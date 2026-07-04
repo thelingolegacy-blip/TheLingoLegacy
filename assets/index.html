@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>That's My Lingo - Assets Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .asset-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .asset-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .asset-preview {
+            width: 100%;
+            height: 150px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .asset-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .asset-preview.placeholder {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            font-size: 3em;
+        }
+
+        .asset-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .asset-desc {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .embed-code {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #333;
+            word-break: break-all;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .asset-card.expanded .embed-code {
+            display: block;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .usage-section {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .usage-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .usage-section code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .assets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 That's My Lingo - Assets Library</h1>
+            <p>Curated assets and media for easy embedding on TheLingoLegacy.com</p>
+        </header>
+
+        <div class="content">
+            <!-- Usage Instructions -->
+            <div class="usage-section">
+                <h3>📝 How to Use These Assets</h3>
+                <p>
+                    Each asset includes an embed code that you can copy and paste directly into your HTML files. 
+                    Click on any asset card to reveal its embed code, then use the "Copy Code" button to get started!
+                </p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab(event, 'all')">All Assets</button>
+                <button class="tab-btn" onclick="showTab(event, 'logos')">Logos & Branding</button>
+                <button class="tab-btn" onclick="showTab(event, 'icons')">Icons</button>
+                <button class="tab-btn" onclick="showTab(event, 'social')">Social Media</button>
+                <button class="tab-btn" onclick="showTab(event, 'badges')">Badges & Buttons</button>
+            </div>
+
+            <!-- All Assets Tab -->
+            <div id="all" class="tab-content active">
+                <div class="section">
+                    <h2>📦 All Assets</h2>
+                    <div class="assets-grid" id="allAssets"></div>
+                </div>
+            </div>
+
+            <!-- Logos Tab -->
+            <div id="logos" class="tab-content">
+                <div class="section">
+                    <h2>🎨 Logos & Branding</h2>
+                    <div class="assets-grid" id="logosAssets"></div>
+                </div>
+            </div>
+
+            <!-- Icons Tab -->
+            <div id="icons" class="tab-content">
+                <div class="section">
+                    <h2>✨ Icons</h2>
+                    <div class="assets-grid" id="iconsAssets"></div>
+                </div>
+            </div>
+
+            <!-- Social Media Tab -->
+            <div id="social" class="tab-content">
+                <div class="section">
+                    <h2>📱 Social Media Assets</h2>
+                    <div class="assets-grid" id="socialAssets"></div>
+                </div>
+            </div>
+
+            <!-- Badges Tab -->
+            <div id="badges" class="tab-content">
+                <div class="section">
+                    <h2>🏷️ Badges & Buttons</h2>
+                    <div class="assets-grid" id="badgesAssets"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 The Lingo Legacy. All assets are freely available for use in your projects.</p>
+            <p><a href="https://github.com/thelingolegacy-blip" style="color: #667eea; text-decoration: none;">Visit our GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Asset data structure
+        const assets = [
+            {
+                name: "Lingo Legacy Logo - Main",
+                category: "logos",
+                description: "Primary logo for The Lingo Legacy brand",
+                emoji: "🎤",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-main.png",
+                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-main.png" alt="Lingo Legacy Logo" width="200" />`
+            },
+            {
+                name: "Lingo Legacy Logo - Horizontal",
+                category: "logos",
+                description: "Horizontal logo variant for headers and banners",
+                emoji: "🎤",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-horizontal.png",
+                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-horizontal.png" alt="Lingo Legacy Logo Horizontal" width="300" />`
+            },
+            {
+                name: "Lingo Legacy Logo - Square",
+                category: "logos",
+                description: "Square logo for social media and favicons",
+                emoji: "🎤",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-square.png",
+                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-square.png" alt="Lingo Legacy Logo Square" width="150" />`
+            },
+            {
+                name: "GitHub Badge",
+                category: "badges",
+                description: "GitHub profile badge for linking to repository",
+                emoji: "🔗",
+                url: "https://img.shields.io/badge/GitHub-TheLingoLegacy-blue?logo=github",
+                embedCode: `<a href="https://github.com/thelingolegacy-blip"><img src="https://img.shields.io/badge/GitHub-TheLingoLegacy-blue?logo=github" alt="GitHub" /></a>`
+            },
+            {
+                name: "Follow Badge",
+                category: "badges",
+                description: "Call-to-action follow button",
+                emoji: "⭐",
+                url: "https://img.shields.io/badge/Follow-TheLingoLegacy-orange?style=social&logo=github",
+                embedCode: `<img src="https://img.shields.io/badge/Follow-TheLingoLegacy-orange?style=social&logo=github" alt="Follow" />`
+            },
+            {
+                name: "Twitter Icon",
+                category: "icons",
+                description: "Twitter/X social media icon",
+                emoji: "🐦",
+                url: "https://img.shields.io/badge/Twitter-@LingoLegacy-1DA1F2?logo=twitter&logoColor=white",
+                embedCode: `<a href="https://twitter.com/LingoLegacy"><img src="https://img.shields.io/badge/Twitter-@LingoLegacy-1DA1F2?logo=twitter&logoColor=white" alt="Twitter" /></a>`
+            },
+            {
+                name: "LinkedIn Icon",
+                category: "icons",
+                description: "LinkedIn social media icon",
+                emoji: "💼",
+                url: "https://img.shields.io/badge/LinkedIn-LingoLegacy-0077B5?logo=linkedin&logoColor=white",
+                embedCode: `<a href="https://linkedin.com/company/lingo-legacy"><img src="https://img.shields.io/badge/LinkedIn-LingoLegacy-0077B5?logo=linkedin&logoColor=white" alt="LinkedIn" /></a>`
+            },
+            {
+                name: "Discord Badge",
+                category: "icons",
+                description: "Discord community badge",
+                emoji: "🎮",
+                url: "https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white",
+                embedCode: `<a href="https://discord.gg/thelingolegacy"><img src="https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>`
+            },
+            {
+                name: "Facebook Banner",
+                category: "social",
+                description: "Facebook page header image (1200x628px)",
+                emoji: "📘",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/facebook-banner.png",
+                embedCode: `<!-- Facebook Banner -->\n<meta property="og:image" content="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/facebook-banner.png" />`
+            },
+            {
+                name: "Twitter Cover Photo",
+                category: "social",
+                description: "Twitter header image (1500x500px)",
+                emoji: "🐦",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/twitter-header.png",
+                embedCode: `<!-- Twitter Header Meta Tag -->\n<meta name="twitter:image" content="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/twitter-header.png" />`
+            },
+            {
+                name: "Instagram Square Post",
+                category: "social",
+                description: "Instagram post template (1080x1080px)",
+                emoji: "📸",
+                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/instagram-post.png",
+                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/instagram-post.png" alt="Instagram Post" width="400" />`
+            }
+        ];
+
+        // Initialize assets on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAssets('all');
+        });
+
+        // Render assets based on category
+        function renderAssets(category) {
+            let filtered = assets;
+            if (category !== 'all') {
+                filtered = assets.filter(a => a.category === category);
+            }
+
+            const targetId = category === 'all' ? 'allAssets' : `${category}Assets`;
+            const target = document.getElementById(targetId);
+            
+            target.innerHTML = filtered.map(asset => `
+                <div class="asset-card" onclick="toggleEmbedCode(this)">
+                    <div class="asset-preview placeholder">${asset.emoji}</div>
+                    <div class="asset-name">${asset.name}</div>
+                    <div class="asset-desc">${asset.description}</div>
+                    <div class="embed-code">${escapeHtml(asset.embedCode)}</div>
+                    <button class="copy-btn" onclick="copyToClipboard(event, '${escapeHtml(asset.embedCode)}')">
+                        📋 Copy Embed Code
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Toggle embed code visibility
+        function toggleEmbedCode(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(event, text) {
+            event.stopPropagation();
+            
+            const unescaped = unescapeHtml(text);
+            navigator.clipboard.writeText(unescaped).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Tab navigation
+        function showTab(event, tabName) {
+            event.preventDefault();
+            
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            renderAssets(tabName);
+        }
+
+        // HTML escape/unescape functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function unescapeHtml(html) {
+            const txt = document.createElement('textarea');
+            txt.innerHTML = html;
+            return txt.value;
+        }
+    </script>
+</body>
+</html>
