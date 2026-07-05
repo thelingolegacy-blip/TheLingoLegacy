@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  ai-service:
+    build:
+      context: .
+      dockerfile: features/ai/github-app/Dockerfile
+    image: thelingolegacy/ai-service:latest
+    environment:
+      - AI_BASE_URL=${AI_BASE_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_SERVICE_PORT=${AI_SERVICE_PORT}
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
