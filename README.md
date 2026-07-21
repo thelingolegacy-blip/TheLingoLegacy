@@ -45,3 +45,7 @@ There are two main ways to grant access to Copilot in an enterprise:
 * **Enable Copilot for organizations**. This approach allows you to choose Copilot Business or Copilot Enterprise for individual organizations and give organization owners control to grant licenses to the users who need them most.
 
 For instructions, see [Granting users access to GitHub Copilot in your enterprise](/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access).
+
+## Product blueprints
+
+- [Lingo Legacy Treasury and Lingo.ai Connect](docs/treasury-connect-blueprint.md): financial management, subscription tracking, AI orchestration, integrations, and Vercel-native implementation plan.
