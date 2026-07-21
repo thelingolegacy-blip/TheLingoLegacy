@@ -78,6 +78,15 @@ export default function Home() {
 
       <section className="section shell split-panel align-start">
         <div>
+          <p className="eyebrow">Empire Repo Activated</p>
+          <h2>Multi-app Vercel architecture is now mapped.</h2>
+          <p>The repository now has app roots, service roots, shared packages, platform shells, and an entity registry for the full Lingo Legacy portfolio.</p>
+        </div>
+        <Link className="btn primary" href="/empire-repo">Open Empire Repo</Link>
+      </section>
+
+      <section className="section shell split-panel align-start">
+        <div>
           <p className="eyebrow">Launch Operating System</p>
           <h2>Countdowns, promos, ads, forms, legal, and growth loops.</h2>
           <p>Phase 7 through Phase 13 adds entity launch countdowns, promotion packages, advertising rules, surveys, legal infrastructure, email notifications, and an Admin HQ command center.</p>

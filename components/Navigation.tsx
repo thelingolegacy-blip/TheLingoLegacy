@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
 const links = [
-  ['Home', '/'], ['Sites', '/subdomains'], ['Money', '/monetization'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Lingo.ai', '/ask-lingo'], ['Assets', '/assets'], ['Entities', '/entities'], ['Admin', '/admin'],
+  ['Home', '/'], ['Empire', '/empire-repo'], ['Sites', '/subdomains'], ['Money', '/monetization'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Lingo.ai', '/ask-lingo'], ['Assets', '/assets'], ['Entities', '/entities'], ['Admin', '/admin'],
 ];
 
 const mobile = [
-  ['Sites', '/subdomains'], ['Money', '/monetization'], ['Shop', '/shop'], ['Market', '/market'], ['Lingo', '/ask-lingo'], ['Profile', '/profile'],
+  ['Empire', '/empire-repo'], ['Sites', '/subdomains'], ['Money', '/monetization'], ['Shop', '/shop'], ['Lingo', '/ask-lingo'], ['Profile', '/profile'],
 ];
 
 export default function Navigation() {
