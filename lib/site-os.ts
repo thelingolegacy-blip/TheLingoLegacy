@@ -112,7 +112,7 @@ export const siteSections: SiteSection[] = [
     summary: 'Universal navigation, voice guidance, smart recommendations, search, and cross-module route suggestions.',
     guidedLinks: ['Universal Navigation', 'Voice Guidance', 'Smart Recommendations', 'Cross-Module Routing'],
     modules: ['Intent launcher', 'Voice-ready prompts', 'Recommendation paths', 'Module route map'],
-    entities: ['AskLingoSession', 'AskLingoIntent', 'AskLingoRecommendation', 'Route'],
+    entities: ['AskLingoSession', 'AskLingoIntent', 'AskLingoRecommendation', 'AskLingoBuildRequest', 'AskLingoBuildOutput', 'AskLingoBuildHistory', 'Route'],
     interactions: ['Select intent', 'Preview voice prompt', 'Follow recommendation', 'Jump across modules'],
     assets: ['Assistant orb', 'Prompt chips', 'Route lines', 'Recommendation cards'],
     sprint: 'Wave 5 intelligence scaffold',

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import {
+  askLingoBuildActions,
+  askLingoBuildOutputs,
   askLingoDataEntities,
   askLingoGuidanceSteps,
   askLingoIntents,
@@ -80,6 +82,30 @@ export default function AskLingoExperience() {
             <article className="system-card guidance-step" key={step}>
               <span>{index + 1}</span>
               <p>{step}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="build-mode" className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Build Mode</p>
+          <h2>Preview, tweak, expand, accept</h2>
+          <p className="hero-copy">Build Mode converts prompts into safe preview scaffolds with layout, copy, cards, labels, and actions. These buttons are placeholders until persistence and moderation are connected.</p>
+        </div>
+        <div className="ask-build-grid">
+          {askLingoBuildOutputs.map((output) => (
+            <article className="system-card build-output-card" key={output.title}>
+              <p className="eyebrow">{output.targetRoute}</p>
+              <h3>{output.title}</h3>
+              <p>{output.prompt}</p>
+              <div className="module-list">
+                {output.sections.map(([name, copy]) => <span key={name}>{name}: {copy}</span>)}
+              </div>
+              <div className="route-map compact">
+                {askLingoBuildActions.map((action) => <span key={action}>{action}</span>)}
+              </div>
+              <Link className="btn primary compact" href={output.targetRoute}>Open generated preview</Link>
             </article>
           ))}
         </div>

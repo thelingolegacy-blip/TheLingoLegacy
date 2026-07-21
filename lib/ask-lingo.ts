@@ -1,4 +1,4 @@
-export type AskLingoIntentCategory = 'navigation' | 'play' | 'commerce' | 'lore' | 'media' | 'profile' | 'help';
+export type AskLingoIntentCategory = 'navigation' | 'play' | 'commerce' | 'lore' | 'media' | 'profile' | 'help' | 'build';
 
 export type AskLingoIntent = {
   category: AskLingoIntentCategory;
@@ -91,6 +91,15 @@ export const askLingoIntents: AskLingoIntent[] = [
     primaryAction: 'Start Guided Tour',
     response: 'Lingo Legacy is a connected OS of HQ, Play, Shop, Market, Infinity, Profile, Media, and Ask Lingo routing.',
   },
+  {
+    category: 'build',
+    label: 'Build a section',
+    prompt: 'Build a new Media Network section here.',
+    targetModule: 'Build Mode',
+    targetRoute: '/ask-lingo#build-mode',
+    primaryAction: 'Open Build Mode',
+    response: 'Build Mode returns a preview scaffold, filled copy, action buttons, and safe Accept, Tweak, or Expand placeholders before any live content is changed.',
+  },
 ];
 
 export const askLingoSmartSuggestions = [
@@ -110,6 +119,9 @@ export const askLingoDataEntities = [
   ['AskLingoSession', 'id, user_id, started_at, context_module, last_intent_type'],
   ['AskLingoIntent', 'id, session_id, raw_input, input_type, intent_category, target_module, target_entity_type, target_entity_id'],
   ['AskLingoRecommendation', 'id, intent_id, entity_type, entity_id, rank, reason'],
+  ['AskLingoBuildRequest', 'id, user_id, prompt, target_module, target_route, output_type, status'],
+  ['AskLingoBuildOutput', 'id, request_id, layout_type, sections, copy_blocks, action_map, preview_state'],
+  ['AskLingoBuildHistory', 'id, request_id, user_id, action_taken, version, created_at'],
 ] as const;
 
 export const askLingoRoadmap = [
@@ -118,5 +130,35 @@ export const askLingoRoadmap = [
   ['3', 'Rules-based recommendations from XP, inventory, and recent activity'],
   ['4', 'Voice capture and playback'],
   ['5', 'Guided flows with Do it for me navigation'],
-  ['6', 'Long-term personalization from history and preferences'],
+  ['6', 'Build Mode preview, tweak, expand, and accept workflow'],
+  ['7', 'Long-term personalization from history and preferences'],
+] as const;
+
+export const askLingoBuildActions = ['Accept preview', 'Tweak copy', 'Expand sections', 'Save to build history'] as const;
+
+export const askLingoBuildOutputs = [
+  {
+    title: 'Media Network Home',
+    targetRoute: '/media-network',
+    prompt: 'Generate a cinematic Media Network home page with series, trailers, sound, and releases.',
+    layout: 'Hero + featured rails + release calendar + sound wall + Ask Lingo prompts',
+    sections: [
+      ['Signal Hero', 'A cinematic opening block that positions Media Network as the watch, listen, and release hub.'],
+      ['Series Rail', 'Featured series cards with status labels, short blurbs, and Open Series actions.'],
+      ['Trailer Room', 'Trailer preview cards with Play Trailer placeholders that do not start real media yet.'],
+      ['Sound Archive', 'Playlist and sound pack cards connected to future audio metadata.'],
+      ['Release Calendar', 'Upcoming drops, premieres, and notification prompts.'],
+    ],
+  },
+  {
+    title: 'Quest Guide',
+    targetRoute: '/play',
+    prompt: 'Create a step-by-step quest guide for new players.',
+    layout: 'Guide intro + objectives + XP rewards + Do it for me route actions',
+    sections: [
+      ['Guide Intro', 'Explain the quest path and expected completion time.'],
+      ['Objectives', 'List daily, weekly, and epic objective slots.'],
+      ['Rewards', 'Show XP, badge, and inventory unlock placeholders.'],
+    ],
+  },
 ] as const;
