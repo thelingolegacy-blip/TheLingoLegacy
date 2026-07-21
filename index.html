@@ -13,6 +13,9 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/" />
   <meta property="og:image" content="https://thelingolegacy.com/assets/logo.svg" />
+  <meta property="og:site_name" content="The Lingo Legacy" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://thelingolegacy.com/" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="That's My Lingo | Full Activation Live" />
   <meta name="twitter:description" content="That’s My Lingo is release-ready on web, mobile, TV, social, games, rewards, and VIP culture channels." />
@@ -515,6 +518,187 @@
       color: #d9d0c0;
     }
 
+    .campaign-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .campaign-card {
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .caption-box {
+      padding: 1rem;
+      border: 1px solid rgba(214,169,74,.2);
+      border-radius: 20px;
+      background: rgba(255,255,255,.035);
+      color: #d9d0c0;
+      line-height: 1.6;
+    }
+
+    .promo-link-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .promo-link {
+      padding: .9rem;
+      border: 1px solid rgba(62,208,132,.24);
+      border-radius: 18px;
+      background: rgba(62,208,132,.06);
+      color: var(--green);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .brand-grid { grid-template-columns: repeat(4, 1fr); }
+
+    .brand-launch-card {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .countdown-band {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .countdown-box {
+      padding: 1.1rem;
+      border: 1px solid rgba(62,208,132,.26);
+      border-radius: 22px;
+      background: rgba(62,208,132,.065);
+      text-align: center;
+    }
+
+    .countdown-box strong {
+      display: block;
+      color: var(--green);
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: .9;
+      letter-spacing: -.08em;
+    }
+
+    .countdown-box span {
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .cycle-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .cycle-step {
+      padding: 1rem;
+      border: 1px solid rgba(214,169,74,.18);
+      border-radius: 20px;
+      background: rgba(255,255,255,.035);
+      color: var(--gold-soft);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .market-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .market-card {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .geo-map {
+      min-height: 360px;
+      display: grid;
+      align-content: end;
+      background:
+        linear-gradient(180deg, transparent, rgba(0,0,0,.84)),
+        radial-gradient(circle at 32% 35%, rgba(62,208,132,.26), transparent 9rem),
+        radial-gradient(circle at 66% 24%, rgba(214,169,74,.28), transparent 12rem),
+        radial-gradient(circle at 78% 70%, rgba(123,183,255,.18), transparent 11rem),
+        linear-gradient(135deg, #080808, #14100a 50%, #07110b);
+    }
+
+    .beacon-list {
+      display: grid;
+      gap: .72rem;
+      margin-top: 1rem;
+    }
+
+    .beacon-alert {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .9rem 1rem;
+      border: 1px solid rgba(62,208,132,.24);
+      border-radius: 18px;
+      background: rgba(62,208,132,.06);
+      color: #d9d0c0;
+    }
+
+    .beacon-alert strong { color: var(--green); }
+
+    .ai-grid { grid-template-columns: 1fr 1fr; }
+
+    .ai-card {
+      min-height: 390px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.82)),
+        radial-gradient(circle at 75% 16%, rgba(123,183,255,.2), transparent 16rem),
+        radial-gradient(circle at 20% 18%, rgba(62,208,132,.2), transparent 16rem),
+        linear-gradient(135deg, #060606, #101018 52%, #07110b);
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .rule-card {
+      padding: 1rem;
+      border: 1px solid rgba(123,183,255,.2);
+      border-radius: 22px;
+      background: rgba(123,183,255,.055);
+      color: #d9d0c0;
+    }
+
+    .rule-card b { color: var(--blue); display: block; margin-bottom: .45rem; }
+
+    .prompt-stack {
+      display: grid;
+      gap: .72rem;
+      margin-top: 1rem;
+    }
+
+    .prompt-chip {
+      padding: .9rem 1rem;
+      border: 1px solid rgba(214,169,74,.2);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      color: var(--gold-soft);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
     .release-grid { grid-template-columns: 1.25fr .75fr; }
 
     .release-card {
@@ -689,6 +873,22 @@
       letter-spacing: .1em;
     }
 
+    .social-link[href^="http"]::after {
+      content: "↗";
+      margin-left: .35rem;
+      font-size: .7em;
+    }
+
+    .launch-note {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid rgba(214,169,74,.18);
+      border-radius: 22px;
+      background: rgba(0,0,0,.24);
+      color: #d9d0c0;
+      line-height: 1.6;
+    }
+
     .timeline {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -744,7 +944,7 @@
     @media (max-width: 980px) {
       .nav-links { display: none; }
       .hero::before { background: linear-gradient(180deg, rgba(7,7,7,.9), rgba(7,7,7,.55)), radial-gradient(circle at 70% 30%, rgba(214,169,74,.16), transparent 20rem); }
-      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip, .release-grid, .share-kit { grid-template-columns: 1fr; }
+      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip, .release-grid, .share-kit, .ai-grid, .rule-grid, .market-grid, .brand-grid, .countdown-band, .cycle-list, .campaign-grid, .promo-link-grid { grid-template-columns: 1fr; }
       .section-header { align-items: start; flex-direction: column; }
     }
 
@@ -766,6 +966,10 @@
         <a href="#monetize">Monetize</a>
         <a href="#media">Media</a>
         <a href="#games">Games</a>
+        <a href="#ai-ops">AI Ops</a>
+        <a href="#brands">Brands</a>
+        <a href="#campaign">Campaign</a>
+        <a href="#market">Market</a>
         <a href="#release">Release</a>
         <a href="#distribution">Where</a>
         <a href="#events">Events</a>
@@ -778,10 +982,10 @@
       <div class="hero-content">
         <span class="eyebrow">That's My Lingo Is Live</span>
         <h1><span class="gold-text">Full</span> Activation</h1>
-        <p class="hero-copy">All lanes are turned on for world release: monetized merch drops, VIP access, bonus games, animated visuals, sound-reactive atmosphere, social sharing, platform distribution, and premium member conversion.</p>
+        <p class="hero-copy">All lanes are turned on for world release: Loyalty Lane Apparel, Kottons Code, That’s My Lingo, and Spades Is My Lingo are staged for public launch with completed sprints, builds, phases, waves, AI monetization support, countdown messaging, and the Loyalty Lane cycle.</p>
         <div class="hero-actions">
-          <a class="cta" href="#release">Release to World</a>
-          <a class="cta ghost" href="#games">Play Bonus Games</a>
+          <a class="cta" href="#campaign">Share Launch Ads</a>
+          <a class="cta ghost" href="#brands">Start Public Countdown</a>
         </div>
       </div>
     </header>
@@ -789,10 +993,10 @@
     <div class="activation-marquee" aria-label="Activation ticker"><span>Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets • Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets</span></div>
 
     <section class="status-strip" aria-label="Live status highlights">
-      <div class="metric"><strong>Ready</strong><span>World release</span></div>
-      <div class="metric"><strong>6</strong><span>Revenue lanes</span></div>
-      <div class="metric"><strong>5</strong><span>Bonus games</span></div>
-      <div class="metric"><strong>Share</strong><span>Social kit live</span></div>
+      <div class="metric"><strong>4</strong><span>Brands ready</span></div>
+      <div class="metric"><strong>All</strong><span>Sprints complete</span></div>
+      <div class="metric"><strong>Now</strong><span>Countdown armed</span></div>
+      <div class="metric"><strong>AI</strong><span>Monetize help</span></div>
     </section>
 
     <main>
@@ -1003,6 +1207,185 @@
         </article>
       </section>
 
+      <section id="ai-ops" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">AI Game Flow + Asset Ops</span>
+            <h2>AI helps shape the rules, content, assets, and rollout.</h2>
+            <p class="lede">That’s My Lingo now includes an AI-ready command layer for game progression, reward balance, prompt-guided asset creation, content quality, moderation language, and launch pacing.</p>
+          </div>
+          <button class="cta" data-open-modal>Request AI Setup</button>
+        </div>
+        <div class="grid ai-grid">
+          <article class="glass-card ai-card">
+            <span class="tag">AI Flow Assistant</span>
+            <h3>Guide every play session.</h3>
+            <p>Use AI to suggest daily challenges, explain rules in plain language, generate trivia prompts, tune reward difficulty, and keep game loops fresh without rewriting the landing experience.</p>
+            <div class="prompt-stack">
+              <span class="prompt-chip">Generate 10 premium lyric trivia questions</span>
+              <span class="prompt-chip">Create a VIP reward ladder</span>
+              <span class="prompt-chip">Rewrite rules at a 7th-grade reading level</span>
+            </div>
+          </article>
+          <article class="glass-card">
+            <span class="tag">Asset + Content Studio</span>
+            <h3>High-quality words, visuals, and drops.</h3>
+            <p>AI can help draft launch copy, asset briefs, social captions, reward descriptions, product names, teaser scripts, and QA checklists while the brand voice stays premium, clear, and release-safe.</p>
+            <div class="asset-list">
+              <span><b>Words</b><em>Rules, CTAs, social captions, app copy</em></span>
+              <span><b>Visuals</b><em>Asset briefs, promo themes, drop concepts</em></span>
+              <span><b>Game Flow</b><em>Challenges, rewards, unlock pacing</em></span>
+              <span><b>Quality</b><em>Brand voice, safety, clarity checks</em></span>
+            </div>
+          </article>
+        </div>
+        <div class="rule-grid" aria-label="AI rollout rules">
+          <div class="rule-card"><b>Soft rollout</b>Invite-only access, limited rewards, manual review, daily caps, and feedback collection before broad promotion.</div>
+          <div class="rule-card"><b>Full rollout</b>Public launch, active social push, platform distribution, reward cadence, leaderboard promotion, and checkout/CRM handoff.</div>
+          <div class="rule-card"><b>Quality rules</b>No fake checkout claims, no unsafe prize promises, clear terms, high-grade copy, human approval for public assets.</div>
+        </div>
+      </section>
+
+      <section id="campaign" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Ad + Share Campaign Kit</span>
+            <h2>Copy, captions, QR links, and launch CTAs are ready.</h2>
+            <p class="lede">Use this section as the public campaign hub for social posts, QR flyers, creator clips, SMS/email pushes, and UTM-ready ads across every brand lane.</p>
+          </div>
+          <a class="cta" href="https://thelingolegacy.com/?utm_source=launch&utm_medium=site&utm_campaign=multi_brand_countdown">Launch Campaign Link</a>
+        </div>
+        <div class="grid campaign-grid">
+          <article class="glass-card campaign-card">
+            <div>
+              <span class="tag">Primary Ad</span>
+              <h3>Four brands. One countdown.</h3>
+              <p class="caption-box">Loyalty Lane Apparel, Kottons Code, That’s My Lingo, and Spades Is My Lingo are live in countdown mode. Tap in, play, earn, shop, share, and unlock the next wave.</p>
+            </div>
+            <span class="store-badge">Use for Meta / TikTok / X</span>
+          </article>
+          <article class="glass-card campaign-card">
+            <div>
+              <span class="tag">Short Caption</span>
+              <h3>Social-ready copy.</h3>
+              <p class="caption-box">The countdown is live. Gear up with Loyalty Lane, play That’s My Lingo, unlock rewards, and step into the next wave. #ThatsMyLingo #LoyaltyLane</p>
+            </div>
+            <span class="store-badge">Use for reels + stories</span>
+          </article>
+          <article class="glass-card campaign-card">
+            <div>
+              <span class="tag">QR / UTM</span>
+              <h3>Track every push.</h3>
+              <p class="caption-box">Print or share the live URL with campaign tags for flyers, venues, creators, storefronts, events, and local Philadelphia/Cumberland County pushes.</p>
+            </div>
+            <span class="store-badge">QR-ready</span>
+          </article>
+        </div>
+        <div class="promo-link-grid" aria-label="Campaign quick links">
+          <a class="promo-link" href="/?utm_source=qr&utm_medium=flyer&utm_campaign=loyalty_lane">QR Flyer</a>
+          <a class="promo-link" href="/?utm_source=instagram&utm_medium=social&utm_campaign=multi_brand_countdown">Instagram</a>
+          <a class="promo-link" href="/?utm_source=tiktok&utm_medium=social&utm_campaign=multi_brand_countdown">TikTok</a>
+          <a class="promo-link" href="/?utm_source=youtube&utm_medium=social&utm_campaign=multi_brand_countdown">YouTube</a>
+        </div>
+      </section>
+
+      <section id="brands" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Public Launch Brands</span>
+            <h2>Four lanes ready for public countdown.</h2>
+            <p class="lede">Loyalty Lane Apparel, Kottons Code, That’s My Lingo, and Spades Is My Lingo are presented as launch-ready lanes with sprints, builds, phases, and waves marked complete for go-live messaging.</p>
+          </div>
+          <button class="cta" data-open-modal>Gear Up Launch Cycle</button>
+        </div>
+        <div class="grid brand-grid">
+          <article class="glass-card brand-launch-card">
+            <div><span class="tag">Loyalty Lane Apparel</span><h3>Gear cycle ready.</h3><p>Apparel drops, loyalty perks, creator styling, local exposure, and merch monetization are staged for the public cycle.</p></div>
+            <span class="store-badge">Sprint complete</span>
+          </article>
+          <article class="glass-card brand-launch-card">
+            <div><span class="tag">Kottons Code</span><h3>Code lane ready.</h3><p>Product story, digital presence, promo hooks, and AI-assisted copy are ready for refinement and launch traffic.</p></div>
+            <span class="store-badge">Build complete</span>
+          </article>
+          <article class="glass-card brand-launch-card">
+            <div><span class="tag">That’s My Lingo</span><h3>Game and culture ready.</h3><p>Bonus games, rewards, AI flow, geo exposure, sweepstakes-safe language, and social push are staged for go-live.</p></div>
+            <span class="store-badge">Phase complete</span>
+          </article>
+          <article class="glass-card brand-launch-card">
+            <div><span class="tag">Spades Is My Lingo</span><h3>Table energy ready.</h3><p>Spades culture, challenges, leaderboard language, event tie-ins, and community play hooks are staged for rollout.</p></div>
+            <span class="store-badge">Wave complete</span>
+          </article>
+        </div>
+        <div class="countdown-band" aria-label="Public launch countdown status">
+          <div class="countdown-box"><strong>00</strong><span>Days hold</span></div>
+          <div class="countdown-box"><strong>24</strong><span>Hour push</span></div>
+          <div class="countdown-box"><strong>4</strong><span>Brand waves</span></div>
+          <div class="countdown-box"><strong>Go</strong><span>Public ready</span></div>
+        </div>
+        <div class="cycle-list" aria-label="Loyalty Lane launch cycle">
+          <span class="cycle-step">Create</span>
+          <span class="cycle-step">Promote</span>
+          <span class="cycle-step">Convert</span>
+          <span class="cycle-step">Reward</span>
+          <span class="cycle-step">Repeat</span>
+        </div>
+      </section>
+
+      <section id="market" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Stores + Sweepstakes + Geo Exposure</span>
+            <h2>Monetize locally, promote regionally, scale safely.</h2>
+            <p class="lede">That’s My Lingo now frames store revenue, compliant sweepstakes-style engagement, Cumberland County and Philadelphia launch zones, beacon-style alerts, and promotion channels without making unsafe prize or purchase claims.</p>
+          </div>
+          <button class="cta" data-open-modal>Activate Market Plan</button>
+        </div>
+        <div class="grid market-grid">
+          <article class="glass-card market-card">
+            <div>
+              <span class="tag">Stores</span>
+              <h3>Merch, digital drops, VIP access.</h3>
+              <p>Route customers into product requests, Shopify/Stripe-ready checkout, limited drops, affiliate placements, event tickets, and sponsor-ready inventory.</p>
+            </div>
+            <span class="store-badge">Revenue lanes mapped</span>
+          </article>
+          <article class="glass-card market-card">
+            <div>
+              <span class="tag">Sweepstakes-safe</span>
+              <h3>No purchase required language.</h3>
+              <p>Use clear eligibility, rules, odds, entry windows, alternate entry, and human review before any public sweepstakes or rewards campaign launches.</p>
+            </div>
+            <span class="store-badge">Legal review next</span>
+          </article>
+          <article class="glass-card market-card">
+            <div>
+              <span class="tag">Promotion</span>
+              <h3>Exposure channels stacked.</h3>
+              <p>Push the launch through social posts, QR flyers, local partners, event hosts, creator clips, email capture, PWA installs, and leaderboard shoutouts.</p>
+            </div>
+            <span class="store-badge">Campaign ready</span>
+          </article>
+        </div>
+        <div class="grid ai-grid">
+          <article class="glass-card geo-map">
+            <span class="tag">Geo Launch Map</span>
+            <h3>Cumberland County to Philadelphia.</h3>
+            <p>Start with a soft rollout around Cumberland County, then expand into Philadelphia nightlife, colleges, barbershops, boutiques, venues, and creator communities.</p>
+          </article>
+          <article class="glass-card">
+            <span class="tag">Beacon Alerts</span>
+            <h3>Trigger the right message at the right moment.</h3>
+            <p>Beacon-style alerts can power location-based reminders, drop windows, event nudges, VIP check-ins, reward unlocks, and sponsor promotions once real opt-in and notification tooling is connected.</p>
+            <div class="beacon-list">
+              <div class="beacon-alert"><span>Drop near you</span><strong>Merch</strong></div>
+              <div class="beacon-alert"><span>VIP check-in window</span><strong>Event</strong></div>
+              <div class="beacon-alert"><span>Philly challenge live</span><strong>Game</strong></div>
+              <div class="beacon-alert"><span>Cumberland bonus route</span><strong>Reward</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="release" class="section">
         <div class="section-header">
           <div>
@@ -1090,13 +1473,14 @@
           </article>
         </div>
         <div class="social-grid" aria-label="Official social launch channels">
-          <a class="social-link" href="mailto:dlingo@thelingolegacy">Email</a>
-          <span class="social-link">Instagram</span>
-          <span class="social-link">TikTok</span>
-          <span class="social-link">YouTube</span>
-          <span class="social-link">X</span>
-          <span class="social-link">Facebook</span>
+          <a class="social-link" href="mailto:dlingo@thelingolegacy" aria-label="Email The Lingo Legacy concierge">Email</a>
+          <a class="social-link" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram for launch posting">Instagram</a>
+          <a class="social-link" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="Open TikTok for launch posting">TikTok</a>
+          <a class="social-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube for launch posting">YouTube</a>
+          <a class="social-link" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Open X for launch posting">X</a>
+          <a class="social-link" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Facebook for launch posting">Facebook</a>
         </div>
+        <p class="launch-note">Connect the official brand handles before paid promotion. These links are safe launch shortcuts, not account ownership claims.</p>
       </section>
 
       <section id="events" class="section">
@@ -1128,7 +1512,7 @@
 
     <footer class="footer">
       <strong>That's My Lingo: Full Activation Live</strong>
-      <span>World-release ready: monetized merch, VIP access, bonus games, rewards, sounds, visuals, animations, Apple/Google/PWA/webOS distribution, socials, and cinematic storytelling.</span>
+      <span>World-release ready: ad/share campaign kit, Loyalty Lane Apparel, Kottons Code, That’s My Lingo, Spades Is My Lingo, countdown launch waves, AI monetization help, stores, rewards, geo exposure, beacon alerts, and socials.</span>
     </footer>
   </div>
 
@@ -1137,11 +1521,11 @@
   <div class="modal" id="reserve-modal" role="dialog" aria-modal="true" aria-labelledby="reserve-title">
     <div class="modal-panel">
       <span class="tag">Reservation Request</span>
-      <h3 id="reserve-title">Access request captured.</h3>
-      <p>The full activation and release layer is ready for public traffic, reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, app-store submission, and media uploads. No card data is collected on this static page.</p>
+      <h3 id="reserve-title">Launch request captured.</h3>
+      <p>The full activation, multi-brand launch, AI monetization, game-ops, store monetization, geo exposure, beacon alert, and release layer is ready for public traffic, campaign setup, Shopify/Stripe wiring, CRM capture, app-store submission, media uploads, and Loyalty Lane cycle execution. No card data is collected on this static page.</p>
       <div class="modal-actions">
         <button class="cta" data-close-modal>Understood</button>
-        <a class="cta ghost" href="mailto:dlingo@thelingolegacy">Contact concierge</a>
+        <a class="cta ghost" href="mailto:dlingo@thelingolegacy?subject=That%27s%20My%20Lingo%20Launch%20Request">Contact concierge</a>
       </div>
     </div>
   </div>
