@@ -1,0 +1,10 @@
+{
+  "id": "com.thelingolegacy.hq",
+  "version": "0.1.0",
+  "vendor": "The Lingo Legacy",
+  "type": "web",
+  "main": "index.html",
+  "title": "The Lingo Legacy HQ",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png"
+}

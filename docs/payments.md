@@ -8,6 +8,12 @@ Required Vercel environment variables:
 - `STRIPE_ONE_TIME_PRICE_ID`: Stripe Price ID for the one-time credit-card payment.
 - `SITE_URL`: Production site URL, for example `https://thelingolegacy.com`.
 
+
+Webhook alert variables:
+
+- `STRIPE_WEBHOOK_SECRET`: Stripe webhook signing secret for `/api/stripe-webhook`.
+- `PAYMENT_ALERT_WEBHOOK_URL`: optional private webhook URL for payment notifications.
+
 Optional subscription variable for the next phase:
 
 - `STRIPE_SUBSCRIPTION_PRICE_ID`: Stripe Price ID for the subscription product.
