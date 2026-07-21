@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#070707" />
-  <meta name="description" content="The Lingo Legacy is a cinematic destination for music, merch, games, and VIP culture." />
-  <title>The Lingo Legacy | Cinematic VIP Experience</title>
+  <meta name="description" content="That's My Lingo is live: a monetized cinematic destination for music, merch, games, visuals, sounds, drops, and VIP culture." />
+  <title>That's My Lingo | Live Full Activation</title>
   <style>
     :root {
       --bg: #070707;
@@ -18,6 +18,8 @@
       --line: rgba(214, 169, 74, 0.22);
       --white: #fff7e8;
       --shadow: 0 30px 90px rgba(0, 0, 0, 0.62);
+      --green: #3ed084;
+      --blue: #7bb7ff;
     }
 
     * { box-sizing: border-box; }
@@ -29,6 +31,7 @@
       background:
         radial-gradient(circle at 18% 12%, rgba(214, 169, 74, 0.18), transparent 30rem),
         radial-gradient(circle at 85% 18%, rgba(88, 24, 24, 0.42), transparent 34rem),
+        radial-gradient(circle at 48% 82%, rgba(62, 208, 132, 0.12), transparent 30rem),
         linear-gradient(135deg, #050505 0%, #12100c 48%, #050505 100%);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow-x: hidden;
@@ -106,6 +109,32 @@
 
     .nav-links a { padding: .75rem .9rem; border-radius: 999px; }
     .nav-links a:hover { color: var(--gold-soft); background: rgba(255,255,255,.045); }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .5rem .7rem;
+      border: 1px solid rgba(62,208,132,.42);
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(62,208,132,.09);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      box-shadow: 0 0 34px rgba(62,208,132,.14);
+    }
+
+    .live-pill::before {
+      content: "";
+      width: .5rem;
+      height: .5rem;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 18px var(--green);
+      animation: pulse 1.7s ease-in-out infinite;
+    }
 
     .cta {
       display: inline-flex;
@@ -214,6 +243,48 @@
 
     .hero-actions { display: flex; flex-wrap: wrap; gap: .85rem; }
 
+    .sound-toggle {
+      position: fixed;
+      right: clamp(1rem, 3vw, 2rem);
+      bottom: clamp(1rem, 3vw, 2rem);
+      z-index: 45;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: 1px solid rgba(214,169,74,.42);
+      color: var(--gold-soft);
+      background: rgba(8,8,8,.78);
+      box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 0 30px rgba(214,169,74,.12);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+    }
+
+    .sound-toggle.active {
+      color: #07110b;
+      background: linear-gradient(135deg, var(--green), var(--gold-soft));
+    }
+
+    .activation-marquee {
+      margin: 1rem clamp(1rem, 4vw, 4rem) 0;
+      overflow: hidden;
+      border: 1px solid rgba(214,169,74,.2);
+      border-radius: 999px;
+      background: rgba(0,0,0,.42);
+      color: var(--gold-soft);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .72rem;
+      font-weight: 900;
+    }
+
+    .activation-marquee span {
+      display: inline-flex;
+      gap: 2rem;
+      min-width: max-content;
+      padding: .8rem 1rem;
+      animation: marquee 24s linear infinite;
+    }
+
     .status-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(150px, 1fr));
@@ -267,6 +338,8 @@
     .feature-grid { grid-template-columns: 1.15fr .85fr; }
     .card-grid { grid-template-columns: repeat(3, 1fr); }
     .merch-grid { grid-template-columns: repeat(4, 1fr); }
+    .monetize-grid { grid-template-columns: repeat(3, 1fr); }
+    .media-grid { grid-template-columns: 1fr 1fr; }
 
     .glass-card {
       position: relative;
@@ -372,6 +445,63 @@
       font-weight: 900;
     }
 
+    .activation-card { min-height: 330px; }
+
+    .activation-card strong {
+      display: block;
+      margin-top: 1rem;
+      color: var(--green);
+      font-size: clamp(2.6rem, 7vw, 5.6rem);
+      line-height: .85;
+      letter-spacing: -.08em;
+    }
+
+    .media-stage {
+      min-height: 440px;
+      display: grid;
+      align-content: end;
+      background:
+        linear-gradient(180deg, transparent, rgba(0,0,0,.82)),
+        radial-gradient(circle at 30% 28%, rgba(123,183,255,.22), transparent 14rem),
+        radial-gradient(circle at 72% 20%, rgba(214,169,74,.24), transparent 14rem),
+        conic-gradient(from 220deg at 50% 50%, #080808, #201008, #090909, #1b0710, #080808);
+    }
+
+    .equalizer {
+      display: flex;
+      align-items: end;
+      gap: .38rem;
+      height: 92px;
+      margin-top: 1.5rem;
+    }
+
+    .equalizer i {
+      display: block;
+      width: 12px;
+      min-height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--gold-soft), var(--green));
+      animation: bounce 1s ease-in-out infinite alternate;
+      animation-delay: calc(var(--bar) * -90ms);
+    }
+
+    .asset-list {
+      display: grid;
+      gap: .72rem;
+      margin-top: 1rem;
+    }
+
+    .asset-list span {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .85rem 1rem;
+      border: 1px solid rgba(214,169,74,.16);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      color: #d9d0c0;
+    }
+
     .timeline {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -420,11 +550,14 @@
 
     @keyframes slowPush { from { transform: scale(1.02) translateX(0); } to { transform: scale(1.08) translateX(1.2rem); } }
     @keyframes reveal { from { opacity: 0; transform: translateY(22px); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(.82); opacity: .6; } 50% { transform: scale(1.18); opacity: 1; } }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes bounce { from { height: 18px; opacity: .62; } to { height: 88px; opacity: 1; } }
 
     @media (max-width: 980px) {
       .nav-links { display: none; }
       .hero::before { background: linear-gradient(180deg, rgba(7,7,7,.9), rgba(7,7,7,.55)), radial-gradient(circle at 70% 30%, rgba(214,169,74,.16), transparent 20rem); }
-      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid { grid-template-columns: 1fr; }
+      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid { grid-template-columns: 1fr; }
       .section-header { align-items: start; flex-direction: column; }
     }
 
@@ -443,28 +576,33 @@
       <div class="nav-links">
         <a href="#experience">Experience</a>
         <a href="#vault">Merch Vault</a>
+        <a href="#monetize">Monetize</a>
+        <a href="#media">Media</a>
         <a href="#events">Events</a>
       </div>
+      <span class="live-pill">Live Activation</span>
       <button class="cta ghost" data-open-modal>Reserve Access</button>
     </nav>
 
     <header id="top" class="hero">
       <div class="hero-content">
-        <span class="eyebrow">Cinematic VIP Culture</span>
-        <h1><span class="gold-text">Lingo</span> Legacy</h1>
-        <p class="hero-copy">A high-gloss destination for music, games, merch, and executive nightlife energy. Built with film-grade contrast, champagne lighting, and a premium member-first storefront.</p>
+        <span class="eyebrow">That's My Lingo Is Live</span>
+        <h1><span class="gold-text">Full</span> Activation</h1>
+        <p class="hero-copy">All lanes are turned on: monetized merch drops, VIP access, animated visuals, sound-reactive atmosphere, content assets, event funnels, and premium member conversion.</p>
         <div class="hero-actions">
-          <a class="cta" href="#vault">Explore the Vault</a>
-          <a class="cta ghost" href="#experience">View the Experience</a>
+          <a class="cta" href="#monetize">Start Monetizing</a>
+          <a class="cta ghost" href="#media">Launch Visuals + Sound</a>
         </div>
       </div>
     </header>
 
+    <div class="activation-marquee" aria-label="Activation ticker"><span>Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets • Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets</span></div>
+
     <section class="status-strip" aria-label="Live status highlights">
-      <div class="metric"><strong>24.8K</strong><span>Status credits</span></div>
-      <div class="metric"><strong>4</strong><span>VIP drops</span></div>
-      <div class="metric"><strong>3</strong><span>Featured events</span></div>
-      <div class="metric"><strong>Live</strong><span>Concierge mode</span></div>
+      <div class="metric"><strong>Live</strong><span>Production active</span></div>
+      <div class="metric"><strong>6</strong><span>Revenue lanes</span></div>
+      <div class="metric"><strong>24/7</strong><span>Asset showcase</span></div>
+      <div class="metric"><strong>On</strong><span>Sound + motion</span></div>
     </section>
 
     <main>
@@ -472,8 +610,8 @@
         <div class="section-header">
           <div>
             <span class="tag">Director's Cut Interface</span>
-            <h2>Luxury pacing, darker atmosphere, cleaner motion.</h2>
-            <p class="lede">The page now leads with a cinematic scene, then reveals the high-value actions: reserve, shop, attend, and redeem.</p>
+            <h2>Luxury pacing, monetized actions, full motion.</h2>
+            <p class="lede">The page now drives visitors into purchase, reservation, membership, content, and event actions with a cinematic product-first flow.</p>
           </div>
           <button class="cta" data-open-modal>Join the List</button>
         </div>
@@ -481,8 +619,8 @@
         <div class="grid feature-grid">
           <article class="glass-card hero-card">
             <span class="tag">VIP Lounge Hub</span>
-            <h3>Reserved for the elevated.</h3>
-            <p>Gold rim lighting, deep shadows, and editorial spacing create a premium app-like landing experience without adding a build step.</p>
+            <h3>Reserved for the activated.</h3>
+            <p>Gold rim lighting, deep shadows, animated energy, and conversion-focused calls-to-action create a premium app-like launch experience without adding a build step.</p>
           </article>
           <div class="grid mini-row">
             <article class="glass-card mini-card">
@@ -547,6 +685,70 @@
         </div>
       </section>
 
+
+
+      <section id="monetize" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Monetization Stack</span>
+            <h2>Every asset points to revenue.</h2>
+            <p class="lede">The live experience now frames products, memberships, sounds, visuals, and events as clear conversion lanes ready for Stripe, Shopify, or concierge checkout.</p>
+          </div>
+          <button class="cta" data-open-modal>Activate Checkout</button>
+        </div>
+        <div class="grid monetize-grid">
+          <article class="glass-card activation-card">
+            <span class="tag">Merch</span>
+            <strong>$</strong>
+            <h3>Drop-ready product funnel.</h3>
+            <p>Hoodies, outerwear, caps, and reserve accessories now sit inside a premium sales lane with request buttons and price anchors.</p>
+          </article>
+          <article class="glass-card activation-card">
+            <span class="tag">Membership</span>
+            <strong>VIP</strong>
+            <h3>Access becomes the product.</h3>
+            <p>Reserve access, private events, concierge requests, and member-only culture are positioned as paid experiences.</p>
+          </article>
+          <article class="glass-card activation-card">
+            <span class="tag">Content</span>
+            <strong>PLAY</strong>
+            <h3>Sounds and visuals sell the world.</h3>
+            <p>Music loops, campaign visuals, drops, and animated brand moments create repeatable launch content for social and in-app promotion.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="media" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Visuals + Sound Engine</span>
+            <h2>Atmosphere, movement, and sonic identity.</h2>
+            <p class="lede">A sound-toggle experience adds a generated lounge pulse while equalizer motion, shimmer, marquee movement, and hover lighting keep the static site feeling alive.</p>
+          </div>
+        </div>
+        <div class="grid media-grid">
+          <article class="glass-card media-stage">
+            <span class="tag">Live Scene</span>
+            <h3>Champagne noir visual system.</h3>
+            <p>Animated gradients, cinematic grain, gold lighting, and activation ticker styling create a launch-ready brand stage.</p>
+            <div class="equalizer" aria-hidden="true">
+              <i style="--bar:1"></i><i style="--bar:2"></i><i style="--bar:3"></i><i style="--bar:4"></i><i style="--bar:5"></i><i style="--bar:6"></i><i style="--bar:7"></i><i style="--bar:8"></i>
+            </div>
+          </article>
+          <article class="glass-card">
+            <span class="tag">Asset Activation</span>
+            <h3>All launch assets organized.</h3>
+            <p>Each asset lane is visible to customers and ready to connect to real media, checkout, or CRM systems.</p>
+            <div class="asset-list">
+              <span><b>Visuals</b><em>Hero art, drops, social clips</em></span>
+              <span><b>Sounds</b><em>Generated lounge pulse + music lane</em></span>
+              <span><b>Animations</b><em>Marquee, equalizer, hover lights</em></span>
+              <span><b>Monetization</b><em>Merch, VIP, events, content</em></span>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="events" class="section">
         <div class="section-header">
           <div>
@@ -575,16 +777,18 @@
     </main>
 
     <footer class="footer">
-      <strong>The Lingo Legacy</strong>
-      <span>Music, merch, games, and cinematic VIP storytelling.</span>
+      <strong>That's My Lingo: Full Activation Live</strong>
+      <span>Monetized merch, VIP access, sounds, visuals, animations, events, and cinematic storytelling.</span>
     </footer>
   </div>
+
+  <button class="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle generated lounge sound" data-sound-toggle>♪</button>
 
   <div class="modal" id="reserve-modal" role="dialog" aria-modal="true" aria-labelledby="reserve-title">
     <div class="modal-panel">
       <span class="tag">Reservation Request</span>
       <h3 id="reserve-title">Access request captured.</h3>
-      <p>This static prototype is ready for a real reservation form, Shopify cart, and Stripe Checkout session. No card data is collected on this page.</p>
+      <p>The full activation layer is live and ready for real reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, and media uploads. No card data is collected on this static page.</p>
       <div class="modal-actions">
         <button class="cta" data-close-modal>Understood</button>
         <a class="cta ghost" href="mailto:dlingo@thelingolegacy">Contact concierge</a>
@@ -594,6 +798,40 @@
 
   <script>
     const modal = document.querySelector('#reserve-modal');
+    const soundButton = document.querySelector('[data-sound-toggle]');
+    let audioContext;
+    let oscillator;
+    let gain;
+
+    const stopSound = () => {
+      if (oscillator) oscillator.stop();
+      oscillator = null;
+      if (gain) gain.gain.setValueAtTime(0, audioContext.currentTime);
+      soundButton.classList.remove('active');
+      soundButton.setAttribute('aria-pressed', 'false');
+    };
+
+    const startSound = async () => {
+      audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') await audioContext.resume();
+      oscillator = audioContext.createOscillator();
+      gain = audioContext.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 72;
+      gain.gain.value = 0.035;
+      oscillator.connect(gain).connect(audioContext.destination);
+      oscillator.start();
+      soundButton.classList.add('active');
+      soundButton.setAttribute('aria-pressed', 'true');
+    };
+
+    soundButton.addEventListener('click', () => {
+      if (oscillator) {
+        stopSound();
+      } else {
+        startSound();
+      }
+    });
     document.querySelectorAll('[data-open-modal]').forEach((button) => {
       button.addEventListener('click', () => modal.classList.add('open'));
     });
