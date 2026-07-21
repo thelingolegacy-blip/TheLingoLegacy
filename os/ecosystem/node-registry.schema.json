@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/ecosystem/node-registry.schema.json",
+  "title": "Lingo Legacy Ecosystem Node",
+  "type": "object",
+  "required": ["nodeId", "name", "lane", "ownerId", "status", "dependencies"],
+  "properties": {
+    "nodeId": { "type": "string" },
+    "name": { "type": "string" },
+    "lane": { "type": "string", "enum": ["project", "music", "merch", "community", "partner", "platform"] },
+    "ownerId": { "type": "string" },
+    "status": { "type": "string", "enum": ["planned", "active", "blocked", "launched", "archived"] },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "activationPhase": { "type": "string" },
+    "publicUrl": { "type": "string" }
+  },
+  "additionalProperties": false
+}

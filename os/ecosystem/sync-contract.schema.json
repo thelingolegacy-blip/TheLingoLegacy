@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/ecosystem/sync-contract.schema.json",
+  "title": "Lingo Legacy Sync Contract",
+  "type": "object",
+  "required": ["syncId", "source", "destination", "trigger", "ownerId", "validation", "rollback"],
+  "properties": {
+    "syncId": { "type": "string" },
+    "source": { "type": "string" },
+    "destination": { "type": "string" },
+    "trigger": { "type": "string", "enum": ["manual", "scheduled", "event", "deployment"] },
+    "ownerId": { "type": "string" },
+    "validation": { "type": "array", "items": { "type": "string" } },
+    "rollback": { "type": "string" },
+    "lastRunAt": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["planned", "active", "paused", "failed"] }
+  },
+  "additionalProperties": false
+}

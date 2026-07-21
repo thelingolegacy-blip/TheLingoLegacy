@@ -41,3 +41,11 @@ Intervene only when:
 - Node registry fields are documented.
 - Sync engine rules are documented.
 - Wave 3 is linked from the doctrine and README.
+
+## Ecosystem scaffolds
+
+Concrete Wave 3 scaffolds are documented in [`wave-3-ecosystem-scaffolds.md`](wave-3-ecosystem-scaffolds.md).
+
+- Asset schema: [`../os/ecosystem/assets.schema.json`](../os/ecosystem/assets.schema.json).
+- Node registry schema: [`../os/ecosystem/node-registry.schema.json`](../os/ecosystem/node-registry.schema.json).
+- Sync contract schema: [`../os/ecosystem/sync-contract.schema.json`](../os/ecosystem/sync-contract.schema.json).

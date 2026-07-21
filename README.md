@@ -65,6 +65,7 @@ Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/
 - [Wave 2 command systems](docs/wave-2-command-systems.md) — Admin Command Center, AI Ops, and Event Bus rules.
   - [Wave 2 command system scaffolds](docs/wave-2-command-system-scaffolds.md) — JSON scaffolds for admin actions, AI Ops boundaries, and Event Bus contracts.
 - [Wave 3 ecosystem layer](docs/wave-3-ecosystem-layer.md) — Global Asset Manager, node registry, and sync engine rules.
+  - [Wave 3 ecosystem scaffolds](docs/wave-3-ecosystem-scaffolds.md) — JSON scaffolds for asset records, ecosystem nodes, and sync contracts.
 - [Wave 4 experience layer](docs/wave-4-experience-layer.md) — UI shell, Lingo.ai app, and OS Home navigation rules.
 - [Wave 5 deployment](docs/wave-5-deployment.md) — deployment stack, routing rules, and automation trigger rules.
 

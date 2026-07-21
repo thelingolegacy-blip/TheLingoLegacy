@@ -79,3 +79,7 @@ Verify [`../os/auto-mode/entirety.json`](../os/auto-mode/entirety.json), [`auto-
 ## Wave 2 scaffold checks
 
 Verify `os/command/admin-actions.schema.json`, `os/command/ai-ops-boundaries.json`, and `os/command/event-bus.schema.json` before continuing command-system implementation.
+
+## Wave 3 scaffold checks
+
+Verify `os/ecosystem/assets.schema.json`, `os/ecosystem/node-registry.schema.json`, and `os/ecosystem/sync-contract.schema.json` before continuing ecosystem implementation.

@@ -7,7 +7,7 @@
     { "id": "wave-0", "name": "Foundation", "plan": "docs/wave-0-foundation.md", "status": "documented" },
     { "id": "wave-1", "name": "Core Systems", "plan": "docs/wave-1-core-systems.md", "scaffold": "docs/wave-1-core-system-scaffolds.md", "status": "scaffolded" },
     { "id": "wave-2", "name": "Command Systems", "plan": "docs/wave-2-command-systems.md", "scaffold": "docs/wave-2-command-system-scaffolds.md", "status": "scaffolded" },
-    { "id": "wave-3", "name": "Ecosystem Layer", "plan": "docs/wave-3-ecosystem-layer.md", "status": "documented" },
+    { "id": "wave-3", "name": "Ecosystem Layer", "plan": "docs/wave-3-ecosystem-layer.md", "scaffold": "docs/wave-3-ecosystem-scaffolds.md", "status": "scaffolded" },
     { "id": "wave-4", "name": "Experience Layer", "plan": "docs/wave-4-experience-layer.md", "status": "documented" },
     { "id": "wave-5", "name": "Deployment", "plan": "docs/wave-5-deployment.md", "status": "documented" }
   ],
