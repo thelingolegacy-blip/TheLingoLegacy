@@ -114,6 +114,13 @@
       "root": "site/lingoai/",
       "script": "site/lingoai/game-engine.js",
       "status": "active"
+    },
+    {
+      "id": "social-launch-calendar",
+      "doc": "docs/social-launch-calendar.md",
+      "calendar": "os/social/launch-calendar.json",
+      "pinnedPosts": "os/social/pinned-posts.json",
+      "status": "active"
     }
   ]
 }

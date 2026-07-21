@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "posts": [
+    {
+      "entityId": "lingo-legacy-llc",
+      "platforms": ["Instagram", "TikTok", "YouTube", "X/Twitter", "Facebook Page", "LinkedIn Page", "Threads", "Bluesky"],
+      "copy": "Start here. The Lingo Legacy OS is live: culture, play, commerce, media, geo-beacons, XP, and Crown drops in one Industrial Noir ecosystem. Enter the hub: https://thelingolegacy.com"
+    },
+    {
+      "entityId": "lingo-ai",
+      "platforms": ["Instagram", "TikTok", "YouTube", "X/Twitter", "Threads", "Bluesky"],
+      "copy": "That’s My Lingo. Play the Lingo.ai browser prototype, tap for XP, screenshot your score, and tag us for the next Crown drop. Play: https://thelingolegacy.com/site/lingoai/"
+    },
+    {
+      "entityId": "iconic-house-of-avalon",
+      "platforms": ["Instagram", "Facebook Page", "LinkedIn Page", "YouTube"],
+      "copy": "Meet The Iconic House of Avalon: culture in motion, legacy in formation. Explore programs, archives, houses, and events: https://thelingolegacy.com/site/avalon/"
+    },
+    {
+      "entityId": "peaches-keys",
+      "platforms": ["Instagram", "TikTok", "Threads", "Bluesky"],
+      "copy": "Peaches Keys is unlocking the next play. Follow for spotlights, drops, creator moments, and Lingo Legacy OS missions: https://thelingolegacy.com/site/creators/"
+    }
+  ]
+}

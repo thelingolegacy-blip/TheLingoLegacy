@@ -90,6 +90,7 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 
 - [Brand spine](docs/brand-spine.md)
 - [Social account matrix](docs/social-account-matrix.md)
+- [Social launch calendar](docs/social-launch-calendar.md)
 - [Lingo.ai game scaffold](site/lingoai/)
 
 ## Stability operation sync

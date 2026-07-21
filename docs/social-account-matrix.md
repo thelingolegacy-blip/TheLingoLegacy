@@ -34,3 +34,9 @@ Use this matrix to create or update accounts per entity.
 ## Machine-readable source
 
 - [`../os/social/social-matrix.json`](../os/social/social-matrix.json)
+
+## Launch execution
+
+- [`social-launch-calendar.md`](social-launch-calendar.md)
+- [`../os/social/launch-calendar.json`](../os/social/launch-calendar.json)
+- [`../os/social/pinned-posts.json`](../os/social/pinned-posts.json)

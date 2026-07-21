@@ -47,3 +47,7 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 ## Website build layer
 
 - [`os-web-stack-v1.md`](os-web-stack-v1.md) — deployed Industrial Noir website architecture.
+
+## Social launch layer
+
+- [`social-launch-calendar.md`](social-launch-calendar.md) — 30-day campaign calendar and pinned post rollout.
