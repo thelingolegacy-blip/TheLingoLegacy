@@ -3,6 +3,7 @@ import UniverseMap from '@/components/UniverseMap';
 import Timeline from '@/components/Timeline';
 import { assetRegistry, coreLayers, entityModel, interactionModels, siteSections, waves } from '@/lib/site-os';
 import { subdomainSites } from '@/lib/subdomains';
+import { monetizationPillars } from '@/lib/monetization';
 
 const worlds = siteSections.map((section) => ({
   title: section.label,
@@ -121,6 +122,15 @@ export default function Home() {
           ))}
         </div>
         <Link className="btn primary compact" href="/subdomains">Open Subdomain Map</Link>
+      </section>
+
+      <section className="section shell split-panel align-start">
+        <div>
+          <p className="eyebrow">Monetization Superlayer</p>
+          <h2>Profit infrastructure under Ask Lingo.</h2>
+          <p>{monetizationPillars.length} monetization pillars are scaffolded: subscriptions, ads, surveys, banners, beacons, geo-alerts, and promotions.</p>
+        </div>
+        <Link className="btn primary" href="/monetization">Open Monetization Hub</Link>
       </section>
 
       <section className="section shell">

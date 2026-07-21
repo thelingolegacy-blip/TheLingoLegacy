@@ -27,6 +27,7 @@ export const askLingoLocalPrompts = [
   ['Media Network', 'What should I watch or listen to?', '/sites/media'],
   ['Lingo.ai', 'Build, guide, navigate, or explain the OS.', '/sites/lingo'],
   ['Partners', 'Build a partner page, quest, guide, story, collection, or onboarding flow.', '/sites/partners'],
+  ['Monetization', 'Recommend, explain, build, trigger, or optimize profit surfaces.', '/monetization'],
 ] as const;
 
 export const askLingoIntents: AskLingoIntent[] = [
@@ -174,6 +175,19 @@ export const askLingoBuildOutputs = [
       ['Benefits Grid', 'XP rewards, stipends, co-branded campaigns, media placement, and summit invitations.'],
       ['Program Rail', 'Creator Program, Cultural Residency, Film Festival, and Avalon International Summit.'],
       ['Ask Lingo Partner Build', 'Generate partner pages, quests, stories, collections, media pages, and onboarding flows.'],
+    ],
+  },
+  {
+    title: 'Monetization Superlayer',
+    targetRoute: '/monetization',
+    prompt: 'Generate the complete profit infrastructure with subscriptions, ads, surveys, banners, beacons, geo-alerts, and promotions.',
+    layout: 'Hero + pillars + subscriptions + ad/survey/banner surfaces + triggers + OS integrations + Ask Lingo controls',
+    sections: [
+      ['Profit Hero', 'Position monetization as a superlayer under Ask Lingo intelligence.'],
+      ['Subscription System', 'Starter, Pro, Infinity, Media, Creator, and Partner passes.'],
+      ['Campaign Surfaces', 'Ads, surveys, banners, and strategic promotions.'],
+      ['Trigger Layer', 'Beacons and geo-alerts that can later connect to real consented signals.'],
+      ['Ask Lingo Monetization Brain', 'Recommend, explain, build, trigger, and optimize monetization flows.'],
     ],
   },
 ] as const;
