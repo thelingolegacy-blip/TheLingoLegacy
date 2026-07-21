@@ -273,6 +273,44 @@ const languageFeatureGroups = [
   ['Enterprise Administration', 'Team workspaces, shared dictionaries, custom terminology, brand voice guidelines, approval workflows, analytics dashboards, usage reports, and API access controls.'],
 ];
 
+
+const enterpriseExpansionDomains = [
+  ['Identity & Access Platform', 'Lingo ID, SSO, MFA, passkeys/WebAuthn, device and session management, parent or guardian accounts, RBAC, organizations, workspaces, audit logs, recovery, and consent.'],
+  ['Security Operations Center', 'Monitoring, intrusion detection, threat intelligence, vulnerability scanning, secrets management, encryption, key rotation, DDoS, bot protection, abuse detection, fraud monitoring, and compliance reporting.'],
+  ['Payments & Commerce', 'Multiple payment providers, digital wallets, gift cards, coupons, promotions, subscriptions, installment payments where supported, tax, currency, refunds, chargebacks, and invoicing.'],
+  ['Enterprise AI Platform', 'Ask Lingo, Lingo.ai, agents, workflow builder, prompt library, knowledge base, document Q&A, image understanding, speech, TTS, translation, summarization, code, writing, safety, and human review.'],
+  ['Search Platform', 'Indexes for users, games, books, products, articles, videos, support, and docs with filters, suggestions, voice, semantic search, saved searches, and trending searches.'],
+  ['Communication Platform', 'Email, push, SMS, in-app messages, live chat, community announcements, and newsletters.'],
+  ['Social Platform', 'Profiles, friends, following, groups, clubs, communities, messaging, voice chat, media sharing, activity feeds, reactions, comments, moderation, and reporting.'],
+  ['Creator Economy', 'Asset uploads, portfolio pages, revenue dashboard, royalties, licensing, publishing workflows, analytics, collaboration, and content scheduling.'],
+  ['Learning Platform', 'Reading programs, speech recovery, interactive lessons, quizzes, flashcards, certificates, teacher and parent dashboards, and classroom management.'],
+  ['Streaming Platform', 'Movies, TV episodes, livestreams, podcasts, audiobooks, music, shorts, educational videos, playlists, continue watching, downloads, captions, and multiple audio tracks.'],
+  ['Developer Ecosystem', 'REST APIs, SDKs, webhooks, API keys, CLI tools, documentation, sample projects, sandbox, status dashboard, and changelog.'],
+  ['Business Intelligence', 'Revenue, user growth, retention, sales, inventory, marketing, support, product health, and executive KPI dashboards.'],
+  ['Automation Platform', 'Marketing automation, onboarding, order processing, publishing pipelines, inventory alerts, support routing, scheduled jobs, and backup automation.'],
+  ['Content Management System', 'Websites, blogs, documentation, product pages, landing pages, news, press releases, campaigns, and localization.'],
+  ['Localization Platform', 'Multiple languages, regional formats, currency, time zones, translation memory, and cultural adaptation.'],
+  ['Digital Asset Management', 'Logos, artwork, videos, audio, fonts, templates, source files, brand guidelines, version history, metadata, search, permissions, and licensing records.'],
+  ['Infrastructure', 'Local development, testing, staging, production, disaster recovery, CI/CD, monitoring, logging, CDN, caching, autoscaling, backup, and restore.'],
+  ['Quality Engineering', 'Unit, integration, end-to-end, performance, security, accessibility, localization, compatibility, and beta testing programs.'],
+  ['Compliance', 'Privacy, terms, cookie consent, accessibility, copyright, trademark, data retention, and incident response policies.'],
+  ['Enterprise APIs', 'Authentication, users, organizations, wallet, rewards, XP, commerce, inventory, books, games, media, AI, notifications, analytics, search, support, and licensing.'],
+  ['Product Lifecycle Management', 'Concept, research, design, prototype, development, testing, release candidate, launch, operations, maintenance, and end-of-life.'],
+  ['Sustainability & Governance', 'Accessibility reviews, security reviews, privacy impact assessments, risk, vendor management, continuity, and disaster recovery planning.'],
+  ['Future Innovation', 'AR/VR, smart TV apps, connected devices, robotics or kiosks, AI-assisted game creation, education research partnerships, and open APIs.'],
+];
+
+const productionReadinessArtifacts = [
+  'Data models',
+  'API specifications',
+  'UI/UX designs',
+  'Security architecture',
+  'Testing plans',
+  'Phased delivery schedules',
+  'Product-specific roadmaps',
+  'Operational runbooks',
+];
+
 export default function ProductionSpecPackagePage() {
   return (
     <div className="page-shell shell">
@@ -511,6 +549,43 @@ export default function ProductionSpecPackagePage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="section-command-hero">
+        <div>
+          <p className="eyebrow">Enterprise Expansion vNext</p>
+          <h2>Major platform domains for a full-scale software and media organization.</h2>
+          <p className="hero-copy">These additions round out the ecosystem blueprint beyond product concepts into identity, security, commerce, AI, search, communication, social, creator, learning, streaming, developer, intelligence, automation, content, localization, asset, infrastructure, quality, compliance, API, lifecycle, governance, and innovation systems.</p>
+        </div>
+        <article className="system-card command-card">
+          <p className="eyebrow">vNext Rule</p>
+          <h2>Capabilities first, artifacts next.</h2>
+          <p>This layer defines the missing production domains. The next pass converts each domain into data models, API specs, UI/UX designs, security architecture, tests, and phased delivery plans.</p>
+        </article>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Expansion Domains</p>
+          <h2>Twenty-three systems to complete the enterprise map.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {enterpriseExpansionDomains.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Production Readiness</p>
+          <h2>Convert high-level capabilities into implementation artifacts.</h2>
+          <p>The documentation now spans the major domains expected in a large software, media, education, commerce, and community organization.</p>
+        </div>
+        <div className="route-map">{productionReadinessArtifacts.map((artifact) => <span key={artifact}>{artifact}</span>)}</div>
       </section>
 
       <section className="section split-panel align-start">
