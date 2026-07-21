@@ -3,16 +3,47 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Lingo Legacy — Home</title>
-  <style>body{font-family:Arial;background:#071017;color:#eaf6ff;padding:20px}a{color:#7ab8ff}</style>
+  <title>The Lingo Legacy — Landing Universe</title>
+  <meta name="description" content="A cinematic Lingo Legacy landing page with identity portals for games, music, commerce, community, and launch phases." />
+  <link rel="stylesheet" href="/assets/legacy-universe.css" />
+  <style>
+    :root{color-scheme:dark;--text:#eaf6ff;--muted:#a9bbd0;--gold:#f7c948;--line:rgba(255,255,255,.14);--panel:rgba(8,13,31,.76)}*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.6}a{color:var(--gold)}main{width:min(1120px,calc(100% - 32px));margin:auto;padding:34px 0 82px}.back{display:inline-flex;margin-bottom:38px;color:var(--muted);text-decoration:none}.hero{border:1px solid var(--line);border-radius:36px;padding:clamp(28px,6vw,64px);background:linear-gradient(135deg,rgba(98,247,255,.12),rgba(255,79,216,.12),rgba(247,201,72,.08));box-shadow:0 30px 90px rgba(0,0,0,.34);overflow:hidden;position:relative}.hero::before{content:"";position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.08) 0 8deg,transparent 8deg 18deg);animation:turn 38s linear infinite;opacity:.18}.hero>*{position:relative}.eyebrow{letter-spacing:.18em;text-transform:uppercase;color:#62f7ff;font-weight:900}.hero h1{font-size:clamp(3rem,9vw,7.8rem);line-height:.9;margin:.08em 0 .22em;letter-spacing:-.07em}.hero p{font-size:clamp(1.05rem,2vw,1.32rem);max-width:760px;color:var(--muted)}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}.cta{display:inline-flex;border-radius:999px;padding:13px 18px;background:var(--gold);color:#111;text-decoration:none;font-weight:950}.cta.secondary{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text)}.universes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:28px}.universe{min-height:230px;border:1px solid var(--line);border-radius:28px;padding:22px;background:var(--panel);position:relative;overflow:hidden}.universe::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;bottom:-70px;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)}.badge{width:56px;height:56px;border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-weight:1000;color:var(--gold);margin-bottom:16px}.journey{display:grid;gap:18px;margin-top:80px}.step{display:grid;grid-template-columns:80px 1fr;gap:18px;align-items:start;border:1px solid var(--line);border-radius:24px;padding:18px;background:rgba(255,255,255,.055)}.step-num{width:64px;height:64px;border-radius:999px;display:grid;place-items:center;background:linear-gradient(135deg,#62f7ff,#ff4fd8);color:#071017;font-weight:1000}.step h2{margin:0 0 4px}.step p{margin:0;color:var(--muted)}footer{margin-top:70px;color:var(--muted)}@keyframes turn{to{transform:rotate(360deg)}}@media(max-width:640px){.step{grid-template-columns:1fr}.step-num{width:52px;height:52px}}
+  </style>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="stylesheet" href="/assets/entity-experience.css" />
+  <link rel="stylesheet" href="/assets/launch-activation.css" />
 </head>
 <body>
-  <h1>The Lingo Legacy</h1>
-  <p>Welcome to the official home for projects, music, and merch.</p>
-  <ul>
-    <li><a href="/02_GAMES/">Games</a></li>
-    <li><a href="/03_MUSIC_DIVISION/">Music</a></li>
-  </ul>
-  <footer>Contact: dlingo@thelingolegacy</footer>
+  <main>
+    <a class="back" href="/">Back to universe hub</a>
+    <section class="hero">
+      <p class="eyebrow">Landing page transformed</p>
+      <h1>Every scroll opens a new world.</h1>
+      <p>This landing page now introduces the full Lingo Legacy with identity icons, animated cosmic backgrounds, optional music, launch phases, and direct paths into the ecosystem.</p>
+      <div class="actions">
+        <a class="cta" href="/ecosystem/">Explore all worlds</a>
+        <a class="cta secondary" href="/waitlist/">Join the waitlist</a>
+        <a class="cta secondary" href="/payments/">Support the launch</a>
+      </div>
+    </section>
+
+    <section class="universes" aria-label="Lingo Legacy identities">
+      <article class="universe"><div class="badge">G</div><h2>Games</h2><p>Party games, education games, character worlds, zombie survival, city adventures, and competitive social play.</p></article>
+      <article class="universe"><div class="badge">M</div><h2>Music</h2><p>Artist pages, theme songs, background sound, launch trailers, and audio branding for every world.</p></article>
+      <article class="universe"><div class="badge">S</div><h2>Stores</h2><p>Apparel, merch collections, publishing, Shopify planning, payments, sponsors, and product drops.</p></article>
+      <article class="universe"><div class="badge">C</div><h2>Community</h2><p>Support, referrals, loyalty rewards, waitlists, nonprofit expansion, creator collabs, and daily social missions.</p></article>
+    </section>
+
+    <section class="journey" aria-label="Launch journey">
+      <article class="step"><div class="step-num">1</div><div><h2>Arrive at HQ</h2><p>The visitor lands in the master universe and chooses the identity that matches their interest.</p></div></article>
+      <article class="step"><div class="step-num">2</div><div><h2>Transform by section</h2><p>Scrolling changes the visual mood so each part feels like a fresh universe without leaving the page.</p></div></article>
+      <article class="step"><div class="step-num">3</div><div><h2>Take action</h2><p>Every route points toward payments, waitlists, partners, sponsors, support, or the full ecosystem directory.</p></div></article>
+    </section>
+
+    <footer>Contact: <a href="mailto:dlingo@thelingolegacy.com">dlingo@thelingolegacy.com</a></footer>
+  </main>
+  <script defer src="/assets/legacy-universe.js"></script>
+  <script defer src="/assets/entity-experience.js"></script>
+  <script defer src="/assets/launch-activation.js"></script>
 </body>
 </html>
