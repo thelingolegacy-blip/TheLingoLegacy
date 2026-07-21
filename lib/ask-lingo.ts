@@ -26,6 +26,7 @@ export const askLingoLocalPrompts = [
   ['Profile', 'Optimize my XP and rewards.', '/sites/profile'],
   ['Media Network', 'What should I watch or listen to?', '/sites/media'],
   ['Lingo.ai', 'Build, guide, navigate, or explain the OS.', '/sites/lingo'],
+  ['Partners', 'Build a partner page, quest, guide, story, collection, or onboarding flow.', '/sites/partners'],
 ] as const;
 
 export const askLingoIntents: AskLingoIntent[] = [
@@ -95,7 +96,7 @@ export const askLingoIntents: AskLingoIntent[] = [
   {
     category: 'build',
     label: 'Build a section',
-    prompt: 'Build a new Media Network section here.',
+    prompt: 'Build a partner page for Mazzoni Center.',
     targetModule: 'Build Mode',
     targetRoute: '/ask-lingo#build-mode',
     primaryAction: 'Open Build Mode',
@@ -160,6 +161,19 @@ export const askLingoBuildOutputs = [
       ['Guide Intro', 'Explain the quest path and expected completion time.'],
       ['Objectives', 'List daily, weekly, and epic objective slots.'],
       ['Rewards', 'Show XP, badge, and inventory unlock placeholders.'],
+    ],
+  },
+  {
+    title: 'Partnership Homepage',
+    targetRoute: '/sites/partners',
+    prompt: 'Generate the Partnership homepage with categories, benefits, programs, featured lanes, and OS integration.',
+    layout: 'Hero + categories + featured partners + benefits + programs + OS integrations + CTA',
+    sections: [
+      ['Alliance Hero', 'Position partnerships as a living subsystem across the full Lingo Legacy OS.'],
+      ['Partner Categories', 'Cultural, commerce, technology, and community partnership lanes.'],
+      ['Benefits Grid', 'XP rewards, stipends, co-branded campaigns, media placement, and summit invitations.'],
+      ['Program Rail', 'Creator Program, Cultural Residency, Film Festival, and Avalon International Summit.'],
+      ['Ask Lingo Partner Build', 'Generate partner pages, quests, stories, collections, media pages, and onboarding flows.'],
     ],
   },
 ] as const;

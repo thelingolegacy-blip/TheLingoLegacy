@@ -99,6 +99,17 @@ export const subdomainSites: SubdomainSite[] = [
     askPrompt: 'Ask Lingo: Build, guide, navigate, or explain the OS.',
     accent: 'Intelligence',
   },
+  {
+    slug: 'partners',
+    host: 'partners.thelingolegacy.com',
+    label: 'Partners',
+    title: 'Partnership System',
+    role: 'Partner programs, cultural alliances, commerce collaborations, technology integrations, community impact, and Ask Lingo partner build flows.',
+    home: 'Partner Home',
+    pages: ['Partner Network', 'Partner Programs', 'Partner Tools', 'Become a Partner', 'Partner Stories', 'Partner Media', 'Partner Support'],
+    askPrompt: 'Ask Lingo: Build a partner page, quest, guide, story, collection, or onboarding flow.',
+    accent: 'Alliance',
+  },
 ];
 
 export function pageToSlug(page: string) {

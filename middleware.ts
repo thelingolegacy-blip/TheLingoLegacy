@@ -9,6 +9,7 @@ const hostToSite: Record<string, string> = {
   'profile.thelingolegacy.com': 'profile',
   'media.thelingolegacy.com': 'media',
   'lingo.thelingolegacy.com': 'lingo',
+  'partners.thelingolegacy.com': 'partners',
 };
 
 function cleanPath(pathname: string) {
