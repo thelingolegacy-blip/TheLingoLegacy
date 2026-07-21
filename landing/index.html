@@ -2,17 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Lingo Legacy — Home</title>
-  <style>body{font-family:Arial;background:#071017;color:#eaf6ff;padding:20px}a{color:#7ab8ff}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Join The Lingo Legacy waitlist for games, music, merch, and culture-driven drops." />
+  <title>The Lingo Legacy — Landing Page</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <style>
+    :root { color-scheme: dark; --bg:#060812; --text:#f7fbff; --muted:#aeb9c8; --line:rgba(255,255,255,.16); --panel:rgba(255,255,255,.08); --gold:#ffd166; --mint:#46d38a; --blue:#7ab8ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); background:radial-gradient(circle at 20% 10%,rgba(255,209,102,.22),transparent 28rem),radial-gradient(circle at 85% 20%,rgba(70,211,138,.20),transparent 30rem),linear-gradient(180deg,#071017,var(--bg)); line-height:1.6; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(1080px,calc(100% - 32px)); margin:0 auto; }
+    header { padding:20px 0; border-bottom:1px solid var(--line); background:rgba(6,8,18,.72); backdrop-filter:blur(16px); }
+    nav { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.03em; }
+    .mark { width:34px; height:34px; display:grid; place-items:center; border-radius:11px; color:#061018; background:linear-gradient(135deg,var(--mint),var(--blue)); }
+    .links { display:flex; gap:16px; color:var(--muted); font-size:.94rem; }
+    main { padding:58px 0; }
+    .hero { display:grid; grid-template-columns:1.08fr .92fr; gap:28px; align-items:center; }
+    .eyebrow { display:inline-flex; color:var(--gold); border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:7px 12px; font-size:.78rem; font-weight:900; text-transform:uppercase; letter-spacing:.09em; }
+    h1,h2,h3 { margin:0; line-height:1.05; letter-spacing:-.045em; }
+    h1 { margin-top:18px; font-size:clamp(3rem,8vw,6rem); max-width:10ch; }
+    h2 { font-size:clamp(2rem,5vw,3.7rem); }
+    p { margin:0; color:var(--muted); }
+    .lead { margin-top:20px; max-width:620px; font-size:1.18rem; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+    .button { display:inline-flex; justify-content:center; align-items:center; border-radius:999px; padding:12px 18px; font-weight:900; border:1px solid var(--line); background:var(--panel); }
+    .button.primary { border-color:transparent; background:linear-gradient(135deg,var(--gold),#ff8a5c); color:#101014; }
+    .panel { border:1px solid var(--line); background:var(--panel); border-radius:28px; padding:24px; }
+    .signup { box-shadow:0 30px 90px rgba(0,0,0,.32); }
+    label { display:block; margin-bottom:8px; font-weight:800; }
+    input { width:100%; padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.22); color:var(--text); font:inherit; }
+    .form-row { display:grid; gap:14px; margin-top:18px; }
+    .note { margin-top:14px; font-size:.9rem; }
+    .section { margin-top:56px; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:22px; }
+    .card { min-height:190px; border:1px solid var(--line); background:var(--panel); border-radius:22px; padding:20px; }
+    .card span { display:inline-flex; margin-bottom:14px; color:var(--gold); font-size:.78rem; font-weight:900; letter-spacing:.09em; text-transform:uppercase; }
+    footer { padding:28px 0; border-top:1px solid var(--line); color:var(--muted); }
+    @media (max-width:860px) { .hero,.grid { grid-template-columns:1fr; } .links { display:none; } }
+  </style>
 </head>
 <body>
-  <h1>The Lingo Legacy</h1>
-  <p>Welcome to the official home for projects, music, and merch.</p>
-  <ul>
-    <li><a href="/02_GAMES/">Games</a></li>
-    <li><a href="/03_MUSIC_DIVISION/">Music</a></li>
-  </ul>
-  <footer>Contact: dlingo@thelingolegacy</footer>
+  <header>
+    <nav class="wrap" aria-label="Landing navigation">
+      <a class="brand" href="/"><span class="mark">LL</span><span>The Lingo Legacy</span></a>
+      <div class="links"><a href="/">Home</a><a href="/app/">App</a><a href="/assets/">Assets</a></div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Founding access</span>
+        <h1>Claim your place in the legacy.</h1>
+        <p class="lead">A focused landing page for launch campaigns: invite fans into daily lingo challenges, featured music, limited merch, and creator-led drops.</p>
+        <div class="actions">
+          <a class="button primary" href="mailto:hello@thelingolegacy.com?subject=Join%20The%20Lingo%20Legacy%20waitlist">Join the Waitlist</a>
+          <a class="button" href="/app/">Preview the App</a>
+        </div>
+      </div>
+
+      <aside class="panel signup" aria-label="Waitlist preview form">
+        <span class="eyebrow">Waitlist Preview</span>
+        <h2 style="margin-top:14px">Get launch updates.</h2>
+        <p class="lead" style="font-size:1rem">Use the email CTA now, then connect this form to your preferred CRM when the backend is ready.</p>
+        <div class="form-row">
+          <div><label for="name">Name</label><input id="name" value="Legacy Member" readonly /></div>
+          <div><label for="email">Email</label><input id="email" value="you@example.com" readonly /></div>
+          <a class="button primary" href="mailto:hello@thelingolegacy.com?subject=Join%20The%20Lingo%20Legacy%20waitlist">Request Access</a>
+        </div>
+        <p class="note">No data is collected on this static preview page.</p>
+      </aside>
+    </section>
+
+    <section class="section">
+      <h2>Everything needed for a stronger first impression.</h2>
+      <div class="grid">
+        <article class="card"><span>Games</span><h3>Daily challenge hook</h3><p>Visitors immediately understand the core game loop and why to return.</p></article>
+        <article class="card"><span>Music</span><h3>Release-ready story</h3><p>The page supports artist drops, singles, and culture moments around the brand.</p></article>
+        <article class="card"><span>Merch</span><h3>Commerce path</h3><p>Merch messaging is staged for future product pages, checkout, or drop integrations.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">© 2026 The Lingo Legacy · hello@thelingolegacy.com</div></footer>
 </body>
 </html>

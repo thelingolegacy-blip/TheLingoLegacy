@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The Lingo Legacy is the home for language-driven games, music, merch, and community experiences." />
+  <meta property="og:title" content="The Lingo Legacy" />
+  <meta property="og:description" content="Games, music, merch, and community experiences built around the language of culture." />
+  <meta property="og:type" content="website" />
+  <title>The Lingo Legacy — Games, Music, Merch, Culture</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05070d;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.13);
+      --text: #f7fbff;
+      --muted: #aeb9c8;
+      --line: rgba(255, 255, 255, 0.16);
+      --gold: #ffd166;
+      --mint: #46d38a;
+      --blue: #7ab8ff;
+      --violet: #b794f4;
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(70, 211, 138, 0.25), transparent 34rem),
+        radial-gradient(circle at top right, rgba(122, 184, 255, 0.18), transparent 32rem),
+        linear-gradient(180deg, #071017 0%, var(--bg) 58%, #080a12 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 7, 13, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--mint), var(--blue));
+      color: #061018;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+    .button.primary { background: linear-gradient(135deg, var(--gold), #ff8a5c); color: #101014; }
+    .button.secondary { background: var(--panel); border-color: var(--line); color: var(--text); }
+
+    .hero {
+      padding: 88px 0 56px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--gold);
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    h1, h2, h3 { line-height: 1.05; margin: 0; letter-spacing: -0.045em; }
+    h1 { max-width: 11ch; font-size: clamp(3.1rem, 9vw, 6.6rem); }
+    h2 { font-size: clamp(2rem, 5vw, 4rem); }
+    h3 { font-size: 1.3rem; }
+    p { margin: 0; }
+
+    .lead {
+      max-width: 640px;
+      margin: 22px 0 30px;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 2vw, 1.28rem);
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .showcase {
+      position: relative;
+      min-height: 470px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04)),
+        radial-gradient(circle at top, rgba(255, 209, 102, 0.25), transparent 18rem);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    .showcase-card {
+      height: 100%;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 24px;
+      padding: 24px;
+      background: rgba(5, 7, 13, 0.66);
+      border: 1px solid var(--line);
+    }
+
+    .score-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .score {
+      border-radius: 18px;
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    .score span { display: block; color: var(--muted); font-size: 0.8rem; }
+    .score strong { display: block; font-size: 1.55rem; color: var(--mint); }
+
+    .prompt {
+      margin: 28px 0;
+      padding: 24px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(70, 211, 138, 0.18), rgba(122, 184, 255, 0.14));
+      border: 1px solid var(--line);
+    }
+    .prompt small { display: block; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .prompt b { display: block; margin-top: 8px; font-size: clamp(2.2rem, 6vw, 4rem); letter-spacing: -0.06em; }
+
+    .choices { display: grid; gap: 10px; }
+    .choice { padding: 14px 16px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+    .choice.active { color: #061018; background: var(--mint); border-color: var(--mint); font-weight: 900; }
+
+    .section { padding: 64px 0; }
+    .section-head { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 28px; }
+    .section-head p { max-width: 540px; color: var(--muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card {
+      padding: 24px;
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      min-height: 220px;
+    }
+    .card .kicker { color: var(--gold); font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.78rem; }
+    .card h3 { margin: 14px 0 10px; }
+    .card p { color: var(--muted); }
+
+    .feature-band {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: stretch;
+      padding: 28px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(183, 148, 244, 0.18), rgba(70, 211, 138, 0.12));
+      border: 1px solid var(--line);
+    }
+
+    .track-list { display: grid; gap: 12px; }
+    .track {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid var(--line);
+    }
+    .track span { color: var(--muted); }
+
+    .cta {
+      text-align: center;
+      padding: 56px 24px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at top, rgba(255, 209, 102, 0.28), transparent 24rem),
+        var(--panel-strong);
+      border: 1px solid var(--line);
+    }
+    .cta p { max-width: 650px; margin: 16px auto 24px; color: var(--muted); }
+
+    footer { padding: 36px 0; color: var(--muted); border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 860px) {
+      .hero, .feature-band { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 12px; }
+      .nav-links { display: none; }
+      .showcase { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Primary navigation">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="The Lingo Legacy home">
+        <span class="brand-mark">LL</span>
+        <span>The Lingo Legacy</span>
+      </a>
+      <div class="nav-links">
+        <a href="#games">Games</a>
+        <a href="#music">Music</a>
+        <a href="#merch">Merch</a>
+        <a href="/app/">Launch App</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="wrap hero">
+      <div>
+        <p class="eyebrow">Culture speaks here</p>
+        <h1>Play the language of legacy.</h1>
+        <p class="lead">The Lingo Legacy brings together word games, music drops, merch, and community challenges in one premium destination for culture-driven creators and fans.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="/app/">Launch the App</a>
+          <a class="button secondary" href="#games">Explore the Legacy</a>
+        </div>
+      </div>
+
+      <aside class="showcase" aria-label="App preview">
+        <div class="showcase-card">
+          <div class="score-row">
+            <div class="score"><span>Streak</span><strong>07</strong></div>
+            <div class="score"><span>XP</span><strong>2.4k</strong></div>
+            <div class="score"><span>Rank</span><strong>#12</strong></div>
+          </div>
+          <div class="prompt">
+            <small>Daily Lingo</small>
+            <b>Legacy</b>
+          </div>
+          <div class="choices" aria-label="Sample quiz choices">
+            <div class="choice">A trend that fades fast</div>
+            <div class="choice active">Something built to last</div>
+            <div class="choice">A private playlist</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="games" class="wrap section">
+      <div class="section-head">
+        <h2>Landing pages ready for every lane.</h2>
+        <p>Each audience path now has a clear message, action, and next step: play, listen, shop, or join the community.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <p class="kicker">Games</p>
+          <h3>That's My Lingo</h3>
+          <p>Daily prompts, streaks, leaderboards, and culture-first word challenges built for repeat visits.</p>
+        </article>
+        <article class="card">
+          <p class="kicker">Community</p>
+          <h3>Legacy League</h3>
+          <p>Fans can compete, share scores, and move through themed seasons as new drops go live.</p>
+        </article>
+        <article class="card">
+          <p class="kicker">Creators</p>
+          <h3>Spotlight Drops</h3>
+          <p>Campaign-ready sections for releases, featured creators, and brand moments across the site.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="music" class="wrap section">
+      <div class="feature-band">
+        <div class="card">
+          <p class="kicker">Music Division</p>
+          <h2>Soundtracks for the movement.</h2>
+          <p style="margin-top:16px;color:var(--muted)">The music landing area now supports release announcements, featured tracks, and artist storytelling without feeling like a placeholder.</p>
+        </div>
+        <div class="track-list" aria-label="Featured release list">
+          <div class="track"><strong>Legacy Intro</strong><span>Featured drop</span></div>
+          <div class="track"><strong>That's My Lingo</strong><span>Single campaign</span></div>
+          <div class="track"><strong>Studio Sessions</strong><span>Behind the scenes</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="merch" class="wrap section">
+      <div class="section-head">
+        <h2>Built for launch.</h2>
+        <p>The site now has the essentials visitors expect before a full commerce or authenticated app backend is connected.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><p class="kicker">Merch</p><h3>Coming drop module</h3><p>Clear product messaging for apparel, collectibles, and limited legacy drops.</p></article>
+        <article class="card"><p class="kicker">Email</p><h3>Waitlist CTA</h3><p>Visitors have a focused reason to come back while forms or CRM integrations are added.</p></article>
+        <article class="card"><p class="kicker">Assets</p><h3>Brand library</h3><p>The existing <a href="/assets/" style="color:var(--blue)">asset library</a> remains available for logos and embed snippets.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <div class="cta">
+        <h2>Ready to enter the legacy?</h2>
+        <p>Launch the app experience, explore the landing page campaign, or use this static foundation as the base for the next Vercel deployment.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="button primary" href="/app/">Open App</a>
+          <a class="button secondary" href="/landing/">View Landing Page</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© 2026 The Lingo Legacy. All rights reserved.</span>
+      <span>Contact: hello@thelingolegacy.com</span>
+    </div>
+  </footer>
+</body>
+</html>
