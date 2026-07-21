@@ -192,3 +192,71 @@ body.entity-reduce-motion *, body.entity-reduce-motion *::before, body.entity-re
   .entity-cta-panel { grid-template-columns: 1fr; }
   .entity-toast-stack { right: 12px; left: 12px; width: auto; }
 }
+
+.entity-asset-stage {
+  margin: 44px auto 0;
+  width: min(1100px, calc(100% - 32px));
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 30px;
+  padding: clamp(18px, 4vw, 30px);
+  background: radial-gradient(circle at top left, color-mix(in srgb, var(--entity-secondary) 18%, transparent), transparent 28rem), var(--entity-panel);
+  color: var(--entity-text);
+  box-shadow: 0 24px 84px rgba(0,0,0,.34);
+}
+
+.entity-asset-stage-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.entity-asset-stage-head p,
+.entity-asset-stage-head h2 { margin: 0; }
+.entity-asset-stage-head p { color: var(--entity-primary); font-weight: 1000; text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; }
+.entity-asset-stage-head span { color: var(--entity-muted); }
+
+.entity-asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+.entity-asset-card {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 22px;
+  background: rgba(255,255,255,.055);
+}
+.entity-asset-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #050816;
+}
+.entity-asset-card figcaption {
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--entity-muted);
+  font-size: .88rem;
+}
+.entity-asset-video-row,
+.entity-asset-audio-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.entity-asset-video-row video,
+.entity-asset-audio-row audio {
+  width: 100%;
+  border-radius: 18px;
+  background: #050816;
+}
+
+@media (max-width: 520px) {
+  .entity-asset-stage { width: calc(100% - 20px); padding: 14px; border-radius: 22px; }
+  .entity-asset-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .entity-asset-card figcaption { min-height: 0; font-size: .78rem; }
+  .entity-asset-video-row,
+  .entity-asset-audio-row { grid-template-columns: 1fr; }
+}
