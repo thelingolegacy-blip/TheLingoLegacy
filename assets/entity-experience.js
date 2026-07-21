@@ -45,7 +45,7 @@
       personality: 'Neo Noir Detective',
       palette: ['#9ca3af', '#60a5fa', '#111827'],
       welcome: 'Case file opened. Follow the clues through the rain.',
-      cta: ['Review clues', '/ecosystem/'],
+      cta: ['Open Shadow Noire', '/shadow-noire/'],
       notification: ['Evidence Added', 'Evidence board, hidden clues, and crime map concepts are staged.']
     },
     legacyZombies: {
