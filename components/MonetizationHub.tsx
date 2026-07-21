@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {
+  activationChecklist,
   adTargetingSignals,
   adTypes,
   askLingoMonetizationActions,
@@ -7,9 +8,11 @@ import {
   beaconActivations,
   beaconTriggers,
   geoAlertTypes,
+  monetizationAudit,
   monetizationBuildExamples,
   monetizationIntegrations,
   monetizationPillars,
+  monetizationSystems,
   promotionTypes,
   subscriptionFeatures,
   subscriptionTypes,
@@ -42,6 +45,19 @@ export default function MonetizationHub() {
       </div>
 
       <section className="section compact-section">
+        <div className="section-heading"><p className="eyebrow">Deep Systems</p><h2>Routeable monetization engines</h2></div>
+        <div className="ops-grid expanded-grid">
+          {monetizationSystems.map((system) => (
+            <Link className="system-card" href={`/monetization/${system.slug}`} key={system.slug}>
+              <p className="eyebrow">Inactive scaffold</p>
+              <h3>{system.title}</h3>
+              <p>{system.summary}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="section compact-section">
         <div className="section-heading"><p className="eyebrow">Superlayer</p><h2>Core monetization pillars</h2></div>
         <div className="ops-grid expanded-grid">
           {monetizationPillars.map(([title, copy]) => (
@@ -55,7 +71,7 @@ export default function MonetizationHub() {
           <p className="eyebrow">Subscriptions</p>
           <h2>Global OS product</h2>
           <div className="ops-grid compact-grid">
-            {subscriptionTypes.map(([title, copy]) => <article className="system-card" key={title}><h3>{title}</h3><p>{copy}</p></article>)}
+            {subscriptionTypes.map((title) => <article className="system-card" key={title}><h3>{title}</h3><p>Pass scaffold with perks, eligibility, rewards, and future entitlement checks.</p></article>)}
           </div>
         </div>
         <div><p className="eyebrow">Features</p><PillList items={subscriptionFeatures} /></div>
@@ -86,6 +102,13 @@ export default function MonetizationHub() {
         </div>
       </section>
 
+      <section className="section compact-section">
+        <div className="section-heading"><p className="eyebrow">Monetization Deep Audit</p><h2>Required before activation</h2></div>
+        <div className="ops-grid expanded-grid">
+          {monetizationAudit.map(([title, copy]) => <article className="system-card" key={title}><h3>{title}</h3><p>{copy}</p></article>)}
+        </div>
+      </section>
+
       <section className="section compact-section split-panel align-start">
         <div>
           <p className="eyebrow">Ask Lingo Monetization Brain</p>
@@ -93,7 +116,9 @@ export default function MonetizationHub() {
           <PillList items={askLingoMonetizationActions} />
         </div>
         <div>
-          <p className="eyebrow">Build Mode Examples</p>
+          <p className="eyebrow">Activation Checklist</p>
+          <PillList items={activationChecklist} />
+          <p className="eyebrow compact">Build Mode Examples</p>
           <div className="module-list">{monetizationBuildExamples.map((example) => <span key={example}>{example}</span>)}</div>
         </div>
       </section>
