@@ -76,6 +76,8 @@
     : route.includes('obsidian') ? 'obsidianCloset'
     : 'hq';
   const entity = ENTITIES[entityKey];
+  const tmlMediaAssets = { images: [], audio: [], video: [] };
+  let uploadedSoundtrack;
 
   document.documentElement.style.setProperty('--entity-primary', entity.palette[0]);
   document.documentElement.style.setProperty('--entity-secondary', entity.palette[1]);
@@ -148,6 +150,17 @@
 
   function startEntityMusic() {
     const legacyToggle = document.querySelector('.legacy-sound-toggle, .sound');
+    if (tmlMediaAssets.audio.length) {
+      uploadedSoundtrack = uploadedSoundtrack || new Audio(tmlMediaAssets.audio[0].url);
+      uploadedSoundtrack.loop = true;
+      uploadedSoundtrack.volume = Math.max(0.01, entityMusicVolume);
+      uploadedSoundtrack.play().then(() => {
+        musicButton.textContent = 'Music: on';
+      }).catch(() => {
+        musicButton.textContent = 'Tap music again';
+      });
+      return;
+    }
     if (legacyToggle && legacyToggle.getAttribute('aria-pressed') !== 'true') {
       legacyToggle.click();
       musicButton.textContent = 'Music: on';
@@ -185,6 +198,7 @@
   }
 
   function stopEntityMusic() {
+    if (uploadedSoundtrack) uploadedSoundtrack.pause();
     const legacyToggle = document.querySelector('.legacy-sound-toggle, .sound');
     if (legacyToggle && legacyToggle.getAttribute('aria-pressed') === 'true') legacyToggle.click();
     clearInterval(entityMusicTimer);
@@ -195,7 +209,8 @@
   musicButton.addEventListener('click', () => {
     const legacyToggle = document.querySelector('.legacy-sound-toggle, .sound');
     const legacyOn = legacyToggle && legacyToggle.getAttribute('aria-pressed') === 'true';
-    if (entityMusicTimer || legacyOn) stopEntityMusic(); else startEntityMusic();
+    const uploadedOn = uploadedSoundtrack && !uploadedSoundtrack.paused;
+    if (entityMusicTimer || legacyOn || uploadedOn) stopEntityMusic(); else startEntityMusic();
   });
 
   const panel = document.createElement('section');
@@ -216,6 +231,7 @@
     const legacyGain = window.__legacyMusicGain;
     if (legacyGain) legacyGain.gain.value = entityMusicVolume;
     if (entityMusicGain) entityMusicGain.gain.value = entityMusicVolume;
+    if (uploadedSoundtrack) uploadedSoundtrack.volume = Math.max(0.01, entityMusicVolume);
   });
 
   function blip(freq = 420) {
@@ -236,6 +252,62 @@
   }
   document.addEventListener('pointerover', (event) => { if (event.target.closest('a,button')) blip(520); }, { passive: true });
   document.addEventListener('click', (event) => { if (event.target.closest('a,button')) blip(720); }, { passive: true });
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function readableAssetName(asset) {
+    return (asset.pathname || '')
+      .split('/')
+      .pop()
+      .replace(/^\d+-/, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\.[^.]+$/, '')
+      .trim() || 'Lingo Legacy asset';
+  }
+
+  function renderUploadedAssets(assets) {
+    const images = assets.filter((asset) => asset.kind === 'image').slice(0, 12);
+    const videos = assets.filter((asset) => asset.kind === 'video').slice(0, 2);
+    const audio = assets.filter((asset) => asset.kind === 'audio').slice(0, 4);
+
+    tmlMediaAssets.images = images;
+    tmlMediaAssets.video = videos;
+    tmlMediaAssets.audio = audio;
+    if (!images.length && !videos.length && !audio.length) return;
+
+    const section = document.createElement('section');
+    section.className = 'entity-asset-stage';
+    section.innerHTML = `
+      <div class="entity-asset-stage-head">
+        <p>Phone-ready content files</p>
+        <h2>${entity.name} assets are live</h2>
+        <span>${images.length} images · ${videos.length} videos · ${audio.length} sounds</span>
+      </div>
+      ${images.length ? `<div class="entity-asset-grid">${images.map((asset, index) => { const label = escapeHtml(readableAssetName(asset)); const url = escapeHtml(asset.url); return `<figure class="entity-asset-card"><img src="${url}" alt="${label}" loading="lazy" decoding="async" ${index === 0 ? 'fetchpriority="high"' : ''}><figcaption>${label}</figcaption></figure>`; }).join('')}</div>` : ''}
+      ${videos.length ? `<div class="entity-asset-video-row">${videos.map((asset) => `<video controls playsinline preload="metadata" src="${escapeHtml(asset.url)}"></video>`).join('')}</div>` : ''}
+      ${audio.length ? `<div class="entity-asset-audio-row">${audio.map((asset) => `<audio controls preload="metadata" src="${escapeHtml(asset.url)}"></audio>`).join('')}</div>` : ''}
+    `;
+
+    const main = document.querySelector('main') || document.body;
+    main.appendChild(section);
+    if (audio.length) musicButton.textContent = 'Music: off';
+  }
+
+  function loadUploadedAssets() {
+    fetch('/api/assets', { headers: { accept: 'application/json' } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => renderUploadedAssets((payload && payload.assets) || []))
+      .catch(() => {});
+  }
+
+  loadUploadedAssets();
 
   const cta = document.createElement('section');
   cta.className = 'entity-cta-panel';
