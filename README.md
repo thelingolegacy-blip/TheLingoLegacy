@@ -33,14 +33,18 @@ vercel promote <deployment-url> --scope thelingolegacy --yes
 
 Because this is a static HTML site, no build step is required. The root `index.html` is the production homepage.
 
-## Activation phase 1–4
+## Activation phase 1–8
 
-Phase 1–4 activation is documented in [`docs/activation-phase-1-4.md`](docs/activation-phase-1-4.md) and includes:
+Phase 1–8 activation is documented in [`docs/activation-phase-1-8.md`](docs/activation-phase-1-8.md) and includes:
 
 1. Public HQ foundation.
 2. Offer architecture.
 3. Audience engine.
 4. Production readiness.
+5. Content runway.
+6. Revenue pathways.
+7. Community capture.
+8. Metrics command.
 
 ## Launch checklist
 
@@ -48,3 +52,4 @@ Phase 1–4 activation is documented in [`docs/activation-phase-1-4.md`](docs/ac
 - Verify all public links and contact details.
 - Confirm the production deployment is `Ready` after promotion.
 - Confirm the root homepage, landing page, asset library, and activation docs resolve in production.
+- Confirm phase 5–8 content, revenue, community, and metrics lanes are represented before the next launch push.

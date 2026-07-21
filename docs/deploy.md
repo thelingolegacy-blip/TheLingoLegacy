@@ -18,8 +18,8 @@ The Lingo Legacy site is deployed on Vercel as a static HTML project.
 - Landing page: `landing/index.html`.
 - Asset library: `assets/index.html`.
 
-## Activation phase 1–4 release
+## Activation phase 1–8 release
 
-Phase 1–4 activation includes the production homepage, aligned landing page, activation documentation, and deployment checklist.
+Phase 1–8 activation includes the production homepage, aligned landing page, activation documentation, deployment checklist, content runway, revenue pathways, community capture, and metrics command lane.
 
 Before a full brand launch, replace `assets/logo.svg` with the final logo and verify all public contact details.
