@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://thelingolegacy.com/sitemap.xml

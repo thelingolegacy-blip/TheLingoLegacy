@@ -1,0 +1,9 @@
+{
+  "name": "The Lingo Legacy",
+  "short_name": "Lingo Legacy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071017",
+  "theme_color": "#071017",
+  "description": "The official launch hub for The Lingo Legacy ecosystem."
+}
