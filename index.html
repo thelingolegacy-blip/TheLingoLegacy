@@ -9,13 +9,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="That's My Lingo is live: a monetized cinematic destination for music, merch, games, visuals, sounds, drops, and VIP culture." />
   <meta property="og:title" content="That's My Lingo | Full Activation Live" />
-  <meta property="og:description" content="Monetized merch, VIP access, sounds, visuals, animations, socials, and platform distribution." />
+  <meta property="og:description" content="That’s My Lingo is preparing for world release with merch, VIP access, bonus games, sounds, visuals, socials, and platform distribution." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/" />
   <meta property="og:image" content="https://thelingolegacy.com/assets/logo.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="That's My Lingo | Full Activation Live" />
-  <meta name="twitter:description" content="Find That's My Lingo on web, mobile, TV, and social launch channels." />
+  <meta name="twitter:description" content="That’s My Lingo is release-ready on web, mobile, TV, social, games, rewards, and VIP culture channels." />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="apple-touch-icon" href="/assets/logo.svg" />
   <title>That's My Lingo | Live Full Activation</title>
@@ -515,6 +515,59 @@
       color: #d9d0c0;
     }
 
+    .release-grid { grid-template-columns: 1.25fr .75fr; }
+
+    .release-card {
+      min-height: 470px;
+      display: grid;
+      align-content: end;
+      background:
+        linear-gradient(180deg, transparent, rgba(0,0,0,.86)),
+        radial-gradient(circle at 72% 20%, rgba(62,208,132,.22), transparent 16rem),
+        radial-gradient(circle at 24% 18%, rgba(214,169,74,.32), transparent 18rem),
+        linear-gradient(135deg, #0b0b0b, #171007 55%, #07110b);
+    }
+
+    .release-card h3 { font-size: clamp(2.4rem, 7vw, 6rem); }
+
+    .checklist {
+      display: grid;
+      gap: .72rem;
+      margin-top: 1rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .9rem 1rem;
+      border: 1px solid rgba(62,208,132,.24);
+      border-radius: 18px;
+      background: rgba(62,208,132,.06);
+      color: #d9d0c0;
+    }
+
+    .check-item strong { color: var(--green); }
+
+    .share-kit {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .share-card {
+      padding: 1rem;
+      border: 1px solid rgba(214,169,74,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.035);
+      color: var(--gold-soft);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
     .games-grid { grid-template-columns: repeat(4, 1fr); }
 
     .game-card {
@@ -691,7 +744,7 @@
     @media (max-width: 980px) {
       .nav-links { display: none; }
       .hero::before { background: linear-gradient(180deg, rgba(7,7,7,.9), rgba(7,7,7,.55)), radial-gradient(circle at 70% 30%, rgba(214,169,74,.16), transparent 20rem); }
-      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip { grid-template-columns: 1fr; }
+      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip, .release-grid, .share-kit { grid-template-columns: 1fr; }
       .section-header { align-items: start; flex-direction: column; }
     }
 
@@ -713,6 +766,7 @@
         <a href="#monetize">Monetize</a>
         <a href="#media">Media</a>
         <a href="#games">Games</a>
+        <a href="#release">Release</a>
         <a href="#distribution">Where</a>
         <a href="#events">Events</a>
       </div>
@@ -724,10 +778,10 @@
       <div class="hero-content">
         <span class="eyebrow">That's My Lingo Is Live</span>
         <h1><span class="gold-text">Full</span> Activation</h1>
-        <p class="hero-copy">All lanes are turned on: monetized merch drops, VIP access, animated visuals, sound-reactive atmosphere, content assets, event funnels, and premium member conversion.</p>
+        <p class="hero-copy">All lanes are turned on for world release: monetized merch drops, VIP access, bonus games, animated visuals, sound-reactive atmosphere, social sharing, platform distribution, and premium member conversion.</p>
         <div class="hero-actions">
-          <a class="cta" href="#games">Play Bonus Games</a>
-          <a class="cta ghost" href="#monetize">Start Monetizing</a>
+          <a class="cta" href="#release">Release to World</a>
+          <a class="cta ghost" href="#games">Play Bonus Games</a>
         </div>
       </div>
     </header>
@@ -735,10 +789,10 @@
     <div class="activation-marquee" aria-label="Activation ticker"><span>Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets • Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets</span></div>
 
     <section class="status-strip" aria-label="Live status highlights">
-      <div class="metric"><strong>Live</strong><span>Production active</span></div>
+      <div class="metric"><strong>Ready</strong><span>World release</span></div>
       <div class="metric"><strong>6</strong><span>Revenue lanes</span></div>
       <div class="metric"><strong>5</strong><span>Bonus games</span></div>
-      <div class="metric"><strong>On</strong><span>Sound + rewards</span></div>
+      <div class="metric"><strong>Share</strong><span>Social kit live</span></div>
     </section>
 
     <main>
@@ -949,6 +1003,45 @@
         </article>
       </section>
 
+      <section id="release" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Release to the World</span>
+            <h2>Launch page, share kit, and rollout map are ready.</h2>
+            <p class="lede">That’s My Lingo now has a release-ready landing layer for public traffic, social sharing, platform discovery, game engagement, merch conversion, and VIP capture.</p>
+          </div>
+          <a class="cta" href="https://thelingolegacy.com/" aria-label="Open the live public release page">Open Live Site</a>
+        </div>
+        <div class="grid release-grid">
+          <article class="glass-card release-card">
+            <span class="tag">Public Launch Mode</span>
+            <h3>World release armed.</h3>
+            <p>Use the live Vercel site as the official launch destination while app stores, TV channels, social profiles, checkout, and CRM accounts are connected.</p>
+            <div class="hero-actions">
+              <a class="cta" href="#distribution">Find Every Platform</a>
+              <button class="cta ghost" data-open-modal>Join Release List</button>
+            </div>
+          </article>
+          <article class="glass-card">
+            <span class="tag">Release Checklist</span>
+            <h3>Final world-launch lanes.</h3>
+            <div class="checklist">
+              <div class="check-item"><span>Production website</span><strong>Ready</strong></div>
+              <div class="check-item"><span>PWA install metadata</span><strong>Ready</strong></div>
+              <div class="check-item"><span>Social preview metadata</span><strong>Ready</strong></div>
+              <div class="check-item"><span>Bonus games/rewards</span><strong>Ready</strong></div>
+              <div class="check-item"><span>Store accounts + native apps</span><strong>Next</strong></div>
+              <div class="check-item"><span>Real checkout + CRM</span><strong>Next</strong></div>
+            </div>
+          </article>
+        </div>
+        <div class="share-kit" aria-label="Release sharing kit">
+          <div class="share-card">Tagline: Play. Earn. Unlock. Repeat.</div>
+          <div class="share-card">Hashtag: #ThatsMyLingo</div>
+          <div class="share-card">Launch URL: thelingolegacy.com</div>
+        </div>
+      </section>
+
       <section id="distribution" class="section">
         <div class="section-header">
           <div>
@@ -1035,7 +1128,7 @@
 
     <footer class="footer">
       <strong>That's My Lingo: Full Activation Live</strong>
-      <span>Monetized merch, VIP access, bonus games, rewards, sounds, visuals, animations, Apple/Google/PWA/webOS distribution, socials, and cinematic storytelling.</span>
+      <span>World-release ready: monetized merch, VIP access, bonus games, rewards, sounds, visuals, animations, Apple/Google/PWA/webOS distribution, socials, and cinematic storytelling.</span>
     </footer>
   </div>
 
@@ -1045,7 +1138,7 @@
     <div class="modal-panel">
       <span class="tag">Reservation Request</span>
       <h3 id="reserve-title">Access request captured.</h3>
-      <p>The full activation layer is live and ready for real reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, and media uploads. No card data is collected on this static page.</p>
+      <p>The full activation and release layer is ready for public traffic, reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, app-store submission, and media uploads. No card data is collected on this static page.</p>
       <div class="modal-actions">
         <button class="cta" data-close-modal>Understood</button>
         <a class="cta ghost" href="mailto:dlingo@thelingolegacy">Contact concierge</a>
