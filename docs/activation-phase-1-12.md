@@ -110,3 +110,7 @@ This is the complete activation plan for The Lingo Legacy static site on Vercel.
 - Content, revenue, community, metrics, partnership, operations, scale, and governance lanes are ready for execution.
 - No package build step is required for this static site.
 - Stability verification and operation sync are documented for future command expansion.
+
+## Auto mode entirety
+
+Use [`auto-mode-execution.md`](auto-mode-execution.md), [`sprint-activation-map.md`](sprint-activation-map.md), and [`deploy-activation-runbook.md`](deploy-activation-runbook.md) to keep every phase connected to waves, sprints, deploys, and activations.

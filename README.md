@@ -67,6 +67,14 @@ Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/
 - [Wave 4 experience layer](docs/wave-4-experience-layer.md) — UI shell, Lingo.ai app, and OS Home navigation rules.
 - [Wave 5 deployment](docs/wave-5-deployment.md) — deployment stack, routing rules, and automation trigger rules.
 
+## Auto mode entirety
+
+Auto mode execution is documented in [`docs/auto-mode-execution.md`](docs/auto-mode-execution.md). It covers all remaining waves, sprints, phases, deploys, and activations using the OS doctrine.
+
+- [Sprint activation map](docs/sprint-activation-map.md)
+- [Deploy activation runbook](docs/deploy-activation-runbook.md)
+- [Machine-readable auto-mode map](os/auto-mode/entirety.json)
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

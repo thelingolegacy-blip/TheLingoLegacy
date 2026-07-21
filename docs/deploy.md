@@ -28,3 +28,7 @@ Before a full brand launch, replace `assets/logo.svg` with the final logo and ve
 ## Stability sync
 
 Use [`stability-operation-sync.md`](stability-operation-sync.md) to verify static HTML, local links, phase markers, and command expansion terms before each production promotion.
+
+## Auto mode deployment
+
+Use [`deploy-activation-runbook.md`](deploy-activation-runbook.md) for auto-mode preview verification, promotion, and post-promotion activation.

@@ -108,3 +108,7 @@ When this rule is active, execution follows this loop:
 - The doctrine is linked from the README and activation plan.
 - Future build waves can reference this file as the execution philosophy.
 - Stability sync remains the verification layer for production pushes.
+
+## Auto mode entirety
+
+Use [`auto-mode-execution.md`](auto-mode-execution.md) to continue all remaining waves, sprints, phases, deploys, and activations without repeated instructions.

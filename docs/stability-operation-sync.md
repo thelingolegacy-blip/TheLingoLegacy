@@ -71,3 +71,7 @@ Use Wave 1–5 plans to verify that core systems, command systems, ecosystem, ex
 ## Wave 1 scaffold checks
 
 Verify `os/core/xp-events.schema.json`, `os/core/wallet-ledger.schema.json`, and `os/core/identity-roles.json` before continuing core-system implementation.
+
+## Auto mode checks
+
+Verify [`../os/auto-mode/entirety.json`](../os/auto-mode/entirety.json), [`auto-mode-execution.md`](auto-mode-execution.md), [`sprint-activation-map.md`](sprint-activation-map.md), and [`deploy-activation-runbook.md`](deploy-activation-runbook.md) before deployment promotion.
