@@ -94,6 +94,7 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 - [Lingo.ai game scaffold](site/lingoai/)
 - [Lingo.ai activation](docs/lingo-ai-activation.md)
 - [Lingo.ai distribution kit](docs/lingo-ai-distribution-kit.md)
+- [Lingo.ai next five go-live tasks](docs/lingo-ai-next-five-go-live.md)
 
 ## Monetization activation
 

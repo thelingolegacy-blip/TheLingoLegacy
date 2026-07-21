@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "status": "go-live-ready",
+  "tasks": [
+    {
+      "id": "launch-qa-checklist",
+      "name": "Launch QA Checklist",
+      "purpose": "Verify the Lingo.ai route, controls, sharing, page links, metadata, and production deployment before promotion.",
+      "checks": ["root route loads", "game canvas renders", "mute toggle works", "share button works or copies", "distribution page opens", "payment CTAs resolve"]
+    },
+    {
+      "id": "privacy-policy-placeholder",
+      "name": "Privacy / Policy Placeholder",
+      "purpose": "Provide a portal submission placeholder until legal-approved policy text is finalized.",
+      "checks": ["privacy page exists", "game portals can reference policy URL", "no unsupported legal claims"]
+    },
+    {
+      "id": "portal-submission-pack",
+      "name": "Portal Submission Pack",
+      "purpose": "Bundle metadata, tags, descriptions, screenshots, trailer requirements, and final HTML5 export requirements.",
+      "checks": ["Itch.io metadata", "CrazyGames metadata", "GameMonetize metadata", "Poki metadata", "asset checklist"]
+    },
+    {
+      "id": "analytics-event-wiring-map",
+      "name": "Analytics Event Wiring Map",
+      "purpose": "Define event names and surfaces for gameplay, score sharing, premium clicks, XP booster clicks, and portal outbound clicks.",
+      "checks": ["play_lingo_ai", "score_xp", "share_score", "click_premium", "click_xp_booster", "portal_outbound_click"]
+    },
+    {
+      "id": "production-go-live-checklist",
+      "name": "Production Go-Live Checklist",
+      "purpose": "Confirm final production state after promotion and define rollback handoff.",
+      "checks": ["Vercel production READY", "custom domains attached", "PR updated", "manual portal submissions queued", "Stripe public links pending"]
+    }
+  ]
+}

@@ -91,3 +91,8 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 
 - [`lingo-ai-distribution-kit.md`](lingo-ai-distribution-kit.md)
 - [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)
+
+## Lingo.ai next five go-live tasks
+
+- [`lingo-ai-next-five-go-live.md`](lingo-ai-next-five-go-live.md)
+- [`../os/games/lingo-ai-next-five.json`](../os/games/lingo-ai-next-five.json)

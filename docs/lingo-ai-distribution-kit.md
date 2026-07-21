@@ -73,3 +73,8 @@ Lingo.ai: That’s My Lingo is the browser game surface of the Lingo Legacy OS. 
 ## Machine-readable source
 
 - [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)
+
+## Lingo.ai next five go-live tasks
+
+- [`lingo-ai-next-five-go-live.md`](lingo-ai-next-five-go-live.md)
+- [`../os/games/lingo-ai-next-five.json`](../os/games/lingo-ai-next-five.json)
