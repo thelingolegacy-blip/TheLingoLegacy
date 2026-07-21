@@ -96,6 +96,24 @@
       "doc": "docs/os-web-stack-v1.md",
       "root": "site/",
       "status": "active"
+    },
+    {
+      "id": "brand-spine",
+      "doc": "docs/brand-spine.md",
+      "map": "os/brand/brand-spine.json",
+      "status": "active"
+    },
+    {
+      "id": "social-account-matrix",
+      "doc": "docs/social-account-matrix.md",
+      "map": "os/social/social-matrix.json",
+      "status": "active"
+    },
+    {
+      "id": "lingo-ai-game-scaffold",
+      "root": "site/lingoai/",
+      "script": "site/lingoai/game-engine.js",
+      "status": "active"
     }
   ]
 }

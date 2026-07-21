@@ -86,6 +86,12 @@ The Cumberland + Philadelphia Cycles Laundry Hub network is documented in [`docs
 
 The deployable Industrial Noir website architecture is implemented in [`docs/os-web-stack-v1.md`](docs/os-web-stack-v1.md), with live static pages under `site/`.
 
+## Brand spine + social matrix
+
+- [Brand spine](docs/brand-spine.md)
+- [Social account matrix](docs/social-account-matrix.md)
+- [Lingo.ai game scaffold](site/lingoai/)
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

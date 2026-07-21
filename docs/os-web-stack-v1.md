@@ -20,6 +20,7 @@ Every page inherits:
 - [Home / OS Gateway](/)
 - [The Iconic House of Avalon](/site/avalon/)
 - [Lingo Legacy OS](/site/os/)
+- [Lingo.ai game page](/site/lingoai/)
 - [Cycles Laundry Network](/site/cycles/)
 - [Apparel + Merch Universe](/site/merch/)
 - [Books + Media](/site/media/)
@@ -40,3 +41,8 @@ Every page inherits:
 ## Activation state
 
 Full Auto-Build is active. The website is static, deployable on Vercel, and linked from the auto-mode execution map.
+
+## Brand and social layer
+
+- [Brand spine](brand-spine.md)
+- [Social account matrix](social-account-matrix.md)
