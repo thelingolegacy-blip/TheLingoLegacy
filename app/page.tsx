@@ -1,15 +1,13 @@
 import Link from 'next/link';
 import UniverseMap from '@/components/UniverseMap';
 import Timeline from '@/components/Timeline';
+import { coreLayers, siteSections, waves } from '@/lib/site-os';
 
-const worlds = [
-  { title: 'Games', icon: '🎮', href: '/games', copy: 'Playable worlds, arcade drops, and future multiplayer portals.' },
-  { title: 'Apparel', icon: '👕', href: '/apparel', copy: 'Industrial noir merch, limited drops, and character-linked gear.' },
-  { title: 'Books', icon: '📚', href: '/books', copy: 'Stories, lore archives, educational releases, and expansion books.' },
-  { title: 'Media', icon: '🎬', href: '/media', copy: 'Video, music, trailers, animation, and smart TV-ready experiences.' },
-  { title: 'AI Lab', icon: '🤖', href: '/ai-lab', copy: 'Ask Lingo, guided discovery, learning tools, and voice-ready systems.' },
-  { title: 'Rewards', icon: '🏆', href: '/rewards', copy: 'Lingo ID, achievements, loyalty paths, and community progression.' },
-];
+const worlds = siteSections.map((section) => ({
+  title: section.label,
+  href: `/${section.slug}`,
+  copy: section.summary,
+}));
 
 export default function Home() {
   return (
@@ -59,7 +57,7 @@ export default function Home() {
         <div className="world-grid">
           {worlds.map((world) => (
             <Link className="world-card" href={world.href} key={world.title}>
-              <span className="world-icon" aria-hidden="true">{world.icon}</span>
+              <span className="world-icon" aria-hidden="true">{world.title.slice(0, 2)}</span>
               <h3>{world.title}</h3>
               <p>{world.copy}</p>
             </Link>
@@ -94,6 +92,32 @@ export default function Home() {
           <Link href="/master-data">Master Data</Link>
           <Link href="/asset-production">Asset Map</Link>
           <Link href="/user-experience">UX System</Link>
+        </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading">
+          <p className="eyebrow">Full OS Architecture</p>
+          <h2>Global Infrastructure Layers</h2>
+        </div>
+        <div className="pill-row architecture-grid">
+          {coreLayers.map((layer) => <span key={layer}>{layer}</span>)}
+        </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading">
+          <p className="eyebrow">Execution Pipeline</p>
+          <h2>Waves and Sprints</h2>
+        </div>
+        <div className="ops-grid">
+          {waves.map(([wave, title, copy]) => (
+            <article className="system-card" key={wave}>
+              <p className="eyebrow">{wave}</p>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
         </div>
       </section>
 

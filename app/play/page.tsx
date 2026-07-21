@@ -1,7 +1,7 @@
 import SectionScaffold from '@/components/SectionScaffold';
 import { getSection } from '@/lib/site-os';
 
-const section = getSection('media-network');
+const section = getSection('play');
 
 export default function Page() {
   if (!section) return null;

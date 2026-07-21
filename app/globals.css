@@ -112,3 +112,11 @@ h2 { font-size: clamp(2rem, 5vw, 4.4rem); line-height: .95; letter-spacing: -.05
 .architecture-flow span { border-color: rgba(0,229,255,.34); background: rgba(0,229,255,.08); }
 .completion-grid { margin-top: 28px; }
 .completion-grid span { border-color: rgba(182,255,0,.28); background: rgba(182,255,0,.06); }
+.section-command-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 420px); gap: 24px; align-items: stretch; margin-bottom: 28px; }
+.command-card { display: grid; align-content: center; }
+.command-card h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+.module-shell .ops-grid { align-items: stretch; }
+.module-list { display: grid; gap: 10px; }
+.module-list span { border-left: 2px solid rgba(0,229,255,.44); padding: 10px 12px; background: rgba(0,229,255,.06); color: #d8e6f4; font-weight: 760; }
+.architecture-grid span { border-color: rgba(0,229,255,.34); background: rgba(0,229,255,.08); }
+@media (max-width: 900px) { .section-command-hero { grid-template-columns: 1fr; } }
