@@ -43,3 +43,7 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 ## Active expansion layers
 
 - [`cycles-laundry-hub-network.md`](cycles-laundry-hub-network.md) — Cumberland + Philadelphia Laundry Hub geo-beacon expansion.
+
+## Website build layer
+
+- [`os-web-stack-v1.md`](os-web-stack-v1.md) — deployed Industrial Noir website architecture.

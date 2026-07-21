@@ -91,3 +91,7 @@ Verify `os/experience/ui-shell.schema.json`, `os/experience/lingo-ai-entrypoints
 ## Laundry Hub checks
 
 Verify `os/geo/laundry-hubs.json` and `docs/cycles-laundry-hub-network.md` before promoting hub-network expansions.
+
+## OS Web Stack checks
+
+Verify `site/` HTML pages and [`os-web-stack-v1.md`](os-web-stack-v1.md) before promotion.

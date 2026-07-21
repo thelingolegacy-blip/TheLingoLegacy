@@ -90,6 +90,12 @@
       "doc": "docs/cycles-laundry-hub-network.md",
       "map": "os/geo/laundry-hubs.json",
       "status": "active"
+    },
+    {
+      "id": "os-web-stack-v1",
+      "doc": "docs/os-web-stack-v1.md",
+      "root": "site/",
+      "status": "active"
     }
   ]
 }
