@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const links = [
-  ['Home', '/'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Ask Lingo', '/ask-lingo'], ['Admin', '/admin'],
+  ['Home', '/'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Ask Lingo', '/ask-lingo'], ['Assets', '/assets'], ['Entities', '/entities'], ['Admin', '/admin'],
 ];
 
 const mobile = [

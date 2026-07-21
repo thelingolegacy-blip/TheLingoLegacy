@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import UniverseMap from '@/components/UniverseMap';
 import Timeline from '@/components/Timeline';
-import { coreLayers, siteSections, waves } from '@/lib/site-os';
+import { assetRegistry, coreLayers, entityModel, interactionModels, siteSections, waves } from '@/lib/site-os';
 
 const worlds = siteSections.map((section) => ({
   title: section.label,
@@ -118,6 +118,30 @@ export default function Home() {
               <p>{copy}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading">
+          <p className="eyebrow">Total Activation</p>
+          <h2>Assets, Entities, and Interactions</h2>
+        </div>
+        <div className="ops-grid">
+          <article className="system-card">
+            <h2>Assets</h2>
+            <p>{assetRegistry.length} asset groups scaffolded for production replacement.</p>
+            <Link className="btn secondary compact" href="/assets">Open Asset Registry</Link>
+          </article>
+          <article className="system-card">
+            <h2>Entities</h2>
+            <p>{entityModel.length} core data entities mapped for future persistence.</p>
+            <Link className="btn secondary compact" href="/entities">Open Entity Model</Link>
+          </article>
+          <article className="system-card">
+            <h2>Interactions</h2>
+            <p>{interactionModels.length} interaction contracts scaffolded across the OS.</p>
+            <Link className="btn secondary compact" href="/interactions">Open Interaction Models</Link>
+          </article>
         </div>
       </section>
 
