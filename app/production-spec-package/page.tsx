@@ -104,6 +104,74 @@ const releasePipeline = [
   'Ongoing maintenance and updates',
 ];
 
+
+const eosDivisions = [
+  ['Executive Office', 'Corporate strategy, budget approval, product approval, partnerships, investor relations, and brand governance.'],
+  ['Product Management Office', 'Roadmaps for games, books, mobile apps, websites, apparel, media, and community initiatives with requirements, release plans, feature priority, and documentation.'],
+  ['Engineering', 'Mobile, web, backend, cloud, security, QA, DevOps, AI, and data teams operating authentication, profiles, wallet, rewards, analytics, payments, notifications, and cloud storage.'],
+  ['Creative Studio', 'Illustration, character design, motion graphics, video, animation, UI/UX, sound, music, and copywriting for books, game art, marketing, apparel, trailers, and social content.'],
+  ['Publishing', 'Manuscript intake, editing, illustration, layout, proofing, ISBN, digital publishing, print publishing, and audiobook production.'],
+  ['Commerce', 'Direct-to-consumer store, wholesale, digital marketplace, memberships, gift cards, limited releases, inventory, shipping, returns, promotions, and customer accounts.'],
+  ['Marketing', 'Daily social posts, short-form video, long-form video, email newsletters, blog articles, launches, campaigns, reach, engagement, conversion, acquisition, and retention.'],
+  ['Customer Experience', 'Help Center, live chat, email support, community forums, bug reports, feature requests, fast response, clear documentation, and continuous improvement.'],
+  ['Community Programs', 'Reading clubs, youth education, technology workshops, volunteer events, scholarships, and community partnerships.'],
+  ['Legal & Governance', 'IP management, trademark monitoring, copyright registration, licensing, contracts, privacy compliance, terms, and accessibility policies.'],
+];
+
+const sharedDataModel = [
+  'Identity',
+  'Profile',
+  'Friends',
+  'Rewards',
+  'Wallet',
+  'Purchases',
+  'Game progress',
+  'Book library',
+  'Digital assets',
+  'Notifications',
+  'Support history',
+  'Membership status',
+];
+
+const unifiedReleaseCalendar = [
+  'Discovery',
+  'Planning',
+  'Design',
+  'Development',
+  'Internal testing',
+  'External beta',
+  'Release candidate',
+  'Production launch',
+  'Post-launch support',
+  'Continuous updates',
+];
+
+const aiPlatforms = [
+  ['Lingo.ai', 'Core AI platform and intelligence layer for business automation, content generation, coding assistance, creative brainstorming, learning support, customer support, analytics insights, and workflow automation.'],
+  ['Ask Lingo', 'User-facing conversational assistant that answers natural-language requests across XP, orders, books, vocabulary, apparel design, game levels, rewards, shopping, learning, gaming, creator tools, business, and support.'],
+];
+
+const lingoAiModules = [
+  'Lingo Chat',
+  'Lingo Create',
+  'Lingo Code',
+  'Lingo Learn',
+  'Lingo Business',
+  'Lingo Studio',
+  'Lingo Vision',
+  'Lingo Voice',
+];
+
+const askLingoRoles = [
+  'Consumer Assistant',
+  'Shopping Assistant',
+  'Learning Assistant',
+  'Gaming Assistant',
+  'Creator Assistant',
+  'Business Assistant',
+  'Support Assistant',
+];
+
 export default function ProductionSpecPackagePage() {
   return (
     <div className="page-shell shell">
@@ -183,6 +251,89 @@ export default function ProductionSpecPackagePage() {
           <h2>Branded portals connected to the shared platform.</h2>
         </div>
         <div className="pill-row architecture-grid">{websiteNetwork.map((site) => <span key={site}>{site}</span>)}</div>
+      </section>
+
+      <section className="section-command-hero">
+        <div>
+          <p className="eyebrow">Phase 4 Enterprise Operating System</p>
+          <h2>One coordinated platform for every product, service, and team.</h2>
+          <p className="hero-copy">Mission: build interconnected entertainment, education, commerce, and community products under one unified ecosystem. Vision: every user has one account, one profile, one wallet, and one loyalty experience across all Lingo Legacy products.</p>
+        </div>
+        <article className="system-card command-card">
+          <p className="eyebrow">EOS Rule</p>
+          <h2>Repeatable growth framework.</h2>
+          <p>New products can be added without breaking consistency because teams share operating rules, platform services, release calendars, data models, and AI interfaces.</p>
+        </article>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">EOS Division Structure</p>
+          <h2>Coordinated operating teams</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {eosDivisions.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Shared Data Model</p>
+          <h2>Every account connects the full ecosystem.</h2>
+          <p>Identity, commerce, learning, gaming, support, and membership records follow the user across every Lingo Legacy product.</p>
+        </div>
+        <div className="route-map">{sharedDataModel.map((field) => <span key={field}>{field}</span>)}</div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Unified Release Calendar</p>
+          <h2>One lifecycle for every launch.</h2>
+          <p>EOS standardizes discovery through continuous updates so product, engineering, creative, marketing, support, and operations stay aligned.</p>
+        </div>
+        <div className="route-map architecture-flow">{unifiedReleaseCalendar.map((step) => <span key={step}>{step}</span>)}</div>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">AI Experience Architecture</p>
+          <h2>Lingo.ai powers Ask Lingo.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {aiPlatforms.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Lingo.ai Modules</p>
+          <h2>Underlying intelligence layer.</h2>
+          <div className="route-map">{lingoAiModules.map((module) => <span key={module}>{module}</span>)}</div>
+        </div>
+        <div>
+          <p className="eyebrow">Ask Lingo Roles</p>
+          <h2>Conversational interface.</h2>
+          <div className="route-map">{askLingoRoles.map((role) => <span key={role}>{role}</span>)}</div>
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">AI Workflow Example</p>
+          <h2>Ask Lingo receives. Lingo.ai generates.</h2>
+          <p>A user asks to create a new Kotton's Code character. Ask Lingo receives the request, Lingo.ai generates the artwork prompt, story outline, and structured character data, then Ask Lingo returns the result in a friendly conversational format.</p>
+        </div>
+        <div className="route-map architecture-flow"><span>User request</span><span>Ask Lingo interface</span><span>Lingo.ai engine</span><span>Structured output</span><span>Friendly response</span></div>
       </section>
 
       <section className="section split-panel align-start">
