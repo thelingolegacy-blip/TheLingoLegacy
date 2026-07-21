@@ -3,49 +3,84 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Lingo Legacy — Home</title>
-  <meta name="description" content="Official home for The Lingo Legacy ecosystem: games, books, apparel, music, rewards, media, and community projects." />
-  <meta property="og:title" content="The Lingo Legacy" />
-  <meta property="og:description" content="Explore The Lingo Legacy ecosystem and support the launch wave." />
+  <title>The Lingo Legacy — Universe Hub</title>
+  <meta name="description" content="Enter The Lingo Legacy universe: games, music, apparel, publishing, rewards, media, sponsors, and community launch worlds." />
+  <meta property="og:title" content="The Lingo Legacy Universe" />
+  <meta property="og:description" content="Every Lingo Legacy identity opens a new world for games, music, commerce, media, and community." />
   <meta property="og:type" content="website" />
   <link rel="manifest" href="/site.webmanifest" />
+  <link rel="stylesheet" href="/assets/legacy-universe.css" />
   <style>
-    body{font-family:Arial,sans-serif;background:#071017;color:#eaf6ff;padding:32px;line-height:1.6}a{color:#f7c948}.hero{max-width:760px;margin:0 auto}.cta{display:inline-block;margin-top:16px;background:#f7c948;color:#111;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:700}
+    :root{color-scheme:dark;--panel:rgba(8,13,31,.74);--line:rgba(255,255,255,.14);--gold:#f7c948;--cyan:#62f7ff;--pink:#ff4fd8;--green:#5dff9f;--text:#eaf6ff;--muted:#a9bbd0}
+    *{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.6}a{color:var(--gold)}main{width:min(1180px,calc(100% - 32px));margin:auto;padding:28px 0 80px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:44px}.brand{font-weight:900;letter-spacing:.08em;text-transform:uppercase}.nav{display:flex;gap:12px;flex-wrap:wrap}.nav a{color:var(--text);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:9px 13px;background:rgba(255,255,255,.05)}.hero{min-height:72vh;display:grid;align-items:center;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px}.eyebrow{color:var(--cyan);font-weight:900;letter-spacing:.18em;text-transform:uppercase}.hero h1{font-size:clamp(3.1rem,9vw,8.4rem);line-height:.86;margin:.08em 0 .22em;letter-spacing:-.08em}.hero p{font-size:clamp(1.05rem,2vw,1.35rem);color:var(--muted);max-width:700px}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}.cta{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:14px 20px;background:var(--gold);color:#111;text-decoration:none;font-weight:950;box-shadow:0 14px 48px rgba(247,201,72,.22)}.cta.secondary{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text)}.portal{position:relative;min-height:480px;border:1px solid var(--line);border-radius:34px;overflow:hidden;background:radial-gradient(circle at 50% 40%,rgba(98,247,255,.23),transparent 28%),linear-gradient(150deg,rgba(255,79,216,.16),rgba(247,201,72,.08),rgba(93,255,159,.1));box-shadow:inset 0 0 80px rgba(255,255,255,.04),0 30px 90px rgba(0,0,0,.36)}.portal::before{content:"";position:absolute;inset:12%;border-radius:50%;border:2px solid rgba(255,255,255,.18);box-shadow:0 0 60px rgba(98,247,255,.22),inset 0 0 60px rgba(255,79,216,.16);animation:spin 22s linear infinite}.portal::after{content:"Legacy Universe";position:absolute;inset:auto 28px 28px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.68);font-weight:900}.planet{position:absolute;border-radius:999px;display:grid;place-items:center;font-weight:1000;color:#06111d;text-decoration:none;box-shadow:0 18px 60px rgba(0,0,0,.34);transition:transform .35s ease}.planet:hover{transform:scale(1.09) rotate(-4deg)}.planet.games{width:138px;height:138px;background:linear-gradient(135deg,var(--green),var(--cyan));left:10%;top:14%}.planet.music{width:120px;height:120px;background:linear-gradient(135deg,var(--pink),#ffd1f6);right:11%;top:18%}.planet.shop{width:150px;height:150px;background:linear-gradient(135deg,var(--gold),#ff8b3d);left:20%;bottom:13%}.planet.community{width:132px;height:132px;background:linear-gradient(135deg,#8b5cf6,var(--cyan));right:18%;bottom:15%}.section-title{margin:84px 0 18px}.section-title h2{font-size:clamp(2.1rem,6vw,4.5rem);line-height:.95;margin:0}.section-title p{max-width:720px;color:var(--muted);font-size:1.08rem}.identity-grid,.world-grid,.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.card{border:1px solid var(--line);border-radius:24px;padding:22px;background:var(--panel);box-shadow:0 22px 70px rgba(0,0,0,.26);backdrop-filter:blur(18px)}.icon{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;margin-bottom:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);font-weight:1000;color:var(--gold)}.card h3{margin:0 0 8px;font-size:1.25rem}.card p{margin:0;color:var(--muted)}.world-grid a{text-decoration:none;color:var(--text)}.world-grid strong{color:var(--gold)}.phase{position:relative;overflow:hidden}.phase::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-120%);animation:shimmer 6s ease-in-out infinite}.footer{margin-top:84px;border-top:1px solid var(--line);padding-top:22px;color:var(--muted)}@keyframes spin{to{transform:rotate(360deg)}}@keyframes shimmer{50%,100%{transform:translateX(120%)}}@media(max-width:880px){.hero{grid-template-columns:1fr}.portal{min-height:390px}.topbar{align-items:flex-start;flex-direction:column}.planet.games{left:5%;top:12%}.planet.music{right:5%;top:12%}.planet.shop{left:7%;bottom:12%}.planet.community{right:5%;bottom:10%}}
   </style>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
-  <main class="hero">
-    <h1>The Lingo Legacy</h1>
-    <p>Official home for projects, games, music, books, apparel, and community rewards.</p>
-    <p>Secure credit-card payments are now available while subscriptions and memberships are being prepared.</p>
-    <a class="cta" href="/payments/">Pay by credit card</a>
-    <a class="cta" href="/ecosystem/">Explore ecosystem</a>
-    <ul>
-      <li><a href="/landing/">Legacy landing page</a></li>
-      <li><a href="/assets/">Assets library</a></li>
-      <li><a href="/zavionelingo/">Zavionelingo</a></li>
-      <li><a href="/pryncezay/">Pryncezay</a></li>
-      <li><a href="/loyaltylane_/">Loyaltylane_</a></li>
-      <li><a href="/therealzavione/">Therealzavione</a></li>
-      <li><a href="/kottonscode/">KottonsCode</a></li>
-      <li><a href="/thatsmylingo/">ThatsMyLingo</a></li>
-      <li><a href="/ecosystem/">Full ecosystem directory</a></li>
-      <li><a href="/launch-directory/">Launch directory</a></li>
-      <li><a href="/support/">Support and intake</a></li>
-      <li><a href="/campaigns/">Campaigns</a></li>
-      <li><a href="/launch-command-center/">Launch command center</a></li>
-      <li><a href="/waitlist/">Waitlist</a></li>
-      <li><a href="/sponsor/">Sponsors / partners</a></li>
-      <li><a href="/thats-my-lingo/">That’s My Lingo</a></li>
-      <li><a href="/spades-is-my-lingo/">Spades Is My Lingo</a></li>
-      <li><a href="/uhoh-lingo-university/">UhOh Lingo University</a></li>
-      <li><a href="/loyalty-lane/">Loyalty Lane</a></li>
-      <li><a href="/publishing/">Publishing</a></li>
-      <li><a href="/apparel/">Apparel</a></li>
-      <li><a href="/investors/">Investors / sponsors</a></li>
-    </ul>
-    <footer>Contact: dlingo@thelingolegacy.com</footer>
+  <main>
+    <header class="topbar">
+      <a class="brand" href="/">The Lingo Legacy</a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="/ecosystem/">Worlds</a><a href="/music/">Music</a><a href="/apparel/">Apparel</a><a href="/payments/">Payments</a><a href="/support/">Support</a>
+      </nav>
+    </header>
+
+    <section class="hero" data-universe="community">
+      <div>
+        <p class="eyebrow">Phase portal activated</p>
+        <h1>Step into every Lingo universe.</h1>
+        <p>The home page now behaves like a launch portal: identities, games, music, apparel, books, rewards, partners, and community funnels each carry their own energy while staying connected to one master ecosystem.</p>
+        <div class="actions">
+          <a class="cta" href="/ecosystem/">Enter the ecosystem</a>
+          <a class="cta secondary" href="/payments/">Support by card</a>
+          <a class="cta secondary" href="/landing/">Open landing page</a>
+        </div>
+      </div>
+      <div class="portal" aria-label="Interactive universe portals">
+        <a class="planet games" href="/kottons-code-games/">Games</a>
+        <a class="planet music" href="/music/">Music</a>
+        <a class="planet shop" href="/apparel/">Shop</a>
+        <a class="planet community" href="/support/">Crew</a>
+      </div>
+    </section>
+
+    <section class="section-title">
+      <p class="eyebrow">Identity icons</p>
+      <h2>Four identities guide the whole site.</h2>
+      <p>Each identity acts like a doorway. Hover the floating icons or scroll into each section to transform the background into a different universe.</p>
+    </section>
+    <section class="identity-grid">
+      <article class="card"><div class="icon">G</div><h3>Game Worlds</h3><p>Kotton’s Code, Spades Is My Lingo, Lingo City, Legacy Zombies, Tricia’s Escape, and character-driven adventures.</p></article>
+      <article class="card"><div class="icon">M</div><h3>Music Worlds</h3><p>ZAVIONE, Pryncezay, theme music, background sound, media drops, and audio identity for every launch.</p></article>
+      <article class="card"><div class="icon">S</div><h3>Shop Worlds</h3><p>Apparel, collections, Shopify planning, rewards, payments, merch drops, sponsors, and partner funnels.</p></article>
+      <article class="card"><div class="icon">C</div><h3>Community Worlds</h3><p>Waitlists, referrals, loyalty, support, nonprofit expansion, daily social, creator collabs, and launch teams.</p></article>
+    </section>
+
+    <section class="section-title">
+      <p class="eyebrow">Active portals</p>
+      <h2>Choose the next universe.</h2>
+    </section>
+    <section class="world-grid">
+      <a class="card" href="/thats-my-lingo/"><strong>That’s My Lingo</strong><p>Flagship culture and party-game MVP.</p></a>
+      <a class="card" href="/uhoh-lingo-university/"><strong>UhOh Lingo University</strong><p>Learning, education, and game-based skill building.</p></a>
+      <a class="card" href="/loyalty-lane/"><strong>Loyalty Lane</strong><p>Rewards, referrals, local business, and community loyalty.</p></a>
+      <a class="card" href="/publishing/"><strong>Publishing</strong><p>Books, workbooks, recovery materials, and printable legacy products.</p></a>
+      <a class="card" href="/daily-social/"><strong>Daily Social</strong><p>Launch content for every social platform.</p></a>
+      <a class="card" href="/investors/"><strong>Investors & Sponsors</strong><p>Partnership, grant, and sponsor-ready launch materials.</p></a>
+    </section>
+
+    <section class="section-title">
+      <p class="eyebrow">Next phases</p>
+      <h2>Launch wave roadmap.</h2>
+    </section>
+    <section class="phase-grid">
+      <article class="card phase"><h3>Phase 1: Experience</h3><p>Animated backgrounds, identity icons, music controls, and richer landing content are active across the site.</p></article>
+      <article class="card phase"><h3>Phase 2: Conversion</h3><p>Payments, waitlists, sponsors, partners, and support pages guide visitors toward clear action.</p></article>
+      <article class="card phase"><h3>Phase 3: Expansion</h3><p>Games, music, apparel, publishing, and community pages can keep gaining content without changing the site structure.</p></article>
+    </section>
+
+    <footer class="footer">Contact: <a href="mailto:dlingo@thelingolegacy.com">dlingo@thelingolegacy.com</a></footer>
   </main>
+  <script defer src="/assets/legacy-universe.js"></script>
 </body>
 </html>
