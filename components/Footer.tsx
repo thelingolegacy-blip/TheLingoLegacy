@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const commandLinks = [
-  ['Launch Ops', '/launch'], ['Master Data', '/master-data'], ['Assets', '/asset-production'], ['UX System', '/user-experience'], ['Admin', '/admin'], ['Legal', '/legal'],
+  ['Launch Ops', '/launch'], ['Marketing', '/marketing'], ['Press', '/press'], ['Business Ops', '/business-operations'], ['Help Center', '/help'], ['Development Spec', '/development-spec'], ['Master Data', '/master-data'], ['Assets', '/asset-production'], ['UX System', '/user-experience'], ['Admin', '/admin'], ['Legal', '/legal'],
 ];
 
 const legalLinks = [

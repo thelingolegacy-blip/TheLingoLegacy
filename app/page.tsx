@@ -84,6 +84,10 @@ export default function Home() {
         </div>
         <div className="route-map">
           <Link href="/launch">Launch Ops</Link>
+          <Link href="/marketing">Marketing</Link>
+          <Link href="/press">Press Kit</Link>
+          <Link href="/business-operations">Business Ops</Link>
+          <Link href="/development-spec">Build Spec</Link>
           <Link href="/master-data">Master Data</Link>
           <Link href="/asset-production">Asset Map</Link>
           <Link href="/user-experience">UX System</Link>

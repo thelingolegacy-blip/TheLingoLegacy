@@ -5,7 +5,7 @@ export const brandCore = {
 };
 
 export const routes = [
-  '/', '/games', '/apparel', '/books', '/media', '/rewards', '/lingo-id', '/ai-lab', '/events', '/maps', '/community', '/launch', '/asset-production', '/master-data', '/user-experience', '/admin',
+  '/', '/games', '/apparel', '/books', '/media', '/rewards', '/lingo-id', '/ai-lab', '/events', '/maps', '/community', '/launch', '/marketing', '/press', '/business-operations', '/help', '/production-scale', '/future-expansion', '/development-spec', '/asset-production', '/master-data', '/user-experience', '/admin',
 ];
 
 export const launchEntities = [

@@ -106,3 +106,7 @@ h2 { font-size: clamp(2rem, 5vw, 4.4rem); line-height: .95; letter-spacing: -.05
 .static-node { position: relative; inset: auto; translate: none; margin: 6px; }
 .navlinks { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; }
 @media (max-width: 900px) { .countdown-wall, .ops-grid, .legal-grid, .asset-tree, .footer-columns { grid-template-columns: 1fr; } .countdown-grid { grid-template-columns: repeat(2, 1fr); } }
+.flow-map span::after, .architecture-flow span::after { content: '↓'; margin-left: 10px; color: var(--cyan); }
+.flow-map span:last-child::after, .architecture-flow span:last-child::after { content: ''; }
+.architecture-flow { flex-direction: column; align-items: flex-start; }
+.architecture-flow span { border-color: rgba(0,229,255,.34); background: rgba(0,229,255,.08); }
