@@ -1,0 +1,37 @@
+{
+  "name": "That's My Lingo",
+  "short_name": "My Lingo",
+  "description": "That’s My Lingo full activation: bonus games, rewards, merch, VIP, sounds, visuals, events, and social launch channels.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070707",
+  "theme_color": "#070707",
+  "orientation": "portrait-primary",
+  "categories": ["entertainment", "music", "shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Merch Vault",
+      "short_name": "Merch",
+      "url": "/#vault"
+    },
+    {
+      "name": "Bonus Games",
+      "short_name": "Games",
+      "url": "/#games"
+    },
+    {
+      "name": "Where to Find Us",
+      "short_name": "Where",
+      "url": "/#distribution"
+    }
+  ]
+}
