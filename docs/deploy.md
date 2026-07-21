@@ -1,4 +1,25 @@
 # Deployment notes
 
-- Host as a static site (GitHub Pages or Netlify).
-- Build: none (static HTML). Replace assets/logo.svg with final PNG/SVG before launch.
+The Lingo Legacy site is deployed on Vercel as a static HTML project.
+
+## Production flow
+
+1. Merge or update the release branch.
+2. Let the Vercel Git integration create a preview deployment.
+3. Confirm the deployment is `Ready`.
+4. Promote the verified deployment to production.
+5. Check the production homepage, landing page, asset library, and docs links.
+
+## Static site details
+
+- Build command: none.
+- Output directory: repository root.
+- Root page: `index.html`.
+- Landing page: `landing/index.html`.
+- Asset library: `assets/index.html`.
+
+## Activation phase 1–4 release
+
+Phase 1–4 activation includes the production homepage, aligned landing page, activation documentation, and deployment checklist.
+
+Before a full brand launch, replace `assets/logo.svg` with the final logo and verify all public contact details.

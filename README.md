@@ -6,7 +6,8 @@ This repository contains the public static website for The Lingo Legacy project.
 
 - `landing/` — static landing page content.
 - `assets/` — placeholder logos, images, and asset library pages.
-- `docs/` — project documentation and deployment notes.
+- `docs/` — project documentation, activation plans, and deployment notes.
+- `index.html` — production homepage for the Vercel root route.
 
 ## Deployment
 
@@ -30,10 +31,20 @@ vercel list the-lingo-legacy --scope thelingolegacy
 vercel promote <deployment-url> --scope thelingolegacy --yes
 ```
 
-Because this is a static HTML site, no build step is required.
+Because this is a static HTML site, no build step is required. The root `index.html` is the production homepage.
+
+## Activation phase 1–4
+
+Phase 1–4 activation is documented in [`docs/activation-phase-1-4.md`](docs/activation-phase-1-4.md) and includes:
+
+1. Public HQ foundation.
+2. Offer architecture.
+3. Audience engine.
+4. Production readiness.
 
 ## Launch checklist
 
 - Replace `assets/logo.svg` with the final logo before launch.
 - Verify all public links and contact details.
 - Confirm the production deployment is `Ready` after promotion.
+- Confirm the root homepage, landing page, asset library, and activation docs resolve in production.
