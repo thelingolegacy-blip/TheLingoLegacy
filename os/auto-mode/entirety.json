@@ -156,6 +156,12 @@
       "schema": "os/funding/stripe-credit-engine.schema.json",
       "services": "os/funding/credit-engine-services.json",
       "status": "backend-scaffold-only"
+    },
+    {
+      "id": "external-platform-connections",
+      "doc": "docs/external-platform-connections.md",
+      "map": "os/platforms/external-platform-connections.json",
+      "status": "connection-handoff-ready"
     }
   ]
 }

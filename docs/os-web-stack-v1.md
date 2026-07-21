@@ -46,3 +46,8 @@ Full Auto-Build is active. The website is static, deployable on Vercel, and link
 
 - [Brand spine](brand-spine.md)
 - [Social account matrix](social-account-matrix.md)
+
+## External platform connections
+
+- [`external-platform-connections.md`](external-platform-connections.md)
+- [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)

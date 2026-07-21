@@ -1,0 +1,88 @@
+{
+  "version": "1.0",
+  "status": "connection-handoff-ready",
+  "principle": "Vercel hosts the OS routing layer; external platforms require owner credentials and must be connected in their own dashboards.",
+  "platforms": [
+    {
+      "id": "canvas",
+      "name": "Canvas",
+      "category": "education / course ops",
+      "connectionUse": "Course modules, onboarding, youth programs, Avalon learning paths.",
+      "osRoute": "/site/platforms/#canvas",
+      "handoffRequired": ["Canvas admin login", "course/account URL", "API token only if backend integration is approved"],
+      "safeNextStep": "Create Canvas course/module links and add public URLs to the OS hub."
+    },
+    {
+      "id": "gdevelop",
+      "name": "GDevelop",
+      "category": "game engine / HTML5 export",
+      "connectionUse": "Export Lingo.ai or minigames to HTML5 and deploy under /site/lingoai/ or /games/.",
+      "osRoute": "/site/lingoai/",
+      "handoffRequired": ["GDevelop project export", "game asset package", "publish target choice"],
+      "safeNextStep": "Export HTML5 build and replace the current prototype game scaffold."
+    },
+    {
+      "id": "godaddy",
+      "name": "GoDaddy",
+      "category": "domains / DNS",
+      "connectionUse": "Optional registrar/DNS connection if domains are managed there.",
+      "osRoute": "/docs/deploy.md",
+      "handoffRequired": ["GoDaddy account owner login", "domain list", "DNS edit approval"],
+      "safeNextStep": "Keep thelingolegacy.com on Vercel-assigned DNS records; do not change nameservers unless intentionally migrating DNS."
+    },
+    {
+      "id": "square",
+      "name": "Square",
+      "category": "commerce / POS",
+      "connectionUse": "POS, merch sales, event checkout, vendor lane payments.",
+      "osRoute": "/site/monetization/",
+      "handoffRequired": ["Square account login", "catalog export or public checkout links", "location IDs if backend integration is approved"],
+      "safeNextStep": "Add public Square checkout/catalog links to merch and vendor pages."
+    },
+    {
+      "id": "wix",
+      "name": "Wix",
+      "category": "website / legacy pages",
+      "connectionUse": "Legacy page migration, content references, or redirect source.",
+      "osRoute": "/site/nav/",
+      "handoffRequired": ["Wix account login", "page inventory", "redirect plan"],
+      "safeNextStep": "Inventory Wix pages and decide whether to redirect, rebuild, or archive."
+    },
+    {
+      "id": "sofi",
+      "name": "SoFi",
+      "category": "banking / funding",
+      "connectionUse": "External funding source feeding launch runway or Stripe balance.",
+      "osRoute": "/site/funding/",
+      "handoffRequired": ["SoFi account owner action", "approved transfer path", "reconciliation policy"],
+      "safeNextStep": "Document only transfer policy; never store bank data in repository."
+    },
+    {
+      "id": "chime",
+      "name": "Chime",
+      "category": "banking / funding",
+      "connectionUse": "External funding source for launch cushion or operator expenses.",
+      "osRoute": "/site/funding/",
+      "handoffRequired": ["Chime account owner action", "approved transfer path", "reconciliation policy"],
+      "safeNextStep": "Document only transfer policy; never store bank data in repository."
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "category": "payments + app distribution",
+      "connectionUse": "Apple Pay via Stripe and future Apple Developer/App Store distribution.",
+      "osRoute": "/site/payments/",
+      "handoffRequired": ["Stripe Apple Pay domain verification", "Apple Developer account for App Store", "app bundle details when mobile app exists"],
+      "safeNextStep": "Verify thelingolegacy.com in Stripe for Apple Pay; App Store work begins after mobile build exists."
+    },
+    {
+      "id": "google-play",
+      "name": "Google Play",
+      "category": "payments + app distribution",
+      "connectionUse": "Google Pay via Stripe and future Google Play distribution.",
+      "osRoute": "/site/payments/",
+      "handoffRequired": ["Stripe Google Pay enabled", "Google Play Console account", "Android app package when mobile build exists"],
+      "safeNextStep": "Enable Google Pay in Stripe; Google Play work begins after Android build exists."
+    }
+  ]
+}

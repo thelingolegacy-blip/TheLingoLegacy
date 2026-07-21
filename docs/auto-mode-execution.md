@@ -76,3 +76,8 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 - [`stripe-credit-engine.md`](stripe-credit-engine.md)
 - [`../os/funding/stripe-credit-engine.schema.json`](../os/funding/stripe-credit-engine.schema.json)
 - [`../os/funding/credit-engine-services.json`](../os/funding/credit-engine-services.json)
+
+## External platform connections
+
+- [`external-platform-connections.md`](external-platform-connections.md)
+- [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)

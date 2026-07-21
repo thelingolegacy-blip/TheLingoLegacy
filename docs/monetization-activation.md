@@ -37,3 +37,8 @@ Do not commit secret keys. Static pages should use public payment links until th
 - [`credit-rules-and-webhooks.md`](credit-rules-and-webhooks.md)
 - [`../os/funding/credit-rules.json`](../os/funding/credit-rules.json)
 - [`../os/funding/stripe-credit-webhooks.json`](../os/funding/stripe-credit-webhooks.json)
+
+## External platform connections
+
+- [`external-platform-connections.md`](external-platform-connections.md)
+- [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)

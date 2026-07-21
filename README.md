@@ -110,6 +110,11 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 - [Stripe Credit Engine](docs/stripe-credit-engine.md)
 - [Funding page](site/funding/)
 
+## External platform connections
+
+- [External platform connections](docs/external-platform-connections.md)
+- [Platform hub](site/platforms/)
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.
