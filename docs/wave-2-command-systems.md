@@ -41,3 +41,11 @@ Intervene only when:
 - AI Ops rules match the OS execution doctrine.
 - Event Bus routing rules are defined.
 - Wave 2 is linked from the doctrine and README.
+
+## Command system scaffolds
+
+Concrete Wave 2 scaffolds are documented in [`wave-2-command-system-scaffolds.md`](wave-2-command-system-scaffolds.md).
+
+- Admin action schema: [`../os/command/admin-actions.schema.json`](../os/command/admin-actions.schema.json).
+- AI Ops boundaries: [`../os/command/ai-ops-boundaries.json`](../os/command/ai-ops-boundaries.json).
+- Event Bus schema: [`../os/command/event-bus.schema.json`](../os/command/event-bus.schema.json).

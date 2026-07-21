@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/command/event-bus.schema.json",
+  "title": "Lingo Legacy Event Bus Contract",
+  "type": "object",
+  "required": ["eventName", "source", "destination", "payload", "occurredAt", "retry"],
+  "properties": {
+    "eventName": { "type": "string" },
+    "source": { "type": "string" },
+    "destination": { "type": "string" },
+    "payload": { "type": "object" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "retry": {
+      "type": "object",
+      "required": ["enabled", "maxAttempts"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxAttempts": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "traceId": { "type": "string" }
+  },
+  "additionalProperties": false
+}

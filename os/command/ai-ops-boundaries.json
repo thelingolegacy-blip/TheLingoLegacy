@@ -1,0 +1,22 @@
+{
+  "mode": "intervention-only continuous execution",
+  "allowed": [
+    "scaffold missing files",
+    "validate static HTML and links",
+    "summarize pull request changes",
+    "expand command runbooks",
+    "prepare deployment verification notes"
+  ],
+  "requiresApproval": [
+    "production deployment promotion",
+    "destructive changes",
+    "credential or secret changes",
+    "billing or paid-plan changes"
+  ],
+  "mustStopFor": [
+    "missing access",
+    "unclear production target",
+    "failed validation that cannot be repaired locally",
+    "user instruction that changes scope"
+  ]
+}

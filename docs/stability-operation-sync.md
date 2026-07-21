@@ -75,3 +75,7 @@ Verify `os/core/xp-events.schema.json`, `os/core/wallet-ledger.schema.json`, and
 ## Auto mode checks
 
 Verify [`../os/auto-mode/entirety.json`](../os/auto-mode/entirety.json), [`auto-mode-execution.md`](auto-mode-execution.md), [`sprint-activation-map.md`](sprint-activation-map.md), and [`deploy-activation-runbook.md`](deploy-activation-runbook.md) before deployment promotion.
+
+## Wave 2 scaffold checks
+
+Verify `os/command/admin-actions.schema.json`, `os/command/ai-ops-boundaries.json`, and `os/command/event-bus.schema.json` before continuing command-system implementation.

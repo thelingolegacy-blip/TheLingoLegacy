@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/command/admin-actions.schema.json",
+  "title": "Lingo Legacy Admin Command Action",
+  "type": "object",
+  "required": ["commandId", "name", "ownerRole", "intent", "status", "requestedAt", "validation"],
+  "properties": {
+    "commandId": { "type": "string" },
+    "name": { "type": "string" },
+    "ownerRole": { "type": "string", "enum": ["admin", "system", "partner"] },
+    "intent": { "type": "string" },
+    "status": { "type": "string", "enum": ["draft", "queued", "running", "blocked", "completed", "reversed"] },
+    "requestedAt": { "type": "string", "format": "date-time" },
+    "validation": {
+      "type": "object",
+      "required": ["required", "checks"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "checks": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "rollback": { "type": "string" },
+    "releaseNote": { "type": "string" }
+  },
+  "additionalProperties": false
+}
