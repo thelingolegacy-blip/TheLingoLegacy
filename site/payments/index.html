@@ -1,1 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Payments — Lingo Legacy OS</title><link rel="stylesheet" href="/site/styles.css"/></head><body><nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/site/monetization/">Monetization</a><a href="/site/analytics/">Analytics</a><a href="/docs/monetization-activation.md">Docs</a></div></div></nav><header class="wrap hero"><div class="eyebrow">Apple Pay + Google Pay</div><h1>Stripe payment layer staged.</h1><p class="lead">Payment links, subscriptions, Apple Pay, Google Pay, ACH, and Checkout are mapped. Real Stripe credentials must be configured outside the repository.</p></header><main class="wrap"><section class="grid"><article class="card"><strong>Stripe</strong><h2>Backbone</h2><ul><li>Products + prices</li><li>Checkout</li><li>Billing</li></ul></article><article class="card"><strong>Wallets</strong><h2>Fast checkout</h2><ul><li>Apple Pay domain verification</li><li>Google Pay dashboard enablement</li><li>Payment Links</li></ul></article><article class="card"><strong>Security</strong><h2>No secrets in repo</h2><ul><li>Env vars for secret keys</li><li>Public links only in static pages</li><li>Backend required for Checkout sessions</li></ul></article></section></main></body></html>
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Payments — Lingo Legacy OS</title><link rel="stylesheet" href="/site/styles.css"/></head>
+<body>
+<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/site/monetization/">Monetization</a><a href="/site/analytics/">Analytics</a><a href="/docs/stripe-payment-link-deployment-package.md">Stripe Package</a></div></div></nav>
+<header class="wrap hero"><div class="eyebrow">Apple Pay + Google Pay</div><h1>Stripe Payment Links ready.</h1><p class="lead">One product, multiple prices, and one public Payment Link per tier. Real Stripe links are added only after creation in Stripe Dashboard.</p></header>
+<main class="wrap">
+<section class="grid">
+<article class="card"><strong>Lingo.ai Premium</strong><h2>$9.99/mo · $99/yr</h2><ul><li>Subscription</li><li>Apple Pay + Google Pay</li><li>Placeholder: STRIPE_PAYMENT_LINK_LINGO_AI_PREMIUM</li></ul></article>
+<article class="card"><strong>OS Builder</strong><h2>$29/mo · $290/yr</h2><ul><li>Subscription</li><li>Creator/studio tier</li><li>Placeholder: STRIPE_PAYMENT_LINK_LINGO_OS_BUILDER</li></ul></article>
+<article class="card"><strong>Avalon Supporter</strong><h2>$5/mo · $50/yr</h2><ul><li>Supporter membership</li><li>Donation top-up ready</li><li>Placeholder: STRIPE_PAYMENT_LINK_AVALON_SUPPORTER</li></ul></article>
+<article class="card"><strong>Creator / Partner</strong><h2>$14.99/mo · $149/yr</h2><ul><li>Subscription</li><li>Business info collection</li><li>Placeholder: STRIPE_PAYMENT_LINK_CREATOR_PARTNER</li></ul></article>
+<article class="card"><strong>XP Booster / Crown Pack</strong><h2>$4.99–$49.99</h2><ul><li>One-time purchase</li><li>Quantity enabled</li><li>Placeholder: STRIPE_PAYMENT_LINK_XP_BOOSTER_CROWN_PACK</li></ul></article>
+<article class="card"><strong>Webhook Fulfillment</strong><h2>Backend later</h2><ul><li>checkout.session.completed</li><li>customer.subscription.updated</li><li>invoice.payment_failed</li><li>customer.subscription.deleted</li></ul></article>
+</section>
+</main>
+</body>
+</html>

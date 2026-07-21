@@ -21,3 +21,8 @@ Do not commit secret keys. Static pages should use public payment links until th
 - [`../os/payments/payment-activation.json`](../os/payments/payment-activation.json)
 - [`../os/analytics/tracking-plan.json`](../os/analytics/tracking-plan.json)
 - [`../os/promotion/promo-engine.json`](../os/promotion/promo-engine.json)
+
+## Final Stripe deployment package
+
+- [`stripe-payment-link-deployment-package.md`](stripe-payment-link-deployment-package.md)
+- [`../os/payments/stripe-payment-link-package.json`](../os/payments/stripe-payment-link-package.json)

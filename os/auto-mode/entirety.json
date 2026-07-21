@@ -130,6 +130,12 @@
       "analytics": "os/analytics/tracking-plan.json",
       "promotion": "os/promotion/promo-engine.json",
       "status": "activation-ready"
+    },
+    {
+      "id": "stripe-payment-link-deployment-package",
+      "doc": "docs/stripe-payment-link-deployment-package.md",
+      "map": "os/payments/stripe-payment-link-package.json",
+      "status": "ready-for-stripe-dashboard-creation"
     }
   ]
 }

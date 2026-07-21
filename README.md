@@ -96,6 +96,7 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 ## Monetization activation
 
 - [Monetization activation](docs/monetization-activation.md)
+- [Stripe Payment Link deployment package](docs/stripe-payment-link-deployment-package.md)
 - [Monetization page](site/monetization/)
 - [Payments page](site/payments/)
 - [Analytics page](site/analytics/)

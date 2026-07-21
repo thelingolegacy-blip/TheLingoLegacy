@@ -55,3 +55,7 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 ## Monetization activation layer
 
 - [`monetization-activation.md`](monetization-activation.md) — subscriptions, payments, analytics, commerce, and promotion engine activation.
+
+## Stripe deployment package
+
+- [`stripe-payment-link-deployment-package.md`](stripe-payment-link-deployment-package.md) — product, price, Payment Link, webhook, and deployment checklist.
