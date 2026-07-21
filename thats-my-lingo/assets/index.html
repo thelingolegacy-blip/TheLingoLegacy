@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>That’s My Lingo Asset Manager — The Lingo Legacy</title>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#070b12;--panel:#101827;--gold:#f6c65b;--purple:#cf2cff;--text:#f7fbff;--muted:#aeb8c5;--line:rgba(246,198,91,.28)}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#35204d,var(--bg) 42%);color:var(--text);font-family:Arial,sans-serif;line-height:1.5;padding:28px}main{max-width:1180px;margin:auto}.hero,.panel{border:1px solid var(--line);background:rgba(16,24,39,.88);border-radius:24px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.3)}a{color:var(--gold)}h1{margin:.1em 0;font-size:clamp(2rem,5vw,4.5rem);line-height:1}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:18px;margin-top:18px}.field{display:grid;gap:7px;margin:12px 0}label{font-weight:800;color:var(--gold);font-size:.9rem;text-transform:uppercase;letter-spacing:.05em}input,select,button{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:#080d16;color:var(--text);padding:12px;font:inherit}button{background:linear-gradient(135deg,var(--gold),#f09b22);color:#101010;font-weight:900;cursor:pointer}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.preview{min-height:220px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.2);border-radius:18px;padding:12px;background:#080d16;overflow:hidden}.preview img,.preview video{max-width:100%;max-height:420px;border-radius:14px}.preview audio{width:100%}canvas{width:100%;max-height:520px;background:#05070b;border-radius:18px;border:1px solid rgba(255,255,255,.12)}progress{width:100%;height:18px}.check{display:flex;gap:10px;align-items:center}.check input{width:auto}.manifest{padding-left:20px;word-break:break-word}@media(max-width:820px){.grid{grid-template-columns:1fr}body{padding:16px}}
+  </style>
+  <link rel="stylesheet" href="/assets/legacy-universe.css" />
+</head>
+<body>
+  <main>
+    <p><a href="/thats-my-lingo/">← That’s My Lingo</a> · <a href="/">HQ</a></p>
+    <section class="hero">
+      <p class="muted">Production asset pipeline</p>
+      <h1>That’s My Lingo Asset Manager</h1>
+      <p>Upload photos, logos, symbols, sounds, animations, videos, fonts, and marketing files into the casino asset structure. Images can be cropped before upload; large files upload directly to Vercel Blob.</p>
+    </section>
+
+    <section class="grid">
+      <form id="uploadForm" class="panel">
+        <div class="field">
+          <label for="category">Asset category</label>
+          <select id="category">
+            <option value="brand">01 Brand / logos</option>
+            <option value="slot">02 Slot machine</option>
+            <option value="symbols">03 Reel symbols</option>
+            <option value="currency">04 Currency / Loyalty Bucks</option>
+            <option value="effects">05 Win effects / animations</option>
+            <option value="ui">06 UI / buttons</option>
+            <option value="bonus">07 Cards and bonus</option>
+            <option value="characters">08 Characters</option>
+            <option value="backgrounds">09 Backgrounds</option>
+            <option value="audio">10 Audio / sounds</option>
+            <option value="marketing">11 Marketing / store</option>
+            <option value="video">12 Video</option>
+            <option value="fonts">13 Fonts</option>
+            <option value="source">14 Source</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="assetName">Production asset name</label>
+          <input id="assetName" placeholder="TML_Loyalty_Bucks_Hero" />
+        </div>
+        <div class="field">
+          <label for="uploadKey">Launch upload key</label>
+          <input id="uploadKey" type="password" autocomplete="current-password" placeholder="Required to protect the Blob store" required />
+        </div>
+        <div class="field">
+          <label for="assetFile">Choose photo, sound, animation, video, logo, font, or source file</label>
+          <input id="assetFile" type="file" accept="image/*,audio/*,video/*,.json,.lottie,.skel,.atlas,.ttf,.otf,.woff,.woff2,.glb,.fbx" required />
+        </div>
+        <div id="imageControls">
+          <label class="check"><input id="cropImage" type="checkbox" checked /> Crop/optimize image before upload</label>
+          <div class="controls">
+            <div class="field"><label for="aspect">Crop</label><select id="aspect"><option value="original">Original</option><option value="1:1">Square</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1024">1024 app icon</option></select></div>
+            <div class="field"><label for="imageType">Output</label><select id="imageType"><option value="image/webp">WebP</option><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option></select></div>
+            <div class="field"><label for="quality">Quality</label><input id="quality" type="range" min="55" max="100" value="88" /></div>
+            <div class="field"><label for="zoom">Zoom</label><input id="zoom" type="range" min="100" max="250" value="100" /></div>
+            <div class="field"><label for="posX">Position X</label><input id="posX" type="range" min="0" max="100" value="50" /></div>
+            <div class="field"><label for="posY">Position Y</label><input id="posY" type="range" min="0" max="100" value="50" /></div>
+          </div>
+        </div>
+        <button type="submit">Upload to Vercel Blob</button>
+        <div class="field"><progress id="progress" max="100" value="0"></progress></div>
+        <p id="result" class="muted"></p>
+      </form>
+
+      <section class="panel">
+        <h2>Preview and crop</h2>
+        <div id="preview" class="preview"><p class="muted">Select an asset to preview it here.</p></div>
+        <canvas id="cropCanvas" width="1" height="1"></canvas>
+        <h2>Uploaded asset URLs</h2>
+        <p class="muted">Copy these Blob URLs into game screens, store listings, social campaigns, and app metadata.</p>
+        <ol id="manifest" class="manifest"></ol>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="/assets/tml-asset-manager.js"></script>
+</body>
+</html>
