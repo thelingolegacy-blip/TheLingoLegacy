@@ -1,4 +1,8 @@
 # Deployment notes
 
-- Host as a static site (GitHub Pages or Netlify).
-- Build: none (static HTML). Replace assets/logo.svg with final PNG/SVG before launch.
+This site is a static Vercel-compatible HTML experience. No build step is required.
+
+- Entry point: `index.html`
+- Secondary landing copy: `landing/index.html`
+- Assets: `assets/`
+- Future production checkout: create a server-side Stripe Checkout session and redirect users from the current checkout-ready CTAs.
