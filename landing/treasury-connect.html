@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lingo Legacy Treasury &amp; Lingo.ai Connect</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#071017;color:#eaf6ff;line-height:1.6;margin:0;padding:32px}
+    main{max-width:980px;margin:0 auto}
+    a{color:#7ab8ff} h1,h2{color:#fff} section{background:#0d1b24;border:1px solid #173448;border-radius:12px;padding:20px;margin:18px 0}
+    li{margin:6px 0}.note{background:#13283a;border-left:4px solid #7ab8ff;padding:14px;border-radius:8px}
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="/">Back home</a></p>
+  <h1>Lingo Legacy Treasury &amp; Lingo.ai Connect</h1>
+  <p>A product blueprint for subscription-first cash planning and secure AI orchestration across the Lingo Legacy ecosystem.</p>
+
+  <section>
+    <h2>Lingo Legacy Treasury</h2>
+    <p>A centralized financial management layer that receives business revenue, reserves required amounts, tracks subscriptions, and reports owner distributions after required obligations are covered.</p>
+    <ol>
+      <li>Tax reserve</li>
+      <li>Required operating expenses</li>
+      <li>Software subscriptions</li>
+      <li>Payroll and contractors</li>
+      <li>Marketing budget</li>
+      <li>Emergency reserve</li>
+      <li>Business savings</li>
+      <li>Owner distribution</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Subscription Manager</h2>
+    <ul>
+      <li>Vendor, category, amount, renewal date, and payment method label</li>
+      <li>Required versus optional status and priority level</li>
+      <li>Reminder schedule and cash coverage warnings</li>
+      <li>Monthly summaries and bookkeeping exports</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Lingo.ai Connect</h2>
+    <p>The integration layer for Ask Lingo: agents, permissions, APIs, notifications, and third-party app connections.</p>
+    <ul>
+      <li>Business Agent for reports, inventory, messages, and scheduling</li>
+      <li>Creator Agent for posts, scripts, videos, and marketing ideas</li>
+      <li>Developer Agent for code review, docs, testing, and deployment help</li>
+      <li>Personal Agent for reminders, notes, organization, and planning</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Security Requirements</h2>
+    <ul>
+      <li>Strong authentication and explicit per-integration authorization</li>
+      <li>Encryption, audit logs, revocable tokens, and privacy controls</li>
+      <li>Role-based access and manual approval for high-risk actions</li>
+      <li>Accountant or advisor review for tax reserves and owner distributions</li>
+    </ul>
+    <p class="note">The system can prioritize payments and recommend distributions, but it cannot guarantee subscriptions are paid unless account balances, providers, and authorization rules support the payment.</p>
+  </section>
+
+  <section>
+    <h2>Vercel-Native Implementation</h2>
+    <ul>
+      <li>Vercel Functions for APIs, reports, alerts, and automation handlers</li>
+      <li>Vercel Cron Jobs for renewal reminders and monthly summaries</li>
+      <li>Vercel Blob for reports and uploaded documents</li>
+      <li>Neon via the Vercel Marketplace for relational data. Vercel Postgres is no longer first-party; existing databases were migrated in December 2024.</li>
+      <li>Upstash Redis via the Vercel Marketplace for queues and short-lived workflow state. Vercel KV is no longer first-party; existing stores were migrated in December 2024.</li>
+      <li>Vercel AI Gateway for AI model routing and agent orchestration</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>First Milestone</h2>
+    <ol>
+      <li>Add subscription records manually.</li>
+      <li>Add monthly revenue and expense entries manually.</li>
+      <li>Calculate reserves and projected owner distribution.</li>
+      <li>Show upcoming renewals and cash coverage warnings.</li>
+      <li>Export a monthly summary for bookkeeping review.</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>
