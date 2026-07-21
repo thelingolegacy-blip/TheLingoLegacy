@@ -6,6 +6,7 @@ import ParticleBackground from '@/components/ParticleBackground';
 import AudioController from '@/components/AudioController';
 import AIHelper from '@/components/AIHelper';
 import SeasonalTheme from '@/components/SeasonalTheme';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'The Lingo Legacy HQ',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Footer />
         <AudioController />
         <AIHelper />
+        <Analytics />
       </body>
     </html>
   );
