@@ -1,0 +1,12 @@
+{
+  "name": "the-lingo-legacy-site",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site; no build step required'"
+  },
+  "dependencies": {
+    "stripe": "^16.12.0"
+  }
+}

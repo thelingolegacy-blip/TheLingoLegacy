@@ -7,7 +7,7 @@ Folders:
 - assets/: placeholder logos and images
 - docs/: site docs and deployment notes
 
-Contact placeholder: dlingo@thelingolegacy
+Contact: dlingo@thelingolegacy.com
 # Setting up GitHub Copilot for your enterprise
 
 Enable GitHub Copilot across your enterprise so developers can write code faster.
@@ -45,3 +45,8 @@ There are two main ways to grant access to Copilot in an enterprise:
 * **Enable Copilot for organizations**. This approach allows you to choose Copilot Business or Copilot Enterprise for individual organizations and give organization owners control to grant licenses to the users who need them most.
 
 For instructions, see [Granting users access to GitHub Copilot in your enterprise](/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access).
+
+
+## Payments
+
+The site includes a Stripe Checkout payment page at `/payments/` for one-time credit-card payments. Configure `STRIPE_SECRET_KEY`, `STRIPE_ONE_TIME_PRICE_ID`, and `SITE_URL` in Vercel before launch. Add `STRIPE_SUBSCRIPTION_PRICE_ID` when subscription billing is ready.
