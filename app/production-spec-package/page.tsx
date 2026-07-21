@@ -311,6 +311,83 @@ const productionReadinessArtifacts = [
   'Operational runbooks',
 ];
 
+
+const domainBlueprintGroups = [
+  ['Corporate', 'thelingolegacy.com, lingo.ai'],
+  ['AI', 'asklingo.ai, api.lingo.ai, docs.lingo.ai, developers.lingo.ai, studio.lingo.ai, status.lingo.ai, auth.lingo.ai, console.lingo.ai'],
+  ['Games', 'thatsmylingo.com, kottonscode.com, legacyzombies.com, spadesismylingo.com, lingocity.com, crazyweasel.com, bulldoglegacybridge.com'],
+  ['Publishing', 'lingopublishing.com, kottonscodebooks.com, sayitagainbooks.com'],
+  ['Commerce', 'shop.thelingolegacy.com, apparel.thelingolegacy.com, store.thelingolegacy.com, marketplace.thelingolegacy.com'],
+  ['Loyalty Lane', 'loyaltylane.com, loyaltylaneapparel.com, loyaltylanecycles.com'],
+  ['Foundation', 'avalonfoundation.org, houseofavalon.org'],
+  ['Developer Platform', 'developer.thelingolegacy.com, api.thelingolegacy.com, docs.thelingolegacy.com, status.thelingolegacy.com, sdk.thelingolegacy.com'],
+  ['Admin', 'admin.thelingolegacy.com, dashboard.thelingolegacy.com, analytics.thelingolegacy.com'],
+  ['Media', 'media.thelingolegacy.com, press.thelingolegacy.com, podcast.thelingolegacy.com, music.thelingolegacy.com, studios.thelingolegacy.com'],
+  ['Careers', 'careers.thelingolegacy.com, jobs.thelingolegacy.com'],
+  ['Support', 'help.thelingolegacy.com, support.thelingolegacy.com, community.thelingolegacy.com, feedback.thelingolegacy.com'],
+];
+
+const businessEmailGroups = [
+  ['Executive', 'ceo, office, executive, founders @thelingolegacy.com'],
+  ['Customer', 'support, help, contact, hello @thelingolegacy.com'],
+  ['Business', 'partnerships, licensing, legal, finance, accounting @thelingolegacy.com'],
+  ['Marketing', 'marketing, media, press, social @thelingolegacy.com'],
+  ['Technology', 'developers, api, security, bugs, status @thelingolegacy.com'],
+  ['Publishing', 'books, authors, editor @thelingolegacy.com'],
+  ['Games', 'games, beta, esports @thelingolegacy.com'],
+  ['Commerce', 'shop, orders, returns @thelingolegacy.com'],
+  ['Foundation', 'donate, volunteers, grants @avalonfoundation.org'],
+];
+
+const hostingArchitecture = [
+  ['Frontend', 'Vercel for Next.js sites, static marketing sites, documentation, and landing pages.'],
+  ['Backend', 'Google Cloud Run or Firebase App Hosting, Firebase Authentication, Cloud Functions, Firestore, and Cloud Storage.'],
+  ['Media', 'Cloud Storage, CDN, image optimization, and video streaming platform.'],
+  ['Databases', 'Firestore for application data, PostgreSQL if relational workloads need it, and BigQuery for analytics.'],
+];
+
+const dnsStructure = [
+  '@ main website',
+  'www main website',
+  'app web app',
+  'api API gateway',
+  'auth authentication',
+  'admin dashboard',
+  'docs documentation',
+  'developer portal',
+  'status status page',
+  'shop store',
+  'support help center',
+  'community community',
+  'blog blog',
+  'careers careers',
+  'media media hub',
+  'podcast podcasts',
+  'cdn static assets',
+  'assets brand assets',
+];
+
+const brandAccounts = ['YouTube', 'TikTok', 'Instagram', 'Facebook', 'LinkedIn', 'X', 'GitHub', 'Discord'];
+
+const operationsServices = [
+  'Help desk',
+  'Incident tracking',
+  'Monitoring',
+  'Backups',
+  'Analytics',
+  'CRM',
+  'Email marketing',
+  'Internal knowledge base',
+  'Password manager',
+  'Source code repositories',
+];
+
+const domainRolloutOrder = [
+  'Core: thelingolegacy.com, lingo.ai, shared authentication, email, and DNS',
+  'Platform: app, api, admin, docs, and developer subdomains',
+  'Products: game, book, apparel, and community sites as each reaches public launch',
+];
+
 export default function ProductionSpecPackagePage() {
   return (
     <div className="page-shell shell">
@@ -586,6 +663,90 @@ export default function ProductionSpecPackagePage() {
           <p>The documentation now spans the major domains expected in a large software, media, education, commerce, and community organization.</p>
         </div>
         <div className="route-map">{productionReadinessArtifacts.map((artifact) => <span key={artifact}>{artifact}</span>)}</div>
+      </section>
+
+      <section className="section-command-hero">
+        <div>
+          <p className="eyebrow">Domain and Communications Blueprint</p>
+          <h2>Recommended names, email routes, DNS, hosting, and rollout order.</h2>
+          <p className="hero-copy">This layer defines the public web presence and communications structure for the ecosystem. Domain names are recommended targets, not confirmed registrations or availability results.</p>
+        </div>
+        <article className="system-card command-card">
+          <p className="eyebrow">Rollout Rule</p>
+          <h2>Core first. Products as they launch.</h2>
+          <p>Start with the main brand, AI brand, shared authentication, email, and DNS, then add platform subdomains and individual product sites as each becomes public-ready.</p>
+        </article>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Domain Blueprint</p>
+          <h2>Corporate, AI, product, platform, and support domains.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {domainBlueprintGroups.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Business Email Structure</p>
+          <h2>Role-based inboxes for operations.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {businessEmailGroups.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Hosting Architecture</p>
+          <h2>Frontend, backend, media, and database placement.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {hostingArchitecture.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">DNS Structure</p>
+          <h2>Standard hostnames for the platform.</h2>
+          <div className="route-map">{dnsStructure.map((record) => <span key={record}>{record}</span>)}</div>
+        </div>
+        <div>
+          <p className="eyebrow">Brand Accounts</p>
+          <h2>Consistent organization-owned handles.</h2>
+          <div className="route-map">{brandAccounts.map((account) => <span key={account}>{account}</span>)}</div>
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Operations Stack</p>
+          <h2>Core internal services.</h2>
+          <div className="route-map">{operationsServices.map((service) => <span key={service}>{service}</span>)}</div>
+        </div>
+        <div>
+          <p className="eyebrow">Recommended Rollout Order</p>
+          <h2>Stable foundation before full network.</h2>
+          <div className="route-map architecture-flow">{domainRolloutOrder.map((step) => <span key={step}>{step}</span>)}</div>
+        </div>
       </section>
 
       <section className="section split-panel align-start">

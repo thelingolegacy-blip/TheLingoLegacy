@@ -500,6 +500,247 @@ Potential initiatives: mixed reality AR/VR experiences, smart TV applications, c
 
 With these additions, the blueprint spans most major domains expected in a large software and media organization. The remaining work is converting high-level capabilities into data models, API specifications, UI/UX designs, security architecture, testing plans, and phased delivery schedules for each product.
 
+
+## Lingo Legacy Domain and Communications Blueprint
+
+These are recommended names and communications structures, not confirmed domain registrations or availability results.
+
+### Corporate
+
+Primary domains:
+
+- thelingolegacy.com
+- lingo.ai
+
+### AI
+
+- asklingo.ai
+- api.lingo.ai
+- docs.lingo.ai
+- developers.lingo.ai
+- studio.lingo.ai
+- status.lingo.ai
+- auth.lingo.ai
+- console.lingo.ai
+
+### Games
+
+- thatsmylingo.com
+- kottonscode.com
+- legacyzombies.com
+- spadesismylingo.com
+- lingocity.com
+- crazyweasel.com
+- bulldoglegacybridge.com
+
+### Publishing
+
+- lingopublishing.com
+- kottonscodebooks.com
+- sayitagainbooks.com
+
+### Commerce
+
+- shop.thelingolegacy.com
+- apparel.thelingolegacy.com
+- store.thelingolegacy.com
+- marketplace.thelingolegacy.com
+
+### Loyalty Lane
+
+- loyaltylane.com
+- loyaltylaneapparel.com
+- loyaltylanecycles.com
+
+### Foundation
+
+- avalonfoundation.org
+- houseofavalon.org
+
+### Developer Platform
+
+- developer.thelingolegacy.com
+- api.thelingolegacy.com
+- docs.thelingolegacy.com
+- status.thelingolegacy.com
+- sdk.thelingolegacy.com
+
+### Admin
+
+- admin.thelingolegacy.com
+- dashboard.thelingolegacy.com
+- analytics.thelingolegacy.com
+
+### Media
+
+- media.thelingolegacy.com
+- press.thelingolegacy.com
+- podcast.thelingolegacy.com
+- music.thelingolegacy.com
+- studios.thelingolegacy.com
+
+### Careers
+
+- careers.thelingolegacy.com
+- jobs.thelingolegacy.com
+
+### Support
+
+- help.thelingolegacy.com
+- support.thelingolegacy.com
+- community.thelingolegacy.com
+- feedback.thelingolegacy.com
+
+### Business email structure
+
+Executive:
+
+- ceo@thelingolegacy.com
+- office@thelingolegacy.com
+- executive@thelingolegacy.com
+- founders@thelingolegacy.com
+
+Customer:
+
+- support@thelingolegacy.com
+- help@thelingolegacy.com
+- contact@thelingolegacy.com
+- hello@thelingolegacy.com
+
+Business:
+
+- partnerships@thelingolegacy.com
+- licensing@thelingolegacy.com
+- legal@thelingolegacy.com
+- finance@thelingolegacy.com
+- accounting@thelingolegacy.com
+
+Marketing:
+
+- marketing@thelingolegacy.com
+- media@thelingolegacy.com
+- press@thelingolegacy.com
+- social@thelingolegacy.com
+
+Technology:
+
+- developers@thelingolegacy.com
+- api@thelingolegacy.com
+- security@thelingolegacy.com
+- bugs@thelingolegacy.com
+- status@thelingolegacy.com
+
+Publishing:
+
+- books@thelingolegacy.com
+- authors@thelingolegacy.com
+- editor@thelingolegacy.com
+
+Games:
+
+- games@thelingolegacy.com
+- beta@thelingolegacy.com
+- esports@thelingolegacy.com
+
+Commerce:
+
+- shop@thelingolegacy.com
+- orders@thelingolegacy.com
+- returns@thelingolegacy.com
+
+Foundation:
+
+- donate@avalonfoundation.org
+- volunteers@avalonfoundation.org
+- grants@avalonfoundation.org
+
+### Hosting architecture
+
+Frontend:
+
+- Vercel for Next.js sites
+- Static marketing sites
+- Documentation
+- Landing pages
+
+Backend:
+
+- Google Cloud Run or Firebase App Hosting
+- Firebase Authentication
+- Cloud Functions
+- Firestore
+- Cloud Storage
+
+Media:
+
+- Cloud Storage
+- CDN
+- Image optimization
+- Video streaming platform
+
+Databases:
+
+- Firestore for application data
+- PostgreSQL if needed for relational workloads
+- BigQuery for analytics
+
+### DNS structure
+
+- `@` -> Main website
+- `www` -> Main website
+- `app` -> Web app
+- `api` -> API gateway
+- `auth` -> Authentication
+- `admin` -> Admin dashboard
+- `docs` -> Documentation
+- `developer` -> Developer portal
+- `status` -> Status page
+- `shop` -> Store
+- `support` -> Help center
+- `community` -> Community
+- `blog` -> Blog
+- `careers` -> Careers
+- `media` -> Media hub
+- `podcast` -> Podcasts
+- `cdn` -> Static assets
+- `assets` -> Brand assets
+
+### Brand accounts
+
+Create organization-owned accounts with consistent naming where available:
+
+- YouTube
+- TikTok
+- Instagram
+- Facebook
+- LinkedIn
+- X
+- GitHub
+- Discord
+
+### Operations
+
+Core services:
+
+- Help desk
+- Incident tracking
+- Monitoring
+- Backups
+- Analytics
+- Customer relationship management
+- Email marketing
+- Internal knowledge base
+- Password manager
+- Source code repositories
+
+### Recommended rollout order
+
+1. Core: thelingolegacy.com, lingo.ai, shared authentication, email, and DNS.
+2. Platform: app, api, admin, docs, and developer subdomains.
+3. Products: individual websites for games, books, apparel, and community initiatives as each reaches a public launch stage.
+
+This approach creates a stable foundation without requiring every product website to be live on day one.
+
 ## Build-ready artifacts
 
 The next implementation pass should specify every database table, API endpoint, UI screen, workflow, deployment pipeline, legal document, and asset needed to build the ecosystem end to end.
