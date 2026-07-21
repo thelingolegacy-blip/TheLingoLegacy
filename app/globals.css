@@ -151,3 +151,9 @@ h2 { font-size: clamp(2rem, 5vw, 4.4rem); line-height: .95; letter-spacing: -.05
 .media-build-shell .section { padding-block: 34px; }
 .media-build-shell .result-card button { width: fit-content; cursor: default; }
 @media (max-width: 900px) { .ask-build-grid { grid-template-columns: 1fr; } }
+.subdomain-grid, .subdomain-mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.subdomain-mini-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.subdomain-card { display: grid; gap: 10px; }
+.subdomain-card h2 { font-size: clamp(1.4rem, 3vw, 2.4rem); word-break: break-word; }
+.subdomain-shell .ops-grid { align-items: stretch; }
+@media (max-width: 900px) { .subdomain-grid, .subdomain-mini-grid { grid-template-columns: 1fr; } }

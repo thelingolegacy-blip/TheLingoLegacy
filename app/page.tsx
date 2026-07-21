@@ -2,6 +2,7 @@ import Link from 'next/link';
 import UniverseMap from '@/components/UniverseMap';
 import Timeline from '@/components/Timeline';
 import { assetRegistry, coreLayers, entityModel, interactionModels, siteSections, waves } from '@/lib/site-os';
+import { subdomainSites } from '@/lib/subdomains';
 
 const worlds = siteSections.map((section) => ({
   title: section.label,
@@ -103,6 +104,23 @@ export default function Home() {
         <div className="pill-row architecture-grid">
           {coreLayers.map((layer) => <span key={layer}>{layer}</span>)}
         </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading">
+          <p className="eyebrow">Subdomain Ecosystem</p>
+          <h2>Eight first-class websites</h2>
+        </div>
+        <div className="subdomain-mini-grid">
+          {subdomainSites.map((site) => (
+            <Link className="system-card subdomain-card" href={`/sites/${site.slug}`} key={site.host}>
+              <p className="eyebrow">{site.accent}</p>
+              <h3>{site.host}</h3>
+              <p>{site.role}</p>
+            </Link>
+          ))}
+        </div>
+        <Link className="btn primary compact" href="/subdomains">Open Subdomain Map</Link>
       </section>
 
       <section className="section shell">

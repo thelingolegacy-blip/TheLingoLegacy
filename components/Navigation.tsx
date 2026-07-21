@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
 const links = [
-  ['Home', '/'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Ask Lingo', '/ask-lingo'], ['Assets', '/assets'], ['Entities', '/entities'], ['Admin', '/admin'],
+  ['Home', '/'], ['Sites', '/subdomains'], ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Infinity', '/infinity'], ['Profile', '/profile'], ['Media', '/media-network'], ['Lingo.ai', '/ask-lingo'], ['Assets', '/assets'], ['Entities', '/entities'], ['Admin', '/admin'],
 ];
 
 const mobile = [
-  ['HQ', '/hq'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Ask', '/ask-lingo'], ['Profile', '/profile'],
+  ['Sites', '/subdomains'], ['Play', '/play'], ['Shop', '/shop'], ['Market', '/market'], ['Lingo', '/ask-lingo'], ['Profile', '/profile'],
 ];
 
 export default function Navigation() {

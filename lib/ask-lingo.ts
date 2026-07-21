@@ -18,13 +18,14 @@ export const askLingoSurfaces = [
 ] as const;
 
 export const askLingoLocalPrompts = [
-  ['HQ', 'What is happening today?', '/hq'],
-  ['Play', 'What should I play next?', '/play'],
-  ['Shop', 'What should I get?', '/shop'],
-  ['Market', 'What is trending?', '/market'],
-  ['Infinity', 'Show me lore about Avalon.', '/infinity'],
-  ['Profile', 'Optimize my XP and rewards.', '/profile'],
-  ['Media Network', 'What should I watch or listen to?', '/media-network'],
+  ['HQ', 'What is happening today?', '/sites/hq'],
+  ['Play', 'What should I play next?', '/sites/play'],
+  ['Shop', 'What should I get?', '/sites/shop'],
+  ['Market', 'What is trending?', '/sites/market'],
+  ['Infinity', 'Show me lore about Avalon.', '/sites/infinity'],
+  ['Profile', 'Optimize my XP and rewards.', '/sites/profile'],
+  ['Media Network', 'What should I watch or listen to?', '/sites/media'],
+  ['Lingo.ai', 'Build, guide, navigate, or explain the OS.', '/sites/lingo'],
 ] as const;
 
 export const askLingoIntents: AskLingoIntent[] = [
@@ -33,7 +34,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Open a module',
     prompt: 'Take me to the right place.',
     targetModule: 'HQ Router',
-    targetRoute: '/hq',
+    targetRoute: '/sites/hq',
     primaryAction: 'Open HQ',
     response: 'I can route you to the right module, page, quest, product, story, reward, or media surface.',
   },
@@ -42,7 +43,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Find a game',
     prompt: 'What should I play?',
     targetModule: 'Play',
-    targetRoute: '/play',
+    targetRoute: '/sites/play',
     primaryAction: 'Open Game Hub',
     response: 'Start in Play. I will surface game worlds, quests, difficulty paths, achievements, and XP actions here.',
   },
@@ -51,7 +52,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Browse starter items',
     prompt: 'I want something from the shop.',
     targetModule: 'Shop + Market',
-    targetRoute: '/shop',
+    targetRoute: '/sites/shop',
     primaryAction: 'Open Shop',
     response: 'I can guide users toward products, bundles, collections, digital goods, and XP-aligned starter kits.',
   },
@@ -60,7 +61,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Explore lore',
     prompt: 'Tell me about Avalon.',
     targetModule: 'Infinity',
-    targetRoute: '/infinity',
+    targetRoute: '/sites/infinity',
     primaryAction: 'Open Lore Codex',
     response: 'Infinity is the lore and worldbuilding layer. I can route lore questions to stories, codex entries, and world assets.',
   },
@@ -69,7 +70,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Show trailers',
     prompt: 'Play something for me.',
     targetModule: 'Media Network',
-    targetRoute: '/media-network',
+    targetRoute: '/sites/media',
     primaryAction: 'Open Media Network',
     response: 'I can recommend series, trailers, sounds, releases, and playlists once the media catalog is connected.',
   },
@@ -78,7 +79,7 @@ export const askLingoIntents: AskLingoIntent[] = [
     label: 'Review my XP',
     prompt: 'How do I level up?',
     targetModule: 'Profile',
-    targetRoute: '/profile',
+    targetRoute: '/sites/profile',
     primaryAction: 'Open Profile',
     response: 'Profile will hold XP, badges, inventory, rewards, settings, and progress signals for deeper personalization.',
   },
@@ -139,7 +140,7 @@ export const askLingoBuildActions = ['Accept preview', 'Tweak copy', 'Expand sec
 export const askLingoBuildOutputs = [
   {
     title: 'Media Network Home',
-    targetRoute: '/media-network',
+    targetRoute: '/sites/media',
     prompt: 'Generate a cinematic Media Network home page with series, trailers, sound, and releases.',
     layout: 'Hero + featured rails + release calendar + sound wall + Ask Lingo prompts',
     sections: [
@@ -152,7 +153,7 @@ export const askLingoBuildOutputs = [
   },
   {
     title: 'Quest Guide',
-    targetRoute: '/play',
+    targetRoute: '/sites/play',
     prompt: 'Create a step-by-step quest guide for new players.',
     layout: 'Guide intro + objectives + XP rewards + Do it for me route actions',
     sections: [
