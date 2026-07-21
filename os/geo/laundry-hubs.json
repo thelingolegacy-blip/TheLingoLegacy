@@ -1,0 +1,32 @@
+{
+  "network": "Cycles Laundry Hub Network",
+  "status": "active",
+  "operatingSystem": "Industrial Noir OS",
+  "grid": "Cumberland + Philadelphia Cycles Grid",
+  "priorityZoneType": "Drop-Eligible Crown Site",
+  "geoBeaconBehavior": [
+    { "radiusMeters": 500, "state": "hub-detected", "message": "Hub Detected: Prep Cycle" },
+    { "radiusMeters": 200, "state": "warm-zone", "message": "Warm Zone: Machines Syncing" },
+    { "radiusMeters": 50, "state": "crown-active", "message": "CROWN ACTIVE — Laundry Drop Available" }
+  ],
+  "hubs": [
+    { "hubId": "cycles-cumberland-bridgeton", "name": "Bridgeton Cycles Hub", "region": "Cumberland County", "role": "anchor site", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-cumberland-vineland", "name": "Vineland Cycles Hub", "region": "Cumberland County", "role": "high-traffic zone", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-cumberland-millville", "name": "Millville Cycles Hub", "region": "Cumberland County", "role": "youth corridor", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-center-city", "name": "Center City Cycles Hub", "region": "Philadelphia", "role": "commuter density", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-broad-street", "name": "Broad Street Cycles Hub", "region": "Philadelphia", "role": "cultural artery", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-west", "name": "West Philly Cycles Hub", "region": "Philadelphia", "role": "university belt", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-north", "name": "North Philly Cycles Hub", "region": "Philadelphia", "role": "community core", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-south", "name": "South Philly Cycles Hub", "region": "Philadelphia", "role": "neighborhood grid", "status": "active", "crownEligible": true },
+    { "hubId": "cycles-philly-fishtown-kensington", "name": "Fishtown/Kensington Cycles Hub", "region": "Philadelphia", "role": "creative strip", "status": "active", "crownEligible": true }
+  ],
+  "operationalLayer": [
+    "Lingo OS machine telemetry",
+    "Bones-to-Coins laundry missions",
+    "TapStitch folding + customization stations",
+    "Vendor micro-booths",
+    "Noir-tone lighting + Crown scent diffuser",
+    "Drop-zone countdown screens"
+  ],
+  "triggerOutputs": ["XP", "Coins", "promo drops"]
+}

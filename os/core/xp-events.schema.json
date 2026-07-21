@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/core/xp-events.schema.json",
+  "title": "Lingo Legacy XP Event",
+  "type": "object",
+  "required": ["eventId", "source", "actorId", "action", "points", "occurredAt", "verificationState"],
+  "properties": {
+    "eventId": { "type": "string", "description": "Unique XP event identifier." },
+    "source": { "type": "string", "description": "System, campaign, or operator that created the XP event." },
+    "actorId": { "type": "string", "description": "Identity receiving or losing XP." },
+    "action": { "type": "string", "description": "Action that produced the XP change." },
+    "points": { "type": "integer", "description": "Positive award or negative reversal amount." },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "verificationState": { "type": "string", "enum": ["pending", "verified", "reversed"] },
+    "reason": { "type": "string" },
+    "relatedEntityId": { "type": "string" }
+  },
+  "additionalProperties": false
+}

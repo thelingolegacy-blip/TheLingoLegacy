@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/funding/stripe-credit-engine.schema.json",
+  "title": "Lingo Legacy Stripe Credit Engine Event",
+  "type": "object",
+  "required": ["eventId", "type", "requestedBy", "amountUsd", "currency", "reason", "status", "createdAt"],
+  "properties": {
+    "eventId": { "type": "string" },
+    "type": { "type": "string", "enum": ["credit_request", "credit_approval", "credit_write", "credit_reversal", "coupon_issue", "webhook_fulfillment"] },
+    "requestedBy": { "type": "string" },
+    "approvedBy": { "type": "string" },
+    "stripeCustomerRef": { "type": "string", "description": "Opaque backend reference only; do not store raw customer IDs in public docs." },
+    "amountUsd": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "enum": ["usd"] },
+    "reason": { "type": "string" },
+    "source": { "type": "string", "enum": ["stripe-capital", "stripe-balance-credit", "external-funding", "coupon", "revenue-recycling", "xp", "bones", "season-bonus"] },
+    "status": { "type": "string", "enum": ["requested", "approved", "rejected", "written", "reversed", "fulfilled"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "auditHash": { "type": "string" }
+  },
+  "additionalProperties": false
+}

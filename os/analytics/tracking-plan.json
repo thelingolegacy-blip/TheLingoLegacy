@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "status": "activation-ready",
+  "tools": ["Vercel Web Analytics", "Google Analytics", "Meta Pixel", "TikTok Pixel", "YouTube analytics", "Stripe revenue dashboard", "Game analytics"],
+  "events": [
+    { "event": "page_view", "surfaces": ["all"] },
+    { "event": "play_lingo_ai", "surfaces": ["/site/lingoai/"] },
+    { "event": "share_score", "surfaces": ["/site/lingoai/"] },
+    { "event": "subscription_click", "surfaces": ["/site/monetization/", "/site/payments/"] },
+    { "event": "donate_or_support_click", "surfaces": ["/site/avalon/"] },
+    { "event": "geo_drop_interest", "surfaces": ["/site/geo/", "/site/cycles/"] }
+  ]
+}

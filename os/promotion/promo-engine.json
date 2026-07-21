@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "status": "activation-ready",
+  "cadence": {
+    "daily": ["short-form gameplay clip", "entity story post", "CTA repost"],
+    "weekly": ["campaign recap", "community highlight", "XP challenge", "partner spotlight"],
+    "monthly": ["OS rollout report", "best plays compilation", "drop calendar"]
+  },
+  "loops": ["cross-entity amplification", "XP reward loop", "nonprofit tie-in", "game clips and reels", "landing page funnels"],
+  "paidAds": ["awareness", "play-now", "support-Avalon", "Cycles local drop", "merch drop"]
+}

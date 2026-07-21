@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "campaign": "That's My Lingo 30-Day Launch",
+  "goal": "Drive awareness, browser plays, account follows, community screenshots, and ecosystem adoption.",
+  "weeks": [
+    {
+      "week": 1,
+      "theme": "Awareness",
+      "focus": "Introduce Lingo Legacy OS, Lingo.ai, Avalon, and Peaches Keys.",
+      "posts": [
+        { "day": 1, "platforms": ["Instagram", "TikTok", "YouTube Shorts"], "entity": "lingo-ai", "format": "short video", "cta": "Play the prototype in browser" },
+        { "day": 2, "platforms": ["X/Twitter", "Threads", "Bluesky"], "entity": "lingo-legacy-llc", "format": "launch thread", "cta": "Bookmark the OS hub" },
+        { "day": 3, "platforms": ["Instagram", "Facebook Page"], "entity": "iconic-house-of-avalon", "format": "mission carousel", "cta": "Meet Avalon" },
+        { "day": 4, "platforms": ["TikTok", "Instagram"], "entity": "peaches-keys", "format": "character spotlight", "cta": "Follow for drops" },
+        { "day": 5, "platforms": ["YouTube", "LinkedIn"], "entity": "lingo-legacy-llc", "format": "ecosystem explainer", "cta": "Explore the OS" }
+      ]
+    },
+    {
+      "week": 2,
+      "theme": "Play & Share",
+      "focus": "Push Lingo.ai browser plays, XP screenshots, and social tags.",
+      "posts": [
+        { "day": 8, "platforms": ["TikTok", "Instagram Reels"], "entity": "lingo-ai", "format": "score challenge", "cta": "Screenshot your score" },
+        { "day": 10, "platforms": ["X/Twitter", "Threads"], "entity": "lingo-ai", "format": "challenge prompt", "cta": "Tag @LingoDotAI" },
+        { "day": 12, "platforms": ["YouTube Shorts", "Instagram"], "entity": "peaches-keys", "format": "reaction clip", "cta": "Unlock the next play" }
+      ]
+    },
+    {
+      "week": 3,
+      "theme": "Deep Dive",
+      "focus": "Explain the OS, XP, wallet, Avalon support layer, and Cycles hubs.",
+      "posts": [
+        { "day": 15, "platforms": ["YouTube", "LinkedIn"], "entity": "lingo-legacy-llc", "format": "behind the OS", "cta": "Partner with us" },
+        { "day": 17, "platforms": ["Instagram", "Facebook Page"], "entity": "iconic-house-of-avalon", "format": "nonprofit tie-in", "cta": "Volunteer or support" },
+        { "day": 19, "platforms": ["TikTok", "Instagram"], "entity": "lingo-ai", "format": "XP/rewards explainer", "cta": "Play and earn XP" }
+      ]
+    },
+    {
+      "week": 4,
+      "theme": "Consolidation",
+      "focus": "Compile best plays, community highlights, and OS rollout CTA.",
+      "posts": [
+        { "day": 22, "platforms": ["YouTube", "Instagram"], "entity": "lingo-legacy-llc", "format": "community compilation", "cta": "Follow all entities" },
+        { "day": 25, "platforms": ["TikTok", "Instagram Reels"], "entity": "lingo-ai", "format": "best score montage", "cta": "Play before the next drop" },
+        { "day": 28, "platforms": ["X/Twitter", "LinkedIn", "Threads"], "entity": "lingo-legacy-llc", "format": "rollout recap", "cta": "Stay for the OS rollout" },
+        { "day": 30, "platforms": ["All"], "entity": "all", "format": "final CTA", "cta": "Bookmark the hub and follow the network" }
+      ]
+    }
+  ]
+}

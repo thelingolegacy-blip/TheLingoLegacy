@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "status": "backend-scaffold-only",
+  "services": [
+    {
+      "id": "credit-request-service",
+      "purpose": "Accept operator/admin/system credit requests and validate shape.",
+      "requires": ["authenticated operator", "requested amount", "reason", "credit type"]
+    },
+    {
+      "id": "credit-approval-service",
+      "purpose": "Apply role, limit, multiplier, and approval policy before credit write.",
+      "requires": ["role validation", "limit check", "audit entry"]
+    },
+    {
+      "id": "stripe-credit-write-service",
+      "purpose": "Write approved credit to Stripe customer balance from secure backend only.",
+      "requires": ["Stripe secret key in environment", "verified Stripe customer ID", "approved credit event"]
+    },
+    {
+      "id": "immutable-credit-log-service",
+      "purpose": "Record every request, approval, write, reversal, and fulfillment event.",
+      "requires": ["event ID", "actor", "timestamp", "audit hash"]
+    },
+    {
+      "id": "webhook-fulfillment-service",
+      "purpose": "React to Stripe billing events and adjust OS access, XP, crowns, or perks.",
+      "requires": ["verified Stripe signature", "idempotency key", "billing state update"]
+    }
+  ]
+}

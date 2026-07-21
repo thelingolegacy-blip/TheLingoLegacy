@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "tiers": {
+    "tier1": ["Instagram", "TikTok", "YouTube", "X/Twitter"],
+    "tier2": ["Facebook Page", "LinkedIn Page", "Threads", "Bluesky"]
+  },
+  "entities": [
+    {
+      "entityId": "lingo-legacy-llc",
+      "handleRoot": "@LingoLegacy",
+      "bio": "Industrial Noir OS for culture, play, commerce, and legacy. Start at the hub.",
+      "mainLink": "https://thelingolegacy.com",
+      "pinnedPost": "Start here: enter the Lingo Legacy OS hub, explore the ecosystem, and follow the rollout."
+    },
+    {
+      "entityId": "lingo-ai",
+      "handleRoot": "@LingoDotAI",
+      "bio": "That’s My Lingo. Play, earn XP, unlock drops.",
+      "mainLink": "https://thelingolegacy.com/site/lingoai/",
+      "pinnedPost": "Play Lingo.ai in your browser, screenshot your score, and tag us."
+    },
+    {
+      "entityId": "iconic-house-of-avalon",
+      "handleRoot": "@HouseOfAvalon",
+      "bio": "Culture in motion. Legacy in formation. Programs, houses, archives, and events.",
+      "mainLink": "https://thelingolegacy.com/site/avalon/",
+      "pinnedPost": "Meet Avalon: cultural archives, community programs, houses, events, and ways to support."
+    },
+    {
+      "entityId": "peaches-keys",
+      "handleRoot": "@PeachesKeys",
+      "bio": "Unlock the next play. Spotlights, drops, and creator moments from the Lingo Legacy universe.",
+      "mainLink": "https://thelingolegacy.com/site/creators/",
+      "pinnedPost": "Peaches Keys is live in the Lingo Legacy creator ecosystem. Follow for drops and spotlights."
+    }
+  ],
+  "accountSetupChecklist": [
+    "Use consistent handle root where available.",
+    "Apply profile and banner rules from brand-spine.json.",
+    "Add main hub link or entity page link.",
+    "Publish pinned Start Here post.",
+    "Cross-link entity accounts from the OS hub."
+  ]
+}

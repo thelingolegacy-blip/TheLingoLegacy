@@ -1,0 +1,48 @@
+:root {
+  color-scheme: dark;
+  --bg: #06090d;
+  --panel: rgba(12, 18, 25, 0.9);
+  --panel-strong: rgba(19, 29, 40, 0.94);
+  --text: #f2efe6;
+  --muted: #a7b0b8;
+  --crown: #d7b56d;
+  --cyan: #56d8ff;
+  --ember: #ff6b35;
+  --border: rgba(215, 181, 109, 0.24);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(6,9,13,.78), rgba(6,9,13,.92)),
+    url('https://maps.googleapis.com/maps/api/staticmap?center=Philadelphia,PA&zoom=8&size=1200x800&maptype=roadmap') center/cover fixed,
+    var(--bg);
+  line-height: 1.6;
+}
+a { color: var(--cyan); }
+.wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+.nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); background: rgba(6,9,13,.82); border-bottom: 1px solid var(--border); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; }
+.brand { color: var(--crown); font-weight: 900; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+.nav-links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.nav-links a { color: var(--text); text-decoration: none; font-size: .92rem; opacity: .86; }
+.hero { padding: 76px 0 42px; }
+.eyebrow { color: var(--crown); text-transform: uppercase; letter-spacing: .16em; font-weight: 800; }
+h1 { font-size: clamp(2.5rem, 7vw, 6rem); line-height: .94; margin: 14px 0; }
+.lead { color: var(--muted); max-width: 760px; font-size: 1.15rem; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 34px 0; }
+.card { background: linear-gradient(180deg, var(--panel-strong), var(--panel)); border: 1px solid var(--border); border-radius: 22px; padding: 22px; min-height: 100%; box-shadow: 0 22px 70px rgba(0,0,0,.22); }
+.card h2, .card h3 { margin-top: 0; }
+.card strong { color: var(--crown); }
+.card ul { padding-left: 18px; color: var(--muted); }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.btn { border: 1px solid var(--border); border-radius: 999px; padding: 11px 16px; background: rgba(215,181,109,.1); color: var(--text); text-decoration: none; font-weight: 800; }
+.btn.primary { background: var(--crown); color: #1b1307; }
+.panel-row { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; margin: 28px 0 56px; }
+.ai-dock { border-left: 4px solid var(--cyan); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+.seasons span { display: inline-block; border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; margin: 4px; color: var(--muted); }
+footer { border-top: 1px solid var(--border); color: var(--muted); padding: 28px 0 40px; margin-top: 40px; }
+@media (max-width: 860px) { .grid, .panel-row { grid-template-columns: 1fr; } .nav-inner { align-items: flex-start; flex-direction: column; } }

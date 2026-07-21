@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "system": "Lingo Legacy OS",
+  "identityRules": [
+    "Preserve each entity identity while cross-linking through the OS hub.",
+    "Use Industrial Noir as the global system aesthetic.",
+    "Keep profile image, banner, tone, and CTA consistent per entity."
+  ],
+  "entities": [
+    {
+      "id": "lingo-legacy-llc",
+      "name": "Lingo Legacy LLC",
+      "mission": "Build the Industrial Noir ecosystem connecting play, culture, commerce, and community.",
+      "tone": "strategic, cinematic, founder-led",
+      "colors": ["crown-gold", "noir-black", "electric-cyan"],
+      "typography": "bold condensed headers, clean sans body",
+      "tagline": "The OS for culture, play, and legacy.",
+      "pitch": "Lingo Legacy LLC powers the ecosystem behind Lingo.ai, Cycles, commerce, media, and community activations.",
+      "profileRule": "Crown mark on dark Industrial Noir field.",
+      "bannerRule": "Map-grid texture with gold crown and active entity lanes."
+    },
+    {
+      "id": "lingo-ai",
+      "name": "Lingo.ai",
+      "mission": "Turn language, gameplay, and AI-guided missions into XP-powered play.",
+      "tone": "sharp, playful, challenge-driven",
+      "colors": ["electric-cyan", "crown-gold", "deep-purple"],
+      "typography": "game UI display headers, readable sans body",
+      "tagline": "That’s My Lingo.",
+      "pitch": "Lingo.ai is the browser game and AI app where players complete language missions, earn XP, and unlock drops.",
+      "profileRule": "Lingo.ai glyph or character avatar with neon edge glow.",
+      "bannerRule": "Gameplay frame, XP bar, and Crown drop CTA."
+    },
+    {
+      "id": "iconic-house-of-avalon",
+      "name": "The Iconic House of Avalon, Inc.",
+      "mission": "Advance cultural preservation, community programs, houses, events, and intergenerational legacy.",
+      "tone": "cultural, elegant, archival, community-rooted",
+      "colors": ["crown-gold", "ivory", "noir-black"],
+      "typography": "formal serif accents, clean sans body",
+      "tagline": "Culture in motion. Legacy in formation.",
+      "pitch": "Avalon is the nonprofit cultural house for archives, programs, events, and community uplift.",
+      "profileRule": "Avalon crest or house mark on ivory/noir background.",
+      "bannerRule": "Archive, ballroom, and community imagery with understated Crown treatment."
+    },
+    {
+      "id": "peaches-keys",
+      "name": "Peaches Keys",
+      "mission": "Represent character-led storytelling, creator spotlights, and community hooks.",
+      "tone": "bright, charismatic, witty, culture-forward",
+      "colors": ["peach", "crown-gold", "noir-black"],
+      "typography": "expressive display accents, clean sans body",
+      "tagline": "Unlock the next play.",
+      "pitch": "Peaches Keys anchors spotlight content, character drops, and creator-led activation moments.",
+      "profileRule": "Character-forward portrait or icon with peach/crown accents.",
+      "bannerRule": "Spotlight frame with quote, drop cue, and Lingo.ai cross-link."
+    }
+  ]
+}

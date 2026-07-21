@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/ecosystem/assets.schema.json",
+  "title": "Lingo Legacy Global Asset Record",
+  "type": "object",
+  "required": ["assetId", "title", "type", "ownerId", "status", "usageRights", "createdAt"],
+  "properties": {
+    "assetId": { "type": "string" },
+    "title": { "type": "string" },
+    "type": { "type": "string", "enum": ["brand", "music", "merch", "image", "video", "document", "campaign", "platform"] },
+    "ownerId": { "type": "string" },
+    "status": { "type": "string", "enum": ["draft", "review", "approved", "published", "retired"] },
+    "usageRights": { "type": "string" },
+    "publicUrl": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "relatedNodeId": { "type": "string" }
+  },
+  "additionalProperties": false
+}

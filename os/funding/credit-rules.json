@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "status": "scaffold-only-secure-backend-required",
+  "ownAccountCreditRules": [
+    {
+      "id": "cover-os-builder-first-month",
+      "description": "Apply internal credit to cover the first month of OS Builder for the operator account.",
+      "amountUsd": 29.00,
+      "requires": ["real Stripe customer ID", "operator approval", "secure backend or Stripe Dashboard action"],
+      "forbiddenInRepo": ["customer ID", "secret key", "raw API payload with private identifiers"]
+    },
+    {
+      "id": "cover-promo-runway",
+      "description": "Use credit or coupons to offset launch promotional access.",
+      "amountUsd": null,
+      "requires": ["defined promo budget", "expiration date", "redemption cap"],
+      "forbiddenInRepo": ["bank data", "secret key", "private customer identifiers"]
+    }
+  ],
+  "customerCreditRules": [
+    {
+      "id": "first-month-free",
+      "method": "coupon",
+      "discount": "100% first month",
+      "bestFor": "launch onboarding without cash outlay"
+    },
+    {
+      "id": "creator-onboarding-credit",
+      "method": "promotion-code",
+      "discount": "operator-defined",
+      "bestFor": "creator and partner acquisition"
+    },
+    {
+      "id": "supporter-credit",
+      "method": "customer-balance-credit",
+      "discount": "operator-defined",
+      "bestFor": "manual supporter or grant-funded credits"
+    }
+  ],
+  "approvalPolicy": {
+    "requiresHumanApproval": ["issuing real customer balance credits", "using Stripe Capital", "changing prices", "activating paid ads", "grant-funded credit allocation"],
+    "canBeDocumentedAutomatically": ["coupon rules", "promotion structure", "webhook mapping", "credit policy scaffolds"]
+  }
+}

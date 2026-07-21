@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/experience/ui-shell.schema.json",
+  "title": "Lingo Legacy UI Shell Region",
+  "type": "object",
+  "required": ["regionId", "name", "purpose", "priority", "accessibility"],
+  "properties": {
+    "regionId": { "type": "string" },
+    "name": { "type": "string" },
+    "purpose": { "type": "string" },
+    "priority": { "type": "string", "enum": ["primary", "secondary", "support"] },
+    "accessibility": {
+      "type": "object",
+      "required": ["landmark", "labelRequired"],
+      "properties": {
+        "landmark": { "type": "string" },
+        "labelRequired": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "routes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

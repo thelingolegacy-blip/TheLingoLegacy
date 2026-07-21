@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "status": "ready-for-stripe-dashboard-creation",
+  "architecture": "one product, multiple prices, one public Payment Link per tier or purchase group",
+  "domain": "thelingolegacy.com",
+  "products": [
+    {
+      "id": "prod_lingo_ai_premium",
+      "name": "Lingo.ai Premium",
+      "type": "service",
+      "mode": "subscription",
+      "prices": [
+        { "lookupKey": "lingo_ai_premium_monthly", "amountUsd": 9.99, "interval": "month" },
+        { "lookupKey": "lingo_ai_premium_annual", "amountUsd": 99.00, "interval": "year" }
+      ],
+      "paymentLink": {
+        "placeholderUrl": "STRIPE_PAYMENT_LINK_LINGO_AI_PREMIUM",
+        "collect": ["name", "email"],
+        "allowPromotionCodes": true,
+        "redirectUrl": "https://thelingolegacy.com/site/lingoai/?activated=lingo-ai-premium",
+        "enabledMethods": ["Apple Pay", "Google Pay", "Link", "Cards"]
+      }
+    },
+    {
+      "id": "prod_lingo_os_builder",
+      "name": "Lingo Legacy OS Builder",
+      "type": "service",
+      "mode": "subscription",
+      "prices": [
+        { "lookupKey": "lingo_os_builder_monthly", "amountUsd": 29.00, "interval": "month" },
+        { "lookupKey": "lingo_os_builder_annual", "amountUsd": 290.00, "interval": "year" }
+      ],
+      "paymentLink": {
+        "placeholderUrl": "STRIPE_PAYMENT_LINK_LINGO_OS_BUILDER",
+        "collect": ["name", "email"],
+        "allowPromotionCodes": true,
+        "redirectUrl": "https://thelingolegacy.com/site/os/?activated=os-builder",
+        "enabledMethods": ["Apple Pay", "Google Pay", "Link", "Cards"]
+      }
+    },
+    {
+      "id": "prod_avalon_supporter",
+      "name": "Avalon Supporter Membership",
+      "type": "service",
+      "mode": "subscription",
+      "prices": [
+        { "lookupKey": "avalon_supporter_monthly", "amountUsd": 5.00, "interval": "month" },
+        { "lookupKey": "avalon_supporter_annual", "amountUsd": 50.00, "interval": "year" }
+      ],
+      "paymentLink": {
+        "placeholderUrl": "STRIPE_PAYMENT_LINK_AVALON_SUPPORTER",
+        "collect": ["name", "email"],
+        "allowPromotionCodes": true,
+        "allowDonationTopUps": true,
+        "redirectUrl": "https://thelingolegacy.com/site/avalon/?activated=avalon-supporter",
+        "enabledMethods": ["Apple Pay", "Google Pay", "Link", "Cards"]
+      }
+    },
+    {
+      "id": "prod_creator_partner_tier",
+      "name": "Creator / Partner Tier",
+      "type": "service",
+      "mode": "subscription",
+      "prices": [
+        { "lookupKey": "creator_partner_monthly", "amountUsd": 14.99, "interval": "month" },
+        { "lookupKey": "creator_partner_annual", "amountUsd": 149.00, "interval": "year" }
+      ],
+      "paymentLink": {
+        "placeholderUrl": "STRIPE_PAYMENT_LINK_CREATOR_PARTNER",
+        "collect": ["name", "email", "business_info"],
+        "allowPromotionCodes": true,
+        "redirectUrl": "https://thelingolegacy.com/site/creators/?activated=creator-partner",
+        "enabledMethods": ["Apple Pay", "Google Pay", "Link", "Cards"]
+      }
+    },
+    {
+      "id": "prod_xp_booster_crown_pack",
+      "name": "XP Booster / Crown Pack",
+      "type": "service",
+      "mode": "payment",
+      "prices": [
+        { "lookupKey": "xp_booster_small", "amountUsd": 4.99 },
+        { "lookupKey": "xp_booster_medium", "amountUsd": 9.99 },
+        { "lookupKey": "xp_booster_large", "amountUsd": 19.99 },
+        { "lookupKey": "crown_pack_premium", "amountUsd": 49.99 }
+      ],
+      "paymentLink": {
+        "placeholderUrl": "STRIPE_PAYMENT_LINK_XP_BOOSTER_CROWN_PACK",
+        "collect": ["name", "email"],
+        "allowQuantity": true,
+        "allowPromotionCodes": true,
+        "redirectUrl": "https://thelingolegacy.com/site/lingoai/?activated=xp-boosted",
+        "enabledMethods": ["Apple Pay", "Google Pay", "Link", "Cards"]
+      }
+    }
+  ],
+  "platformConfiguration": {
+    "applePayDomain": "thelingolegacy.com",
+    "googlePay": "enable in Stripe Payment Methods",
+    "stripeTax": "optional but recommended before global paid launch",
+    "customerPortal": "enable for subscription self-service",
+    "webhookEvents": [
+      "checkout.session.completed",
+      "customer.subscription.updated",
+      "invoice.payment_failed",
+      "customer.subscription.deleted"
+    ]
+  },
+  "secretHandling": [
+    "Do not commit Stripe secret keys.",
+    "Use Payment Links first for static pages.",
+    "Use webhooks only when fulfillment backend exists.",
+    "Only public Payment Link URLs should be added to the repository."
+  ]
+}

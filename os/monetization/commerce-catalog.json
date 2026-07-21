@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "status": "activation-ready",
+  "items": [
+    { "id": "xp-booster", "name": "XP Booster", "entity": "Lingo.ai", "type": "digital-good", "paymentMode": "one-time" },
+    { "id": "crown-cosmetic-pack", "name": "Crown Cosmetic Pack", "entity": "Lingo.ai", "type": "cosmetic-pack", "paymentMode": "one-time" },
+    { "id": "avalon-merch", "name": "Avalon Merch", "entity": "The Iconic House of Avalon, Inc.", "type": "merch", "paymentMode": "one-time" },
+    { "id": "event-ticket", "name": "Event Ticket", "entity": "Avalon / Cycles", "type": "ticket", "paymentMode": "one-time" },
+    { "id": "partner-marketplace-item", "name": "Partner Marketplace Item", "entity": "Lingo Legacy OS", "type": "marketplace", "paymentMode": "one-time" }
+  ]
+}

@@ -1,0 +1,98 @@
+# Auto mode — Entirety execution map
+
+Auto mode completes Lingo Legacy OS by keeping every wave, sprint, phase, deploy, and activation moving under the OS execution doctrine.
+
+## Operating command
+
+Complete all remaining waves, sprints, phases, deploys, and activations for the entirety on auto mode.
+
+## Auto mode rules
+
+- Continue the approved build plan without repeated instructions.
+- Intervene only where a file, scaffold, validation, deploy, or activation is missing.
+- Keep documentation, machine-readable maps, deployment notes, and pull request summaries aligned.
+- Validate static pages, markdown links, JSON maps, activation markers, and deployment readiness before promotion.
+- Stop only for missing access, destructive actions, or production-affecting uncertainty that cannot be verified.
+
+## Execution surfaces
+
+- Waves: [`os/auto-mode/entirety.json`](../os/auto-mode/entirety.json).
+- Sprints: [`sprint-activation-map.md`](sprint-activation-map.md).
+- Deploys: [`deploy-activation-runbook.md`](deploy-activation-runbook.md).
+- Stability: [`stability-operation-sync.md`](stability-operation-sync.md).
+- Doctrine: [`os-execution-doctrine.md`](os-execution-doctrine.md).
+
+## Entirety loop
+
+1. Load the active branch and Vercel project context.
+2. Pick the next incomplete wave, sprint, phase, deploy, or activation.
+3. Apply the smallest useful scaffold or implementation package.
+4. Validate files, links, JSON, markers, and deployment readiness.
+5. Update the pull request.
+6. Promote only a verified Vercel `READY` deployment.
+7. Continue to the next item until the map is complete.
+
+## Completion criteria
+
+- Full wave map exists.
+- Sprint activation map exists.
+- Deploy activation runbook exists.
+- Machine-readable auto-mode map exists.
+- README, doctrine, activation, stability, and deploy docs link to auto mode.
+
+## Active expansion layers
+
+- [`cycles-laundry-hub-network.md`](cycles-laundry-hub-network.md) — Cumberland + Philadelphia Laundry Hub geo-beacon expansion.
+
+## Website build layer
+
+- [`os-web-stack-v1.md`](os-web-stack-v1.md) — deployed Industrial Noir website architecture.
+
+## Social launch layer
+
+- [`social-launch-calendar.md`](social-launch-calendar.md) — 30-day campaign calendar and pinned post rollout.
+
+## Monetization activation layer
+
+- [`monetization-activation.md`](monetization-activation.md) — subscriptions, payments, analytics, commerce, and promotion engine activation.
+
+## Stripe deployment package
+
+- [`stripe-payment-link-deployment-package.md`](stripe-payment-link-deployment-package.md) — product, price, Payment Link, webhook, and deployment checklist.
+
+## Credit activation
+
+- [`credit-activation-runbook.md`](credit-activation-runbook.md)
+- [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)
+
+## Credit rules and webhooks
+
+- [`credit-rules-and-webhooks.md`](credit-rules-and-webhooks.md)
+- [`../os/funding/credit-rules.json`](../os/funding/credit-rules.json)
+- [`../os/funding/stripe-credit-webhooks.json`](../os/funding/stripe-credit-webhooks.json)
+
+## Stripe Credit Engine
+
+- [`stripe-credit-engine.md`](stripe-credit-engine.md)
+- [`../os/funding/stripe-credit-engine.schema.json`](../os/funding/stripe-credit-engine.schema.json)
+- [`../os/funding/credit-engine-services.json`](../os/funding/credit-engine-services.json)
+
+## External platform connections
+
+- [`external-platform-connections.md`](external-platform-connections.md)
+- [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)
+
+## Lingo.ai activation
+
+- [`lingo-ai-activation.md`](lingo-ai-activation.md)
+- [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)
+
+## Lingo.ai distribution kit
+
+- [`lingo-ai-distribution-kit.md`](lingo-ai-distribution-kit.md)
+- [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)
+
+## Lingo.ai next five go-live tasks
+
+- [`lingo-ai-next-five-go-live.md`](lingo-ai-next-five-go-live.md)
+- [`../os/games/lingo-ai-next-five.json`](../os/games/lingo-ai-next-five.json)

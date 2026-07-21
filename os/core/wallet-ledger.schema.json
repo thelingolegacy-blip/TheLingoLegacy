@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://the-lingo-legacy.vercel.app/os/core/wallet-ledger.schema.json",
+  "title": "Lingo Legacy Wallet Ledger Entry",
+  "type": "object",
+  "required": ["entryId", "walletId", "type", "amount", "currency", "source", "reason", "occurredAt"],
+  "properties": {
+    "entryId": { "type": "string" },
+    "walletId": { "type": "string" },
+    "type": { "type": "string", "enum": ["credit", "debit", "hold", "release", "reversal", "settlement"] },
+    "amount": { "type": "number" },
+    "currency": { "type": "string" },
+    "source": { "type": "string" },
+    "reason": { "type": "string" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "relatedEntryId": { "type": "string" },
+    "settlementNote": { "type": "string" }
+  },
+  "additionalProperties": false
+}
