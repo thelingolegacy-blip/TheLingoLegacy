@@ -26,6 +26,15 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@lingo/ui/*": [
+        "./packages/ui/src/*"
+      ],
+      "@lingo/auth": [
+        "./packages/auth/src/index.ts"
+      ],
+      "@lingo/entities": [
+        "./packages/entities/src/index.ts"
       ]
     }
   },

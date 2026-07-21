@@ -1,0 +1,18 @@
+export type LingoEntityCategory =
+  | 'Parent Company'
+  | 'Game'
+  | 'Book Series'
+  | 'Apparel Brand'
+  | 'Community Program'
+  | 'Media Division'
+  | 'Music Division'
+  | 'Business Service'
+  | 'Digital Product'
+  | 'Application'
+  | 'Website'
+  | 'Form'
+  | 'Database Module'
+  | 'API Module'
+  | 'Universe'
+  | 'Character'
+  | 'Creator Brand';
