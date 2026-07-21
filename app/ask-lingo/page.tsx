@@ -1,9 +1,5 @@
-import SectionScaffold from '@/components/SectionScaffold';
-import { getSection } from '@/lib/site-os';
-
-const section = getSection('ask-lingo');
+import AskLingoExperience from '@/components/AskLingoExperience';
 
 export default function Page() {
-  if (!section) return null;
-  return <SectionScaffold section={section} />;
+  return <AskLingoExperience />;
 }
