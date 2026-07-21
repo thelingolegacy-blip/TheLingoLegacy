@@ -515,6 +515,51 @@
       color: #d9d0c0;
     }
 
+    .ai-grid { grid-template-columns: 1fr 1fr; }
+
+    .ai-card {
+      min-height: 390px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.82)),
+        radial-gradient(circle at 75% 16%, rgba(123,183,255,.2), transparent 16rem),
+        radial-gradient(circle at 20% 18%, rgba(62,208,132,.2), transparent 16rem),
+        linear-gradient(135deg, #060606, #101018 52%, #07110b);
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .rule-card {
+      padding: 1rem;
+      border: 1px solid rgba(123,183,255,.2);
+      border-radius: 22px;
+      background: rgba(123,183,255,.055);
+      color: #d9d0c0;
+    }
+
+    .rule-card b { color: var(--blue); display: block; margin-bottom: .45rem; }
+
+    .prompt-stack {
+      display: grid;
+      gap: .72rem;
+      margin-top: 1rem;
+    }
+
+    .prompt-chip {
+      padding: .9rem 1rem;
+      border: 1px solid rgba(214,169,74,.2);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      color: var(--gold-soft);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
     .release-grid { grid-template-columns: 1.25fr .75fr; }
 
     .release-card {
@@ -744,7 +789,7 @@
     @media (max-width: 980px) {
       .nav-links { display: none; }
       .hero::before { background: linear-gradient(180deg, rgba(7,7,7,.9), rgba(7,7,7,.55)), radial-gradient(circle at 70% 30%, rgba(214,169,74,.16), transparent 20rem); }
-      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip, .release-grid, .share-kit { grid-template-columns: 1fr; }
+      .status-strip, .card-grid, .merch-grid, .timeline, .feature-grid, .monetize-grid, .media-grid, .distribution-grid, .social-grid, .games-grid, .reward-strip, .release-grid, .share-kit, .ai-grid, .rule-grid { grid-template-columns: 1fr; }
       .section-header { align-items: start; flex-direction: column; }
     }
 
@@ -766,6 +811,7 @@
         <a href="#monetize">Monetize</a>
         <a href="#media">Media</a>
         <a href="#games">Games</a>
+        <a href="#ai-ops">AI Ops</a>
         <a href="#release">Release</a>
         <a href="#distribution">Where</a>
         <a href="#events">Events</a>
@@ -778,7 +824,7 @@
       <div class="hero-content">
         <span class="eyebrow">That's My Lingo Is Live</span>
         <h1><span class="gold-text">Full</span> Activation</h1>
-        <p class="hero-copy">All lanes are turned on for world release: monetized merch drops, VIP access, bonus games, animated visuals, sound-reactive atmosphere, social sharing, platform distribution, and premium member conversion.</p>
+        <p class="hero-copy">All lanes are turned on for world release: AI-assisted game flow, monetized merch drops, VIP access, bonus games, premium assets, high-quality copy, soft rollout controls, social sharing, platform distribution, and member conversion.</p>
         <div class="hero-actions">
           <a class="cta" href="#release">Release to World</a>
           <a class="cta ghost" href="#games">Play Bonus Games</a>
@@ -789,10 +835,10 @@
     <div class="activation-marquee" aria-label="Activation ticker"><span>Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets • Monetized merch • VIP access • Music drops • Visual engine • Sound mode • Animated storefront • Event funnel • Brand assets</span></div>
 
     <section class="status-strip" aria-label="Live status highlights">
-      <div class="metric"><strong>Ready</strong><span>World release</span></div>
-      <div class="metric"><strong>6</strong><span>Revenue lanes</span></div>
-      <div class="metric"><strong>5</strong><span>Bonus games</span></div>
-      <div class="metric"><strong>Share</strong><span>Social kit live</span></div>
+      <div class="metric"><strong>AI</strong><span>Game ops ready</span></div>
+      <div class="metric"><strong>Soft</strong><span>Rollout rules</span></div>
+      <div class="metric"><strong>Full</strong><span>Launch path</span></div>
+      <div class="metric"><strong>HQ</strong><span>Content standard</span></div>
     </section>
 
     <main>
@@ -1003,6 +1049,45 @@
         </article>
       </section>
 
+      <section id="ai-ops" class="section">
+        <div class="section-header">
+          <div>
+            <span class="tag">AI Game Flow + Asset Ops</span>
+            <h2>AI helps shape the rules, content, assets, and rollout.</h2>
+            <p class="lede">That’s My Lingo now includes an AI-ready command layer for game progression, reward balance, prompt-guided asset creation, content quality, moderation language, and launch pacing.</p>
+          </div>
+          <button class="cta" data-open-modal>Request AI Setup</button>
+        </div>
+        <div class="grid ai-grid">
+          <article class="glass-card ai-card">
+            <span class="tag">AI Flow Assistant</span>
+            <h3>Guide every play session.</h3>
+            <p>Use AI to suggest daily challenges, explain rules in plain language, generate trivia prompts, tune reward difficulty, and keep game loops fresh without rewriting the landing experience.</p>
+            <div class="prompt-stack">
+              <span class="prompt-chip">Generate 10 premium lyric trivia questions</span>
+              <span class="prompt-chip">Create a VIP reward ladder</span>
+              <span class="prompt-chip">Rewrite rules at a 7th-grade reading level</span>
+            </div>
+          </article>
+          <article class="glass-card">
+            <span class="tag">Asset + Content Studio</span>
+            <h3>High-quality words, visuals, and drops.</h3>
+            <p>AI can help draft launch copy, asset briefs, social captions, reward descriptions, product names, teaser scripts, and QA checklists while the brand voice stays premium, clear, and release-safe.</p>
+            <div class="asset-list">
+              <span><b>Words</b><em>Rules, CTAs, social captions, app copy</em></span>
+              <span><b>Visuals</b><em>Asset briefs, promo themes, drop concepts</em></span>
+              <span><b>Game Flow</b><em>Challenges, rewards, unlock pacing</em></span>
+              <span><b>Quality</b><em>Brand voice, safety, clarity checks</em></span>
+            </div>
+          </article>
+        </div>
+        <div class="rule-grid" aria-label="AI rollout rules">
+          <div class="rule-card"><b>Soft rollout</b>Invite-only access, limited rewards, manual review, daily caps, and feedback collection before broad promotion.</div>
+          <div class="rule-card"><b>Full rollout</b>Public launch, active social push, platform distribution, reward cadence, leaderboard promotion, and checkout/CRM handoff.</div>
+          <div class="rule-card"><b>Quality rules</b>No fake checkout claims, no unsafe prize promises, clear terms, high-grade copy, human approval for public assets.</div>
+        </div>
+      </section>
+
       <section id="release" class="section">
         <div class="section-header">
           <div>
@@ -1128,7 +1213,7 @@
 
     <footer class="footer">
       <strong>That's My Lingo: Full Activation Live</strong>
-      <span>World-release ready: monetized merch, VIP access, bonus games, rewards, sounds, visuals, animations, Apple/Google/PWA/webOS distribution, socials, and cinematic storytelling.</span>
+      <span>World-release ready: AI game ops, rollout rules, premium assets, monetized merch, VIP access, bonus games, rewards, sounds, visuals, Apple/Google/PWA/webOS distribution, socials, and cinematic storytelling.</span>
     </footer>
   </div>
 
@@ -1138,7 +1223,7 @@
     <div class="modal-panel">
       <span class="tag">Reservation Request</span>
       <h3 id="reserve-title">Access request captured.</h3>
-      <p>The full activation and release layer is ready for public traffic, reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, app-store submission, and media uploads. No card data is collected on this static page.</p>
+      <p>The full activation, AI game-ops, and release layer is ready for public traffic, game-flow setup, asset generation briefs, reservation forms, Shopify cart links, Stripe Checkout sessions, CRM capture, app-store submission, and media uploads. No card data is collected on this static page.</p>
       <div class="modal-actions">
         <button class="cta" data-close-modal>Understood</button>
         <a class="cta ghost" href="mailto:dlingo@thelingolegacy">Contact concierge</a>

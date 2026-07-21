@@ -1,7 +1,7 @@
 {
   "name": "That's My Lingo",
   "short_name": "My Lingo",
-  "description": "That’s My Lingo world release: bonus games, rewards, merch, VIP, sounds, visuals, platform distribution, and social launch channels.",
+  "description": "That’s My Lingo world release: AI game ops, rollout rules, bonus games, rewards, merch, VIP, sounds, visuals, platform distribution, and social launch channels.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -22,6 +22,11 @@
       "name": "Merch Vault",
       "short_name": "Merch",
       "url": "/#vault"
+    },
+    {
+      "name": "AI Game Ops",
+      "short_name": "AI Ops",
+      "url": "/#ai-ops"
     },
     {
       "name": "World Release",
