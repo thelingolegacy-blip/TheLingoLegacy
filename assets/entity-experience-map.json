@@ -1,0 +1,79 @@
+{
+  "system": "Lingo Legacy Entity Experience System",
+  "cmsReady": true,
+  "audioDefault": "off_until_user_opt_in",
+  "sharedLayer": [
+    "personalized_welcome_animation",
+    "ambient_soundtrack_controls",
+    "animated_loading_sequence",
+    "scroll_progress_indicator",
+    "floating_action_menu",
+    "dynamic_cta_sections",
+    "achievement_notifications",
+    "accessibility_controls",
+    "theme_mode",
+    "interactive_footer_easter_eggs",
+    "mobile_first_responsive_design",
+    "seo_pwa_analytics_hooks"
+  ],
+  "entities": {
+    "hq": {
+      "name": "The Lingo Legacy HQ",
+      "personality": "Executive, Premium, Cinematic, Industrial Noir",
+      "visualLanguage": ["Architect Gold", "Deep Onyx", "Metallic Slate", "Neon Cyan"],
+      "background": ["animated city skyline", "moving light streaks", "metallic textures"],
+      "audio": ["deep cinematic pulses", "industrial ambience", "metallic UI clicks"],
+      "interactions": ["HQ status dashboard", "animated statistics", "live ecosystem map", "CEO welcome sequence"]
+    },
+    "thatsMyLingo": {
+      "name": "That’s My Lingo™",
+      "theme": "Vegas meets Mobile Gaming",
+      "visuals": ["gold coins", "slot reels", "neon casino lights", "confetti"],
+      "audio": ["jackpot bells", "coin drops", "win fanfares"],
+      "notifications": ["Achievement Unlocked", "Daily Bonus", "Mega Win", "Lucky Spin"],
+      "interactions": ["animated slot reels", "leaderboards", "XP counter", "daily streak rewards"]
+    },
+    "kottonsCode": {
+      "name": "Kotton’s Code™",
+      "theme": "Magical Learning Adventure",
+      "visuals": ["puffy clouds", "storybook transitions", "floating books", "cartoon world"],
+      "audio": ["bubble pops", "happy piano", "bark sounds", "magical sparkles"],
+      "interactions": ["Read Along", "character voice playback", "hidden collectibles", "sticker rewards"]
+    },
+    "loyaltyLaneApparel": {
+      "name": "Loyalty Lane Apparel",
+      "theme": "Luxury Streetwear",
+      "visuals": ["editorial photography", "high fashion layouts", "motion typography", "fabric animations"],
+      "audio": ["camera shutter", "fabric movement", "soft bass"],
+      "interactions": ["360 clothing viewer", "outfit builder", "virtual closet", "size assistant"]
+    },
+    "loyaltyLaneCycles": {
+      "name": "Loyalty Lane Cycles",
+      "theme": "Modern Community Hub",
+      "visuals": ["friendly", "bright", "neighborhood inspired"],
+      "audio": ["bicycle bells", "laundry ambience", "positive notification tones"],
+      "interactions": ["live washer availability", "loyalty rewards", "QR scanner", "pickup scheduling"]
+    },
+    "shadowNoire": {
+      "name": "Shadow Noire",
+      "theme": "Neo Noir Detective",
+      "visuals": ["rain", "smoke", "dark city", "film grain"],
+      "audio": ["thunder", "rain", "jazz ambience", "typewriter"],
+      "interactions": ["evidence board", "hidden clues", "interactive crime map"]
+    },
+    "legacyZombies": {
+      "name": "Legacy Zombies",
+      "theme": "Apocalyptic Survival",
+      "visuals": ["fog", "ash", "destroyed streets"],
+      "audio": ["wind", "zombie growls", "radio static"],
+      "interactions": ["infection tracker", "survival countdown", "safe zone alerts"]
+    },
+    "obsidianCloset": {
+      "name": "Obsidian Closet",
+      "theme": "Luxury Interior Design",
+      "visuals": ["marble", "glass", "dark wood", "luxury lighting"],
+      "audio": ["soft piano", "water ambience", "gentle transitions"],
+      "interactions": ["room visualizer", "before after slider", "interactive gallery"]
+    }
+  }
+}

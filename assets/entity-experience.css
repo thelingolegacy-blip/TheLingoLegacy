@@ -1,0 +1,194 @@
+:root {
+  --entity-primary: #f7c948;
+  --entity-secondary: #62f7ff;
+  --entity-accent: #ff4fd8;
+  --entity-panel: rgba(8, 13, 31, .82);
+  --entity-text: #eaf6ff;
+  --entity-muted: #a9bbd0;
+}
+
+.entity-loader,
+.entity-welcome,
+.entity-toast,
+.entity-action-menu,
+.entity-accessibility-panel,
+.entity-cta-panel,
+.entity-footer-secret,
+.entity-scroll-progress {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.entity-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--entity-secondary) 22%, transparent), transparent 30rem), #050816;
+  color: var(--entity-text);
+  transition: opacity .5s ease, visibility .5s ease;
+}
+
+.entity-loader.is-done { opacity: 0; visibility: hidden; }
+.entity-loader-card { text-align: center; display: grid; gap: 14px; }
+.entity-loader-ring { width: 86px; height: 86px; border-radius: 999px; border: 2px solid rgba(255,255,255,.16); border-top-color: var(--entity-primary); margin: auto; animation: entitySpin 1s linear infinite; }
+.entity-loader-title { font-weight: 1000; letter-spacing: .18em; text-transform: uppercase; }
+.entity-loader-subtitle { color: var(--entity-muted); }
+
+.entity-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  z-index: 9998;
+  background: linear-gradient(90deg, var(--entity-primary), var(--entity-secondary), var(--entity-accent));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--entity-secondary) 45%, transparent);
+}
+
+.entity-welcome {
+  position: fixed;
+  left: 50%;
+  top: 22px;
+  transform: translate(-50%, -16px);
+  z-index: 9997;
+  max-width: min(560px, calc(100vw - 24px));
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 24px;
+  padding: 16px 18px;
+  background: var(--entity-panel);
+  color: var(--entity-text);
+  box-shadow: 0 22px 80px rgba(0,0,0,.42);
+  backdrop-filter: blur(18px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+
+.entity-welcome.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.entity-welcome strong { color: var(--entity-primary); }
+.entity-welcome small { display: block; color: var(--entity-muted); margin-top: 3px; }
+
+.entity-action-menu {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9996;
+  display: grid;
+  gap: 10px;
+}
+
+.entity-action-button,
+.entity-action-toggle,
+.entity-accessibility-panel button,
+.entity-notification-action,
+.entity-cta-panel a {
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(5,8,22,.82);
+  color: var(--entity-text);
+  padding: 11px 14px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 14px 44px rgba(0,0,0,.34);
+  backdrop-filter: blur(14px);
+}
+
+.entity-action-toggle { background: linear-gradient(135deg, var(--entity-primary), var(--entity-secondary)); color: #06111d; }
+.entity-action-list { display: none; gap: 8px; }
+.entity-action-menu.is-open .entity-action-list { display: grid; }
+.entity-action-button:hover, .entity-action-button:focus-visible { border-color: var(--entity-primary); transform: translateY(-2px); }
+
+.entity-accessibility-panel {
+  position: fixed;
+  left: 18px;
+  top: 64px;
+  z-index: 9995;
+  width: min(320px, calc(100vw - 36px));
+  display: none;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 22px;
+  background: var(--entity-panel);
+  color: var(--entity-text);
+  box-shadow: 0 22px 80px rgba(0,0,0,.42);
+  backdrop-filter: blur(18px);
+}
+
+.entity-accessibility-panel.is-open { display: grid; }
+.entity-accessibility-panel label { display: grid; gap: 5px; color: var(--entity-muted); font-size: .92rem; }
+.entity-accessibility-panel input { width: 100%; }
+
+.entity-toast-stack {
+  position: fixed;
+  right: 18px;
+  top: 84px;
+  z-index: 9994;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 36px));
+}
+
+.entity-toast {
+  border: 1px solid rgba(255,255,255,.16);
+  border-left: 4px solid var(--entity-primary);
+  border-radius: 20px;
+  padding: 14px;
+  background: var(--entity-panel);
+  color: var(--entity-text);
+  box-shadow: 0 18px 70px rgba(0,0,0,.36);
+  backdrop-filter: blur(18px);
+  animation: entitySlideIn .35s ease both;
+}
+.entity-toast strong { display: block; color: var(--entity-primary); }
+.entity-toast span { color: var(--entity-muted); }
+.entity-notification-action { display: inline-flex; margin-top: 10px; padding: 8px 11px; background: color-mix(in srgb, var(--entity-primary) 90%, #fff); color: #06111d; }
+
+.entity-cta-panel {
+  margin: 56px auto 0;
+  width: min(980px, calc(100% - 32px));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 28px;
+  padding: clamp(18px, 4vw, 28px);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--entity-primary) 18%, transparent), color-mix(in srgb, var(--entity-secondary) 16%, transparent)), var(--entity-panel);
+  color: var(--entity-text);
+  box-shadow: 0 24px 84px rgba(0,0,0,.34);
+}
+.entity-cta-panel h2 { margin: 0 0 4px; }
+.entity-cta-panel p { margin: 0; color: var(--entity-muted); }
+.entity-cta-panel a { background: var(--entity-primary); color: #06111d; }
+
+.entity-footer-secret {
+  margin: 34px auto;
+  width: min(980px, calc(100% - 32px));
+  text-align: center;
+  color: var(--entity-muted);
+}
+.entity-footer-secret button { all: unset; cursor: pointer; color: var(--entity-primary); font-weight: 900; }
+
+body.entity-theme-light {
+  --entity-panel: rgba(255,255,255,.86);
+  --entity-text: #06111d;
+  --entity-muted: #334155;
+  background-color: #f8fafc !important;
+  color: #06111d !important;
+}
+
+body.entity-high-contrast { filter: contrast(1.18) saturate(1.1); }
+body.entity-large-text { font-size: 112%; }
+body.entity-reduce-motion *, body.entity-reduce-motion *::before, body.entity-reduce-motion *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+
+@keyframes entitySpin { to { transform: rotate(360deg); } }
+@keyframes entitySlideIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 760px) {
+  .entity-action-menu { right: 12px; bottom: 12px; }
+  .entity-cta-panel { grid-template-columns: 1fr; }
+  .entity-toast-stack { right: 12px; left: 12px; width: auto; }
+}

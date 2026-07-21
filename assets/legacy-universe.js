@@ -41,6 +41,7 @@
     masterGain.gain.value = 0.045;
     if (!masterConnected) {
       masterGain.connect(audioContext.destination);
+      window.__legacyMusicGain = masterGain;
       masterConnected = true;
     }
     timer = window.setInterval(() => {
