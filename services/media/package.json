@@ -1,0 +1,9 @@
+{
+  "name": "@lingo/media-service",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "typecheck": "tsc --noEmit"
+  }
+}

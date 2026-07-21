@@ -1,0 +1,9 @@
+{
+  "users": ["userID", "username", "avatar", "preferences", "XP", "level", "rewards", "createdDate"],
+  "games": ["title", "category", "assets", "releaseDate", "status", "players"],
+  "wallet": ["userID", "currency", "transactions", "rewards", "history"],
+  "products": ["productID", "name", "collection", "inventory", "pricing", "images"],
+  "content": ["books", "videos", "announcements", "events", "trailers"],
+  "campaigns": ["campaignID", "entity", "status", "launchDate", "assets", "channels"],
+  "supportTickets": ["ticketID", "userID", "topic", "status", "messages", "createdDate"]
+}
