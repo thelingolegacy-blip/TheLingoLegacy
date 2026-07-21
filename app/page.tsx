@@ -30,6 +30,7 @@ export default function Home() {
           <p className="hero-copy">The master command shell connecting games, apparel, books, media, AI, rewards, events, and Lingo ID into one digital ecosystem foundation.</p>
           <div className="cta-row">
             <Link className="btn primary" href="#universe">Enter the Legacy</Link>
+            <Link className="btn secondary" href="/launch">Launch Operations</Link>
             <Link className="btn secondary" href="/lingo-id">Activate Lingo ID</Link>
           </div>
         </div>
@@ -73,6 +74,20 @@ export default function Home() {
           <p>Lingo ID is the profile layer for achievements, loyalty, saved sound preferences, story progress, event access, and future community status.</p>
         </div>
         <Link className="btn primary" href="/rewards">View Rewards System</Link>
+      </section>
+
+      <section className="section shell split-panel align-start">
+        <div>
+          <p className="eyebrow">Launch Operating System</p>
+          <h2>Countdowns, promos, ads, forms, legal, and growth loops.</h2>
+          <p>Phase 7 through Phase 13 adds entity launch countdowns, promotion packages, advertising rules, surveys, legal infrastructure, email notifications, and an Admin HQ command center.</p>
+        </div>
+        <div className="route-map">
+          <Link href="/launch">Launch Ops</Link>
+          <Link href="/master-data">Master Data</Link>
+          <Link href="/asset-production">Asset Map</Link>
+          <Link href="/user-experience">UX System</Link>
+        </div>
       </section>
 
       <Timeline />
