@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "status": "ruleset-scaffold-secure-backend-required",
+  "principle": "No automated Stripe credit write occurs without role authorization, limit checks, immutable logging, and operator approval for production-affecting credit.",
+  "roles": [
+    { "role": "owner", "canRequest": true, "canApprove": true, "maxCreditUsd": 500.00 },
+    { "role": "admin", "canRequest": true, "canApprove": true, "maxCreditUsd": 100.00 },
+    { "role": "operator", "canRequest": true, "canApprove": false, "maxCreditUsd": 50.00 },
+    { "role": "system", "canRequest": true, "canApprove": false, "maxCreditUsd": 25.00 }
+  ],
+  "creditTypes": [
+    { "id": "own-account-credit", "requiresApproval": true, "requiresCustomerId": true, "storage": "secure-backend-only" },
+    { "id": "customer-launch-credit", "requiresApproval": true, "requiresCustomerId": true, "storage": "secure-backend-only" },
+    { "id": "coupon-credit-alternative", "requiresApproval": false, "requiresCustomerId": false, "storage": "stripe-dashboard-or-backend" },
+    { "id": "xp-to-credit", "requiresApproval": true, "requiresCustomerId": true, "storage": "secure-backend-only" },
+    { "id": "bones-to-credit", "requiresApproval": true, "requiresCustomerId": true, "storage": "secure-backend-only" },
+    { "id": "season-bonus-credit", "requiresApproval": true, "requiresCustomerId": true, "storage": "secure-backend-only" }
+  ],
+  "limits": {
+    "dailyCreditWriteLimitUsd": 500.00,
+    "perCustomerDailyLimitUsd": 100.00,
+    "launchWaveBudgetLimitUsd": 1000.00,
+    "requiresManualReviewAboveUsd": 100.00
+  },
+  "multipliers": [
+    { "id": "launch-week", "multiplier": 1.25, "requiresApproval": true },
+    { "id": "season-drop", "multiplier": 1.5, "requiresApproval": true },
+    { "id": "avalon-supporter", "multiplier": 1.1, "requiresApproval": false }
+  ],
+  "forbidden": [
+    "committing Stripe secret keys",
+    "committing real customer IDs",
+    "issuing credit without audit log",
+    "issuing credit without role validation",
+    "using credit to bypass failed payment policy without approval"
+  ]
+}

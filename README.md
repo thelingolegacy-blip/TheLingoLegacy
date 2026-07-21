@@ -105,6 +105,9 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 ## Credit activation
 
 - [Credit activation runbook](docs/credit-activation-runbook.md)
+- [Credit rules and webhooks](docs/credit-rules-and-webhooks.md)
+- [Stripe Credit ruleset](docs/stripe-credit-ruleset.md)
+- [Stripe Credit Engine](docs/stripe-credit-engine.md)
 - [Funding page](site/funding/)
 
 ## Stability operation sync

@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "status": "scaffold-only-secure-backend-required",
+  "events": [
+    {
+      "event": "checkout.session.completed",
+      "purpose": "Grant purchased access, XP, crowns, or supporter perks.",
+      "creditBehavior": "If a customer credit balance paid the invoice, fulfill the purchase normally."
+    },
+    {
+      "event": "invoice.paid",
+      "purpose": "Confirm subscription invoice was paid and update local access status.",
+      "creditBehavior": "Mark invoice as covered even when paid by customer balance credit."
+    },
+    {
+      "event": "invoice.payment_failed",
+      "purpose": "Pause or warn when payment fails.",
+      "creditBehavior": "Check whether coupon/credit fallback is allowed before pausing."
+    },
+    {
+      "event": "customer.subscription.deleted",
+      "purpose": "Revoke subscription access.",
+      "creditBehavior": "Do not restore access unless a new paid or credited subscription exists."
+    },
+    {
+      "event": "customer.subscription.updated",
+      "purpose": "Adjust tier, upgrade, downgrade, or cancellation-at-period-end state.",
+      "creditBehavior": "Respect Stripe proration and billing cycle state."
+    }
+  ],
+  "security": [
+    "Verify Stripe webhook signatures in backend code.",
+    "Do not process webhook events from unverified sources.",
+    "Do not store card data locally.",
+    "Use Stripe customer ID as billing identifier only in secure backend storage."
+  ]
+}

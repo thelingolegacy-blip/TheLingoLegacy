@@ -2,12 +2,14 @@
 <html lang="en">
 <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Funding — Lingo Legacy OS</title><link rel="stylesheet" href="/site/styles.css"/></head>
 <body>
-<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/site/payments/">Payments</a><a href="/site/funding/">Funding</a><a href="/site/monetization/">Monetization</a><a href="/docs/credit-activation-runbook.md">Runbook</a></div></div></nav>
-<header class="wrap hero"><div class="eyebrow">Credit + Launch Funding</div><h1>Funding stack mapped safely.</h1><p class="lead">Stripe Capital, balance credits, external funding, and coupons are staged as operator-run options. No financial secrets or customer IDs are stored.</p></header>
+<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/site/payments/">Payments</a><a href="/site/funding/">Funding</a><a href="/site/monetization/">Monetization</a><a href="/docs/credit-rules-and-webhooks.md">Credit Rules</a></div></div></nav>
+<header class="wrap hero"><div class="eyebrow">Credit + Launch Funding</div><h1>Funding stack mapped safely.</h1><p class="lead">Stripe Capital, balance credits, external funding, coupons, own-account credit rules, and webhook fulfillment are staged as secure operator-run paths.</p></header>
 <main class="wrap"><section class="grid">
 <article class="card"><strong>1</strong><h2>Stripe Capital</h2><ul><li>Best after revenue starts</li><li>Eligibility appears in Stripe</li><li>No repo code required</li></ul></article>
 <article class="card"><strong>2</strong><h2>Stripe Balance Credits</h2><ul><li>Direct invoice offset</li><li>Requires real customer ID</li><li>Operator-only action</li></ul></article>
 <article class="card"><strong>3</strong><h2>External Funding</h2><ul><li>Grants</li><li>Micro-loans</li><li>Business capital</li></ul></article>
 <article class="card"><strong>4</strong><h2>Coupons / Promotions</h2><ul><li>100% first month</li><li>Free trials</li><li>Launch discounts</li></ul></article>
-</section></main>
+<article class="card"><strong>5</strong><h2>Own-account credit rules</h2><ul><li>Cover OS Builder first month</li><li>Cover promo runway</li><li>Requires operator approval</li></ul></article>
+<article class="card"><strong>6</strong><h2>Webhook fulfillment</h2><ul><li>checkout.session.completed</li><li>invoice.paid</li><li>invoice.payment_failed</li><li>customer.subscription.updated</li></ul></article>
+<article class="card"><strong>7</strong><h2>Credit Engine</h2><ul><li>Credit request service</li><li>Approval service</li><li>Immutable logs</li><li>Webhook fulfillment</li></ul></article></section></main>
 </body></html>

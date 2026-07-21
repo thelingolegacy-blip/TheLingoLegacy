@@ -31,3 +31,9 @@ Do not commit secret keys. Static pages should use public payment links until th
 
 - [`credit-activation-runbook.md`](credit-activation-runbook.md)
 - [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)
+
+## Credit rules and webhooks
+
+- [`credit-rules-and-webhooks.md`](credit-rules-and-webhooks.md)
+- [`../os/funding/credit-rules.json`](../os/funding/credit-rules.json)
+- [`../os/funding/stripe-credit-webhooks.json`](../os/funding/stripe-credit-webhooks.json)

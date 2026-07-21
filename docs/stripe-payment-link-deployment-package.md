@@ -84,3 +84,14 @@ Use webhooks only when the fulfillment backend exists:
 
 - [`credit-activation-runbook.md`](credit-activation-runbook.md)
 - [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)
+
+## Credit rules and webhooks
+
+- [`credit-rules-and-webhooks.md`](credit-rules-and-webhooks.md)
+- [`../os/funding/credit-rules.json`](../os/funding/credit-rules.json)
+- [`../os/funding/stripe-credit-webhooks.json`](../os/funding/stripe-credit-webhooks.json)
+
+## Stripe Credit ruleset
+
+- [`stripe-credit-ruleset.md`](stripe-credit-ruleset.md)
+- [`../os/funding/stripe-credit-ruleset.json`](../os/funding/stripe-credit-ruleset.json)

@@ -40,3 +40,20 @@ Use coupons and promotion codes when you want first-month coverage without addin
 ## Machine-readable source
 
 - [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)
+
+## Credit rules and webhooks
+
+- [`credit-rules-and-webhooks.md`](credit-rules-and-webhooks.md)
+- [`../os/funding/credit-rules.json`](../os/funding/credit-rules.json)
+- [`../os/funding/stripe-credit-webhooks.json`](../os/funding/stripe-credit-webhooks.json)
+
+## Stripe Credit ruleset
+
+- [`stripe-credit-ruleset.md`](stripe-credit-ruleset.md)
+- [`../os/funding/stripe-credit-ruleset.json`](../os/funding/stripe-credit-ruleset.json)
+
+## Stripe Credit Engine
+
+- [`stripe-credit-engine.md`](stripe-credit-engine.md)
+- [`../os/funding/stripe-credit-engine.schema.json`](../os/funding/stripe-credit-engine.schema.json)
+- [`../os/funding/credit-engine-services.json`](../os/funding/credit-engine-services.json)

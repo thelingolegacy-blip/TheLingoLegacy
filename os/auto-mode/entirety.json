@@ -142,6 +142,20 @@
       "doc": "docs/credit-activation-runbook.md",
       "map": "os/funding/credit-activation.json",
       "status": "operator-action-required"
+    },
+    {
+      "id": "credit-rules-and-webhooks",
+      "doc": "docs/credit-rules-and-webhooks.md",
+      "rules": "os/funding/credit-rules.json",
+      "webhooks": "os/funding/stripe-credit-webhooks.json",
+      "status": "scaffold-only-secure-backend-required"
+    },
+    {
+      "id": "stripe-credit-engine",
+      "doc": "docs/stripe-credit-engine.md",
+      "schema": "os/funding/stripe-credit-engine.schema.json",
+      "services": "os/funding/credit-engine-services.json",
+      "status": "backend-scaffold-only"
     }
   ]
 }
