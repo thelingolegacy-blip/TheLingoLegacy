@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const commandLinks = [
-  ['Launch Ops', '/launch'], ['Marketing', '/marketing'], ['Press', '/press'], ['Business Ops', '/business-operations'], ['Help Center', '/help'], ['Development Spec', '/development-spec'], ['Master Data', '/master-data'], ['Assets', '/asset-production'], ['UX System', '/user-experience'], ['Admin', '/admin'], ['Legal', '/legal'],
+  ['Launch Ops', '/launch'], ['Marketing', '/marketing'], ['Phase Infinity', '/phase-infinity'], ['Production Spec', '/production-spec-package'], ['Database', '/database-system'], ['Security', '/security-trust'], ['AI Ecosystem', '/ai-ecosystem'], ['Game Platform', '/game-platform'], ['Commerce', '/commerce-system'], ['Media Network', '/media-network'], ['Analytics', '/analytics-command'], ['Automation', '/automation-engine'], ['Admin', '/admin'], ['Legal', '/legal'],
 ];
 
 const legalLinks = [

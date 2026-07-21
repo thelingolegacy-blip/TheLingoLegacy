@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
 const links = [
-  ['Home', '/'], ['Games', '/games'], ['Apparel', '/apparel'], ['Books', '/books'], ['Media', '/media'], ['Rewards', '/rewards'], ['AI Lab', '/ai-lab'], ['Launch', '/launch'], ['Marketing', '/marketing'], ['Press', '/press'], ['Lingo ID', '/lingo-id'], ['Community', '/community'], ['Admin', '/admin'],
+  ['Home', '/'], ['Games', '/games'], ['Apparel', '/apparel'], ['Books', '/books'], ['Media', '/media'], ['Rewards', '/rewards'], ['AI Lab', '/ai-lab'], ['Launch', '/launch'], ['Marketing', '/marketing'], ['Infinity', '/phase-infinity'], ['Spec', '/production-spec-package'], ['Admin', '/admin'],
 ];
 
 const mobile = [
-  ['HQ', '/'], ['Play', '/games'], ['Shop', '/apparel'], ['Launch', '/launch'], ['Market', '/marketing'], ['Profile', '/lingo-id'],
+  ['HQ', '/'], ['Play', '/games'], ['Shop', '/apparel'], ['Market', '/marketing'], ['Infinity', '/phase-infinity'], ['Profile', '/lingo-id'],
 ];
 
 export default function Navigation() {

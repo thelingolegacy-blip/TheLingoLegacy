@@ -88,6 +88,9 @@ export default function Home() {
           <Link href="/press">Press Kit</Link>
           <Link href="/business-operations">Business Ops</Link>
           <Link href="/development-spec">Build Spec</Link>
+          <Link href="/phase-infinity">Phase Infinity</Link>
+          <Link href="/production-spec-package">Production Spec</Link>
+          <Link href="/database-system">Database</Link>
           <Link href="/master-data">Master Data</Link>
           <Link href="/asset-production">Asset Map</Link>
           <Link href="/user-experience">UX System</Link>
