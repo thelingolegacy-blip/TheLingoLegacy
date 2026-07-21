@@ -1,7 +1,7 @@
 {
   "name": "That's My Lingo",
   "short_name": "My Lingo",
-  "description": "That’s My Lingo world release: bonus games, rewards, merch, VIP, sounds, visuals, platform distribution, and social launch channels.",
+  "description": "That’s My Lingo world release: stores, monetization, sweepstakes-safe rewards, Cumberland County and Philadelphia exposure, beacon alerts, AI game ops, games, VIP, and platform distribution.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -22,6 +22,16 @@
       "name": "Merch Vault",
       "short_name": "Merch",
       "url": "/#vault"
+    },
+    {
+      "name": "Market Plan",
+      "short_name": "Market",
+      "url": "/#market"
+    },
+    {
+      "name": "AI Game Ops",
+      "short_name": "AI Ops",
+      "url": "/#ai-ops"
     },
     {
       "name": "World Release",
