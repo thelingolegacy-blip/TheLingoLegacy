@@ -55,3 +55,7 @@ Every stability-sync pass should preserve these terms so future checks can verif
 - README references the stability and operation-sync procedure.
 - Deployment notes include the stability verification step.
 - Static HTML, local links, activation phase markers, and command terms are verified.
+
+## Doctrine link
+
+Use [`os-execution-doctrine.md`](os-execution-doctrine.md) to decide when to intervene and when to continue execution without interrupting momentum.

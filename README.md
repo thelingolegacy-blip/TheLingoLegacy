@@ -50,6 +50,10 @@ The complete activation system is documented in [`docs/activation-phase-1-12.md`
 11. Scale readiness.
 12. Launch governance.
 
+## OS execution doctrine
+
+The intervention-only continuous execution rule is documented in [`docs/os-execution-doctrine.md`](docs/os-execution-doctrine.md). It keeps Lingo Legacy OS moving wave-by-wave: intervene where needed, avoid over-assisting, and continue the approved build plan without repeated instructions.
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

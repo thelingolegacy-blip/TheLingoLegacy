@@ -86,6 +86,13 @@ This is the complete activation plan for The Lingo Legacy static site on Vercel.
 - Keep the public promise, offer lanes, and operating metrics aligned.
 - Feed lessons learned back into the next activation cycle.
 
+## OS execution doctrine
+
+- Use [`os-execution-doctrine.md`](os-execution-doctrine.md) as the operating philosophy for Lingo Legacy OS build waves.
+- Intervene only where implementation is needed.
+- Continue the full approved build plan without requiring repeated user instructions.
+- Keep momentum high with concise execution, validation, and pull request updates.
+
 ## Stability operation sync
 
 - Load the current activation branch and deployment notes before each expansion.
