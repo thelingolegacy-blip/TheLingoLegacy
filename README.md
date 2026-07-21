@@ -54,6 +54,10 @@ The complete activation system is documented in [`docs/activation-phase-1-12.md`
 
 The intervention-only continuous execution rule is documented in [`docs/os-execution-doctrine.md`](docs/os-execution-doctrine.md). It keeps Lingo Legacy OS moving wave-by-wave: intervene where needed, avoid over-assisting, and continue the approved build plan without repeated instructions.
 
+## Wave 0 foundation
+
+Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/wave-0-foundation.md). It defines the current repo structure, static validation path, and Vercel preview-to-production flow.
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

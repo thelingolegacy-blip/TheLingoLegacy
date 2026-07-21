@@ -28,6 +28,9 @@ Primary lanes:
 
 - Repo structure.
 - Build pipeline.
+- Vercel production flow.
+
+Execution plan: [`wave-0-foundation.md`](wave-0-foundation.md).
 
 ### Wave 1 — Core Systems
 

@@ -89,6 +89,7 @@ This is the complete activation plan for The Lingo Legacy static site on Vercel.
 ## OS execution doctrine
 
 - Use [`os-execution-doctrine.md`](os-execution-doctrine.md) as the operating philosophy for Lingo Legacy OS build waves.
+- Use [`wave-0-foundation.md`](wave-0-foundation.md) as the active Wave 0 foundation execution plan.
 - Intervene only where implementation is needed.
 - Continue the full approved build plan without requiring repeated user instructions.
 - Keep momentum high with concise execution, validation, and pull request updates.

@@ -59,3 +59,7 @@ Every stability-sync pass should preserve these terms so future checks can verif
 ## Doctrine link
 
 Use [`os-execution-doctrine.md`](os-execution-doctrine.md) to decide when to intervene and when to continue execution without interrupting momentum.
+
+## Wave 0 link
+
+Use [`wave-0-foundation.md`](wave-0-foundation.md) as the foundation baseline when checking repo structure, build pipeline expectations, and Vercel production flow.
