@@ -4,19 +4,73 @@
   "scope": "waves, sprints, phases, deploys, activations",
   "status": "active",
   "waves": [
-    { "id": "wave-0", "name": "Foundation", "plan": "docs/wave-0-foundation.md", "status": "documented" },
-    { "id": "wave-1", "name": "Core Systems", "plan": "docs/wave-1-core-systems.md", "scaffold": "docs/wave-1-core-system-scaffolds.md", "status": "scaffolded" },
-    { "id": "wave-2", "name": "Command Systems", "plan": "docs/wave-2-command-systems.md", "scaffold": "docs/wave-2-command-system-scaffolds.md", "status": "scaffolded" },
-    { "id": "wave-3", "name": "Ecosystem Layer", "plan": "docs/wave-3-ecosystem-layer.md", "scaffold": "docs/wave-3-ecosystem-scaffolds.md", "status": "scaffolded" },
-    { "id": "wave-4", "name": "Experience Layer", "plan": "docs/wave-4-experience-layer.md", "scaffold": "docs/wave-4-experience-scaffolds.md", "status": "scaffolded" },
-    { "id": "wave-5", "name": "Deployment", "plan": "docs/wave-5-deployment.md", "status": "documented" }
+    {
+      "id": "wave-0",
+      "name": "Foundation",
+      "plan": "docs/wave-0-foundation.md",
+      "status": "documented"
+    },
+    {
+      "id": "wave-1",
+      "name": "Core Systems",
+      "plan": "docs/wave-1-core-systems.md",
+      "scaffold": "docs/wave-1-core-system-scaffolds.md",
+      "status": "scaffolded"
+    },
+    {
+      "id": "wave-2",
+      "name": "Command Systems",
+      "plan": "docs/wave-2-command-systems.md",
+      "scaffold": "docs/wave-2-command-system-scaffolds.md",
+      "status": "scaffolded"
+    },
+    {
+      "id": "wave-3",
+      "name": "Ecosystem Layer",
+      "plan": "docs/wave-3-ecosystem-layer.md",
+      "scaffold": "docs/wave-3-ecosystem-scaffolds.md",
+      "status": "scaffolded"
+    },
+    {
+      "id": "wave-4",
+      "name": "Experience Layer",
+      "plan": "docs/wave-4-experience-layer.md",
+      "scaffold": "docs/wave-4-experience-scaffolds.md",
+      "status": "scaffolded"
+    },
+    {
+      "id": "wave-5",
+      "name": "Deployment",
+      "plan": "docs/wave-5-deployment.md",
+      "status": "documented"
+    }
   ],
   "sprints": [
-    { "range": "1-3", "lane": "Foundation lock", "status": "mapped" },
-    { "range": "4-6", "lane": "Core systems lock", "status": "mapped" },
-    { "range": "7-9", "lane": "Command systems lock", "status": "mapped" },
-    { "range": "10-12", "lane": "Ecosystem lock", "status": "mapped" },
-    { "range": "13-15", "lane": "Experience and deployment lock", "status": "mapped" }
+    {
+      "range": "1-3",
+      "lane": "Foundation lock",
+      "status": "mapped"
+    },
+    {
+      "range": "4-6",
+      "lane": "Core systems lock",
+      "status": "mapped"
+    },
+    {
+      "range": "7-9",
+      "lane": "Command systems lock",
+      "status": "mapped"
+    },
+    {
+      "range": "10-12",
+      "lane": "Ecosystem lock",
+      "status": "mapped"
+    },
+    {
+      "range": "13-15",
+      "lane": "Experience and deployment lock",
+      "status": "mapped"
+    }
   ],
   "phases": "docs/activation-phase-1-12.md",
   "deployRunbook": "docs/deploy-activation-runbook.md",
@@ -29,5 +83,13 @@
     "verify wave markers",
     "verify sprint markers",
     "verify deployment readiness"
+  ],
+  "activeExpansionLayers": [
+    {
+      "id": "cycles-laundry-hub-network",
+      "doc": "docs/cycles-laundry-hub-network.md",
+      "map": "os/geo/laundry-hubs.json",
+      "status": "active"
+    }
   ]
 }

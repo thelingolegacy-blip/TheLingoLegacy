@@ -39,3 +39,7 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 - Deploy activation runbook exists.
 - Machine-readable auto-mode map exists.
 - README, doctrine, activation, stability, and deploy docs link to auto mode.
+
+## Active expansion layers
+
+- [`cycles-laundry-hub-network.md`](cycles-laundry-hub-network.md) — Cumberland + Philadelphia Laundry Hub geo-beacon expansion.

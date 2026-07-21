@@ -78,6 +78,10 @@ Auto mode execution is documented in [`docs/auto-mode-execution.md`](docs/auto-m
 - [Deploy activation runbook](docs/deploy-activation-runbook.md)
 - [Machine-readable auto-mode map](os/auto-mode/entirety.json)
 
+## Laundry Hub network
+
+The Cumberland + Philadelphia Cycles Laundry Hub network is documented in [`docs/cycles-laundry-hub-network.md`](docs/cycles-laundry-hub-network.md), with the machine-readable hub map at [`os/geo/laundry-hubs.json`](os/geo/laundry-hubs.json).
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

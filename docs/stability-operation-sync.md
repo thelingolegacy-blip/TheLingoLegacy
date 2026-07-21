@@ -87,3 +87,7 @@ Verify `os/ecosystem/assets.schema.json`, `os/ecosystem/node-registry.schema.jso
 ## Wave 4 scaffold checks
 
 Verify `os/experience/ui-shell.schema.json`, `os/experience/lingo-ai-entrypoints.json`, and `os/experience/os-home-navigation.json` before continuing experience implementation.
+
+## Laundry Hub checks
+
+Verify `os/geo/laundry-hubs.json` and `docs/cycles-laundry-hub-network.md` before promoting hub-network expansions.

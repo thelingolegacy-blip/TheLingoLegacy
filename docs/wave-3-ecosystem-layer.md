@@ -49,3 +49,7 @@ Concrete Wave 3 scaffolds are documented in [`wave-3-ecosystem-scaffolds.md`](wa
 - Asset schema: [`../os/ecosystem/assets.schema.json`](../os/ecosystem/assets.schema.json).
 - Node registry schema: [`../os/ecosystem/node-registry.schema.json`](../os/ecosystem/node-registry.schema.json).
 - Sync contract schema: [`../os/ecosystem/sync-contract.schema.json`](../os/ecosystem/sync-contract.schema.json).
+
+## Laundry Hub network expansion
+
+The Cycles Laundry Hub Network extends Wave 3 ecosystem mapping with Cumberland + Philadelphia hub zones. See [`cycles-laundry-hub-network.md`](cycles-laundry-hub-network.md).

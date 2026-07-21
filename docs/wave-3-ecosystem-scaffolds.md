@@ -50,3 +50,7 @@ Every sync contract records:
 - Node registry schema exists.
 - Sync engine contract schema exists.
 - Wave 3 plan links to the concrete scaffolds.
+
+## Laundry Hub network scaffold
+
+The hub network map is stored at [`../os/geo/laundry-hubs.json`](../os/geo/laundry-hubs.json).
