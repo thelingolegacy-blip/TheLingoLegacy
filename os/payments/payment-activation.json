@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "status": "requires-real-processor-account",
+  "backbone": "Stripe",
+  "wallets": ["Apple Pay", "Google Pay"],
+  "methods": ["card", "ACH", "Stripe Checkout", "Stripe Billing", "Payment Links"],
+  "setupSteps": [
+    "Create or access Stripe account",
+    "Verify business identity",
+    "Create products and prices for subscription tiers",
+    "Create payment links or Checkout sessions",
+    "Add public checkout links to entity landing pages",
+    "Enable Apple Pay domain verification in Stripe",
+    "Enable Google Pay in Stripe payment method settings",
+    "Add analytics/revenue dashboard review cadence"
+  ],
+  "securityRules": [
+    "Never commit Stripe secret keys",
+    "Use environment variables for secret values",
+    "Use public payment links or publishable keys only in static pages",
+    "Verify domain ownership in Stripe before Apple Pay launch"
+  ]
+}

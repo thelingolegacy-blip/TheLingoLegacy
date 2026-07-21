@@ -121,6 +121,15 @@
       "calendar": "os/social/launch-calendar.json",
       "pinnedPosts": "os/social/pinned-posts.json",
       "status": "active"
+    },
+    {
+      "id": "monetization-activation",
+      "doc": "docs/monetization-activation.md",
+      "subscriptions": "os/monetization/subscription-tiers.json",
+      "payments": "os/payments/payment-activation.json",
+      "analytics": "os/analytics/tracking-plan.json",
+      "promotion": "os/promotion/promo-engine.json",
+      "status": "activation-ready"
     }
   ]
 }

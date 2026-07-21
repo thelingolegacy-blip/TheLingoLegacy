@@ -93,6 +93,14 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 - [Social launch calendar](docs/social-launch-calendar.md)
 - [Lingo.ai game scaffold](site/lingoai/)
 
+## Monetization activation
+
+- [Monetization activation](docs/monetization-activation.md)
+- [Monetization page](site/monetization/)
+- [Payments page](site/payments/)
+- [Analytics page](site/analytics/)
+- [Promotion engine page](site/promo/)
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

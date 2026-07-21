@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "status": "activation-ready",
+  "processor": "Stripe Checkout or Stripe Billing",
+  "tiers": [
+    { "id": "lingo-ai-premium", "entity": "Lingo.ai", "name": "Lingo.ai Premium", "billing": "monthly", "features": ["premium missions", "XP multipliers", "early Crown drops", "creator challenges"], "paymentMode": "subscription" },
+    { "id": "lingo-os-builder", "entity": "Lingo Legacy LLC", "name": "OS Builder Tier", "billing": "monthly", "features": ["builder updates", "early roadmap access", "partner queue", "private drops"], "paymentMode": "subscription" },
+    { "id": "avalon-supporter", "entity": "The Iconic House of Avalon, Inc.", "name": "Avalon Supporter Membership", "billing": "monthly", "features": ["supporter updates", "event notices", "archive access", "community recognition"], "paymentMode": "subscription" },
+    { "id": "creator-partner", "entity": "Lingo Legacy OS", "name": "Creator / Partner Tier", "billing": "monthly", "features": ["creator profile", "collab submissions", "vendor lane access", "campaign participation"], "paymentMode": "subscription" },
+    { "id": "business-enterprise", "entity": "Lingo Legacy OS", "name": "Business / Enterprise Plan", "billing": "custom", "features": ["partner campaigns", "geo-beacon activations", "sponsored drops", "analytics reporting"], "paymentMode": "invoice-or-checkout" }
+  ]
+}

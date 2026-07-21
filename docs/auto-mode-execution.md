@@ -51,3 +51,7 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 ## Social launch layer
 
 - [`social-launch-calendar.md`](social-launch-calendar.md) — 30-day campaign calendar and pinned post rollout.
+
+## Monetization activation layer
+
+- [`monetization-activation.md`](monetization-activation.md) — subscriptions, payments, analytics, commerce, and promotion engine activation.
