@@ -1,47 +1,39 @@
 # TheLingoLegacy — Website Repo
 
-This repo contains the public website skeleton for The Lingo Legacy project.
+This repository contains the public static website for The Lingo Legacy project.
 
-Folders:
-- landing/: simple landing page
-- assets/: placeholder logos and images
-- docs/: site docs and deployment notes
+## Project structure
 
-Contact placeholder: dlingo@thelingolegacy
-# Setting up GitHub Copilot for your enterprise
+- `landing/` — static landing page content.
+- `assets/` — placeholder logos, images, and asset library pages.
+- `docs/` — project documentation and deployment notes.
 
-Enable GitHub Copilot across your enterprise so developers can write code faster.
+## Deployment
 
-## Enable GitHub Copilot
+The site is deployed on Vercel as the `the-lingo-legacy` project under the `thelingolegacy` team.
 
-To purchase GitHub Copilot for your enterprise, [contact GitHub's Sales team](https://github.com/enterprise/contact?ref_product=copilot\&ref_type=engagement\&ref_style=text).
+Current production deployment flow:
 
-A member of the Sales team will work with you to set up Copilot for your enterprise.
+1. Merge changes into the repository branch intended for release.
+2. Vercel creates a preview deployment from the Git integration.
+3. Confirm the preview deployment is `Ready` in Vercel.
+4. Promote the verified deployment to production.
 
-## Set policies
+Production URL:
 
-You will use enterprise policies to manage two aspects of governance:
+- https://the-lingo-legacy.vercel.app
 
-* **Availability**: Which Copilot features, models, and MCP servers are available in your enterprise?
-* **Controls**: What restrictions apply to these features? For example, will you exclude certain files or block suggestions matching public code?
+Useful Vercel commands:
 
-Generally, enterprise owners can either set each policy for the whole enterprise or "let organizations decide." With the latter option, users are subject to the policy of the organization where they receive their Copilot license or to the default defined in your "Policies for enterprise-assigned users" setting.
+```bash
+vercel list the-lingo-legacy --scope thelingolegacy
+vercel promote <deployment-url> --scope thelingolegacy --yes
+```
 
-To manage policies, see [Managing policies and features for GitHub Copilot in your enterprise](/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies).
+Because this is a static HTML site, no build step is required.
 
-## Configure networking
+## Launch checklist
 
-If your corporate network restricts users' traffic, add the required URLs to the allowlist for your firewall or proxy. See [Copilot allowlist reference](/en/copilot/reference/copilot-allowlist-reference).
-
-If you route traffic via a proxy server, you may need to ask users to configure proxy settings in their environment. You may also need to install custom certificates on your users' machines. For more information, see [Network settings for GitHub Copilot](/en/copilot/concepts/network-settings).
-
-If your enterprise is on GHE.com, users will also need to configure their environment to authenticate from their development environment. See [Using GitHub Copilot with an account on GHE.com](/en/copilot/how-tos/configure-personal-settings/authenticate-to-ghecom).
-
-## Assign licenses
-
-There are two main ways to grant access to Copilot in an enterprise:
-
-* **Assign licenses directly to users or teams** in the enterprise. This approach simplifies license management at scale and provides the option of granting Copilot licenses to users who don't consume a GitHub Enterprise license. This approach is currently only available for **Copilot Business** licenses.
-* **Enable Copilot for organizations**. This approach allows you to choose Copilot Business or Copilot Enterprise for individual organizations and give organization owners control to grant licenses to the users who need them most.
-
-For instructions, see [Granting users access to GitHub Copilot in your enterprise](/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access).
+- Replace `assets/logo.svg` with the final logo before launch.
+- Verify all public links and contact details.
+- Confirm the production deployment is `Ready` after promotion.
