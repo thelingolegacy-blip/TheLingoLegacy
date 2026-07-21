@@ -4,7 +4,7 @@ const path = require('path');
 const root = process.cwd();
 const outDir = path.join(root, 'public');
 const exclude = new Set(['.git', '.github', 'api', 'node_modules', 'public']);
-const copyExtensions = new Set(['.html', '.css', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.txt', '.xml', '.json', '.webmanifest', '.md']);
+const copyExtensions = new Set(['.html', '.css', '.js', '.mjs', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.txt', '.xml', '.json', '.webmanifest', '.md', '.mp3', '.wav', '.aac', '.m4a', '.mp4', '.mov', '.webm', '.lottie', '.ttf', '.otf', '.woff', '.woff2', '.glb', '.fbx']);
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
