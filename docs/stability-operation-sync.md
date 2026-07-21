@@ -67,3 +67,7 @@ Use [`wave-0-foundation.md`](wave-0-foundation.md) as the foundation baseline wh
 ## Wave 1–5 links
 
 Use Wave 1–5 plans to verify that core systems, command systems, ecosystem, experience, and deployment changes stay aligned with the OS execution doctrine.
+
+## Wave 1 scaffold checks
+
+Verify `os/core/xp-events.schema.json`, `os/core/wallet-ledger.schema.json`, and `os/core/identity-roles.json` before continuing core-system implementation.

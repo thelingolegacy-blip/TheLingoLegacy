@@ -1,0 +1,29 @@
+{
+  "roles": [
+    {
+      "role": "user",
+      "description": "Default audience identity with public engagement access."
+    },
+    {
+      "role": "creator",
+      "description": "Content or product contributor with owned assets and campaign activity."
+    },
+    {
+      "role": "admin",
+      "description": "Operator with release, moderation, and system management responsibility."
+    },
+    {
+      "role": "partner",
+      "description": "External collaborator, sponsor, vendor, or distribution contact."
+    },
+    {
+      "role": "system",
+      "description": "Automation identity for scheduled, generated, or integration-driven events."
+    }
+  ],
+  "rules": [
+    "Identity ownership stays separate from public display names.",
+    "Role changes must include actor, reason, timestamp, and previous role.",
+    "System identities must identify the automation source."
+  ]
+}

@@ -41,3 +41,11 @@ Intervene only when:
 - Wallet services have ledger rules.
 - Identity module has role and ownership rules.
 - Wave 1 is linked from the doctrine and README.
+
+## Core system scaffolds
+
+Concrete Wave 1 scaffolds are documented in [`wave-1-core-system-scaffolds.md`](wave-1-core-system-scaffolds.md).
+
+- XP event schema: [`../os/core/xp-events.schema.json`](../os/core/xp-events.schema.json).
+- Wallet ledger schema: [`../os/core/wallet-ledger.schema.json`](../os/core/wallet-ledger.schema.json).
+- Identity role registry: [`../os/core/identity-roles.json`](../os/core/identity-roles.json).

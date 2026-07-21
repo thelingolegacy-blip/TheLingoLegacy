@@ -61,6 +61,7 @@ Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/
 ## Wave 1–5 execution plans
 
 - [Wave 1 core systems](docs/wave-1-core-systems.md) — XP Engine, wallet services, and identity module rules.
+  - [Wave 1 core system scaffolds](docs/wave-1-core-system-scaffolds.md) — JSON scaffolds for XP events, wallet ledger entries, and identity roles.
 - [Wave 2 command systems](docs/wave-2-command-systems.md) — Admin Command Center, AI Ops, and Event Bus rules.
 - [Wave 3 ecosystem layer](docs/wave-3-ecosystem-layer.md) — Global Asset Manager, node registry, and sync engine rules.
 - [Wave 4 experience layer](docs/wave-4-experience-layer.md) — UI shell, Lingo.ai app, and OS Home navigation rules.
