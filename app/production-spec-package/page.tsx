@@ -172,6 +172,107 @@ const askLingoRoles = [
   'Support Assistant',
 ];
 
+
+const languageEngineModules = [
+  'Spell Check',
+  'Grammar Check',
+  'Type Check',
+  'Punctuation Check',
+  'Capitalization Check',
+  'Sentence Structure Analysis',
+  'Paragraph Analysis',
+  'Readability Score',
+  'Vocabulary Suggestions',
+  'Tone Detection',
+  'Style Analysis',
+  'Clarity Improvements',
+  'Consistency Checker',
+  'Plagiarism Integration',
+  'Citation Assistant',
+  'Translation',
+  'Multilingual Support',
+];
+
+const writingCommands = [
+  'Check my spelling',
+  'Fix my grammar',
+  'Rewrite professionally',
+  'Make this friendlier',
+  'Simplify this paragraph',
+  'Summarize this document',
+  'Expand these notes',
+  'Translate to Spanish',
+  'Check my resume',
+  'Improve my essay',
+  'Draft an email',
+  'Proofread my manuscript',
+];
+
+const writingModes = [
+  'Academic',
+  'Business',
+  'Casual',
+  'Professional',
+  'Legal',
+  'Medical review-assisted',
+  'Technical',
+  'Marketing',
+  'Social Media',
+  'Children’s Reading',
+  'Speech Therapy',
+  'Accessibility-focused writing',
+];
+
+const languageApiEndpoints = [
+  'POST /api/v1/spellcheck',
+  'POST /api/v1/grammar',
+  'POST /api/v1/proofread',
+  'POST /api/v1/rewrite',
+  'POST /api/v1/summarize',
+  'POST /api/v1/translate',
+  'POST /api/v1/paraphrase',
+  'POST /api/v1/detect-language',
+  'POST /api/v1/tone',
+  'POST /api/v1/readability',
+  'POST /api/v1/keywords',
+  'POST /api/v1/outline',
+  'POST /api/v1/citations',
+];
+
+const writingQualityPipeline = [
+  'Detect language',
+  'Spell check',
+  'Grammar analysis',
+  'Punctuation review',
+  'Capitalization review',
+  'Style analysis',
+  'Tone analysis',
+  'Readability scoring',
+  'Clarity suggestions',
+  'Optional rewrite',
+  'Final proofreading',
+];
+
+const lingoScoreCategories = [
+  'Accuracy',
+  'Grammar',
+  'Spelling',
+  'Readability',
+  'Clarity',
+  'Tone',
+  'Structure',
+  'Vocabulary',
+  'Consistency',
+];
+
+const languageFeatureGroups = [
+  ['Accessibility Tools', 'Dyslexia-friendly formatting, read-aloud support, speech-to-text, text-to-speech, adjustable font sizes, high contrast, and simplified reading mode.'],
+  ['Education Features', 'Essay review, homework feedback, vocabulary builder, flashcards, writing prompts, reading comprehension questions, and progress tracking.'],
+  ['Business Features', 'Email drafting, proposal writing, meeting summaries, report generation, contract review assistance, knowledge base search, and customer support response drafting.'],
+  ['Creator Features', 'Story outlining, character profiles, dialogue suggestions, script formatting, blog drafting, book editing, SEO optimization, and social captions.'],
+  ['Enterprise Administration', 'Team workspaces, shared dictionaries, custom terminology, brand voice guidelines, approval workflows, analytics dashboards, usage reports, and API access controls.'],
+];
+
 export default function ProductionSpecPackagePage() {
   return (
     <div className="page-shell shell">
@@ -334,6 +435,82 @@ export default function ProductionSpecPackagePage() {
           <p>A user asks to create a new Kotton's Code character. Ask Lingo receives the request, Lingo.ai generates the artwork prompt, story outline, and structured character data, then Ask Lingo returns the result in a friendly conversational format.</p>
         </div>
         <div className="route-map architecture-flow"><span>User request</span><span>Ask Lingo interface</span><span>Lingo.ai engine</span><span>Structured output</span><span>Friendly response</span></div>
+      </section>
+
+      <section className="section-command-hero">
+        <div>
+          <p className="eyebrow">Lingo.ai Language Intelligence Suite</p>
+          <h2>Writing quality, productivity, and multilingual support.</h2>
+          <p className="hero-copy">The Language Intelligence Suite extends Lingo.ai into spell check, grammar, proofreading, rewriting, translation, education support, business writing, creator tools, and enterprise writing governance.</p>
+        </div>
+        <article className="system-card command-card">
+          <p className="eyebrow">Production Note</p>
+          <h2>Specialized services allowed.</h2>
+          <p>Plagiarism detection, high-quality translation, grammar accuracy, and domain review can use appropriately licensed third-party services or specialized models when production quality requires it.</p>
+        </article>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Core Writing Engine</p>
+          <h2>Language-quality modules</h2>
+        </div>
+        <div className="pill-row architecture-grid">{languageEngineModules.map((module) => <span key={module}>{module}</span>)}</div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Ask Lingo Writing Assistant</p>
+          <h2>Natural commands for writing help.</h2>
+          <div className="route-map">{writingCommands.map((command) => <span key={command}>{command}</span>)}</div>
+        </div>
+        <div>
+          <p className="eyebrow">Writing Modes</p>
+          <h2>Context-aware output.</h2>
+          <div className="route-map">{writingModes.map((mode) => <span key={mode}>{mode}</span>)}</div>
+        </div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Developer APIs</p>
+          <h2>Endpoint organization for language tools.</h2>
+          <p>Each writing capability can ship as a stable API surface for websites, mobile apps, creator tools, education portals, and enterprise integrations.</p>
+        </div>
+        <div className="route-map">{languageApiEndpoints.map((endpoint) => <span key={endpoint}>{endpoint}</span>)}</div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Writing Quality Pipeline</p>
+          <h2>From raw text to polished output.</h2>
+          <p>User text flows through detection, correction, analysis, scoring, suggestions, optional rewriting, and final proofreading.</p>
+        </div>
+        <div className="route-map architecture-flow">{writingQualityPipeline.map((step) => <span key={step}>{step}</span>)}</div>
+      </section>
+
+      <section className="section split-panel align-start">
+        <div>
+          <p className="eyebrow">Lingo Score</p>
+          <h2>Proprietary writing quality score.</h2>
+          <p>Outputs include Overall Score, strengths, suggested improvements, estimated reading level, and estimated reading time.</p>
+        </div>
+        <div className="route-map">{lingoScoreCategories.map((category) => <span key={category}>{category}</span>)}</div>
+      </section>
+
+      <section className="section compact-section">
+        <div className="section-heading">
+          <p className="eyebrow">Language Suite Product Lines</p>
+          <h2>Accessibility, education, business, creator, and enterprise tools.</h2>
+        </div>
+        <div className="ops-grid expanded-grid">
+          {languageFeatureGroups.map(([title, copy]) => (
+            <article className="system-card" key={title}>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="section split-panel align-start">
