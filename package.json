@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'Static site; no build step required'"
+    "build": "node scripts-build-static.js"
   },
   "dependencies": {
     "stripe": "^16.12.0"
