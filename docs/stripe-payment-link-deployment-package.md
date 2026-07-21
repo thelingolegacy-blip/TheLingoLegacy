@@ -79,3 +79,8 @@ Use webhooks only when the fulfillment backend exists:
 ## Machine-readable source
 
 - [`../os/payments/stripe-payment-link-package.json`](../os/payments/stripe-payment-link-package.json)
+
+## Credit activation
+
+- [`credit-activation-runbook.md`](credit-activation-runbook.md)
+- [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)

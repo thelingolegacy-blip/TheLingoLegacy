@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "status": "operator-action-required",
+  "purpose": "Cover first-month launch costs and promotion runway without storing financial credentials in the repository.",
+  "rankedOptions": [
+    {
+      "rank": 1,
+      "id": "stripe-capital",
+      "name": "Stripe Capital",
+      "bestFor": "Working capital after Stripe revenue starts flowing.",
+      "notes": ["Eligibility appears in Stripe Dashboard when available.", "Repayment is based on sales activity.", "No repository or site code is required."]
+    },
+    {
+      "rank": 2,
+      "id": "stripe-balance-credits",
+      "name": "Stripe Balance Credits",
+      "bestFor": "Applying account/customer credit to offset first-month invoices.",
+      "notes": ["Requires a real Stripe customer ID.", "Use only inside Stripe Dashboard or secure backend.", "Do not commit customer IDs unless intentionally public/test data."]
+    },
+    {
+      "rank": 3,
+      "id": "external-funding-to-stripe-balance",
+      "name": "External Funding → Stripe Balance",
+      "bestFor": "Early launch funding, grants, micro-loans, donations, or business capital.",
+      "notes": ["Deposit through approved financial accounts.", "Use Stripe dashboard reporting for reconciliation."]
+    },
+    {
+      "rank": 4,
+      "id": "coupons-and-promotions",
+      "name": "Stripe Coupons / Promotions",
+      "bestFor": "Free trials, first-month discounts, and launch promos without adding credit.",
+      "notes": ["Can provide 100% off first month.", "Works with Payment Links and Checkout.", "Best zero-cash option for launch incentives."]
+    }
+  ],
+  "recommendedStack": ["Stripe Capital", "Stripe Balance Credits", "Coupons / Promotions"],
+  "safeAutomationBoundaries": [
+    "Do not store Stripe secret keys in the repository.",
+    "Do not store real customer IDs unless approved for operational docs.",
+    "Do not automate credit issuance without a secure backend and explicit operator approval.",
+    "Use coupons/promotions first when avoiding cash outlay."
+  ],
+  "futureWebhookEvents": [
+    "checkout.session.completed",
+    "invoice.paid",
+    "invoice.payment_failed",
+    "customer.subscription.deleted"
+  ]
+}

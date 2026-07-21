@@ -102,6 +102,11 @@ The deployable Industrial Noir website architecture is implemented in [`docs/os-
 - [Analytics page](site/analytics/)
 - [Promotion engine page](site/promo/)
 
+## Credit activation
+
+- [Credit activation runbook](docs/credit-activation-runbook.md)
+- [Funding page](site/funding/)
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

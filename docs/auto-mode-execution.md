@@ -59,3 +59,8 @@ Complete all remaining waves, sprints, phases, deploys, and activations for the 
 ## Stripe deployment package
 
 - [`stripe-payment-link-deployment-package.md`](stripe-payment-link-deployment-package.md) — product, price, Payment Link, webhook, and deployment checklist.
+
+## Credit activation
+
+- [`credit-activation-runbook.md`](credit-activation-runbook.md)
+- [`../os/funding/credit-activation.json`](../os/funding/credit-activation.json)

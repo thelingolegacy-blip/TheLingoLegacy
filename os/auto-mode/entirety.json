@@ -136,6 +136,12 @@
       "doc": "docs/stripe-payment-link-deployment-package.md",
       "map": "os/payments/stripe-payment-link-package.json",
       "status": "ready-for-stripe-dashboard-creation"
+    },
+    {
+      "id": "credit-activation",
+      "doc": "docs/credit-activation-runbook.md",
+      "map": "os/funding/credit-activation.json",
+      "status": "operator-action-required"
     }
   ]
 }
