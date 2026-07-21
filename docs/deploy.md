@@ -9,6 +9,7 @@ The Lingo Legacy site is deployed on Vercel as a static HTML project.
 3. Confirm the deployment is `Ready`.
 4. Promote the verified deployment to production.
 5. Check the production homepage, landing page, asset library, and docs links.
+6. Run the stability operation-sync checklist before recording the release.
 
 ## Static site details
 
@@ -23,3 +24,7 @@ The Lingo Legacy site is deployed on Vercel as a static HTML project.
 Phase 1–12 activation includes the production homepage, aligned landing page, activation documentation, deployment checklist, content runway, revenue pathways, community capture, metrics command, partnership pipeline, operations cadence, scale readiness, and launch governance lanes.
 
 Before a full brand launch, replace `assets/logo.svg` with the final logo and verify all public contact details.
+
+## Stability sync
+
+Use [`stability-operation-sync.md`](stability-operation-sync.md) to verify static HTML, local links, phase markers, and command expansion terms before each production promotion.

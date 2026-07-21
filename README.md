@@ -50,6 +50,10 @@ The complete activation system is documented in [`docs/activation-phase-1-12.md`
 11. Scale readiness.
 12. Launch governance.
 
+## Stability operation sync
+
+Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.
+
 ## Launch checklist
 
 - Replace `assets/logo.svg` with the final logo before launch.
@@ -57,3 +61,4 @@ The complete activation system is documented in [`docs/activation-phase-1-12.md`
 - Confirm the production deployment is `Ready` after promotion.
 - Confirm the root homepage, landing page, asset library, and activation docs resolve in production.
 - Confirm phase 9–12 partnership, operations, scale readiness, and governance lanes are represented before the next launch push.
+- Run the stability operation-sync command expansion checklist before promotion.

@@ -86,6 +86,13 @@ This is the complete activation plan for The Lingo Legacy static site on Vercel.
 - Keep the public promise, offer lanes, and operating metrics aligned.
 - Feed lessons learned back into the next activation cycle.
 
+## Stability operation sync
+
+- Load the current activation branch and deployment notes before each expansion.
+- Verify stability by parsing static HTML and checking local links.
+- Keep homepage, landing page, README, deployment notes, and activation docs synchronized.
+- Use [`stability-operation-sync.md`](stability-operation-sync.md) for command expansion and pull request update criteria.
+
 ## Phase 1–12 completion criteria
 
 - Root homepage exists and is production-safe.
@@ -93,3 +100,4 @@ This is the complete activation plan for The Lingo Legacy static site on Vercel.
 - Documentation explains the complete activation system and deployment flow.
 - Content, revenue, community, metrics, partnership, operations, scale, and governance lanes are ready for execution.
 - No package build step is required for this static site.
+- Stability verification and operation sync are documented for future command expansion.
