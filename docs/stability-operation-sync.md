@@ -83,3 +83,7 @@ Verify `os/command/admin-actions.schema.json`, `os/command/ai-ops-boundaries.jso
 ## Wave 3 scaffold checks
 
 Verify `os/ecosystem/assets.schema.json`, `os/ecosystem/node-registry.schema.json`, and `os/ecosystem/sync-contract.schema.json` before continuing ecosystem implementation.
+
+## Wave 4 scaffold checks
+
+Verify `os/experience/ui-shell.schema.json`, `os/experience/lingo-ai-entrypoints.json`, and `os/experience/os-home-navigation.json` before continuing experience implementation.

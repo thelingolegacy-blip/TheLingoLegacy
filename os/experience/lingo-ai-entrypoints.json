@@ -1,0 +1,27 @@
+{
+  "entrypoints": [
+    {
+      "id": "ask-lingo",
+      "label": "Ask Lingo",
+      "purpose": "User-facing assistant entry for questions, guidance, and build navigation.",
+      "outputType": "answer"
+    },
+    {
+      "id": "build-mode",
+      "label": "Build Mode",
+      "purpose": "Operator-facing assistant entry for scaffolding, validation, and command expansion.",
+      "outputType": "action-plan"
+    },
+    {
+      "id": "ops-summary",
+      "label": "Ops Summary",
+      "purpose": "Summarizes current wave, sprint, deployment, activation, and blockers.",
+      "outputType": "summary"
+    }
+  ],
+  "rules": [
+    "Separate user prompts from system actions.",
+    "Keep AI-generated operating outputs traceable in docs or pull request summaries.",
+    "Require validation before production-affecting actions."
+  ]
+}

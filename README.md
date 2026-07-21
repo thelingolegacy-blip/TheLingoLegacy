@@ -67,6 +67,7 @@ Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/
 - [Wave 3 ecosystem layer](docs/wave-3-ecosystem-layer.md) — Global Asset Manager, node registry, and sync engine rules.
   - [Wave 3 ecosystem scaffolds](docs/wave-3-ecosystem-scaffolds.md) — JSON scaffolds for asset records, ecosystem nodes, and sync contracts.
 - [Wave 4 experience layer](docs/wave-4-experience-layer.md) — UI shell, Lingo.ai app, and OS Home navigation rules.
+  - [Wave 4 experience scaffolds](docs/wave-4-experience-scaffolds.md) — JSON scaffolds for UI shell regions, Lingo.ai entrypoints, and OS Home navigation.
 - [Wave 5 deployment](docs/wave-5-deployment.md) — deployment stack, routing rules, and automation trigger rules.
 
 ## Auto mode entirety

@@ -41,3 +41,11 @@ Intervene only when:
 - Lingo.ai app structure is documented.
 - OS Home navigation model is documented.
 - Wave 4 is linked from the doctrine and README.
+
+## Experience scaffolds
+
+Concrete Wave 4 scaffolds are documented in [`wave-4-experience-scaffolds.md`](wave-4-experience-scaffolds.md).
+
+- UI shell schema: [`../os/experience/ui-shell.schema.json`](../os/experience/ui-shell.schema.json).
+- Lingo.ai entry points: [`../os/experience/lingo-ai-entrypoints.json`](../os/experience/lingo-ai-entrypoints.json).
+- OS Home navigation: [`../os/experience/os-home-navigation.json`](../os/experience/os-home-navigation.json).

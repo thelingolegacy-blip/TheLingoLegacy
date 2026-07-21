@@ -1,0 +1,15 @@
+{
+  "navigation": [
+    { "id": "activation", "label": "Activation", "href": "docs/activation-phase-1-12.md", "priority": "primary" },
+    { "id": "assets", "label": "Assets", "href": "assets/index.html", "priority": "primary" },
+    { "id": "operations", "label": "Operations", "href": "docs/os-execution-doctrine.md", "priority": "primary" },
+    { "id": "stability", "label": "Stability", "href": "docs/stability-operation-sync.md", "priority": "secondary" },
+    { "id": "auto-mode", "label": "Auto Mode", "href": "docs/auto-mode-execution.md", "priority": "secondary" },
+    { "id": "deploy", "label": "Deploy", "href": "docs/deploy-activation-runbook.md", "priority": "secondary" }
+  ],
+  "rules": [
+    "Keep production-critical links visible.",
+    "Route every primary action to an existing static file.",
+    "Avoid hiding deployment and stability links behind visual-only navigation."
+  ]
+}
