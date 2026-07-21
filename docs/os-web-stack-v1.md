@@ -51,3 +51,8 @@ Full Auto-Build is active. The website is static, deployable on Vercel, and link
 
 - [`external-platform-connections.md`](external-platform-connections.md)
 - [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)
+
+## Lingo.ai activation
+
+- [`lingo-ai-activation.md`](lingo-ai-activation.md)
+- [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)

@@ -6,26 +6,29 @@
   <meta name="description" content="Lingo.ai browser game scaffold — That's My Lingo." />
   <title>Lingo.ai — Play Now</title>
   <link rel="stylesheet" href="/site/styles.css" />
-  <style>#game-container{padding:12px}canvas{width:100%;max-width:900px;border:1px solid var(--border);border-radius:18px;background:#05080d;display:block}</style>
+  <style>#game-container{padding:12px}canvas{width:100%;max-width:900px;border:1px solid var(--border);border-radius:18px;background:#05080d;display:block}.mini{font-size:.9rem;color:var(--muted)}</style>
 </head>
 <body>
-  <nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/">Home</a><a href="/site/os/">OS</a><a href="/site/lingoai/">Lingo.ai</a><a href="/site/avalon/">Avalon</a><a href="/site/cycles/">Cycles</a><a href="/site/social/">Social</a><a href="/site/monetization/">Monetization</a><a href="/site/payments/">Payments</a><a href="/site/platforms/">Platforms</a><a href="/site/funding/">Funding</a><a href="/site/brand/">Brand</a></div></div></nav>
+  <nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/">Lingo Legacy OS</a><div class="nav-links"><a href="/">Home</a><a href="/site/os/">OS</a><a href="/site/lingoai/">Lingo.ai</a><a href="/site/social/">Social</a><a href="/site/monetization/">Monetization</a><a href="/site/payments/">Payments</a><a href="/site/platforms/">Platforms</a></div></div></nav>
   <header class="wrap hero">
     <div class="eyebrow">That’s My Lingo</div>
     <h1>Lingo.ai — Play Now</h1>
-    <p class="lead">Browser-playable HTML5 game scaffold for language missions, XP rewards, and Crown drops.</p>
-    <div class="actions"><a class="btn primary" href="#game-container">Play in browser</a><a class="btn" href="/docs/brand-spine.md">Brand Spine</a><a class="btn" href="/docs/social-account-matrix.md">Social Matrix</a></div>
+    <p class="lead">Browser-playable HTML5 game scaffold for language missions, XP rewards, Crown drops, score sharing, and portal distribution.</p>
+    <div class="actions"><a class="btn primary" href="#game-container">Play in browser</a><a class="btn" href="/docs/lingo-ai-activation.md">Activation Plan</a><a class="btn" href="/site/payments/">Unlock Premium</a><a class="btn" href="/site/social/">Share Campaign</a></div>
   </header>
   <main class="wrap">
-    <section class="card" id="game-container"><canvas id="lingo-game" aria-label="Lingo.ai prototype game canvas"></canvas></section>
+    <section class="card" id="game-container"><canvas id="lingo-game" aria-label="Lingo.ai prototype game canvas"></canvas><p class="mini">Prototype live. Final GDevelop HTML5 export can replace this engine when ready.</p></section>
     <section class="actions" id="controls"><button class="btn" id="mute-toggle">Sound: On</button><button class="btn" id="share-btn">Share</button></section>
     <section class="grid">
-      <article class="card"><strong>How to play</strong><h2>Tap the Lingo core</h2><ul><li>Click/tap the game field to earn XP.</li><li>Prototype mechanics stand in for word missions.</li><li>Final engine can wire Phaser, Construct, or custom JS.</li></ul></article>
+      <article class="card"><strong>How to play</strong><h2>Tap the Lingo core</h2><ul><li>Click/tap the game field to earn XP.</li><li>Prototype mechanics stand in for word missions.</li><li>Final engine can wire GDevelop, Phaser, or custom JS.</li></ul></article>
       <article class="card"><strong>XP / Rewards</strong><h2>Score into the OS</h2><ul><li>XP score staged.</li><li>Wallet and Coin sync ready via Wave 1 schemas.</li><li>Crown drops connect through geo-beacons.</li></ul></article>
-      <article class="card"><strong>Distribution</strong><h2>Everywhere playable</h2><ul><li>Own site first.</li><li>Game portals later.</li><li>Social bios and YouTube descriptions link here.</li></ul></article>
+      <article class="card"><strong>Premium</strong><h2>Monetization hooks</h2><ul><li>Lingo.ai Premium.</li><li>XP Booster / Crown Pack.</li><li>Payment Link placeholders ready.</li></ul></article>
+      <article class="card"><strong>Distribution</strong><h2>Everywhere playable</h2><ul><li>Own site live.</li><li>Itch.io, CrazyGames, GameMonetize, Poki planned.</li><li>Social bios and YouTube descriptions link here.</li></ul></article>
+      <article class="card"><strong>Analytics</strong><h2>Event hooks</h2><ul><li>play_lingo_ai</li><li>score_xp</li><li>share_score</li><li>click_premium</li></ul></article>
+      <article class="card"><strong>Next build</strong><h2>GDevelop handoff</h2><ul><li>Export HTML5 zip.</li><li>Drop assets into this route.</li><li>Replace prototype engine.</li></ul></article>
     </section>
   </main>
-  <footer class="wrap">Lingo.ai scaffold · HTML5 canvas · XP-ready</footer>
+  <footer class="wrap">Lingo.ai scaffold · HTML5 canvas · XP-ready · Distribution-ready</footer>
   <script src="./game-engine.js"></script>
 </body>
 </html>

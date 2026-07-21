@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "status": "activation-ready",
+  "game": "Lingo.ai",
+  "tagline": "That’s My Lingo",
+  "primaryRoute": "/site/lingoai/",
+  "playModes": [
+    { "id": "browser-prototype", "status": "live", "route": "/site/lingoai/", "notes": "Canvas prototype with XP score, mute toggle, and share action." },
+    { "id": "gdevelop-html5-export", "status": "handoff-required", "route": "/site/lingoai/", "notes": "Replace prototype with GDevelop HTML5 export when asset package is ready." },
+    { "id": "mobile-build", "status": "future", "route": "Apple / Google Play", "notes": "Requires native/mobile package before store submission." }
+  ],
+  "distribution": [
+    { "channel": "Own site", "status": "live", "url": "https://thelingolegacy.com/site/lingoai/" },
+    { "channel": "Itch.io", "status": "planned", "requirement": "HTML5 zip export and game listing assets" },
+    { "channel": "CrazyGames", "status": "planned", "requirement": "Playable HTML5 build and portal review" },
+    { "channel": "GameMonetize", "status": "planned", "requirement": "HTML5 build, ad policy review, portal metadata" },
+    { "channel": "Poki", "status": "planned", "requirement": "Publisher acceptance and quality review" },
+    { "channel": "Social bios", "status": "ready", "requirement": "Use Lingo.ai route in bios and pinned posts" }
+  ],
+  "events": ["play_lingo_ai", "tap_lingo_core", "score_xp", "share_score", "click_premium", "click_xp_booster"],
+  "ctas": ["Play in browser", "Share score", "Unlock premium", "Boost XP", "Follow @LingoDotAI"]
+}

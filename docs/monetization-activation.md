@@ -42,3 +42,8 @@ Do not commit secret keys. Static pages should use public payment links until th
 
 - [`external-platform-connections.md`](external-platform-connections.md)
 - [`../os/platforms/external-platform-connections.json`](../os/platforms/external-platform-connections.json)
+
+## Lingo.ai activation
+
+- [`lingo-ai-activation.md`](lingo-ai-activation.md)
+- [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)

@@ -32,3 +32,8 @@ This is the 30-day execution layer for the “That’s My Lingo” campaign.
 
 - [`../os/social/launch-calendar.json`](../os/social/launch-calendar.json)
 - [`../os/social/pinned-posts.json`](../os/social/pinned-posts.json)
+
+## Lingo.ai activation
+
+- [`lingo-ai-activation.md`](lingo-ai-activation.md)
+- [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)
