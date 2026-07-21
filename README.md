@@ -58,6 +58,14 @@ The intervention-only continuous execution rule is documented in [`docs/os-execu
 
 Wave 0 foundation execution is documented in [`docs/wave-0-foundation.md`](docs/wave-0-foundation.md). It defines the current repo structure, static validation path, and Vercel preview-to-production flow.
 
+## Wave 1–5 execution plans
+
+- [Wave 1 core systems](docs/wave-1-core-systems.md) — XP Engine, wallet services, and identity module rules.
+- [Wave 2 command systems](docs/wave-2-command-systems.md) — Admin Command Center, AI Ops, and Event Bus rules.
+- [Wave 3 ecosystem layer](docs/wave-3-ecosystem-layer.md) — Global Asset Manager, node registry, and sync engine rules.
+- [Wave 4 experience layer](docs/wave-4-experience-layer.md) — UI shell, Lingo.ai app, and OS Home navigation rules.
+- [Wave 5 deployment](docs/wave-5-deployment.md) — deployment stack, routing rules, and automation trigger rules.
+
 ## Stability operation sync
 
 Stability verification and command expansion are documented in [`docs/stability-operation-sync.md`](docs/stability-operation-sync.md). Use it after every production push to keep the homepage, landing page, activation docs, deployment notes, and pull request summary aligned.

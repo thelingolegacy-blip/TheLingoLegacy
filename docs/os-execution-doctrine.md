@@ -42,6 +42,8 @@ Primary lanes:
 - Wallet services.
 - Identity module.
 
+Execution plan: [`wave-1-core-systems.md`](wave-1-core-systems.md).
+
 ### Wave 2 — Command Systems
 
 Intervene only when Admin Command Center structure, AI Ops automation logic, or Event Bus routing needs implementation.
@@ -51,6 +53,8 @@ Primary lanes:
 - Admin Command Center.
 - AI Ops.
 - Event Bus.
+
+Execution plan: [`wave-2-command-systems.md`](wave-2-command-systems.md).
 
 ### Wave 3 — Ecosystem Layer
 
@@ -62,6 +66,8 @@ Primary lanes:
 - Node registry.
 - Sync engine.
 
+Execution plan: [`wave-3-ecosystem-layer.md`](wave-3-ecosystem-layer.md).
+
 ### Wave 4 — Experience Layer
 
 Intervene only when the UI shell, Lingo.ai frontend structure, or OS Home navigation logic needs scaffolding.
@@ -72,6 +78,8 @@ Primary lanes:
 - OS Home.
 - Navigation shell.
 
+Execution plan: [`wave-4-experience-layer.md`](wave-4-experience-layer.md).
+
 ### Wave 5 — Deployment
 
 Intervene only when deployment composition, routing rules, or automation triggers need implementation or repair.
@@ -81,6 +89,8 @@ Primary lanes:
 - Deployment stack.
 - Routing rules.
 - Automation triggers.
+
+Execution plan: [`wave-5-deployment.md`](wave-5-deployment.md).
 
 ## Continuous execution standard
 

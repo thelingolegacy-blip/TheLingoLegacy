@@ -63,3 +63,7 @@ Use [`os-execution-doctrine.md`](os-execution-doctrine.md) to decide when to int
 ## Wave 0 link
 
 Use [`wave-0-foundation.md`](wave-0-foundation.md) as the foundation baseline when checking repo structure, build pipeline expectations, and Vercel production flow.
+
+## Wave 1–5 links
+
+Use Wave 1–5 plans to verify that core systems, command systems, ecosystem, experience, and deployment changes stay aligned with the OS execution doctrine.
