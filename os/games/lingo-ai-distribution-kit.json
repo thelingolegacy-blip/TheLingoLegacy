@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "status": "portal-submission-ready-after-final-html5-export",
+  "game": {
+    "title": "Lingo.ai: That’s My Lingo",
+    "shortDescription": "Tap into a language-powered arcade prototype where every play earns XP toward Crown drops.",
+    "longDescription": "Lingo.ai: That’s My Lingo is the browser game surface of the Lingo Legacy OS. Players tap the Lingo core, score XP, share results, and enter the pathway for premium missions, Crown drops, and future GDevelop-powered gameplay.",
+    "genre": ["Arcade", "Educational", "Casual", "Language"],
+    "tags": ["language", "xp", "browser game", "html5", "arcade", "creator economy", "industrial noir"],
+    "ageRatingTarget": "Everyone / family-friendly pending final content review",
+    "orientation": "responsive browser",
+    "controls": ["mouse", "touch"],
+    "primaryUrl": "https://thelingolegacy.com/site/lingoai/"
+  },
+  "portalChecklist": [
+    { "portal": "Itch.io", "required": ["HTML5 zip", "cover image", "screenshots", "short description", "tags", "external link to OS hub"], "status": "metadata-ready" },
+    { "portal": "CrazyGames", "required": ["final HTML5 build", "gameplay quality review", "privacy policy", "thumbnail", "controls description"], "status": "metadata-ready" },
+    { "portal": "GameMonetize", "required": ["HTML5 build", "ad policy review", "portal metadata", "publisher account", "game icon"], "status": "metadata-ready" },
+    { "portal": "Poki", "required": ["publisher acceptance", "high-quality build", "performance review", "game assets", "localization notes"], "status": "metadata-ready" },
+    { "portal": "Own Site", "required": ["live route", "share CTA", "analytics events", "premium CTA"], "status": "live" }
+  ],
+  "socialShareCopy": [
+    "That’s My Lingo. I just scored XP in Lingo.ai — play it in your browser.",
+    "Tap the Lingo core, earn XP, unlock the next Crown drop.",
+    "Lingo.ai is live: browser play, score sharing, and premium missions loading."
+  ],
+  "assetChecklist": ["game icon", "cover image", "3 screenshots", "15-second gameplay clip", "30-second trailer", "logo lockup", "privacy policy link"],
+  "nextBuildInputs": ["GDevelop HTML5 export", "final sprites", "sound effects", "music loop", "win/lose states", "portal screenshots"]
+}

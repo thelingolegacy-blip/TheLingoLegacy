@@ -35,3 +35,8 @@ Lingo.ai is the playable game and AI app surface for the Lingo Legacy OS.
 ## Machine-readable source
 
 - [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)
+
+## Lingo.ai distribution kit
+
+- [`lingo-ai-distribution-kit.md`](lingo-ai-distribution-kit.md)
+- [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)

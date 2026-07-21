@@ -169,6 +169,13 @@
       "map": "os/games/lingo-ai-activation.json",
       "route": "site/lingoai/",
       "status": "activation-ready"
+    },
+    {
+      "id": "lingo-ai-distribution-kit",
+      "doc": "docs/lingo-ai-distribution-kit.md",
+      "map": "os/games/lingo-ai-distribution-kit.json",
+      "page": "site/lingoai/distribution.html",
+      "status": "portal-submission-ready-after-final-html5-export"
     }
   ]
 }

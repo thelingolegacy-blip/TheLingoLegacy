@@ -37,3 +37,8 @@ This is the 30-day execution layer for the “That’s My Lingo” campaign.
 
 - [`lingo-ai-activation.md`](lingo-ai-activation.md)
 - [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)
+
+## Lingo.ai distribution kit
+
+- [`lingo-ai-distribution-kit.md`](lingo-ai-distribution-kit.md)
+- [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)

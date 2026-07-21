@@ -34,3 +34,8 @@ Vercel hosts the OS routing layer. External platforms require account-owner cred
 
 - [`lingo-ai-activation.md`](lingo-ai-activation.md)
 - [`../os/games/lingo-ai-activation.json`](../os/games/lingo-ai-activation.json)
+
+## Lingo.ai distribution kit
+
+- [`lingo-ai-distribution-kit.md`](lingo-ai-distribution-kit.md)
+- [`../os/games/lingo-ai-distribution-kit.json`](../os/games/lingo-ai-distribution-kit.json)
