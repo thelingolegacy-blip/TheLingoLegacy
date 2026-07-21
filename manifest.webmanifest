@@ -1,7 +1,7 @@
 {
   "name": "That's My Lingo",
   "short_name": "My Lingo",
-  "description": "That’s My Lingo world release: bonus games, rewards, merch, VIP, sounds, visuals, platform distribution, and social launch channels.",
+  "description": "That’s My Lingo world release with Loyalty Lane Apparel, Kottons Code, Spades Is My Lingo, countdown launch waves, AI monetization, stores, rewards, geo exposure, and platform distribution.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -22,6 +22,21 @@
       "name": "Merch Vault",
       "short_name": "Merch",
       "url": "/#vault"
+    },
+    {
+      "name": "Brand Launch",
+      "short_name": "Brands",
+      "url": "/#brands"
+    },
+    {
+      "name": "Market Plan",
+      "short_name": "Market",
+      "url": "/#market"
+    },
+    {
+      "name": "AI Game Ops",
+      "short_name": "AI Ops",
+      "url": "/#ai-ops"
     },
     {
       "name": "World Release",
