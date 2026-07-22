@@ -3,125 +3,161 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The Lingo Legacy app hub for daily language challenges, rankings, and upcoming drops." />
+  <meta name="description" content="Play The Lingo Legacy daily culture-word challenge with score, streaks, sound effects, and instant feedback." />
   <link rel="canonical" href="https://thelingolegacy.com/app/" />
   <meta property="og:title" content="The Lingo Legacy App" />
-  <meta property="og:description" content="The Lingo Legacy app hub for daily language challenges, rankings, and upcoming drops." />
+  <meta property="og:description" content="Play the daily culture-word challenge with score, streaks, sound effects, and instant feedback." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/app/" />
   <meta property="og:image" content="https://thelingolegacy.com/assets/facebook-banner.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="The Lingo Legacy App" />
-  <meta name="twitter:description" content="The Lingo Legacy app hub for daily language challenges, rankings, and upcoming drops." />
+  <meta name="twitter:description" content="Play the daily culture-word challenge with score, streaks, sound effects, and instant feedback." />
   <meta name="twitter:image" content="https://thelingolegacy.com/assets/facebook-banner.svg" />
   <title>The Lingo Legacy App</title>
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="theme-color" content="#46d38a" />
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #05070d;
-      --panel: rgba(255, 255, 255, 0.08);
-      --line: rgba(255, 255, 255, 0.14);
-      --text: #f7fbff;
-      --muted: #aeb9c8;
-      --mint: #46d38a;
-      --gold: #ffd166;
-      --blue: #7ab8ff;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top right, rgba(70, 211, 138, 0.22), transparent 32rem), linear-gradient(180deg, #071017, var(--bg));
-      color: var(--text);
-      line-height: 1.55;
-    }
-    a { color: inherit; text-decoration: none; }
-    .wrap { width: min(1140px, calc(100% - 32px)); margin: 0 auto; }
-    header { padding: 22px 0; border-bottom: 1px solid var(--line); background: rgba(5, 7, 13, 0.72); backdrop-filter: blur(16px); }
-    nav { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; letter-spacing: -0.03em; }
-    .mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: linear-gradient(135deg, var(--mint), var(--blue)); color: #061018; }
-    .nav-links { display: flex; gap: 16px; color: var(--muted); font-size: 0.94rem; }
-    main { padding: 48px 0 64px; }
-    .hero { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 28px; align-items: stretch; }
-    h1, h2, h3 { margin: 0; line-height: 1.05; letter-spacing: -0.045em; }
-    h1 { font-size: clamp(2.6rem, 7vw, 5.6rem); }
-    h2 { font-size: clamp(1.7rem, 4vw, 3rem); }
-    p { margin: 0; color: var(--muted); }
-    .lead { margin-top: 18px; font-size: 1.15rem; max-width: 620px; }
-    .button { display: inline-flex; margin-top: 24px; border-radius: 999px; padding: 12px 18px; background: linear-gradient(135deg, var(--gold), #ff8a5c); color: #101014; font-weight: 900; }
-    .panel { border: 1px solid var(--line); background: var(--panel); border-radius: 28px; padding: 24px; }
-    .dashboard { display: grid; gap: 16px; }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .stat { border: 1px solid var(--line); border-radius: 18px; padding: 16px; background: rgba(0, 0, 0, 0.18); }
-    .stat span { display: block; color: var(--muted); font-size: 0.8rem; }
-    .stat strong { display: block; margin-top: 4px; font-size: 1.55rem; color: var(--mint); }
-    .challenge { display: grid; gap: 12px; }
-    .question { padding: 24px; border-radius: 22px; background: linear-gradient(135deg, rgba(70, 211, 138, 0.18), rgba(122, 184, 255, 0.12)); border: 1px solid var(--line); }
-    .question small { color: var(--gold); font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
-    .question b { display: block; margin-top: 10px; font-size: clamp(2rem, 6vw, 4.2rem); }
-    .answers { display: grid; gap: 10px; }
-    .answer { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; background: rgba(255, 255, 255, 0.06); color: var(--muted); }
-    .answer.selected { background: var(--mint); color: #061018; font-weight: 900; border-color: var(--mint); }
-    .section { margin-top: 34px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
-    .card { border: 1px solid var(--line); background: var(--panel); border-radius: 22px; padding: 20px; min-height: 170px; }
-    .card h3 { margin-bottom: 10px; font-size: 1.18rem; }
-    .badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; color: var(--gold); border: 1px solid var(--line); background: rgba(255, 255, 255, 0.06); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
-    footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
-    @media (max-width: 860px) { .hero, .grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } .nav-links { display: none; } }
+    :root { color-scheme: dark; --bg:#05070d; --panel:rgba(255,255,255,.085); --panel-strong:rgba(255,255,255,.14); --line:rgba(255,255,255,.16); --text:#f7fbff; --muted:#aeb9c8; --mint:#46d38a; --gold:#ffd166; --blue:#7ab8ff; --danger:#ff6b6b; --violet:#b794f4; --shadow:0 32px 100px rgba(0,0,0,.38); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); background:radial-gradient(circle at 10% 10%,rgba(70,211,138,.24),transparent 28rem),radial-gradient(circle at 92% 0%,rgba(122,184,255,.18),transparent 32rem),linear-gradient(180deg,#071017,var(--bg)); line-height:1.55; overflow-x:hidden; }
+    body::before { content:""; position:fixed; inset:-20%; pointer-events:none; background:linear-gradient(115deg,transparent 0 42%,rgba(255,255,255,.055) 48%,transparent 54% 100%); animation:shine 9s linear infinite; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(1180px,calc(100% - 32px)); margin:0 auto; }
+    header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line); background:rgba(5,7,13,.74); backdrop-filter:blur(18px); }
+    nav { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:16px 0; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:950; letter-spacing:-.03em; }
+    .mark { width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg,var(--mint),var(--blue)); color:#061018; }
+    .links { display:flex; gap:16px; color:var(--muted); font-size:.94rem; }
+    .links a:hover { color:var(--text); }
+    main { padding:42px 0 72px; }
+    .hero { display:grid; grid-template-columns:.78fr 1.22fr; gap:24px; align-items:stretch; }
+    h1,h2,h3 { margin:0; line-height:1.03; letter-spacing:-.048em; }
+    h1 { font-size:clamp(2.9rem,8vw,6.4rem); }
+    h2 { font-size:clamp(2rem,5vw,3.8rem); }
+    p { margin:0; color:var(--muted); }
+    .lead { margin-top:18px; font-size:1.12rem; max-width:650px; }
+    .panel { position:relative; border:1px solid var(--line); background:linear-gradient(160deg,var(--panel-strong),rgba(255,255,255,.045)); border-radius:30px; padding:24px; box-shadow:var(--shadow); overflow:hidden; }
+    .panel::after { content:""; position:absolute; inset:auto -20% -45% 35%; height:190px; background:radial-gradient(circle,rgba(255,209,102,.22),transparent 65%); pointer-events:none; }
+    .badge { display:inline-flex; padding:7px 12px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.07); color:var(--gold); font-size:.78rem; font-weight:950; text-transform:uppercase; letter-spacing:.09em; }
+    .button { cursor:pointer; border:0; display:inline-flex; align-items:center; justify-content:center; gap:8px; margin-top:24px; border-radius:999px; padding:12px 18px; background:linear-gradient(135deg,var(--gold),#ff8a5c); color:#101014; font:inherit; font-weight:950; transition:transform .2s ease,filter .2s ease; }
+    .button:hover { transform:translateY(-2px); filter:saturate(1.12); }
+    .button.secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--line); }
+    .sound { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+    .game { display:grid; gap:16px; }
+    .hud { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .stat { border:1px solid var(--line); border-radius:18px; padding:14px; background:rgba(0,0,0,.22); }
+    .stat span { display:block; color:var(--muted); font-size:.78rem; }
+    .stat strong { display:block; margin-top:4px; color:var(--mint); font-size:1.7rem; }
+    .question { position:relative; padding:28px; border-radius:24px; background:linear-gradient(135deg,rgba(70,211,138,.2),rgba(122,184,255,.13)); border:1px solid var(--line); min-height:190px; display:grid; align-content:center; overflow:hidden; }
+    .question::before { content:""; position:absolute; inset:0; background:radial-gradient(circle at var(--x, 20%) var(--y, 20%),rgba(255,209,102,.24),transparent 16rem); transition:.35s; }
+    .question small,.question b,.question p { position:relative; }
+    .question small { color:var(--gold); font-weight:950; text-transform:uppercase; letter-spacing:.09em; }
+    .question b { display:block; margin:8px 0 10px; font-size:clamp(2.4rem,8vw,5.8rem); letter-spacing:-.07em; }
+    .answers { display:grid; gap:10px; }
+    .answer { cursor:pointer; width:100%; text-align:left; border:1px solid var(--line); border-radius:18px; padding:16px; color:var(--text); background:rgba(255,255,255,.065); font:inherit; transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+    .answer:hover:not(:disabled) { transform:translateX(4px); border-color:rgba(70,211,138,.55); }
+    .answer.correct { background:rgba(70,211,138,.28); border-color:var(--mint); }
+    .answer.wrong { background:rgba(255,107,107,.24); border-color:var(--danger); }
+    .answer:disabled { cursor:not-allowed; }
+    .meter { height:10px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.09); }
+    .meter span { display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--mint),var(--gold)); transform-origin:left; transition:width .25s linear; }
+    .feedback { min-height:28px; color:var(--gold); font-weight:850; }
+    .section { margin-top:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .card { border:1px solid var(--line); background:var(--panel); border-radius:22px; padding:20px; min-height:170px; animation:rise .7s both; }
+    .card h3 { margin-bottom:10px; font-size:1.2rem; }
+    .card p { font-size:.96rem; }
+    .confetti { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:50; }
+    .piece { position:absolute; top:-20px; width:9px; height:14px; border-radius:3px; animation:fall 1.2s linear forwards; }
+    @keyframes shine { from { transform:translateX(-30%); } to { transform:translateX(30%); } }
+    @keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+    @keyframes fall { to { transform:translateY(105vh) rotate(520deg); opacity:0; } }
+    @keyframes pulse { 50% { transform:scale(1.02); } }
+    .pulse { animation:pulse .35s ease; }
+    @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } }
   </style>
 </head>
 <body>
-  <header>
-    <nav class="wrap" aria-label="App navigation">
-      <a class="brand" href="/"><span class="mark">LL</span><span>The Lingo Legacy</span></a>
-      <div class="nav-links"><a href="/">Home</a><a href="/landing/">Landing</a><a href="/assets/">Assets</a></div>
-    </nav>
-  </header>
-
+  <header><nav class="wrap" aria-label="App navigation"><a class="brand" href="/"><span class="mark">LL</span><span>The Lingo Legacy</span></a><div class="links"><a href="/">Home</a><a href="/landing/">Landing</a><a href="/assets/">Assets</a></div></nav></header>
   <main class="wrap">
     <section class="hero">
       <div class="panel">
-        <span class="badge">App Preview</span>
-        <h1 style="margin-top:16px">Your daily lingo command center.</h1>
-        <p class="lead">This app shell gives visitors a finished destination while authentication, live leaderboards, payments, and game APIs are connected.</p>
-        <a class="button" href="#daily">Start Daily Challenge</a>
+        <span class="badge">Playable Studio Demo</span>
+        <h1 style="margin-top:16px">Play the daily lingo drop.</h1>
+        <p class="lead">A polished browser-side word challenge with scoring, streaks, sound effects, motion, local best-score saves, and instant feedback. No account is required.</p>
+        <button class="button" id="startGame">Start Game</button>
+        <a class="button secondary" href="/landing/">Join Launch List</a>
+        <div class="sound"><button class="button secondary" id="toggleSound" type="button">Sound: On</button><button class="button secondary" id="resetBest" type="button">Reset Best</button></div>
       </div>
-
-      <div id="daily" class="panel dashboard" aria-label="Daily challenge preview">
-        <div class="stats">
-          <div class="stat"><span>Streak</span><strong>07</strong></div>
-          <div class="stat"><span>XP</span><strong>2.4k</strong></div>
-          <div class="stat"><span>Badges</span><strong>18</strong></div>
-          <div class="stat"><span>Rank</span><strong>#12</strong></div>
+      <section id="daily" class="panel game" aria-label="Playable daily challenge">
+        <div class="hud">
+          <div class="stat"><span>Score</span><strong id="score">0</strong></div>
+          <div class="stat"><span>Streak</span><strong id="streak">0</strong></div>
+          <div class="stat"><span>Best</span><strong id="best">0</strong></div>
+          <div class="stat"><span>Round</span><strong id="round">1/5</strong></div>
         </div>
-        <div class="challenge">
-          <div class="question"><small>Daily Word</small><b>Legacy</b></div>
-          <div class="answers">
-            <div class="answer">A moment that disappears overnight</div>
-            <div class="answer selected">Something built to outlast the trend</div>
-            <div class="answer">A private playlist for artists</div>
-          </div>
-        </div>
-      </div>
+        <div class="meter" aria-hidden="true"><span id="timerBar"></span></div>
+        <div class="question" id="questionCard"><small id="category">Daily Word</small><b id="word">Legacy</b><p id="prompt">Pick the strongest meaning.</p></div>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback" role="status">Press Start Game to begin.</div>
+      </section>
     </section>
-
-    <section class="section">
-      <h2>What the app supports next</h2>
-      <div class="grid">
-        <article class="card"><h3>Player Profiles</h3><p>Profile cards, streaks, badges, XP, and saved progress are ready to map to real user data.</p></article>
-        <article class="card"><h3>Game Seasons</h3><p>Daily challenges can expand into weekly themes, creator prompts, and competitive seasons.</p></article>
-        <article class="card"><h3>Drops Hub</h3><p>Music, merch, and announcements have a clear app surface for future integrations.</p></article>
-      </div>
+    <section class="section" aria-label="Game systems">
+      <article class="card"><h3>Live Play Loop</h3><p>Five timed rounds, instant scoring, streak bonuses, best-score storage, and replay flow are implemented in the browser.</p></article>
+      <article class="card"><h3>Sound + Motion</h3><p>Correct, miss, start, and complete cues are generated with the Web Audio API, paired with motion and celebration effects.</p></article>
+      <article class="card"><h3>Ready for Backend</h3><p>The static game is structured so future auth, leaderboards, seasons, and saved profiles can plug into the same UI.</p></article>
     </section>
   </main>
-
-  <footer>
-    <div class="wrap">© 2026 The Lingo Legacy. App shell ready for backend integration.</div>
-  </footer>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <script>
+    const questions = [
+      { category:'Culture Code', word:'Legacy', prompt:'What does “legacy” mean in the brand voice?', answer:1, choices:['A trend that disappears overnight','Something built to outlast the trend','A private playlist for artists'] },
+      { category:'Studio Slang', word:'Drop', prompt:'In launch language, a “drop” is...', answer:0, choices:['A timed release of music, merch, or content','A broken leaderboard entry','A skipped daily challenge'] },
+      { category:'Community', word:'Streak', prompt:'A streak rewards players for...', answer:2, choices:['Changing their username','Buying every product','Returning and playing consistently'] },
+      { category:'Music Division', word:'Hook', prompt:'A hook is strongest when it is...', answer:1, choices:['Hidden after the footer','Memorable and repeatable','Only visible to admins'] },
+      { category:'Merch Lane', word:'Limited', prompt:'Limited merch should feel...', answer:0, choices:['Exclusive, timely, and worth acting on','Generic and always available','Disconnected from the brand story'] }
+    ];
+    let index=0, score=0, streak=0, answered=false, soundOn=true, timer, remaining=100;
+    const $ = id => document.getElementById(id);
+    const bestKey = 'lingoLegacyBestScore';
+    $('best').textContent = localStorage.getItem(bestKey) || '0';
+    function tone(freq, type='sine', dur=.16, gain=.045) {
+      if (!soundOn) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx(), osc = ctx.createOscillator(), vol = ctx.createGain();
+      osc.frequency.value = freq; osc.type = type; vol.gain.value = gain;
+      osc.connect(vol); vol.connect(ctx.destination); osc.start();
+      vol.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + dur); osc.stop(ctx.currentTime + dur);
+    }
+    function cue(kind){ if(kind==='correct'){ tone(660,'triangle'); setTimeout(()=>tone(880,'triangle',.18),80); } else if(kind==='wrong'){ tone(180,'sawtooth',.18,.035); } else if(kind==='start'){ tone(420,'sine'); } else { [520,680,840].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.18),i*90)); } }
+    function render(){
+      answered=false; remaining=100; $('timerBar').style.width='100%';
+      const q=questions[index]; $('category').textContent=q.category; $('word').textContent=q.word; $('prompt').textContent=q.prompt; $('round').textContent=`${index+1}/${questions.length}`; $('feedback').textContent='Choose the best answer before the meter runs out.';
+      $('answers').innerHTML=q.choices.map((c,i)=>`<button class="answer" type="button" data-choice="${i}">${c}</button>`).join('');
+      document.querySelectorAll('.answer').forEach(btn=>btn.addEventListener('click',()=>choose(Number(btn.dataset.choice))));
+      clearInterval(timer); timer=setInterval(()=>{ remaining-=2; $('timerBar').style.width=Math.max(remaining,0)+'%'; if(remaining<=0) choose(-1); },120);
+    }
+    function choose(choice){
+      if(answered) return; answered=true; clearInterval(timer);
+      const q=questions[index]; const buttons=[...document.querySelectorAll('.answer')]; buttons.forEach(b=>b.disabled=true);
+      buttons[q.answer]?.classList.add('correct');
+      if(choice===q.answer){ streak++; const points=100 + streak*25 + Math.round(remaining); score+=points; $('feedback').textContent=`Correct. +${points} points. Streak x${streak}.`; $('questionCard').classList.add('pulse'); cue('correct'); }
+      else { streak=0; if(choice>=0) buttons[choice]?.classList.add('wrong'); $('feedback').textContent = choice < 0 ? 'Time. Lock in faster next round.' : 'Miss. The green answer is the strongest read.'; cue('wrong'); }
+      $('score').textContent=score; $('streak').textContent=streak; setTimeout(()=>$('questionCard').classList.remove('pulse'),360);
+      setTimeout(next,1100);
+    }
+    function next(){ index++; if(index>=questions.length) return finish(); render(); }
+    function finish(){
+      const best=Math.max(Number(localStorage.getItem(bestKey)||0),score); localStorage.setItem(bestKey,best); $('best').textContent=best; $('feedback').textContent=`Run complete. Final score: ${score}. ${score>=best?'New best saved.':'Replay to beat your best.'}`; cue('finish'); burst(); $('startGame').textContent='Replay Game';
+    }
+    function burst(){ const root=$('confetti'); root.innerHTML=''; for(let i=0;i<42;i++){ const p=document.createElement('span'); p.className='piece'; p.style.left=Math.random()*100+'%'; p.style.background=['#46d38a','#ffd166','#7ab8ff','#b794f4'][i%4]; p.style.animationDelay=Math.random()*.35+'s'; root.appendChild(p); } setTimeout(()=>root.innerHTML='',1600); }
+    $('startGame').addEventListener('click',()=>{ index=0; score=0; streak=0; $('score').textContent=0; $('streak').textContent=0; cue('start'); render(); });
+    $('toggleSound').addEventListener('click',()=>{ soundOn=!soundOn; $('toggleSound').textContent=`Sound: ${soundOn?'On':'Off'}`; if(soundOn) cue('start'); });
+    $('resetBest').addEventListener('click',()=>{ localStorage.removeItem(bestKey); $('best').textContent='0'; $('feedback').textContent='Best score reset on this device.'; });
+    $('questionCard').addEventListener('pointermove', e=>{ const r=e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty('--x', ((e.clientX-r.left)/r.width*100)+'%'); e.currentTarget.style.setProperty('--y', ((e.clientY-r.top)/r.height*100)+'%'); });
+  </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ The Lingo Legacy is a static HTML site and deploys on Vercel without a build com
 
 - `/` — production homepage
 - `/landing/` — campaign landing page
-- `/app/` — app preview shell
+- `/app/` — playable daily game shell
 - `/assets/` — brand asset library
 
 After merging changes to the production branch, Vercel will create a new production deployment automatically if the project is connected to this repository.
