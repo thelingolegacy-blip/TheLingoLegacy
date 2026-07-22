@@ -315,24 +315,24 @@
                 category: "logos",
                 description: "Primary logo for The Lingo Legacy brand",
                 emoji: "🎤",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-main.png",
-                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-main.png" alt="Lingo Legacy Logo" width="200" />`
+                url: "/assets/logo-main.svg",
+                embedCode: `<img src="/assets/logo-main.svg" alt="Lingo Legacy Logo" width="200" />`
             },
             {
                 name: "Lingo Legacy Logo - Horizontal",
                 category: "logos",
                 description: "Horizontal logo variant for headers and banners",
                 emoji: "🎤",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-horizontal.png",
-                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-horizontal.png" alt="Lingo Legacy Logo Horizontal" width="300" />`
+                url: "/assets/logo-horizontal.svg",
+                embedCode: `<img src="/assets/logo-horizontal.svg" alt="Lingo Legacy Logo Horizontal" width="300" />`
             },
             {
                 name: "Lingo Legacy Logo - Square",
                 category: "logos",
                 description: "Square logo for social media and favicons",
                 emoji: "🎤",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-square.png",
-                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/logo-square.png" alt="Lingo Legacy Logo Square" width="150" />`
+                url: "/assets/logo-square.svg",
+                embedCode: `<img src="/assets/logo-square.svg" alt="Lingo Legacy Logo Square" width="150" />`
             },
             {
                 name: "GitHub Badge",
@@ -379,24 +379,24 @@
                 category: "social",
                 description: "Facebook page header image (1200x628px)",
                 emoji: "📘",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/facebook-banner.png",
-                embedCode: `<!-- Facebook Banner -->\n<meta property="og:image" content="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/facebook-banner.png" />`
+                url: "/assets/facebook-banner.svg",
+                embedCode: `<!-- Facebook Banner -->\n<meta property="og:image" content="https://thelingolegacy.com/assets/facebook-banner.svg" />`
             },
             {
                 name: "Twitter Cover Photo",
                 category: "social",
                 description: "Twitter header image (1500x500px)",
                 emoji: "🐦",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/twitter-header.png",
-                embedCode: `<!-- Twitter Header Meta Tag -->\n<meta name="twitter:image" content="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/twitter-header.png" />`
+                url: "/assets/twitter-header.svg",
+                embedCode: `<!-- Twitter Header Meta Tag -->\n<meta name="twitter:image" content="https://thelingolegacy.com/assets/twitter-header.svg" />`
             },
             {
                 name: "Instagram Square Post",
                 category: "social",
                 description: "Instagram post template (1080x1080px)",
                 emoji: "📸",
-                url: "https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/instagram-post.png",
-                embedCode: `<img src="https://raw.githubusercontent.com/thelingolegacy-blip/TheLingoLegacy/main/assets/instagram-post.png" alt="Instagram Post" width="400" />`
+                url: "/assets/instagram-post.svg",
+                embedCode: `<img src="/assets/instagram-post.svg" alt="Instagram Post" width="400" />`
             }
         ];
 
@@ -417,7 +417,7 @@
             
             target.innerHTML = filtered.map(asset => `
                 <div class="asset-card" onclick="toggleEmbedCode(this)">
-                    <div class="asset-preview placeholder">${asset.emoji}</div>
+                    <div class="asset-preview"><img src="${asset.url}" alt="${asset.name}" loading="lazy" /></div>
                     <div class="asset-name">${asset.name}</div>
                     <div class="asset-desc">${asset.description}</div>
                     <div class="embed-code">${escapeHtml(asset.embedCode)}</div>
