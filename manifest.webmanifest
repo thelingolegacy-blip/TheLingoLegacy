@@ -1,0 +1,18 @@
+{
+  "name": "The Lingo Legacy",
+  "short_name": "Lingo Legacy",
+  "description": "Games, music, merch, and community experiences built around the language of culture.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05070d",
+  "theme_color": "#46d38a",
+  "icons": [
+    {
+      "src": "/assets/logo-square.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
