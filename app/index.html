@@ -28,7 +28,7 @@
     .wrap { width:min(1180px,calc(100% - 32px)); margin:0 auto; }
     header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line); background:rgba(5,7,13,.74); backdrop-filter:blur(18px); }
     nav { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:16px 0; }
-    .brand { display:flex; align-items:center; gap:10px; font-weight:950; letter-spacing:-.03em; }
+      .brand { display:flex; align-items:center; gap:10px; font-weight:950; letter-spacing:-.03em; }
     .mark { width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg,var(--mint),var(--blue)); color:#061018; }
     .links { display:flex; gap:16px; color:var(--muted); font-size:.94rem; }
     .links a:hover { color:var(--text); }
@@ -78,6 +78,7 @@
     .pulse { animation:pulse .35s ease; }
     @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } }
   </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
   <header><nav class="wrap" aria-label="App navigation"><a class="brand" href="/"><span class="mark">LL</span><span>That’s My Lingo</span></a><div class="links"><a href="/">Home</a><a href="/landing/">Landing</a><a href="/assets/">Assets</a></div></nav></header>
