@@ -445,7 +445,7 @@
                     <div class="asset-name">${asset.name}</div>
                     <div class="asset-desc">${asset.description}</div>
                     <div class="embed-code">${escapeHtml(asset.embedCode)}</div>
-                    <button class="copy-btn" onclick="copyToClipboard(event, '${escapeHtml(asset.embedCode)}')">
+                    <button class="copy-btn" type="button" data-embed-code="${encodeURIComponent(asset.embedCode)}" onclick="copyToClipboard(event)">
                         📋 Copy Embed Code
                     </button>
                 </div>
@@ -458,12 +458,12 @@
         }
 
         // Copy to clipboard function
-        function copyToClipboard(event, text) {
+        function copyToClipboard(event) {
             event.stopPropagation();
             
-            const unescaped = unescapeHtml(text);
-            navigator.clipboard.writeText(unescaped).then(() => {
-                const btn = event.target;
+            const btn = event.currentTarget;
+            const embedCode = decodeURIComponent(btn.dataset.embedCode || '');
+            navigator.clipboard.writeText(embedCode).then(() => {
                 const originalText = btn.textContent;
                 btn.textContent = '✅ Copied!';
                 btn.classList.add('copied');
