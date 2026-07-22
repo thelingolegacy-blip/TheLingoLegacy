@@ -6,12 +6,12 @@ Static Vercel website for The Lingo Legacy: a culture-driven destination for wor
 
 - `/` — polished public homepage with games, music, merch, and launch calls to action
 - `/landing/` — campaign landing page and waitlist call to action
-- `/app/` — static app preview shell for daily challenges, profile stats, and future product surfaces
+- `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 
 ## Development
 
-This is a static HTML site. There is no build step and no package manager install required.
+This is a static HTML site with browser-side interactivity. There is no build step and no package manager install required.
 
 Open `index.html` locally, or serve the folder with any static server:
 

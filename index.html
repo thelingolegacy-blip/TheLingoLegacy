@@ -111,6 +111,10 @@
     }
 
     .button:hover { transform: translateY(-2px); }
+    @keyframes glowFloat { 50% { transform: translateY(-10px) scale(1.01); filter: saturate(1.15); } }
+    .showcase { animation: glowFloat 5s ease-in-out infinite; }
+    .choice, .track, .card { transition: transform .22s ease, border-color .22s ease; }
+    .choice:hover, .track:hover, .card:hover { transform: translateY(-4px); border-color: rgba(70, 211, 138, .45); }
     .button.primary { background: linear-gradient(135deg, var(--gold), #ff8a5c); color: #101014; }
     .button.secondary { background: var(--panel); border-color: var(--line); color: var(--text); }
 
@@ -288,7 +292,7 @@
         <h1>Play the language of legacy.</h1>
         <p class="lead">The Lingo Legacy brings together word games, music drops, merch, and community challenges in one premium destination for culture-driven creators and fans.</p>
         <div class="hero-actions">
-          <a class="button primary" href="/app/">Launch the App</a>
+          <a class="button primary" href="/app/">Play the Daily Game</a>
           <a class="button secondary" href="#games">Explore the Legacy</a>
         </div>
       </div>
@@ -355,7 +359,7 @@
     <section id="merch" class="wrap section">
       <div class="section-head">
         <h2>Built for launch.</h2>
-        <p>The site now has the essentials visitors expect before a full commerce or authenticated app backend is connected.</p>
+        <p>The site now has a playable browser game, launch list flow, brand assets, metadata, and a clear path for commerce or authenticated backend integrations.</p>
       </div>
       <div class="grid">
         <article class="card"><p class="kicker">Merch</p><h3>Coming drop module</h3><p>Clear product messaging for apparel, collectibles, and limited legacy drops.</p></article>
