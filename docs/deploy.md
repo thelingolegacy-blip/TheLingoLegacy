@@ -1,6 +1,6 @@
 # Deployment notes
 
-The Lingo Legacy is a static HTML site and deploys on Vercel without a build command.
+That’s My Lingo is a static HTML site and deploys on Vercel without a build command.
 
 ## Vercel settings
 

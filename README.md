@@ -1,6 +1,6 @@
-# The Lingo Legacy
+# That’s My Lingo by The Lingo Legacy
 
-Static Vercel website for The Lingo Legacy: a culture-driven destination for word games, music, merch, and community drops.
+Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-gold culture game world with playable lingo rounds, district UI, community lanes, merch/marketplace framing, and launch-list capture.
 
 ## Site map
 

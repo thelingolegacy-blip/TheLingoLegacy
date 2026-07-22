@@ -1,15 +1,15 @@
 {
-  "name": "The Lingo Legacy",
-  "short_name": "Lingo Legacy",
+  "name": "That’s My Lingo",
+  "short_name": "My Lingo",
   "description": "Games, music, merch, and community experiences built around the language of culture.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#05070d",
-  "theme_color": "#46d38a",
+  "theme_color": "#d7a63d",
   "icons": [
     {
-      "src": "/assets/logo-square.svg",
+      "src": "/assets/thats-my-lingo-mark.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
