@@ -21,6 +21,16 @@ Open `index.html` locally, or serve the folder with any static server:
 python3 -m http.server 3000
 ```
 
+## Validation
+
+Run the static smoke test before opening a pull request or deploying:
+
+```bash
+node scripts/validate-static-site.mjs
+```
+
+It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, and required page metadata.
+
 ## Deployment
 
 Deploy the repository as a static site on Vercel. The production entrypoint is `index.html` at the repository root.
