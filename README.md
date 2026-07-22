@@ -7,7 +7,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/` — polished public homepage with games, music, merch, and launch calls to action
 - `/thats-my-lingo/` — full demo lane with slots, demo store, rewards, opt-in sounds, card/dice bonuses, and animations
 - `/landing/` — campaign landing page and waitlist call to action
-- `/kottons-code/` — unified canon demo for apps, games, and ebooks with The Code, animated series bible, publishing universe, daily-life rhythm, SEPTA/NJ Transit/Grandma travel arcs, Mystery Pet rotation, Boutique Tech HQ, IHOP reset, Peaches Protocol, rare dove pet, dual-world conflict, Season 1 structure, theme sequence, Code XP, and OS architecture
+- `/kottons-code/` — unified canon demo for apps, games, and ebooks with The Code, animated series bible, publishing universe, book production waves, daily-life rhythm, SEPTA/NJ Transit/Grandma travel arcs, Mystery Pet rotation, Boutique Tech HQ, IHOP reset, Peaches Protocol, rare dove pet, dual-world conflict, Season 1 structure, theme sequence, Code XP, and OS architecture
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 
