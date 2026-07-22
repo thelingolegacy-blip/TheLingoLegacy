@@ -12,6 +12,10 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 
+## Production experience layer
+
+Every public route loads `/assets/studio-enhancements.css` and `/assets/studio-enhancements.js` for the shared studio layer: skip links, scroll progress, route dock, sound toggle, motion-safe reveal animations, pointer lighting, share/status toasts, and glass/glow card treatment.
+
 ## Development
 
 This is a static HTML site with browser-side interactivity. There is no build step and no package manager install required.
