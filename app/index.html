@@ -18,6 +18,8 @@
   <link rel="icon" href="/assets/thats-my-lingo-mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="theme-color" content="#d7a63d" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
   <style>
     :root { color-scheme: dark; --bg:#05070d; --panel:rgba(255,255,255,.085); --panel-strong:rgba(255,255,255,.14); --line:rgba(255,255,255,.16); --text:#f7fbff; --muted:#aeb9c8; --mint:#46d38a; --gold:#f0c85a; --blue:#62f0ff; --danger:#ff6b6b; --violet:#5d30c9; --pink:#ff7ad9; --shadow:0 32px 100px rgba(0,0,0,.38); }
     * { box-sizing:border-box; }
@@ -127,7 +129,12 @@
     let index=0, score=0, streak=0, answered=false, soundOn=true, timer, remaining=100;
     const $ = id => document.getElementById(id);
     const bestKey = 'lingoLegacyBestScore';
-    $('best').textContent = localStorage.getItem(bestKey) || '0';
+    const store={
+      get(key){ try { return localStorage.getItem(key); } catch { return null; } },
+      set(key,value){ try { localStorage.setItem(key,value); return true; } catch { return false; } },
+      remove(key){ try { localStorage.removeItem(key); return true; } catch { return false; } }
+    };
+    $('best').textContent = store.get(bestKey) || '0';
     function tone(freq, type='sine', dur=.16, gain=.045) {
       if (!soundOn) return;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -156,12 +163,12 @@
     }
     function next(){ index++; if(index>=questions.length) return finish(); render(); }
     function finish(){
-      const best=Math.max(Number(localStorage.getItem(bestKey)||0),score); localStorage.setItem(bestKey,best); $('best').textContent=best; $('feedback').textContent=`Run complete. Final score: ${score}. ${score>=best?'New best saved.':'Replay to beat your best.'}`; cue('finish'); burst(); $('startGame').textContent='Replay Game';
+      const best=Math.max(Number(store.get(bestKey)||0),score); const savedBest=store.set(bestKey,best); $('best').textContent=best; $('feedback').textContent=`Run complete. Final score: ${score}. ${savedBest ? (score>=best?'New best saved.':'Replay to beat your best.') : 'Browser storage is blocked, so best score was not saved.'}`; cue('finish'); burst(); $('startGame').textContent='Replay Game';
     }
     function burst(){ const root=$('confetti'); root.innerHTML=''; for(let i=0;i<42;i++){ const p=document.createElement('span'); p.className='piece'; p.style.left=Math.random()*100+'%'; p.style.background=['#46d38a','#ffd166','#7ab8ff','#b794f4'][i%4]; p.style.animationDelay=Math.random()*.35+'s'; root.appendChild(p); } setTimeout(()=>root.innerHTML='',1600); }
     $('startGame').addEventListener('click',()=>{ index=0; score=0; streak=0; $('score').textContent=0; $('streak').textContent=0; cue('start'); render(); });
     $('toggleSound').addEventListener('click',()=>{ soundOn=!soundOn; $('toggleSound').textContent=`Sound: ${soundOn?'On':'Off'}`; if(soundOn) cue('start'); });
-    $('resetBest').addEventListener('click',()=>{ localStorage.removeItem(bestKey); $('best').textContent='0'; $('feedback').textContent='Best score reset on this device.'; });
+    $('resetBest').addEventListener('click',()=>{ store.remove(bestKey); $('best').textContent='0'; $('feedback').textContent='Best score reset on this device.'; });
     $('questionCard').addEventListener('pointermove', e=>{ const r=e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty('--x', ((e.clientX-r.left)/r.width*100)+'%'); e.currentTarget.style.setProperty('--y', ((e.clientY-r.top)/r.height*100)+'%'); });
   </script>
 </body>
