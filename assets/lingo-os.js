@@ -4,7 +4,7 @@
   if (!body || doc.getElementById('hud-layer')) return;
 
   doc.documentElement.classList.add('theme-industrial-noir');
-  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest');
+  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest', 'auto-cinematic-mode', 'overlay-dominant');
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
@@ -21,6 +21,11 @@
   const hud = doc.createElement('div');
   hud.id = 'hud-layer';
   hud.setAttribute('aria-label', 'The Lingo Legacy OS HUD');
+
+  const cinematic = doc.createElement('div');
+  cinematic.id = 'cinematic-overlay';
+  cinematic.setAttribute('aria-hidden', 'true');
+  cinematic.innerHTML = '<div class="os-cinematic-frame"><small>Auto Cinematic Mode</small><strong>Industrial Noir OS Surface</strong><p>Overlay dominance, scene suppression, z-index governance, motion language, lighting, and studio asset framing are running as one production surface.</p></div>';
 
   const navItems = [
     ['/', 'OS', 'Home'],
@@ -47,6 +52,7 @@
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
+        <button class="os-action" type="button" data-os-toggle-overlay>Overlay</button>
         <button class="os-action" type="button" data-os-event="xp">XP +25</button>
         <a class="os-action" href="/admin-command-center/">Command</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
@@ -65,7 +71,7 @@
   `;
 
   body.prepend(world);
-  body.append(fx, hud);
+  body.append(cinematic, fx, hud);
 
   hud.querySelector('[data-os-toggle-fx]')?.addEventListener('click', () => {
     body.classList.toggle('fx-disabled');
@@ -74,10 +80,21 @@
     toast('Performance mode', disabled ? 'FX layer disabled.' : 'FX layer online.');
   });
 
+  hud.querySelector('[data-os-toggle-overlay]')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    toggleSceneSuppression();
+  });
+
+  autoCinematicLoop();
   pulseXp();
   doc.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('a, button') : null;
     if (!target) return;
+
+    if (target.hasAttribute('data-os-toggle-overlay')) {
+      toggleSceneSuppression();
+      return;
+    }
 
     const systemEvent = target.getAttribute('data-os-event');
     if (systemEvent === 'wallet') {
@@ -126,6 +143,36 @@
   function setChip(name, value) {
     const chip = doc.querySelector(`[data-os-chip="${name}"] b`);
     if (chip) chip.textContent = value;
+  }
+
+  function toggleSceneSuppression() {
+    body.classList.toggle('scene-suppressed');
+    const suppressed = body.classList.contains('scene-suppressed');
+    setChip('mode', suppressed ? 'Overlay only' : online);
+    toast('Overlay dominance', suppressed ? 'Scene suppression active.' : 'Background content restored.');
+  }
+
+  function autoCinematicLoop() {
+    const tick = () => {
+      if (!body.classList.contains('auto-cinematic-mode')) return;
+      const x = 34 + Math.random() * 42;
+      const y = 18 + Math.random() * 28;
+      doc.documentElement.style.setProperty('--os-scene-light-x', `${x}%`);
+      doc.documentElement.style.setProperty('--os-scene-light-y', `${y}%`);
+      sceneSpark();
+    };
+    tick();
+    window.setInterval(tick, 4200);
+  }
+
+  function sceneSpark() {
+    if (body.classList.contains('fx-disabled')) return;
+    const spark = doc.createElement('i');
+    spark.className = 'os-scene-spark';
+    spark.style.left = `${12 + Math.random() * 76}%`;
+    spark.style.top = `${8 + Math.random() * 28}%`;
+    fx.append(spark);
+    window.setTimeout(() => spark.remove(), 2200);
   }
 
   function toast(label, message) {

@@ -18,7 +18,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 
 This is a static HTML site with browser-side interactivity. There is no build step and no package manager install required.
 
-The global OS skin lives in `assets/lingo-os.css` and `assets/lingo-os.js`. Together they inject the World Layer, HUD Layer, FX Layer, command bar, side rail, quick actions, Industrial Noir theme state, core OS modules, and XP/wallet event feedback across the static site.
+The global OS skin lives in `assets/lingo-os.css` and `assets/lingo-os.js`. Together they inject the World Layer, HUD Layer, FX Layer, command bar, side rail, quick actions, Industrial Noir theme state, core OS modules, XP/wallet event feedback, and auto-cinematic overlay governance across the static site.
 
 Open `index.html` locally, or serve the folder with any static server:
 
