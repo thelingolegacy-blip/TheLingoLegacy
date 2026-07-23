@@ -59,9 +59,13 @@ Weekly cadence:
 - 1 behind-the-scenes production post
 - 1 community or pet-of-the-week feature
 
+## Completed static build targets
+
+- Added individual static episode pages for Episode 01 and Episode 02.
+- Added an educator landing page with lesson prompts, read-aloud activities, and safe-use notes.
+
 ## Next build targets
 
-- Add individual episode pages.
-- Add downloadable educator landing page.
+- Add downloadable educator PDFs or printable static files.
 - Add app screen wireframes.
 - Add persistent email capture when backend/forms are selected.
