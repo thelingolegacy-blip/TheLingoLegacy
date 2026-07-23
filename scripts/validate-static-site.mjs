@@ -23,17 +23,47 @@ for (const file of ['manifest.webmanifest','vercel.json']) {
     try { JSON.parse(fs.readFileSync(p,'utf8')); } catch(e) { errors.push(`${file}: invalid JSON: ${e.message}`); }
   }
 }
+const pageIds = new Map();
+const pageRoutes = new Map();
+for (const file of htmlFiles) {
+  const html = fs.readFileSync(file, 'utf8');
+  const route = rel(file) === 'index.html' ? '/' : (path.basename(file) === 'index.html' ? `/${rel(path.dirname(file)).replace(/\\/g, '/')}/` : `/${rel(file).replace(/\\/g, '/')}`);
+  pageRoutes.set(file, route);
+  pageIds.set(route, new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1])));
+}
+
 const sitemap = path.join(root,'sitemap.xml');
 if (fs.existsSync(sitemap)) {
   const text = fs.readFileSync(sitemap,'utf8');
+  const sitemapRoutes = new Set();
   for (const m of text.matchAll(/<loc>(.*?)<\/loc>/g)) {
-    try { new URL(m[1]); } catch { errors.push(`sitemap.xml: invalid loc ${m[1]}`); }
+    try {
+      const url = new URL(m[1]);
+      sitemapRoutes.add(url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`);
+    } catch {
+      errors.push(`sitemap.xml: invalid loc ${m[1]}`);
+    }
   }
+  for (const route of pageRoutes.values()) {
+    if (route !== '/' && route.endsWith('/') && !sitemapRoutes.has(route)) errors.push(`sitemap.xml: missing route ${route}`);
+  }
+}
+
+function routeForLink(file, urlPath) {
+  if (!urlPath) return pageRoutes.get(file);
+  if (urlPath.startsWith('/')) {
+    const normalized = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
+    return pageIds.has(normalized) ? normalized : null;
+  }
+  const target = path.normalize(path.join(path.dirname(file), urlPath));
+  if (target.endsWith('index.html')) return `/${rel(path.dirname(target)).replace(/\\/g, '/')}/`;
+  const asDir = `/${rel(target).replace(/\\/g, '/')}/`;
+  return pageIds.has(asDir) ? asDir : null;
 }
 
 for (const file of htmlFiles) {
   const text = fs.readFileSync(file,'utf8');
-  const ids = new Set([...text.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
+  const ids = pageIds.get(pageRoutes.get(file));
   let i=0;
   for (const m of text.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
     i++;
@@ -49,8 +79,10 @@ for (const file of htmlFiles) {
     if (raw.startsWith('/_vercel/')) continue;
     if (raw.startsWith('#')) { if (raw.length > 1 && !ids.has(raw.slice(1))) errors.push(`${rel(file)}: missing anchor target ${raw}`); continue; }
     const [urlPath, hash] = raw.split('#');
-    if (hash && !ids.has(hash) && (urlPath === '' || urlPath === path.posix.join('/', path.relative(root, file)).replace(/index\.html$/,''))) {
-      errors.push(`${rel(file)}: missing anchor target #${hash}`);
+    if (hash) {
+      const route = routeForLink(file, urlPath);
+      const targetIds = route ? pageIds.get(route) : ids;
+      if (targetIds && !targetIds.has(hash)) errors.push(`${rel(file)}: missing anchor target #${hash}`);
     }
     if (!urlPath || urlPath.startsWith('//')) continue;
     let target;
