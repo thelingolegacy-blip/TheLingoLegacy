@@ -15,5 +15,6 @@ That’s My Lingo is a static HTML site and deploys on Vercel without a build co
 - `/landing/` — campaign landing page
 - `/app/` — playable daily game shell
 - `/assets/` — brand asset library
+- `/universe/` — connected universe route map for production, command center, assets, game rooms, and brand-world pages
 
 After merging changes to the production branch, Vercel will create a new production deployment automatically if the project is connected to this repository.

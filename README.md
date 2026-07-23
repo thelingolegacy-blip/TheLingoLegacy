@@ -11,6 +11,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/assets/` — existing brand asset library
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, backend, analytics, commerce, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
+- `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
 
 ## Development
 
