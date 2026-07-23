@@ -40,12 +40,13 @@
     ['/app/', 'XP', 'Daily app'],
     ['/thats-my-lingo/', 'PLAY', 'Game floor'],
     ['/loading/', 'LOAD', 'Loading gateway'],
+    ['/studio-assets/', 'ART', 'Studio assets'],
     ['/tapstich/', 'TAP', 'Tapstich'],
     ['/studio-production/', 'STU', 'Studio production'],
     ['/universe/', 'MAP', 'Universe map']
   ];
 
-  const status = currentPath === '/app' ? 'XP Engine' : currentPath.includes('loading') ? 'Loading Gate' : currentPath.includes('studio-production') ? 'Studio Ops' : currentPath.includes('thats-my-lingo') ? 'Game Floor' : 'World Online';
+  const status = currentPath === '/app' ? 'XP Engine' : currentPath.includes('loading') ? 'Loading Gate' : currentPath.includes('studio-assets') ? 'Asset Studio' : currentPath.includes('studio-production') ? 'Studio Ops' : currentPath.includes('thats-my-lingo') ? 'Game Floor' : 'World Online';
   const online = currentPath.includes('admin') ? 'Admin' : currentPath.includes('app') ? 'Quest' : 'Noir';
 
   hud.innerHTML = `
