@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">That’s My Lingo game visual deck</title>
+  <desc id="desc">Purple and gold arcade city scene with card table, reel symbols, avatar badge, and district portals.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="15%" r="80%">
+      <stop offset="0" stop-color="#6c2dff"/>
+      <stop offset=".42" stop-color="#16072f"/>
+      <stop offset="1" stop-color="#030205"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff4a8"/>
+      <stop offset=".52" stop-color="#f7ca4c"/>
+      <stop offset="1" stop-color="#9b5a13"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" x2="1">
+      <stop offset="0" stop-color="#55edff"/>
+      <stop offset="1" stop-color="#ff33d3"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="720" rx="56" fill="url(#bg)"/>
+  <g opacity=".26" stroke="#fff" stroke-width="2">
+    <path d="M0 90h1200M0 180h1200M0 270h1200M0 360h1200M0 450h1200M0 540h1200M0 630h1200"/>
+    <path d="M120 0v720M240 0v720M360 0v720M480 0v720M600 0v720M720 0v720M840 0v720M960 0v720M1080 0v720"/>
+  </g>
+  <ellipse cx="600" cy="620" rx="470" ry="86" fill="#000" opacity=".55"/>
+  <path d="M215 584 358 350h484l143 234Z" fill="#12071f" stroke="url(#gold)" stroke-width="6"/>
+  <path d="M315 560 410 390h380l95 170Z" fill="#1f0f3d" stroke="#55edff" stroke-width="3" opacity=".9"/>
+  <g filter="url(#glow)">
+    <rect x="420" y="120" width="360" height="230" rx="34" fill="#12071f" stroke="url(#gold)" stroke-width="8"/>
+    <rect x="454" y="164" width="76" height="118" rx="18" fill="url(#gold)"/>
+    <rect x="562" y="164" width="76" height="118" rx="18" fill="url(#gold)"/>
+    <rect x="670" y="164" width="76" height="118" rx="18" fill="url(#gold)"/>
+    <text x="492" y="238" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="46" font-weight="900" fill="#1a0710">L</text>
+    <text x="600" y="238" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="46" font-weight="900" fill="#1a0710">7</text>
+    <text x="708" y="238" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="42" font-weight="900" fill="#1a0710">★</text>
+    <rect x="492" y="306" width="216" height="36" rx="18" fill="url(#cyan)"/>
+  </g>
+  <g transform="translate(125 150)">
+    <circle cx="94" cy="94" r="84" fill="#0c0417" stroke="url(#gold)" stroke-width="6"/>
+    <circle cx="94" cy="82" r="36" fill="url(#cyan)"/>
+    <path d="M35 166c14-46 104-46 118 0" fill="url(#gold)"/>
+    <text x="94" y="226" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="900" fill="#f7ca4c">PLAYER</text>
+  </g>
+  <g transform="translate(895 150)">
+    <rect x="0" y="0" width="190" height="270" rx="30" fill="#0c0417" stroke="#55edff" stroke-width="5"/>
+    <text x="95" y="58" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="900" fill="#55edff">DISTRICT</text>
+    <circle cx="60" cy="118" r="22" fill="#f7ca4c"/>
+    <circle cx="130" cy="118" r="22" fill="#ff33d3"/>
+    <circle cx="95" cy="180" r="26" fill="#69ff78"/>
+    <path d="M60 118 130 118 95 180Z" fill="none" stroke="#fff7dc" stroke-width="4" opacity=".75"/>
+  </g>
+  <text x="600" y="90" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="52" font-weight="1000" fill="url(#gold)">THAT’S MY LINGO</text>
+  <text x="600" y="675" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="900" fill="#dbc88f">game visuals · reels · avatars · district portals</text>
+</svg>
