@@ -10,6 +10,7 @@ const requiredFiles = [
   'healthz',
   'vercel.json',
   'tapstich/index.html',
+  'outer-crown-expansion/index.html',
 ];
 
 const errors = [];
