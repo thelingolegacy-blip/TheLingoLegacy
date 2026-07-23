@@ -10,7 +10,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
-- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, backend, analytics, commerce, and the connected Lingo Legacy OS
+- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, backend, analytics, commerce, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 
 ## Development
 
@@ -37,3 +37,7 @@ It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inli
 Deploy the repository as a static site on Vercel. The production entrypoint is `index.html` at the repository root.
 
 Contact: hello@thelingolegacy.com
+
+## Blueprint Studio Phase 2
+
+The shared Creative OS / Production Dashboard architecture is documented in `docs/blueprint-studio-phase-2.md` and surfaced on `/studio-production/`.
