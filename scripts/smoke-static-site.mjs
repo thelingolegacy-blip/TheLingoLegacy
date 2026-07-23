@@ -11,6 +11,7 @@ const requiredFiles = [
   'vercel.json',
   'tapstich/index.html',
   'outer-crown-expansion/index.html',
+  'full-entity-simulcast/index.html',
 ];
 
 const errors = [];

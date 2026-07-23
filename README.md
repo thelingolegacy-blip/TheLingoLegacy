@@ -20,6 +20,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
 - `/outer-crown-expansion/` — HQ Mode multi-state expansion for NYC, Delaware, New Jersey, simulcast beacons, promo overlays, and ignition controls
+- `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
 - `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
 - `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
 
