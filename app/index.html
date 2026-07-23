@@ -78,7 +78,14 @@
     @keyframes fall { to { transform:translateY(105vh) rotate(520deg); opacity:0; } }
     @keyframes pulse { 50% { transform:scale(1.02); } }
     .pulse { animation:pulse .35s ease; }
-    @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } }
+
+    .visual-board { margin-top:22px; border:1px solid rgba(240,200,90,.34); border-radius:26px; padding:14px; background:radial-gradient(circle at 18% 10%,rgba(98,240,255,.16),transparent 10rem),rgba(0,0,0,.22); }
+    .visual-board img { display:block; width:100%; border-radius:20px; box-shadow:0 20px 70px rgba(0,0,0,.32); }
+    .visual-caption { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+    .visual-caption span { border:1px solid var(--line); border-radius:999px; padding:8px 10px; text-align:center; color:var(--gold); background:rgba(255,255,255,.06); font-size:.82rem; font-weight:900; }
+    .world-shot { grid-column:span 3; min-height:260px; padding:0; overflow:hidden; }
+    .world-shot img { width:100%; height:100%; object-fit:cover; display:block; }
+    @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } .world-shot { grid-column:auto; } .visual-caption { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -92,6 +99,7 @@
         <button class="button" id="startGame">Start Game</button>
         <a class="button secondary" href="/landing/">Join Launch List</a>
         <div class="sound"><button class="button secondary" id="toggleSound" type="button">Sound: On</button><button class="button secondary" id="resetBest" type="button">Reset Best</button></div>
+        <div class="visual-board" aria-label="Game visual preview"><img src="/assets/game-visuals.svg" alt="That’s My Lingo arcade visuals with reels, avatar badge, and district portals" /><div class="visual-caption"><span>Reels</span><span>Avatar</span><span>District</span></div></div>
       </div>
       <section id="daily" class="panel game" aria-label="Playable daily challenge">
         <div class="hud">
@@ -107,6 +115,7 @@
       </section>
     </section>
     <section class="section" aria-label="Game systems">
+      <article class="card world-shot"><img src="/assets/game-visuals.svg" alt="Purple and gold arcade city visual deck for the game" /></article>
       <article class="card"><h3>Live Play Loop</h3><p>Five timed rounds, instant scoring, streak bonuses, best-score storage, and replay flow are implemented in the browser.</p></article>
       <article class="card"><h3>Sound + Motion</h3><p>Correct, miss, start, and complete cues are generated with the Web Audio API, paired with motion and celebration effects.</p></article>
       <article class="card"><h3>Ready for Backend</h3><p>The static game is structured so future auth, leaderboards, seasons, and saved profiles can plug into the same UI.</p></article>
