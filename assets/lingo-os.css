@@ -711,3 +711,23 @@ body.overlay-dominant .os-command-bar {
   18% { opacity: 1; }
   100% { opacity: 0; transform: translateY(42vh) rotate(12deg); }
 }
+
+body.kids-explorer-surface #cinematic-overlay {
+  display: none;
+}
+
+body.kids-explorer-surface #world-layer {
+  opacity: 0.08;
+}
+
+body.kids-explorer-surface .os-command-bar {
+  border-color: rgba(255, 215, 91, 0.42);
+  background: rgba(255, 248, 240, 0.72);
+}
+
+body.kids-explorer-surface .os-brand,
+body.kids-explorer-surface .os-action,
+body.kids-explorer-surface .os-nav-link,
+body.kids-explorer-surface .os-fab {
+  color: #17457c;
+}

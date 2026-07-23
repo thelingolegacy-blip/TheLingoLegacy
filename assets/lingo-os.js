@@ -3,8 +3,15 @@
   const body = doc.body;
   if (!body || doc.getElementById('hud-layer')) return;
 
+  const isKidsExplorer = body.dataset.osSurface === 'kids-explorer';
+
   doc.documentElement.classList.add('theme-industrial-noir');
-  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest', 'auto-cinematic-mode', 'overlay-dominant');
+  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest');
+  if (isKidsExplorer) {
+    body.classList.add('kids-explorer-surface');
+  } else {
+    body.classList.add('auto-cinematic-mode', 'overlay-dominant');
+  }
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
@@ -85,7 +92,7 @@
     toggleSceneSuppression();
   });
 
-  autoCinematicLoop();
+  if (!isKidsExplorer) autoCinematicLoop();
   pulseXp();
   doc.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('a, button') : null;
