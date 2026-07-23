@@ -63,9 +63,9 @@ Weekly cadence:
 
 - Added individual static episode pages for Episode 01 and Episode 02.
 - Added an educator landing page with lesson prompts, read-aloud activities, and safe-use notes.
+- Added static app screen wireframes for onboarding, story selection, read-aloud mode, activities, progress, and educator review.
 
 ## Next build targets
 
-- Add downloadable educator PDFs or printable static files.
-- Add app screen wireframes.
+- Add downloadable educator PDFs or printable static files for the educator landing page.
 - Add persistent email capture when backend/forms are selected.
