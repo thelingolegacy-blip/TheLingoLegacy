@@ -6,6 +6,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 
 - `/` — polished public homepage with games, music, merch, and launch calls to action
 - `/thats-my-lingo/` — full demo lane with slots, demo store, rewards, opt-in sounds, card/dice bonuses, and animations
+- `/loading/` — cinematic LoadingPage gateway with Vegas Studio boot sequence, LL monogram reveal, jackpot progress rail, status ticker, audio visualization, and demo diagnostics
 - `/landing/` — campaign landing page and waitlist call to action
 - `/kottons-code/` — bright kids explorer world for Kotton, Kimba, Jada, play/learn/watch zones, storybook episodes, mini-games, and CSS animation cues
 - `/tapstich/` — static apparel customization lane for patch drops, outfit boards, creator-safe merch concepts, and no-cost launch review
