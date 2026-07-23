@@ -24,11 +24,11 @@
     :root { color-scheme: dark; --bg:#05070d; --panel:rgba(255,255,255,.085); --panel-strong:rgba(255,255,255,.14); --line:rgba(255,255,255,.16); --text:#f7fbff; --muted:#aeb9c8; --mint:#46d38a; --gold:#f0c85a; --blue:#62f0ff; --danger:#ff6b6b; --violet:#5d30c9; --pink:#ff7ad9; --shadow:0 32px 100px rgba(0,0,0,.38); }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); background:radial-gradient(circle at 12% 5%,rgba(98,240,255,.22),transparent 28rem),radial-gradient(circle at 90% 0%,rgba(255,122,217,.2),transparent 30rem),radial-gradient(circle at 52% 22%,rgba(240,200,90,.16),transparent 24rem),linear-gradient(180deg,#131821,var(--bg)); line-height:1.55; overflow-x:hidden; }
+    body { margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); background:radial-gradient(circle at 12% 5%,rgba(98,240,255,.28),transparent 28rem),radial-gradient(circle at 90% 0%,rgba(255,122,217,.26),transparent 30rem),radial-gradient(circle at 52% 22%,rgba(240,200,90,.22),transparent 24rem),radial-gradient(circle at 50% 78%,rgba(70,211,138,.18),transparent 34rem),linear-gradient(180deg,#131821,var(--bg)); line-height:1.55; overflow-x:hidden; }
     body::before { content:""; position:fixed; inset:-20%; pointer-events:none; background:linear-gradient(115deg,transparent 0 42%,rgba(255,255,255,.055) 48%,transparent 54% 100%); animation:shine 9s linear infinite; }
     a { color:inherit; text-decoration:none; }
     .wrap { width:min(1180px,calc(100% - 32px)); margin:0 auto; }
-    header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line); background:rgba(5,7,13,.74); backdrop-filter:blur(18px); }
+    header { position:sticky; top:0; z-index:20; border-bottom:1px solid transparent; background:rgba(5,7,13,.74); backdrop-filter:blur(18px); box-shadow:0 18px 60px rgba(0,0,0,.24); }
     nav { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:16px 0; }
     .brand { display:flex; align-items:center; gap:10px; font-weight:950; letter-spacing:-.03em; }
     .mark { width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg,var(--mint),var(--blue)); color:#061018; }
@@ -41,25 +41,27 @@
     h2 { font-size:clamp(2rem,5vw,3.8rem); }
     p { margin:0; color:var(--muted); }
     .lead { margin-top:18px; font-size:1.12rem; max-width:650px; }
-    .panel { position:relative; border:1px solid var(--line); background:linear-gradient(160deg,var(--panel-strong),rgba(255,255,255,.045)); border-radius:30px; padding:24px; box-shadow:var(--shadow); overflow:hidden; }
+    .panel { position:relative; border:1px solid transparent; background:radial-gradient(circle at 82% 8%,rgba(240,200,90,.18),transparent 14rem),linear-gradient(160deg,var(--panel-strong),rgba(255,255,255,.045)); border-radius:32px; padding:24px; box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.12); overflow:hidden; backdrop-filter:blur(18px); }
     .panel::after { content:""; position:absolute; inset:auto -20% -45% 35%; height:190px; background:radial-gradient(circle,rgba(255,209,102,.22),transparent 65%); pointer-events:none; }
     .badge { display:inline-flex; padding:7px 12px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.07); color:var(--gold); font-size:.78rem; font-weight:950; text-transform:uppercase; letter-spacing:.09em; }
-    .button { cursor:pointer; border:0; display:inline-flex; align-items:center; justify-content:center; gap:8px; margin-top:24px; border-radius:999px; padding:12px 18px; background:linear-gradient(135deg,var(--gold),#ff8a5c); color:#101014; font:inherit; font-weight:950; transition:transform .2s ease,filter .2s ease; }
-    .button:hover { transform:translateY(-2px); filter:saturate(1.12); }
-    .button.secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--line); }
+    .button { cursor:pointer; position:relative; overflow:hidden; border:0; display:inline-flex; align-items:center; justify-content:center; gap:8px; margin-top:24px; border-radius:999px; padding:13px 20px; background:linear-gradient(135deg,#fff5b8,var(--gold),#ff8a5c); color:#101014; font:inherit; font-weight:950; box-shadow:0 18px 58px rgba(240,200,90,.2),inset 0 1px 0 rgba(255,255,255,.22); transition:transform .2s ease,filter .2s ease,box-shadow .2s ease; }
+    .button:after { content:""; position:absolute; inset:1px; border-radius:inherit; background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent); transform:translateX(-130%); transition:transform .42s ease; }
+    .button:hover,.button:focus-visible { transform:translateY(-3px); filter:saturate(1.14); box-shadow:0 26px 78px rgba(240,200,90,.24),0 18px 58px rgba(0,0,0,.3); outline:0; }
+    .button:hover:after,.button:focus-visible:after { transform:translateX(130%); }
+    .button.secondary { background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035)); color:var(--text); border:1px solid transparent; }
     .sound { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
     .game { display:grid; gap:16px; }
     .hud { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-    .stat { border:1px solid var(--line); border-radius:18px; padding:14px; background:rgba(0,0,0,.22); }
+    .stat { border:1px solid transparent; border-radius:18px; padding:14px; background:rgba(0,0,0,.24); box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 46px rgba(0,0,0,.2); }
     .stat span { display:block; color:var(--muted); font-size:.78rem; }
     .stat strong { display:block; margin-top:4px; color:var(--mint); font-size:1.7rem; }
-    .question { position:relative; padding:28px; border-radius:24px; background:linear-gradient(135deg,rgba(70,211,138,.2),rgba(122,184,255,.13)); border:1px solid var(--line); min-height:190px; display:grid; align-content:center; overflow:hidden; }
+    .question { position:relative; padding:28px; border-radius:28px; background:radial-gradient(circle at 70% 16%,rgba(240,200,90,.22),transparent 12rem),linear-gradient(135deg,rgba(70,211,138,.22),rgba(122,184,255,.15)); border:1px solid transparent; min-height:210px; display:grid; align-content:center; overflow:hidden; box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 26px 86px rgba(0,0,0,.28); }
     .question::before { content:""; position:absolute; inset:0; background:radial-gradient(circle at var(--x, 20%) var(--y, 20%),rgba(255,209,102,.24),transparent 16rem); transition:.35s; }
     .question small,.question b,.question p { position:relative; }
     .question small { color:var(--gold); font-weight:950; text-transform:uppercase; letter-spacing:.09em; }
     .question b { display:block; margin:8px 0 10px; font-size:clamp(2.4rem,8vw,5.8rem); letter-spacing:-.07em; }
     .answers { display:grid; gap:10px; }
-    .answer { cursor:pointer; width:100%; text-align:left; border:1px solid var(--line); border-radius:18px; padding:16px; color:var(--text); background:rgba(255,255,255,.065); font:inherit; transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+    .answer { cursor:pointer; width:100%; text-align:left; border:1px solid transparent; border-radius:18px; padding:16px; color:var(--text); background:rgba(255,255,255,.075); font:inherit; box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 40px rgba(0,0,0,.18); transition:transform .18s ease,box-shadow .18s ease,background .18s ease; }
     .answer:hover:not(:disabled) { transform:translateX(4px); border-color:rgba(70,211,138,.55); }
     .answer.correct { background:rgba(70,211,138,.28); border-color:var(--mint); }
     .answer.wrong { background:rgba(255,107,107,.24); border-color:var(--danger); }
@@ -68,7 +70,7 @@
     .meter span { display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--mint),var(--gold)); transform-origin:left; transition:width .25s linear; }
     .feedback { min-height:28px; color:var(--gold); font-weight:850; }
     .section { margin-top:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .card { border:1px solid var(--line); background:var(--panel); border-radius:22px; padding:20px; min-height:170px; animation:rise .7s both; }
+    .card { border:1px solid transparent; background:linear-gradient(160deg,rgba(255,255,255,.105),rgba(255,255,255,.035)); border-radius:24px; padding:20px; min-height:170px; box-shadow:0 24px 78px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.08); animation:rise .7s both; }
     .card h3 { margin-bottom:10px; font-size:1.2rem; }
     .card p { font-size:.96rem; }
     .confetti { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:50; }
@@ -77,9 +79,10 @@
     @keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
     @keyframes fall { to { transform:translateY(105vh) rotate(520deg); opacity:0; } }
     @keyframes pulse { 50% { transform:scale(1.02); } }
+    @keyframes stageDrift { 50% { transform:translateY(-8px) scale(1.012); filter:saturate(1.16); } }
     .pulse { animation:pulse .35s ease; }
     @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } }
-  </style>
+      .app-production-stage{margin:24px 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}.app-image-slot{position:relative;min-height:250px;border-radius:30px;overflow:hidden;background:radial-gradient(circle at 50% 26%,rgba(240,200,90,.26),transparent 10rem),radial-gradient(circle at 72% 68%,rgba(98,240,255,.2),transparent 12rem),linear-gradient(145deg,rgba(255,122,217,.16),rgba(0,0,0,.36));box-shadow:0 32px 100px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12);animation:stageDrift 7s ease-in-out infinite}.app-image-slot:before{content:"APP";position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-size:clamp(4rem,14vw,8rem);font-weight:1000;letter-spacing:-.08em;color:rgba(255,255,255,.09);text-shadow:0 0 70px rgba(98,240,255,.34)}.app-image-slot:after{content:"Image-ready game stage";position:absolute;left:18px;right:18px;bottom:18px;padding:14px;border-radius:20px;background:rgba(0,0,0,.36);color:var(--gold);font-weight:1000;text-transform:uppercase;letter-spacing:.09em}.app-cue-grid{display:grid;gap:12px}.app-cue{border-radius:22px;padding:16px;background:rgba(0,0,0,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 54px rgba(0,0,0,.2)}.app-cue strong{display:block;color:var(--blue);text-transform:uppercase;letter-spacing:.08em}.app-cue span{display:block;color:var(--muted);margin-top:6px}@media (max-width:900px){.app-production-stage{grid-template-columns:1fr}}</style>
   <link rel="stylesheet" href="/assets/studio-grade.css" />
   <script defer src="/assets/studio-grade.js"></script>
 </head>
@@ -93,7 +96,7 @@
         <p class="lead">A polished browser-side culture challenge with scoring, streaks, sound effects, neon motion, local best-score saves, and instant feedback. No account is required.</p>
         <button class="button" id="startGame">Start Game</button>
         <a class="button secondary" href="/landing/">Join Launch List</a>
-        <div class="sound"><button class="button secondary" id="toggleSound" type="button">Sound: On</button><button class="button secondary" id="resetBest" type="button">Reset Best</button></div>
+        <div class="sound"><button class="button secondary" id="toggleSound" type="button">Sound: On</button><button class="button secondary" id="resetBest" type="button">Reset Best</button><button class="button secondary" type="button" data-sg-trigger="App production burst">Visual Burst</button><button class="button secondary" type="button" data-sg-sound="sweep">Studio Sound</button></div>
       </div>
       <section id="daily" class="panel game" aria-label="Playable daily challenge">
         <div class="hud">
@@ -108,6 +111,7 @@
         <div class="feedback" id="feedback" role="status">Press Start Game to begin.</div>
       </section>
     </section>
+    <section class="app-production-stage" aria-label="App production visuals and sound hooks"><div class="app-image-slot" role="img" aria-label="Image-ready app game stage with stronger production visuals"></div><div class="app-cue-grid"><article class="app-cue"><strong>Stronger app background</strong><span>Neon, gold, violet, and mint light fields push the playable app into studio mode.</span></article><article class="app-cue"><strong>Button upgrade</strong><span>Primary, launch, sound, and reset controls now use shimmer, stronger shadows, and touch spacing.</span></article><article class="app-cue"><strong>Sound hooks</strong><span>Game sounds remain in Web Audio while studio sound tests use the shared asset layer.</span></article></div></section>
     <section class="section" aria-label="Game systems">
       <article class="card"><h3>Live Play Loop</h3><p>Five timed rounds, instant scoring, streak bonuses, best-score storage, and replay flow are implemented in the browser.</p></article>
       <article class="card"><h3>Sound + Motion</h3><p>Correct, miss, start, and complete cues are generated with the Web Audio API, paired with motion and celebration effects.</p></article>
