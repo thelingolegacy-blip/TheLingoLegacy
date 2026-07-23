@@ -262,7 +262,7 @@
             <div class="usage-section">
                 <h3>📝 How to Use These Assets</h3>
                 <p>
-                    Each asset includes an embed code that you can copy and paste directly into your HTML files. 
+                    Each asset includes an embed code that you can copy and paste directly into your HTML files.
                     Click on any asset card to reveal its embed code, then use the "Copy Code" button to get started!
                 </p>
             </div>
@@ -438,7 +438,7 @@
 
             const targetId = category === 'all' ? 'allAssets' : `${category}Assets`;
             const target = document.getElementById(targetId);
-            
+
             target.innerHTML = filtered.map(asset => `
                 <div class="asset-card" onclick="toggleEmbedCode(this)">
                     <div class="asset-preview"><img src="${asset.url}" alt="${asset.name}" loading="lazy" /></div>
@@ -460,14 +460,14 @@
         // Copy to clipboard function
         function copyToClipboard(event) {
             event.stopPropagation();
-            
+
             const btn = event.currentTarget;
             const embedCode = decodeURIComponent(btn.dataset.embedCode || '');
             navigator.clipboard.writeText(embedCode).then(() => {
                 const originalText = btn.textContent;
                 btn.textContent = '✅ Copied!';
                 btn.classList.add('copied');
-                
+
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.classList.remove('copied');
@@ -481,21 +481,21 @@
         // Tab navigation
         function showTab(event, tabName) {
             event.preventDefault();
-            
+
             // Hide all tab content
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Remove active class from all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-            
+
             renderAssets(tabName);
         }
 

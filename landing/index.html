@@ -33,7 +33,22 @@
       <aside class="panel signup float" id="join" aria-label="Launch list form"><span class="eyebrow">Launch List</span><h2 style="margin-top:14px">Get first access.</h2><p class="lead" style="font-size:1rem">This static form saves your entry on this device and opens a prefilled email so you can send the request without a backend.</p><form class="form-row" id="waitlistForm"><div><label for="name">Name</label><input id="name" name="name" autocomplete="name" required placeholder="Legacy Member" /></div><div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></div><div><label for="lane">Primary lane</label><select id="lane" name="lane"><option>Games</option><option>Music</option><option>Merch</option><option>Creator drops</option></select></div><button class="button primary" type="submit">Save + Open Email</button></form><div class="success" id="success" role="status"></div><p class="note">Email-backed launch capture is active now; entries stay local unless visitors send the prefilled request email. A protected backend can be added next.</p></aside>
     </section>
     <section class="section"><h2>Every lane has a launch-ready purpose.</h2><div class="grid"><article class="card"><span>Games</span><h3>Daily challenge hook</h3><p>Visitors can play a real five-round browser game that proves the core loop before accounts and leaderboards arrive.</p></article><article class="card"><span>Music</span><h3>Release-ready story</h3><p>Music content is framed for singles, playlists, behind-the-scenes drops, and creator-led campaigns.</p></article><article class="card"><span>Merch</span><h3>Commerce path</h3><p>Merch messaging is staged for product drops, scarcity windows, and future checkout integrations.</p></article><article class="card"><span>Lingo.ai</span><h3>Ask Lingo studio</h3><p>Visitors can start a guided prompt experience for content ideas, visual assets, animation plans, and launch actions.</p></article></div></section>
-  </main><footer><div class="wrap">© 2026 That’s My Lingo · hello@thelingolegacy.com</div></footer>
+
+    <section class="wrap universe-rail" aria-label="Lingo Legacy universe shortcuts" style="margin:0 auto 56px;display:grid;gap:12px;border:1px solid rgba(247,202,76,.28);border-radius:28px;padding:20px;background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.04));box-shadow:0 20px 70px rgba(0,0,0,.24)">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+        <div><strong style="display:block;color:#f7ca4c;text-transform:uppercase;letter-spacing:.08em">Lingo Legacy Universe</strong><span style="color:#d8c9a0">Move through the live web layer, production studio, game rooms, assets, and launch lanes.</span></div>
+        <a class="button primary" href="/universe/">Open Universe Map</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <a class="button" href="/thats-my-lingo/">Casino Demo</a>
+        <a class="button" href="/app/">Daily Game</a>
+        <a class="button" href="/studio-production/">Studio Production</a>
+        <a class="button" href="/admin-command-center/">Command Center</a>
+        <a class="button" href="/assets/">Assets</a>
+        <a class="button" href="/landing/">Launch List</a>
+      </div>
+    </section>
+</main><footer><div class="wrap">© 2026 That’s My Lingo · hello@thelingolegacy.com</div></footer>
   <script>
     const form=document.getElementById('waitlistForm'), success=document.getElementById('success'), nameInput=document.getElementById('name'), emailInput=document.getElementById('email'), laneInput=document.getElementById('lane');
     const store={
