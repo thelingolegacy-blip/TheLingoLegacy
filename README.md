@@ -14,6 +14,8 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
+- `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
+- `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
 
 ## Development
 
@@ -49,11 +51,11 @@ The shared Creative OS / Production Dashboard architecture is documented in `doc
 
 ## Premium Studio Production Layout System
 
-See `docs/premium-production-layout-system.md` for the shared high-premium layout language and reference-image placement plan.
+See `docs/premium-production-layout-system.md` for the shared high-premium layout language and reference-image placement plan. The crowding/depth cleanup system is documented in `docs/studio-ui-cleanup-pass.md` and surfaced on `/studio-ui-cleanup/`.
 
 ## Studio safety guardrails
 
-Security headers, advisory AI crawler blocks, no-cost service boundaries, and safe overlay rules are documented in `docs/studio-safety-guardrails.md`.
+Security headers, advisory AI crawler blocks, no-cost service boundaries, and safe overlay rules are documented in `docs/studio-safety-guardrails.md`. The product-level Safety Core operating model is documented in `docs/lingo-safety-core.md` and surfaced on `/trust-compliance/`.
 
 ## Launch operations
 
