@@ -374,6 +374,49 @@ body.studio-grade-mode {
 .sg-section-head h2 { margin: 0; font-size: clamp(2rem, 5vw, 4.6rem); line-height: 0.94; letter-spacing: -0.06em; text-transform: uppercase; }
 .sg-section-head p { max-width: 440px; margin: 0; color: var(--sg-muted); line-height: 1.6; }
 
+.sg-entity-rail {
+  width: min(1180px, calc(100% - 30px));
+  margin: 42px auto 62px;
+  padding: 0;
+}
+
+.sg-entity-card {
+  position: relative;
+  border: 1px solid rgba(247, 202, 76, 0.34);
+  border-radius: 30px;
+  padding: 22px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.032)),
+    rgba(8, 10, 13, 0.68);
+  box-shadow: 0 26px 86px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.16);
+  backdrop-filter: blur(16px) saturate(1.15);
+  overflow: hidden;
+}
+
+.sg-entity-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(84, 232, 255, 0.14), transparent 12rem),
+    linear-gradient(105deg, transparent 0 42%, rgba(247, 202, 76, 0.08) 48%, transparent 56%);
+  pointer-events: none;
+}
+
+.sg-entity-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.sg-entity-card h2 {
+  margin: 12px 0 10px;
+  color: var(--sg-ink);
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
 .sg-toast {
   position: fixed;
   left: 50%;
