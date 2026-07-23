@@ -10,6 +10,8 @@ const requiredFiles = [
   'healthz',
   'vercel.json',
   'tapstich/index.html',
+  'admin-command-center/index.html',
+  'casino-upgrade/index.html',
 ];
 
 const errors = [];
