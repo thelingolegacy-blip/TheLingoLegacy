@@ -8,10 +8,11 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/thats-my-lingo/` — full demo lane with slots, demo store, rewards, opt-in sounds, card/dice bonuses, and animations
 - `/landing/` — campaign landing page and waitlist call to action
 - `/kottons-code/` — bright kids explorer world for Kotton, Kimba, Jada, play/learn/watch zones, storybook episodes, mini-games, and CSS animation cues
+- `/tapstich/` — static apparel customization lane for patch drops, outfit boards, creator-safe merch concepts, and no-cost launch review
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
-- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, backend, analytics, commerce, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
+- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
 
 ## Development

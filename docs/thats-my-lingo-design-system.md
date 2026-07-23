@@ -56,4 +56,4 @@ Each world should unlock new reel skins, soundtrack, symbols, achievements, seas
 - No cash-value prizes.
 - Clearly label all balances as virtual/demo currency.
 - Use platform in-app purchase systems for digital goods when required.
-- Keep privacy, terms, age rating, analytics, crash reporting, and support flows release-ready.
+- Keep privacy, terms, age rating, no-cost QA, and support flows release-ready.

@@ -19,7 +19,7 @@ This roadmap keeps the product in a non-gambling model: demo coins, XP, badges, 
 - Daily missions, weekly events, holiday themes, limited-time cosmetics, community goals, and seasonal campaigns.
 
 ## Phase 4 — Backend and security
-- Firebase Authentication, Firestore cloud save, player profiles, inventory, daily rewards, XP, achievements, leaderboards, analytics, crash reporting, Remote Config, and Cloud Functions.
+- No-cost static prototype first; authentication, cloud saves, player profiles, inventory, daily rewards, XP, achievements, leaderboards, telemetry, remote config, and cloud functions require deliberate paid-service approval.
 - Firebase App Check, server-authoritative rewards, rate limiting, anti-cheat validation, encrypted save data, monitoring, backups, and audit logging.
 
 ## Phase 5 — Monetization without wagering

@@ -57,10 +57,10 @@ This package defines the casino-grade upgrade wave for the Lingo game experience
 
 ## Vercel-native asset pipeline
 
-- Store uploaded/generated image, audio, and animation assets in Vercel Blob.
+- Store uploaded/generated image, audio, and animation assets as Git-tracked static files for the no-cost path; move to paid file storage only after approval.
 - Use immutable asset URLs for published drops so CDN/browser cache does not show stale overwrites.
-- For fast reward/session state, use Upstash Redis. Vercel KV is no longer first-party; existing stores were migrated to Upstash Redis through the Vercel Marketplace in December 2024.
-- For relational progression, wallet, or catalog data, use Neon. Vercel Postgres is no longer first-party; existing databases were migrated to Neon through the Vercel Marketplace in December 2024.
+- For the no-cost path, avoid fast reward/session state services; add marketplace-backed state only after approval.
+- For the no-cost path, avoid relational progression, wallet, or catalog databases; add marketplace-backed relational data only after approval.
 
 ## Compliance note
 

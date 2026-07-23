@@ -8,7 +8,7 @@ Blueprint Studio Phase 2 converts the Lingo Legacy Creative OS into an operation
 | --- | --- | --- |
 | Assets Library | Stores brand, character, world, UI, motion, audio, product, marketing, and tech assets | Versioned creative inventory |
 | Blueprint Studio | Turns assets into website, app, game, cinematic, and brand-specific experiences | Production-ready screens and flows |
-| Automation Layer | Tags new assets, routes them to studios, generates launch material, and tracks analytics | Repeatable creative operations |
+| Automation Layer | Tags new assets, routes them to studios, generates launch material, and tracks approved QA notes | Repeatable creative operations |
 | Production Dashboard | Controls assets, projects, timelines, testing, and publishing | Admin command center |
 | Phase 2 Wireframes | Maps screens, menus, buttons, animation triggers, sound cues, and user journeys | Build-ready UX blueprint |
 
@@ -51,10 +51,10 @@ Every screen should define:
 - Required assets from the library
 - Animation trigger and fallback static state
 - Sound cue and mute-safe behavior
-- Analytics event name
+- QA event or note name
 - QA acceptance criteria
 - Publishing destination
 
 ## Automation flow
 
-`Asset Added → Auto-Tag → Stored → Available Everywhere → Marketing Generated → Analytics Tracked`
+`Asset Added → Auto-Tag → Stored → Available Everywhere → Marketing Generated → QA Note Tracked`
