@@ -39,6 +39,7 @@
     ['/#os-modules', 'SYS', 'Core OS screens'],
     ['/app/', 'XP', 'Daily app'],
     ['/thats-my-lingo/', 'PLAY', 'Game floor'],
+    ['/tapstich/', 'TAP', 'Tapstich'],
     ['/studio-production/', 'STU', 'Studio production'],
     ['/universe/', 'MAP', 'Universe map']
   ];

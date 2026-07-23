@@ -7,7 +7,7 @@ This layout pass upgrades Lingo Legacy surfaces toward a high-premium studio pre
 - Cinematic hero framing with strong title hierarchy.
 - Industrial Noir / casino-premium contrast: matte black, deep purple, steel, cyan glow, and gold accents.
 - Premium rails for production status, asset categories, studio pipelines, and launch controls.
-- Reference-ready image slots for future Vercel Blob assets.
+- Reference-ready image slots for future static assets; use paid file storage only after approval.
 - Copy avoids regulated-wagering language unless legal/compliance approves it; use virtual rewards, Loyalty Bucks, XP, badges, and unlocks.
 
 ## Layout modules
@@ -15,7 +15,7 @@ This layout pass upgrades Lingo Legacy surfaces toward a high-premium studio pre
 1. Hero proof panel — one sentence promise, one primary CTA, one cinematic stage.
 2. Premium production rail — three cards showing assets, motion/sound, and publishing readiness.
 3. Framework board — UI skin, interaction timing, GDevelop config, and reward-loop requirements.
-4. Asset pipeline note — Vercel Blob for files, Upstash Redis for fast state, Neon for relational data.
+4. No-cost asset pipeline note — Git-tracked static files first; paid storage or database services only after approval.
 
 ## Reference image use
 

@@ -19,8 +19,6 @@
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="theme-color" content="#d7a63d" />
   <link rel="stylesheet" href="/assets/lingo-os.css" />
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
   <script defer src="/assets/lingo-os.js"></script>
   <style>
     :root { color-scheme:dark; --bg:#060812; --text:#f7fbff; --muted:#aeb9c8; --line:rgba(255,255,255,.16); --panel:rgba(255,255,255,.085); --gold:#ffd166; --mint:#46d38a; --blue:#7ab8ff; --violet:#b794f4; }
@@ -29,7 +27,7 @@
 </head>
 <body>
   <header><nav class="wrap" aria-label="Landing navigation"><a class="brand" href="/"><span class="mark">LL</span><span>That’s My Lingo</span></a><div class="links"><a href="/">Home</a><a href="/app/">Play</a><a href="/assets/">Assets</a><a href="/lingo-ai/">Ask Lingo</a></div></nav></header>
-  <main class="wrap"><section class="launch-strip" aria-label="Go-live readiness"><div><b>Studio-ready go-live mode active.</b> <span>Analytics, Speed Insights, production domains, and launch QA are enabled for this lane.</span></div><div class="launch-pills"><em>Build worker</em><em>Content worker</em><em>QA worker</em><em>No secret tokens shown</em></div></section>
+  <main class="wrap"><section class="launch-strip" aria-label="Go-live readiness"><div><b>Studio-ready go-live mode active.</b> <span>No paid telemetry scripts, production-domain readiness, and launch QA are enabled for this lane.</span></div><div class="launch-pills"><em>Build worker</em><em>Content worker</em><em>QA worker</em><em>No secret tokens shown</em></div></section>
     <section class="hero">
       <div><span class="eyebrow">Founding access</span><h1>Claim your seat in the district.</h1><p class="lead">A purple-and-gold launch page for fans, players, creators, and partners: play the daily challenge, join the launch list, and enter each district lane as drops go live.</p><div class="actions"><a class="button primary" href="/app/">Play the Demo</a><a class="button" href="#join">Join Launch List</a><a class="button" href="/lingo-ai/">Start Lingo.ai</a></div><div class="proof"><div><strong>5</strong><span>Game rounds</span></div><div><strong>4</strong><span>Launch lanes</span></div><div><strong>0</strong><span>Install required</span></div><div><strong>24/7</strong><span>Static uptime</span></div></div></div>
       <aside class="panel signup float" id="join" aria-label="Launch list form"><span class="eyebrow">Launch List</span><h2 style="margin-top:14px">Get first access.</h2><p class="lead" style="font-size:1rem">This static form saves your entry on this device and opens a prefilled email so you can send the request without a backend.</p><form class="form-row" id="waitlistForm"><div><label for="name">Name</label><input id="name" name="name" autocomplete="name" required placeholder="Legacy Member" /></div><div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></div><div><label for="lane">Primary lane</label><select id="lane" name="lane"><option>Games</option><option>Music</option><option>Merch</option><option>Creator drops</option></select></div><button class="button primary" type="submit">Save + Open Email</button></form><div class="success" id="success" role="status"></div><p class="note">Email-backed launch capture is active now; entries stay local unless visitors send the prefilled request email. A protected backend can be added next.</p></aside>
