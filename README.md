@@ -54,3 +54,7 @@ See `docs/premium-production-layout-system.md` for the shared high-premium layou
 ## Studio safety guardrails
 
 Security headers, advisory AI crawler blocks, no-cost service boundaries, and safe overlay rules are documented in `docs/studio-safety-guardrails.md`.
+
+## Launch operations
+
+Vercel-native launch checks, `/healthz`, rollback notes, and smoke-test guidance are documented in `docs/launch-operations-guardrails.md`.
