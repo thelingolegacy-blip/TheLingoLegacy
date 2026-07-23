@@ -371,7 +371,7 @@ body.lingo-os-active header:not(.os-native-header) {
     right: 12px;
     bottom: 12px;
     width: auto;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     z-index: 1;
   }
   .os-nav-link {
@@ -406,4 +406,377 @@ body.lingo-os-active header:not(.os-native-header) {
   body.lingo-os-active > section:first-child {
     padding-top: 82px;
   }
+}
+
+/* Phase 2: core OS screen modules and system event feedback. */
+.os-module-matrix,
+.os-event-console {
+  display: grid;
+  gap: 14px;
+}
+
+.os-module-matrix {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.os-module-card {
+  position: relative;
+  min-height: 230px;
+  border: 1px solid rgba(247, 200, 75, 0.24);
+  border-radius: 30px;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(86, 239, 255, 0.12), transparent 11rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.os-module-card::after {
+  content: attr(data-module);
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  color: rgba(247, 200, 75, 0.12);
+  font-size: 3.35rem;
+  font-weight: 1000;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.os-module-card h3,
+.os-module-card p,
+.os-module-card ul,
+.os-module-card .tag,
+.os-module-card .button {
+  position: relative;
+  z-index: 1;
+}
+
+.os-module-card ul {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.os-module-card li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--os-muted);
+}
+
+.os-module-card li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--os-green);
+  box-shadow: 0 0 16px rgba(107, 255, 139, 0.48);
+}
+
+.os-event-console {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 16px;
+}
+
+.os-event-card {
+  border: 1px solid rgba(86, 239, 255, 0.24);
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.os-event-card b {
+  display: block;
+  color: var(--os-cyan);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.os-event-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--os-ink);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.os-event-card p {
+  margin: 8px 0 0;
+  color: var(--os-muted);
+}
+
+.os-wallet-flash {
+  animation: osWalletFlash 680ms ease-out;
+}
+
+.os-key-burst {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 200, 75, 0.75);
+  animation: osKeyBurst 820ms ease-out forwards;
+}
+
+@keyframes osWalletFlash {
+  0% { box-shadow: 0 0 0 rgba(247, 200, 75, 0); }
+  35% { box-shadow: 0 0 34px rgba(247, 200, 75, 0.42); }
+  100% { box-shadow: 0 0 0 rgba(247, 200, 75, 0); }
+}
+
+@keyframes osKeyBurst {
+  from { opacity: 1; transform: scale(0.4); }
+  to { opacity: 0; transform: scale(7); }
+}
+
+@media (max-width: 980px) {
+  .os-module-matrix,
+  .os-event-console {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .os-module-matrix,
+  .os-event-console {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase 3: auto-cinematic overlay dominance, suppression, and z-index governance. */
+:root {
+  --os-layer-world: 0;
+  --os-layer-content: 20;
+  --os-layer-ui: 7000;
+  --os-layer-overlay: 9000;
+  --os-layer-fx: 9500;
+  --os-scene-light-x: 50%;
+  --os-scene-light-y: 28%;
+}
+
+body.auto-cinematic-mode {
+  background: #020204;
+}
+
+body.auto-cinematic-mode #world-layer {
+  z-index: var(--os-layer-world);
+  opacity: 0.18;
+  filter: saturate(0.82) brightness(0.52);
+}
+
+body.auto-cinematic-mode #hud-layer {
+  z-index: var(--os-layer-ui);
+}
+
+body.auto-cinematic-mode #fx-layer {
+  z-index: var(--os-layer-fx);
+}
+
+#cinematic-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--os-layer-overlay);
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at var(--os-scene-light-x) var(--os-scene-light-y), rgba(247, 200, 75, 0.22), transparent 16rem),
+    radial-gradient(circle at calc(100% - var(--os-scene-light-x)) 18%, rgba(86, 239, 255, 0.18), transparent 18rem),
+    linear-gradient(110deg, rgba(0, 0, 0, 0.92), rgba(5, 5, 7, 0.72) 45%, rgba(0, 0, 0, 0.94));
+}
+
+body.auto-cinematic-mode #cinematic-overlay,
+body.overlay-dominant #cinematic-overlay {
+  display: block;
+}
+
+#cinematic-overlay::before,
+#cinematic-overlay::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+}
+
+#cinematic-overlay::before {
+  background:
+    linear-gradient(100deg, transparent 0 31%, rgba(247, 200, 75, 0.2) 33%, transparent 36% 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 110px);
+  opacity: 0.72;
+  animation: osCameraPan 18s ease-in-out infinite alternate;
+}
+
+#cinematic-overlay::after {
+  background:
+    radial-gradient(ellipse at 50% 0%, transparent 0 44%, rgba(0, 0, 0, 0.46) 78%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 9px);
+  mix-blend-mode: screen;
+  opacity: 0.36;
+}
+
+.os-cinematic-frame {
+  position: absolute;
+  inset: max(86px, 8vh) max(22px, 6vw) max(92px, 10vh);
+  display: grid;
+  align-content: end;
+  max-width: 1180px;
+  margin: auto;
+  border: 1px solid rgba(247, 200, 75, 0.26);
+  border-radius: 42px;
+  padding: clamp(22px, 5vw, 54px);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 61, 214, 0.12), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 0 80px rgba(247, 200, 75, 0.08), 0 42px 140px rgba(0, 0, 0, 0.58);
+  transform-origin: center;
+  animation: osHeroCamera 12s ease-in-out infinite alternate;
+}
+
+.os-cinematic-frame small {
+  color: var(--os-gold);
+  font-size: 0.78rem;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.os-cinematic-frame strong {
+  display: block;
+  max-width: 760px;
+  margin-top: 12px;
+  color: var(--os-ink);
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: 0.86;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+}
+
+.os-cinematic-frame p {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: var(--os-muted);
+  font-size: clamp(1rem, 2vw, 1.24rem);
+  line-height: 1.65;
+}
+
+body.scene-suppressed > main,
+body.scene-suppressed > footer,
+body.scene-suppressed > header:not(.os-native-header),
+body.scene-suppressed .top {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.scene-suppressed #hud-layer,
+body.scene-suppressed #fx-layer,
+body.scene-suppressed #cinematic-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+body.overlay-dominant .os-command-bar {
+  background: rgba(0, 0, 0, 0.72);
+  border-color: rgba(247, 200, 75, 0.42);
+}
+
+.os-scene-spark {
+  position: absolute;
+  width: 3px;
+  height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, rgba(247, 200, 75, 0.9), transparent);
+  opacity: 0;
+  animation: osSceneSpark 1.8s ease-out forwards;
+}
+
+@keyframes osCameraPan {
+  from { transform: translate3d(-2%, -1%, 0) rotate(-0.6deg); }
+  to { transform: translate3d(2%, 1%, 0) rotate(0.6deg); }
+}
+
+@keyframes osHeroCamera {
+  from { transform: scale(1) translate3d(-0.5%, 0, 0); }
+  to { transform: scale(1.025) translate3d(0.5%, -0.5%, 0); }
+}
+
+@keyframes osSceneSpark {
+  0% { opacity: 0; transform: translateY(-12vh) rotate(12deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(42vh) rotate(12deg); }
+}
+
+body.kids-explorer-surface #cinematic-overlay {
+  display: none;
+}
+
+body.kids-explorer-surface #world-layer {
+  opacity: 0.08;
+}
+
+body.kids-explorer-surface .os-command-bar {
+  border-color: rgba(255, 215, 91, 0.42);
+  background: rgba(255, 248, 240, 0.72);
+}
+
+body.kids-explorer-surface .os-brand,
+body.kids-explorer-surface .os-action,
+body.kids-explorer-surface .os-nav-link,
+body.kids-explorer-surface .os-fab {
+  color: #17457c;
+}
+
+/* Overlay dominance correction: full suppression, top stack, and hard visibility flags. */
+body.overlay-dominant:not(.kids-explorer-surface) {
+  overflow: hidden !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay {
+  z-index: 999999 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  background:
+    radial-gradient(circle at var(--os-scene-light-x) var(--os-scene-light-y), rgba(247, 200, 75, 0.34), transparent 15rem),
+    radial-gradient(circle at calc(100% - var(--os-scene-light-x)) 18%, rgba(86, 239, 255, 0.24), transparent 17rem),
+    linear-gradient(110deg, #000 0%, #050507 42%, #000 100%) !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::before {
+  opacity: 1 !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::after {
+  opacity: 0.72 !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #world-layer,
+body.scene-suppressed:not(.kids-explorer-surface) > main,
+body.scene-suppressed:not(.kids-explorer-surface) > footer,
+body.scene-suppressed:not(.kids-explorer-surface) > header:not(.os-native-header),
+body.scene-suppressed:not(.kids-explorer-surface) .top {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #hud-layer {
+  z-index: 999998 !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #fx-layer {
+  z-index: 999997 !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) .os-cinematic-frame {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 61, 214, 0.18), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)) !important;
 }
