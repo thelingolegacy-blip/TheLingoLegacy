@@ -10,7 +10,7 @@
   --os-violet: #6b2dff;
   --os-magenta: #ff3dd6;
   --os-green: #6bff8b;
-  --os-line: rgba(247, 200, 75, 0.34);
+  --os-line: transparent;
   --os-hud-top: 88px;
   --os-hud-rail: 86px;
 }
@@ -126,7 +126,7 @@ body.fx-disabled #world-layer::before {
   gap: 12px;
   align-items: center;
   padding: 10px 12px;
-  border: 1px solid rgba(247, 200, 75, 0.24);
+  border: 1px solid transparent;
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(5, 5, 7, 0.88), rgba(5, 5, 7, 0.58));
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
@@ -188,7 +188,7 @@ body.fx-disabled #world-layer::before {
 
 .os-chip {
   min-height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid transparent;
   border-radius: 16px;
   padding: 7px 10px;
   background: rgba(0, 0, 0, 0.26);
@@ -210,7 +210,7 @@ body.fx-disabled #world-layer::before {
 }
 
 .os-action {
-  border: 1px solid rgba(247, 200, 75, 0.26);
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 9px 12px;
   background: rgba(255, 255, 255, 0.07);
@@ -234,8 +234,8 @@ body.fx-disabled #world-layer::before {
 .os-nav-link:focus-visible,
 .os-fab:hover,
 .os-fab:focus-visible {
-  border-color: rgba(86, 239, 255, 0.66);
-  box-shadow: 0 0 26px rgba(86, 239, 255, 0.12);
+  border-color: transparent;
+  box-shadow: none;
   outline: 0;
   transform: translateY(-1px);
 }
@@ -248,7 +248,7 @@ body.fx-disabled #world-layer::before {
   gap: 8px;
   width: 64px;
   padding: 8px;
-  border: 1px solid rgba(247, 200, 75, 0.2);
+  border: 1px solid transparent;
   border-radius: 24px;
   background: rgba(5, 5, 7, 0.62);
   backdrop-filter: blur(16px);
@@ -259,7 +259,7 @@ body.fx-disabled #world-layer::before {
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid transparent;
   border-radius: 17px;
   background: rgba(255, 255, 255, 0.055);
   color: var(--os-ink);
@@ -283,7 +283,7 @@ body.fx-disabled #world-layer::before {
   justify-content: center;
   min-width: 112px;
   min-height: 44px;
-  border: 1px solid rgba(247, 200, 75, 0.28);
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 10px 14px;
   background: var(--os-panel-strong);
@@ -305,7 +305,7 @@ body.fx-disabled #world-layer::before {
 }
 
 .os-toast {
-  border: 1px solid rgba(247, 200, 75, 0.25);
+  border: 1px solid transparent;
   border-radius: 20px;
   padding: 12px 14px;
   background: rgba(5, 5, 7, 0.74);
@@ -422,7 +422,7 @@ body.lingo-os-active header:not(.os-native-header) {
 .os-module-card {
   position: relative;
   min-height: 230px;
-  border: 1px solid rgba(247, 200, 75, 0.24);
+  border: 1px solid transparent;
   border-radius: 30px;
   padding: 22px;
   background:
@@ -484,7 +484,7 @@ body.lingo-os-active header:not(.os-native-header) {
 }
 
 .os-event-card {
-  border: 1px solid rgba(86, 239, 255, 0.24);
+  border: 1px solid transparent;
   border-radius: 24px;
   padding: 18px;
   background: rgba(0, 0, 0, 0.26);
@@ -630,7 +630,7 @@ body.overlay-dominant #cinematic-overlay {
   align-content: end;
   max-width: 1180px;
   margin: auto;
-  border: 1px solid rgba(247, 200, 75, 0.26);
+  border: 1px solid transparent;
   border-radius: 42px;
   padding: clamp(22px, 5vw, 54px);
   background:
