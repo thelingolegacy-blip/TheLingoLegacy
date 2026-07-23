@@ -552,10 +552,13 @@ body.lingo-os-active header:not(.os-native-header) {
 /* Phase 3: auto-cinematic overlay dominance, suppression, and z-index governance. */
 :root {
   --os-layer-world: 0;
-  --os-layer-content: 20;
-  --os-layer-ui: 7000;
-  --os-layer-overlay: 9000;
-  --os-layer-fx: 9500;
+  --os-layer-content: 10;
+  --os-layer-nav: 100;
+  --os-layer-backdrop: 400;
+  --os-layer-overlay: 500;
+  --os-layer-toast: 600;
+  --os-layer-fx: 650;
+  --os-layer-ui: 700;
   --os-scene-light-x: 50%;
   --os-scene-light-y: 28%;
 }
@@ -738,7 +741,7 @@ body.overlay-dominant:not(.kids-explorer-surface) {
 }
 
 body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay {
-  z-index: 999999 !important;
+  z-index: var(--os-layer-overlay) !important;
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
@@ -767,11 +770,11 @@ body.scene-suppressed:not(.kids-explorer-surface) .top {
 }
 
 body.scene-suppressed:not(.kids-explorer-surface) #hud-layer {
-  z-index: 999998 !important;
+  z-index: var(--os-layer-ui) !important;
 }
 
 body.scene-suppressed:not(.kids-explorer-surface) #fx-layer {
-  z-index: 999997 !important;
+  z-index: var(--os-layer-fx) !important;
   pointer-events: none !important;
 }
 
