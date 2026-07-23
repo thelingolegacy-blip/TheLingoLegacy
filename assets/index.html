@@ -249,8 +249,10 @@
             }
         }
     </style>
+  <link rel="stylesheet" href="/assets/studio-grade.css" />
+  <script defer src="/assets/studio-grade.js"></script>
 </head>
-<body>
+<body class="studio-grade-mode">
     <div class="container">
         <header>
             <h1>🎤 That's My Lingo - Assets Library</h1>
@@ -512,5 +514,10 @@
             return txt.value;
         }
     </script>
+
+    <section class="wrap sg-entity-rail" aria-label="Studio-grade asset layer">
+      <div class="sg-entity-card"><span class="sg-tag">Studio assets</span><h2>Studio-grade visuals, sounds, animations, backgrounds, and symbols are connected.</h2><p>This page now shares the Lingo Legacy premium asset layer: onyx/gold scene language, glass panels, reusable symbol cues, light sweeps, reward bursts, and user-triggered audio motifs.</p><div class="sg-actions"><a class="sg-button sg-button--primary" href="/studio-assets/">Open Studio Assets</a><button class="sg-button" type="button" data-sg-trigger="Entity visual burst">Test Visual Burst</button><button class="sg-button" type="button" data-sg-sound="click">Test Sound</button></div></div>
+    </section>
+  <div class="sg-toast" data-sg-toast role="status" aria-live="polite"></div>
 </body>
 </html>

@@ -80,8 +80,10 @@
     .pulse { animation:pulse .35s ease; }
     @media (max-width:900px) { .hero,.section { grid-template-columns:1fr; } .hud { grid-template-columns:repeat(2,1fr); } .links { display:none; } }
   </style>
+  <link rel="stylesheet" href="/assets/studio-grade.css" />
+  <script defer src="/assets/studio-grade.js"></script>
 </head>
-<body>
+<body class="studio-grade-mode">
   <header><nav class="wrap" aria-label="App navigation"><a class="brand" href="/"><span class="mark">LL</span><span>That’s My Lingo</span></a><div class="links"><a href="/">Home</a><a href="/landing/">Landing</a><a href="/assets/">Assets</a></div></nav></header>
   <main class="wrap">
     <section class="hero">
@@ -130,6 +132,10 @@
         <a class="button" href="/assets/">Assets</a>
         <a class="button" href="/landing/">Launch List</a>
       </div>
+    </section>
+
+    <section class="wrap sg-entity-rail" aria-label="Studio-grade asset layer">
+      <div class="sg-entity-card"><span class="sg-tag">Studio assets</span><h2>Studio-grade visuals, sounds, animations, backgrounds, and symbols are connected.</h2><p>This page now shares the Lingo Legacy premium asset layer: onyx/gold scene language, glass panels, reusable symbol cues, light sweeps, reward bursts, and user-triggered audio motifs.</p><div class="sg-actions"><a class="sg-button sg-button--primary" href="/studio-assets/">Open Studio Assets</a><button class="sg-button" type="button" data-sg-trigger="Entity visual burst">Test Visual Burst</button><button class="sg-button" type="button" data-sg-sound="click">Test Sound</button></div></div>
     </section>
 </main>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
@@ -186,5 +192,6 @@
     $('resetBest').addEventListener('click',()=>{ store.remove(bestKey); $('best').textContent='0'; $('feedback').textContent='Best score reset on this device.'; });
     $('questionCard').addEventListener('pointermove', e=>{ const r=e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty('--x', ((e.clientX-r.left)/r.width*100)+'%'); e.currentTarget.style.setProperty('--y', ((e.clientY-r.top)/r.height*100)+'%'); });
   </script>
+  <div class="sg-toast" data-sg-toast role="status" aria-live="polite"></div>
 </body>
 </html>
