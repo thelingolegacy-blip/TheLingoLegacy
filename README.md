@@ -50,3 +50,7 @@ The shared Creative OS / Production Dashboard architecture is documented in `doc
 ## Premium Studio Production Layout System
 
 See `docs/premium-production-layout-system.md` for the shared high-premium layout language and reference-image placement plan.
+
+## Studio safety guardrails
+
+Security headers, advisory AI crawler blocks, no-cost service boundaries, and safe overlay rules are documented in `docs/studio-safety-guardrails.md`.
