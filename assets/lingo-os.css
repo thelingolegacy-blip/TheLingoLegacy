@@ -731,3 +731,52 @@ body.kids-explorer-surface .os-nav-link,
 body.kids-explorer-surface .os-fab {
   color: #17457c;
 }
+
+/* Overlay dominance correction: full suppression, top stack, and hard visibility flags. */
+body.overlay-dominant:not(.kids-explorer-surface) {
+  overflow: hidden !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay {
+  z-index: 999999 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  background:
+    radial-gradient(circle at var(--os-scene-light-x) var(--os-scene-light-y), rgba(247, 200, 75, 0.34), transparent 15rem),
+    radial-gradient(circle at calc(100% - var(--os-scene-light-x)) 18%, rgba(86, 239, 255, 0.24), transparent 17rem),
+    linear-gradient(110deg, #000 0%, #050507 42%, #000 100%) !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::before {
+  opacity: 1 !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::after {
+  opacity: 0.72 !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #world-layer,
+body.scene-suppressed:not(.kids-explorer-surface) > main,
+body.scene-suppressed:not(.kids-explorer-surface) > footer,
+body.scene-suppressed:not(.kids-explorer-surface) > header:not(.os-native-header),
+body.scene-suppressed:not(.kids-explorer-surface) .top {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #hud-layer {
+  z-index: 999998 !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #fx-layer {
+  z-index: 999997 !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) .os-cinematic-frame {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 61, 214, 0.18), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)) !important;
+}

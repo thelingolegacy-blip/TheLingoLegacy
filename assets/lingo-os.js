@@ -10,7 +10,7 @@
   if (isKidsExplorer) {
     body.classList.add('kids-explorer-surface');
   } else {
-    body.classList.add('auto-cinematic-mode', 'overlay-dominant');
+    body.classList.add('auto-cinematic-mode', 'overlay-dominant', 'scene-suppressed');
   }
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
