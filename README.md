@@ -10,6 +10,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
+- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, backend, analytics, commerce, and the connected Lingo Legacy OS
 
 ## Development
 
