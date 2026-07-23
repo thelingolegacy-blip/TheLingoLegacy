@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="That’s My Lingo social casino arcade demo: slot-style reels, virtual coins, XP, rewards, cosmetics, and no real-money wagering." />
+  <meta name="description" content="That’s My Lingo social casino arcade demo: immersive slot-style reels, virtual coins, XP, missions, rewards, and no real-money wagering." />
   <link rel="canonical" href="https://thelingolegacy.com/thats-my-lingo/" />
-  <meta property="og:title" content="That’s My Lingo — Full Demo" />
+  <meta property="og:title" content="That’s My Lingo — Social Casino Arcade" />
   <meta property="og:description" content="Spin social casino reels, earn virtual coins and XP, unlock cosmetics, and preview non-wagering jackpot-style gameplay." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/thats-my-lingo/" />
@@ -18,232 +18,55 @@
   <script defer src="/_vercel/insights/script.js"></script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
   <style>
-    :root{color-scheme:dark;--bg:#06030b;--panel:#0c0816e8;--panel2:#130822f2;--ink:#fff8d8;--muted:#d9c895;--gold:#f7ca4c;--gold2:#8d5717;--purple:#4c0fa5;--pink:#ff35d3;--green:#69ff78;--red:#ff5151;--cyan:#54e8ff;--line:#d7a63d66;--shadow:0 35px 120px #000a}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 50% 6%,#6518d0 0,transparent 28rem),radial-gradient(circle at 85% 18%,#ff35d330,transparent 24rem),linear-gradient(180deg,#150825,#030205 70%);line-height:1.5;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff1 1px,transparent 1px),linear-gradient(#fff1 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(#000,transparent 80%)}a{text-decoration:none;color:inherit}button{font:inherit}.wrap{width:min(1240px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:#05040bd9;border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0}.brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:-.03em}.brand img{width:46px;height:46px;border-radius:12px;filter:drop-shadow(0 0 18px #f7ca4c55)}.links{display:flex;gap:14px;color:var(--muted);font-size:.94rem}.links a:hover{color:var(--ink)}.hero{padding:42px 0 26px;display:grid;grid-template-columns:.86fr 1.14fr;gap:24px;align-items:center}.eyebrow{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--gold);font-weight:1000;text-transform:uppercase;letter-spacing:.1em;font-size:.78rem;background:#0006}h1,h2,h3{margin:0;line-height:1.02}h1{margin:18px 0 16px;font-size:clamp(3.25rem,8vw,7rem);text-transform:uppercase;text-shadow:0 0 30px #ff35d366}h1 span{display:block;background:linear-gradient(#fff6b0,#f5c84b 45%,#8a4a0b);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{color:var(--muted);font-size:1.12rem;max-width:680px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;padding:12px 18px;background:#ffffff12;font-weight:1000;color:var(--ink);cursor:pointer}.button.primary{border:0;background:linear-gradient(135deg,#fff0a0,#d79020);color:#130900}.button:hover{transform:translateY(-2px)}.machine{position:relative;border:2px solid var(--line);border-radius:34px;padding:18px;background:linear-gradient(180deg,#21113a,#050507);box-shadow:var(--shadow);overflow:hidden}.machine:before{content:"";position:absolute;inset:-35%;background:conic-gradient(transparent,#f7ca4c22,transparent,#54e8ff22,transparent);animation:halo 9s linear infinite}.machine>*{position:relative}.marquee{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #f7ca4c55;border-radius:18px;padding:10px 12px;background:#0009;color:var(--gold);font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.lamp{width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 20px var(--gold);animation:blink 1s steps(2,end) infinite}.logo{text-align:center;margin:14px 0}.logo img{width:min(380px,82%);filter:drop-shadow(0 20px 38px #000)}.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}.reel{height:142px;border:1px solid #f5c84b66;border-radius:18px;background:linear-gradient(180deg,#191126,#07070b);display:grid;place-items:center;font-size:3rem;box-shadow:inset 0 0 28px #000;transition:transform .25s}.reel.spin{animation:reel .18s linear infinite}.controls{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.meter{border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center;background:#0008;color:var(--muted)}.meter strong{display:block;color:var(--ink);font-size:1.1rem}.spinbtn{border:0;border-radius:14px;background:linear-gradient(#8dff6a,#13971d);font-size:1.35rem;font-weight:1000;color:#fff;cursor:pointer;box-shadow:0 12px 24px #0c5c1688}.spinbtn:disabled{filter:grayscale(.8);cursor:not-allowed}.status{min-height:30px;margin-top:12px;color:var(--gold);font-weight:900;text-align:center}.shell{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;margin:26px 0}.panel{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#ffffff10,#ffffff06),var(--panel);padding:18px;box-shadow:0 20px 70px #0005}.panel h2,.panel h3{color:var(--gold);text-transform:uppercase;letter-spacing:-.03em}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.tab{border:1px solid var(--line);border-radius:999px;background:#0008;color:var(--muted);padding:8px 12px;cursor:pointer}.tab.active{background:linear-gradient(135deg,#fff0a0,#d79020);color:#130900;font-weight:1000}.store{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.item{border:1px solid #d7a63d44;border-radius:18px;background:#050509cc;padding:14px;min-height:176px;display:grid;gap:8px}.item .icon{font-size:2rem}.buy{border:0;border-radius:12px;background:linear-gradient(135deg,#54e8ff,#3d64ff);color:white;font-weight:1000;padding:9px;cursor:pointer}.buy.owned{background:#ffffff18;color:var(--green)}.rewards{display:grid;gap:10px}.reward{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid #ffffff12;border-radius:16px;background:#0006;padding:10px}.badge{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),var(--purple));font-weight:1000}.progress{height:9px;background:#ffffff14;border-radius:999px;overflow:hidden;margin-top:6px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .4s ease}.jackpot{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tier{padding:13px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(135deg,#24113d,#060609);font-weight:1000;text-align:center}.tier small{display:block;color:var(--muted);font-weight:700}.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 32px}.tile{border:1px solid var(--line);border-radius:20px;padding:16px;background:#07070dcc;min-height:175px}.tile b{display:block;color:var(--gold);font-size:1.08rem;margin-bottom:6px}.card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.card,.dice{height:112px;border:1px solid #f7ca4c55;border-radius:16px;background:linear-gradient(160deg,#fff,#e9e0c6);color:#16070b;display:grid;place-items:center;font-size:2.35rem;font-weight:1000;cursor:pointer;transform-style:preserve-3d}.card.flipped{animation:flip .55s ease}.dice.roll{animation:dice .5s ease}.toast{position:fixed;left:50%;bottom:22px;z-index:50;transform:translateX(-50%) translateY(120px);border:1px solid var(--line);border-radius:16px;background:#08050fcc;color:var(--ink);padding:12px 16px;box-shadow:0 18px 60px #0009;transition:transform .3s}.toast.show{transform:translateX(-50%) translateY(0)}.coin{position:fixed;top:-30px;z-index:40;pointer-events:none;font-size:1.4rem;animation:coinfall 1.6s linear forwards}.winflash{animation:winflash .8s ease 2}@keyframes halo{to{transform:rotate(360deg)}}@keyframes blink{50%{opacity:.35}}@keyframes reel{to{transform:translateY(8px) scale(1.04)}}@keyframes flip{50%{transform:rotateY(90deg) scale(1.05)}}@keyframes dice{25%{transform:rotate(14deg) translateY(-8px)}50%{transform:rotate(-16deg)}75%{transform:rotate(10deg) translateY(-4px)}}@keyframes coinfall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}@keyframes winflash{50%{box-shadow:0 0 70px #f7ca4c,inset 0 0 40px #f7ca4c55}}@media(max-width:960px){.hero,.shell{grid-template-columns:1fr}.store,.mini{grid-template-columns:1fr 1fr}.links{display:none}}@media(max-width:620px){.store,.mini,.jackpot,.controls{grid-template-columns:1fr}.reels{gap:6px}.reel{height:100px;font-size:2rem}h1{font-size:3rem}}
-  .compliance-note{margin:12px 0 0;color:#f7e6ad;font-size:.92rem;border:1px solid rgba(247,202,76,.35);border-radius:14px;background:rgba(0,0,0,.35);padding:10px}.economy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.economy-grid div{border:1px solid rgba(247,202,76,.35);border-radius:16px;background:rgba(0,0,0,.35);padding:12px}.economy-grid strong,.economy-grid span{display:block}.economy-grid strong{color:var(--gold);font-size:1.2rem}.economy-grid span{color:var(--muted);font-size:.9rem}.mission-list{display:grid;gap:10px}.mission{border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(0,0,0,.36);padding:11px}.mission strong{color:var(--gold)}@media(max-width:620px){.economy-grid{grid-template-columns:1fr}}
-  .launch-strip{margin:18px auto 0;border:1px solid rgba(118,255,159,.45);border-radius:20px;background:linear-gradient(135deg,rgba(118,255,159,.14),rgba(98,240,255,.10)),rgba(0,0,0,.32);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.launch-strip b{color:#76ff9f}.launch-strip span{color:inherit;opacity:.82}.launch-pills{display:flex;flex-wrap:wrap;gap:8px}.launch-pills em{font-style:normal;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.22);font-weight:900;font-size:.86rem}@media(max-width:760px){.launch-strip{grid-template-columns:1fr}}</style>
+    :root{color-scheme:dark;--ink:#fff8dc;--muted:#dbc88f;--gold:#f7ca4c;--gold2:#8d5717;--purple:#4c0fa5;--pink:#ff35d3;--green:#69ff78;--cyan:#54e8ff;--red:#ff5151;--line:rgba(247,202,76,.45);--black:#030205;--shadow:0 40px 150px rgba(0,0,0,.72)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 50% 0,rgba(101,24,208,.78),transparent 34rem),radial-gradient(circle at 12% 18%,rgba(84,232,255,.26),transparent 28rem),radial-gradient(circle at 92% 26%,rgba(255,53,211,.32),transparent 26rem),linear-gradient(180deg,#150825 0,#030205 72%);overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,255,255,.055) 0 1px,transparent 1px 72px),linear-gradient(115deg,transparent 0 38%,rgba(247,202,76,.09) 39% 40%,transparent 41% 100%);mask-image:linear-gradient(#000,transparent 82%)}a{color:inherit;text-decoration:none}button{font:inherit}.wrap{width:min(1240px,calc(100% - 28px));margin:auto}.top{position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(180deg,rgba(3,2,8,.9),rgba(3,2,8,.42));border-bottom:1px solid rgba(247,202,76,.22);backdrop-filter:blur(16px)}nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:-.04em}.brand img{width:44px;height:44px;border-radius:14px;filter:drop-shadow(0 0 24px rgba(247,202,76,.56))}.links{display:flex;align-items:center;gap:14px;color:var(--muted);font-weight:850}.links a:hover{color:var(--ink)}.casino-floor{position:relative;min-height:100vh;padding:104px 0 44px;display:grid;grid-template-columns:.82fr 1.18fr;gap:28px;align-items:center}.copy{position:relative;z-index:3}.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--gold);background:rgba(0,0,0,.42);font-weight:1000;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem}.eyebrow:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 18px var(--green)}h1{margin:18px 0 16px;font-size:clamp(3.6rem,9vw,8rem);line-height:.88;text-transform:uppercase;letter-spacing:-.08em;text-shadow:0 0 42px rgba(255,53,211,.42)}h1 span{display:block;background:linear-gradient(#fff6b0,#f7ca4c 48%,#8d5717);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{max-width:660px;color:var(--muted);font-size:clamp(1.04rem,1.8vw,1.24rem);line-height:1.62}.actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:24px}.button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;min-height:48px;padding:12px 18px;background:rgba(255,255,255,.08);color:var(--ink);font-weight:1000;cursor:pointer;transition:.2s ease}.button:hover{transform:translateY(-2px);border-color:rgba(84,232,255,.72)}.primary{border:0;color:#170900;background:linear-gradient(135deg,#fff0a0,#f7ca4c 52%,#b86914);box-shadow:0 16px 60px rgba(247,202,76,.28)}.machine{position:relative;z-index:2;border-radius:48px;padding:24px;background:linear-gradient(180deg,#2a0d48 0,#09040f 70%);border:2px solid var(--line);box-shadow:var(--shadow);overflow:hidden}.machine:before{content:"";position:absolute;inset:-32%;background:conic-gradient(from 0deg,transparent,rgba(247,202,76,.34),transparent,rgba(84,232,255,.18),transparent,rgba(255,53,211,.26),transparent);animation:halo 10s linear infinite}.machine:after{content:"";position:absolute;left:6%;right:6%;bottom:3%;height:30%;background:radial-gradient(ellipse at 50% 0,rgba(247,202,76,.28),transparent 62%);clip-path:polygon(13% 0,87% 0,100% 100%,0 100%)}.machine>*{position:relative;z-index:2}.marquee{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid rgba(247,202,76,.55);border-radius:22px;padding:12px 14px;background:linear-gradient(90deg,rgba(247,202,76,.15),rgba(255,53,211,.13),rgba(247,202,76,.15));color:var(--gold);font-weight:1000;text-transform:uppercase;letter-spacing:.1em;text-align:center}.lamp{width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 20px var(--gold);animation:blink 1s steps(2,end) infinite}.logo{text-align:center;margin:10px 0 6px}.logo img{width:min(310px,72%);filter:drop-shadow(0 22px 42px rgba(0,0,0,.62)) drop-shadow(0 0 28px rgba(247,202,76,.18))}.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}.reel{height:clamp(94px,12vw,146px);border-radius:24px;background:linear-gradient(180deg,#fff8d4 0,#dcae45 54%,#fff1a4 100%);display:grid;place-items:center;color:#18070d;font-size:clamp(1.55rem,3vw,3.1rem);font-weight:1000;box-shadow:inset 0 -18px 34px rgba(80,36,0,.24),0 0 26px rgba(247,202,76,.18);transition:transform .22s}.reel.spin{animation:reel .14s linear infinite}.console{display:grid;grid-template-columns:repeat(5,1fr) 1.2fr;gap:10px}.meter{border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:11px 8px;background:rgba(0,0,0,.48);text-align:center;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}.meter strong{display:block;color:var(--ink);font-size:1.1rem;letter-spacing:0}.spinbtn{border:0;border-radius:18px;background:linear-gradient(#8dff6a,#13971d);font-size:1.32rem;font-weight:1000;color:white;cursor:pointer;box-shadow:0 16px 34px rgba(19,151,29,.36)}.spinbtn:disabled{filter:grayscale(.8);cursor:not-allowed}.status{min-height:30px;margin-top:13px;color:var(--gold);font-weight:1000;text-align:center}.compliance{margin-top:12px;color:#f8e9b3;font-size:.94rem;text-align:center}.side-rail{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:-22px auto 56px}.rail{border:1px solid rgba(247,202,76,.28);border-radius:30px;padding:20px;background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.045));box-shadow:0 24px 85px rgba(0,0,0,.34)}.rail h2,.rail h3{margin:0 0 12px;color:var(--gold);text-transform:uppercase;letter-spacing:-.04em}.rail p{margin:0;color:var(--muted)}.mission-list{display:grid;gap:10px}.mission{border-left:3px solid var(--gold);padding:10px 0 10px 13px;background:linear-gradient(90deg,rgba(247,202,76,.12),transparent);border-radius:0 16px 16px 0}.mission strong{display:block;color:var(--ink)}.progress{height:8px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:8px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .35s}.rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.reward{min-height:112px;border-radius:22px;padding:13px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.12)}.reward b{display:block;color:var(--gold);margin-bottom:6px}.bonus-floor{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 auto 60px}.bonus{min-height:165px;border:1px solid rgba(247,202,76,.28);border-radius:30px;padding:18px;background:radial-gradient(circle at 50% 0,rgba(247,202,76,.14),transparent 9rem),rgba(255,255,255,.055);box-shadow:0 22px 74px rgba(0,0,0,.28)}.bonus b{display:block;color:var(--gold);font-size:1.12rem;margin-bottom:8px}.bonus p{margin:0;color:var(--muted)}.toast{position:fixed;left:50%;bottom:22px;z-index:70;transform:translateX(-50%) translateY(120px);border:1px solid var(--line);border-radius:18px;background:rgba(8,5,15,.92);padding:12px 16px;box-shadow:0 18px 70px rgba(0,0,0,.7);transition:transform .3s}.toast.show{transform:translateX(-50%) translateY(0)}.coin{position:fixed;top:-30px;z-index:60;pointer-events:none;color:var(--gold);font-weight:1000;animation:coinfall 1.6s linear forwards}.winflash{animation:winflash .75s ease 2}@keyframes halo{to{transform:rotate(360deg)}}@keyframes blink{50%{opacity:.35}}@keyframes reel{to{transform:translateY(10px) scale(1.04)}}@keyframes coinfall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}@keyframes winflash{50%{box-shadow:0 0 80px rgba(247,202,76,.9),inset 0 0 44px rgba(247,202,76,.34)}}@media(max-width:980px){.casino-floor{grid-template-columns:1fr;padding-top:100px}.side-rail{grid-template-columns:1fr}.bonus-floor{grid-template-columns:1fr 1fr}.links{display:none}.console{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.reels{gap:6px}.machine{padding:14px;border-radius:34px}.console,.bonus-floor,.rewards{grid-template-columns:1fr}.spinbtn{min-height:58px}h1{font-size:3.25rem}}
+  </style>
 </head>
 <body>
-  <header class="top">
-    <nav class="wrap" aria-label="Primary navigation">
-      <a class="brand" href="/"><img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo"><span>That’s My Lingo</span></a>
-      <div class="links"><a href="#slot">Reels</a><a href="#economy">Economy</a><a href="#store">Store</a><a href="#rewards">Rewards</a><a href="/app/">Word Game</a></div>
-    </nav>
-  </header>
-  <main class="wrap"><section class="launch-strip" aria-label="Go-live readiness"><div><b>Studio-ready go-live mode active.</b> <span>Analytics, Speed Insights, production domains, and launch QA are enabled for this lane.</span></div><div class="launch-pills"><em>Build worker</em><em>Content worker</em><em>QA worker</em><em>No secret tokens shown</em></div></section>
-    <section class="hero">
-      <div>
-        <span class="eyebrow">Social casino arcade lane</span>
-        <h1>That’s My <span>Lingo</span></h1>
-        <p class="lead">Spin slot-style reels for entertainment, collect virtual coins, level up with Loyalty XP, earn badges, and unlock cosmetic rewards. No real-money gambling, cash-out, or cash-value prizes.</p>
-        <div class="actions"><a class="button primary" href="#slot">Start Demo</a><button class="button" id="soundToggle" type="button">Sound: Off</button><button class="button" id="resetDemo" type="button">Reset Demo</button></div>
-      </div>
-      <section class="machine" id="slot" aria-label="That’s My Lingo social casino arcade demo">
-        <div class="marquee"><span class="lamp"></span><span id="marquee">Grand opening jackpot demo</span><span class="lamp"></span></div>
-        <div class="logo"><img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo jackpot badge"></div>
-        <div class="reels" id="reels" aria-live="polite"></div>
-        <div class="controls">
-          <div class="meter">BET<strong id="bet">250</strong></div>
-          <div class="meter">BANK<strong id="bank">5,000</strong></div>
-          <div class="meter">WIN<strong id="win">0</strong></div>
-          <div class="meter">XP<strong id="xp">0</strong></div>
-          <div class="meter">LEVEL<strong id="level">1</strong></div>
-          <button class="spinbtn" id="spin" type="button">SPIN</button>
-        </div>
-        <div class="status" id="status">Tap spin to start the social casino arcade demo.</div>
-        <p class="compliance-note">Entertainment only. Demo Coins, Lingo Tokens, XP, badges, and rewards have no cash value and cannot be redeemed for money.</p>
-      </section>
+  <header class="top"><nav class="wrap" aria-label="Primary navigation"><a class="brand" href="/"><img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo"><span>That’s My Lingo</span></a><div class="links"><a href="#play">Play</a><a href="#missions">Missions</a><a href="#rewards">Rewards</a><a href="/landing/">Launch List</a></div></nav></header>
+  <main>
+    <section class="wrap casino-floor" id="play">
+      <div class="copy"><span class="eyebrow">Casino floor open</span><h1>Spin the <span>Lingo</span></h1><p class="lead">A full-screen social casino arcade demo with slot-style reels, virtual coins, XP, missions, unlocks, and jackpot energy. No real-money gambling, cash-out, or cash-value prizes.</p><div class="actions"><button class="button primary" id="heroSpin" type="button">Spin Now</button><button class="button" id="soundToggle" type="button">Sound: Off</button><button class="button" id="resetDemo" type="button">Reset Demo</button></div></div>
+      <section class="machine" aria-label="That’s My Lingo social casino arcade demo"><div class="marquee"><span class="lamp"></span><span id="marquee">Grand opening jackpot demo</span><span class="lamp"></span></div><div class="logo"><img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo jackpot badge"></div><div class="reels" id="reels" aria-live="polite"></div><div class="console"><div class="meter">Bet<strong id="bet">250</strong></div><div class="meter">Bank<strong id="bank">5,000</strong></div><div class="meter">Win<strong id="win">0</strong></div><div class="meter">XP<strong id="xp">0</strong></div><div class="meter">Level<strong id="level">1</strong></div><button class="spinbtn" id="spin" type="button">SPIN</button></div><div class="status" id="status">Tap spin to start the social casino arcade demo.</div><p class="compliance">Entertainment only. Demo Coins, Lingo Tokens, XP, badges, and rewards have no cash value and cannot be redeemed for money.</p></section>
     </section>
 
-    <section class="shell">
-      <article class="panel" id="store">
-        <h2>Cosmetic Store</h2>
-        <p>Spend virtual Demo Coins on cosmetics, boosts, themes, and VIP-style collectibles. No real purchases, wallet, wagering, or payment flow is included.</p>
-        <div class="tabs" role="tablist" aria-label="Store categories">
-          <button class="tab active" data-category="all" type="button">All</button>
-          <button class="tab" data-category="boost" type="button">Boosts</button>
-          <button class="tab" data-category="style" type="button">Style</button>
-          <button class="tab" data-category="vip" type="button">VIP</button>
-        </div>
-        <div class="store" id="storeGrid"></div>
-      </article>
-      <article class="panel" id="rewards">
-        <h2>Rewards Tracker</h2>
-        <div class="rewards" id="rewardsGrid"></div>
-      </article>
+    <section class="wrap side-rail" id="missions">
+      <article class="rail"><h2>Season Missions</h2><div class="mission-list" id="missionsGrid"></div></article>
+      <article class="rail" id="rewards"><h2>Reward Track</h2><div class="rewards" id="rewardsGrid"></div></article>
     </section>
 
-    <section class="shell" id="economy">
-      <article class="panel">
-        <h2>Virtual Economy</h2>
-        <div class="economy-grid">
-          <div><strong id="tokenCount">0</strong><span>Lingo Tokens</span></div>
-          <div><strong id="dailyStreak">1</strong><span>Daily streak</span></div>
-          <div><strong>No cash value</strong><span>Progress only</span></div>
-        </div>
-        <button class="button primary" id="dailyReward" type="button">Claim Daily Reward</button>
-        <p class="compliance-note">Players can earn progression, cosmetics, badges, and merch-discount style unlocks. They cannot buy or redeem winnings for cash.</p>
-      </article>
-      <article class="panel">
-        <h2>Season Missions</h2>
-        <div class="mission-list" id="missionsGrid"></div>
-      </article>
-    </section>
-
-    <section class="shell">
-      <article class="panel">
-        <h2>Bonus Games</h2>
-        <p>Click cards or dice to preview quick bonus animations and sound cues.</p>
-        <div class="card-row"><button class="card" type="button">♠</button><button class="card" type="button">?</button><button class="dice" type="button">🎲</button></div>
-      </article>
-      <article class="panel">
-        <h2>Jackpot Tiers</h2>
-        <div class="jackpot"><div class="tier">MINI<small>1,000</small></div><div class="tier">MAJOR<small>5,000</small></div><div class="tier">MEGA<small>10,000</small></div><div class="tier">GRAND<small>Progressive</small></div></div>
-      </article>
-    </section>
-
-    <section class="mini" aria-label="Demo feature list">
-      <div class="tile"><b>Reels</b><p>Five animated slot-style reels with weighted symbols, virtual bank, bet, win math, XP, and jackpot-style messaging.</p></div>
-      <div class="tile"><b>Store</b><p>Demo-only cosmetic, boost, and VIP drops saved in local browser storage with no payment or cash-out path.</p></div>
-      <div class="tile"><b>Sound</b><p>Opt-in oscillator sound effects for spin, win, store unlocks, card flips, and dice rolls.</p></div>
-      <div class="tile"><b>Animations</b><p>Reel shake, jackpot flash, coin shower, card flip, dice roll, marquee lights, and glow motion.</p></div>
-    </section>
+    <section class="wrap bonus-floor" aria-label="Arcade feature list"><article class="bonus"><b>Virtual economy</b><p><span id="tokenCount">0</span> Lingo Tokens earned. Progress only, no cash value.</p></article><article class="bonus"><b>Daily streak</b><p><span id="dailyStreak">1</span> day streak. Come back for virtual coin and XP bonuses.</p><button class="button primary" id="dailyReward" type="button">Claim Daily</button></article><article class="bonus"><b>Jackpot tiers</b><p>Mini, Major, Mega, and Grand-style messages for entertainment pacing.</p></article><article class="bonus"><b>Bonus games</b><p>Card flip and dice-roll moments are staged for the next production pass.</p></article></section>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
-    const symbols = ['7','🎲','💵','👑','💎','🎤','♠','⭐'];
-    const storeItems = [
-      {id:'lucky-dice', category:'boost', icon:'🎲', name:'Lucky Dice Boost', price:700, text:'+25 demo coins on the next dice roll.'},
-      {id:'gold-mic', category:'style', icon:'🎤', name:'Gold Mic Skin', price:900, text:'Adds VIP stage energy to the reels.'},
-      {id:'crown-pass', category:'vip', icon:'👑', name:'Crown Pass', price:1500, text:'Unlocks the VIP champion badge.'},
-      {id:'coin-rain', category:'style', icon:'💵', name:'Coin Rain FX', price:650, text:'Turns big wins into extra coin showers.'},
-      {id:'spades-table', category:'boost', icon:'♠', name:'Spades Bonus Key', price:800, text:'Opens a bonus card reveal.'},
-      {id:'grand-glow', category:'vip', icon:'💎', name:'Grand Glow', price:2200, text:'Adds jackpot lighting around the machine.'}
+    const symbols = ['7','DICE','COIN','CROWN','GEM','MIC','SPADE','STAR'];
+    const missions = [
+      {id:'spin', name:'Spin Starter', goal:5, label:'5 spins'},
+      {id:'coins', name:'Bank Builder', goal:6500, label:'6,500 bank'},
+      {id:'xp', name:'XP Climb', goal:400, label:'400 XP'},
+      {id:'tokens', name:'Token Trail', goal:50, label:'50 tokens'}
     ];
     const rewards = [
-      {id:'spin', icon:'S', name:'Spin Starter', goal:5, label:'5 spins'},
-      {id:'coins', icon:'C', name:'Coin Collector', goal:8000, label:'8,000 bank'},
-      {id:'store', icon:'B', name:'Store Shopper', goal:3, label:'3 unlocks'},
-      {id:'xp', icon:'X', name:'XP Grinder', goal:1200, label:'1,200 Loyalty XP'},
-      {id:'tokens', icon:'T', name:'Token Trail', goal:50, label:'50 Lingo Tokens'}
-    ];
-    const missions = [
       {id:'daily', name:'Daily Check-in', text:'Claim one daily reward for virtual coins, tokens, and XP.'},
-      {id:'season', name:'Season Pass Track', text:'Complete spins and bonus games to unlock cosmetics and badges.'},
-      {id:'community', name:'Community Event', text:'Climb entertainment leaderboards with XP only — no cash prize pool.'}
+      {id:'season', name:'Season Track', text:'Complete spins and bonus games to unlock cosmetics and badges.'},
+      {id:'community', name:'Community Event', text:'Climb XP-only leaderboards with no cash prize pool.'}
     ];
-    const state = JSON.parse(localStorage.getItem('tml-demo') || '{}');
-    const today = new Date().toISOString().slice(0,10);
-    const game = {bank: state.bank || 5000, bet: 250, lastWin: 0, spins: state.spins || 0, owned: state.owned || [], xp: state.xp || 0, tokens: state.tokens || 0, streak: state.streak || 1, lastDaily: state.lastDaily || '', sound: false, category: 'all'};
-    const reels = document.getElementById('reels');
-    const bank = document.getElementById('bank');
-    const bet = document.getElementById('bet');
-    const win = document.getElementById('win');
-    const xp = document.getElementById('xp');
-    const level = document.getElementById('level');
-    const tokenCount = document.getElementById('tokenCount');
-    const dailyStreak = document.getElementById('dailyStreak');
-    const spin = document.getElementById('spin');
-    const status = document.getElementById('status');
-    const marquee = document.getElementById('marquee');
-    const toast = document.getElementById('toast');
-    const soundToggle = document.getElementById('soundToggle');
-    let audioCtx;
-
-    function save(){localStorage.setItem('tml-demo', JSON.stringify({bank:game.bank, spins:game.spins, owned:game.owned, xp:game.xp, tokens:game.tokens, streak:game.streak, lastDaily:game.lastDaily}));}
-    function levelFor(xpValue){return Math.max(1, Math.floor(xpValue/500)+1);}
-    function awardProgress(xpAmount, tokenAmount=0){game.xp += xpAmount; game.tokens += tokenAmount;}
+    const saved = JSON.parse(localStorage.getItem('tml-demo') || '{}');
+    const game = {bank:saved.bank || 5000, bet:250, lastWin:0, spins:saved.spins || 0, xp:saved.xp || 0, tokens:saved.tokens || 0, streak:saved.streak || 1, lastDaily:saved.lastDaily || '', sound:false};
+    const reels = document.getElementById('reels'), bank = document.getElementById('bank'), bet = document.getElementById('bet'), win = document.getElementById('win'), xp = document.getElementById('xp'), level = document.getElementById('level'), spin = document.getElementById('spin'), status = document.getElementById('status'), marquee = document.getElementById('marquee'), tokenCount = document.getElementById('tokenCount'), dailyStreak = document.getElementById('dailyStreak'), toast = document.getElementById('toast');
     function money(n){return Number(n).toLocaleString();}
-    function showToast(message){toast.textContent = message; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200);}
-    function tone(freq, duration=.13, type='sine'){
-      if(!game.sound) return;
-      const C = window.AudioContext || window.webkitAudioContext;
-      if(!C) return;
-      audioCtx = audioCtx || new C();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
-      gain.gain.setValueAtTime(.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + duration);
-      osc.start(); osc.stop(audioCtx.currentTime + duration);
-    }
-    function coinShower(count=18){
-      for(let i=0;i<count;i++){
-        const c=document.createElement('span'); c.className='coin'; c.textContent=['💵','🪙','⭐'][i%3];
-        c.style.left=Math.random()*100+'vw'; c.style.animationDelay=Math.random()*.45+'s'; document.body.appendChild(c);
-        setTimeout(()=>c.remove(),2100);
-      }
-    }
-    function renderReels(values=symbols.slice(0,5)){reels.innerHTML=values.map(s=>`<div class="reel">${s}</div>`).join('');}
-    function renderHud(){bank.textContent=money(game.bank); bet.textContent=money(game.bet); win.textContent=money(game.lastWin); xp.textContent=money(game.xp); level.textContent=levelFor(game.xp); tokenCount.textContent=money(game.tokens); dailyStreak.textContent=money(game.streak); spin.disabled=game.bank<game.bet; renderRewards(); renderMissions();}
-    function calculate(values){
-      const counts = values.reduce((a,s)=>(a[s]=(a[s]||0)+1,a),{});
-      const max = Math.max(...Object.values(counts));
-      if(max>=5) return {amount:5000, message:'JACKPOT! Five-symbol lingo lock.'};
-      if(max===4) return {amount:1500, message:'Major win. Four symbols connected.'};
-      if(max===3) return {amount:650, message:'Triple match. Coins added.'};
-      const stars = values.filter(v=>v==='⭐').length;
-      if(stars>=2) return {amount:300, message:'Star bonus hit.'};
-      return {amount:75, message:'Small demo payout.'};
-    }
-    function spinReels(){
-      if(game.bank<game.bet){showToast('Demo bank is empty. Reset to replay.'); return;}
-      game.bank-=game.bet; game.lastWin=0; game.spins+=1; awardProgress(25, 1); renderHud();
-      status.textContent='Reels spinning...'; marquee.textContent='Listen for the lingo lock'; tone(220,.12,'sawtooth');
-      const cells=[...document.querySelectorAll('.reel')]; cells.forEach(c=>c.classList.add('spin'));
-      let ticks=0;
-      const timer=setInterval(()=>{
-        const values=cells.map(()=>symbols[Math.floor(Math.random()*symbols.length)]);
-        cells.forEach((c,i)=>c.textContent=values[i]); ticks++;
-        if(ticks>14){
-          clearInterval(timer); cells.forEach(c=>c.classList.remove('spin'));
-          const final=cells.map(c=>c.textContent); const result=calculate(final);
-          game.lastWin=result.amount; game.bank+=result.amount; awardProgress(Math.max(10, Math.round(result.amount/20)), result.amount>=1500?5:1); status.textContent=result.message; marquee.textContent=result.amount>=1500?'Big lingo win':'Demo coins updated';
-          if(result.amount>=1500){document.querySelector('.machine').classList.add('winflash'); coinShower(game.owned.includes('coin-rain')?42:24); tone(880,.22,'triangle'); setTimeout(()=>document.querySelector('.machine').classList.remove('winflash'),1700);} else {tone(440,.16,'square');}
-          save(); renderHud();
-        }
-      },80);
-    }
-    function renderStore(){
-      const items = storeItems.filter(i=>game.category==='all'||i.category===game.category);
-      document.getElementById('storeGrid').innerHTML = items.map(item=>{
-        const owned = game.owned.includes(item.id);
-        return `<article class="item"><div class="icon">${item.icon}</div><strong>${item.name}</strong><p>${item.text}</p><button class="buy ${owned?'owned':''}" data-id="${item.id}" type="button">${owned?'Owned':money(item.price)+' coins'}</button></article>`;
-      }).join('');
-    }
-    function renderRewards(){
-      const progress = {spin:game.spins, coins:game.bank, store:game.owned.length, xp:game.xp, tokens:game.tokens};
-      document.getElementById('rewardsGrid').innerHTML = rewards.map(r=>{
-        const pct = Math.min(100, Math.round((progress[r.id]/r.goal)*100));
-        return `<div class="reward"><span class="badge">${r.icon}</span><div><strong>${r.name}</strong><p>${r.label}</p><div class="progress"><span style="width:${pct}%"></span></div></div><strong>${pct}%</strong></div>`;
-      }).join('');
-    }
-    function renderMissions(){
-      document.getElementById('missionsGrid').innerHTML = missions.map(m=>`<div class="mission"><strong>${m.name}</strong><p>${m.text}</p></div>`).join('');
-      document.getElementById('dailyReward').disabled = game.lastDaily === today;
-      document.getElementById('dailyReward').textContent = game.lastDaily === today ? 'Daily Reward Claimed' : 'Claim Daily Reward';
-    }
-    document.addEventListener('click', event=>{
-      const buy = event.target.closest('.buy');
-      if(buy){
-        const item = storeItems.find(i=>i.id===buy.dataset.id);
-        if(game.owned.includes(item.id)){showToast(item.name+' is already unlocked.'); return;}
-        if(game.bank<item.price){showToast('Need more demo coins for '+item.name+'.'); tone(160,.15,'square'); return;}
-        game.bank-=item.price; game.owned.push(item.id); awardProgress(90, 3); save(); renderHud(); renderStore(); coinShower(10); tone(660,.18,'triangle'); showToast('Unlocked '+item.name+'.');
-      }
-      const card = event.target.closest('.card');
-      if(card){card.classList.add('flipped'); card.textContent=['♠','👑','💎','⭐'][Math.floor(Math.random()*4)]; awardProgress(20,1); save(); renderHud(); tone(520,.13,'triangle'); setTimeout(()=>card.classList.remove('flipped'),620);}
-      const dice = event.target.closest('.dice');
-      if(dice){dice.classList.add('roll'); const roll=Math.ceil(Math.random()*6); dice.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][roll-1]; const bonus=roll*25+(game.owned.includes('lucky-dice')?25:0); game.bank+=bonus; awardProgress(roll*10,2); save(); renderHud(); tone(360+roll*55,.14,'sine'); showToast('Dice bonus: '+bonus+' virtual coins.'); setTimeout(()=>dice.classList.remove('roll'),620);}
-    });
-    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); game.category=tab.dataset.category; renderStore(); tone(300,.08,'sine');}));
-    document.getElementById('dailyReward').addEventListener('click',()=>{
-      if(game.lastDaily===today){showToast('Daily reward already claimed.'); return;}
-      game.bank += 500; game.tokens += 10; game.xp += 150; game.streak += 1; game.lastDaily = today; save(); renderHud(); coinShower(16); tone(720,.18,'triangle'); showToast('Daily reward: 500 virtual coins, 10 tokens, 150 XP.');
-    });
-    spin.addEventListener('click', spinReels);
-    soundToggle.addEventListener('click',()=>{game.sound=!game.sound; soundToggle.textContent='Sound: '+(game.sound?'On':'Off'); tone(740,.12,'triangle');});
-    document.getElementById('resetDemo').addEventListener('click',()=>{localStorage.removeItem('tml-demo'); game.bank=5000; game.spins=0; game.owned=[]; game.lastWin=0; game.xp=0; game.tokens=0; game.streak=1; game.lastDaily=''; renderStore(); renderHud(); showToast('Demo reset.');});
-    renderReels(); renderStore(); renderHud();
+    function levelFor(x){return Math.max(1, Math.floor(x/250)+1);}
+    function save(){localStorage.setItem('tml-demo', JSON.stringify({bank:game.bank, spins:game.spins, xp:game.xp, tokens:game.tokens, streak:game.streak, lastDaily:game.lastDaily}));}
+    function tone(freq=440,dur=.12,type='sine'){if(!game.sound)return;const ctx=new (window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(.045,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);osc.connect(gain).connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+dur);}
+    function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400);}
+    function coinShower(count=12){for(let i=0;i<count;i++){const c=document.createElement('div');c.className='coin';c.textContent='GOLD';c.style.left=Math.random()*100+'vw';c.style.animationDelay=Math.random()*.35+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),1900);}}
+    function payout(results){const counts=results.reduce((acc,s)=>(acc[s]=(acc[s]||0)+1,acc),{});const max=Math.max(...Object.values(counts));if(max===5)return game.bet*40;if(max===4)return game.bet*12;if(max===3)return game.bet*4;if(results.includes('7')&&results.includes('STAR'))return game.bet*2;return 0;}
+    function renderReels(values=['7','STAR','LINGO','GOLD','7']){reels.innerHTML=values.map(v=>`<div class="reel">${v}</div>`).join('');}
+    function renderMissions(){const progress={spin:game.spins, coins:game.bank, xp:game.xp, tokens:game.tokens};document.getElementById('missionsGrid').innerHTML=missions.map(m=>{const val=Math.min(progress[m.id]||0,m.goal),pct=Math.round((val/m.goal)*100);return `<div class="mission"><strong>${m.name}</strong><small>${m.label} · ${pct}%</small><div class="progress"><span style="width:${pct}%"></span></div></div>`}).join('');}
+    function renderRewards(){document.getElementById('rewardsGrid').innerHTML=rewards.map(r=>`<div class="reward"><b>${r.name}</b><span>${r.text}</span></div>`).join('');}
+    function renderHud(){bank.textContent=money(game.bank);bet.textContent=money(game.bet);win.textContent=money(game.lastWin);xp.textContent=money(game.xp);level.textContent=levelFor(game.xp);tokenCount.textContent=money(game.tokens);dailyStreak.textContent=money(game.streak);spin.disabled=game.bank<game.bet;renderMissions();renderRewards();}
+    function spinReels(){if(game.bank<game.bet){showToast('Not enough demo coins. Reset the demo or claim a daily reward.');return;}spin.disabled=true;game.bank-=game.bet;game.lastWin=0;game.spins+=1;game.xp+=25;game.tokens+=1;renderHud();marquee.textContent='Reels are live';status.textContent='Spinning the Lingo floor...';tone(240,.08,'square');const reelEls=[...reels.children];reelEls.forEach(el=>el.classList.add('spin'));let ticks=0;const timer=setInterval(()=>{reelEls.forEach(el=>el.textContent=symbols[Math.floor(Math.random()*symbols.length)]);ticks++;if(ticks>14){clearInterval(timer);const result=Array.from({length:5},()=>symbols[Math.floor(Math.random()*symbols.length)]);renderReels(result);const paid=payout(result);game.lastWin=paid;if(paid){game.bank+=paid;game.xp+=75;game.tokens+=Math.max(2,Math.floor(paid/500));status.textContent=`Win: ${money(paid)} demo coins.`;marquee.textContent='Winner on the floor';document.querySelector('.machine').classList.add('winflash');setTimeout(()=>document.querySelector('.machine').classList.remove('winflash'),1600);coinShower(18);tone(720,.22,'triangle');}else{status.textContent='No win this spin. XP and token progress added.';marquee.textContent='Next spin is ready';tone(160,.12,'sawtooth');}save();renderHud();spin.disabled=false;}},85);}
+    document.getElementById('heroSpin').addEventListener('click',spinReels);spin.addEventListener('click',spinReels);document.getElementById('soundToggle').addEventListener('click',e=>{game.sound=!game.sound;e.currentTarget.textContent='Sound: '+(game.sound?'On':'Off');tone(520,.12,'triangle');});document.getElementById('resetDemo').addEventListener('click',()=>{localStorage.removeItem('tml-demo');Object.assign(game,{bank:5000,lastWin:0,spins:0,xp:0,tokens:0,streak:1,lastDaily:''});renderReels();renderHud();showToast('Demo reset.');});document.getElementById('dailyReward').addEventListener('click',()=>{const today=new Date().toDateString();if(game.lastDaily===today){showToast('Daily reward already claimed today.');return;}game.bank+=500;game.tokens+=10;game.xp+=150;game.streak+=1;game.lastDaily=today;save();renderHud();coinShower(14);tone(700,.18,'triangle');showToast('Daily reward: 500 virtual coins, 10 tokens, 150 XP.');});
+    renderReels();renderHud();
   </script>
 </body>
 </html>
