@@ -43,3 +43,7 @@ Contact: hello@thelingolegacy.com
 ## Blueprint Studio Phase 2
 
 The shared Creative OS / Production Dashboard architecture is documented in `docs/blueprint-studio-phase-2.md` and surfaced on `/studio-production/`.
+
+## Premium Studio Production Layout System
+
+See `docs/premium-production-layout-system.md` for the shared high-premium layout language and reference-image placement plan.
