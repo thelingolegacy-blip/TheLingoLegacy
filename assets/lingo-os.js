@@ -24,6 +24,7 @@
 
   const navItems = [
     ['/', 'OS', 'Home'],
+    ['/#os-modules', 'SYS', 'Core OS screens'],
     ['/app/', 'XP', 'Daily app'],
     ['/thats-my-lingo/', 'PLAY', 'Game floor'],
     ['/studio-production/', 'STU', 'Studio production'],
@@ -40,12 +41,13 @@
         <span><small>The Lingo Legacy OS</small><strong>${escapeHtml(pageTitle)}</strong></span>
       </a>
       <div class="os-status" aria-label="System status">
-        <span class="os-chip"><span>System</span><b>${status}</b></span>
-        <span class="os-chip"><span>Mode</span><b>${online}</b></span>
-        <span class="os-chip"><span>Wallet</span><b>Keys armed</b></span>
+        <span class="os-chip" data-os-chip="system"><span>System</span><b>${status}</b></span>
+        <span class="os-chip" data-os-chip="mode"><span>Mode</span><b>${online}</b></span>
+        <span class="os-chip" data-os-chip="wallet"><span>Wallet</span><b>Keys armed</b></span>
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
+        <button class="os-action" type="button" data-os-event="xp">XP +25</button>
         <a class="os-action" href="/admin-command-center/">Command</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
       </div>
@@ -53,7 +55,7 @@
     <nav class="os-side-rail" aria-label="OS navigation rail">
       ${navItems.map(([href, label, title]) => `<a class="os-nav-link" href="${href}" title="${title}" aria-label="${title}">${label}</a>`).join('')}
     </nav>
-    <div class="os-toast-dock" aria-live="polite">
+    <div class="os-toast-dock" aria-live="polite" data-os-toasts>
       <div class="os-toast"><small>System layer</small><strong>${escapeHtml(status)} synced to HUD + FX.</strong></div>
     </div>
     <div class="os-fab-stack" aria-label="Quick actions">
@@ -69,12 +71,24 @@
     body.classList.toggle('fx-disabled');
     const disabled = body.classList.contains('fx-disabled');
     doc.querySelector('[data-os-toggle-fx]').textContent = disabled ? 'FX Off' : 'Performance';
+    toast('Performance mode', disabled ? 'FX layer disabled.' : 'FX layer online.');
   });
 
   pulseXp();
   doc.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('a, button') : null;
-    if (target && !body.classList.contains('fx-disabled')) pulseXp(event.clientX, event.clientY);
+    if (!target) return;
+
+    const systemEvent = target.getAttribute('data-os-event');
+    if (systemEvent === 'wallet') {
+      walletGlow(event.clientX, event.clientY);
+    } else if (systemEvent === 'xp') {
+      pulseXp(event.clientX, event.clientY);
+      setChip('system', 'XP +25');
+      toast('XP Engine', 'Quest progress sent to HUD + FX.');
+    } else if (!body.classList.contains('fx-disabled')) {
+      pulseXp(event.clientX, event.clientY);
+    }
   });
 
   function pulseXp(x = window.innerWidth - 150, y = 118) {
@@ -88,6 +102,41 @@
       fx.append(dot);
       window.setTimeout(() => dot.remove(), 1200);
     }
+  }
+
+  function walletGlow(x = window.innerWidth - 150, y = 118) {
+    setChip('wallet', 'New key');
+    const wallet = doc.querySelector('[data-os-chip="wallet"]');
+    wallet?.classList.remove('os-wallet-flash');
+    requestAnimationFrame(() => wallet?.classList.add('os-wallet-flash'));
+    keyBurst(x, y);
+    toast('Wallet event', 'New Key Unlocked overlay armed.');
+  }
+
+  function keyBurst(x, y) {
+    if (body.classList.contains('fx-disabled')) return;
+    const burst = doc.createElement('i');
+    burst.className = 'os-key-burst';
+    burst.style.left = `${x}px`;
+    burst.style.top = `${y}px`;
+    fx.append(burst);
+    window.setTimeout(() => burst.remove(), 1000);
+  }
+
+  function setChip(name, value) {
+    const chip = doc.querySelector(`[data-os-chip="${name}"] b`);
+    if (chip) chip.textContent = value;
+  }
+
+  function toast(label, message) {
+    const dock = doc.querySelector('[data-os-toasts]');
+    if (!dock) return;
+    const item = doc.createElement('div');
+    item.className = 'os-toast';
+    item.innerHTML = `<small>${escapeHtml(label)}</small><strong>${escapeHtml(message)}</strong>`;
+    dock.prepend(item);
+    while (dock.children.length > 3) dock.lastElementChild.remove();
+    window.setTimeout(() => item.remove(), 4600);
   }
 
   function escapeHtml(value) {
