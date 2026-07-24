@@ -1,0 +1,18 @@
+{
+  "name": "the-lingo-legacy-static-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static Vercel website for The Lingo Legacy ecosystem.",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "npm run check",
+    "vercel-build": "npm run check",
+    "check": "npm run validate && npm run smoke",
+    "validate": "node scripts/validate-static-site.mjs",
+    "smoke": "node scripts/smoke-static-site.mjs",
+    "dev": "python3 -m http.server 3000"
+  }
+}

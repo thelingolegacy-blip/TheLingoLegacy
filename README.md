@@ -38,13 +38,13 @@ python3 -m http.server 3000
 
 ## Validation
 
-Run the static smoke test before opening a pull request or deploying:
+Run the static validation suite before opening a pull request or deploying:
 
 ```bash
-node scripts/validate-static-site.mjs
+npm run check
 ```
 
-It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, and required page metadata.
+It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, required page metadata, launch files, security headers, crawler guardrails, and unsafe overlay z-index values. Vercel runs the same checks through `npm run build`.
 
 ## Deployment
 
