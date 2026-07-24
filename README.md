@@ -13,6 +13,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/kottons-code/episodes/sunny-key/` and `/kottons-code/episodes/blue-clue-trail/` — static KottonsCode episode pages
 - `/kottons-code/educators/` — educator landing page with lesson prompts and safe-use notes
 - `/kottons-code/app-wireframes/` — static app screen wireframes for onboarding, stories, activities, progress, and educator review
+- `/kottons-code/printables/lesson-plan/`, `/kottons-code/printables/clue-cards/`, and `/kottons-code/printables/safety-checklist/` — printer-friendly static educator resources
 - `/tapstich/` — static apparel customization lane for patch drops, outfit boards, creator-safe merch concepts, and no-cost launch review
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
 - `/assets/` — existing brand asset library
