@@ -26,8 +26,24 @@ for (const file of ['manifest.webmanifest','vercel.json']) {
 const sitemap = path.join(root,'sitemap.xml');
 if (fs.existsSync(sitemap)) {
   const text = fs.readFileSync(sitemap,'utf8');
+  const sitemapRoutes = new Set();
+  let sitemapOrigin = '';
   for (const m of text.matchAll(/<loc>(.*?)<\/loc>/g)) {
-    try { new URL(m[1]); } catch { errors.push(`sitemap.xml: invalid loc ${m[1]}`); }
+    try {
+      const url = new URL(m[1]);
+      sitemapOrigin ||= url.origin;
+      sitemapRoutes.add(url.pathname);
+    } catch {
+      errors.push(`sitemap.xml: invalid loc ${m[1]}`);
+    }
+  }
+  for (const file of htmlFiles) {
+    if (path.basename(file) !== 'index.html') continue;
+    const routePath = rel(file).replace(/(^|\/)index\.html$/, '$1');
+    const route = routePath ? `/${routePath}` : '/';
+    if (!sitemapRoutes.has(route)) {
+      errors.push(`sitemap.xml: missing route ${sitemapOrigin}${route}`);
+    }
   }
 }
 
