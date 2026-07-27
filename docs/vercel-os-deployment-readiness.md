@@ -1,6 +1,6 @@
 # Vercel OS deployment readiness
 
-This repository currently deploys as a static Vercel site. It does not contain a Next.js App Router application, `/api/*` route handlers, or runtime middleware yet.
+The production site before this migration deploys as a static Vercel site. The Next.js OS branch adds an App Router application, `/api/*` route handlers, and runtime middleware for preview validation before production cutover.
 
 ## Current production fit
 

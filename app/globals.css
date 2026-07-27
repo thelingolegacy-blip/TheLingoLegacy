@@ -1,0 +1,151 @@
+:root {
+  --bg: #0b0b0c;
+  --bg-alt: #141416;
+  --fg: #e6e6e7;
+  --fg-dim: #9b9ba0;
+  --accent: #00e0ff;
+  --accent-alt: #9d4dff;
+  --border: #1f1f22;
+  --radius: 14px;
+  --font-main: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-medium: 240ms;
+  --duration-slow: 420ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-main);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0, 224, 255, 0.16), transparent 32rem),
+    radial-gradient(circle at 80% 0%, rgba(157, 77, 255, 0.16), transparent 30rem),
+    var(--bg);
+}
+
+a {
+  color: inherit;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 48px 24px;
+}
+
+.ll-shell {
+  display: grid;
+  gap: 28px;
+}
+
+.ll-hero {
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: clamp(32px, 7vw, 72px);
+  background: linear-gradient(135deg, rgba(20, 20, 22, 0.96), rgba(11, 11, 12, 0.92));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.32);
+}
+
+.ll-hero h1 {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(2.6rem, 8vw, 6.4rem);
+  line-height: 0.88;
+  letter-spacing: -0.08em;
+}
+
+.ll-hero p,
+.ll-card p,
+.ll-command-tile p {
+  color: var(--fg-dim);
+  line-height: 1.7;
+}
+
+.ll-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.ll-card,
+.ll-command-tile {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(20, 20, 22, 0.86);
+  padding: 24px;
+}
+
+.ll-command-tile {
+  transition: transform var(--duration-medium) var(--ease-out), border-color var(--duration-medium) var(--ease-out);
+}
+
+.ll-command-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.ll-section {
+  display: grid;
+  gap: 16px;
+}
+
+.ll-section h2,
+.ll-card h1,
+.ll-card h2,
+.ll-command-tile h3 {
+  margin: 0;
+}
+
+.ll-eyebrow {
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ll-button {
+  appearance: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+  border: 0;
+  border-radius: var(--radius);
+  color: #050506;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 13px 20px;
+  transition: transform var(--duration-medium) var(--ease-out), filter var(--duration-medium) var(--ease-out);
+}
+
+.ll-button:hover {
+  filter: saturate(1.25);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.ll-xp-burst {
+  animation: xpBurst 0.6s var(--ease-out);
+  color: var(--accent);
+  display: inline-flex;
+  font-weight: 900;
+}
+
+@keyframes xpBurst {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
