@@ -19,3 +19,5 @@ That’s My Lingo is a static HTML site and deploys on Vercel without a build co
 - `/tapstich/` — static apparel customization lane; no Vercel Functions, middleware, database, Blob, Shopify API, or added telemetry scripts
 
 After merging changes to the production branch, Vercel will create a new production deployment automatically if the project is connected to this repository.
+
+For the planned OS backend layer, see `vercel-os-deployment-readiness.md` and `.env.example`. The current repository is static HTML; add Next.js App Router files, route handlers, and middleware in a separate implementation wave before enabling `/api/*` functions or runtime environment-variable usage.
