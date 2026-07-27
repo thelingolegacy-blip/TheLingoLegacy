@@ -52,6 +52,8 @@ It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inli
 
 Deploy the repository as a static site on Vercel. The production entrypoint is `index.html` at the repository root.
 
+See `docs/vercel-os-deployment-readiness.md` for the Vercel OS environment map, current static-site settings, and the checklist for a future Next.js App Router API/middleware migration.
+
 Contact: hello@thelingolegacy.com
 
 ## Blueprint Studio Phase 2
