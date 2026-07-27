@@ -1,0 +1,785 @@
+/* The Lingo Legacy OS shell: world, content, HUD, FX, and system-state layers. */
+:root {
+  --os-noir: #050507;
+  --os-panel: rgba(13, 13, 18, 0.78);
+  --os-panel-strong: rgba(21, 21, 29, 0.9);
+  --os-ink: #fff9e8;
+  --os-muted: #c9b98c;
+  --os-gold: #f7c84b;
+  --os-cyan: #56efff;
+  --os-violet: #6b2dff;
+  --os-magenta: #ff3dd6;
+  --os-green: #6bff8b;
+  --os-line: rgba(247, 200, 75, 0.34);
+  --os-hud-top: 88px;
+  --os-hud-rail: 86px;
+}
+
+html.theme-industrial-noir,
+body.theme-industrial-noir {
+  color-scheme: dark;
+}
+
+body.lingo-os-active {
+  background-color: var(--os-noir);
+}
+
+#world-layer,
+#fx-layer,
+#hud-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+#world-layer {
+  z-index: -2;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 16% 10%, rgba(107, 45, 255, 0.32), transparent 28rem),
+    radial-gradient(circle at 83% 12%, rgba(247, 200, 75, 0.21), transparent 24rem),
+    radial-gradient(circle at 50% 56%, rgba(86, 239, 255, 0.13), transparent 36rem),
+    linear-gradient(180deg, #09090f 0%, #050507 56%, #010102 100%);
+}
+
+#world-layer::before,
+#world-layer::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+}
+
+#world-layer::before {
+  background:
+    linear-gradient(118deg, transparent 0 35%, rgba(247, 200, 75, 0.09) 35.4% 36.2%, transparent 37%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 84px),
+    radial-gradient(circle at 72% 42%, rgba(255, 61, 214, 0.1), transparent 18rem);
+  mask-image: linear-gradient(#000 0 72%, transparent 92%);
+  animation: osWorldDrift 26s ease-in-out infinite alternate;
+}
+
+#world-layer::after {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.42) 0.8px, transparent 0.9px);
+  background-size: 42px 42px;
+  opacity: 0.09;
+  mix-blend-mode: screen;
+}
+
+body.season-winter #world-layer {
+  background:
+    radial-gradient(circle at 20% 8%, rgba(86, 239, 255, 0.26), transparent 28rem),
+    radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.14), transparent 22rem),
+    linear-gradient(180deg, #071019 0%, #050507 58%, #010102 100%);
+}
+
+body.mode-quest #world-layer::before {
+  background:
+    linear-gradient(118deg, transparent 0 35%, rgba(107, 255, 139, 0.1) 35.4% 36.2%, transparent 37%),
+    repeating-linear-gradient(90deg, rgba(247, 200, 75, 0.05) 0 1px, transparent 1px 74px),
+    radial-gradient(circle at 72% 42%, rgba(107, 255, 139, 0.12), transparent 18rem);
+}
+
+#fx-layer {
+  z-index: 5000;
+  overflow: hidden;
+}
+
+body.fx-disabled #fx-layer,
+body.fx-disabled #world-layer::before {
+  display: none;
+}
+
+.os-orb {
+  position: absolute;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 999px;
+  filter: blur(32px);
+  opacity: 0.16;
+  animation: osFloat 12s ease-in-out infinite alternate;
+}
+
+.os-orb--gold { left: 8%; top: 18%; background: var(--os-gold); }
+.os-orb--cyan { right: 9%; top: 48%; background: var(--os-cyan); animation-delay: -4s; }
+.os-orb--violet { left: 42%; bottom: 8%; background: var(--os-violet); animation-delay: -7s; }
+
+#hud-layer {
+  z-index: 8000;
+}
+
+.os-command-bar,
+.os-side-rail,
+.os-fab-stack,
+.os-toast-dock {
+  pointer-events: auto;
+}
+
+.os-command-bar {
+  position: fixed;
+  top: 12px;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 0.9fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(247, 200, 75, 0.24);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(5, 5, 7, 0.88), rgba(5, 5, 7, 0.58));
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.os-brand,
+.os-status,
+.os-actions,
+.os-nav-link,
+.os-fab,
+.os-toast {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.os-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--os-ink);
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.os-brand img {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  filter: drop-shadow(0 0 20px rgba(247, 200, 75, 0.52));
+}
+
+.os-brand small,
+.os-status span,
+.os-toast small {
+  display: block;
+  color: var(--os-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.os-brand strong,
+.os-toast strong {
+  display: block;
+  overflow: hidden;
+  color: var(--os-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.os-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.os-chip {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px 10px;
+  background: rgba(0, 0, 0, 0.26);
+  color: var(--os-ink);
+}
+
+.os-chip b {
+  display: block;
+  color: var(--os-gold);
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+.os-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.os-action {
+  border: 1px solid rgba(247, 200, 75, 0.26);
+  border-radius: 999px;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--os-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.os-action--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #fff6b8, var(--os-gold) 52%, #a86118);
+  color: #160d03;
+}
+
+.os-action:hover,
+.os-action:focus-visible,
+.os-nav-link:hover,
+.os-nav-link:focus-visible,
+.os-fab:hover,
+.os-fab:focus-visible {
+  border-color: rgba(86, 239, 255, 0.66);
+  box-shadow: 0 0 26px rgba(86, 239, 255, 0.12);
+  outline: 0;
+  transform: translateY(-1px);
+}
+
+.os-side-rail {
+  position: fixed;
+  top: 94px;
+  left: max(12px, env(safe-area-inset-left));
+  display: grid;
+  gap: 8px;
+  width: 64px;
+  padding: 8px;
+  border: 1px solid rgba(247, 200, 75, 0.2);
+  border-radius: 24px;
+  background: rgba(5, 5, 7, 0.62);
+  backdrop-filter: blur(16px);
+}
+
+.os-nav-link {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--os-ink);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.os-fab-stack {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 10px;
+}
+
+.os-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  min-height: 44px;
+  border: 1px solid rgba(247, 200, 75, 0.28);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: var(--os-panel-strong);
+  color: var(--os-ink);
+  font-size: 0.82rem;
+  font-weight: 1000;
+  text-decoration: none;
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.36);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.os-toast-dock {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  top: 94px;
+  display: grid;
+  gap: 10px;
+  width: min(320px, calc(100vw - 28px));
+}
+
+.os-toast {
+  border: 1px solid rgba(247, 200, 75, 0.25);
+  border-radius: 20px;
+  padding: 12px 14px;
+  background: rgba(5, 5, 7, 0.74);
+  box-shadow: 0 18px 58px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(18px);
+}
+
+body.lingo-os-active > main,
+body.lingo-os-active > .wrap:first-child,
+body.lingo-os-active > section:first-child {
+  position: relative;
+  z-index: 1;
+}
+
+body.lingo-os-active > main,
+body.lingo-os-active > .wrap:first-child,
+body.lingo-os-active > section:first-child {
+  padding-top: max(var(--os-hud-top), 86px);
+}
+
+body.lingo-os-active .top,
+body.lingo-os-active header:not(.os-native-header) {
+  top: 82px;
+}
+
+.os-xp-pulse {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--os-gold);
+  box-shadow: 0 0 28px var(--os-gold);
+  animation: osXpRise 900ms ease-out forwards;
+}
+
+@keyframes osWorldDrift {
+  from { transform: translate3d(-1%, -1%, 0) rotate(-0.5deg); }
+  to { transform: translate3d(1%, 1%, 0) rotate(0.5deg); }
+}
+
+@keyframes osFloat {
+  from { transform: translate3d(-8px, -10px, 0) scale(0.96); }
+  to { transform: translate3d(10px, 12px, 0) scale(1.04); }
+}
+
+@keyframes osXpRise {
+  0% { opacity: 0; transform: translateY(18px) scale(0.4); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-80px) scale(1.6); }
+}
+
+@media (max-width: 900px) {
+  :root { --os-hud-top: 82px; --os-hud-rail: 0px; }
+  .os-command-bar {
+    grid-template-columns: 1fr auto;
+  }
+  .os-status {
+    display: none;
+  }
+  .os-side-rail {
+    top: auto;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    grid-template-columns: repeat(6, 1fr);
+    z-index: 1;
+  }
+  .os-nav-link {
+    width: auto;
+  }
+  .os-fab-stack {
+    bottom: 84px;
+  }
+  .os-toast-dock {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .os-command-bar {
+    min-height: 58px;
+    border-radius: 20px;
+  }
+  .os-brand img {
+    width: 36px;
+    height: 36px;
+  }
+  .os-brand small,
+  .os-actions .os-action:not(.os-action--primary) {
+    display: none;
+  }
+  .os-action {
+    padding: 8px 10px;
+  }
+  body.lingo-os-active > main,
+  body.lingo-os-active > .wrap:first-child,
+  body.lingo-os-active > section:first-child {
+    padding-top: 82px;
+  }
+}
+
+/* Phase 2: core OS screen modules and system event feedback. */
+.os-module-matrix,
+.os-event-console {
+  display: grid;
+  gap: 14px;
+}
+
+.os-module-matrix {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.os-module-card {
+  position: relative;
+  min-height: 230px;
+  border: 1px solid rgba(247, 200, 75, 0.24);
+  border-radius: 30px;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(86, 239, 255, 0.12), transparent 11rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.os-module-card::after {
+  content: attr(data-module);
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  color: rgba(247, 200, 75, 0.12);
+  font-size: 3.35rem;
+  font-weight: 1000;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.os-module-card h3,
+.os-module-card p,
+.os-module-card ul,
+.os-module-card .tag,
+.os-module-card .button {
+  position: relative;
+  z-index: 1;
+}
+
+.os-module-card ul {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.os-module-card li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--os-muted);
+}
+
+.os-module-card li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--os-green);
+  box-shadow: 0 0 16px rgba(107, 255, 139, 0.48);
+}
+
+.os-event-console {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 16px;
+}
+
+.os-event-card {
+  border: 1px solid rgba(86, 239, 255, 0.24);
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.os-event-card b {
+  display: block;
+  color: var(--os-cyan);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.os-event-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--os-ink);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.os-event-card p {
+  margin: 8px 0 0;
+  color: var(--os-muted);
+}
+
+.os-wallet-flash {
+  animation: osWalletFlash 680ms ease-out;
+}
+
+.os-key-burst {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 200, 75, 0.75);
+  animation: osKeyBurst 820ms ease-out forwards;
+}
+
+@keyframes osWalletFlash {
+  0% { box-shadow: 0 0 0 rgba(247, 200, 75, 0); }
+  35% { box-shadow: 0 0 34px rgba(247, 200, 75, 0.42); }
+  100% { box-shadow: 0 0 0 rgba(247, 200, 75, 0); }
+}
+
+@keyframes osKeyBurst {
+  from { opacity: 1; transform: scale(0.4); }
+  to { opacity: 0; transform: scale(7); }
+}
+
+@media (max-width: 980px) {
+  .os-module-matrix,
+  .os-event-console {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .os-module-matrix,
+  .os-event-console {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase 3: auto-cinematic overlay dominance, suppression, and z-index governance. */
+:root {
+  --os-layer-world: 0;
+  --os-layer-content: 10;
+  --os-layer-nav: 100;
+  --os-layer-backdrop: 400;
+  --os-layer-overlay: 500;
+  --os-layer-toast: 600;
+  --os-layer-fx: 650;
+  --os-layer-ui: 700;
+  --os-scene-light-x: 50%;
+  --os-scene-light-y: 28%;
+}
+
+body.auto-cinematic-mode {
+  background: #020204;
+}
+
+body.auto-cinematic-mode #world-layer {
+  z-index: var(--os-layer-world);
+  opacity: 0.18;
+  filter: saturate(0.82) brightness(0.52);
+}
+
+body.auto-cinematic-mode #hud-layer {
+  z-index: var(--os-layer-ui);
+}
+
+body.auto-cinematic-mode #fx-layer {
+  z-index: var(--os-layer-fx);
+}
+
+#cinematic-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--os-layer-overlay);
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at var(--os-scene-light-x) var(--os-scene-light-y), rgba(247, 200, 75, 0.22), transparent 16rem),
+    radial-gradient(circle at calc(100% - var(--os-scene-light-x)) 18%, rgba(86, 239, 255, 0.18), transparent 18rem),
+    linear-gradient(110deg, rgba(0, 0, 0, 0.92), rgba(5, 5, 7, 0.72) 45%, rgba(0, 0, 0, 0.94));
+}
+
+body.auto-cinematic-mode #cinematic-overlay,
+body.overlay-dominant #cinematic-overlay {
+  display: block;
+}
+
+#cinematic-overlay::before,
+#cinematic-overlay::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+}
+
+#cinematic-overlay::before {
+  background:
+    linear-gradient(100deg, transparent 0 31%, rgba(247, 200, 75, 0.2) 33%, transparent 36% 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 110px);
+  opacity: 0.72;
+  animation: osCameraPan 18s ease-in-out infinite alternate;
+}
+
+#cinematic-overlay::after {
+  background:
+    radial-gradient(ellipse at 50% 0%, transparent 0 44%, rgba(0, 0, 0, 0.46) 78%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 9px);
+  mix-blend-mode: screen;
+  opacity: 0.36;
+}
+
+.os-cinematic-frame {
+  position: absolute;
+  inset: max(86px, 8vh) max(22px, 6vw) max(92px, 10vh);
+  display: grid;
+  align-content: end;
+  max-width: 1180px;
+  margin: auto;
+  border: 1px solid rgba(247, 200, 75, 0.26);
+  border-radius: 42px;
+  padding: clamp(22px, 5vw, 54px);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 61, 214, 0.12), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 0 80px rgba(247, 200, 75, 0.08), 0 42px 140px rgba(0, 0, 0, 0.58);
+  transform-origin: center;
+  animation: osHeroCamera 12s ease-in-out infinite alternate;
+}
+
+.os-cinematic-frame small {
+  color: var(--os-gold);
+  font-size: 0.78rem;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.os-cinematic-frame strong {
+  display: block;
+  max-width: 760px;
+  margin-top: 12px;
+  color: var(--os-ink);
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: 0.86;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+}
+
+.os-cinematic-frame p {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: var(--os-muted);
+  font-size: clamp(1rem, 2vw, 1.24rem);
+  line-height: 1.65;
+}
+
+body.scene-suppressed > main,
+body.scene-suppressed > footer,
+body.scene-suppressed > header:not(.os-native-header),
+body.scene-suppressed .top {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.scene-suppressed #hud-layer,
+body.scene-suppressed #fx-layer,
+body.scene-suppressed #cinematic-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+body.overlay-dominant .os-command-bar {
+  background: rgba(0, 0, 0, 0.72);
+  border-color: rgba(247, 200, 75, 0.42);
+}
+
+.os-scene-spark {
+  position: absolute;
+  width: 3px;
+  height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, rgba(247, 200, 75, 0.9), transparent);
+  opacity: 0;
+  animation: osSceneSpark 1.8s ease-out forwards;
+}
+
+@keyframes osCameraPan {
+  from { transform: translate3d(-2%, -1%, 0) rotate(-0.6deg); }
+  to { transform: translate3d(2%, 1%, 0) rotate(0.6deg); }
+}
+
+@keyframes osHeroCamera {
+  from { transform: scale(1) translate3d(-0.5%, 0, 0); }
+  to { transform: scale(1.025) translate3d(0.5%, -0.5%, 0); }
+}
+
+@keyframes osSceneSpark {
+  0% { opacity: 0; transform: translateY(-12vh) rotate(12deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(42vh) rotate(12deg); }
+}
+
+body.kids-explorer-surface #cinematic-overlay {
+  display: none;
+}
+
+body.kids-explorer-surface #world-layer {
+  opacity: 0.08;
+}
+
+body.kids-explorer-surface .os-command-bar {
+  border-color: rgba(255, 215, 91, 0.42);
+  background: rgba(255, 248, 240, 0.72);
+}
+
+body.kids-explorer-surface .os-brand,
+body.kids-explorer-surface .os-action,
+body.kids-explorer-surface .os-nav-link,
+body.kids-explorer-surface .os-fab {
+  color: #17457c;
+}
+
+/* Overlay dominance correction: full suppression, top stack, and hard visibility flags. */
+body.overlay-dominant:not(.kids-explorer-surface) {
+  overflow: hidden !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay {
+  z-index: var(--os-layer-overlay) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  background:
+    radial-gradient(circle at var(--os-scene-light-x) var(--os-scene-light-y), rgba(247, 200, 75, 0.34), transparent 15rem),
+    radial-gradient(circle at calc(100% - var(--os-scene-light-x)) 18%, rgba(86, 239, 255, 0.24), transparent 17rem),
+    linear-gradient(110deg, #000 0%, #050507 42%, #000 100%) !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::before {
+  opacity: 1 !important;
+}
+
+body.overlay-dominant:not(.kids-explorer-surface) #cinematic-overlay::after {
+  opacity: 0.72 !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #world-layer,
+body.scene-suppressed:not(.kids-explorer-surface) > main,
+body.scene-suppressed:not(.kids-explorer-surface) > footer,
+body.scene-suppressed:not(.kids-explorer-surface) > header:not(.os-native-header),
+body.scene-suppressed:not(.kids-explorer-surface) .top {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #hud-layer {
+  z-index: var(--os-layer-ui) !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) #fx-layer {
+  z-index: var(--os-layer-fx) !important;
+  pointer-events: none !important;
+}
+
+body.scene-suppressed:not(.kids-explorer-surface) .os-cinematic-frame {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 61, 214, 0.18), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)) !important;
+}
