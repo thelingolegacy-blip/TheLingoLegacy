@@ -1,0 +1,103 @@
+{
+  "version": "2026.07.28-static-front-back-integration-os",
+  "mode": "static-blueprint-only",
+  "liveBackendWrites": false,
+  "livePayments": false,
+  "liveExternalServiceCalls": false,
+  "vercelFunctions": false,
+  "guardrails": [
+    "no_real_money_wagering",
+    "no_cash_out",
+    "no_cash_equivalent_prizes",
+    "static_contracts_until_backend_activation",
+    "auth_validation_audit_required_before_live_services"
+  ],
+  "surfaces": [
+    {
+      "id": "frontend_web",
+      "name": "Vercel Static Web Frontend",
+      "role": "Public studio, casino, monetization, payload, and OS documentation surfaces.",
+      "status": "active_static",
+      "activation": "Already deploys as static HTML on Vercel."
+    },
+    {
+      "id": "flutter_app",
+      "name": "Flutter App Layer",
+      "role": "Future mobile shell for auth, wallet display, XP, store, and sync UI.",
+      "status": "contract_only",
+      "activation": "Add mobile API contracts only after auth, consent, and no-cash-out enforcement exist."
+    },
+    {
+      "id": "firebase",
+      "name": "Firebase Optional Layer",
+      "role": "Optional auth, notifications, and app telemetry bridge if still connected.",
+      "status": "contract_only",
+      "activation": "Do not enable Cloud Functions or Firestore writes from this static repo without a separate backend plan."
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare DNS and Edge Boundary",
+      "role": "Optional DNS, domain, bot, or caching boundary in front of Vercel-owned deployments.",
+      "status": "manual_external",
+      "activation": "Keep Vercel as deployment source of truth; DNS changes require domain-specific verification before edits."
+    },
+    {
+      "id": "vercel",
+      "name": "Vercel Delivery Layer",
+      "role": "Static hosting, deployments, previews, domains, headers, and Vercel Blob for file storage.",
+      "status": "active_static",
+      "activation": "No new Functions are active in this blueprint."
+    },
+    {
+      "id": "github",
+      "name": "GitHub Source and PR Layer",
+      "role": "Source control, pull requests, validation workflow, and deployment trigger source.",
+      "status": "active_source",
+      "activation": "Use focused PRs; avoid broad auto-build loops."
+    },
+    {
+      "id": "blob_storage",
+      "name": "Vercel Blob File Storage",
+      "role": "First-party file storage for images, documents, generated assets, profile uploads, and media.",
+      "status": "planned",
+      "activation": "Use immutable blob URLs and separate pointers for mutable content."
+    },
+    {
+      "id": "neon_postgres",
+      "name": "Neon Relational Storage via Vercel Marketplace",
+      "role": "Future relational data for users, entitlements, audit logs, configs, purchases, and economy state.",
+      "status": "planned_marketplace",
+      "activation": "Vercel Postgres is no longer first-party; existing databases migrated to Neon via Vercel Marketplace in December 2024."
+    },
+    {
+      "id": "upstash_redis",
+      "name": "Upstash Redis Cache via Vercel Marketplace",
+      "role": "Future cache, rate counters, idempotency keys, and AI flavor dedupe.",
+      "status": "planned_marketplace",
+      "activation": "Vercel KV is no longer first-party; existing stores migrated to Upstash Redis via Vercel Marketplace in December 2024."
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "source_to_preview",
+      "name": "GitHub to Vercel Preview",
+      "steps": ["focused_branch", "static_validation", "pull_request", "vercel_preview", "review"]
+    },
+    {
+      "id": "preview_to_production",
+      "name": "Preview to Production",
+      "steps": ["merge_to_main", "production_deployment", "sitemap_static_routes", "post_deploy_smoke_check"]
+    },
+    {
+      "id": "future_backend_activation",
+      "name": "Future Backend Activation",
+      "steps": ["auth", "schema_validation", "rate_limits", "audit_logs", "spend_guardrails", "rollback_plan", "then_live_endpoint"]
+    },
+    {
+      "id": "asset_pipeline",
+      "name": "Studio Asset Pipeline",
+      "steps": ["asset_intake", "static_preview", "blob_storage_when_approved", "metadata_pointer", "cdn_cache_review"]
+    }
+  ],
+  "studioModules": ["animation", "sound", "visual_fx", "asset", "cinematic_ui", "world_building", "character", "motion", "monetization_safety", "payload_contracts"]
+}
