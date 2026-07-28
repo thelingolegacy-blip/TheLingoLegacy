@@ -40,14 +40,14 @@
 
   const navItems = [
     ['/', 'OS', 'Home'],
-    ['/#os-modules', 'SYS', 'Core OS screens'],
+    ['/#os-modules', 'HQ', 'Home layers'],
     ['/app/', 'XP', 'Daily app'],
     ['/thats-my-lingo/', 'PLAY', 'Game floor'],
     ['/loading/', 'LOAD', 'Loading gateway'],
     ['/studio-assets/', 'ART', 'Studio assets'],
     ['/tapstich/', 'TAP', 'Tapstich'],
     ['/studio-production/', 'STU', 'Studio production'],
-    ['/studio-world-os/', 'WORLD', 'Studio World OS'],
+    ['/studio-world-os/', 'WORLDS', 'Silent worlds'],
     ['/universe/', 'MAP', 'Universe map']
   ];
 
@@ -55,7 +55,7 @@
   const online = currentPath.includes('admin') ? 'Admin' : currentPath.includes('app') ? 'Quest' : 'Noir';
 
   hud.innerHTML = `
-    <div class="os-command-bar" role="navigation" aria-label="OS command bar">
+    <div class="os-command-bar" role="navigation" aria-label="OS world bar">
       <a class="os-brand" href="/">
         <img src="/assets/thats-my-lingo-mark.svg" alt="">
         <span><small>The Lingo Legacy OS</small><strong>${escapeHtml(pageTitle)}</strong></span>
@@ -69,9 +69,9 @@
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
         <button class="os-action" type="button" data-os-toggle-overlay>Overlay</button>
         <button class="os-action" type="button" data-os-pro-mode>Pro mode</button>
-        <button class="os-action" type="button" data-os-command>⌘K</button>
+        <button class="os-action" type="button" data-os-command>Worlds</button>
         <button class="os-action" type="button" data-os-event="xp">XP +25</button>
-        <a class="os-action" href="/admin-command-center/">Command</a>
+        <a class="os-action" href="/admin-command-center/">HQ</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
       </div>
     </div>
@@ -86,10 +86,10 @@
       <a class="os-fab" href="${lastStudioPath}">Resume</a>
       <a class="os-fab" href="/studio-production/">Upgrade</a>
     </div>
-    <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy command palette">
+    <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy world switcher">
       <div class="os-command-panel" role="dialog" aria-modal="true" aria-labelledby="os-command-title">
-        <div class="os-command-head"><span id="os-command-title">Command layer</span><button type="button" data-os-command-close aria-label="Close command palette">Close</button></div>
-        <input data-os-command-input type="search" autocomplete="off" placeholder="Switch studios, assets, modes, worlds..." aria-label="Search commands" />
+        <div class="os-command-head"><span id="os-command-title">World switcher</span><button type="button" data-os-command-close aria-label="Close world switcher">Close</button></div>
+        <input data-os-command-input type="search" autocomplete="off" placeholder="Find worlds, studios, assets, and modes..." aria-label="Search worlds" />
         <div class="os-command-results" data-os-command-results></div>
       </div>
     </section>
@@ -149,7 +149,7 @@
     const commands = [
       ...navItems.map(([href, label, title]) => ({ label: title, detail: label, href })),
       { label: 'Resume last active studio', detail: 'Startup', href: lastStudioPath },
-      { label: 'Open Studio World OS', detail: 'Studio foundation', href: '/studio-world-os/' },
+      { label: 'Open Silent Worlds', detail: 'World constellation', href: '/studio-world-os/' },
       { label: 'Open Asset Browser', detail: 'Assets', href: '/studio-assets/' },
       { label: 'Open Casino Studio', detail: 'Casino', href: '/casino-upgrade/' },
       { label: 'Open Cartoon Studio', detail: 'Cartoon', href: '/kottons-code/' },
