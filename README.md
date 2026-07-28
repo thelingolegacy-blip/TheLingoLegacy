@@ -25,7 +25,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
 - `/integration-os/` — static front-to-back integration blueprint for Flutter, Firebase, Cloudflare, Vercel, GitHub, Blob, Neon, Upstash Redis, and studio pipelines
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
-- `/studio-world-os/` — shared Studio feature inheritance, unique entity-world identity locks, cross-world connection rules, sponsorship gates, and all-wave activation map
+- `/studio-world-os/` — Silent World Constellation with fully individual entity worlds, seamless travel, and sealed premium realms
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
 - `/outer-crown-expansion/` — HQ Mode multi-state expansion for NYC, Delaware, New Jersey, simulcast beacons, promo overlays, and ignition controls
 - `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
