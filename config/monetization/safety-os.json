@@ -1,0 +1,74 @@
+{
+  "version": "2026.07.28-static-monetization-safety-os",
+  "mode": "static-blueprint-only",
+  "livePayments": false,
+  "liveAds": false,
+  "liveSurveys": false,
+  "liveBackendWrites": false,
+  "vercelFunctions": false,
+  "hardLines": [
+    "no_real_money_wagers",
+    "no_real_money_payouts",
+    "no_cash_out",
+    "no_virtual_currency_to_cash",
+    "no_virtual_currency_to_cash_equivalent_prizes",
+    "no_sweepstakes_with_monetary_value",
+    "no_financial_value_rewards"
+  ],
+  "layers": [
+    {
+      "id": "core_monetization",
+      "name": "Core Monetization",
+      "status": "blueprint_enabled",
+      "modules": [
+        { "id": "virtual_currency", "name": "Virtual Currency", "allowed": true, "guardrail": "Purchasable and spendable in-app only; never redeemable for cash or cash-equivalent value." },
+        { "id": "xp_engine", "name": "XP & Leveling", "allowed": true, "guardrail": "Progression, streaks, levels, and boosts cannot create financial-value rewards." },
+        { "id": "cosmetics", "name": "Cosmetics & Skins", "allowed": true, "guardrail": "No resale, transfer, redemption, or cash-value claims." },
+        { "id": "boosts", "name": "Boosts & Power-Ups", "allowed": true, "guardrail": "Entertainment and progression utility only; no payout or prize advantage." },
+        { "id": "season_pass_vip", "name": "Season Pass & VIP", "allowed": true, "guardrail": "Show pricing, renewal, cancellation, and no-cash-value terms clearly." },
+        { "id": "mystery_boxes", "name": "Mystery Boxes", "allowed": true, "guardrail": "Chance-based rewards must stay non-cash and non-transferable with published odds where required." },
+        { "id": "ads_banners", "name": "Ads & Banners", "allowed": true, "guardrail": "No real-money gambling ads or deceptive promotions." },
+        { "id": "surveys_offers", "name": "Surveys & Offers", "allowed": true, "guardrail": "Reward virtual currency, XP, or cosmetics only; never cash-equivalent value." },
+        { "id": "promotions_events", "name": "Promotions & Events", "allowed": true, "guardrail": "Daily bonuses, streaks, and seasonal events stay no-cash-value entertainment." }
+      ]
+    },
+    {
+      "id": "safety_layer",
+      "name": "Safety Guardrails",
+      "status": "always_on",
+      "modules": [
+        { "id": "consent_manager", "name": "Consent Manager", "required": true, "guardrail": "Gate ads, analytics, tracking, location, surveys, and personalization by user consent." },
+        { "id": "data_minimization", "name": "Data Minimization", "required": true, "guardrail": "Collect only fields required for the feature and retention policy." },
+        { "id": "audit_logging", "name": "Audit Logging", "required": true, "guardrail": "Log purchases, grants, virtual currency changes, entitlement changes, and admin actions." },
+        { "id": "no_cash_out_enforcement", "name": "No Cash-Out Enforcement", "required": true, "guardrail": "No API, UI, admin config, or promotion can create redemption or payout paths." }
+      ]
+    },
+    {
+      "id": "geo_maps_beacons",
+      "name": "Geo, GPS, Beacon, and Maps",
+      "status": "opt_in_only",
+      "modules": [
+        { "id": "location_access", "name": "Location Access", "allowed": true, "guardrail": "Opt-in, revocable, and limited to events, navigation, AR, or local offers." },
+        { "id": "geo_beacons", "name": "Geo-Beacons", "allowed": true, "guardrail": "Engagement triggers only; never gambling eligibility or regulated zoning." },
+        { "id": "map_integrations", "name": "Map Integrations", "allowed": true, "guardrail": "Navigation, events, AR, and local discovery only." }
+      ]
+    },
+    {
+      "id": "ai_plugins",
+      "name": "AI and Plugin Governance",
+      "status": "sandboxed",
+      "modules": [
+        { "id": "ai_personalization", "name": "AI Personalization", "allowed": true, "guardrail": "Cosmetic, XP, content, and event recommendations only; no odds, payouts, or safety decisions." },
+        { "id": "ai_npc_behavior", "name": "AI NPC Behavior", "allowed": true, "guardrail": "Flavor and gameplay personality only; no odds manipulation or spend pressure." },
+        { "id": "plugin_sandbox", "name": "Plugin Sandbox", "allowed": true, "guardrail": "Least privilege, monitored, kill-switch enabled, and no gambling SDKs." },
+        { "id": "analytics_tracking", "name": "Tracking & Analytics", "allowed": true, "guardrail": "Consent-bound, anonymized where possible, and no profiling for gambling behavior." }
+      ]
+    }
+  ],
+  "riskScoring": {
+    "low": ["cosmetics", "themes", "sound_packs", "xp_progression", "non_cash_events"],
+    "medium": ["mystery_boxes", "surveys_offers", "subscriptions", "geo_beacons", "affiliate_links"],
+    "blocked": ["cash_out", "real_money_wager", "cash_prize_sweepstakes", "cash_equivalent_redemption", "odds_for_financial_value"]
+  },
+  "activationRule": "A monetization module can become live only after terms copy, consent handling, purchase/refund flow, audit logging, support path, and no-cash-value enforcement are implemented."
+}
