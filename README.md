@@ -78,3 +78,7 @@ Vercel-native launch checks, `/healthz`, rollback notes, and smoke-test guidance
 ## That’s My Lingo production foundation
 
 See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented in `docs/lingo-casino-config-system.md` and surfaced on `/casino-config/`.
+
+## Agent cost guardrails
+
+See `docs/agent-cost-guardrails.md` for the static-first operating rules, Spend Management recommendation, and billing review path.

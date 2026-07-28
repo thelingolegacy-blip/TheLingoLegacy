@@ -4,7 +4,7 @@
     "coreLogic": "deterministic",
     "aiRole": "flavor-only",
     "outcomes": "no-ai-payouts",
-    "deployment": "static-first Vercel delivery with lightweight API functions",
+    "deployment": "static-first Vercel delivery with static JSON contracts and no live API functions",
     "storagePlan": {
       "relational": "Neon through Vercel Marketplace for production Postgres tables",
       "cache": "Upstash Redis through Vercel Marketplace for AI cache, rate counters, and transient state",
