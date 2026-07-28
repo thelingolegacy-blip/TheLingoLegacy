@@ -1,0 +1,234 @@
+{
+  "version": "2026.07.28-ai-light-foundation",
+  "principles": {
+    "coreLogic": "deterministic",
+    "aiRole": "flavor-only",
+    "outcomes": "no-ai-payouts",
+    "deployment": "static-first Vercel delivery with lightweight API functions",
+    "storagePlan": {
+      "relational": "Neon through Vercel Marketplace for production Postgres tables",
+      "cache": "Upstash Redis through Vercel Marketplace for AI cache, rate counters, and transient state",
+      "assets": "Vercel Blob for generated media, cosmetics, and uploadable assets"
+    }
+  },
+  "machines": [
+    {
+      "id": "cash_man_lingo_mania",
+      "name": "Cash Man Lingo Mania",
+      "category": "slot",
+      "volatilityTier": "high",
+      "reels": 5,
+      "rows": 3,
+      "paylines": 25,
+      "symbols": [
+        { "id": "coin_bag", "type": "high", "payout": 50 },
+        { "id": "slang_coin", "type": "bonus", "payout": 0 },
+        { "id": "wild_star", "type": "wild", "payout": 0 }
+      ],
+      "bonusSchemas": ["hold_and_spin", "cash_man_popin"],
+      "jackpotProfileId": "jackpot_cash_family",
+      "worldId": "neon_world",
+      "enabled": true
+    },
+    {
+      "id": "lions_vaults",
+      "name": "Lions Vaults",
+      "category": "slot",
+      "volatilityTier": "medium",
+      "reels": 5,
+      "rows": 3,
+      "paylines": 20,
+      "symbols": [
+        { "id": "lion_key", "type": "bonus", "payout": 0 },
+        { "id": "gold_bar", "type": "high", "payout": 40 },
+        { "id": "vault_door", "type": "scatter", "payout": 0 }
+      ],
+      "bonusSchemas": ["vault_break", "key_collect"],
+      "jackpotProfileId": "jackpot_vault_family",
+      "worldId": "jungle_vault_world",
+      "enabled": true
+    },
+    {
+      "id": "lingo_eruptions",
+      "name": "Lingo Eruptions",
+      "category": "slot",
+      "volatilityTier": "high",
+      "reels": 6,
+      "rows": 4,
+      "paylines": 40,
+      "symbols": [
+        { "id": "lava_letter", "type": "high", "payout": 60 },
+        { "id": "eruption_orb", "type": "bonus", "payout": 0 },
+        { "id": "magma_wild", "type": "wild", "payout": 0 }
+      ],
+      "bonusSchemas": ["eruption_mode", "multiplier_flow"],
+      "jackpotProfileId": "jackpot_eruption_family",
+      "worldId": "lava_lingo_world",
+      "enabled": true
+    }
+  ],
+  "jackpotProfiles": [
+    {
+      "id": "jackpot_cash_family",
+      "name": "Cash Family Jackpot",
+      "tiers": [
+        { "id": "mini", "base": 1000 },
+        { "id": "major", "base": 25000 },
+        { "id": "mega", "base": 100000 }
+      ],
+      "contributionRate": 0.01,
+      "resetRules": { "mode": "base_plus_seed", "auditRequired": true }
+    },
+    {
+      "id": "jackpot_vault_family",
+      "name": "Vault Family Jackpot",
+      "tiers": [
+        { "id": "mini", "base": 750 },
+        { "id": "grand", "base": 75000 }
+      ],
+      "contributionRate": 0.008,
+      "resetRules": { "mode": "fixed_seed", "auditRequired": true }
+    },
+    {
+      "id": "jackpot_eruption_family",
+      "name": "Eruption Family Jackpot",
+      "tiers": [
+        { "id": "spark", "base": 1500 },
+        { "id": "volcano", "base": 120000 }
+      ],
+      "contributionRate": 0.012,
+      "resetRules": { "mode": "seasonal_seed", "auditRequired": true }
+    }
+  ],
+  "economy": {
+    "id": "default_demo_economy",
+    "xpCurve": { "1": 0, "2": 500, "3": 1500, "4": 3500, "5": 7000, "10": 25000 },
+    "currencyTypes": [
+      { "id": "demo_coins", "cashValue": false },
+      { "id": "lingo_tokens", "cashValue": false },
+      { "id": "tickets", "cashValue": false }
+    ],
+    "rewardTables": {
+      "daily_spin": { "xp": [50, 250], "demoCoins": [100, 1000] },
+      "bonus_storm": { "xpMultiplier": 1.5, "ticketDropChance": 0.1 }
+    }
+  },
+  "missions": [
+    {
+      "id": "daily_spin_50",
+      "type": "daily",
+      "machineId": null,
+      "objective": { "action": "spin", "count": 50 },
+      "rewards": { "xp": 500, "currency": { "demo_coins": 1000 } },
+      "activeWindow": { "cron": "0 8 * * *", "durationHours": 24 },
+      "enabled": true
+    },
+    {
+      "id": "weekly_vault_keys",
+      "type": "weekly",
+      "machineId": "lions_vaults",
+      "objective": { "action": "collect_symbol", "symbolId": "lion_key", "count": 25 },
+      "rewards": { "xp": 2500, "cosmeticId": "vault_gold_reel_skin" },
+      "activeWindow": { "cron": "0 8 * * MON", "durationHours": 168 },
+      "enabled": true
+    }
+  ],
+  "events": [
+    {
+      "id": "friday_bonus_storm",
+      "name": "Friday Bonus Storm",
+      "kind": "bonus_storm",
+      "config": { "boost": "bonus_trigger_weight", "multiplier": 1.15, "affectedMachines": ["cash_man_lingo_mania", "lingo_eruptions"] },
+      "activeWindow": { "cron": "0 18 * * FRI", "durationHours": 6 },
+      "enabled": true
+    },
+    {
+      "id": "season_launch_neon",
+      "name": "Neon World Launch",
+      "kind": "season_launch",
+      "config": { "worldId": "neon_world", "featuredCosmetics": ["neon_lobby_theme"] },
+      "activeWindow": { "startsAt": "2026-08-01T12:00:00Z", "endsAt": "2026-09-01T12:00:00Z" },
+      "enabled": false
+    }
+  ],
+  "cosmetics": [
+    {
+      "id": "vault_gold_reel_skin",
+      "type": "slot_skin",
+      "targetId": "lions_vaults",
+      "rarity": "rare",
+      "unlockRules": { "missionId": "weekly_vault_keys" },
+      "assets": { "preview": "/assets/thats-my-lingo-mark.svg" }
+    },
+    {
+      "id": "neon_lobby_theme",
+      "type": "lobby_theme",
+      "targetId": "neon_world",
+      "rarity": "legendary",
+      "unlockRules": { "eventId": "season_launch_neon" },
+      "assets": { "preview": "/assets/thats-my-lingo-mark.svg" }
+    }
+  ],
+  "worlds": [
+    {
+      "id": "neon_world",
+      "name": "Neon World",
+      "theme": "neon",
+      "machines": ["cash_man_lingo_mania"],
+      "ambientFx": { "palette": ["gold", "cyan", "magenta"], "motion": "light_sweep" },
+      "enabled": true
+    },
+    {
+      "id": "jungle_vault_world",
+      "name": "Jungle Vault World",
+      "theme": "jungle",
+      "machines": ["lions_vaults"],
+      "ambientFx": { "palette": ["gold", "green"], "motion": "vault_pulse" },
+      "enabled": true
+    },
+    {
+      "id": "lava_lingo_world",
+      "name": "Lava Lingo World",
+      "theme": "lava",
+      "machines": ["lingo_eruptions"],
+      "ambientFx": { "palette": ["gold", "red", "violet"], "motion": "eruption_glow" },
+      "enabled": true
+    }
+  ],
+  "families": [
+    { "id": "cash_family", "type": "bonus", "members": ["cash_man_lingo_mania"], "rules": { "sharedBonus": "hold_and_spin" } },
+    { "id": "mascot_founders", "type": "mascot", "members": ["cash_man", "vault_lion", "eruption_host"], "rules": { "aiFlavorOnly": true, "humanReviewRequired": true } }
+  ],
+  "autoEngine": {
+    "dailyRotation": { "missionCount": 3, "source": "missions", "requiresPublishedConfig": true },
+    "weeklyEvents": { "maxConcurrent": 2, "source": "events", "requiresSafetyReview": true },
+    "seasonalCycles": { "durationDays": 30, "approvalGate": "admin_review" },
+    "mutationRules": { "aiMayPropose": true, "aiMayPublish": false, "deterministicEngineOnly": true },
+    "worldShifts": { "enabled": true, "cron": "0 9 * * MON", "fallbackWorldId": "neon_world" }
+  },
+  "safety": {
+    "content": {
+      "slangWhitelistRequired": true,
+      "humanReviewRequired": true,
+      "blockedCategories": ["slurs", "hate", "sexual_content", "harassment", "self_harm"],
+      "fallbackPackId": "approved_starter_pack"
+    },
+    "system": {
+      "rateLimitKeys": ["userId", "sessionId", "ip"],
+      "circuitBreaker": { "aiProviderFailures": 3, "windowMinutes": 5, "fallback": "cached_or_curated_content" },
+      "auditEconomyMutations": true
+    },
+    "player": {
+      "disclosure": "AI flavor never controls wins, losses, volatility, or rewards.",
+      "noCashValueRequired": true,
+      "noEmotionalManipulation": true
+    }
+  },
+  "aiFlavor": {
+    "allowedUses": ["slang_generation", "mascot_dialog", "event_names", "seasonal_lore", "cosmetic_descriptions"],
+    "forbiddenUses": ["spin_outcomes", "payouts", "jackpot_selection", "volatility_changes", "reward_grants"],
+    "cacheKey": "sha256(prompt + parameters + safetyVersion)",
+    "ttlSeconds": 86400,
+    "reviewState": "draft_until_approved"
+  }
+}
