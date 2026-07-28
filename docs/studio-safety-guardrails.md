@@ -6,6 +6,7 @@ These guardrails keep the static Lingo Legacy site production-safe without addin
 
 - Security headers are set in `vercel.json`: HSTS, CSP with `frame-ancestors 'none'`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, strict referrer policy, and locked-down browser permissions.
 - `robots.txt` blocks common AI crawlers and disallows `/api/` paths. This is advisory only; enforce with Vercel Firewall if traffic becomes a measured cost driver.
+- Follow CTAs must use local badge assets, clear destination copy, and `rel="noopener noreferrer"` on new-tab external links so social previews do not add third-party image calls or opener risk.
 - The site stays static: no server functions, no database, no paid storage, no paid telemetry scripts, no Shopify Admin writes.
 
 ## Overlay and hidden-content rules
