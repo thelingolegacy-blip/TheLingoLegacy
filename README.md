@@ -24,7 +24,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/casino-config/` — AI-light casino config command center for deterministic machines, economy, missions, events, worlds, admin screens, static config data, and safety guardrails
 - `/payload-matrix/` — static payload URL matrix for reserved Lingo Legacy OS contracts across OS, AI, workflow, backend, app, nonprofit, and character systems
 - `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
-- `/integration-os/` — static front-to-back integration blueprint for Flutter, Firebase, Cloudflare, Vercel, GitHub, Blob, Neon, Upstash Redis, and studio pipelines
+- `/integration-os/` — full front-to-back integration map for Flutter, Firebase, Cloudflare, Vercel, GitHub, Vercel Blob, Neon, Upstash Redis, and studio pipelines
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/studio-world-os/` — Silent World Constellation with fully individual entity worlds, seamless travel, sealed premium realms, and the unified cross-platform experience layer
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
