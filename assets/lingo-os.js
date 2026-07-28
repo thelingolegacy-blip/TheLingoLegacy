@@ -4,21 +4,52 @@
   if (!body || doc.getElementById('hud-layer')) return;
 
   const isKidsExplorer = body.dataset.osSurface === 'kids-explorer';
+  const productionConfig = Object.freeze({
+    startup: {
+      onboarding: false,
+      tutorialPopups: false,
+      firstRunAnimations: false,
+      debugBanners: false,
+      placeholderTips: false,
+      demoContent: false
+    },
+    featureFlags: {
+      adminCommandCenter: false,
+      studioUpgradeShortcut: false,
+      xpDebugEvents: false,
+      proModeToggle: false,
+      cinematicOverlay: false,
+      audioTestPads: true,
+      studioAssets: true,
+      trustCore: true
+    },
+    assets: [
+      { href: '/assets/thats-my-lingo-mark.svg', as: 'image' },
+      { href: '/assets/lingo-os.css', as: 'style' },
+      { href: '/assets/studio-grade.css', as: 'style' }
+    ]
+  });
+  const featureFlags = productionConfig.featureFlags;
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
   doc.documentElement.classList.add('theme-industrial-noir');
-  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest');
+  body.classList.add('lingo-os-active', 'theme-industrial-noir', 'season-winter', 'mode-quest', 'production-shell-ready');
   if (isKidsExplorer) {
     body.classList.add('kids-explorer-surface');
-  } else {
+  } else if (featureFlags.cinematicOverlay) {
     body.classList.add('auto-cinematic-mode', 'overlay-dominant', 'scene-suppressed');
   }
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
-  const lastStudioPath = localStorage.getItem('lingo:last-studio-path') || '/studio-production/';
+  const sessionState = loadSessionState();
+  const lastStudioPath = sessionState.lastStudioPath || '/studio-production/';
   const isStudioPath = /studio|casino|cartoon|streetwear|universe|kottons-code|tapstich|thats-my-lingo/.test(currentPath);
-  if (isStudioPath) localStorage.setItem('lingo:last-studio-path', `${location.pathname}${location.hash || ''}`);
+  if (isStudioPath) saveSessionState({ lastStudioPath: `${location.pathname}${location.hash || ''}` });
   preloadCoreSurfaces();
+  applyProductionStartup();
+  applyFeatureFlags();
+  setupResilienceHooks();
 
   const world = doc.createElement('div');
   world.id = 'world-layer';
@@ -36,7 +67,8 @@
   const cinematic = doc.createElement('div');
   cinematic.id = 'cinematic-overlay';
   cinematic.setAttribute('aria-hidden', 'true');
-  cinematic.innerHTML = '<div class="os-cinematic-frame"><small>Auto Cinematic Mode</small><strong>Industrial Noir OS Surface</strong><p>Overlay dominance, scene suppression, z-index governance, motion language, lighting, and studio asset framing are running as one production surface.</p></div>';
+  cinematic.dataset.featureFlag = 'cinematicOverlay';
+  cinematic.innerHTML = '<div class="os-cinematic-frame"><small>Production Shell</small><strong>Studio surface ready</strong><p>Navigation, feature flags, session restoration, asset preloading, and recovery hooks are online.</p></div>';
 
   const navItems = [
     ['/', 'OS', 'Home'],
@@ -67,11 +99,11 @@
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
-        <button class="os-action" type="button" data-os-toggle-overlay>Overlay</button>
-        <button class="os-action" type="button" data-os-pro-mode>Pro mode</button>
+        <button class="os-action" type="button" data-os-toggle-overlay data-feature-flag="cinematicOverlay">Overlay</button>
+        <button class="os-action" type="button" data-os-pro-mode data-feature-flag="proModeToggle">Pro mode</button>
         <button class="os-action" type="button" data-os-command>Worlds</button>
-        <button class="os-action" type="button" data-os-event="xp">XP +25</button>
-        <a class="os-action" href="/admin-command-center/">HQ</a>
+        <button class="os-action" type="button" data-os-event="xp" data-feature-flag="xpDebugEvents">XP +25</button>
+        <a class="os-action" href="/admin-command-center/" data-feature-flag="adminCommandCenter">HQ</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
       </div>
     </div>
@@ -82,9 +114,10 @@
       <div class="os-toast"><small>System layer</small><strong>${escapeHtml(status)} synced to HUD + FX.</strong></div>
     </div>
     <div class="os-fab-stack" aria-label="Quick actions">
-      <a class="os-fab" href="/landing/">Create</a>
       <a class="os-fab" href="${lastStudioPath}">Resume</a>
-      <a class="os-fab" href="/studio-production/">Upgrade</a>
+      <a class="os-fab" href="/studio-production/">Studio</a>
+      <a class="os-fab" href="/trust-compliance/" data-feature-flag="trustCore">Trust</a>
+      <a class="os-fab" href="/studio-production/" data-feature-flag="studioUpgradeShortcut">Upgrade</a>
     </div>
     <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy world switcher">
       <div class="os-command-panel" role="dialog" aria-modal="true" aria-labelledby="os-command-title">
@@ -97,6 +130,8 @@
 
   body.prepend(world);
   body.append(cinematic, fx, hud);
+  applyFeatureFlags(hud);
+  applyFeatureFlags(cinematic);
 
   hud.querySelector('[data-os-toggle-fx]')?.addEventListener('click', () => {
     body.classList.toggle('fx-disabled');
@@ -119,8 +154,8 @@
 
   setupCommandPalette();
 
-  if (!isKidsExplorer) autoCinematicLoop();
-  pulseXp();
+  if (!isKidsExplorer && featureFlags.cinematicOverlay && !prefersReducedMotion) autoCinematicLoop();
+  if (!prefersReducedMotion) pulseXp();
   doc.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('a, button') : null;
     if (!target) return;
@@ -184,14 +219,75 @@
   }
 
   function preloadCoreSurfaces() {
-    const surfaces = ['/assets/thats-my-lingo-mark.svg', '/assets/studio-grade.css', '/assets/studio-grade.js'];
-    for (const href of surfaces) {
+    const seen = new Set([...doc.querySelectorAll('link[href]')].map((link) => link.getAttribute('href')));
+    for (const asset of productionConfig.assets) {
+      if (seen.has(asset.href)) continue;
       const link = doc.createElement('link');
-      link.rel = href.endsWith('.js') ? 'prefetch' : 'preload';
-      link.href = href;
-      if (href.endsWith('.css')) link.as = 'style';
-      if (href.endsWith('.svg')) link.as = 'image';
+      link.rel = asset.as === 'script' ? 'prefetch' : 'preload';
+      link.href = asset.href;
+      link.as = asset.as;
       doc.head.append(link);
+    }
+  }
+
+  function applyProductionStartup() {
+    if (!productionConfig.startup.firstRunAnimations || prefersReducedMotion) body.classList.add('startup-animations-disabled');
+    if (!productionConfig.startup.debugBanners) body.classList.add('debug-banners-disabled');
+    if (!productionConfig.startup.placeholderTips) body.classList.add('placeholder-tips-disabled');
+    if (!productionConfig.startup.demoContent) body.classList.add('demo-content-disabled');
+    doc.documentElement.dataset.theme = sessionState.theme || 'industrial-noir';
+    if (sessionState.lastPath && sessionState.lastPath !== `${location.pathname}${location.hash || ''}`) {
+      body.dataset.restoredFrom = sessionState.lastPath;
+    }
+    saveSessionState({ lastPath: `${location.pathname}${location.hash || ''}`, theme: doc.documentElement.dataset.theme });
+  }
+
+  function applyFeatureFlags(root = doc) {
+    const flagged = root.matches?.('[data-feature-flag]') ? [root, ...root.querySelectorAll('[data-feature-flag]')] : [...root.querySelectorAll('[data-feature-flag]')];
+    flagged.forEach((node) => {
+      const flag = node.getAttribute('data-feature-flag');
+      const enabled = flag ? featureFlags[flag] === true : true;
+      node.toggleAttribute('hidden', !enabled);
+      node.setAttribute('aria-hidden', enabled ? 'false' : 'true');
+    });
+  }
+
+  function setupResilienceHooks() {
+    window.addEventListener('online', () => {
+      body.classList.remove('offline-aware');
+      toast('Network restored', 'Background sync may resume.');
+    });
+    window.addEventListener('offline', () => {
+      body.classList.add('offline-aware');
+      toast('Offline mode', 'Cached pages and local state remain available.');
+    });
+    if (!navigator.onLine) body.classList.add('offline-aware');
+    window.addEventListener('error', (event) => {
+      saveSessionState({ lastClientError: event.message || 'unknown client error' });
+      toast('Recovery mode', 'A client error was captured locally.');
+    });
+    window.addEventListener('unhandledrejection', () => {
+      saveSessionState({ lastClientError: 'unhandled promise rejection' });
+      toast('Recovery mode', 'A background task recovered safely.');
+    });
+    doc.addEventListener('visibilitychange', () => {
+      if (doc.visibilityState === 'hidden') saveSessionState({ lastPath: `${location.pathname}${location.hash || ''}` });
+    });
+  }
+
+  function loadSessionState() {
+    try {
+      return JSON.parse(localStorage.getItem('lingo:production-session') || '{}') || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveSessionState(patch) {
+    try {
+      localStorage.setItem('lingo:production-session', JSON.stringify({ ...loadSessionState(), ...patch, updatedAt: new Date().toISOString() }));
+    } catch {
+      // Storage can be unavailable in private browsing; the shell stays functional without persistence.
     }
   }
 
