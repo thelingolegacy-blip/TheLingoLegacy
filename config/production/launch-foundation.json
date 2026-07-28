@@ -1,0 +1,41 @@
+{
+  "environment": "production",
+  "startup": {
+    "onboardingScreens": false,
+    "tutorialPopups": false,
+    "firstRunAnimations": false,
+    "debugBanners": false,
+    "placeholderLoadingTips": false,
+    "sampleDemoContent": false,
+    "temporaryShortcuts": false
+  },
+  "featureFlags": {
+    "adminCommandCenter": false,
+    "studioUpgradeShortcut": false,
+    "xpDebugEvents": false,
+    "proModeToggle": false,
+    "cinematicOverlay": false,
+    "audioTestPads": true,
+    "studioAssets": true,
+    "trustCore": true
+  },
+  "startupFlow": [
+    "initialize core services",
+    "load local production configuration",
+    "restore session state",
+    "preload critical assets",
+    "initialize persistent navigation",
+    "start offline and recovery hooks",
+    "render main application"
+  ],
+  "criticalAssets": [
+    "/assets/thats-my-lingo-mark.svg",
+    "/assets/lingo-os.css",
+    "/assets/studio-grade.css"
+  ],
+  "observability": {
+    "paidTelemetryDefault": false,
+    "crashCapture": "local session marker only",
+    "performanceMonitoring": "manual smoke checks and Vercel deployment status until approved"
+  }
+}

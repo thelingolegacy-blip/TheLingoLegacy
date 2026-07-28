@@ -79,6 +79,10 @@ Security headers, advisory AI crawler blocks, no-cost service boundaries, and sa
 
 Vercel-native launch checks, `/healthz`, rollback notes, and smoke-test guidance are documented in `docs/launch-operations-guardrails.md`.
 
+## Production launch foundation
+
+The production shell disables startup friction, hides unfinished controls behind static feature flags, restores session state, preloads critical assets, and adds offline/error recovery hooks. See `docs/production-launch-foundation.md` and `config/production/launch-foundation.json`.
+
 ## That’s My Lingo production foundation
 
 See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented in `docs/lingo-casino-config-system.md` and surfaced on `/casino-config/`.
