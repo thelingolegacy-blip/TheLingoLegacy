@@ -7,7 +7,7 @@ This document defines the AI-light casino configuration foundation for That’s 
 - Spins, payouts, jackpot selection, XP, missions, rewards, volatility, and unlocks must be deterministic server-authoritative logic.
 - AI can generate slang, mascot dialog, event names, seasonal lore, and cosmetic descriptions only.
 - AI output must be cached by prompt and parameters, filtered, reviewed, and stored before it can appear in the product.
-- The public Vercel surface stays static-first, with lightweight API functions for config reads.
+- The public Vercel surface stays static-first with no API/function requirement for this foundation; config is served as static JSON.
 - Persistent production storage should use Neon through Vercel Marketplace for relational data and Upstash Redis through Vercel Marketplace for cache/rate counters. Vercel Postgres and Vercel KV are no longer first-party products; existing stores were migrated to Neon and Upstash Redis via Vercel Marketplace in December 2024.
 
 ## Config domains
@@ -25,22 +25,15 @@ This document defines the AI-light casino configuration foundation for That’s 
 | Auto engine | Cron rotations, mutation rules, approval gates | `auto_engine_settings` |
 | Safety | Content review, rate limits, circuit breakers, player disclosures | `safety_settings` |
 
-## API scaffold
+## Static config surface
 
-The current API functions are read-only and seeded from `config/casino/master.json`:
+This foundation intentionally disables the new Vercel Function surface. The live static seed is served from:
 
 ```txt
-GET /api/config
-GET /api/config/machines
-GET /api/config/economy
-GET /api/config/missions
-GET /api/config/events
-GET /api/config/cosmetics
-GET /api/config/worlds
-GET /api/config/auto-engine
+/config/casino/master.json
 ```
 
-Non-GET methods return `501` until authenticated admin storage, validation, role checks, and audit logs are implemented.
+When authenticated admin storage is ready, add protected write APIs with validation, role checks, audit logs, and rate limits. Until then, the public site reads static documentation and JSON only.
 
 ## Admin screens
 
@@ -60,3 +53,4 @@ Move the JSON seed into a protected admin data model:
 3. Persist writes to Neon tables.
 4. Cache published config in Upstash Redis.
 5. Require an audit log entry for every economy, jackpot, event, or machine change.
+6. Add protected Vercel Functions only after the static foundation is approved.
