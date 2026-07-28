@@ -20,6 +20,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
 - `/admin-command-center/` — production dashboard command center for assets, projects, studios, timeline, testing, publishing, and automation
 - `/casino-upgrade/` — casino-grade UI upgrade package for visual skin, motion timing, sound hooks, and rollout planning
+- `/casino-config/` — AI-light casino config command center for deterministic machines, economy, missions, events, worlds, admin screens, API scaffolds, and safety guardrails
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
 - `/outer-crown-expansion/` — HQ Mode multi-state expansion for NYC, Delaware, New Jersey, simulcast beacons, promo overlays, and ignition controls
@@ -75,4 +76,4 @@ Vercel-native launch checks, `/healthz`, rollback notes, and smoke-test guidance
 
 ## That’s My Lingo production foundation
 
-See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist.
+See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented in `docs/lingo-casino-config-system.md` and surfaced on `/casino-config/`.
