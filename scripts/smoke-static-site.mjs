@@ -44,5 +44,17 @@ for (const bot of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Bytespider']) {
 const css = fs.readFileSync(path.join(root, 'assets/lingo-os.css'), 'utf8');
 if (/z-index:\s*99999/.test(css)) errors.push('unsafe arbitrary z-index found');
 
+const assetLibrary = fs.readFileSync(path.join(root, 'assets/index.html'), 'utf8');
+const followBadgeBlock = assetLibrary.match(/name: "Follow Badge",[\s\S]*?\n            },/)?.[0] || '';
+if (!followBadgeBlock.includes('url: "/assets/follow-badge.svg"')) {
+  errors.push('follow badge must use the local no-tracker SVG asset');
+}
+if (!followBadgeBlock.includes('rel="noopener noreferrer"')) {
+  errors.push('follow badge external link missing noopener noreferrer guardrail');
+}
+if (followBadgeBlock.includes('https://img.shields.io')) {
+  errors.push('follow badge must not load third-party badge images');
+}
+
 console.log(JSON.stringify({ ok: errors.length === 0, errors }, null, 2));
 if (errors.length) process.exit(1);
