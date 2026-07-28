@@ -3,306 +3,327 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The Lingo Legacy HQ studio landing page: an Onyx Gold Entertainment Lounge for games, character worlds, commerce, media, rewards, loading gateway, and command-center surfaces." />
+  <meta name="description" content="The Lingo Legacy home app: a clean public hub for games, learning worlds, studio updates, rewards, safety, and launch information." />
   <link rel="canonical" href="https://thelingolegacy.com/" />
-  <meta property="og:title" content="The Lingo Legacy HQ — Premium Studio Lobby" />
-  <meta property="og:description" content="Enter the Lingo Legacy HQ: games, worlds, media, store, rewards, LoadingPage, and production command surfaces in a premium studio lobby." />
+  <meta property="og:title" content="The Lingo Legacy" />
+  <meta property="og:description" content="A clean public hub for That’s My Lingo, KottonsCode, Loyalty Lane, studio updates, and launch resources." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/" />
   <meta property="og:image" content="https://thelingolegacy.com/assets/thats-my-lingo-mark.svg" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="The Lingo Legacy HQ — Premium Studio Lobby" />
-  <meta name="twitter:description" content="A premium Onyx Gold studio lobby for That’s My Lingo, franchise portals, rewards, LoadingPage, and command surfaces." />
+  <meta name="twitter:title" content="The Lingo Legacy" />
+  <meta name="twitter:description" content="Games, learning worlds, apparel concepts, studio updates, and launch resources in one simple web app." />
   <meta name="twitter:image" content="https://thelingolegacy.com/assets/thats-my-lingo-mark.svg" />
-  <title>The Lingo Legacy HQ — Premium Studio Lobby</title>
+  <title>The Lingo Legacy</title>
   <link rel="icon" href="/assets/thats-my-lingo-mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#050507" />
-  <link rel="stylesheet" href="/assets/lingo-os.css" />
-  <link rel="stylesheet" href="/assets/hq-studio.css" />
-  <link rel="stylesheet" href="/assets/studio-grade.css" />
-  <script defer src="/assets/lingo-os.js"></script>
-  <script defer src="/assets/studio-grade.js"></script>
+  <meta name="theme-color" content="#f8fafc" />
+  <script defer src="/assets/studio-settings.js"></script>
   <style>
-    :root{color-scheme:dark;--ink:#fff9e8;--muted:#c9b98c;--dim:#8d8064;--noir:#050507;--panel:#101016;--steel:#1c1c24;--gold:#f7c84b;--amber:#a86118;--cyan:#56efff;--violet:#6b2dff;--magenta:#ff3dd6;--green:#6bff8b;--line:rgba(247,200,75,.34);--glass:rgba(255,255,255,.075);--shadow:0 28px 100px rgba(0,0,0,.55);--radius:30px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 18% 8%,rgba(107,45,255,.28),transparent 29rem),radial-gradient(circle at 84% 14%,rgba(247,200,75,.2),transparent 24rem),radial-gradient(circle at 45% 55%,rgba(86,239,255,.12),transparent 35rem),linear-gradient(180deg,#08080d 0,#050507 52%,#010102 100%);overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 0 36%,rgba(247,200,75,.08) 36.5% 37.2%,transparent 38%),repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 1px,transparent 1px 86px);mask-image:linear-gradient(#000,transparent 82%);z-index:-1}a{color:inherit;text-decoration:none}img{max-width:100%;display:block}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}.top{position:fixed;top:0;left:0;right:0;z-index:50;background:linear-gradient(180deg,rgba(5,5,7,.92),rgba(5,5,7,.52));border-bottom:1px solid rgba(247,200,75,.18);backdrop-filter:blur(18px)}nav{height:74px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:-.045em}.brand img{width:44px;height:44px;border-radius:14px;filter:drop-shadow(0 0 26px rgba(247,200,75,.62))}.navlinks{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.9rem;font-weight:850}.navlinks a{padding:8px 10px;border-radius:999px}.navlinks a:hover,.navlinks a:focus-visible{color:var(--ink);background:rgba(255,255,255,.08);outline:0}.hero{min-height:100vh;padding:120px 0 76px;display:grid;grid-template-columns:.92fr 1.08fr;gap:36px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:9px 13px;background:rgba(0,0,0,.36);color:var(--gold);font-size:.75rem;font-weight:1000;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{content:"";width:8px;height:8px;border-radius:999px;background:var(--green);box-shadow:0 0 20px var(--green)}h1,h2,h3,p{margin-top:0}h1{margin:20px 0 18px;font-size:clamp(3.4rem,9vw,8.25rem);line-height:.87;letter-spacing:-.085em;text-transform:uppercase;text-shadow:0 0 60px rgba(107,45,255,.35)}h1 span{display:block;background:linear-gradient(180deg,#fff8cc 0,#f7c84b 45%,#8f4f12 100%);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{max-width:670px;color:var(--muted);font-size:clamp(1.05rem,2vw,1.28rem);line-height:1.7}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.button{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:48px;border:1px solid var(--line);border-radius:999px;padding:13px 19px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.035));color:var(--ink);font-weight:1000;box-shadow:0 14px 44px rgba(0,0,0,.32);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.button:after{content:"";position:absolute;inset:1px;border-radius:inherit;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);opacity:0;transform:translateX(-30%);transition:.28s ease;pointer-events:none}.button:hover,.button:focus-visible{transform:translateY(-2px);border-color:rgba(86,239,255,.7);box-shadow:0 18px 58px rgba(86,239,255,.12),0 14px 44px rgba(0,0,0,.35);outline:0}.button:hover:after,.button:focus-visible:after{opacity:1;transform:translateX(30%)}.primary{border:0;color:#160d03;background:linear-gradient(135deg,#fff6b8,#f7c84b 48%,#a86118);box-shadow:0 18px 70px rgba(247,200,75,.24)}.ghost{background:rgba(0,0,0,.2)}.stage{position:relative;min-height:660px;border:1px solid rgba(247,200,75,.44);border-radius:48px;overflow:hidden;background:radial-gradient(circle at 52% 22%,rgba(247,200,75,.18),transparent 14rem),linear-gradient(180deg,#191927,#050507 70%);box-shadow:var(--shadow)}.stage:before{content:"";position:absolute;inset:-22%;background:conic-gradient(from 30deg,transparent,rgba(247,200,75,.23),transparent,rgba(86,239,255,.16),transparent,rgba(255,61,214,.14),transparent);animation:turn 18s linear infinite}.stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0 46%,rgba(5,5,7,.88) 100%),repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 7px)}.console{position:absolute;z-index:2;left:7%;right:7%;top:9%;bottom:8%;display:grid;grid-template-rows:auto 1fr auto;gap:16px}.console-top,.console-bottom{display:flex;gap:10px;justify-content:space-between;align-items:center;border:1px solid rgba(247,200,75,.28);border-radius:24px;padding:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(10px)}.console-top strong{color:var(--gold);text-transform:uppercase;letter-spacing:.12em}.light{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 20px var(--green)}.screen{position:relative;border:1px solid rgba(86,239,255,.28);border-radius:34px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));overflow:hidden}.screen-grid{height:100%;display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.poster{border-radius:28px;padding:24px;background:radial-gradient(circle at 30% 20%,rgba(255,61,214,.2),transparent 12rem),linear-gradient(160deg,rgba(247,200,75,.18),rgba(5,5,7,.75));border:1px solid rgba(247,200,75,.28)}.poster img{width:98px;height:98px;border-radius:28px;margin-bottom:22px;filter:drop-shadow(0 0 30px rgba(247,200,75,.55))}.poster h2{font-size:clamp(2.1rem,4vw,4.1rem);line-height:.92;letter-spacing:-.07em;text-transform:uppercase}.deck{display:grid;gap:12px}.tile{border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:15px;background:rgba(0,0,0,.34)}.tile b{display:block;color:var(--gold);margin-bottom:6px}.tile p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.45}.console-bottom{color:var(--muted);font-size:.9rem}.marquee{display:inline-flex;gap:10px;align-items:center;color:var(--gold);font-weight:1000;letter-spacing:.1em;text-transform:uppercase}.section{padding:72px 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:22px}.section-head h2{max-width:780px;margin:0;font-size:clamp(2rem,5vw,4.75rem);line-height:.95;letter-spacing:-.06em;text-transform:uppercase}.section-head p{max-width:430px;margin:0;color:var(--muted);line-height:1.6}.grid{display:grid;gap:14px}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}.card{position:relative;min-height:220px;border:1px solid rgba(247,200,75,.23);border-radius:var(--radius);padding:22px;background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.035));box-shadow:0 24px 72px rgba(0,0,0,.28);overflow:hidden}.card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 12%,rgba(86,239,255,.13),transparent 12rem);pointer-events:none}.card h3{position:relative;margin:18px 0 10px;font-size:1.35rem}.card p,.card li{position:relative;color:var(--muted);line-height:1.55}.tag{position:relative;display:inline-flex;border:1px solid rgba(247,200,75,.3);border-radius:999px;padding:6px 10px;color:var(--gold);font-size:.72rem;font-weight:1000;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.26)}.flow{counter-reset:step}.flow .card{min-height:250px}.flow .card:after{counter-increment:step;content:counter(step,decimal-leading-zero);position:absolute;right:18px;bottom:12px;color:rgba(247,200,75,.18);font-size:4.25rem;font-weight:1000;letter-spacing:-.08em}.index-board{border:1px solid rgba(247,200,75,.28);border-radius:40px;padding:22px;background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.035));box-shadow:var(--shadow)}.index-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0;padding:0;list-style:none}.index-list a{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;border:1px solid rgba(255,255,255,.11);border-radius:20px;padding:13px 14px;background:rgba(0,0,0,.28);transition:.18s ease}.index-list a:hover,.index-list a:focus-visible{border-color:rgba(86,239,255,.58);transform:translateY(-1px);outline:0}.index-list span:first-child{display:grid;place-items:center;width:34px;height:34px;border-radius:12px;background:rgba(247,200,75,.13);color:var(--gold);font-weight:1000}.index-list b{display:block}.index-list small{color:var(--muted)}.rail{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.rail a,.rail div{border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:14px;background:rgba(0,0,0,.28);color:var(--muted);font-weight:850}.rail b{display:block;color:var(--ink);margin-bottom:4px}.visual{min-height:310px;display:grid;place-items:end start;background:radial-gradient(circle at 76% 18%,rgba(255,61,214,.15),transparent 14rem),linear-gradient(160deg,rgba(247,200,75,.14),rgba(5,5,7,.72))}.visual h3{font-size:clamp(1.9rem,4vw,3.9rem);line-height:.9;letter-spacing:-.06em;text-transform:uppercase}.meter-row{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.xpbar{height:16px;border-radius:999px;background:#14141a;overflow:hidden;border:1px solid rgba(247,200,75,.22);margin:15px 0}.xpbar span{display:block;height:100%;width:74%;background:linear-gradient(90deg,var(--violet),var(--cyan),var(--gold));box-shadow:0 0 20px rgba(86,239,255,.3)}.footer{padding:56px 0 70px;border-top:1px solid rgba(247,200,75,.22);color:var(--muted)}.footer-grid{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}.footer-links{display:flex;flex-wrap:wrap;gap:12px}.footer-links a{color:var(--ink);font-weight:850}.disclaimer{border:1px solid rgba(247,200,75,.25);border-radius:24px;padding:16px 18px;background:rgba(0,0,0,.32);color:#f8e8b5;font-weight:850;line-height:1.5}@keyframes turn{to{transform:rotate(360deg)}}@media(max-width:980px){.hero,.screen-grid,.meter-row{grid-template-columns:1fr}.stage{min-height:620px}.cols-3,.cols-4,.rail,.index-list{grid-template-columns:1fr 1fr}.section-head{display:block}.section-head p{margin-top:12px}.navlinks{display:none}}@media(max-width:620px){.wrap{width:min(100% - 24px,1180px)}nav{height:68px}.hero{padding-top:102px}.stage{min-height:560px;border-radius:34px}.console{left:4%;right:4%}.console-top,.console-bottom{display:block}.screen{padding:14px}.poster{padding:18px}.cols-3,.cols-4,.rail,.index-list{grid-template-columns:1fr}h1{font-size:3.35rem}.section{padding:52px 0}}
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe3ef;
+      --brand: #5b21b6;
+      --brand-strong: #3b0764;
+      --accent: #ca8a04;
+      --success: #15803d;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 46%, #eef2ff 100%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(91, 33, 182, 0.24), transparent 28rem),
+        radial-gradient(circle at 88% 18%, rgba(202, 138, 4, 0.2), transparent 24rem),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.04) 0 25%, transparent 25% 100%);
+      transition: opacity 0.25s ease;
+    }
+    body.settings-visuals::before { opacity: 1; }
+    body.settings-animations .card,
+    body.settings-animations .app-card,
+    body.settings-animations .rail a { animation: softLift 0.7s ease both; }
+    body.settings-visuals .app-card { border-color: #c4b5fd; box-shadow: 0 24px 70px rgba(91, 33, 182, 0.14); }
+    body.settings-visuals .hero-visual { display: block; }
+    body:not(.settings-show-upgrades) .gated-info { display: none; }
+    body.settings-show-upgrades .upgrade-toggle-note { display: none; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    h1, h2, h3, p { margin-top: 0; }
+    p { color: var(--muted); line-height: 1.65; }
+
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: -0.03em; }
+    .brand img { width: 42px; height: 42px; border-radius: 12px; box-shadow: 0 10px 24px rgba(91, 33, 182, 0.14); }
+    .navlinks { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.93rem; font-weight: 700; }
+    .navlinks a { padding: 9px 11px; border-radius: 999px; }
+    .navlinks a:hover, .navlinks a:focus-visible { color: var(--brand); background: #f3e8ff; outline: 0; }
+
+    .hero { padding: 72px 0 46px; display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 32px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: var(--success); font-size: 0.78rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 9px; height: 9px; border-radius: 999px; background: var(--success); }
+    h1 { margin-bottom: 18px; font-size: clamp(2.75rem, 7vw, 5.8rem); line-height: 0.98; letter-spacing: -0.07em; }
+    .lead { max-width: 660px; font-size: clamp(1.05rem, 2vw, 1.25rem); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 850;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .button:hover, .button:focus-visible { transform: translateY(-1px); border-color: #c4b5fd; box-shadow: 0 14px 30px rgba(91, 33, 182, 0.12); outline: 0; }
+    .primary { border-color: var(--brand); background: var(--brand); color: #ffffff; }
+    .secondary { background: #fefce8; border-color: #fde68a; color: #713f12; }
+    .hero-visual { display: none; margin-top: 22px; border: 1px solid #c4b5fd; border-radius: 24px; padding: 16px; background: linear-gradient(135deg, #ffffff, #f5f3ff); }
+    .visual-bars { display: grid; gap: 8px; margin-top: 12px; }
+    .visual-bars span { display: block; height: 9px; border-radius: 999px; background: linear-gradient(90deg, #5b21b6, #ca8a04); opacity: 0.78; }
+    .visual-bars span:nth-child(2) { width: 78%; opacity: 0.55; }
+    .visual-bars span:nth-child(3) { width: 54%; opacity: 0.38; }
+    .mini-setting { border: 1px solid var(--line); border-radius: 16px; padding: 12px; background: var(--surface-soft); }
+    .mini-setting b { display: block; margin-bottom: 4px; }
+    .mini-setting small { color: var(--muted); }
+    @keyframes softLift { from { opacity: 0.85; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .app-card { border: 1px solid var(--line); border-radius: 32px; padding: 20px; background: var(--surface); box-shadow: var(--shadow); }
+    .dashboard { display: grid; gap: 14px; }
+    .dashboard-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .dashboard-head strong { font-size: 1.05rem; }
+    .status { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #bbf7d0; border-radius: 999px; padding: 7px 10px; background: #f0fdf4; color: var(--success); font-size: 0.8rem; font-weight: 850; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: currentColor; }
+    .feature-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .feature-list a { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 18px; padding: 13px; background: var(--bg); }
+    .feature-list a:hover, .feature-list a:focus-visible { border-color: #c4b5fd; background: #faf5ff; outline: 0; }
+    .icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 14px; background: #ede9fe; color: var(--brand); font-weight: 900; }
+    .feature-list b { display: block; }
+    .feature-list small { color: var(--muted); }
+    .arrow { color: var(--muted); font-weight: 900; }
+
+    .section { padding: 46px 0; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+    .section-head h2 { margin: 0; max-width: 740px; font-size: clamp(2rem, 5vw, 3.7rem); line-height: 1; letter-spacing: -0.055em; }
+    .section-head p { max-width: 430px; margin: 0; }
+    .grid { display: grid; gap: 14px; }
+    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; background: var(--surface); box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06); }
+    .card h3 { margin-bottom: 9px; font-size: 1.25rem; }
+    .tag { display: inline-flex; margin-bottom: 14px; border-radius: 999px; padding: 6px 10px; background: var(--surface-soft); color: var(--brand); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+    .card .button { margin-top: 8px; }
+
+    .steps { counter-reset: step; }
+    .steps .card::before { counter-increment: step; content: counter(step, decimal-leading-zero); display: inline-flex; margin-bottom: 18px; color: var(--accent); font-size: 0.92rem; font-weight: 950; }
+    .rail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .rail a { border: 1px solid var(--line); border-radius: 18px; padding: 15px; background: var(--surface); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04); }
+    .rail a:hover, .rail a:focus-visible { border-color: #c4b5fd; background: #faf5ff; outline: 0; }
+    .rail b { display: block; margin-bottom: 4px; }
+    .rail span { color: var(--muted); font-size: 0.92rem; }
+
+    .notice { border: 1px solid #fde68a; border-radius: 22px; padding: 18px; background: #fffbeb; color: #713f12; font-weight: 750; line-height: 1.55; }
+    .footer { margin-top: 34px; padding: 38px 0 52px; border-top: 1px solid var(--line); color: var(--muted); }
+    .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 12px; font-weight: 750; color: var(--ink); }
+
+    @media (max-width: 920px) {
+      .hero, .cols-3, .cols-4, .rail { grid-template-columns: 1fr 1fr; }
+      .hero > div:first-child { grid-column: 1 / -1; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 12px; }
+      .navlinks { display: none; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 24px, 1120px); }
+      nav { min-height: 66px; }
+      .hero, .cols-3, .cols-4, .rail { grid-template-columns: 1fr; }
+      .hero { padding-top: 46px; }
+      h1 { font-size: 3.1rem; }
+      .feature-list a { grid-template-columns: 36px 1fr; }
+      .arrow { display: none; }
+    }
   </style>
 </head>
-<body class="hq-studio-mode studio-grade-mode">
+<body>
   <header class="top">
     <nav class="wrap" aria-label="Primary navigation">
       <a class="brand" href="/"><img src="/assets/thats-my-lingo-mark.svg" alt="The Lingo Legacy mark"><span>The Lingo Legacy</span></a>
       <div class="navlinks">
-        <a href="#flow">Flow</a>
-        <a href="#index">Index</a>
-        <a href="/thats-my-lingo/">Play</a>
-        <a href="/loading/">Loading</a>
-        <a href="/studio-assets/">Assets</a>
-        <a href="/app/">App</a>
-        <a href="/studio-production/">Studio</a>
-        <a href="/outer-crown-expansion/">Outer Crown</a>
-        <a href="/full-entity-simulcast/">Simulcast</a>
-        <a href="/trust-compliance/">Trust</a>
-        <a href="/studio-ui-cleanup/">UI Cleanup</a>
+        <a href="#apps">Apps</a>
+        <a href="#launch">Launch</a>
+        <a href="#studio">Studio</a>
+        <a href="/settings/">Settings</a>
+        <a href="#resources">Resources</a>
       </div>
     </nav>
   </header>
 
   <main>
-    <section class="wrap hero" id="hero">
+    <section class="wrap hero" id="home">
       <div>
-        <span class="eyebrow">High Premium Studio Ready Mode</span>
-        <h1>Lingo Legacy <span>HQ</span></h1>
-        <p class="lead">An Onyx Gold Entertainment Lounge connecting games, character worlds, commerce, media, rewards, and command-center surfaces through cinematic lighting, floating glass UI, premium motion, and studio-grade navigation.</p>
+        <span class="eyebrow">Public web app</span>
+        <h1>A simpler home for The Lingo Legacy.</h1>
+        <p class="lead">Games, learning worlds, apparel concepts, safety notes, and studio updates are now presented in a clean web-app layout without cinematic overlays, OS chrome, heavy glow effects, or dark display modes.</p>
         <div class="actions">
-          <a class="button primary" href="/loading/">Start LoadingPage</a>
-          <a class="button" href="/thats-my-lingo/">Launch the Game Floor</a>
-          <a class="button primary" href="/drop/">Claim the Micro-Drop</a>
-          <a class="button" href="/app/">Open the Daily App</a>
-          <a class="button" href="/studio-assets/">Open Studio Assets</a>
-          <a class="button" href="/outer-crown-expansion/">Open Outer Crown HQ</a>
-          <a class="button" href="/full-entity-simulcast/">Open Full-Entity Simulcast</a>
-          <a class="button ghost" href="#index">View the Master Index</a>
-          <a class="button" href="/trust-compliance/">Open Safety Core</a>
-          <a class="button" href="/studio-ui-cleanup/">Open UI Cleanup</a>
+          <a class="button primary" href="/thats-my-lingo/">Play That’s My Lingo</a>
+          <a class="button" href="/app/">Open Daily App</a>
+          <a class="button secondary" href="/landing/">Join Launch List</a>
+          <a class="button" href="/settings/">Open Settings</a>
+        </div>
+        <div class="hero-visual" aria-label="Optional studio visual layer">
+          <strong>Studio visual layer is available</strong>
+          <p>Deep background, motion, and sound cues stay controlled from Settings so the default page remains clean.</p>
+          <div class="visual-bars" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
       </div>
-      <div class="stage" aria-label="Cinematic Lingo Legacy studio console preview">
-        <div class="console">
-          <div class="console-top"><strong>Lingo Legacy HQ main stage</strong><span class="marquee"><i class="light" aria-hidden="true"></i>Entertainment empire interface</span></div>
-          <div class="screen">
-            <div class="screen-grid">
-              <article class="poster">
-                <img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo brand mark">
-                <h2>Games. Worlds. Media. Store.</h2>
-                <p>The homepage now acts as a premium studio lobby for the full Lingo Legacy entertainment headquarters.</p>
-              </article>
-              <div class="deck" aria-label="Landing page operating panels">
-                <article class="tile"><b>Hero</b><p>Cinematic promise, primary action, and OS identity in the first viewport.</p></article>
-                <article class="tile"><b>Flow</b><p>Each section hands off to the next: features, characters, worlds, sound, UI, XP, trailers, app, social, footer.</p></article>
-                <article class="tile"><b>Index</b><p>A visible section map keeps the production structure clean for users and future edits.</p></article>
-                <article class="tile"><b>Trust</b><p>Lingo Safety Core adds user protection, fair play, economy controls, responsible play, and launch readiness.</p></article>
-                <article class="tile"><b>UI cleanup</b><p>Visual separation pass creates background, middle-content, and front-UI depth hierarchy.</p></article>
-              </div>
-            </div>
-          </div>
-          <div class="console-bottom">Production surface: public page copy, brand assets, and static UI code only.</div>
+
+      <aside class="app-card dashboard" aria-label="Main app shortcuts">
+        <div class="dashboard-head">
+          <strong>Quick start</strong>
+          <span class="status">Live</span>
         </div>
-      </div>
+        <ul class="feature-list">
+          <li><a href="/thats-my-lingo/"><span class="icon">TML</span><span><b>That’s My Lingo</b><small>Entertainment game lane and rewards framing</small></span><span class="arrow">→</span></a></li>
+          <li><a href="/kottons-code/"><span class="icon">KC</span><span><b>KottonsCode</b><small>Kids explorer world and learning stories</small></span><span class="arrow">→</span></a></li>
+          <li><a href="/loyalty-lane-cycles/"><span class="icon">LL</span><span><b>Loyalty Lane</b><small>Apparel and drop concepts</small></span><span class="arrow">→</span></a></li>
+          <li><a href="/trust-compliance/"><span class="icon">✓</span><span><b>Safety Core</b><small>Fair play, privacy, and launch guardrails</small></span><span class="arrow">→</span></a></li>
+          <li><a href="/settings/"><span class="icon">⚙</span><span><b>Settings</b><small>Control visuals, motion, sound, and gated info</small></span><span class="arrow">→</span></a></li>
+        </ul>
+      </aside>
     </section>
 
-
-
-    <section class="wrap section hq-stage" id="hq-main-stage">
-      <div class="section-head"><h2>Lingo Legacy Command Lounge</h2><p>The v6/v7 home layer turns the first screen into a premium HQ lobby with franchise portals, profile progress, live content, and production command modules.</p></div>
-      <div class="hq-main-grid">
-        <article class="hq-panel">
-          <div class="hq-logo-display"><img src="/assets/thats-my-lingo-mark.svg" alt="Lingo Legacy star gateway mark"></div>
-          <div class="hq-display-copy"><span class="tag">Main stage</span><h3>Onyx Gold Entertainment Lounge</h3><p>Deep onyx architecture, brushed gold accents, black chrome material, neon rim lighting, cinematic camera motion, and premium glass interfaces create the new command-lounge standard.</p><div class="actions"><a class="button primary" href="/loading/">Replay Star Gate</a><a class="button" href="/universe/">Open Universe Map</a></div></div>
-        </article>
-        <div class="hq-portal-grid" aria-label="Franchise universe portals">
-          <article class="hq-portal"><span class="hq-icon">777</span><strong>That’s My Lingo</strong><p>Casino entertainment stage with slot showcase, demo gameplay, rewards display, and player progression.</p><a class="button" href="/thats-my-lingo/">Enter Games</a></article>
-          <article class="hq-portal"><span class="hq-icon">KC</span><strong>Kotton’s Code</strong><p>Interactive story-world portal for character gallery, learning experiences, story chapters, and collectibles.</p><a class="button" href="/kottons-code/">Enter World</a></article>
-          <article class="hq-portal"><span class="hq-icon">LL</span><strong>Loyalty Lane</strong><p>Commerce showroom concept for apparel, reward drops, memberships, countdowns, and collection rooms.</p><a class="button" href="/loyalty-lane-cycles/">Open Store</a></article>
-          <article class="hq-portal"><span class="hq-icon">TV</span><strong>Media Theater</strong><p>Broadcast-style surface for trailers, character showcases, behind-the-scenes panels, and announcements.</p><a class="button" href="/lingo-ai/">Open Studio AI</a></article>
-        </div>
-      </div>
-    </section>
-
-
-
-    <section class="wrap section" id="studio-assets-system">
-      <div class="section-head"><h2>Studio-grade visuals, sounds, and symbols</h2><p>Reusable backgrounds, symbol language, animations, glass panels, and user-triggered audio motifs are now organized into one production asset layer.</p></div>
-      <div class="grid cols-3">
-        <article class="card"><span class="tag">Visuals</span><h3>Images and background plates</h3><p>Onyx architecture, neon showroom plates, reflective floors, chrome image holders, and cinematic light rays.</p><a class="button" href="/studio-assets/#backgrounds">Open Backgrounds</a></article>
-        <article class="card"><span class="tag">Symbols</span><h3>Brand and reward cues</h3><p>LL, Star, Jackpot, XP, VIP, and HQ symbol treatments provide a premium visual language before final artwork uploads.</p><button class="button" type="button" data-sg-trigger="Reward symbol burst">Test Reward Burst</button></article>
-        <article class="card"><span class="tag">Sounds</span><h3>Audio feedback motifs</h3><p>Startup chime, button tone, reward motif, and light-sweep sound remain user-triggered and browser-safe.</p><button class="button" type="button" data-sg-sound="chime">Test Studio Chime</button></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="profile-feed">
-      <div class="section-head"><h2>Lingo ID, rewards, and live content</h2><p>The HQ interface introduces a premium profile card, reward badge language, and streaming-style content feed for future personalization.</p></div>
-      <div class="hq-profile-feed">
-        <article class="hq-panel hq-profile-card"><div class="hq-avatar">LL</div><span class="tag">Lingo ID Studio Profile</span><h3>Level 7 founder access</h3><p>Avatar, XP progress, achievements, collections, and custom themes are staged as cosmetic profile systems.</p><div class="xpbar" aria-label="HQ XP progress"><span></span></div><div class="hq-badges"><span>Star Gate Badge</span><span>Vegas Studio Mode</span><span>LoadingPage Founder</span></div></article>
-        <article class="hq-panel"><span class="tag">Featured now</span><h3>Entertainment feed</h3><p>New games, stories, drops, events, community highlights, and future AI recommendations can land here as cinematic preview cards.</p><div class="hq-feed-list"><a href="/thats-my-lingo/">Featured game: That’s My Lingo casino entertainment stage</a><a href="/loading/">System event: LoadingPage Star Gate v5.0 is active</a><a href="/studio-production/">Production update: premium studio environment ready</a><a href="/trust-compliance/">Safety layer: entertainment-only rewards and launch gate</a></div></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="hq-command-center">
-      <div class="section-head"><h2>Production command mode</h2><p>Enterprise control surfaces are represented as static modules today and can map to live tools later.</p></div>
-      <div class="hq-command-grid" aria-label="Lingo HQ control center modules">
-        <article class="hq-command-card"><b>Content</b><p>Stories, drops, media panels, campaigns, and release copy.</p></article>
-        <article class="hq-command-card"><b>Games</b><p>Game floor, demo modes, rewards, challenges, and showcases.</p></article>
-        <article class="hq-command-card"><b>Commerce</b><p>Loyalty Lane, drops, memberships, and showroom surfaces.</p></article>
-        <article class="hq-command-card"><b>Analytics</b><p>Future monitoring for engagement, performance, and feature usage.</p></article>
-        <article class="hq-command-card"><b>Releases</b><p>Vercel deploys, rollback notes, QA gates, and launch checklists.</p></article>
-        <article class="hq-command-card"><b>Security</b><p>Trust, compliance, fair play, privacy, and responsible-play controls.</p></article>
-        <article class="hq-command-card"><b>Media</b><p>Trailers, announcements, live presentation panels, and studio reels.</p></article>
-        <article class="hq-command-card"><b>Community</b><p>Profiles, leaderboards, creator showcases, events, and moderation path.</p></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="flow">
+    <section class="wrap section" id="apps">
       <div class="section-head">
-        <h2>Studio-grade section flow</h2>
-        <p>The page guides visitors from cinematic identity to product proof, then into the game, app, studio, community, and launch actions.</p>
+        <h2>Choose where to go next.</h2>
+        <p>Each area has a clear purpose and a direct link, so visitors can move through the site like a standard product homepage.</p>
       </div>
-      <div class="grid cols-3 flow">
-        <article class="card"><span class="tag">Hero to features</span><h3>Start with the front door.</h3><p>Hero copy sets the Lingo Legacy OS identity, then the feature stack shows what the visitor can actually do.</p></article>
-        <article class="card"><span class="tag">Features to characters</span><h3>Turn capability into world.</h3><p>Feature cards move into character and identity surfaces so the brand feels like a studio universe.</p></article>
-        <article class="card"><span class="tag">Characters to environments</span><h3>Give the world a place.</h3><p>Cinematic environment panels connect the game floor, app entry, media hub, and studio production lanes.</p></article>
-        <article class="card"><span class="tag">Environments to audio</span><h3>Add sound intent.</h3><p>The audio section defines ambient loops, UI clicks, and trailer energy without autoplay or heavy assets.</p></article>
-        <article class="card"><span class="tag">Audio to UI</span><h3>Make controls feel premium.</h3><p>Buttons, panels, toggles, and rails share one matte-black, gold-edge, neon-hover interaction language.</p></article>
-        <article class="card"><span class="tag">UI to XP</span><h3>Reward the journey.</h3><p>XP, badges, levels, quests, and inventory language make the landing page feel connected to gameplay.</p></article>
-        <article class="card"><span class="tag">XP to trailers</span><h3>Shift into cinema.</h3><p>Trailer and media cards give the page a studio release beat before the app call to action.</p></article>
-        <article class="card"><span class="tag">Trailers to app</span><h3>Open the OS.</h3><p>Device and app links move visitors from marketing into the live daily game and web surfaces.</p></article>
-        <article class="card"><span class="tag">App to social</span><h3>Close with community.</h3><p>Social, support, launch list, and footer links finish the loop without cluttering the hero.</p></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="features">
-      <div class="section-head"><h2>Value stack</h2><p>Every major surface now has a clear landing-page role, button target, and production cue.</p></div>
       <div class="grid cols-4">
-        <article class="card"><span class="tag">Game floor</span><h3>That’s My Lingo</h3><p>Primary play lane with virtual coins, XP, mission framing, and no real-money wagering language.</p><a class="button" href="/thats-my-lingo/">Open Game</a></article>
-        <article class="card"><span class="tag">Daily app</span><h3>App entry point</h3><p>Fast route into the browser-side daily game, scoring, streaks, and repeat engagement.</p><a class="button" href="/app/">Open App</a></article>
-        <article class="card"><span class="tag">Studio</span><h3>Production layer</h3><p>Blueprints, release process, visual systems, asset lanes, and build discipline stay visible.</p><a class="button" href="/studio-production/">Open Studio</a></article>
-        <article class="card"><span class="tag">Universe</span><h3>Route map</h3><p>The universe page connects active products, command center, assets, launch pages, and expansion paths.</p><a class="button" href="/universe/">Open Map</a></article>
-        <article class="card"><span class="tag">Trust layer</span><h3>Lingo Safety Core</h3><p>Dedicated safety, compliance, fair play, economy, responsible play, AI guardrail, and release-gate blueprint.</p><a class="button" href="/trust-compliance/">Open Trust</a></article>
-        <article class="card"><span class="tag">Visual system</span><h3>Studio UI Cleanup</h3><p>Layer separation, floating glass panels, depth spacing, mobile zones, animation priority, and one-hero-object rules.</p><a class="button" href="/studio-ui-cleanup/">Open Cleanup</a></article>
+        <article class="card"><span class="tag">Game</span><h3>That’s My Lingo</h3><p>Open the main entertainment game area with virtual rewards and demo progression.</p><a class="button" href="/thats-my-lingo/">Open game</a></article>
+        <article class="card"><span class="tag">Daily</span><h3>Browser app</h3><p>Start the lightweight daily lingo app with browser-side scoring and streaks.</p><a class="button" href="/app/">Open app</a></article>
+        <article class="card"><span class="tag">Kids</span><h3>KottonsCode</h3><p>Visit the bright explorer world for stories, educator resources, and safe learning prompts.</p><a class="button" href="/kottons-code/">Open world</a></article>
+        <article class="card"><span class="tag">Shop</span><h3>Loyalty Lane</h3><p>Review apparel, patch, membership, and drop concepts in a simple showroom.</p><a class="button" href="/loyalty-lane-cycles/">Open showroom</a></article>
       </div>
     </section>
 
-    <section class="wrap section" id="characters">
-      <div class="section-head"><h2>Characters and identity</h2><p>Character surfaces are framed as future-ready studio cards until final image and animation assets are uploaded.</p></div>
+    <section class="wrap section" id="launch">
+      <div class="section-head">
+        <h2>Launch path.</h2>
+        <p>The page now explains the product path without relying on overlay toggles or hidden OS controls.</p>
+      </div>
+      <div class="grid cols-3 steps">
+        <article class="card"><h3>Explore</h3><p>Start with the game, daily app, KottonsCode, or Loyalty Lane from the top shortcuts.</p></article>
+        <article class="card"><h3>Join</h3><p>Use the launch list to follow releases, campaigns, and early access updates.</p></article>
+        <article class="card"><h3>Review</h3><p>Open the safety and studio resources for production notes, trust guardrails, and roadmap context.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap section" id="studio">
+      <div class="section-head">
+        <h2>Studio and operations.</h2>
+        <p>Production materials remain available, but they sit behind normal navigation instead of becoming the main interface.</p>
+      </div>
       <div class="grid cols-3">
-        <article class="card visual"><div><span class="tag">Character lab</span><h3>Silhouettes, styles, unlocks.</h3><p>Character cards can hold expressions, costumes, badges, and game-state variants.</p></div></article>
-        <article class="card visual"><div><span class="tag">Studio cast</span><h3>Hosts and guides.</h3><p>Build guide characters for onboarding, quests, tutorials, trailers, and reward reveals.</p></div></article>
-        <article class="card visual"><div><span class="tag">Brand marks</span><h3>Asset-safe identity.</h3><p>Use current SVG marks now; replace with production artwork when uploaded.</p></div></article>
+        <article class="card"><span class="tag">Production</span><h3>Studio framework</h3><p>Blueprints, release process, static QA, route maps, and build discipline.</p><a class="button" href="/studio-production/">Open studio</a></article>
+        <article class="card"><span class="tag">Assets</span><h3>Brand files</h3><p>Marks, social art, backgrounds, and studio asset references.</p><a class="button" href="/assets/">Open assets</a></article>
+        <article class="card"><span class="tag">Controls</span><h3>Command center</h3><p>Static operations surface for projects, timeline, testing, and publishing notes.</p><a class="button" href="/admin-command-center/">Open command center</a></article>
       </div>
     </section>
 
-    <section class="wrap section" id="environments">
-      <div class="section-head"><h2>World environments</h2><p>Industrial Noir backgrounds, fog layers, light streaks, district cards, and studio plates create the cinematic world system.</p></div>
+    <section class="wrap section" id="experience-controls">
+      <div class="section-head">
+        <h2>Experience controls.</h2>
+        <p>Advanced studio presentation is available, but it is not forced on every visitor.</p>
+      </div>
       <div class="grid cols-3">
-        <article class="card"><span class="tag">Casino floor</span><h3>Purple-and-gold arcade lane</h3><p>Entertainment-only reels, virtual rewards, launch access, and bold CTA hierarchy.</p></article>
-        <article class="card"><span class="tag">Command center</span><h3>Operator surface</h3><p>A darker panel language for admin, release, QA, metrics, and production checklists.</p></article>
-        <article class="card"><span class="tag">Media hub</span><h3>Trailer-ready world plates</h3><p>Cinematic cards reserve space for videos, posters, social clips, and campaign visuals.</p></article>
+        <article class="card"><span class="tag">Visuals</span><h3>Deep background</h3><p>Optional depth, glow, and background energy can be enabled from Settings.</p><a class="button" href="/settings/">Manage visuals</a></article>
+        <article class="card"><span class="tag">Motion</span><h3>Animation level</h3><p>Motion is off by default for a calmer app UI and can be upgraded by choice.</p><a class="button" href="/settings/">Manage motion</a></article>
+        <article class="card"><span class="tag">Sound</span><h3>Opt-in audio</h3><p>Sound prompts remain silent until the visitor explicitly enables and tests them.</p><a class="button" href="/settings/">Manage sound</a></article>
       </div>
     </section>
 
-    <section class="wrap section" id="audio-ui">
-      <div class="section-head"><h2>Sound, buttons, and UI</h2><p>The landing page defines an interaction system now, while keeping audio opt-in and production-safe for Vercel.</p></div>
+    <section class="wrap section upgrade-toggle-note" aria-label="Hidden upgrade information notice">
+      <div class="notice">Monetization and upgrade details are hidden by default. Turn on “Show business and upgrade info” in <a href="/settings/">Settings</a> when you are ready to review them.</div>
+    </section>
+
+    <section class="wrap section gated-info" id="upgrade-info">
+      <div class="section-head">
+        <h2>Business and upgrade info.</h2>
+        <p>This section only appears after it is enabled in Settings.</p>
+      </div>
       <div class="grid cols-3">
-        <article class="card"><span class="tag">Sound layer</span><h3>Opt-in audio only</h3><p>Ambient loops, metallic taps, trailer swells, and reward sounds stay user-triggered.</p></article>
-        <article class="card"><span class="tag">Button system</span><h3>Primary, secondary, ghost</h3><p>Buttons share glow, shimmer, lift, focus, and compression behavior across every section.</p></article>
-        <article class="card"><span class="tag">Game UI</span><h3>Panels, rails, meters</h3><p>Cards, XP bars, status lights, and console frames keep app and website surfaces aligned.</p></article>
+        <article class="card"><span class="tag">Monetization</span><h3>Appropriate timing</h3><p>Keep commerce, membership, and sponsorship messaging out of the default visitor path until the release plan is ready.</p></article>
+        <article class="card"><span class="tag">Upgrade</span><h3>Feature staging</h3><p>Use settings to preview stronger visual systems, audio packs, and launch messaging before exposing them broadly.</p></article>
+        <article class="card"><span class="tag">Release</span><h3>Controlled rollout</h3><p>Move business modules from hidden to public only when copy, compliance, and offer details are approved.</p></article>
       </div>
     </section>
 
-    <section class="wrap section" id="xp">
-      <div class="section-head"><h2>XP engine and rewards</h2><p>Progression language makes the site feel playable while staying scoped to virtual rewards and unlocks.</p></div>
-      <div class="meter-row">
-        <article class="card">
-          <span class="tag">Player progress</span>
-          <h3>Level 7 studio access</h3>
-          <p>XP, streaks, missions, badges, inventory, and VIP status can be shown as cosmetic progress systems.</p>
-          <div class="xpbar" aria-label="XP progress"><span></span></div>
-          <p>74% toward the next unlock.</p>
-        </article>
-        <article class="card">
-          <span class="tag">Reward scope</span>
-          <h3>Entertainment only</h3>
-          <p>Demo coins, tokens, XP, badges, Loyalty Bucks, and unlocks have no cash value and cannot be redeemed for money.</p>
-        </article>
+    <section class="wrap section" id="resources">
+      <div class="section-head">
+        <h2>More resources.</h2>
+        <p>Deep links stay available for returning users, but the default page now looks and behaves like a typical website.</p>
+      </div>
+      <div class="rail" aria-label="Resource links">
+        <a href="/landing/"><b>Launch list</b><span>Campaign sign-up page</span></a>
+        <a href="/loading/"><b>Loading page</b><span>Optional branded gateway</span></a>
+        <a href="/universe/"><b>Universe map</b><span>Route and product map</span></a>
+        <a href="/lingo-ai/"><b>Lingo.ai</b><span>Studio assistant concept</span></a>
+        <a href="/outer-crown-expansion/"><b>Outer Crown</b><span>Expansion planning surface</span></a>
+        <a href="/full-entity-simulcast/"><b>Simulcast</b><span>Beacon and launch staging</span></a>
+        <a href="/studio-ui-cleanup/"><b>UI cleanup</b><span>Design system notes</span></a>
+        <a href="/settings/"><b>Settings</b><span>Visuals, motion, sound, gated info</span></a>
+        <a href="mailto:hello@thelingolegacy.com?subject=Lingo%20Legacy%20Studio%20Access"><b>Contact</b><span>Send a studio request</span></a>
       </div>
     </section>
 
-    <section class="wrap section" id="trailers-app-social">
-      <div class="section-head"><h2>Trailers, app, and social loop</h2><p>Visitors get a media beat, then clear routes into the app, launch list, studio, and community surfaces.</p></div>
-      <div class="rail" aria-label="Primary destination rail">
-        <a href="/landing/"><b>Launch List</b><span>Join the release lane</span></a>
-        <a href="/drop/"><b>Micro-Drop</b><span>Reserve founder packs</span></a>
-        <a href="/lingo-ai/"><b>Lingo.ai</b><span>Open studio assistant</span></a>
-        <a href="/assets/"><b>Assets</b><span>View brand files</span></a>
-        <a href="/kottons-code/"><b>KottonsCode</b><span>Pet legacy stories</span></a>
-        <a href="/tapstich/"><b>Tapstich</b><span>Static apparel lane</span></a>
-        <a href="/admin-command-center/"><b>Command</b><span>Control surface</span></a>
-        <a href="/trust-compliance/"><b>Safety Core</b><span>Trust and compliance center</span></a>
-        <a href="/studio-ui-cleanup/"><b>UI Cleanup</b><span>Depth and spacing system</span></a>
-        <a href="mailto:hello@thelingolegacy.com?subject=Lingo%20Legacy%20Studio%20Access"><b>Contact</b><span>Start a studio request</span></a>
-      </div>
-    </section>
-
-
-
-    <section class="wrap section" id="auto-cinematic">
-      <div class="section-head"><h2>Auto-cinematic mode</h2><p>All correction layers run together: overlay dominance, scene suppression, z-index governance, motion language, noir lighting, and studio asset framing.</p></div>
-      <div class="os-module-matrix" aria-label="Auto cinematic runtime layers">
-        <article class="os-module-card" data-module="Overlay"><span class="tag">Dominance</span><h3>Overlay is the stage</h3><p>The cinematic overlay is promoted above the page background and becomes the primary production surface.</p><ul><li>Overlay active by default</li><li>HUD remains accessible</li><li>No mixed visual stack</li></ul><button class="button" type="button" data-os-toggle-overlay>Toggle scene suppression</button></article>
-        <article class="os-module-card" data-module="Suppress"><span class="tag">Suppression</span><h3>Hard background hide</h3><p>Scene suppression can remove legacy content from the visible pipeline while keeping the OS HUD and FX online.</p><ul><li>No bleed-through</li><li>No ghosting</li><li>Overlay-only director frame</li></ul></article>
-        <article class="os-module-card" data-module="Motion"><span class="tag">Auto</span><h3>Motion and lighting loop</h3><p>The runtime continuously shifts scene lighting, camera framing, sparks, and ambient motion without manual triggers.</p><ul><li>Camera pan</li><li>Reactive light variables</li><li>Performance toggle safe</li></ul><button class="button" type="button" data-os-event="wallet">Trigger asset reveal</button></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="os-modules">
-      <div class="section-head"><h2>Core OS screens</h2><p>Phase 2 turns the skin into a usable operating map: every major system has a screen role, live-state signal, and event hook.</p></div>
-      <div class="os-module-matrix" aria-label="The Lingo Legacy OS core modules">
-        <article class="os-module-card" data-module="Dashboard"><span class="tag">Dashboard</span><h3>Mission control</h3><p>Top-level view for XP, quests, wallet, keys, active modules, launch actions, and system notices.</p><ul><li>Daily status</li><li>Active quests</li><li>Module health</li></ul></article>
-        <article class="os-module-card" data-module="Quest"><span class="tag">Quest Log</span><h3>Progress engine</h3><p>Daily, seasonal, Avalon, and studio quests convert site movement into visible goals and completion feedback.</p><ul><li>Quest cards</li><li>Completion ripple</li><li>Reward preview</li></ul></article>
-        <article class="os-module-card" data-module="Wallet"><span class="tag">Wallet</span><h3>Balance and badges</h3><p>Virtual coins, Loyalty Bucks, badges, transactions, and unlock records stay cosmetic and entertainment-only.</p><ul><li>Wallet mini-view</li><li>Transaction glow</li><li>No cash value</li></ul></article>
-        <article class="os-module-card" data-module="Keys"><span class="tag">Keys</span><h3>Unlock system</h3><p>Mystery keys, Peaches delivery moments, badge gates, and unlock bursts give progression a visual payoff.</p><ul><li>Key inventory</li><li>Unlock animation</li><li>Badge gates</li></ul></article>
-        <article class="os-module-card" data-module="Avalon"><span class="tag">Avalon Hub</span><h3>Lore and seasons</h3><p>Avalon becomes the seasonal world hub for story arcs, themed quests, mascots, and mode-based skins.</p><ul><li>Season modes</li><li>Lore panels</li><li>World events</li></ul></article>
-        <article class="os-module-card" data-module="Admin"><span class="tag">Command Center</span><h3>Operator controls</h3><p>Admin controls themes, performance mode, module online states, publish gates, and production routing.</p><ul><li>Theme control</li><li>FX toggle</li><li>Release gates</li></ul><a class="button" href="/admin-command-center/">Open Command</a></article>
-      </div>
-      <div class="os-event-console" aria-label="System event hooks">
-        <article class="os-event-card"><b>XP Event</b><strong>Quest +25</strong><p>Clicks and command actions pulse XP through the HUD and FX layer.</p><button class="button" type="button" data-os-event="xp">Trigger XP Pulse</button></article>
-        <article class="os-event-card"><b>Wallet Event</b><strong>New Key Armed</strong><p>Wallet and key events flash the HUD, then emit a non-blocking system toast.</p><button class="button" type="button" data-os-event="wallet">Trigger Wallet Glow</button></article>
-      </div>
-    </section>
-
-    <section class="wrap section" id="index">
-      <div class="section-head"><h2>Master flow index</h2><p>This is the production index for the landing page. Each entry maps to a real section, anchor, or route.</p></div>
-      <div class="index-board">
-        <ol class="index-list">
-          <li><a href="#hero"><span>01</span><span><b>Hero</b><small>Cinematic HQ identity and primary CTAs</small></span><span>Open</span></a></li>
-          <li><a href="#hq-main-stage"><span>02</span><span><b>HQ Main Stage</b><small>Premium lobby, franchise portals, and command lounge</small></span><span>Open</span></a></li>
-          <li><a href="#studio-assets-system"><span>03</span><span><b>Studio Assets</b><small>Visuals, sounds, symbols, animations, and backgrounds</small></span><span>Open</span></a></li>
-          <li><a href="#profile-feed"><span>04</span><span><b>Profile and Feed</b><small>Lingo ID, rewards, badges, and featured now</small></span><span>Open</span></a></li>
-          <li><a href="#hq-command-center"><span>05</span><span><b>HQ Command Center</b><small>Content, games, commerce, analytics, releases, and security</small></span><span>Open</span></a></li>
-          <li><a href="#flow"><span>06</span><span><b>Full Section Flow</b><small>Transition order and user journey</small></span><span>Open</span></a></li>
-          <li><a href="#features"><span>07</span><span><b>Features</b><small>Game, app, studio, and universe links</small></span><span>Open</span></a></li>
-          <li><a href="#characters"><span>08</span><span><b>Characters</b><small>Cast, guides, and identity cards</small></span><span>Open</span></a></li>
-          <li><a href="#environments"><span>09</span><span><b>Environments</b><small>Casino, command, and media worlds</small></span><span>Open</span></a></li>
-          <li><a href="#audio-ui"><span>10</span><span><b>Audio and UI</b><small>Buttons, panels, sound, and controls</small></span><span>Open</span></a></li>
-          <li><a href="#xp"><span>11</span><span><b>XP Engine</b><small>Progress, badges, and virtual rewards</small></span><span>Open</span></a></li>
-          <li><a href="#trailers-app-social"><span>12</span><span><b>Trailers, App, Social</b><small>Media, app entry, launch, and community</small></span><span>Open</span></a></li>
-          <li><a href="#auto-cinematic"><span>13</span><span><b>Auto Cinematic Mode</b><small>Overlay dominance, suppression, z-index, motion, and lighting</small></span><span>Open</span></a></li>
-          <li><a href="#os-modules"><span>14</span><span><b>Core OS Screens</b><small>Dashboard, quests, wallet, keys, Avalon, and command center</small></span><span>Open</span></a></li>
-          <li><a href="/loading/"><span>15</span><span><b>LoadingPage</b><small>Star Gate boot sequence and jackpot progress rail</small></span><span>Open</span></a></li>
-          <li><a href="/trust-compliance/"><span>16</span><span><b>Lingo Safety Core</b><small>Trust, safety, compliance, fair play, economy, and launch readiness</small></span><span>Open</span></a></li>
-          <li><a href="/studio-ui-cleanup/"><span>17</span><span><b>Studio UI Cleanup</b><small>Layer separation, spacing, depth, mobile zones, and animation hierarchy</small></span><span>Open</span></a></li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="wrap section" id="deployment">
-      <div class="section-head"><h2>Vercel production layer</h2><p>The site remains static and fast: no build step, no server secrets, local SVG assets, no paid telemetry scripts and smoke-test validation.</p></div>
-      <p class="disclaimer">Entertainment only. Demo coins, tokens, XP, badges, Loyalty Bucks, VIP status, and rewards have no cash value and cannot be redeemed for money. New brand lanes such as Tapstich stay static-only unless a paid integration is deliberately approved.</p>
-      <div class="actions">
-        <a class="button primary" href="/thats-my-lingo/">Start Playing</a>
-        <a class="button" href="/studio-production/">Review Studio Production</a>
-        <a class="button" href="/trust-compliance/">Review Safety Core</a>
-        <a class="button" href="/studio-ui-cleanup/">Review UI Cleanup</a>
-        <a class="button ghost" href="#hero">Back to Top</a>
-      </div>
+    <section class="wrap section" aria-label="Reward disclaimer">
+      <div class="notice">Reward language on this site is entertainment-only. Demo coins, tokens, XP, badges, Loyalty Bucks, and unlocks have no cash value and cannot be redeemed for money.</div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="wrap footer-grid">
-      <div><strong>The Lingo Legacy</strong><br><span>Studio OS landing page, game front door, and production-safe Vercel surface.</span></div>
-      <div class="footer-links"><a href="/universe/">Universe</a><a href="/loading/">LoadingPage</a><a href="/studio-assets/">Studio Assets</a><a href="/trust-compliance/">Safety Core</a><a href="/studio-ui-cleanup/">UI Cleanup</a><a href="/landing/">Launch List</a><a href="/drop/">Micro-Drop</a><a href="/robots.txt">Robots</a><a href="/sitemap.xml">Sitemap</a></div>
+      <div>© 2026 The Lingo Legacy. Static public web app.</div>
+      <div class="footer-links">
+        <a href="/trust-compliance/">Trust</a>
+        <a href="/robots.txt">Robots</a>
+        <a href="/settings/">Settings</a>
+        <a href="/sitemap.xml">Sitemap</a>
+        <a href="mailto:hello@thelingolegacy.com">Contact</a>
+      </div>
     </div>
   </footer>
-  <div class="sg-toast" data-sg-toast role="status" aria-live="polite"></div>
 </body>
 </html>
