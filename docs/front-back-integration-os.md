@@ -48,6 +48,17 @@ Optional external boundary for DNS, redirects, cache policy, and security contro
 - Vercel preview deployments for review.
 - Merge to main for production deployment.
 
+
+## Production refresh audit — 2026-07-28
+
+- Production deployment is `READY` from GitHub `main` commit `2bc857fa4f2d8c9c293562a244debe3ccc1dce5e`.
+- Production aliases are `thelingolegacy.com`, `www.thelingolegacy.com`, `the-lingo-legacy.vercel.app`, and the Git main branch alias.
+- Cloudflare DNS is active through `christina.ns.cloudflare.com` and `randall.ns.cloudflare.com`; public diagnostics resolve the apex and `www` hostnames to Vercel and HTTPS returns Vercel security headers.
+- Vercel reports the domain is attached and verified; apply the Vercel Domain Connect DNS recommendation in Cloudflare when convenient, then re-run domain verification.
+- Production environment variable names are present for `SITE_URL`, `TML_ASSET_UPLOAD_KEY`, and the public TML asset path map. Secret values stay in Vercel only.
+- Firebase and Flutter remain contract-only: no Firebase runtime SDK, Cloud Functions, Firestore writes, Flutter build, or mobile release pipeline is active in this static repo.
+- Static validation and smoke checks pass; recent Vercel error-level logs returned no entries for the checked window.
+
 ## Activation requirements before live services
 
 1. Auth and role checks.
