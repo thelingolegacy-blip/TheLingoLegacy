@@ -1,5 +1,5 @@
 {
-  "version": "2026.07.28-full-front-back-stack-map",
+  "version": "2026.07.28-production-refresh-audit",
   "mode": "static-blueprint-only",
   "liveBackendWrites": false,
   "livePayments": false,
@@ -171,5 +171,56 @@
     "cloudflare": "optional DNS/edge boundary after domain verification",
     "github": "source control and PR review",
     "vercel": "deployment, domains, previews, static hosting, Blob"
+  },
+  "productionRefreshAudit": {
+    "deployment": {
+      "project": "the-lingo-legacy",
+      "productionUrl": "the-lingo-legacy-p80l8w3cw-thelingolegacy.vercel.app",
+      "productionAliases": [
+        "thelingolegacy.com",
+        "www.thelingolegacy.com",
+        "the-lingo-legacy.vercel.app"
+      ],
+      "state": "READY",
+      "source": "GitHub main @ 2bc857fa4f2d8c9c293562a244debe3ccc1dce5e",
+      "nodeVersion": "24.x"
+    },
+    "domain": {
+      "apex": "thelingolegacy.com",
+      "www": "www.thelingolegacy.com",
+      "dnsProvider": "Cloudflare nameservers",
+      "registrar": "Porkbun",
+      "status": "healthy_on_vercel",
+      "notes": [
+        "Vercel verification reports the domain is attached and verified.",
+        "Cloudflare DNS resolves directly to Vercel-managed ingress IPs.",
+        "Vercel recommends applying the Domain Connect DNS update when convenient."
+      ]
+    },
+    "environment": {
+      "activeProductionKeys": [
+        "SITE_URL",
+        "TML_ASSET_UPLOAD_KEY",
+        "NEXT_PUBLIC_TML_ASSET_BASE_URL",
+        "NEXT_PUBLIC_TML_BRAND_PATH",
+        "NEXT_PUBLIC_TML_SLOT_MACHINE_PATH",
+        "NEXT_PUBLIC_TML_REEL_SYMBOLS_PATH",
+        "NEXT_PUBLIC_TML_CURRENCY_PATH",
+        "NEXT_PUBLIC_TML_WIN_EFFECTS_PATH",
+        "NEXT_PUBLIC_TML_UI_PATH",
+        "NEXT_PUBLIC_TML_BONUS_PATH",
+        "NEXT_PUBLIC_TML_CHARACTERS_PATH",
+        "NEXT_PUBLIC_TML_BACKGROUNDS_PATH",
+        "NEXT_PUBLIC_TML_AUDIO_PATH",
+        "NEXT_PUBLIC_TML_MARKETING_PATH"
+      ],
+      "secretValues": "stored only in Vercel; not committed or displayed",
+      "firebaseRuntime": "not enabled in this static repo"
+    },
+    "validation": {
+      "staticValidation": "pass",
+      "smokeStaticSite": "pass",
+      "runtimeErrors": "no recent Vercel error-level logs found in the checked window"
+    }
   }
 }
