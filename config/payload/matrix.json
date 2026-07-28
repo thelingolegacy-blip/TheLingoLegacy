@@ -1,0 +1,110 @@
+{
+  "version": "2026.07.28-static-payload-matrix",
+  "mode": "reserved-static-contracts",
+  "guardrails": {
+    "liveEndpoints": false,
+    "vercelFunctions": false,
+    "externalServiceCalls": false,
+    "purpose": "Document payload URL contracts before any authenticated backend wiring is approved.",
+    "activationRule": "A reserved payload URL becomes live only after auth, validation, rate limits, audit logs, service ownership, and rollback controls are implemented."
+  },
+  "systems": [
+    {
+      "id": "lingo_legacy_os",
+      "name": "Lingo Legacy OS",
+      "description": "Core OS payload contracts for command, XP, wallet, identity, and events.",
+      "payloads": [
+        { "label": "OS Command Center Payload", "url": "/os/payload/command", "method": "POST", "state": "reserved" },
+        { "label": "XP Engine Payload", "url": "/os/payload/xp", "method": "POST", "state": "reserved" },
+        { "label": "Wallet Payload", "url": "/os/payload/wallet", "method": "POST", "state": "reserved" },
+        { "label": "Identity & Keys Payload", "url": "/os/payload/identity", "method": "POST", "state": "reserved" },
+        { "label": "Global Events Payload", "url": "/os/payload/events", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "lingo_ai",
+      "name": "Lingo.ai",
+      "description": "Automation and AI-layer contracts for flavor, ops, automation, and function proposals only.",
+      "payloads": [
+        { "label": "AI Inference Payload", "url": "/ai/payload/inference", "method": "POST", "state": "reserved", "guardrail": "Flavor-only; no payout or reward decisions." },
+        { "label": "AI Ops Payload", "url": "/ai/payload/ops", "method": "POST", "state": "reserved" },
+        { "label": "Automation Payload", "url": "/ai/payload/automation", "method": "POST", "state": "reserved" },
+        { "label": "LLM Function Payload", "url": "/ai/payload/functions", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "activepieces",
+      "name": "Activepieces",
+      "description": "Workflow payload contracts for future automation bridges.",
+      "payloads": [
+        { "label": "Webhook Trigger Payload", "url": "/hooks/payload", "method": "POST", "state": "reserved" },
+        { "label": "Piece Execution Payload", "url": "/pieces/payload/run", "method": "POST", "state": "reserved" },
+        { "label": "Flow Payload", "url": "/flows/payload/execute", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "backend_stack",
+      "name": "Backend Stack",
+      "description": "Reserved contracts for Caddy, Postgres, Redis, and object-storage style services.",
+      "payloads": [
+        { "label": "Caddy Route Payload", "url": "/caddy/payload/route", "method": "POST", "state": "reserved" },
+        { "label": "Caddy Service Payload", "url": "/caddy/payload/service", "method": "POST", "state": "reserved" },
+        { "label": "DB Write Payload", "url": "/db/payload/write", "method": "POST", "state": "reserved", "guardrail": "Requires authenticated service role and audit log." },
+        { "label": "DB Read Payload", "url": "/db/payload/read", "method": "POST", "state": "reserved" },
+        { "label": "Cache Set Payload", "url": "/cache/payload/set", "method": "POST", "state": "reserved" },
+        { "label": "Cache Get Payload", "url": "/cache/payload/get", "method": "POST", "state": "reserved" },
+        { "label": "Object Upload Payload", "url": "/storage/payload/upload", "method": "POST", "state": "reserved" },
+        { "label": "Object Fetch Payload", "url": "/storage/payload/fetch", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "flutter_app",
+      "name": "Flutter App Layer",
+      "description": "Mobile/app payload contracts for client events and sync.",
+      "payloads": [
+        { "label": "App Event Payload", "url": "/app/payload/event", "method": "POST", "state": "reserved" },
+        { "label": "User Action Payload", "url": "/app/payload/action", "method": "POST", "state": "reserved" },
+        { "label": "Sync Payload", "url": "/app/payload/sync", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "firebase",
+      "name": "Firebase",
+      "description": "Reserved Firebase bridge contracts if that service remains connected later.",
+      "payloads": [
+        { "label": "Cloud Function Payload", "url": "/firebase/payload/function", "method": "POST", "state": "reserved" },
+        { "label": "Auth Payload", "url": "/firebase/payload/auth", "method": "POST", "state": "reserved" },
+        { "label": "Firestore Payload", "url": "/firebase/payload/firestore", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "avalon",
+      "name": "Avalon Cultural Systems",
+      "description": "Nonprofit OS payload contracts for registry, membership, and events.",
+      "payloads": [
+        { "label": "Avalon Registry Payload", "url": "/avalon/payload/registry", "method": "POST", "state": "reserved" },
+        { "label": "Avalon Membership Payload", "url": "/avalon/payload/membership", "method": "POST", "state": "reserved" },
+        { "label": "Avalon Event Payload", "url": "/avalon/payload/event", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "code_crew",
+      "name": "Code Crew",
+      "description": "Kotton, Jada, and Kimba payload contracts for missions, profiles, and operations.",
+      "payloads": [
+        { "label": "Code Crew Mission Payload", "url": "/crew/payload/mission", "method": "POST", "state": "reserved" },
+        { "label": "Pet Profile Payload", "url": "/crew/payload/profile", "method": "POST", "state": "reserved" },
+        { "label": "Ops Payload", "url": "/crew/payload/ops", "method": "POST", "state": "reserved" }
+      ]
+    },
+    {
+      "id": "peaches_keys",
+      "name": "Peaches’ Mystery Keys",
+      "description": "Mystery-key payload contracts for future key and spotlight flows.",
+      "payloads": [
+        { "label": "Mystery Key Payload", "url": "/peaches/payload/key", "method": "POST", "state": "reserved" },
+        { "label": "Spotlight Payload", "url": "/peaches/payload/spotlight", "method": "POST", "state": "reserved" }
+      ]
+    }
+  ]
+}
