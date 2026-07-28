@@ -15,6 +15,10 @@
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
+  const lastStudioPath = localStorage.getItem('lingo:last-studio-path') || '/studio-production/';
+  const isStudioPath = /studio|casino|cartoon|streetwear|universe|kottons-code|tapstich|thats-my-lingo/.test(currentPath);
+  if (isStudioPath) localStorage.setItem('lingo:last-studio-path', `${location.pathname}${location.hash || ''}`);
+  preloadCoreSurfaces();
 
   const world = doc.createElement('div');
   world.id = 'world-layer';
@@ -43,6 +47,7 @@
     ['/studio-assets/', 'ART', 'Studio assets'],
     ['/tapstich/', 'TAP', 'Tapstich'],
     ['/studio-production/', 'STU', 'Studio production'],
+    ['/studio-world-os/', 'WORLD', 'Studio World OS'],
     ['/universe/', 'MAP', 'Universe map']
   ];
 
@@ -63,6 +68,8 @@
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
         <button class="os-action" type="button" data-os-toggle-overlay>Overlay</button>
+        <button class="os-action" type="button" data-os-pro-mode>Pro mode</button>
+        <button class="os-action" type="button" data-os-command>⌘K</button>
         <button class="os-action" type="button" data-os-event="xp">XP +25</button>
         <a class="os-action" href="/admin-command-center/">Command</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
@@ -76,8 +83,16 @@
     </div>
     <div class="os-fab-stack" aria-label="Quick actions">
       <a class="os-fab" href="/landing/">Create</a>
+      <a class="os-fab" href="${lastStudioPath}">Resume</a>
       <a class="os-fab" href="/studio-production/">Upgrade</a>
     </div>
+    <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy command palette">
+      <div class="os-command-panel" role="dialog" aria-modal="true" aria-labelledby="os-command-title">
+        <div class="os-command-head"><span id="os-command-title">Command layer</span><button type="button" data-os-command-close aria-label="Close command palette">Close</button></div>
+        <input data-os-command-input type="search" autocomplete="off" placeholder="Switch studios, assets, modes, worlds..." aria-label="Search commands" />
+        <div class="os-command-results" data-os-command-results></div>
+      </div>
+    </section>
   `;
 
   body.prepend(world);
@@ -94,6 +109,15 @@
     event.stopPropagation();
     toggleSceneSuppression();
   });
+
+  hud.querySelector('[data-os-pro-mode]')?.addEventListener('click', () => {
+    body.classList.toggle('pro-mode');
+    const enabled = body.classList.contains('pro-mode');
+    doc.querySelector('[data-os-pro-mode]').textContent = enabled ? 'Pro on' : 'Pro mode';
+    toast('Pro mode', enabled ? 'Power-user shortcuts and dense HUD are active.' : 'Guided HUD restored.');
+  });
+
+  setupCommandPalette();
 
   if (!isKidsExplorer) autoCinematicLoop();
   pulseXp();
@@ -117,6 +141,59 @@
       pulseXp(event.clientX, event.clientY);
     }
   });
+
+  function setupCommandPalette() {
+    const palette = hud.querySelector('[data-os-palette]');
+    const input = hud.querySelector('[data-os-command-input]');
+    const results = hud.querySelector('[data-os-command-results]');
+    const commands = [
+      ...navItems.map(([href, label, title]) => ({ label: title, detail: label, href })),
+      { label: 'Resume last active studio', detail: 'Startup', href: lastStudioPath },
+      { label: 'Open Studio World OS', detail: 'Studio foundation', href: '/studio-world-os/' },
+      { label: 'Open Asset Browser', detail: 'Assets', href: '/studio-assets/' },
+      { label: 'Open Casino Studio', detail: 'Casino', href: '/casino-upgrade/' },
+      { label: 'Open Cartoon Studio', detail: 'Cartoon', href: '/kottons-code/' },
+      { label: 'Open Streetwear Studio', detail: 'Streetwear', href: '/tapstich/' }
+    ];
+    const render = () => {
+      if (!results || !input) return;
+      const query = input.value.trim().toLowerCase();
+      const visible = commands.filter((item) => `${item.label} ${item.detail}`.toLowerCase().includes(query)).slice(0, 9);
+      results.innerHTML = visible.map((item) => `<a href="${item.href}"><small>${escapeHtml(item.detail)}</small><strong>${escapeHtml(item.label)}</strong></a>`).join('');
+    };
+    const open = () => {
+      if (!palette) return;
+      palette.hidden = false;
+      render();
+      requestAnimationFrame(() => input?.focus());
+    };
+    const close = () => {
+      if (palette) palette.hidden = true;
+    };
+    hud.querySelector('[data-os-command]')?.addEventListener('click', open);
+    hud.querySelector('[data-os-command-close]')?.addEventListener('click', close);
+    input?.addEventListener('input', render);
+    doc.addEventListener('keydown', (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        open();
+      } else if (event.key === 'Escape') {
+        close();
+      }
+    });
+  }
+
+  function preloadCoreSurfaces() {
+    const surfaces = ['/assets/thats-my-lingo-mark.svg', '/assets/studio-grade.css', '/assets/studio-grade.js'];
+    for (const href of surfaces) {
+      const link = doc.createElement('link');
+      link.rel = href.endsWith('.js') ? 'prefetch' : 'preload';
+      link.href = href;
+      if (href.endsWith('.css')) link.as = 'style';
+      if (href.endsWith('.svg')) link.as = 'image';
+      doc.head.append(link);
+    }
+  }
 
   function pulseXp(x = window.innerWidth - 150, y = 118) {
     if (body.classList.contains('fx-disabled')) return;
