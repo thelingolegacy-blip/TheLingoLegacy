@@ -3,38 +3,46 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The Lingo Legacy home app: a clean public hub for games, learning worlds, studio updates, rewards, safety, and launch information." />
+  <meta name="description" content="The Lingo Legacy enterprise platform hub for games, learning worlds, commerce, rewards, creator tools, analytics, safety, and launch operations." />
   <link rel="canonical" href="https://thelingolegacy.com/" />
-  <meta property="og:title" content="The Lingo Legacy" />
-  <meta property="og:description" content="A clean public hub for That’s My Lingo, KottonsCode, Loyalty Lane, studio updates, and launch resources." />
+  <meta property="og:title" content="The Lingo Legacy | Enterprise Culture Platform" />
+  <meta property="og:description" content="A premium production hub for That’s My Lingo, KottonsCode, Loyalty Lane, studio operations, rewards, safety, and ecosystem launch flows." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thelingolegacy.com/" />
   <meta property="og:image" content="https://thelingolegacy.com/assets/thats-my-lingo-mark.svg" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="The Lingo Legacy" />
-  <meta name="twitter:description" content="Games, learning worlds, apparel concepts, studio updates, and launch resources in one simple web app." />
+  <meta name="twitter:title" content="The Lingo Legacy | Enterprise Culture Platform" />
+  <meta name="twitter:description" content="Games, learning, commerce, rewards, creator tools, analytics, and launch operations in one premium web platform." />
   <meta name="twitter:image" content="https://thelingolegacy.com/assets/thats-my-lingo-mark.svg" />
-  <title>The Lingo Legacy</title>
+  <title>The Lingo Legacy | Enterprise Culture Platform</title>
   <link rel="icon" href="/assets/thats-my-lingo-mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#f8fafc" />
+  <meta name="theme-color" content="#12051f" />
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-soft: #f1f5f9;
-      --ink: #0f172a;
-      --muted: #475569;
-      --line: #dbe3ef;
-      --brand: #5b21b6;
-      --brand-strong: #3b0764;
-      --accent: #ca8a04;
-      --success: #15803d;
-      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
-      --radius: 24px;
+      color-scheme: dark;
+      --bg: #07030d;
+      --bg-2: #13051f;
+      --surface: rgba(255,255,255,.09);
+      --surface-strong: rgba(255,255,255,.15);
+      --surface-soft: rgba(255,255,255,.06);
+      --ink: #fff8df;
+      --muted: #d9cbe9;
+      --line: rgba(255,255,255,.18);
+      --brand: #8b5cf6;
+      --brand-strong: #5b21b6;
+      --gold: #f7c948;
+      --hot: #fb7185;
+      --cyan: #67e8f9;
+      --success: #6ee7b7;
+      --danger: #fca5a5;
+      --shadow: 0 28px 80px rgba(0,0,0,.38);
+      --glow: 0 0 52px rgba(247,201,72,.22), 0 0 90px rgba(139,92,246,.16);
+      --radius-xl: 34px;
+      --radius: 22px;
+      --ease: cubic-bezier(.2,.8,.2,1);
     }
-
+    [data-contrast="high"] { --bg:#000; --bg-2:#090014; --surface:rgba(255,255,255,.16); --surface-strong:rgba(255,255,255,.24); --muted:#fff; --line:rgba(255,255,255,.44); --gold:#ffe45c; --cyan:#9ff8ff; }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -42,219 +50,292 @@
       min-height: 100vh;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
-      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 46%, #eef2ff 100%);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(247,201,72,.22), transparent 28rem),
+        radial-gradient(circle at 88% 0%, rgba(139,92,246,.32), transparent 30rem),
+        radial-gradient(circle at 50% 85%, rgba(103,232,249,.14), transparent 26rem),
+        linear-gradient(135deg, var(--bg), var(--bg-2) 54%, #21091a);
+      overflow-x: hidden;
     }
+    body::before, body::after { content:""; position: fixed; inset: 0; pointer-events:none; z-index:-2; }
+    body::before { background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 58px 58px; mask-image: linear-gradient(to bottom, #000, transparent 88%); }
+    body::after { background: radial-gradient(circle, rgba(255,255,255,.22) 0 1px, transparent 1.5px); background-size: 70px 70px; opacity:.22; animation: drift 22s linear infinite; }
     a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
-    h1, h2, h3, p { margin-top: 0; }
-    p { color: var(--muted); line-height: 1.65; }
-
-    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
-    .top {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.9);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(14px);
-    }
-    nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: -0.03em; }
-    .brand img { width: 42px; height: 42px; border-radius: 12px; box-shadow: 0 10px 24px rgba(91, 33, 182, 0.14); }
-    .navlinks { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.93rem; font-weight: 700; }
-    .navlinks a { padding: 9px 11px; border-radius: 999px; }
-    .navlinks a:hover, .navlinks a:focus-visible { color: var(--brand); background: #f3e8ff; outline: 0; }
-
-    .hero { padding: 72px 0 46px; display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 32px; align-items: center; }
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: var(--success); font-size: 0.78rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
-    .eyebrow::before { content: ""; width: 9px; height: 9px; border-radius: 999px; background: var(--success); }
-    h1 { margin-bottom: 18px; font-size: clamp(2.75rem, 7vw, 5.8rem); line-height: 0.98; letter-spacing: -0.07em; }
-    .lead { max-width: 660px; font-size: clamp(1.05rem, 2vw, 1.25rem); }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 12px 18px;
-      background: var(--surface);
-      color: var(--ink);
-      font-weight: 850;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
-    }
-    .button:hover, .button:focus-visible { transform: translateY(-1px); border-color: #c4b5fd; box-shadow: 0 14px 30px rgba(91, 33, 182, 0.12); outline: 0; }
-    .primary { border-color: var(--brand); background: var(--brand); color: #ffffff; }
-    .secondary { background: #fefce8; border-color: #fde68a; color: #713f12; }
-
-    .app-card { border: 1px solid var(--line); border-radius: 32px; padding: 20px; background: var(--surface); box-shadow: var(--shadow); }
-    .dashboard { display: grid; gap: 14px; }
-    .dashboard-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
-    .dashboard-head strong { font-size: 1.05rem; }
-    .status { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #bbf7d0; border-radius: 999px; padding: 7px 10px; background: #f0fdf4; color: var(--success); font-size: 0.8rem; font-weight: 850; }
-    .status::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: currentColor; }
-    .feature-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-    .feature-list a { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 18px; padding: 13px; background: var(--bg); }
-    .feature-list a:hover, .feature-list a:focus-visible { border-color: #c4b5fd; background: #faf5ff; outline: 0; }
-    .icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 14px; background: #ede9fe; color: var(--brand); font-weight: 900; }
-    .feature-list b { display: block; }
-    .feature-list small { color: var(--muted); }
-    .arrow { color: var(--muted); font-weight: 900; }
-
-    .section { padding: 46px 0; }
-    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
-    .section-head h2 { margin: 0; max-width: 740px; font-size: clamp(2rem, 5vw, 3.7rem); line-height: 1; letter-spacing: -0.055em; }
-    .section-head p { max-width: 430px; margin: 0; }
-    .grid { display: grid; gap: 14px; }
-    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .card { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; background: var(--surface); box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06); }
-    .card h3 { margin-bottom: 9px; font-size: 1.25rem; }
-    .tag { display: inline-flex; margin-bottom: 14px; border-radius: 999px; padding: 6px 10px; background: var(--surface-soft); color: var(--brand); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
-    .card .button { margin-top: 8px; }
-
-    .steps { counter-reset: step; }
-    .steps .card::before { counter-increment: step; content: counter(step, decimal-leading-zero); display: inline-flex; margin-bottom: 18px; color: var(--accent); font-size: 0.92rem; font-weight: 950; }
-    .rail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-    .rail a { border: 1px solid var(--line); border-radius: 18px; padding: 15px; background: var(--surface); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04); }
-    .rail a:hover, .rail a:focus-visible { border-color: #c4b5fd; background: #faf5ff; outline: 0; }
-    .rail b { display: block; margin-bottom: 4px; }
-    .rail span { color: var(--muted); font-size: 0.92rem; }
-
-    .notice { border: 1px solid #fde68a; border-radius: 22px; padding: 18px; background: #fffbeb; color: #713f12; font-weight: 750; line-height: 1.55; }
-    .footer { margin-top: 34px; padding: 38px 0 52px; border-top: 1px solid var(--line); color: var(--muted); }
-    .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
-    .footer-links { display: flex; flex-wrap: wrap; gap: 12px; font-weight: 750; color: var(--ink); }
-
-    @media (max-width: 920px) {
-      .hero, .cols-3, .cols-4, .rail { grid-template-columns: 1fr 1fr; }
-      .hero > div:first-child { grid-column: 1 / -1; }
-      .section-head { display: block; }
-      .section-head p { margin-top: 12px; }
-      .navlinks { display: none; }
-    }
-    @media (max-width: 640px) {
-      .wrap { width: min(100% - 24px, 1120px); }
-      nav { min-height: 66px; }
-      .hero, .cols-3, .cols-4, .rail { grid-template-columns: 1fr; }
-      .hero { padding-top: 46px; }
-      h1 { font-size: 3.1rem; }
-      .feature-list a { grid-template-columns: 36px 1fr; }
-      .arrow { display: none; }
-    }
+    img { display:block; max-width:100%; }
+    h1,h2,h3,p { margin-top:0; }
+    p { color: var(--muted); line-height:1.65; }
+    button, input { font: inherit; }
+    .skip { position:absolute; left:16px; top:-80px; z-index:100; border-radius:999px; padding:12px 16px; background:var(--gold); color:#17100a; font-weight:900; transition:top .2s var(--ease); }
+    .skip:focus { top:16px; }
+    .wrap { width:min(1180px, calc(100% - 32px)); margin-inline:auto; }
+    .top { position:sticky; top:0; z-index:30; border-bottom:1px solid var(--line); background:rgba(7,3,13,.72); backdrop-filter:blur(22px); }
+    nav { min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:950; letter-spacing:-.04em; }
+    .brand img { width:46px; height:46px; border-radius:16px; box-shadow:var(--glow); animation: float 5s ease-in-out infinite; }
+    .brand span small { display:block; color:var(--muted); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; }
+    .navlinks { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:.92rem; font-weight:850; }
+    .navlinks a, .mini-action { border:1px solid transparent; border-radius:999px; padding:10px 12px; }
+    .navlinks a:hover, .navlinks a:focus-visible, .mini-action:hover, .mini-action:focus-visible { border-color:var(--line); background:var(--surface); color:var(--ink); outline:0; }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .mini-action { min-height:42px; color:var(--ink); background:var(--surface-soft); cursor:pointer; }
+    .wallet-pill { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(247,201,72,.38); border-radius:999px; padding:10px 13px; background:rgba(247,201,72,.12); color:#fff2b5; font-weight:900; }
+    .hero { position:relative; padding:80px 0 54px; display:grid; grid-template-columns:1.03fr .97fr; gap:34px; align-items:center; }
+    .halo { position:absolute; width:310px; aspect-ratio:1; border-radius:999px; filter:blur(12px); opacity:.7; pointer-events:none; }
+    .halo.one { right:7%; top:70px; background:radial-gradient(circle, rgba(247,201,72,.2), transparent 68%); }
+    .halo.two { left:-130px; bottom:0; background:radial-gradient(circle, rgba(103,232,249,.16), transparent 70%); }
+    .eyebrow { display:inline-flex; align-items:center; gap:10px; margin-bottom:18px; border:1px solid rgba(110,231,183,.42); border-radius:999px; padding:8px 12px; background:rgba(110,231,183,.1); color:var(--success); font-size:.78rem; font-weight:950; letter-spacing:.14em; text-transform:uppercase; }
+    .eyebrow::before { content:""; width:9px; height:9px; border-radius:999px; background:currentColor; box-shadow:0 0 18px currentColor; }
+    h1 { margin-bottom:20px; font-size:clamp(3.2rem, 8vw, 7.2rem); line-height:.9; letter-spacing:-.08em; text-wrap:balance; }
+    .gradient-text { background:linear-gradient(100deg, #fff8df, var(--gold) 38%, #f0abfc 70%, var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead { max-width:690px; font-size:clamp(1.05rem, 2vw, 1.28rem); }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; }
+    .button { position:relative; isolation:isolate; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; border:1px solid var(--line); border-radius:999px; padding:13px 19px; background:var(--surface); color:var(--ink); font-weight:950; box-shadow:0 14px 32px rgba(0,0,0,.18); transition:transform .16s var(--ease), border-color .16s var(--ease), box-shadow .16s var(--ease), background .16s var(--ease); cursor:pointer; }
+    .button::before { content:""; position:absolute; inset:-2px; z-index:-1; opacity:0; background:linear-gradient(90deg, rgba(247,201,72,.34), rgba(139,92,246,.32), rgba(103,232,249,.28)); transition:opacity .18s var(--ease); }
+    .button:hover, .button:focus-visible { transform:translateY(-2px) scale(1.01); border-color:rgba(247,201,72,.54); box-shadow:var(--glow); outline:0; }
+    .button:hover::before, .button:focus-visible::before { opacity:1; }
+    .button:active { transform:translateY(1px) scale(.99); }
+    .button.primary { border-color:rgba(247,201,72,.62); background:linear-gradient(135deg, #f8d24c, #a855f7 54%, #4f46e5); color:#12051f; }
+    .button.secondary { background:rgba(103,232,249,.12); border-color:rgba(103,232,249,.38); color:#dffbff; }
+    .ripple { position:absolute; border-radius:999px; transform:scale(0); background:rgba(255,255,255,.45); animation:ripple .55s ease-out; pointer-events:none; }
+    .hero-panel { position:relative; border:1px solid var(--line); border-radius:var(--radius-xl); padding:18px; background:linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.06)); box-shadow:var(--shadow); backdrop-filter:blur(24px); overflow:hidden; }
+    .hero-panel::before { content:""; position:absolute; inset:-1px; background:linear-gradient(120deg, transparent, rgba(247,201,72,.18), transparent 62%); transform:translateX(-40%); animation:sheen 7s var(--ease) infinite; pointer-events:none; }
+    .screen { position:relative; display:grid; gap:14px; border-radius:28px; padding:18px; background:rgba(7,3,13,.66); }
+    .screen-head { display:flex; align-items:center; justify-content:space-between; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+    .status { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(110,231,183,.42); border-radius:999px; padding:7px 10px; background:rgba(110,231,183,.1); color:var(--success); font-size:.8rem; font-weight:950; }
+    .status::before { content:""; width:8px; height:8px; border-radius:999px; background:currentColor; box-shadow:0 0 16px currentColor; }
+    .shortcut-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
+    .shortcut-list a { display:grid; grid-template-columns:48px 1fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:20px; padding:13px; background:rgba(255,255,255,.07); transition:transform .16s var(--ease), background .16s var(--ease), border-color .16s var(--ease); }
+    .shortcut-list a:hover, .shortcut-list a:focus-visible { transform:translateY(-2px); border-color:rgba(247,201,72,.54); background:rgba(255,255,255,.12); outline:0; }
+    .icon { display:grid; place-items:center; width:48px; height:48px; border-radius:16px; background:linear-gradient(135deg, rgba(247,201,72,.22), rgba(139,92,246,.24)); color:#fff1a8; font-weight:950; box-shadow:inset 0 0 22px rgba(255,255,255,.08); }
+    .shortcut-list b { display:block; }
+    .shortcut-list small { color:var(--muted); }
+    .arrow { color:var(--gold); font-weight:950; }
+    .metrics { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+    .metric { border:1px solid var(--line); border-radius:18px; padding:14px; background:rgba(255,255,255,.07); }
+    .metric b { display:block; font-size:1.45rem; letter-spacing:-.04em; }
+    .metric span { color:var(--muted); font-size:.82rem; }
+    .section { padding:52px 0; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:22px; }
+    .section-head h2 { margin:0; max-width:780px; font-size:clamp(2.05rem, 5vw, 4.35rem); line-height:.96; letter-spacing:-.06em; text-wrap:balance; }
+    .section-head p { max-width:460px; margin:0; }
+    .grid { display:grid; gap:14px; }
+    .cols-3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
+    .cols-4 { grid-template-columns:repeat(4, minmax(0,1fr)); }
+    .card { position:relative; overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); padding:22px; background:linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.055)); box-shadow:0 18px 44px rgba(0,0,0,.22); backdrop-filter:blur(18px); transition:transform .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease); }
+    .card::after { content:""; position:absolute; inset:auto -20% -45% 30%; height:120px; background:radial-gradient(circle, rgba(247,201,72,.18), transparent 65%); pointer-events:none; }
+    .card:hover, .card:focus-within { transform:translateY(-4px); border-color:rgba(247,201,72,.44); box-shadow:var(--shadow); }
+    .card h3 { margin-bottom:9px; font-size:1.25rem; }
+    .tag { display:inline-flex; margin-bottom:14px; border:1px solid rgba(247,201,72,.28); border-radius:999px; padding:6px 10px; background:rgba(247,201,72,.1); color:#ffe7a0; font-size:.72rem; font-weight:950; letter-spacing:.11em; text-transform:uppercase; }
+    .card .button { margin-top:10px; }
+    .journey { counter-reset:step; }
+    .journey .card::before { counter-increment:step; content:counter(step, decimal-leading-zero); display:inline-flex; margin-bottom:18px; color:var(--gold); font-size:.92rem; font-weight:950; }
+    .ops { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .panel { border:1px solid var(--line); border-radius:var(--radius-xl); padding:22px; background:rgba(255,255,255,.08); box-shadow:var(--shadow); }
+    .state-row { display:grid; gap:10px; margin-top:16px; }
+    .state { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid var(--line); border-radius:18px; padding:13px; background:rgba(255,255,255,.06); }
+    .state strong { display:block; }
+    .state small { color:var(--muted); }
+    .badge { border:1px solid rgba(110,231,183,.42); border-radius:999px; padding:6px 9px; color:var(--success); background:rgba(110,231,183,.1); font-size:.78rem; font-weight:950; white-space:nowrap; }
+    .badge.warn { border-color:rgba(247,201,72,.44); color:#ffe7a0; background:rgba(247,201,72,.1); }
+    .skeleton { position:relative; overflow:hidden; min-height:18px; border-radius:999px; background:rgba(255,255,255,.09); }
+    .skeleton::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent); animation:load 1.4s infinite; }
+    .form { display:grid; gap:12px; }
+    .field { display:grid; gap:7px; }
+    .field label { color:var(--ink); font-weight:900; }
+    .field input { min-height:52px; border:1px solid var(--line); border-radius:16px; padding:0 15px; background:rgba(255,255,255,.09); color:var(--ink); outline:0; }
+    .field input:focus { border-color:rgba(247,201,72,.62); box-shadow:0 0 0 4px rgba(247,201,72,.12); }
+    .hint { min-height:20px; color:var(--muted); font-size:.9rem; }
+    .hint.error { color:var(--danger); }
+    .hint.success { color:var(--success); }
+    .rail { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
+    .rail a { border:1px solid var(--line); border-radius:18px; padding:15px; background:rgba(255,255,255,.075); transition:transform .16s var(--ease), border-color .16s var(--ease), background .16s var(--ease); }
+    .rail a:hover, .rail a:focus-visible { transform:translateY(-2px); border-color:rgba(247,201,72,.5); background:rgba(255,255,255,.12); outline:0; }
+    .rail b { display:block; margin-bottom:4px; }
+    .rail span { color:var(--muted); font-size:.92rem; }
+    .notice { border:1px solid rgba(247,201,72,.4); border-radius:22px; padding:18px; background:rgba(247,201,72,.1); color:#fff0b8; font-weight:800; line-height:1.55; }
+    .toast { position:fixed; right:16px; bottom:16px; z-index:60; max-width:min(420px, calc(100% - 32px)); border:1px solid var(--line); border-radius:18px; padding:14px 16px; background:rgba(7,3,13,.92); box-shadow:var(--shadow); transform:translateY(140%); transition:transform .25s var(--ease); }
+    .toast.show { transform:translateY(0); }
+    .footer { margin-top:34px; padding:38px 0 58px; border-top:1px solid var(--line); color:var(--muted); }
+    .footer-grid { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; }
+    .footer-links { display:flex; flex-wrap:wrap; gap:12px; font-weight:850; color:var(--ink); }
+    @media (min-width: 1440px) { .wrap { width:min(1340px, calc(100% - 56px)); } .hero { min-height:76vh; } body { font-size:18px; } }
+    @media (max-width: 980px) { .hero, .cols-3, .cols-4, .ops, .rail { grid-template-columns:1fr 1fr; } .hero > div:first-child { grid-column:1 / -1; } .section-head { display:block; } .section-head p { margin-top:12px; } .navlinks { display:none; } }
+    @media (max-width: 680px) { .wrap { width:min(100% - 24px, 1180px); } nav { min-height:68px; } .wallet-pill { display:none; } .hero, .cols-3, .cols-4, .ops, .rail, .metrics { grid-template-columns:1fr; } .hero { padding-top:48px; } h1 { font-size:3.35rem; } .shortcut-list a { grid-template-columns:42px 1fr; } .icon { width:42px; height:42px; } .arrow { display:none; } .actions .button { width:100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.001ms !important; } }
+    @keyframes drift { to { transform:translate3d(-70px, 70px, 0); } }
+    @keyframes float { 50% { transform:translateY(-5px) rotate(-2deg); } }
+    @keyframes sheen { 50% { transform:translateX(45%); } }
+    @keyframes ripple { to { transform:scale(4); opacity:0; } }
+    @keyframes load { to { transform:translateX(100%); } }
   </style>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="top">
     <nav class="wrap" aria-label="Primary navigation">
-      <a class="brand" href="/"><img src="/assets/thats-my-lingo-mark.svg" alt="The Lingo Legacy mark"><span>The Lingo Legacy</span></a>
+      <a class="brand" href="/" aria-label="The Lingo Legacy home"><img src="/assets/thats-my-lingo-mark.svg" alt=""><span>The Lingo Legacy<small>Enterprise culture OS</small></span></a>
       <div class="navlinks">
-        <a href="#apps">Apps</a>
-        <a href="#launch">Launch</a>
-        <a href="#studio">Studio</a>
+        <a href="#ecosystem">Ecosystem</a>
+        <a href="#journey">Journey</a>
+        <a href="#command">Command</a>
         <a href="#resources">Resources</a>
+      </div>
+      <div class="nav-actions" aria-label="Utility controls">
+        <span class="wallet-pill" aria-label="Demo wallet balance">4,820 XP</span>
+        <button class="mini-action" id="contrastToggle" type="button" aria-pressed="false">Contrast</button>
+        <button class="mini-action" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
       </div>
     </nav>
   </header>
 
-  <main>
+  <main id="main">
     <section class="wrap hero" id="home">
+      <span class="halo one" aria-hidden="true"></span><span class="halo two" aria-hidden="true"></span>
       <div>
-        <span class="eyebrow">Public web app</span>
-        <h1>A simpler home for The Lingo Legacy.</h1>
-        <p class="lead">Games, learning worlds, apparel concepts, safety notes, and studio updates are now presented in a clean web-app layout without cinematic overlays, OS chrome, heavy glow effects, or dark display modes.</p>
+        <span class="eyebrow">Production platform hub</span>
+        <h1><span class="gradient-text">One premium home</span> for every Lingo Legacy world.</h1>
+        <p class="lead">Games, learning, commerce, rewards, creator tools, analytics, safety, and launch operations now land in a studio-grade interface with responsive depth, accessible controls, offline readiness, and production-safe state handling.</p>
         <div class="actions">
           <a class="button primary" href="/thats-my-lingo/">Play That’s My Lingo</a>
-          <a class="button" href="/app/">Open Daily App</a>
-          <a class="button secondary" href="/landing/">Join Launch List</a>
+          <a class="button" href="/admin-command-center/">Open Command Center</a>
+          <a class="button secondary" href="#launch-form">Join Launch List</a>
         </div>
       </div>
-
-      <aside class="app-card dashboard" aria-label="Main app shortcuts">
-        <div class="dashboard-head">
-          <strong>Quick start</strong>
-          <span class="status">Live</span>
+      <aside class="hero-panel" aria-label="Lingo Legacy quick launch console">
+        <div class="screen">
+          <div class="screen-head"><strong>Universal launch console</strong><span class="status">Ready</span></div>
+          <ul class="shortcut-list">
+            <li><a href="/thats-my-lingo/"><span class="icon">TML</span><span><b>That’s My Lingo</b><small>Games, wallet, rewards, missions</small></span><span class="arrow">→</span></a></li>
+            <li><a href="/kottons-code/"><span class="icon">KC</span><span><b>KottonsCode</b><small>Kids learning world and educator lane</small></span><span class="arrow">→</span></a></li>
+            <li><a href="/loyalty-lane-cycles/"><span class="icon">LL</span><span><b>Loyalty Lane</b><small>Commerce, drops, cycles, apparel concepts</small></span><span class="arrow">→</span></a></li>
+            <li><a href="/studio-production/"><span class="icon">OS</span><span><b>Creator Studio</b><small>Assets, releases, QA, production guardrails</small></span><span class="arrow">→</span></a></li>
+          </ul>
+          <div class="metrics" aria-label="Platform readiness metrics">
+            <div class="metric"><b>18</b><span>Live routes</span></div>
+            <div class="metric"><b>AA</b><span>Contrast target</span></div>
+            <div class="metric"><b>PWA</b><span>Offline shell</span></div>
+          </div>
         </div>
-        <ul class="feature-list">
-          <li><a href="/thats-my-lingo/"><span class="icon">TML</span><span><b>That’s My Lingo</b><small>Entertainment game lane and rewards framing</small></span><span class="arrow">→</span></a></li>
-          <li><a href="/kottons-code/"><span class="icon">KC</span><span><b>KottonsCode</b><small>Kids explorer world and learning stories</small></span><span class="arrow">→</span></a></li>
-          <li><a href="/loyalty-lane-cycles/"><span class="icon">LL</span><span><b>Loyalty Lane</b><small>Apparel and drop concepts</small></span><span class="arrow">→</span></a></li>
-          <li><a href="/trust-compliance/"><span class="icon">✓</span><span><b>Safety Core</b><small>Fair play, privacy, and launch guardrails</small></span><span class="arrow">→</span></a></li>
-        </ul>
       </aside>
     </section>
 
-    <section class="wrap section" id="apps">
-      <div class="section-head">
-        <h2>Choose where to go next.</h2>
-        <p>Each area has a clear purpose and a direct link, so visitors can move through the site like a standard product homepage.</p>
-      </div>
+    <section class="wrap section" id="ecosystem">
+      <div class="section-head"><h2>Distinct brands, one operating system.</h2><p>Each product keeps its identity while sharing premium interaction patterns, accessible navigation, launch states, and responsive cards.</p></div>
       <div class="grid cols-4">
-        <article class="card"><span class="tag">Game</span><h3>That’s My Lingo</h3><p>Open the main entertainment game area with virtual rewards and demo progression.</p><a class="button" href="/thats-my-lingo/">Open game</a></article>
-        <article class="card"><span class="tag">Daily</span><h3>Browser app</h3><p>Start the lightweight daily lingo app with browser-side scoring and streaks.</p><a class="button" href="/app/">Open app</a></article>
-        <article class="card"><span class="tag">Kids</span><h3>KottonsCode</h3><p>Visit the bright explorer world for stories, educator resources, and safe learning prompts.</p><a class="button" href="/kottons-code/">Open world</a></article>
-        <article class="card"><span class="tag">Shop</span><h3>Loyalty Lane</h3><p>Review apparel, patch, membership, and drop concepts in a simple showroom.</p><a class="button" href="/loyalty-lane-cycles/">Open showroom</a></article>
+        <article class="card"><span class="tag">Game</span><h3>That’s My Lingo</h3><p>Entertainment hub with virtual rewards, missions, wallet framing, and compliance notes.</p><a class="button" href="/thats-my-lingo/">Open game</a></article>
+        <article class="card"><span class="tag">Daily</span><h3>Lingo app</h3><p>Fast browser game with scoring, streaks, local feedback, and mobile-first play.</p><a class="button" href="/app/">Open app</a></article>
+        <article class="card"><span class="tag">Kids</span><h3>KottonsCode</h3><p>Bright learning world for stories, safe explorer activities, and educator resources.</p><a class="button" href="/kottons-code/">Open world</a></article>
+        <article class="card"><span class="tag">Commerce</span><h3>Loyalty Lane</h3><p>Premium apparel, patch drops, membership concepts, and product showroom paths.</p><a class="button" href="/loyalty-lane-cycles/">Open showroom</a></article>
       </div>
     </section>
 
-    <section class="wrap section" id="launch">
-      <div class="section-head">
-        <h2>Launch path.</h2>
-        <p>The page now explains the product path without relying on overlay toggles or hidden OS controls.</p>
-      </div>
-      <div class="grid cols-3 steps">
-        <article class="card"><h3>Explore</h3><p>Start with the game, daily app, KottonsCode, or Loyalty Lane from the top shortcuts.</p></article>
-        <article class="card"><h3>Join</h3><p>Use the launch list to follow releases, campaigns, and early access updates.</p></article>
-        <article class="card"><h3>Review</h3><p>Open the safety and studio resources for production notes, trust guardrails, and roadmap context.</p></article>
+    <section class="wrap section" id="journey">
+      <div class="section-head"><h2>Complete visitor journey.</h2><p>The homepage now gives every core user type a clear start, success path, support fallback, and recovery state.</p></div>
+      <div class="grid cols-3 journey">
+        <article class="card"><h3>Guest to profile</h3><p>Visitors can enter through games, learning, commerce, or launch list without losing context.</p></article>
+        <article class="card"><h3>Wallet and rewards</h3><p>Demo XP, badges, coins, and unlock language stays clearly entertainment-only and non-cash.</p></article>
+        <article class="card"><h3>Support and trust</h3><p>Safety Core, production guardrails, contact, sitemap, and recovery messaging remain one click away.</p></article>
       </div>
     </section>
 
-    <section class="wrap section" id="studio">
-      <div class="section-head">
-        <h2>Studio and operations.</h2>
-        <p>Production materials remain available, but they sit behind normal navigation instead of becoming the main interface.</p>
-      </div>
-      <div class="grid cols-3">
-        <article class="card"><span class="tag">Production</span><h3>Studio framework</h3><p>Blueprints, release process, static QA, route maps, and build discipline.</p><a class="button" href="/studio-production/">Open studio</a></article>
-        <article class="card"><span class="tag">Assets</span><h3>Brand files</h3><p>Marks, social art, backgrounds, and studio asset references.</p><a class="button" href="/assets/">Open assets</a></article>
-        <article class="card"><span class="tag">Controls</span><h3>Command center</h3><p>Static operations surface for projects, timeline, testing, and publishing notes.</p><a class="button" href="/admin-command-center/">Open command center</a></article>
+    <section class="wrap section" id="command">
+      <div class="section-head"><h2>Enterprise command layer.</h2><p>Operational modules are surfaced as real routes, with visible loading, empty, success, and retry states for the static launch shell.</p></div>
+      <div class="ops">
+        <article class="panel">
+          <span class="tag">Admin</span><h3>Dashboard modules</h3><p>Analytics, revenue, users, games, rewards, products, orders, support, content, media, health, logs, feature flags, and permissions are represented as the next command-center workstream.</p>
+          <div class="state-row" aria-label="Dashboard state examples">
+            <div class="state"><span><strong>Analytics Center</strong><small>Route connected through command center</small></span><span class="badge">Success</span></div>
+            <div class="state"><span><strong>Asset Library</strong><small>Brand files and studio visuals available</small></span><span class="badge">Ready</span></div>
+            <div class="state"><span><strong>Commerce API</strong><small>Backend integration not attached to this static shell</small></span><span class="badge warn">Empty</span></div>
+          </div>
+        </article>
+        <article class="panel" id="launch-form">
+          <span class="tag">Launch list</span><h3>Save interest locally</h3><p>This static site stores your draft on this device and opens a prepared email when you are ready to contact the studio.</p>
+          <form class="form" novalidate>
+            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required><span class="hint" id="emailHint">Use a valid email to prepare your launch request.</span></div>
+            <div class="field"><label for="interest">Primary interest</label><input id="interest" name="interest" autocomplete="organization-title" placeholder="Games, commerce, creator studio, analytics" required><span class="hint" id="interestHint">Saved as a local draft until you submit.</span></div>
+            <button class="button primary" type="submit">Prepare studio request</button>
+          </form>
+        </article>
       </div>
     </section>
 
     <section class="wrap section" id="resources">
-      <div class="section-head">
-        <h2>More resources.</h2>
-        <p>Deep links stay available for returning users, but the default page now looks and behaves like a typical website.</p>
-      </div>
+      <div class="section-head"><h2>Launch resources.</h2><p>Deep links stay available for returning operators, QA reviewers, creators, and launch partners.</p></div>
       <div class="rail" aria-label="Resource links">
-        <a href="/landing/"><b>Launch list</b><span>Campaign sign-up page</span></a>
-        <a href="/loading/"><b>Loading page</b><span>Optional branded gateway</span></a>
-        <a href="/universe/"><b>Universe map</b><span>Route and product map</span></a>
+        <a href="/landing/"><b>Landing page</b><span>Campaign and newsletter</span></a>
+        <a href="/trust-compliance/"><b>Safety Core</b><span>Trust and fair-play guardrails</span></a>
+        <a href="/assets/"><b>Asset Library</b><span>Marks and social visuals</span></a>
+        <a href="/studio-production/"><b>Creator Studio</b><span>Blueprints and QA</span></a>
+        <a href="/universe/"><b>Universe Map</b><span>Route and product map</span></a>
         <a href="/lingo-ai/"><b>Lingo.ai</b><span>Studio assistant concept</span></a>
-        <a href="/outer-crown-expansion/"><b>Outer Crown</b><span>Expansion planning surface</span></a>
-        <a href="/full-entity-simulcast/"><b>Simulcast</b><span>Beacon and launch staging</span></a>
-        <a href="/studio-ui-cleanup/"><b>UI cleanup</b><span>Design system notes</span></a>
+        <a href="/studio-ui-cleanup/"><b>UI Cleanup</b><span>Design-system notes</span></a>
         <a href="mailto:hello@thelingolegacy.com?subject=Lingo%20Legacy%20Studio%20Access"><b>Contact</b><span>Send a studio request</span></a>
       </div>
     </section>
 
-    <section class="wrap section" aria-label="Reward disclaimer">
-      <div class="notice">Reward language on this site is entertainment-only. Demo coins, tokens, XP, badges, Loyalty Bucks, and unlocks have no cash value and cannot be redeemed for money.</div>
-    </section>
+    <section class="wrap section" aria-label="Reward disclaimer"><div class="notice">Reward language on this site is entertainment-only. Demo coins, tokens, XP, badges, Loyalty Bucks, and unlocks have no cash value and cannot be redeemed for money.</div></section>
   </main>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <footer class="footer">
     <div class="wrap footer-grid">
-      <div>© 2026 The Lingo Legacy. Static public web app.</div>
-      <div class="footer-links">
-        <a href="/trust-compliance/">Trust</a>
-        <a href="/robots.txt">Robots</a>
-        <a href="/sitemap.xml">Sitemap</a>
-        <a href="mailto:hello@thelingolegacy.com">Contact</a>
-      </div>
+      <div>© 2026 The Lingo Legacy. Enterprise static launch shell.</div>
+      <div class="footer-links"><a href="/trust-compliance/">Trust</a><a href="/robots.txt">Robots</a><a href="/sitemap.xml">Sitemap</a><a href="mailto:hello@thelingolegacy.com">Contact</a></div>
     </div>
   </footer>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const toast = document.getElementById('toast');
+      const soundToggle = document.getElementById('soundToggle');
+      const contrastToggle = document.getElementById('contrastToggle');
+      const storage = {
+        get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+        set(key, value) { try { localStorage.setItem(key, value); } catch {} }
+      };
+      let soundOn = storage.get('lingoSound') === 'on';
+      let audioContext;
+      const showToast = (message) => { toast.textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 3200); };
+      const syncSound = () => { soundToggle.textContent = soundOn ? 'Sound on' : 'Sound off'; soundToggle.setAttribute('aria-pressed', String(soundOn)); storage.set('lingoSound', soundOn ? 'on' : 'off'); };
+      const ping = (frequency = 520) => { if (!soundOn) return; const AudioEngine = window.AudioContext || window.webkitAudioContext; if (!AudioEngine) return; audioContext ||= new AudioEngine(); const oscillator = audioContext.createOscillator(); const gain = audioContext.createGain(); oscillator.frequency.value = frequency; oscillator.type = 'sine'; gain.gain.setValueAtTime(.0001, audioContext.currentTime); gain.gain.exponentialRampToValueAtTime(.06, audioContext.currentTime + .015); gain.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + .16); oscillator.connect(gain).connect(audioContext.destination); oscillator.start(); oscillator.stop(audioContext.currentTime + .18); };
+      syncSound();
+      soundToggle.addEventListener('click', () => { soundOn = !soundOn; syncSound(); ping(740); showToast(soundOn ? 'Optional interface audio enabled.' : 'Interface audio muted.'); });
+      contrastToggle.addEventListener('click', () => { const enabled = root.dataset.contrast !== 'high'; root.dataset.contrast = enabled ? 'high' : ''; contrastToggle.setAttribute('aria-pressed', String(enabled)); storage.set('lingoContrast', enabled ? 'high' : 'standard'); showToast(enabled ? 'High contrast enabled.' : 'Standard contrast restored.'); });
+      if (storage.get('lingoContrast') === 'high') { root.dataset.contrast = 'high'; contrastToggle.setAttribute('aria-pressed', 'true'); }
+      document.querySelectorAll('.button, .mini-action').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          ping(520);
+          const rect = button.getBoundingClientRect();
+          const ripple = document.createElement('span');
+          const size = Math.max(rect.width, rect.height);
+          ripple.className = 'ripple'; ripple.style.width = ripple.style.height = `${size}px`; ripple.style.left = `${event.clientX - rect.left - size / 2}px`; ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+          button.appendChild(ripple); window.setTimeout(() => ripple.remove(), 600);
+        });
+      });
+      const form = document.querySelector('.form');
+      const email = document.getElementById('email');
+      const interest = document.getElementById('interest');
+      const emailHint = document.getElementById('emailHint');
+      const interestHint = document.getElementById('interestHint');
+      let saved = {};
+      try { saved = JSON.parse(storage.get('lingoLaunchDraft') || '{}'); } catch { saved = {}; }
+      email.value = saved.email || ''; interest.value = saved.interest || '';
+      const saveDraft = () => storage.set('lingoLaunchDraft', JSON.stringify({ email: email.value.trim(), interest: interest.value.trim() }));
+      [email, interest].forEach((field) => field.addEventListener('input', saveDraft));
+      form.addEventListener('submit', (event) => {
+        event.preventDefault(); saveDraft();
+        emailHint.className = 'hint'; interestHint.className = 'hint';
+        if (!email.validity.valid) { emailHint.textContent = 'Enter a valid email address before preparing the request.'; emailHint.className = 'hint error'; email.focus(); return; }
+        if (interest.value.trim().length < 3) { interestHint.textContent = 'Add at least one launch interest so the studio request has context.'; interestHint.className = 'hint error'; interest.focus(); return; }
+        emailHint.textContent = 'Email looks good.'; emailHint.className = 'hint success'; interestHint.textContent = 'Draft saved locally.'; interestHint.className = 'hint success';
+        showToast('Studio request prepared. Opening email composer.'); ping(880);
+        window.location.href = `mailto:hello@thelingolegacy.com?subject=Lingo%20Legacy%20Studio%20Access&body=${encodeURIComponent(`Email: ${email.value.trim()}\nInterest: ${interest.value.trim()}`)}`;
+      });
+      window.addEventListener('error', () => showToast('Something went wrong. Refresh or use the contact link if the issue continues.'));
+      window.addEventListener('unhandledrejection', () => showToast('A background action failed. Your page is still usable.'));
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+    })();
+  </script>
 </body>
 </html>
