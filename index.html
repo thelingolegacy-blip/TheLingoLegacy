@@ -158,9 +158,39 @@
     .footer { margin-top:34px; padding:38px 0 58px; border-top:1px solid var(--line); color:var(--muted); }
     .footer-grid { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; }
     .footer-links { display:flex; flex-wrap:wrap; gap:12px; font-weight:850; color:var(--ink); }
+    .studio-deck { display:grid; grid-template-columns:1.15fr .85fr; gap:16px; align-items:stretch; }
+    .studio-feature { position:relative; min-height:320px; border:1px solid rgba(247,201,72,.34); border-radius:var(--radius-xl); padding:28px; overflow:hidden; background:linear-gradient(145deg, rgba(247,201,72,.16), rgba(139,92,246,.14) 45%, rgba(255,255,255,.07)); box-shadow:var(--shadow), var(--glow); }
+    .studio-feature::before { content:""; position:absolute; inset:18px; border:1px solid rgba(255,255,255,.12); border-radius:26px; pointer-events:none; }
+    .studio-feature::after { content:""; position:absolute; width:260px; aspect-ratio:1; right:-80px; top:-70px; border-radius:999px; background:radial-gradient(circle, rgba(103,232,249,.26), transparent 68%); filter:blur(4px); }
+    .studio-feature h3 { position:relative; z-index:1; max-width:680px; margin:0 0 12px; font-size:clamp(2rem,4vw,3.8rem); line-height:.94; letter-spacing:-.06em; }
+    .studio-feature p { position:relative; z-index:1; max-width:620px; font-size:1.04rem; }
+    .studio-actions { position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .studio-orbits { position:absolute; right:22px; bottom:22px; display:grid; grid-template-columns:repeat(2, minmax(110px, 1fr)); gap:10px; width:min(360px, 46%); }
+    .orbit-chip { border:1px solid var(--line); border-radius:18px; padding:13px; background:rgba(7,3,13,.56); backdrop-filter:blur(18px); box-shadow:0 16px 34px rgba(0,0,0,.24); }
+    .orbit-chip b { display:block; color:var(--gold); }
+    .orbit-chip span { color:var(--muted); font-size:.84rem; }
+    .studio-stack { display:grid; gap:14px; }
+    .studio-card { position:relative; overflow:hidden; border:1px solid var(--line); border-radius:24px; padding:20px; background:linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.055)); box-shadow:0 18px 44px rgba(0,0,0,.24); transition:transform .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease); }
+    .studio-card:hover, .studio-card:focus-within { transform:translate3d(0,-4px,0) rotateX(1deg); border-color:rgba(247,201,72,.48); box-shadow:var(--shadow), 0 0 36px rgba(247,201,72,.12); }
+    .studio-card h3 { margin-bottom:8px; }
+    .studio-card .button { margin-top:8px; }
+    .studio-command { display:grid; grid-template-columns:.92fr 1.08fr; gap:16px; align-items:stretch; }
+    .studio-console { position:relative; overflow:hidden; border:1px solid rgba(103,232,249,.34); border-radius:var(--radius-xl); padding:22px; background:linear-gradient(160deg, rgba(103,232,249,.12), rgba(139,92,246,.12), rgba(255,255,255,.06)); box-shadow:var(--shadow); }
+    .studio-console::before { content:""; position:absolute; inset:0; background:linear-gradient(120deg, transparent, rgba(255,255,255,.12), transparent 54%); transform:translateX(-100%); animation:sheen 8s var(--ease) infinite; pointer-events:none; }
+    .studio-console-grid { position:relative; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .console-tile { border:1px solid var(--line); border-radius:18px; padding:14px; background:rgba(7,3,13,.48); }
+    .console-tile b { display:block; color:var(--cyan); font-size:1.1rem; }
+    .console-tile span { color:var(--muted); font-size:.86rem; }
+    .studio-flow { display:grid; gap:10px; margin-top:18px; }
+    .flow-step { display:grid; grid-template-columns:42px 1fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:18px; padding:12px; background:rgba(255,255,255,.065); }
+    .flow-step i { display:grid; place-items:center; width:42px; height:42px; border-radius:14px; background:linear-gradient(135deg, rgba(247,201,72,.22), rgba(103,232,249,.18)); color:var(--gold); font-style:normal; font-weight:950; }
+    .bottom-dock { position:sticky; bottom:12px; z-index:25; display:flex; justify-content:center; pointer-events:none; margin:8px auto 0; }
+    .dock-inner { pointer-events:auto; display:flex; flex-wrap:wrap; gap:8px; border:1px solid var(--line); border-radius:999px; padding:8px; background:rgba(7,3,13,.72); backdrop-filter:blur(20px); box-shadow:var(--shadow); }
+    .dock-inner a { border-radius:999px; padding:10px 12px; color:var(--muted); font-weight:900; }
+    .dock-inner a:hover, .dock-inner a:focus-visible { color:var(--ink); background:var(--surface); outline:0; }
     @media (min-width: 1440px) { .wrap { width:min(1340px, calc(100% - 56px)); } .hero { min-height:76vh; } body { font-size:18px; } }
-    @media (max-width: 980px) { .hero, .cols-3, .cols-4, .ops, .rail { grid-template-columns:1fr 1fr; } .hero > div:first-child { grid-column:1 / -1; } .section-head { display:block; } .section-head p { margin-top:12px; } .navlinks { display:none; } }
-    @media (max-width: 680px) { .wrap { width:min(100% - 24px, 1180px); } nav { min-height:68px; } .wallet-pill { display:none; } .hero, .cols-3, .cols-4, .ops, .rail, .metrics { grid-template-columns:1fr; } .hero { padding-top:48px; } h1 { font-size:3.35rem; } .shortcut-list a { grid-template-columns:42px 1fr; } .icon { width:42px; height:42px; } .arrow { display:none; } .actions .button { width:100%; } }
+    @media (max-width: 980px) { .hero, .cols-3, .cols-4, .ops, .rail, .studio-deck, .studio-command { grid-template-columns:1fr 1fr; } .hero > div:first-child { grid-column:1 / -1; } .section-head { display:block; } .section-head p { margin-top:12px; } .navlinks { display:none; } }
+    @media (max-width: 680px) { .wrap { width:min(100% - 24px, 1180px); } nav { min-height:68px; } .wallet-pill { display:none; } .hero, .cols-3, .cols-4, .ops, .rail, .metrics, .studio-deck, .studio-command, .studio-console-grid { grid-template-columns:1fr; } .studio-orbits { position:relative; right:auto; bottom:auto; width:100%; grid-template-columns:1fr; margin-top:18px; } .flow-step { grid-template-columns:42px 1fr; } .flow-step .badge { grid-column:2; justify-self:start; } .dock-inner { border-radius:24px; justify-content:center; } .hero { padding-top:48px; } h1 { font-size:3.35rem; } .shortcut-list a { grid-template-columns:42px 1fr; } .icon { width:42px; height:42px; } .arrow { display:none; } .actions .button { width:100%; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.001ms !important; } }
     @keyframes drift { to { transform:translate3d(-70px, 70px, 0); } }
     @keyframes float { 50% { transform:translateY(-5px) rotate(-2deg); } }
@@ -220,12 +250,25 @@
     </section>
 
     <section class="wrap section" id="ecosystem">
-      <div class="section-head"><h2>Distinct brands, one operating system.</h2><p>Each product keeps its identity while sharing premium interaction patterns, accessible navigation, launch states, and responsive cards.</p></div>
-      <div class="grid cols-4">
-        <article class="card"><span class="tag">Game</span><h3>That’s My Lingo</h3><p>Entertainment hub with virtual rewards, missions, wallet framing, and compliance notes.</p><a class="button" href="/thats-my-lingo/">Open game</a></article>
-        <article class="card"><span class="tag">Daily</span><h3>Lingo app</h3><p>Fast browser game with scoring, streaks, local feedback, and mobile-first play.</p><a class="button" href="/app/">Open app</a></article>
-        <article class="card"><span class="tag">Kids</span><h3>KottonsCode</h3><p>Bright learning world for stories, safe explorer activities, and educator resources.</p><a class="button" href="/kottons-code/">Open world</a></article>
-        <article class="card"><span class="tag">Commerce</span><h3>Loyalty Lane</h3><p>Premium apparel, patch drops, membership concepts, and product showroom paths.</p><a class="button" href="/loyalty-lane-cycles/">Open showroom</a></article>
+      <div class="section-head"><h2>Studio UI/UX feature deck.</h2><p>Feature entry points now use a layered studio deck with hero focus, orbit chips, depth spacing, animated surfaces, and direct product actions.</p></div>
+      <div class="studio-deck">
+        <article class="studio-feature">
+          <span class="tag">Studio ecosystem</span>
+          <h3>Every product feels like part of one premium world.</h3>
+          <p>That’s My Lingo, KottonsCode, Loyalty Lane, Creator Studio, Rewards, Wallet, Commerce, and Analytics now enter through a cinematic-but-usable studio surface.</p>
+          <div class="studio-actions"><a class="button primary" href="/thats-my-lingo/">Enter game world</a><a class="button" href="/studio-production/">Open studio OS</a><a class="button secondary" href="/studio-ui-cleanup/">View UI cleanup</a></div>
+          <div class="studio-orbits" aria-label="Studio ecosystem modules">
+            <div class="orbit-chip"><b>Games</b><span>Rewards, missions, unlocks</span></div>
+            <div class="orbit-chip"><b>Creator</b><span>Assets, QA, publishing</span></div>
+            <div class="orbit-chip"><b>Commerce</b><span>Drops, products, wallet</span></div>
+            <div class="orbit-chip"><b>Analytics</b><span>Traffic, funnels, health</span></div>
+          </div>
+        </article>
+        <div class="studio-stack" aria-label="Product studio lanes">
+          <article class="studio-card"><span class="tag">Entertainment</span><h3>That’s My Lingo</h3><p>Studio-grade game entry with reward framing, wallet language, live-ops readiness, and safety notes.</p><a class="button" href="/thats-my-lingo/">Open lane</a></article>
+          <article class="studio-card"><span class="tag">Learning</span><h3>KottonsCode</h3><p>Bright child-safe world with story episodes, educator guidance, and polished explorer navigation.</p><a class="button" href="/kottons-code/">Open lane</a></article>
+          <article class="studio-card"><span class="tag">Commerce</span><h3>Loyalty Lane</h3><p>Fashion/drop showroom path with premium product storytelling and launch-ready merchandising routes.</p><a class="button" href="/loyalty-lane-cycles/">Open lane</a></article>
+        </div>
       </div>
     </section>
 
@@ -239,18 +282,24 @@
     </section>
 
     <section class="wrap section" id="command">
-      <div class="section-head"><h2>Enterprise command layer.</h2><p>Operational modules are surfaced as real routes, with visible loading, empty, success, and retry states for the static launch shell.</p></div>
-      <div class="ops">
-        <article class="panel">
-          <span class="tag">Admin</span><h3>Dashboard modules</h3><p>Analytics, revenue, users, games, rewards, products, orders, support, content, media, health, logs, feature flags, and permissions are represented as the next command-center workstream.</p>
-          <div class="state-row" aria-label="Dashboard state examples">
-            <div class="state"><span><strong>Analytics Center</strong><small>Route connected through command center</small></span><span class="badge">Success</span></div>
-            <div class="state"><span><strong>Asset Library</strong><small>Brand files and studio visuals available</small></span><span class="badge">Ready</span></div>
-            <div class="state"><span><strong>Commerce API</strong><small>Backend integration not attached to this static shell</small></span><span class="badge warn">Empty</span></div>
+      <div class="section-head"><h2>Studio command UI.</h2><p>The command layer now reads like a production cockpit: glass panels, status tiles, release flow, recovery states, and creator-ready form handling.</p></div>
+      <div class="studio-command">
+        <article class="studio-console">
+          <span class="tag">Control room</span><h3>Admin, analytics, commerce, and creator operations.</h3><p>Operational modules are grouped into a studio cockpit with clear status language for what is live, ready, staged, or still waiting on backend integration.</p>
+          <div class="studio-console-grid" aria-label="Studio command modules">
+            <div class="console-tile"><b>Analytics</b><span>Traffic, funnels, performance</span></div>
+            <div class="console-tile"><b>Revenue</b><span>Orders, drops, wallet metrics</span></div>
+            <div class="console-tile"><b>Creator</b><span>Assets, media, publishing QA</span></div>
+            <div class="console-tile"><b>Health</b><span>Logs, support, recovery states</span></div>
+          </div>
+          <div class="studio-flow" aria-label="Release flow states">
+            <div class="flow-step"><i>1</i><span><strong>Design polished</strong><small>Studio UI, motion, accessibility, responsive layout</small></span><span class="badge">Ready</span></div>
+            <div class="flow-step"><i>2</i><span><strong>Static shell live</strong><small>Pages, routes, metadata, offline cache shell</small></span><span class="badge">Live</span></div>
+            <div class="flow-step"><i>3</i><span><strong>Backend hooks</strong><small>Commerce, account, analytics APIs can attach next</small></span><span class="badge warn">Staged</span></div>
           </div>
         </article>
         <article class="panel" id="launch-form">
-          <span class="tag">Launch list</span><h3>Save interest locally</h3><p>This static site stores your draft on this device and opens a prepared email when you are ready to contact the studio.</p>
+          <span class="tag">Studio request</span><h3>Save interest locally</h3><p>This static launch surface stores your draft on this device and opens a prepared email when you are ready to contact the studio.</p>
           <form class="form" novalidate>
             <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required><span class="hint" id="emailHint">Use a valid email to prepare your launch request.</span></div>
             <div class="field"><label for="interest">Primary interest</label><input id="interest" name="interest" autocomplete="organization-title" placeholder="Games, commerce, creator studio, analytics" required><span class="hint" id="interestHint">Saved as a local draft until you submit.</span></div>
@@ -275,12 +324,13 @@
     </section>
 
     <section class="wrap section" aria-label="Reward disclaimer"><div class="notice">Reward language on this site is entertainment-only. Demo coins, tokens, XP, badges, Loyalty Bucks, and unlocks have no cash value and cannot be redeemed for money.</div></section>
+    <div class="bottom-dock" aria-label="Studio quick navigation"><div class="dock-inner"><a href="#home">Home</a><a href="#ecosystem">Worlds</a><a href="#journey">Journey</a><a href="#command">Command</a><a href="#resources">Resources</a></div></div>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <footer class="footer">
     <div class="wrap footer-grid">
-      <div>© 2026 The Lingo Legacy. Enterprise static launch shell.</div>
+      <div>© 2026 The Lingo Legacy. Studio UI/UX production shell.</div>
       <div class="footer-links"><a href="/trust-compliance/">Trust</a><a href="/robots.txt">Robots</a><a href="/sitemap.xml">Sitemap</a><a href="mailto:hello@thelingolegacy.com">Contact</a></div>
     </div>
   </footer>
