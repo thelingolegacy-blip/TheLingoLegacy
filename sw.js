@@ -5,11 +5,18 @@ const SHELL_ASSETS = [
   '/manifest.webmanifest',
   '/assets/thats-my-lingo-mark.svg',
   '/assets/logo-horizontal.svg',
+  '/assets/lingo-os.css',
+  '/assets/lingo-os.js',
+  '/assets/studio-grade.css',
+  '/assets/studio-grade.js',
   '/trust-compliance/',
   '/thats-my-lingo/',
   '/kottons-code/',
   '/loyalty-lane-cycles/',
-  '/admin-command-center/'
+  '/admin-command-center/',
+  '/landing/',
+  '/studio-assets/',
+  '/studio-production/'
 ];
 
 self.addEventListener('install', (event) => {
