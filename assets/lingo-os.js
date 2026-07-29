@@ -20,6 +20,8 @@
       proModeToggle: false,
       cinematicOverlay: false,
       audioTestPads: true,
+      soundFxToggle: true,
+      interactionSpotlight: true,
       studioAssets: true,
       trustCore: true
     },
@@ -43,6 +45,8 @@
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
   const sessionState = loadSessionState();
+  let audioContext = null;
+  let soundEnabled = sessionState.soundFx === true;
   const lastStudioPath = sessionState.lastStudioPath || '/studio-production/';
   const isStudioPath = /studio|casino|cartoon|streetwear|universe|kottons-code|tapstich|thats-my-lingo/.test(currentPath);
   if (isStudioPath) saveSessionState({ lastStudioPath: `${location.pathname}${location.hash || ''}` });
@@ -99,6 +103,7 @@
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
+        <button class="os-action" type="button" data-os-toggle-sound data-feature-flag="soundFxToggle" aria-pressed="false">Sound FX</button>
         <button class="os-action" type="button" data-os-toggle-overlay data-feature-flag="cinematicOverlay">Overlay</button>
         <button class="os-action" type="button" data-os-pro-mode data-feature-flag="proModeToggle">Pro mode</button>
         <button class="os-action" type="button" data-os-command>Worlds</button>
@@ -113,6 +118,7 @@
     <div class="os-toast-dock" aria-live="polite" data-os-toasts>
       <div class="os-toast"><small>System layer</small><strong>${escapeHtml(status)} synced to HUD + FX.</strong></div>
     </div>
+    <div class="os-sound-rail" data-os-sound-rail data-feature-flag="soundFxToggle" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
     <div class="os-fab-stack" aria-label="Quick actions">
       <a class="os-fab" href="${lastStudioPath}">Resume</a>
       <a class="os-fab" href="/studio-production/">Studio</a>
@@ -132,12 +138,17 @@
   body.append(cinematic, fx, hud);
   applyFeatureFlags(hud);
   applyFeatureFlags(cinematic);
+  setSoundEnabled(soundEnabled, false);
 
   hud.querySelector('[data-os-toggle-fx]')?.addEventListener('click', () => {
     body.classList.toggle('fx-disabled');
     const disabled = body.classList.contains('fx-disabled');
     doc.querySelector('[data-os-toggle-fx]').textContent = disabled ? 'FX Off' : 'Performance';
     toast('Performance mode', disabled ? 'FX layer disabled.' : 'FX layer online.');
+  });
+
+  hud.querySelector('[data-os-toggle-sound]')?.addEventListener('click', () => {
+    setSoundEnabled(!soundEnabled, true);
   });
 
   hud.querySelector('[data-os-toggle-overlay]')?.addEventListener('click', (event) => {
@@ -174,8 +185,82 @@
       toast('XP Engine', 'Quest progress sent to HUD + FX.');
     } else if (!body.classList.contains('fx-disabled')) {
       pulseXp(event.clientX, event.clientY);
+      spotlight(event.clientX, event.clientY);
+    }
+
+    if (target.matches('a, button, [role=\"button\"]')) {
+      playTone(target.classList.contains('primary') || target.classList.contains('os-action--primary') ? 'reward' : 'click');
     }
   });
+
+
+  function setSoundEnabled(enabled, announce) {
+    soundEnabled = Boolean(enabled);
+    body.classList.toggle('sound-fx-enabled', soundEnabled);
+    const toggle = doc.querySelector('[data-os-toggle-sound]');
+    if (toggle) {
+      toggle.textContent = soundEnabled ? 'Sound on' : 'Sound FX';
+      toggle.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
+    }
+    saveSessionState({ soundFx: soundEnabled });
+    if (announce) {
+      playTone(soundEnabled ? 'open' : 'close', { force: soundEnabled });
+      toast('Sound FX', soundEnabled ? 'User-triggered audio cues enabled.' : 'Audio cues muted.');
+    }
+  }
+
+  function playTone(type = 'click', options = {}) {
+    if (!soundEnabled && !options.force) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    try {
+      audioContext ||= new AudioContext();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const sequences = {
+        click: [330, 440],
+        open: [392, 523.25, 659.25],
+        close: [220, 196],
+        reward: [523.25, 659.25, 783.99, 1046.5]
+      };
+      const wave = type === 'click' ? 'square' : 'triangle';
+      const motif = sequences[type] || sequences.click;
+      motif.forEach((freq, index) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const start = audioContext.currentTime + index * 0.055;
+        osc.type = wave;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.001, start);
+        gain.gain.exponentialRampToValueAtTime(type === 'reward' ? 0.045 : 0.026, start + 0.018);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.18);
+        osc.connect(gain).connect(audioContext.destination);
+        osc.start(start);
+        osc.stop(start + 0.2);
+      });
+      animateSoundRail(type);
+    } catch {
+      setSoundEnabled(false, false);
+    }
+  }
+
+  function animateSoundRail(type = 'click') {
+    const rail = doc.querySelector('[data-os-sound-rail]');
+    if (!rail) return;
+    rail.dataset.sound = type;
+    rail.classList.remove('is-playing');
+    requestAnimationFrame(() => rail.classList.add('is-playing'));
+    window.setTimeout(() => rail.classList.remove('is-playing'), 520);
+  }
+
+  function spotlight(x, y) {
+    if (!featureFlags.interactionSpotlight || body.classList.contains('fx-disabled')) return;
+    const light = doc.createElement('i');
+    light.className = 'os-interaction-spotlight';
+    light.style.left = `${x}px`;
+    light.style.top = `${y}px`;
+    fx.append(light);
+    window.setTimeout(() => light.remove(), 760);
+  }
 
   function setupCommandPalette() {
     const palette = hud.querySelector('[data-os-palette]');
@@ -199,11 +284,13 @@
     const open = () => {
       if (!palette) return;
       palette.hidden = false;
+      playTone('open');
       render();
       requestAnimationFrame(() => input?.focus());
     };
     const close = () => {
       if (palette) palette.hidden = true;
+      playTone('close');
     };
     hud.querySelector('[data-os-command]')?.addEventListener('click', open);
     hud.querySelector('[data-os-command-close]')?.addEventListener('click', close);
