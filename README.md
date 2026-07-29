@@ -17,6 +17,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/kottons-code/app-wireframes/` — static app screen wireframes for onboarding, stories, activities, progress, and educator review
 - `/tapstich/` — static apparel customization lane for patch drops, outfit boards, creator-safe merch concepts, and no-cost launch review
 - `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
+- `/social-play/` — mobile-first social challenge page with five timed lingo prompts, scorecard, native share, copy-link, and same-seed friend replay
 - `/assets/` — existing brand asset library
 - `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
 - `/admin-command-center/` — production dashboard command center for assets, projects, studios, timeline, testing, publishing, and automation
