@@ -23,6 +23,9 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/casino-upgrade/` — casino-grade UI upgrade package for visual skin, motion timing, sound hooks, and rollout planning
 - `/casino-config/` — AI-light casino config command center for deterministic machines, economy, missions, events, worlds, admin screens, static config data, and safety guardrails
 - `/casino/` — entertainment-only play-money Lingo casino mini-game with animated reels, collectible background asset catalog, weighted symbols, virtual balance persistence, jackpot meter, and bonus hooks
+- `/sweepstakes-visual-system/` — Industrial Noir CSS visual system for sweepstakes-style cards, buttons, dashboards, mascots, pop animations, prize tiers, and season pass surfaces
+- `/multiplayer-rap-arena/` — static multiplayer rap battle arena blueprint with modes, realtime event architecture, scoring, mascot reactions, and an interactive battle board
+- `/auto-racing-universe/` — static full-auto mascot/avatar racing universe blueprint with one main course, seven cheat paths, 30-minute tournaments, brackets, rewards, sponsors, and trailer hooks
 - `/live-casino-studio/` — Full Live Casino Studio launch shell for live dealer, dual-currency readiness, gated payment pipelines, bonus stores, motion, and operator architecture with regulated modules disabled pending approvals
 - `/payload-matrix/` — static payload URL matrix for reserved Lingo Legacy OS contracts across OS, AI, workflow, backend, app, nonprofit, and character systems
 - `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
