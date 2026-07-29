@@ -10,7 +10,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 ## Site map
 
 - `/` — polished public Lingo Game Casino homepage with entertainment-only virtual casino play, daily app routes, merch, rewards, safety language, and launch calls to action
-- `/thats-my-lingo/` — production entertainment lane with 5x3 virtual reels, virtual wallet, progression, missions, ecosystem platform framing, live-ops readiness, compliance guardrails, demo store, rewards, opt-in sounds, and animations
+- `/thats-my-lingo/` — production entertainment lane with 5x3 virtual reels, virtual wallet, progression, missions, regulated casino readiness gate, ecosystem platform framing, live-ops readiness, compliance guardrails, demo store, rewards, opt-in sounds, and animations
 - `/loading/` — cinematic LoadingPage gateway with Vegas Studio boot sequence, LL monogram reveal, jackpot progress rail, status ticker, audio visualization, and demo diagnostics
 - `/studio-assets/` — studio-grade visuals, symbols, backgrounds, animations, glass panels, lighting, and user-triggered audio motifs
 - `/master-interface/` — guardrailed static master interface preview with entertainment-only virtual game suite, radio-style ambience, safe progression, and world links

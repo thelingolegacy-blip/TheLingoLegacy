@@ -39,3 +39,8 @@ This is a static blueprint for compliant entertainment monetization. It does not
 
 - Static page: `/monetization-safety/`
 - Static config: `config/monetization/safety-os.json`
+- Regulated wagering readiness blueprint: `config/monetization/regulated-wagering-readiness.json`
+
+## Regulated wagering readiness
+
+That’s My Lingo can present a casino-grade product shell, but real-money wagers, deposits, withdrawals, cash prizes, payout ledgers, and cash-out guidance stay disabled until a licensed wagering provider or approved regulated backend is integrated. Activation requires qualified legal/compliance review, KYC and age checks, state or jurisdiction geofencing, responsible-play controls, fraud controls, server-verified outcomes, auditable ledgers, tax/reporting workflows, and published terms/rules/support paths.
