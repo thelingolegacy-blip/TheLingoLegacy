@@ -1,6 +1,7 @@
 {
   "version": "2026.07.28-full-front-back-stack-map",
   "mode": "static-blueprint-only",
+  "liveInterfaceUpdating": true,
   "liveBackendWrites": false,
   "livePayments": false,
   "liveExternalServiceCalls": false,
@@ -10,6 +11,7 @@
     "no_cash_out",
     "no_cash_equivalent_prizes",
     "static_contracts_until_backend_activation",
+    "live_interface_updates_without_external_writes",
     "auth_validation_audit_required_before_live_services",
     "domain_verification_required_before_cloudflare_changes",
     "no_committed_secrets"
@@ -20,7 +22,7 @@
       "name": "Vercel Static Web Frontend",
       "role": "Public HQ, game, studio, world, safety, payload, master-interface, and integration pages.",
       "status": "active_static",
-      "activation": "Already deploys as static HTML on Vercel."
+      "activation": "Already deploys as static HTML on Vercel. Live interface updating is enabled for safe preview UI state without external writes."
     },
     {
       "id": "flutter_app",
@@ -170,6 +172,7 @@
     "firebase": "optional app services after protected activation",
     "cloudflare": "optional DNS/edge boundary after domain verification",
     "github": "source control and PR review",
-    "vercel": "deployment, domains, previews, static hosting, Blob"
+    "vercel": "deployment, domains, previews, static hosting, Blob",
+    "liveInterfaceUpdating": "enabled for static preview UI refresh state"
   }
 }
