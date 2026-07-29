@@ -40,6 +40,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
 - `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
 - `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
+- `/lingo-wash-district/` — static Lingo Wash District preview with district map, community shifts, premium gigs, market, league mini-game, board, friends, and local-only wallet state
 
 ## Development
 
