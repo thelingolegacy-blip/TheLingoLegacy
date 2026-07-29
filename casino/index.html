@@ -26,6 +26,10 @@
   <style>
     .vegas-sweepstakes{position:relative;margin:0 auto 30px;border:1px solid rgba(247,200,75,.34);border-radius:34px;padding:22px;background:radial-gradient(circle at 80% 16%,rgba(255,61,214,.18),transparent 16rem),radial-gradient(circle at 20% 78%,rgba(86,239,255,.14),transparent 18rem),linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));box-shadow:0 28px 92px rgba(0,0,0,.36);overflow:hidden}.vegas-sweepstakes:before{content:"";position:absolute;inset:-30%;background:conic-gradient(transparent,rgba(247,200,75,.16),transparent,rgba(86,239,255,.12),transparent,rgba(255,61,214,.14),transparent);animation:turn 18s linear infinite;pointer-events:none}.vegas-sweepstakes>*{position:relative}.sweep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sweep-card{border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:18px;background:rgba(0,0,0,.3)}.sweep-card h2{margin:12px 0 8px;font-size:clamp(1.8rem,4vw,3.6rem);line-height:.95;letter-spacing:-.06em;text-transform:uppercase}.sweep-status{display:grid;gap:8px;margin-top:12px}.sweep-status div{display:flex;justify-content:space-between;gap:10px;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:11px 12px;color:var(--muted);font-weight:850}.sweep-status b{color:var(--gold)}.sweep-status strong{color:var(--green);text-transform:uppercase}.sweep-status .off{color:var(--danger)}.audio-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.audio-row button{border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.34);color:var(--ink);padding:10px 13px;font-weight:1000;cursor:pointer}.casino-shell.vegas-win{animation:stopPop .42s ease-out, glowPulse 1.2s ease-out}.casino-shell.audio-ready:after{filter:saturate(1.35) brightness(1.1)}@keyframes glowPulse{50%{box-shadow:0 0 95px rgba(247,200,75,.45),0 0 80px rgba(86,239,255,.18)}}@media(max-width:900px){.sweep-grid{grid-template-columns:1fr}}@media(max-width:620px){.vegas-sweepstakes{padding:18px;border-radius:26px}.sweep-status div{display:grid}.audio-row .button,.audio-row button{width:100%}}
   </style>
+
+  <style>
+    .casino-shell{background:radial-gradient(circle at 50% 0,rgba(247,200,75,.2),transparent 11rem),linear-gradient(180deg,#120809,#040405 72%);border-color:rgba(247,200,75,.68)}.casino-shell:after{content:"";position:absolute;inset:10px;border:1px solid rgba(247,200,75,.42);border-radius:34px;pointer-events:none;box-shadow:inset 0 0 30px rgba(247,200,75,.18)}.studio-sign{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:2px 2px 4px}.jackpot-stack{display:grid;gap:8px}.jackpot-pill{border:2px solid rgba(247,200,75,.72);border-radius:15px;padding:8px 11px;background:linear-gradient(180deg,rgba(40,8,8,.94),rgba(6,6,8,.92));box-shadow:inset 0 0 16px rgba(247,200,75,.2),0 0 18px rgba(247,200,75,.14)}.jackpot-pill small{display:block;color:#fff0a0;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}.jackpot-pill strong{display:block;color:var(--gold);font-size:clamp(1.05rem,2.2vw,1.55rem);text-shadow:0 0 12px rgba(247,200,75,.55)}.jackpot-pill.blue{background:linear-gradient(180deg,rgba(3,24,47,.95),rgba(4,6,10,.92))}.jackpot-pill.green{background:linear-gradient(180deg,rgba(2,46,21,.95),rgba(4,6,10,.92))}.marquee-logo{min-width:min(390px,44vw);border:2px solid rgba(247,200,75,.78);border-radius:24px;padding:12px;text-align:center;background:linear-gradient(180deg,rgba(0,0,0,.78),rgba(20,8,10,.92));box-shadow:inset 0 0 24px rgba(247,200,75,.18),0 0 36px rgba(247,200,75,.18)}.marquee-logo b{display:block;color:#fff4be;font-size:clamp(1.2rem,3vw,2.1rem);letter-spacing:-.04em;text-transform:uppercase}.marquee-logo strong{display:block;color:var(--gold);font-size:clamp(2.2rem,6vw,4.6rem);line-height:.85;text-transform:uppercase;text-shadow:0 0 18px rgba(247,200,75,.72),0 4px 0 rgba(90,35,0,.8)}.marquee-logo span{display:block;color:#f8e6a7;letter-spacing:.38em;font-weight:1000;text-transform:uppercase}.machine{padding:16px 18px 20px}.reels{position:relative;border:2px solid rgba(247,200,75,.72);box-shadow:inset 0 0 34px rgba(0,0,0,.75),0 0 26px rgba(247,200,75,.18);background:linear-gradient(90deg,rgba(80,8,10,.4),rgba(0,0,0,.65),rgba(80,8,10,.4))}.reels:before,.reels:after{content:"243 WAYS";writing-mode:vertical-rl;text-orientation:upright;position:absolute;top:8px;bottom:8px;display:grid;place-items:center;width:32px;border:1px solid rgba(247,200,75,.45);border-radius:16px;background:linear-gradient(180deg,#2b0608,#050505);color:var(--gold);font-weight:1000;font-size:.78rem;letter-spacing:.02em}.reels:before{left:-42px}.reels:after{right:-42px}.reel{background:radial-gradient(circle at 50% 20%,rgba(255,255,255,.36),transparent 32%),linear-gradient(180deg,#161016,#050505 64%,#140608);border-color:rgba(247,200,75,.5);color:#f7c84b;text-shadow:0 0 14px rgba(247,200,75,.55),0 2px 0 #4a1600;font-family:Georgia,serif}.reel[data-suit="red"]{color:#ff4c55}.reel[data-suit="blue"]{color:#48b9ff}.reel[data-suit="green"]{color:#78ff58}.control-deck{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:center;border:1px solid rgba(247,200,75,.34);border-radius:26px;padding:14px;background:linear-gradient(180deg,rgba(0,0,0,.56),rgba(24,8,8,.42))}.controls{grid-template-columns:1fr auto auto auto}.spin-button-xl{min-width:118px;min-height:118px;border-radius:999px;border:4px solid rgba(255,200,75,.9);background:radial-gradient(circle at 50% 35%,#ffef9d,#c81916 62%,#4d0306);color:#fff1b8;font-size:1.65rem;font-weight:1000;text-transform:uppercase;box-shadow:0 0 26px rgba(247,200,75,.55),inset 0 0 24px rgba(0,0,0,.28)}.table-props{position:absolute;left:18px;right:18px;bottom:-5px;z-index:0;display:flex;justify-content:space-between;pointer-events:none;opacity:.78}.prop-stack{display:flex;gap:8px;align-items:end}.chip-prop,.dice-prop,.card-prop{filter:drop-shadow(0 12px 18px rgba(0,0,0,.55))}.chip-prop{width:46px;height:46px;border-radius:50%;border:8px dashed #f7c84b;background:#111;box-shadow:inset 0 0 0 10px #7c0f14}.dice-prop{width:46px;height:46px;border-radius:10px;background:#9d1418;border:2px solid #ffc76b}.card-prop{width:34px;height:54px;border-radius:7px;background:#f4dfb3;color:#8d0d12;display:grid;place-items:center;font-weight:1000;transform:rotate(-8deg)}@media(max-width:900px){.studio-sign{grid-template-columns:1fr}.marquee-logo{min-width:0}.jackpot-stack{grid-template-columns:1fr 1fr}.reels:before,.reels:after{display:none}.control-deck,.controls{grid-template-columns:1fr}.spin-button-xl{width:100%;min-height:76px;border-radius:22px}.table-props{display:none}}@media(max-width:620px){.machine{padding:12px}.jackpot-stack{grid-template-columns:1fr}.marquee-logo strong{font-size:3rem}.reel{height:70px;font-size:1.75rem}}
+  </style>
 </head>
 <body class="studio-grade-mode" data-bg="obsidian-core">
   <header class="top">
@@ -45,7 +49,7 @@
       <div>
         <span class="eyebrow">Entertainment-only casino edition</span>
         <h1>That’s My Lingo <span>Casino</span></h1>
-        <p class="lead">Spin the Lingo reels with play-money credits, animated slot feedback, collectible background assets, weighted symbols, jackpot progress, and bonus moments built for the wider Lingo Legacy game floor.</p>
+        <p class="lead">Spin a full Vegas Studio reel cabinet with play-money credits, gold marquee lighting, jackpot display panels, card/chip/dice symbols, collectible studio backgrounds, and bonus moments built for the wider Lingo Legacy game floor.</p>
         <div class="actions">
           <a class="button primary" href="#slot-machine">Play the Mini-Game</a>
           <a class="button" href="/trust-compliance/">Read Safety Core</a>
@@ -55,18 +59,24 @@
 
       <section class="casino-shell" id="slot-machine" aria-label="That’s My Lingo casino slot mini-game">
         <div class="machine">
-          <div class="machine-top" aria-label="Player stats">
-            <div class="stat"><small>Balance</small><strong id="balance">$1,000</strong></div>
-            <div class="stat"><small>Last Win</small><strong id="lastWin">$0</strong></div>
-            <div class="stat"><small>Streak</small><strong id="streak">0</strong></div>
+          <div class="studio-sign" aria-label="That’s My Lingo Vegas Studio jackpot marquee">
+            <div class="jackpot-stack"><div class="jackpot-pill"><small>Grand</small><strong>$25,000.00</strong></div><div class="jackpot-pill"><small>Major</small><strong>$2,500.00</strong></div></div>
+            <div class="marquee-logo"><b>That’s My</b><strong>Lingo</strong><span>Vegas Studio</span></div>
+            <div class="jackpot-stack"><div class="jackpot-pill blue"><small>Minor</small><strong>$500.00</strong></div><div class="jackpot-pill green"><small>Mini</small><strong>$100.00</strong></div></div>
           </div>
 
           <div class="reels" id="reels" aria-live="polite">
-            <div class="reel">L</div>
-            <div class="reel">I</div>
-            <div class="reel">N</div>
-            <div class="reel">G</div>
-            <div class="reel">O</div>
+            <div class="reel">A</div>
+            <div class="reel">K</div>
+            <div class="reel">Q</div>
+            <div class="reel">J</div>
+            <div class="reel">♠</div>
+          </div>
+
+          <div class="control-deck">
+            <div class="stat"><small>Balance</small><strong id="balance">$1,000</strong></div>
+            <div class="stat"><small>Last Win</small><strong id="lastWin">$0</strong></div>
+            <button class="spin-button-xl" id="spinButton" type="button">Spin</button>
           </div>
 
           <div class="controls">
@@ -74,9 +84,10 @@
               <label for="bet">Virtual bet</label>
               <input id="bet" type="number" min="10" max="500" step="10" value="50" inputmode="numeric" />
             </div>
-            <button class="button primary" id="spinButton" type="button">Spin</button>
+            <div class="stat"><small>Streak</small><strong id="streak">0</strong></div>
             <button class="button" id="resetButton" type="button">Reset</button><button class="button" id="audioToggle" type="button">Sound: Off</button>
           </div>
+          <div class="table-props" aria-hidden="true"><div class="prop-stack"><span class="chip-prop"></span><span class="chip-prop"></span></div><div class="prop-stack"><span class="card-prop">A♠</span><span class="card-prop">A♥</span><span class="card-prop">A♣</span><span class="dice-prop"></span></div></div>
 
           <div class="message" id="message">Set a virtual bet and spin the Lingo reels.</div>
 
@@ -106,7 +117,7 @@
             <p id="bonusText">Two stars triggered a bonus moment. Add the next quiz or phrase-builder round here.</p>
           </div>
 
-          <div class="machine-foot">Payouts: exact LINGO pays 10x, five matches pays 7x, four matches pays 4x, three matches pays 2x. Star pairs trigger a bonus prompt. Dollar symbols feed the jackpot meter.</div>
+          <div class="machine-foot">Payouts: five matching card/chip/dice symbols pay 7x, four matches pay 4x, three matches pay 2x. Spade wilds and dice/chip bonuses are virtual-only studio effects. Dollar symbols feed the display meter only.</div>
         </div>
       </section>
     </section>
@@ -151,13 +162,15 @@
     const storageKey = "lingoCasinoState";
     const defaultState = { balance: 1000, streak: 0, jackpot: 0, activeBackground: "obsidian-core", xp: 0 };
     const symbolTable = [
-      { symbol: "L", weight: 17 },
-      { symbol: "I", weight: 17 },
-      { symbol: "N", weight: 17 },
-      { symbol: "G", weight: 17 },
-      { symbol: "O", weight: 17 },
-      { symbol: "★", weight: 9 },
-      { symbol: "$", weight: 6 }
+      { symbol: "A", weight: 15 },
+      { symbol: "K", weight: 14 },
+      { symbol: "Q", weight: 14 },
+      { symbol: "J", weight: 13 },
+      { symbol: "10", weight: 13 },
+      { symbol: "♠", weight: 8 },
+      { symbol: "CHIP", weight: 7 },
+      { symbol: "DICE", weight: 6 },
+      { symbol: "$", weight: 4 }
     ];
     const payoutTable = { 5: 7, 4: 4, 3: 2 };
     const backgrounds = [
@@ -222,7 +235,6 @@
 
     function getMultiplier(result) {
       const word = result.join("");
-      if (word === "LINGO") return 10;
       const counts = result.reduce((map, symbol) => {
         map[symbol] = (map[symbol] || 0) + 1;
         return map;
@@ -233,8 +245,8 @@
 
     function isNearLingo(result) {
       const target = "LINGO".split("");
-      const matches = result.filter((symbol, index) => symbol === target[index]).length;
-      return matches === 4;
+      const matches = result.filter(symbol => ["A", "K", "Q", "J", "10"].includes(symbol)).length;
+      return matches >= 4 && result.includes("♠");
     }
 
     function activeBackground() {
@@ -277,7 +289,7 @@
       const baseWin = bet * multiplier;
       const win = Math.floor(baseWin * bg.winBoost);
       const xpEarned = Math.ceil((win > 0 ? 10 : 2) * (1 + bg.xpBoost / 100));
-      const starCount = result.filter(symbol => symbol === "★").length;
+      const starCount = result.filter(symbol => symbol === "♠" || symbol === "DICE").length;
       const dollarCount = result.filter(symbol => symbol === "$").length;
 
       state.balance += win;
@@ -293,13 +305,13 @@
       } else if (win > 0) {
         messageEl.textContent = "Winner: " + result.join("") + " paid " + multiplier + "x with " + bg.name + " for " + money(win) + " and +" + xpEarned + " virtual XP.";
       } else if (isNearLingo(result)) {
-        messageEl.textContent = "So close — one symbol away from LINGO. " + bg.name + " added +" + xpEarned + " virtual XP.";
+        messageEl.textContent = "Spade studio near-hit: card reel suspense on " + bg.name + " added +" + xpEarned + " virtual XP.";
       } else {
         messageEl.textContent = "No win on " + result.join("") + ". " + bg.name + " still banked +" + xpEarned + " virtual XP.";
       }
 
       if (starCount >= 2) {
-        bonusText.textContent = "Two stars landed on " + bg.name + ". Bonus Decode hook is ready for the next phrase, quiz round, or character synergy.";
+        bonusText.textContent = "Spade and dice bonus landed on " + bg.name + ". Bonus Decode hook is ready for the next phrase, quiz round, or character synergy.";
         bonusPanel.classList.add("active");
       } else {
         bonusPanel.classList.remove("active");
@@ -340,13 +352,16 @@
         reel.classList.remove("locked");
         reel.classList.add("spinning");
         const ticker = setInterval(() => {
-          reel.textContent = weightedSymbol();
+          const tickerSymbol = weightedSymbol();
+          reel.textContent = tickerSymbol;
+          reel.dataset.suit = tickerSymbol === "K" ? "red" : tickerSymbol === "J" ? "blue" : tickerSymbol === "10" ? "green" : "gold";
         }, 70);
         setTimeout(() => {
           clearInterval(ticker);
           const finalSymbol = weightedSymbol();
           result[index] = finalSymbol;
           reel.textContent = finalSymbol;
+          reel.dataset.suit = finalSymbol === "K" ? "red" : finalSymbol === "J" ? "blue" : finalSymbol === "10" ? "green" : "gold";
           reel.classList.remove("spinning");
           reel.classList.add("locked");
           if (result.filter(Boolean).length === reels.length) finishSpin(result, bet);
@@ -356,7 +371,7 @@
 
     function resetGame() {
       state = { ...defaultState };
-      ["L", "I", "N", "G", "O"].forEach((symbol, index) => {
+      ["A", "K", "Q", "J", "♠"].forEach((symbol, index) => {
         reels[index].textContent = symbol;
         reels[index].classList.remove("spinning", "locked");
       });
