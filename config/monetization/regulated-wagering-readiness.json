@@ -1,0 +1,38 @@
+{
+  "version": "2026.07.29-regulated-wagering-readiness",
+  "mode": "provider_integration_blueprint_only",
+  "productionRealMoneyWagersEnabled": false,
+  "productionCashOutEnabled": false,
+  "publicFallbackMode": "virtual_entertainment_only",
+  "activationRequires": [
+    "licensed_wagering_provider_or_approved_regulated_backend",
+    "qualified_legal_and_compliance_review",
+    "age_and_identity_verification",
+    "state_or_jurisdiction_geofencing",
+    "responsible_play_limits_and_self_exclusion",
+    "anti_fraud_duplicate_account_controls",
+    "server_verified_outcomes",
+    "auditable_wallet_and_payout_ledger",
+    "tax_and_reporting_workflows",
+    "published_terms_odds_rules_refunds_and_support_path"
+  ],
+  "blockedUntilActivation": [
+    "real_money_deposits",
+    "real_money_wagers",
+    "cash_balance_display",
+    "withdrawals_or_redemptions",
+    "cash_prizes",
+    "casino_or_sportsbook_payouts",
+    "bonus_hedging_or_cashout_guidance"
+  ],
+  "allowedNow": [
+    "founder_passes",
+    "cosmetics",
+    "vip_access",
+    "xp_boosts",
+    "badges",
+    "themes",
+    "virtual_currency_without_cash_value"
+  ],
+  "runtimeGuardrail": "If any required regulated service is missing, the app must stay in virtual entertainment-only mode and must not expose deposits, wagers, withdrawals, redemptions, cash prizes, or cash-equivalent rewards."
+}
