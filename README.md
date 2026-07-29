@@ -24,6 +24,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 - `/casino-config/` — AI-light casino config command center for deterministic machines, economy, missions, events, worlds, admin screens, static config data, and safety guardrails
 - `/casino/` — entertainment-only play-money Lingo casino mini-game with animated reels, collectible background asset catalog, weighted symbols, virtual balance persistence, jackpot meter, and bonus hooks
 - `/visual-showcase/` — CSS-generated casino visual showcase with slot machine, mascot race, rap arena, prize vault, vehicle cards, and Industrial Noir scene blocks
+- `/visual-expansion/` — second-stage casino visual expansion with map blueprint, tournament bracket UI, race FX pack, avatar customization, and trailer storyboard panels
 - `/sweepstakes-visual-system/` — Industrial Noir CSS visual system for sweepstakes-style cards, buttons, dashboards, mascots, pop animations, prize tiers, and season pass surfaces
 - `/multiplayer-rap-arena/` — static multiplayer rap battle arena blueprint with modes, realtime event architecture, scoring, mascot reactions, and an interactive battle board
 - `/auto-racing-universe/` — static full-auto mascot/avatar racing universe blueprint with one main course, seven cheat paths, 30-minute tournaments, brackets, rewards, sponsors, and trailer hooks
