@@ -4,7 +4,7 @@ Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-go
 
 ## Site map
 
-- `/` — polished public homepage with games, music, merch, and launch calls to action
+- `/` — polished public Lingo Game Casino homepage with entertainment-only virtual casino play, daily app routes, merch, rewards, safety language, and launch calls to action
 - `/thats-my-lingo/` — production entertainment lane with 5x3 virtual reels, virtual wallet, progression, missions, ecosystem platform framing, live-ops readiness, compliance guardrails, demo store, rewards, opt-in sounds, and animations
 - `/loading/` — cinematic LoadingPage gateway with Vegas Studio boot sequence, LL monogram reveal, jackpot progress rail, status ticker, audio visualization, and demo diagnostics
 - `/studio-assets/` — studio-grade visuals, symbols, backgrounds, animations, glass panels, lighting, and user-triggered audio motifs
