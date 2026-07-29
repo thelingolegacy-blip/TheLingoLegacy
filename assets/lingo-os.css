@@ -947,3 +947,111 @@ body.offline-aware::after {
     scroll-behavior: auto !important;
   }
 }
+
+/* Visual/audio/motion polish pass: user-triggered sound cues, interaction lighting, and safer page-wide motion. */
+.os-sound-rail {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(144px, env(safe-area-inset-bottom));
+  z-index: 8200;
+  display: grid;
+  grid-template-columns: repeat(5, 4px);
+  gap: 4px;
+  align-items: end;
+  min-height: 34px;
+  padding: 8px 9px;
+  border: 1px solid rgba(86, 239, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(5, 5, 7, 0.68);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.34);
+  opacity: 0.42;
+  backdrop-filter: blur(14px);
+  pointer-events: none;
+}
+
+.os-sound-rail span {
+  width: 4px;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--os-cyan), var(--os-gold));
+  transform-origin: bottom;
+  opacity: 0.72;
+}
+
+body.sound-fx-enabled .os-sound-rail {
+  opacity: 1;
+  border-color: rgba(247, 200, 75, 0.38);
+}
+
+.os-sound-rail.is-playing span:nth-child(1) { animation: osSoundBar 420ms ease-out; }
+.os-sound-rail.is-playing span:nth-child(2) { animation: osSoundBar 420ms 35ms ease-out; }
+.os-sound-rail.is-playing span:nth-child(3) { animation: osSoundBar 420ms 70ms ease-out; }
+.os-sound-rail.is-playing span:nth-child(4) { animation: osSoundBar 420ms 105ms ease-out; }
+.os-sound-rail.is-playing span:nth-child(5) { animation: osSoundBar 420ms 140ms ease-out; }
+
+.os-interaction-spotlight {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.88), rgba(86, 239, 255, 0.36) 36%, rgba(247, 200, 75, 0.16) 58%, transparent 72%);
+  transform: translate(-50%, -50%);
+  animation: osInteractionSpotlight 720ms ease-out forwards;
+}
+
+body.lingo-os-active main :is(.card, .tile, .panel, .hero-card, .hq-panel, .hq-portal, .machine, .stage) {
+  transform: translateZ(0);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, filter 220ms ease;
+}
+
+body.lingo-os-active main :is(.card, .tile, .panel, .hero-card, .hq-panel, .hq-portal, .machine):hover {
+  transform: translateY(-3px);
+  border-color: rgba(86, 239, 255, 0.52) !important;
+  filter: saturate(1.08);
+}
+
+body.lingo-os-active main :is(h1, h2, .eyebrow, .tag) {
+  text-shadow: 0 0 34px rgba(247, 200, 75, 0.14), 0 0 52px rgba(86, 239, 255, 0.08);
+}
+
+@keyframes osSoundBar {
+  0% { transform: scaleY(0.38); }
+  34% { transform: scaleY(2.6); }
+  66% { transform: scaleY(1.25); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes osInteractionSpotlight {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.25); }
+  22% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(7.5); }
+}
+
+@media (max-width: 760px) {
+  .os-sound-rail { bottom: max(104px, env(safe-area-inset-bottom)); right: max(10px, env(safe-area-inset-right)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .os-sound-rail,
+  .os-interaction-spotlight {
+    display: none !important;
+  }
+
+  body.lingo-os-active main :is(.card, .tile, .panel, .hero-card, .hq-panel, .hq-portal, .machine):hover {
+    transform: none;
+  }
+}
+
+.production-shell-ready.startup-animations-disabled .os-sound-rail.is-playing span:nth-child(1),
+.production-shell-ready.startup-animations-disabled .os-sound-rail.is-playing span:nth-child(2),
+.production-shell-ready.startup-animations-disabled .os-sound-rail.is-playing span:nth-child(3),
+.production-shell-ready.startup-animations-disabled .os-sound-rail.is-playing span:nth-child(4),
+.production-shell-ready.startup-animations-disabled .os-sound-rail.is-playing span:nth-child(5) {
+  animation-duration: 420ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+.production-shell-ready.startup-animations-disabled .os-interaction-spotlight {
+  animation-duration: 720ms !important;
+  animation-iteration-count: 1 !important;
+}
