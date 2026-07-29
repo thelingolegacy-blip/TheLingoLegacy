@@ -71,15 +71,11 @@
   cinematic.innerHTML = '<div class="os-cinematic-frame"><small>Production Shell</small><strong>Studio surface ready</strong><p>Navigation, feature flags, session restoration, asset preloading, and recovery hooks are online.</p></div>';
 
   const navItems = [
-    ['/', 'OS', 'Home'],
-    ['/#os-modules', 'HQ', 'Home layers'],
-    ['/app/', 'XP', 'Daily app'],
+    ['/', 'HOME', 'Home'],
     ['/thats-my-lingo/', 'PLAY', 'Game floor'],
-    ['/loading/', 'LOAD', 'Loading gateway'],
-    ['/studio-assets/', 'ART', 'Studio assets'],
-    ['/tapstich/', 'TAP', 'Tapstich'],
-    ['/studio-production/', 'STU', 'Studio production'],
-    ['/studio-world-os/', 'WORLDS', 'Silent worlds'],
+    ['/app/', 'APP', 'Daily app'],
+    ['/studio-production/', 'STUDIO', 'Studio production'],
+    ['/trust-compliance/', 'TRUST', 'Safety core'],
     ['/universe/', 'MAP', 'Universe map']
   ];
 
@@ -95,7 +91,7 @@
       <div class="os-status" aria-label="System status">
         <span class="os-chip" data-os-chip="system"><span>System</span><b>${status}</b></span>
         <span class="os-chip" data-os-chip="mode"><span>Mode</span><b>${online}</b></span>
-        <span class="os-chip" data-os-chip="wallet"><span>Wallet</span><b>Keys armed</b></span>
+        <span class="os-chip" data-os-chip="wallet"><span>State</span><b>Ready</b></span>
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
@@ -115,9 +111,7 @@
     </div>
     <div class="os-fab-stack" aria-label="Quick actions">
       <a class="os-fab" href="${lastStudioPath}">Resume</a>
-      <a class="os-fab" href="/studio-production/">Studio</a>
-      <a class="os-fab" href="/trust-compliance/" data-feature-flag="trustCore">Trust</a>
-      <a class="os-fab" href="/studio-production/" data-feature-flag="studioUpgradeShortcut">Upgrade</a>
+      <a class="os-fab" href="/app/">Launch</a>
     </div>
     <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy world switcher">
       <div class="os-command-panel" role="dialog" aria-modal="true" aria-labelledby="os-command-title">
@@ -155,7 +149,7 @@
   setupCommandPalette();
 
   if (!isKidsExplorer && featureFlags.cinematicOverlay && !prefersReducedMotion) autoCinematicLoop();
-  if (!prefersReducedMotion) pulseXp();
+  if (!prefersReducedMotion && featureFlags.xpDebugEvents) pulseXp();
   doc.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('a, button') : null;
     if (!target) return;

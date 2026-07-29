@@ -5,6 +5,14 @@
 
   doc.documentElement.classList.add('premium-studio-refresh');
 
+  function premiumAmbientEnabled() {
+    return doc.documentElement.hasAttribute('data-premium-ambient') || doc.body?.hasAttribute('data-premium-ambient') || doc.body?.classList.contains('premium-studio-ambient');
+  }
+
+  function premiumDockEnabled() {
+    return doc.documentElement.hasAttribute('data-premium-dock') || doc.body?.hasAttribute('data-premium-dock') || doc.body?.classList.contains('premium-studio-dock-enabled');
+  }
+
   function ensureAurora() {
     if (doc.querySelector('.premium-studio-aurora')) return;
     const aurora = doc.createElement('div');
@@ -106,15 +114,17 @@
         control.style.setProperty('--my', `${event.clientY - rect.top}px`);
       });
       control.addEventListener('click', (event) => {
-        ripple(event.clientX, event.clientY);
+        if (premiumAmbientEnabled()) ripple(event.clientX, event.clientY);
         const text = (control.textContent || '').toLowerCase();
-        const explicit = control.getAttribute('data-sg-sound');
+        const explicit = control.getAttribute('data-sg-sound') || control.getAttribute('data-premium-sound-kind');
+        if (!explicit) return;
         playTone(explicit === 'reward' || text.includes('reward') || text.includes('claim') ? 'reward' : text.includes('launch') || text.includes('open') ? 'lift' : 'tap');
       });
     });
   }
 
   function addStudioDock() {
+    if (!premiumDockEnabled()) return;
     if (doc.querySelector('[data-premium-studio-dock]')) return;
     const main = doc.querySelector('main');
     const footer = doc.querySelector('footer');
@@ -180,7 +190,7 @@
   }
 
   function init() {
-    ensureAurora();
+    if (premiumAmbientEnabled()) ensureAurora();
     addStudioDock();
     enhanceControls();
     doc.addEventListener('click', (event) => {
