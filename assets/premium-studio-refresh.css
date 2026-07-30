@@ -703,3 +703,259 @@ body.premium-studio-ready ::selection {
   font-weight: 850;
   line-height: 1.45;
 }
+
+
+/* Full Studio Shell monetization, CSS/UI/UX, animation, and deep visual pass */
+.premium-shell-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.premium-shell-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--premium-cursor-x, 50%) var(--premium-cursor-y, 26%), rgba(255,216,107,.13), transparent 16rem),
+    linear-gradient(rgba(255,255,255,.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size: auto, 88px 88px, 88px 88px;
+  mask-image: linear-gradient(#000 0 74%, transparent 100%);
+}
+
+.premium-shell-quickstats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+  max-width: 760px;
+}
+
+.premium-shell-quickstats span,
+.premium-shell-money-card,
+.premium-shell-checkout-panel,
+.premium-shell-ops-grid article {
+  border-radius: 22px;
+  border: 1px solid rgba(255, 216, 107, .18);
+  background: linear-gradient(150deg, rgba(255,255,255,.105), rgba(255,255,255,.032));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 20px 60px rgba(0,0,0,.26);
+}
+
+.premium-shell-quickstats span {
+  padding: 13px 14px;
+  color: var(--premium-muted);
+  font-weight: 850;
+}
+
+.premium-shell-quickstats b {
+  display: block;
+  color: var(--premium-gold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: .72rem;
+}
+
+.premium-shell-visual-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(280px, .7fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 58px);
+  overflow: hidden;
+  min-height: 420px;
+  border-radius: var(--premium-radius);
+  padding: clamp(24px, 5vw, 58px);
+  background:
+    radial-gradient(circle at 75% 22%, rgba(98,239,255,.2), transparent 15rem),
+    radial-gradient(circle at 28% 75%, rgba(255,79,216,.16), transparent 18rem),
+    linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
+  box-shadow: var(--premium-shadow), inset 0 1px 0 rgba(255,255,255,.14);
+}
+
+.premium-shell-visual-stage::before,
+.premium-shell-visual-stage::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.premium-shell-visual-stage::before {
+  inset: 18px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,216,107,.2);
+  background: repeating-linear-gradient(90deg, transparent 0 44px, rgba(255,216,107,.075) 45px 46px);
+  mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+}
+
+.premium-shell-visual-stage::after {
+  inset: auto -8% -36% -8%;
+  height: 58%;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,216,107,.2), transparent 58%);
+  transform: perspective(900px) rotateX(62deg);
+}
+
+.premium-shell-stage-copy,
+.premium-shell-orbit {
+  position: relative;
+  z-index: 1;
+}
+
+.premium-shell-stage-copy h2,
+.premium-shell-monetization h2,
+.premium-shell-ops h2 {
+  margin: 14px 0 12px;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: .92;
+  letter-spacing: -.07em;
+  text-transform: uppercase;
+}
+
+.premium-shell-orbit {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255,216,107,.24), transparent 30%),
+    radial-gradient(circle, rgba(98,239,255,.12), transparent 60%);
+}
+
+.premium-shell-orbit i,
+.premium-shell-rings i {
+  animation: premium-shell-spin 14s linear infinite;
+}
+
+.premium-shell-orbit i {
+  position: absolute;
+  inset: 8%;
+  border: 1px solid rgba(255,216,107,.26);
+  border-radius: 50%;
+  transform: rotate(var(--orbit-tilt, 0deg));
+}
+
+.premium-shell-orbit i:nth-child(2) { inset: 18%; --orbit-tilt: 62deg; animation-duration: 18s; border-color: rgba(98,239,255,.28); }
+.premium-shell-orbit i:nth-child(3) { inset: 28%; --orbit-tilt: 118deg; animation-duration: 22s; border-color: rgba(255,79,216,.26); }
+.premium-shell-orbit strong { color: var(--premium-gold); letter-spacing: .22em; text-shadow: 0 0 34px rgba(255,216,107,.42); }
+
+.premium-shell-money-grid,
+.premium-shell-ops-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.premium-shell-money-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.premium-shell-money-card.featured {
+  box-shadow: 0 34px 120px rgba(98,239,255,.13), var(--premium-shadow), inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+.premium-shell-money-card h3,
+.premium-shell-ops-grid h3 {
+  margin: 0;
+  font-size: 1.55rem;
+  letter-spacing: -.04em;
+}
+
+.premium-shell-money-card strong {
+  display: block;
+  color: var(--premium-gold);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: .9;
+  letter-spacing: -.07em;
+}
+
+.premium-shell-money-card p { flex: 1; }
+
+.premium-shell-checkout-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, .42fr) 1fr auto;
+  gap: 14px;
+  align-items: end;
+  margin-top: 16px;
+  padding: 18px;
+}
+
+.premium-shell-checkout-panel label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--premium-gold);
+  font-weight: 1000;
+  font-size: .78rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.premium-shell-checkout-panel input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 16px;
+  padding: 13px 14px;
+  color: var(--premium-ink);
+  background: rgba(0,0,0,.26);
+  font: inherit;
+}
+
+.premium-shell-stripe-status {
+  margin: 0;
+  color: var(--premium-muted);
+  font-weight: 850;
+}
+
+.premium-shell-stripe-status[data-state="success"] { color: var(--premium-green); }
+.premium-shell-stripe-status[data-state="error"] { color: var(--premium-red); }
+
+.premium-shell-ops-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.premium-shell-ops-grid article {
+  padding: 22px;
+}
+
+.premium-shell-ops-grid b {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  color: #160d03;
+  background: linear-gradient(135deg, #fff8c6, var(--premium-gold), var(--premium-gold-deep));
+}
+
+@keyframes premium-shell-spin {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .premium-shell-orbit i,
+  .premium-shell-rings i { animation: none !important; }
+}
+
+@media (max-width: 940px) {
+  .premium-shell-quickstats,
+  .premium-shell-visual-stage,
+  .premium-shell-money-grid,
+  .premium-shell-ops-grid,
+  .premium-shell-checkout-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .premium-shell-visual-stage { padding: 22px; }
+  .premium-shell-orbit { min-height: 260px; }
+  .premium-shell-money-card { min-height: auto; }
+}

@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/assets/premium-studio-refresh.css" />
   <script defer src="/assets/lingo-os.js"></script>
   <script defer src="/assets/premium-studio-refresh.js"></script>
+  <script defer src="/assets/stripe-checkout.js"></script>
   <link rel="stylesheet" href="/assets/my-lingo-world-site.css" />
   <script defer src="/assets/my-lingo-world-site.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
@@ -44,12 +45,17 @@
       <div>
         <span class="eyebrow">Studio static UI ready</span>
         <h1 id="studio-shell-title">Ready Studio <span>Shell</span></h1>
-        <p class="lead">A static command surface for launch polish: UI readiness, motion readiness, safety framing, platform routes, and clean handoff status without adding backend cost.</p>
+        <p class="lead">A full studio command surface for launch polish: monetization, Stripe-ready conversion lanes, premium CSS/UI/UX, motion systems, deep background visuals, safety framing, and route handoff status.</p>
         <div class="actions">
-          <a class="button primary" href="/thats-my-lingo/">Open Game Floor</a>
+          <a class="button primary" href="#studio-monetization">Open Monetization Shell</a>
+          <a class="button" href="/drop/#stripe-checkout">Stripe Founder Drop</a>
           <a class="button" href="/live-casino-studio/">Open Live Studio</a>
-          <a class="button" href="/studio-production/">Production Framework</a>
           <a class="button" href="/trust-compliance/">Safety Core</a>
+        </div>
+        <div class="premium-shell-quickstats" aria-label="Studio monetization quick status">
+          <span><b>Stripe</b>Checkout buttons wired</span>
+          <span><b>CSS/UI/UX</b>Premium shell pass</span>
+          <span><b>Motion</b>Reduced-motion safe</span>
         </div>
       </div>
       <aside class="premium-shell-console" aria-label="Studio readiness console">
@@ -57,6 +63,7 @@
         <div class="premium-shell-rings" aria-hidden="true"><i></i><i></i><i></i><strong>LL</strong></div>
         <div class="premium-shell-meter"><b>UI readiness</b><span><i style="width:94%"></i></span><em>94%</em></div>
         <div class="premium-shell-meter"><b>Motion polish</b><span><i style="width:91%"></i></span><em>91%</em></div>
+        <div class="premium-shell-meter"><b>Monetization shell</b><span><i style="width:88%"></i></span><em>Stripe-ready</em></div>
         <div class="premium-shell-meter"><b>Safety framing</b><span><i style="width:100%"></i></span><em>100%</em></div>
       </aside>
     </section>
@@ -65,6 +72,70 @@
       <article class="card"><span class="tag">UX/UI</span><h2>Studio static interface</h2><p>Clear actions, launch lanes, readable panels, responsive layout, focus states, and premium command-surface hierarchy.</p></article>
       <article class="card"><span class="tag">Motion</span><h2>Ready motion layer</h2><p>Aurora, scanline, hover lift, pointer glow, scroll reveal, ripple feedback, and reduced-motion controls are active.</p></article>
       <article class="card"><span class="tag">Shell</span><h2>Production handoff</h2><p>Use this route as the public studio shell for final QA, screenshots, launch status checks, and route navigation.</p></article>
+    </section>
+
+
+
+    <section class="wrap section premium-shell-visual-stage" aria-label="Deep background studio visual system">
+      <div class="premium-shell-stage-copy">
+        <span class="eyebrow">Deep background visuals</span>
+        <h2>Full Studio shell with cinematic depth.</h2>
+        <p>The shell now carries layered aurora fields, orbital rings, soft scanlines, floating glass panels, and pointer-reactive animation polish while staying static-first for Vercel hosting.</p>
+      </div>
+      <div class="premium-shell-orbit" aria-hidden="true">
+        <i></i><i></i><i></i><strong>STUDIO</strong>
+      </div>
+    </section>
+
+    <section class="wrap section premium-shell-monetization" id="studio-monetization" aria-label="Studio monetization Stripe shell">
+      <div class="section-head">
+        <h2>Studio monetization shell</h2>
+        <p>Stripe-ready founder tiers, clear conversion copy, email fallback, and safety language are surfaced directly in the Studio route.</p>
+      </div>
+      <div class="premium-shell-money-grid">
+        <article class="premium-shell-money-card">
+          <span class="tag">Starter</span>
+          <h3>Digital XP Pack</h3>
+          <strong>$10</strong>
+          <p>Low-friction founder support with identity XP, starter prompt delivery, and launch-list priority framing.</p>
+          <button class="button primary" type="button" data-stripe-tier="xp" data-status-target="[data-studio-stripe-status]">Checkout with Stripe</button>
+        </article>
+        <article class="premium-shell-money-card featured">
+          <span class="tag">Best push</span>
+          <h3>Mystery Key Pack</h3>
+          <strong>$25</strong>
+          <p>Primary conversion lane for collectible identity, lore clue delivery, and early access follow-up.</p>
+          <button class="button primary" type="button" data-stripe-tier="key" data-status-target="[data-studio-stripe-status]">Checkout with Stripe</button>
+        </article>
+        <article class="premium-shell-money-card">
+          <span class="tag">Premium</span>
+          <h3>Avalon Badge Set</h3>
+          <strong>$50</strong>
+          <p>Premium founder badge concept with personalized title, micro-tool starter spell, and manual fulfillment backup.</p>
+          <button class="button primary" type="button" data-stripe-tier="avalon" data-status-target="[data-studio-stripe-status]">Checkout with Stripe</button>
+        </article>
+      </div>
+      <div class="premium-shell-checkout-panel">
+        <div>
+          <label for="studioEmail">Checkout email</label>
+          <input id="studioEmail" type="email" autocomplete="email" data-checkout-email placeholder="founder@example.com" />
+        </div>
+        <p class="premium-shell-stripe-status" data-studio-stripe-status data-stripe-status role="status" aria-live="polite">Stripe Checkout uses the existing secure Vercel Function and server-side price IDs. This page never collects card details.</p>
+        <a class="button" href="/drop/#claim">Use email fallback</a>
+      </div>
+    </section>
+
+    <section class="wrap section premium-shell-ops" aria-label="Next Studio requirements">
+      <div class="section-head">
+        <h2>Next full-shell requirements</h2>
+        <p>Concrete requirements are now visible as product lanes instead of a loose checklist.</p>
+      </div>
+      <div class="premium-shell-ops-grid">
+        <article><b>1</b><h3>Monetization</h3><p>Founder tiers, Stripe checkout, email fallback, fulfillment copy, and no-cash-out safety language.</p></article>
+        <article><b>2</b><h3>CSS/UI/UX</h3><p>Responsive studio cards, readable hierarchy, sticky command navigation, accessible focus states, and premium glass depth.</p></article>
+        <article><b>3</b><h3>Animations</h3><p>Pointer glow, hover lift, scroll reveal, orbit stage, ripple feedback, and reduced-motion support.</p></article>
+        <article><b>4</b><h3>Background visuals</h3><p>Deep aurora, constellation grid, studio rings, bottom glow floor, and visual QA-friendly panels.</p></article>
+      </div>
     </section>
 
     <section class="wrap section premium-shell-board" aria-label="Studio route actions">
@@ -84,7 +155,7 @@
   </main>
 
   <footer class="wrap footer">
-    <div class="disclaimer">Studio Ready Shell is a static Vercel surface for UI readiness, route review, and launch presentation. Entertainment-only rewards have no cash value.</div>
+    <div class="disclaimer">Studio Ready Shell is a static Vercel surface for monetization review, Stripe checkout routing, UI readiness, route review, and launch presentation. Entertainment-only rewards have no cash value.</div>
   </footer>
 </body>
 </html>
