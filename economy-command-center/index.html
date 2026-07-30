@@ -31,6 +31,7 @@
       <div class="links">
         <a href="#metrics">Metrics</a>
         <a href="#ai">AI Balancer</a>
+        <a href="#auto-mode">Auto-Mode</a>
         <a href="#contracts">Contracts</a>
         <a href="/admin-command-center/">Admin</a>
         <a href="/trust-compliance/">Trust</a>
@@ -72,6 +73,20 @@
       </div>
     </section>
 
+
+    <section class="section" id="auto-mode">
+      <div class="section-head"><h2>Auto-Mode control plane</h2><p>Auto-Mode is documented as a safe policy layer first. Live destructive actions remain disabled until backend authorization and audit services exist.</p></div>
+      <div class="grid cols-3">
+        <article class="card"><span class="tag">Global</span><div class="metric watch">REC</div><p>Recommendation-only mode. The system can suggest actions, but cannot mutate wallets, rewards, or prices.</p></article>
+        <article class="card"><span class="tag">Caps</span><div class="metric">10%</div><p>Maximum daily adjustment for critical reward or cooldown actions once approval-required mode is implemented.</p></article>
+        <article class="card"><span class="tag">Loop</span><div class="metric">5m</div><p>Target future review cadence for metric ingestion, stress scoring, playbook selection, and audit logging.</p></article>
+      </div>
+      <div class="grid cols-2" style="margin-top:14px">
+        <article class="card"><span class="tag">Domain switches</span><div class="feed"><article><b>Currency Auto</b><br><span class="muted">OFF until backend policy storage exists.</span></article><article><b>XP Auto</b><br><span class="muted">OFF until XP service contracts exist.</span></article><article><b>Rewards Auto</b><br><span class="muted">OFF until reward cost rollback is implemented.</span></article></div></article>
+        <article class="card"><span class="tag">Protected actions</span><div class="feed"><article><b class="critical">Wallet freeze</b><br><span class="muted">Recommendation only; admin approval required.</span></article><article><b class="critical">Balance mutation</b><br><span class="muted">Blocked from client-side dashboard code.</span></article><article><b class="stable">Audit log</b><br><span class="muted">Required for every selected Auto-Mode action.</span></article></div></article>
+      </div>
+    </section>
+
     <section class="section" id="contracts">
       <div class="section-head"><h2>Data contract preview</h2><p>Concrete field names live in the JSON contract file.</p></div>
       <div class="contract">collections:
@@ -80,6 +95,7 @@
   economy_alerts
   economy_recommendations
   economy_history
+  economy_auto_actions
 
 stressIndex = 0.25I + 0.20V + 0.20R + 0.20F + 0.15S
 status bands: stable 0-30, watch 31-60, critical 61-100</div>

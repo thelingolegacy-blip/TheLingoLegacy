@@ -126,3 +126,90 @@ Blocked until backend authorization exists:
 - Wallet mutations isolated behind audited service methods.
 - Recommendation confidence and rollback plan stored for every action.
 - Vercel deployment alerts configured for backend API errors.
+
+## Auto-Mode master system
+
+Auto-Mode is the future self-regulating economy loop for Lingo Legacy. In this static scaffold it is documented as a policy and contract layer only. The dashboard may show Auto-Mode controls, but no live autonomous writes are enabled by this change.
+
+### Auto-Mode loop
+
+1. Collect metrics from currency, XP, reward, storefront, and fraud services.
+2. Normalize signals and compute the Economy Stress Index.
+3. Detect anomalies against threshold and trend windows.
+4. Select a playbook action for each active domain.
+5. Apply safety caps and approval rules.
+6. Execute only actions allowed by the current mode.
+7. Write an immutable audit entry with metric snapshot, reason, and rollback note.
+8. Update the Command Center dashboard and alert feed.
+
+### Auto domains
+
+- Currency Auto: daily bonus tuning, quest payout tuning, Bones sink activation, store price recommendations.
+- XP Auto: multiplier tuning, cooldown tuning, XP sink recommendations, XP velocity alerts.
+- Rewards Auto: reward cost tuning, seasonal rotation recommendations, mid-tier reward gap detection.
+- Fraud Auto: suspicious account flagging, payout throttling recommendations, wallet freeze recommendations, fraud review queue updates.
+- Behavior Auto: hoarding detection, spending collapse detection, reward demand forecasting, inflation forecasting.
+
+### Aggression by stress index
+
+| Stress range | Mode | Max recommended adjustment per day |
+| --- | --- | --- |
+| 0-30 | Stable | 2% |
+| 31-60 | Watch | 5% |
+| 61-100 | Critical | 10% |
+
+The caps prevent runaway corrections. Destructive actions such as permanent bans, irreversible wallet changes, or cash-value payout changes require manual approval even when Auto-Mode is otherwise active.
+
+### Auto-action playbook
+
+| Domain | Signal | Action | Safety cap | Default execution mode |
+| --- | --- | --- | --- | --- |
+| Currency | Net inflation above 0.60 normalized score | Reduce daily bonus | 5% per cycle | recommendation-only |
+| Currency | Bones hoarding above 40% | Activate or recommend a Bones sink | one sink per cycle | recommendation-only |
+| Currency | Bones spent drops more than 25% | Lower selected store prices | 10% per day | approval-required |
+| XP | XP velocity spikes more than 30% | Reduce XP multipliers | 5% per cycle | recommendation-only |
+| XP | XP inflation above 0.50 | Add or promote an XP sink | one sink per cycle | recommendation-only |
+| XP | XP burst pattern detected | Increase cooldowns on high-yield actions | 10% per day | approval-required |
+| Rewards | Reward pressure above 0.70 | Raise reward costs | 10% per day | approval-required |
+| Rewards | Reward pressure below 0.30 | Lower reward costs | 5% per day | approval-required |
+| Rewards | Mid-tier reward gap detected | Create a mid-tier reward proposal | one proposal per cycle | recommendation-only |
+| Fraud | Fraud risk above 0.40 | Throttle payout recommendation | policy-defined | approval-required |
+| Fraud | Fraud risk above 0.60 | Freeze wallet recommendation | case-by-case | approval-required |
+| Fraud | Multi-account cluster detected | Flag accounts for review | no destructive action | recommendation-only |
+
+### Command Center Auto-Mode controls
+
+- Global Auto-Mode banner: `OFF`, `RECOMMENDATION ONLY`, `APPROVAL REQUIRED`, or `ACTIVE WITH CAPS`.
+- Per-domain switches: Currency, XP, Rewards, Fraud, Behavior.
+- Pause Auto for 24 hours.
+- Roll back last approved auto-action.
+- View full audit trail.
+- Export the current economy snapshot.
+
+### Auto-Mode audit fields
+
+Every selected action must write:
+
+- `actionId`
+- `domain`
+- `signal`
+- `selectedAction`
+- `executionMode`
+- `stressIndexBefore`
+- `stressIndexAfter`
+- `metricSnapshot`
+- `safetyCapApplied`
+- `rollbackPlan`
+- `createdAt`
+- `approvedBy`
+- `executedAt`
+
+### Security requirements before live Auto-Mode
+
+- Admin-only access for override controls.
+- Service-account-only writes for AI-selected actions.
+- Strict schema validation for action documents.
+- Append-only audit logs.
+- No user-controlled client can write economy metrics, fraud logs, or remediation actions.
+- Wallet changes must go through audited backend service methods.
+- Fraud evidence must not be exposed to public clients.
