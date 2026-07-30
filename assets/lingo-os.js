@@ -142,9 +142,10 @@
 
   hud.querySelector('[data-os-toggle-fx]')?.addEventListener('click', () => {
     body.classList.toggle('fx-disabled');
+    body.classList.toggle('motion-disabled', body.classList.contains('fx-disabled'));
     const disabled = body.classList.contains('fx-disabled');
     doc.querySelector('[data-os-toggle-fx]').textContent = disabled ? 'FX Off' : 'Performance';
-    toast('Performance mode', disabled ? 'FX layer disabled.' : 'FX layer online.');
+    toast('Performance mode', disabled ? 'FX and motion layers disabled.' : 'FX and motion layers online.');
   });
 
   hud.querySelector('[data-os-toggle-sound]')?.addEventListener('click', () => {
@@ -164,6 +165,7 @@
   });
 
   setupCommandPalette();
+  setupMotionLayer();
 
   if (!isKidsExplorer && featureFlags.cinematicOverlay && !prefersReducedMotion) autoCinematicLoop();
   if (!prefersReducedMotion) pulseXp();
@@ -260,6 +262,70 @@
     light.style.top = `${y}px`;
     fx.append(light);
     window.setTimeout(() => light.remove(), 760);
+  }
+
+  function setupMotionLayer() {
+    body.classList.add('motion-layer-ready');
+    if (prefersReducedMotion) {
+      body.classList.add('motion-disabled');
+      return;
+    }
+
+    const motionTargets = [
+      ...doc.querySelectorAll('main :is(section, article, .card, .tile, .hq-panel, .hq-portal, .stage, .machine, .index-board, .visual, .rail, .world, .bonus, .foundation-card, .lobby-panel)')
+    ];
+    motionTargets.forEach((node, index) => {
+      node.classList.add('motion-in');
+      node.style.setProperty('--motion-order', String(index % 6));
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      motionTargets.forEach((node) => node.classList.add('is-visible'));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+      motionTargets.forEach((node) => observer.observe(node));
+    }
+
+    const depthTargets = [...doc.querySelectorAll('main :is(.stage, .machine, .visual-scene, .constellation, .expansion-stage)')];
+    let pointerFrame = 0;
+    doc.addEventListener('pointermove', (event) => {
+      if (body.classList.contains('motion-disabled') || body.classList.contains('fx-disabled')) return;
+      if (pointerFrame) return;
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = 0;
+        const x = ((event.clientX / window.innerWidth) - 0.5) * 10;
+        const y = ((event.clientY / window.innerHeight) - 0.5) * 8;
+        depthTargets.forEach((node) => {
+          const rect = node.getBoundingClientRect();
+          const active = event.clientX >= rect.left - 80 && event.clientX <= rect.right + 80 && event.clientY >= rect.top - 80 && event.clientY <= rect.bottom + 80;
+          node.classList.toggle('motion-depth-active', active);
+          if (active) {
+            node.style.setProperty('--motion-pointer-x', x.toFixed(2));
+            node.style.setProperty('--motion-pointer-y', y.toFixed(2));
+          }
+        });
+      });
+    }, { passive: true });
+
+    doc.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (!link || body.classList.contains('motion-disabled') || body.classList.contains('fx-disabled')) return;
+      const href = link.getAttribute('href') || '';
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const flash = doc.createElement('i');
+      flash.className = 'route-motion-flash';
+      flash.style.setProperty('--route-x', `${event.clientX}px`);
+      flash.style.setProperty('--route-y', `${event.clientY}px`);
+      body.append(flash);
+      window.setTimeout(() => flash.remove(), 560);
+    });
   }
 
   function setupCommandPalette() {
