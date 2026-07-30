@@ -898,6 +898,93 @@ body.pro-mode .os-action {
   display: none !important;
 }
 
+
+/* Global motion layer: progressive reveal, pointer depth, and route-change polish. */
+body.motion-layer-ready main :is(section, article, .card, .tile, .hq-panel, .hq-portal, .stage, .machine, .index-board, .visual, .rail, .world, .bonus, .foundation-card, .lobby-panel) {
+  --motion-depth-x: 0px;
+  --motion-depth-y: 0px;
+  transform: translate3d(var(--motion-depth-x), var(--motion-depth-y), 0);
+}
+
+body.motion-layer-ready main .motion-in {
+  opacity: 0;
+  transform: translate3d(var(--motion-depth-x), calc(18px + var(--motion-depth-y)), 0) scale(0.985);
+  filter: saturate(0.94);
+  will-change: transform, opacity, filter;
+}
+
+body.motion-layer-ready main .motion-in.is-visible {
+  opacity: 1;
+  transform: translate3d(var(--motion-depth-x), var(--motion-depth-y), 0) scale(1);
+  filter: saturate(1);
+  transition:
+    opacity 520ms ease,
+    transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 620ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+  transition-delay: min(var(--motion-order, 0) * 44ms, 220ms);
+  will-change: auto;
+}
+
+body.motion-layer-ready main :is(.hero, .stage, .poster, .visual, .hq-panel, .machine, .constellation, .expansion-stage, .visual-scene) {
+  transform-style: preserve-3d;
+}
+
+body.motion-layer-ready main :is(.stage, .machine, .visual-scene, .constellation, .expansion-stage).motion-depth-active {
+  --motion-depth-x: calc(var(--motion-pointer-x, 0) * 1px);
+  --motion-depth-y: calc(var(--motion-pointer-y, 0) * 1px);
+}
+
+body.motion-layer-ready main :is(.button, button, .os-action, .os-fab, .chip, .tab):active {
+  transform: translateY(1px) scale(0.985);
+}
+
+body.motion-layer-ready .route-motion-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 7999;
+  background: radial-gradient(circle at var(--route-x, 50%) var(--route-y, 50%), rgba(86, 239, 255, 0.18), rgba(247, 200, 75, 0.1) 18%, transparent 42%);
+  opacity: 0;
+  pointer-events: none;
+  animation: routeMotionFlash 520ms ease-out forwards;
+}
+
+@keyframes routeMotionFlash {
+  0% { opacity: 0; transform: scale(0.96); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+
+body.motion-disabled main .motion-in,
+body.fx-disabled main .motion-in {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+  filter: none !important;
+  transition: none !important;
+}
+
+body.motion-disabled .route-motion-flash,
+body.fx-disabled .route-motion-flash {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.motion-layer-ready main .motion-in,
+  body.motion-layer-ready main .motion-in.is-visible,
+  body.motion-layer-ready main :is(section, article, .card, .tile, .hq-panel, .hq-portal, .stage, .machine, .index-board, .visual, .rail, .world, .bonus, .foundation-card, .lobby-panel) {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  .route-motion-flash {
+    display: none !important;
+  }
+}
+
 .production-shell-ready.startup-animations-disabled *,
 .production-shell-ready.startup-animations-disabled *::before,
 .production-shell-ready.startup-animations-disabled *::after {
