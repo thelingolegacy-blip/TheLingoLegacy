@@ -1055,3 +1055,40 @@ body.lingo-os-active main :is(h1, h2, .eyebrow, .tag) {
   animation-duration: 720ms !important;
   animation-iteration-count: 1 !important;
 }
+
+/* Studio Ready mode keeps the public live app focused on play and monetization. */
+body[data-os-mode="studio-ready"] .os-command-bar {
+  grid-template-columns: minmax(180px, 1fr) auto;
+}
+
+body[data-os-mode="studio-ready"] .os-status,
+body[data-os-mode="studio-ready"] .os-toast-dock,
+body[data-os-mode="studio-ready"] .os-side-rail,
+body[data-os-mode="studio-ready"] .os-fab-stack,
+body[data-os-mode="studio-ready"] .os-command-palette {
+  display: none !important;
+}
+
+body[data-os-mode="studio-ready"] .os-actions {
+  flex-wrap: nowrap;
+}
+
+body[data-os-mode="studio-ready"] .studio-ready-secondary {
+  background: rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 620px) {
+  body[data-os-mode="studio-ready"] .os-command-bar {
+    grid-template-columns: 1fr;
+    top: 8px;
+  }
+
+  body[data-os-mode="studio-ready"] .os-actions {
+    justify-content: stretch;
+  }
+
+  body[data-os-mode="studio-ready"] .os-action {
+    flex: 1 1 auto;
+    padding-inline: 10px;
+  }
+}
