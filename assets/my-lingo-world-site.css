@@ -1,0 +1,204 @@
+/* Site-wide Vegas veneer for every That’s My Lingo route. */
+:root {
+  --mlw-ink: #fff8de;
+  --mlw-muted: #d3bd86;
+  --mlw-gold: #ffd76a;
+  --mlw-gold-deep: #a86118;
+  --mlw-cyan: #55ecff;
+  --mlw-pink: #ff3fd8;
+  --mlw-violet: #7c3dff;
+  --mlw-black: #05010d;
+  --mlw-glass: rgba(255, 255, 255, .08);
+  --mlw-line: rgba(255, 215, 106, .28);
+}
+
+html.my-lingo-site { color-scheme: dark; }
+html.my-lingo-site body {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 215, 106, .18), transparent 22rem),
+    radial-gradient(circle at 12% 28%, rgba(85, 236, 255, .13), transparent 26rem),
+    radial-gradient(circle at 86% 20%, rgba(255, 63, 216, .12), transparent 25rem),
+    linear-gradient(180deg, #13051d 0%, var(--mlw-black) 54%, #010104 100%) !important;
+  color: var(--mlw-ink);
+  isolation: isolate;
+}
+
+.mlw-route-bg,
+.mlw-route-bg span {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.mlw-route-bg { z-index: -2; overflow: hidden; }
+.mlw-route-bg::before {
+  content: "";
+  position: absolute;
+  inset: -24%;
+  background: conic-gradient(from 20deg at 50% 34%, transparent, rgba(255, 215, 106, .11), transparent, rgba(85, 236, 255, .09), transparent, rgba(255, 63, 216, .09), transparent);
+  filter: blur(46px);
+  animation: mlw-rotate 28s linear infinite;
+}
+.mlw-route-beam {
+  top: -18vh;
+  height: 108vh;
+  width: 26vw;
+  opacity: .18;
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  animation: mlw-sweep 13s ease-in-out infinite alternate;
+}
+.mlw-route-beam:nth-child(1) { left: 6%; background: linear-gradient(180deg, rgba(255, 215, 106, .6), transparent 78%); transform: rotate(17deg); }
+.mlw-route-beam:nth-child(2) { right: 7%; background: linear-gradient(180deg, rgba(85, 236, 255, .42), transparent 80%); transform: rotate(-16deg); animation-delay: -5s; }
+.mlw-route-beam:nth-child(3) { left: 46%; background: linear-gradient(180deg, rgba(255, 63, 216, .32), transparent 82%); transform: rotate(4deg); animation-delay: -8s; }
+.mlw-route-floor {
+  top: auto;
+  bottom: -14vh;
+  height: 46vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 215, 106, .22), transparent 50%),
+    repeating-linear-gradient(90deg, rgba(255, 215, 106, .13) 0 1px, transparent 1px 110px),
+    repeating-linear-gradient(0deg, rgba(85, 236, 255, .10) 0 1px, transparent 1px 54px),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.82));
+  transform: perspective(720px) rotateX(62deg) scaleX(1.32);
+  transform-origin: bottom center;
+  opacity: .68;
+}
+.mlw-route-particles {
+  background-image:
+    radial-gradient(circle, rgba(255,215,106,.72) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(85,236,255,.42) 0 1px, transparent 1.4px);
+  background-size: 160px 160px, 240px 240px;
+  opacity: .12;
+  animation: mlw-particles 26s linear infinite;
+}
+
+html.my-lingo-site .top,
+html.my-lingo-site header,
+html.my-lingo-site .panel,
+html.my-lingo-site .card,
+html.my-lingo-site article,
+html.my-lingo-site .console,
+html.my-lingo-site .hero aside,
+html.my-lingo-site .visual-scene,
+html.my-lingo-site .machine,
+html.my-lingo-site .stage,
+html.my-lingo-site .hq-panel,
+html.my-lingo-site .hq-portal,
+html.my-lingo-site .lane,
+html.my-lingo-site .stat,
+html.my-lingo-site .metric {
+  backdrop-filter: blur(12px);
+}
+html.my-lingo-site .card,
+html.my-lingo-site .panel,
+html.my-lingo-site article,
+html.my-lingo-site .lane,
+html.my-lingo-site .visual-scene,
+html.my-lingo-site .hero aside {
+  border-color: var(--mlw-line) !important;
+  box-shadow: 0 24px 82px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+html.my-lingo-site h1,
+html.my-lingo-site h2 {
+  text-shadow: 0 0 60px rgba(124, 61, 255, .28);
+}
+html.my-lingo-site h1 span,
+html.my-lingo-site h2 span,
+html.my-lingo-site .tag,
+html.my-lingo-site .eyebrow,
+html.my-lingo-site .badge {
+  color: var(--mlw-gold) !important;
+}
+html.my-lingo-site .button,
+html.my-lingo-site .btn-primary,
+html.my-lingo-site .btn,
+html.my-lingo-site button,
+html.my-lingo-site [role="button"] {
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+html.my-lingo-site .button:hover,
+html.my-lingo-site .btn-primary:hover,
+html.my-lingo-site .btn:hover,
+html.my-lingo-site button:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.12);
+}
+
+.mlw-studio-rail {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--mlw-line);
+  border-radius: 999px;
+  padding: 8px;
+  background: rgba(5, 1, 13, .74);
+  box-shadow: 0 18px 58px rgba(0,0,0,.45), 0 0 34px rgba(255,215,106,.10);
+  backdrop-filter: blur(18px);
+}
+.mlw-studio-rail a,
+.mlw-studio-rail button {
+  min-height: 38px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 9px 12px;
+  color: var(--mlw-ink);
+  background: rgba(255,255,255,.07);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 1000;
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+.mlw-studio-rail a:first-child {
+  color: #1b1004;
+  border: 0;
+  background: linear-gradient(135deg, #fff8c8, var(--mlw-gold) 52%, var(--mlw-gold-deep));
+}
+.mlw-route-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 74px;
+  z-index: 9992;
+  transform: translate(-50%, 16px);
+  border-radius: 999px;
+  padding: 11px 15px;
+  color: #1b1004;
+  background: linear-gradient(135deg, #fff8c8, var(--mlw-gold));
+  box-shadow: 0 18px 58px rgba(0,0,0,.44);
+  font-weight: 1000;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.mlw-route-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.mlw-spark {
+  position: fixed;
+  z-index: 9991;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  pointer-events: none;
+  color: var(--mlw-gold);
+  background: currentColor;
+  box-shadow: 0 0 18px currentColor;
+  transition: transform 820ms cubic-bezier(.2,.8,.2,1), opacity 820ms ease;
+}
+
+@keyframes mlw-rotate { to { transform: rotate(360deg); } }
+@keyframes mlw-sweep { to { transform: rotate(-7deg) translateX(7vw); opacity: .26; } }
+@keyframes mlw-particles { to { background-position: 0 360px, 120px 460px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mlw-route-bg::before,
+  .mlw-route-beam,
+  .mlw-route-particles { animation: none !important; }
+  .mlw-route-beam { display: none; }
+}
+@media (max-width: 720px) {
+  .mlw-studio-rail { left: 10px; right: 10px; justify-content: center; flex-wrap: wrap; }
+  .mlw-studio-rail a,
+  .mlw-studio-rail button { flex: 1 1 auto; text-align: center; }
+}

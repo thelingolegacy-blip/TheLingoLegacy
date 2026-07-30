@@ -1,6 +1,6 @@
 # Vercel OS deployment readiness
 
-This repository currently deploys as a static Vercel site. It does not contain a Next.js App Router application, `/api/*` route handlers, or runtime middleware yet.
+This repository currently deploys as a static Vercel site with small guarded Vercel Functions under `/api/*` for Stripe Checkout and Beacon text alerts. It does not contain a Next.js App Router application or runtime middleware yet.
 
 ## Current production fit
 
@@ -14,20 +14,28 @@ Use these Vercel settings for the current static site:
 
 The production domain is expected to be `thelingolegacy.com`, with `www.thelingolegacy.com` attached to the same Vercel project.
 
-## Environment variables for the OS layer
+## Environment variables for the refreshed OS layer
 
 `.env.example` lists the full key map for the planned OS backend layer. Add real values only in Vercel Project Settings > Environment Variables; never commit secret values.
 
 Required groups:
 
 - Identity/session: `AUTH_PUBLIC_KEY`, `AUTH_PRIVATE_KEY`, `SESSION_SECRET`
-- Data layer: `POSTGRES_URL`, `REDIS_URL`
-- Object storage: `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `GLOBAL_ASSET_BUCKET`
+- Data layer: `POSTGRES_URL` / `NEON_DATABASE_URL`, `REDIS_URL` / Upstash REST variables
+- Object storage: `BLOB_READ_WRITE_TOKEN`, plus legacy external object-storage placeholders only if a non-Vercel provider is intentionally used
 - Internal services: `OS_INTERNAL_API_KEY`, `ACTIVEPIECES_WEBHOOK_URL`
 - Wallet: `WALLET_SECRET`
 - XP engine: `XP_ENGINE_SECRET`
 - Admin Command Center: `ADMIN_COMMAND_CENTER_KEY`
 - Lingo.ai: `LINGO_AI_ENDPOINT`, `LINGO_AI_KEY`
+
+
+Additional refreshed integration groups:
+
+- Stripe Checkout: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_XP_PACK`, `STRIPE_PRICE_MYSTERY_KEY_PACK`, `STRIPE_PRICE_AVALON_BADGE_SET`, `PUBLIC_SITE_URL`
+- Firebase contract: `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `FIREBASE_WEB_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_MEASUREMENT_ID`, `FIREBASE_VAPID_KEY`
+- Cloudflare contract: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_API_TOKEN`
+- GitHub automation contract: `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `GITHUB_WEBHOOK_SECRET`
 
 ## Next.js migration checklist
 
@@ -48,7 +56,7 @@ To support the full prompt-driven OS architecture, migrate from static HTML to a
 4. Use Node.js runtime for Wallet, XP, Admin, and other heavier backend work.
 5. Use middleware only for lightweight request routing and validation.
 6. Add CORS responses only on API routes that need cross-origin access.
-7. Add provider clients for Postgres, Redis, MinIO, Activepieces, and Lingo.ai after the real services and credentials exist.
+7. Add provider clients for Neon/Postgres, Upstash Redis, Vercel Blob, Activepieces, Firebase, Cloudflare, GitHub automation, and Lingo.ai after the real services and credentials exist.
 8. Enable Web Analytics or Speed Insights in Vercel only after the app has the matching instrumentation package installed.
 
 ## Verification checklist

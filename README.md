@@ -37,7 +37,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 - `/live-casino-studio/` — Full Live Casino Studio launch shell for live dealer, dual-currency readiness, gated payment pipelines, bonus stores, motion, and operator architecture with regulated modules disabled pending approvals
 - `/payload-matrix/` — static payload URL matrix for reserved Lingo Legacy OS contracts across OS, AI, workflow, backend, app, nonprofit, and character systems
 - `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
-- `/integration-os/` — full front-to-back integration map for Flutter, Firebase, Cloudflare, Vercel, GitHub, Vercel Blob, Neon, Upstash Redis, and studio pipelines
+- `/integration-os/` — refreshed front-to-back integration map for frontend shell, backend/API readiness, Flutter, Firebase, Cloudflare, Vercel, GitHub, Vercel Blob, Neon, Upstash Redis, and studio pipelines
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/studio-world-os/` — Silent World Constellation with fully individual entity worlds, seamless travel, sealed premium realms, and the unified cross-platform experience layer
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
@@ -45,6 +45,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 - `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
 - `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
 - `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
+- `/studio-shell/` — full Studio Ready static UI shell for launch status, Stripe-ready monetization lanes, CSS/UI/UX requirements, animation polish, deep background visuals, route actions, safety framing, and visual QA handoff
 
 ## Development
 

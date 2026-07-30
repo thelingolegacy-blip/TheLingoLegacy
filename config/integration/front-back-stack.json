@@ -1,11 +1,11 @@
 {
-  "version": "2026.07.28-full-front-back-stack-map",
+  "version": "2026.07.30-full-refresh-front-back-flutter-firebase-cloudflare-vercel-github",
   "mode": "static-blueprint-only",
   "liveInterfaceUpdating": true,
   "liveBackendWrites": false,
   "livePayments": false,
   "liveExternalServiceCalls": false,
-  "vercelFunctions": false,
+  "vercelFunctions": true,
   "guardrails": [
     "no_real_money_wagering",
     "no_cash_out",
@@ -23,6 +23,13 @@
       "role": "Public HQ, game, studio, world, safety, payload, master-interface, and integration pages.",
       "status": "active_static",
       "activation": "Already deploys as static HTML on Vercel. Live interface updating is enabled for safe preview UI state without external writes."
+    },
+    {
+      "id": "backend_api_readiness",
+      "name": "Backend/API Readiness Layer",
+      "role": "Guarded Vercel Functions for Stripe Checkout and Beacon text alerts, plus future endpoint contracts for identity, wallet display, XP sync, assets, and admin events.",
+      "status": "guarded_existing_functions",
+      "activation": "No new live writes until method guards, input validation, auth, audit logs, rate limits, spend controls, provider env isolation, and rollback are ready."
     },
     {
       "id": "flutter_app",
@@ -82,6 +89,18 @@
     }
   ],
   "pipelines": [
+    {
+      "id": "frontend_backend_refresh",
+      "name": "Frontend and Backend Refresh",
+      "steps": [
+        "static_ui_refresh",
+        "api_contract_review",
+        "env_placeholder_map",
+        "validation",
+        "pull_request",
+        "vercel_preview"
+      ]
+    },
     {
       "id": "source_to_preview",
       "name": "GitHub to Vercel Preview",
@@ -173,6 +192,45 @@
     "cloudflare": "optional DNS/edge boundary after domain verification",
     "github": "source control and PR review",
     "vercel": "deployment, domains, previews, static hosting, Blob",
-    "liveInterfaceUpdating": "enabled for static preview UI refresh state"
-  }
+    "liveInterfaceUpdating": "enabled for static preview UI refresh state",
+    "frontend_refresh": "public static UI, Studio shell, Integration OS, monetization and safety routes",
+    "backend_refresh": "guarded Vercel Functions and future API contracts only",
+    "firebase_env_contract": "Auth, App Check, Firestore, FCM, Crashlytics, Analytics, Remote Config placeholders",
+    "cloudflare_env_contract": "DNS, zone, cache, redirect, security placeholders; no DNS edits from this refresh"
+  },
+  "refreshScope": [
+    "frontend_web",
+    "backend_api_readiness",
+    "flutter",
+    "firebase",
+    "cloudflare",
+    "vercel",
+    "github"
+  ],
+  "backendReadiness": {
+    "activeEndpoints": [
+      {
+        "path": "/api/create-checkout-session",
+        "provider": "stripe",
+        "status": "guarded_existing"
+      },
+      {
+        "path": "/api/beacon-text-alerts",
+        "provider": "webhook_or_twilio",
+        "status": "guarded_existing"
+      }
+    ],
+    "requiredBeforeNewEndpoints": [
+      "auth_or_signed_request",
+      "input_schema_validation",
+      "rate_limit",
+      "audit_log",
+      "no_store_cache_policy",
+      "provider_env_isolation",
+      "spend_guardrails",
+      "rollback_plan"
+    ]
+  },
+  "livePaymentsMode": "guarded_stripe_checkout_only",
+  "vercelFunctionsMode": "guarded_existing_only"
 }

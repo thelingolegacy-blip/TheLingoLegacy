@@ -44,6 +44,7 @@
 
   const pageTitle = (doc.title || 'The Lingo Legacy').replace(/\s*[—|-].*$/, '').trim() || 'The Lingo Legacy';
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
+  const studioReadyMode = body.dataset.osMode === 'studio-ready';
   const sessionState = loadSessionState();
   let audioContext = null;
   let soundEnabled = sessionState.soundFx === true;
@@ -74,7 +75,11 @@
   cinematic.dataset.featureFlag = 'cinematicOverlay';
   cinematic.innerHTML = '<div class="os-cinematic-frame"><small>Production Shell</small><strong>Studio surface ready</strong><p>Navigation, feature flags, session restoration, asset preloading, and recovery hooks are online.</p></div>';
 
-  const navItems = [
+  const navItems = studioReadyMode ? [
+    ['/thats-my-lingo/', 'PLAY', 'Play Now'],
+    ['/drop/#stripe-checkout', 'BUY', 'Buy Access'],
+    ['/trust-compliance/', 'SAFE', 'Safety']
+  ] : [
     ['/', 'OS', 'Home'],
     ['/#os-modules', 'HQ', 'Home layers'],
     ['/app/', 'XP', 'Daily app'],
@@ -102,6 +107,11 @@
         <span class="os-chip" data-os-chip="wallet"><span>Wallet</span><b>Keys armed</b></span>
       </div>
       <div class="os-actions">
+        ${studioReadyMode ? `
+        <a class="os-action os-action--primary" href="/thats-my-lingo/">Play Now</a>
+        <a class="os-action studio-ready-secondary" href="/drop/#stripe-checkout">Buy Access</a>
+        <a class="os-action studio-ready-secondary" href="/trust-compliance/">Safety</a>
+        ` : `
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
         <button class="os-action" type="button" data-os-toggle-sound data-feature-flag="soundFxToggle" aria-pressed="false">Sound FX</button>
         <button class="os-action" type="button" data-os-toggle-overlay data-feature-flag="cinematicOverlay">Overlay</button>
@@ -110,21 +120,22 @@
         <button class="os-action" type="button" data-os-event="xp" data-feature-flag="xpDebugEvents">XP +25</button>
         <a class="os-action" href="/admin-command-center/" data-feature-flag="adminCommandCenter">HQ</a>
         <a class="os-action os-action--primary" href="/app/">Launch</a>
+        `}
       </div>
     </div>
-    <nav class="os-side-rail" aria-label="OS navigation rail">
+    ${studioReadyMode ? '' : `<nav class="os-side-rail" aria-label="OS navigation rail">
       ${navItems.map(([href, label, title]) => `<a class="os-nav-link" href="${href}" title="${title}" aria-label="${title}">${label}</a>`).join('')}
-    </nav>
+    </nav>`}
     <div class="os-toast-dock" aria-live="polite" data-os-toasts>
       <div class="os-toast"><small>System layer</small><strong>${escapeHtml(status)} synced to HUD + FX.</strong></div>
     </div>
     <div class="os-sound-rail" data-os-sound-rail data-feature-flag="soundFxToggle" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-    <div class="os-fab-stack" aria-label="Quick actions">
+    ${studioReadyMode ? '' : `<div class="os-fab-stack" aria-label="Quick actions">
       <a class="os-fab" href="${lastStudioPath}">Resume</a>
       <a class="os-fab" href="/studio-production/">Studio</a>
       <a class="os-fab" href="/trust-compliance/" data-feature-flag="trustCore">Trust</a>
       <a class="os-fab" href="/studio-production/" data-feature-flag="studioUpgradeShortcut">Upgrade</a>
-    </div>
+    </div>`}
     <section class="os-command-palette" data-os-palette hidden aria-label="Lingo Legacy world switcher">
       <div class="os-command-panel" role="dialog" aria-modal="true" aria-labelledby="os-command-title">
         <div class="os-command-head"><span id="os-command-title">World switcher</span><button type="button" data-os-command-close aria-label="Close world switcher">Close</button></div>
