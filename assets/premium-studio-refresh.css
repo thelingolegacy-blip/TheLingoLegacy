@@ -419,3 +419,115 @@ h1 span, h2 span, .sg-hero h1 span, .sg-section h2 span {
   }
   .actions, .sg-actions { gap: 10px !important; }
 }
+
+/* Studio-ready CSS + motion polish pass */
+:root {
+  --premium-focus: 0 0 0 3px rgba(98, 239, 255, 0.26), 0 0 0 1px rgba(255, 216, 107, 0.52);
+}
+
+main, .wrap, .section, .premium-studio-dock { position: relative; z-index: 1; }
+
+body.premium-studio-ready {
+  background-attachment: fixed;
+}
+
+body.premium-studio-ready::before {
+  animation: premiumStudioSweep 16s var(--premium-ease) infinite alternate;
+}
+
+body.premium-studio-ready .hero,
+body.premium-studio-ready .sg-hero {
+  gap: clamp(20px, 4vw, 52px) !important;
+}
+
+body.premium-studio-ready :is(h1, h2, .sg-stage-title) {
+  max-width: 12ch;
+}
+
+body.premium-studio-ready :is(.lead, .sg-lead, .section-head p) {
+  font-size: clamp(1rem, 1.45vw, 1.22rem) !important;
+}
+
+body.premium-studio-ready :is(.card, .panel, .hq-portal, .hq-command-card, .index-list a, .rail a, .rail div, .premium-promo-card, .premium-platform-card, .premium-ad-card, .premium-money-card, .sg-card, .sg-panel) {
+  transform: perspective(900px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) translateY(0);
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+}
+
+body.premium-studio-ready :is(.card, .panel, .hq-portal, .hq-command-card, .index-list a, .rail a, .premium-promo-card, .premium-platform-card, .premium-ad-card, .premium-money-card, .sg-card, .sg-panel):hover {
+  transform: perspective(900px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) translateY(-6px) scale(1.008) !important;
+}
+
+body.premium-studio-ready :is(.button, .btn-primary, .btn-ghost, .sg-button, button.button, a.button, .os-action) {
+  min-height: 50px;
+  padding-inline: clamp(16px, 2vw, 24px) !important;
+  letter-spacing: -0.015em;
+}
+
+body.premium-studio-ready :is(a, button, [role="button"], input, textarea, select):focus-visible {
+  outline: 0 !important;
+  box-shadow: var(--premium-focus) !important;
+}
+
+body.premium-studio-ready :is(.stage, .screen, .poster, .sg-preview, .machine, .visual-scene)::selection,
+body.premium-studio-ready ::selection {
+  color: #130a02;
+  background: var(--premium-gold);
+}
+
+.premium-inview-target {
+  opacity: 0;
+  transform: translateY(24px) scale(.985);
+  transition: opacity .7s var(--premium-ease), transform .7s var(--premium-ease), filter .7s var(--premium-ease);
+  filter: saturate(.9);
+}
+.premium-inview-target.premium-inview-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: saturate(1);
+}
+
+.premium-scanline {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 7px),
+    radial-gradient(circle at var(--premium-cursor-x, 50%) var(--premium-cursor-y, 20%), rgba(98,239,255,.09), transparent 18rem);
+  mix-blend-mode: screen;
+  opacity: .42;
+  mask-image: linear-gradient(transparent 0, #000 12%, #000 78%, transparent 100%);
+}
+
+.premium-studio-ripple {
+  mix-blend-mode: screen;
+}
+
+@keyframes premiumStudioSweep {
+  0% { filter: hue-rotate(0deg) saturate(1); transform: translate3d(0,0,0); }
+  100% { filter: hue-rotate(-8deg) saturate(1.18); transform: translate3d(0,-1.5vh,0); }
+}
+
+@media (max-width: 760px) {
+  body.premium-studio-ready :is(.top, header.top, .nav, nav, .os-command-bar) {
+    position: sticky !important;
+    top: 0;
+  }
+  body.premium-studio-ready :is(.button, .btn-primary, .btn-ghost, .sg-button, button.button, a.button) {
+    width: 100%;
+  }
+  body.premium-studio-ready :is(.actions, .sg-actions) {
+    display: grid !important;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.premium-studio-ready::before { animation: none !important; }
+  .premium-inview-target { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .premium-scanline { display: none !important; }
+  body.premium-studio-ready :is(.card, .panel, .hq-portal, .hq-command-card, .index-list a, .rail a, .premium-promo-card, .premium-platform-card, .premium-ad-card, .premium-money-card, .sg-card, .sg-panel) {
+    transform: none !important;
+  }
+}

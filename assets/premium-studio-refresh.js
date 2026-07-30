@@ -104,6 +104,8 @@
         const rect = control.getBoundingClientRect();
         control.style.setProperty('--mx', `${event.clientX - rect.left}px`);
         control.style.setProperty('--my', `${event.clientY - rect.top}px`);
+        doc.documentElement.style.setProperty('--premium-cursor-x', `${event.clientX}px`);
+        doc.documentElement.style.setProperty('--premium-cursor-y', `${event.clientY}px`);
       });
       control.addEventListener('click', (event) => {
         ripple(event.clientX, event.clientY);
@@ -111,6 +113,62 @@
         const explicit = control.getAttribute('data-sg-sound');
         playTone(explicit === 'reward' || text.includes('reward') || text.includes('claim') ? 'reward' : text.includes('launch') || text.includes('open') ? 'lift' : 'tap');
       });
+    });
+  }
+
+  function enhanceStudioReadyMotion() {
+    doc.body.classList.add('premium-studio-ready');
+
+    if (!doc.querySelector('.premium-scanline')) {
+      const scanline = doc.createElement('div');
+      scanline.className = 'premium-scanline';
+      scanline.setAttribute('aria-hidden', 'true');
+      doc.body.prepend(scanline);
+    }
+
+    if (!reduceMotion) {
+      doc.addEventListener('pointermove', (event) => {
+        doc.documentElement.style.setProperty('--premium-cursor-x', `${event.clientX}px`);
+        doc.documentElement.style.setProperty('--premium-cursor-y', `${event.clientY}px`);
+      }, { passive: true });
+    }
+
+    const tiltTargets = doc.querySelectorAll('.card, .panel, .hq-portal, .hq-command-card, .index-list a, .rail a, .premium-promo-card, .premium-platform-card, .premium-ad-card, .premium-money-card, .sg-card, .sg-panel');
+    tiltTargets.forEach((target) => {
+      if (target.dataset.premiumTilt) return;
+      target.dataset.premiumTilt = 'true';
+      target.addEventListener('pointermove', (event) => {
+        if (reduceMotion) return;
+        const rect = target.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) - 0.5;
+        const y = ((event.clientY - rect.top) / rect.height) - 0.5;
+        target.style.setProperty('--tilt-x', `${x * 3.5}deg`);
+        target.style.setProperty('--tilt-y', `${y * -3.5}deg`);
+      });
+      target.addEventListener('pointerleave', () => {
+        target.style.setProperty('--tilt-x', '0deg');
+        target.style.setProperty('--tilt-y', '0deg');
+      });
+    });
+
+    const revealTargets = Array.from(doc.querySelectorAll('.section, .card, .panel, .premium-promo-card, .premium-platform-card, .premium-ad-card, .premium-money-card, .sg-card, .sg-panel'));
+    if (!('IntersectionObserver' in win) || reduceMotion) {
+      revealTargets.forEach((target) => target.classList.add('premium-inview-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('premium-inview-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealTargets.forEach((target, index) => {
+      if (target.dataset.premiumReveal) return;
+      target.dataset.premiumReveal = 'true';
+      target.classList.add('premium-inview-target');
+      target.style.transitionDelay = `${Math.min(index % 6, 5) * 45}ms`;
+      observer.observe(target);
     });
   }
 
@@ -183,6 +241,7 @@
     ensureAurora();
     addStudioDock();
     enhanceControls();
+    enhanceStudioReadyMotion();
     doc.addEventListener('click', (event) => {
       const trigger = event.target.closest('[data-sg-trigger]');
       if (trigger) burst(trigger.getAttribute('data-sg-trigger') || 'Studio burst');
