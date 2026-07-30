@@ -45,6 +45,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 - `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
 - `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
 - `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
+- `/studio-shell/` — Studio Ready static UI shell for launch status, route actions, motion readiness, safety framing, and visual QA handoff
 
 ## Development
 

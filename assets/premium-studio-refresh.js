@@ -185,6 +185,7 @@
         <h2>Premium interaction layer</h2>
         <p>Polished buttons, cinematic motion, opt-in sound, glow feedback, and rounded studio panels are active across this surface.</p>
       </div>
+      <div class="premium-ready-strip"><a class="button primary" href="/studio-shell/">Open Studio Ready Shell</a><span>Static UI shell, route board, launch status, motion readiness, and safety handoff are ready.</span></div>
       <div class="grid cols-3">
         <article class="card"><span class="tag">UX</span><h3>Studio-grade controls</h3><p>Primary actions now share lift, shimmer, pressed feedback, and soft focus states instead of hard outline boxes.</p></article>
         <article class="card"><span class="tag">Motion</span><h3>Premium animation pass</h3><p>Ambient aurora, depth float, pointer ripples, and visual bursts keep the interface alive without blocking content.</p><button class="button" type="button" data-premium-burst>Test Motion Burst</button></article>
