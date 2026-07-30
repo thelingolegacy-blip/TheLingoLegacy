@@ -1,0 +1,381 @@
+/* Final Studio Universe OS
+   Route-isolated premium world layer for The Lingo Legacy production surface. */
+:root {
+  --su-void: #020204;
+  --su-ink: #fff9e8;
+  --su-muted: #dbcba0;
+  --su-gold: #ffd76a;
+  --su-cyan: #62efff;
+  --su-pink: #ff4fd8;
+  --su-violet: #7657ff;
+  --su-green: #7cff9f;
+  --su-red: #ff6d8a;
+  --su-panel: rgba(12, 12, 18, .78);
+  --su-line: rgba(255, 215, 106, .26);
+  --su-radius: clamp(24px, 2.8vw, 46px);
+  --su-shadow: 0 32px 120px rgba(0, 0, 0, .62);
+  --su-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --su-world-a: var(--su-gold);
+  --su-world-b: var(--su-cyan);
+  --su-world-c: var(--su-violet);
+}
+
+body[data-studio-world="casino"],
+body[data-studio-world="home"],
+body[data-studio-world="live-studio"],
+body[data-studio-world="sweepstakes"] { --su-world-a: #ffd76a; --su-world-b: #ff4fd8; --su-world-c: #62efff; }
+body[data-studio-world="racing"] { --su-world-a: #ff394f; --su-world-b: #ffd76a; --su-world-c: #62efff; }
+body[data-studio-world="rap-arena"] { --su-world-a: #ff4fd8; --su-world-b: #7657ff; --su-world-c: #62efff; }
+body[data-studio-world="ai"] { --su-world-a: #62efff; --su-world-b: #7cff9f; --su-world-c: #7657ff; }
+body[data-studio-world="commerce"] { --su-world-a: #ffd76a; --su-world-b: #7cff9f; --su-world-c: #a76bff; }
+body[data-studio-world="trust"] { --su-world-a: #7cff9f; --su-world-b: #62efff; --su-world-c: #ffd76a; }
+body[data-studio-world="studio"],
+body[data-studio-world="universe"] { --su-world-a: #7657ff; --su-world-b: #62efff; --su-world-c: #ffd76a; }
+body[data-studio-world="loading"] { --su-world-a: #fff4be; --su-world-b: #62efff; --su-world-c: #ff4fd8; }
+
+body {
+  font-family: var(--su-font);
+}
+
+.studio-universe-os .su-atmosphere,
+.studio-universe-os .su-atmosphere::before,
+.studio-universe-os .su-atmosphere::after {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.studio-universe-os .su-atmosphere {
+  background:
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--su-world-a), transparent 72%), transparent 29rem),
+    radial-gradient(circle at 82% 8%, color-mix(in srgb, var(--su-world-b), transparent 78%), transparent 28rem),
+    radial-gradient(circle at 52% 52%, color-mix(in srgb, var(--su-world-c), transparent 84%), transparent 42rem);
+  opacity: .96;
+}
+
+.studio-universe-os .su-atmosphere::before {
+  content: "";
+  background:
+    linear-gradient(115deg, transparent 0 32%, color-mix(in srgb, var(--su-world-a), transparent 90%) 33%, transparent 38%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.042) 0 1px, transparent 1px 94px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 9px);
+  mask-image: linear-gradient(#000, transparent 82%);
+}
+
+.studio-universe-os .su-atmosphere::after {
+  content: "";
+  inset: auto -18vw -28vh;
+  height: 56vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--su-world-a), transparent 78%), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.74));
+  transform: perspective(920px) rotateX(64deg);
+  transform-origin: bottom center;
+}
+
+.su-world-ribbon {
+  width: min(1180px, calc(100% - 32px));
+  margin: clamp(18px, 3vw, 34px) auto;
+  border-radius: var(--su-radius);
+  border: 1px solid var(--su-line);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--su-world-a), transparent 88%), transparent 36%),
+    linear-gradient(155deg, rgba(255,255,255,.13), rgba(255,255,255,.04));
+  box-shadow: var(--su-shadow), inset 0 1px 0 rgba(255,255,255,.16);
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+.su-world-ribbon::before {
+  content: "";
+  position: absolute;
+  inset: -45% -20%;
+  z-index: -1;
+  background: conic-gradient(from 35deg, transparent, color-mix(in srgb, var(--su-world-a), transparent 72%), transparent, color-mix(in srgb, var(--su-world-b), transparent 78%), transparent);
+  animation: su-spin 22s linear infinite;
+  opacity: .76;
+}
+
+.su-world-ribbon__inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: clamp(18px, 3vw, 30px);
+  background: rgba(2,2,4,.58);
+  backdrop-filter: blur(20px) saturate(1.24);
+}
+
+.su-kicker,
+.su-pill {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: var(--su-gold);
+  background: rgba(255,255,255,.08);
+  box-shadow: inset 0 0 0 1px rgba(255,215,106,.18);
+  font-size: .72rem;
+  font-weight: 1000;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.su-world-ribbon h2,
+.su-section h2 {
+  margin: 10px 0 8px;
+  color: var(--su-ink);
+  font-size: clamp(2rem, 4.8vw, 5.1rem);
+  line-height: .9;
+  letter-spacing: -.07em;
+  text-transform: uppercase;
+}
+
+.su-world-ribbon p,
+.su-section p,
+.su-card p,
+.su-world-card p {
+  color: var(--su-muted);
+  line-height: 1.62;
+}
+
+.su-world-ribbon__actions,
+.su-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.su-action,
+.su-sound-toggle {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  color: #160d03;
+  background: linear-gradient(135deg, #fff8c6, var(--su-world-a) 46%, #a75f14);
+  box-shadow: 0 18px 58px color-mix(in srgb, var(--su-world-a), transparent 82%), inset 0 1px 0 rgba(255,255,255,.52);
+  font-weight: 1000;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+
+.su-action--ghost,
+.su-sound-toggle {
+  color: var(--su-ink);
+  background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.04));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 16px 44px rgba(0,0,0,.3);
+}
+
+.su-action:hover,
+.su-action:focus-visible,
+.su-sound-toggle:hover,
+.su-sound-toggle:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  filter: saturate(1.12);
+  outline: 0;
+}
+
+.su-section {
+  width: min(1180px, calc(100% - 32px));
+  margin: clamp(28px, 4vw, 58px) auto;
+  position: relative;
+}
+
+.su-section__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+  gap: 22px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.su-world-grid,
+.su-card-grid,
+.su-money-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.su-world-card,
+.su-card,
+.su-money-card {
+  min-height: 218px;
+  padding: clamp(18px, 2.4vw, 26px);
+  border-radius: var(--su-radius);
+  background:
+    radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--su-world-b), transparent 86%), transparent 12rem),
+    linear-gradient(155deg, rgba(255,255,255,.13), rgba(255,255,255,.04));
+  box-shadow: var(--su-shadow), inset 0 1px 0 rgba(255,255,255,.14);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.su-world-card::before,
+.su-card::before,
+.su-money-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--su-world-a), transparent 68%), transparent 35%, color-mix(in srgb, var(--su-world-b), transparent 72%));
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+
+.su-world-card h3,
+.su-card h3,
+.su-money-card h3 {
+  margin: 14px 0 10px;
+  color: var(--su-ink);
+  font-size: clamp(1.32rem, 2.5vw, 2.15rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+
+.su-stage {
+  min-height: 340px;
+  border-radius: var(--su-radius);
+  padding: clamp(18px, 3vw, 34px);
+  display: grid;
+  align-items: end;
+  background:
+    radial-gradient(circle at 25% 24%, color-mix(in srgb, var(--su-world-a), transparent 68%), transparent 11rem),
+    radial-gradient(circle at 72% 20%, color-mix(in srgb, var(--su-world-b), transparent 76%), transparent 13rem),
+    linear-gradient(160deg, rgba(255,255,255,.12), rgba(0,0,0,.62));
+  box-shadow: var(--su-shadow), inset 0 1px 0 rgba(255,255,255,.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.su-stage__rings {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--su-world-a), transparent 60%);
+  box-shadow: 0 0 0 28px rgba(255,255,255,.025), 0 0 120px color-mix(in srgb, var(--su-world-b), transparent 82%);
+  animation: su-float 6s ease-in-out infinite;
+}
+
+.su-stage__rings::before,
+.su-stage__rings::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: inherit;
+  border: inherit;
+  transform: rotate(24deg) scale(.82);
+}
+.su-stage__rings::after { transform: rotate(-36deg) scale(.58); }
+
+.su-stage__copy {
+  position: relative;
+  max-width: 680px;
+}
+
+.su-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.su-badges span {
+  border-radius: 999px;
+  padding: 8px 10px;
+  color: var(--su-muted);
+  background: rgba(0,0,0,.32);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.11);
+  font-weight: 850;
+  font-size: .82rem;
+}
+
+.su-sweepstakes-note {
+  margin-top: 14px;
+  border-radius: 22px;
+  padding: 14px 16px;
+  color: #fff1bf;
+  background: rgba(255, 215, 106, .09);
+  box-shadow: inset 0 0 0 1px rgba(255,215,106,.18);
+  font-weight: 850;
+}
+
+.su-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 9998;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  max-width: min(460px, calc(100% - 28px));
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: var(--su-ink);
+  background: rgba(2,2,4,.86);
+  box-shadow: 0 18px 70px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,215,106,.22);
+  backdrop-filter: blur(16px);
+  font-weight: 900;
+  text-align: center;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.su-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.su-ripple {
+  position: fixed;
+  z-index: 9997;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: var(--su-world-b);
+  box-shadow: 0 0 28px var(--su-world-b), 0 0 70px var(--su-world-a);
+  animation: su-ripple .68s ease-out forwards;
+}
+
+@keyframes su-spin { to { transform: rotate(360deg); } }
+@keyframes su-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(2deg); } }
+@keyframes su-ripple { to { transform: translate(-50%, -50%) scale(15); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .su-world-ribbon::before,
+  .su-stage__rings,
+  .su-ripple { animation: none !important; }
+  .su-action, .su-sound-toggle { transition: none !important; }
+}
+
+@media (max-width: 920px) {
+  .su-world-ribbon__inner,
+  .su-section__head,
+  .su-world-grid,
+  .su-card-grid,
+  .su-money-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .su-world-ribbon,
+  .su-section { width: min(100% - 24px, 1180px); }
+  .su-world-ribbon__actions,
+  .su-actions { flex-direction: column; }
+  .su-action,
+  .su-sound-toggle { width: 100%; }
+}
