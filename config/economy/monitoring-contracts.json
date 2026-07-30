@@ -1,0 +1,109 @@
+{
+  "version": "2026-07-30",
+  "mode": "static-contract",
+  "collections": {
+    "economy_metrics": {
+      "description": "Current aggregate economy state for dashboard reads.",
+      "example": {
+        "bonesIssued": 1200000,
+        "bonesSpent": 900000,
+        "netInflation": 300000,
+        "xpVelocity": 850000,
+        "rewardPressure": 0.72,
+        "fraudRisk": 14,
+        "spendingImbalance": 38,
+        "stressIndex": 41,
+        "status": "watch",
+        "updatedAt": "serverTimestamp"
+      }
+    },
+    "economy_reports": {
+      "description": "Daily snapshots for trend analysis and AI review.",
+      "example": {
+        "date": "2026-07-30",
+        "metrics": {
+          "bonesIssued": 1200000,
+          "bonesSpent": 900000,
+          "netInflation": 300000,
+          "xpVelocity": 850000,
+          "rewardPressure": 0.72,
+          "fraudRisk": 14,
+          "spendingImbalance": 38,
+          "stressIndex": 41
+        },
+        "recommendations": [
+          "Reduce daily login bonus by 5%",
+          "Add a mid-tier Bones sink",
+          "Increase quest difficulty slightly"
+        ],
+        "createdAt": "serverTimestamp"
+      }
+    },
+    "economy_alerts": {
+      "description": "AI or rule generated economy warnings.",
+      "example": {
+        "type": "inflation_spike",
+        "severity": "high",
+        "message": "Bones issued increased 32% in 24 hours.",
+        "metric": "bonesIssued",
+        "currentValue": 1200000,
+        "threshold": 900000,
+        "status": "open",
+        "createdAt": "serverTimestamp",
+        "resolvedAt": null
+      }
+    },
+    "economy_recommendations": {
+      "description": "Admin-reviewable balancing actions.",
+      "example": {
+        "action": "reduce_daily_bonus",
+        "value": 5,
+        "unit": "percent",
+        "reason": "Inflation is trending upward while spending is flat.",
+        "confidence": 0.78,
+        "approvalState": "pending",
+        "createdAt": "serverTimestamp",
+        "approvedBy": null,
+        "appliedAt": null
+      }
+    },
+    "economy_history": {
+      "description": "Append-only trend points for long-term forecasting.",
+      "example": {
+        "timestamp": "serverTimestamp",
+        "bonesIssued": 1200000,
+        "bonesSpent": 900000,
+        "netInflation": 300000,
+        "xpVelocity": 850000,
+        "rewardPressure": 0.72,
+        "fraudRisk": 14,
+        "stressIndex": 41
+      }
+    }
+  },
+  "stressIndexFormula": {
+    "inflationScore": 0.25,
+    "xpVelocityScore": 0.2,
+    "rewardPressureScore": 0.2,
+    "fraudRiskScore": 0.2,
+    "spendingImbalanceScore": 0.15
+  },
+  "thresholds": {
+    "inflationWatch": 300000,
+    "inflationCritical": 500000,
+    "issuanceSpikePercent24h": 30,
+    "spendingCollapsePercent24h": 25,
+    "fraudWatch": 50,
+    "fraudCritical": 75
+  },
+  "remediationPolicy": {
+    "defaultMode": "recommendation_only",
+    "requiresAdminApproval": true,
+    "blockedActions": [
+      "automatic_wallet_freeze",
+      "automatic_balance_mutation",
+      "automatic_store_price_change",
+      "automatic_reward_payout_reduction"
+    ]
+  }
+}
