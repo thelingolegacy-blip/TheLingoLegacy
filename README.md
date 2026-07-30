@@ -44,6 +44,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 - `/outer-crown-expansion/` — HQ Mode multi-state expansion for NYC, Delaware, New Jersey, simulcast beacons, promo overlays, and ignition controls
 - `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
 - `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
+- `/economy-command-center/` — static economy monitoring scaffold for Bones flow, XP velocity, reward pressure, storefront health, fraud signals, AI recommendations, and data contracts
 - `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
 
 ## Development
@@ -99,6 +100,10 @@ The production shell disables startup friction, hides unfinished controls behind
 ## That’s My Lingo production foundation
 
 See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented in `docs/lingo-casino-config-system.md` and surfaced on `/casino-config/`.
+
+## Economy monitoring scaffold
+
+The static economy monitoring specification lives in `docs/lingo-economy-monitoring-master-spec.md`, the first dashboard shell lives at `/economy-command-center/`, and the JSON data contracts live in `config/economy/monitoring-contracts.json`. This scaffold is recommendation-only until backend services, security rules, and admin authorization are implemented.
 
 ## Agent cost guardrails
 
