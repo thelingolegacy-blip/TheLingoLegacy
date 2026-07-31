@@ -15,6 +15,9 @@
     "/post-launch-ops/",
     "/vercel-hard-lock/",
     "/integrations-readiness/",
+    "/auth0-details/",
+    "/shopify-readiness/",
+    "/exa-readiness/",
     "/auth0-implementation/",
     "/lingo-id/",
     "/account/",
@@ -127,7 +130,10 @@
     "/account/",
     "/session-test/",
     "/protected-routes/",
-    "/integrations-readiness/"
+    "/integrations-readiness/",
+    "/auth0-details/",
+    "/shopify-readiness/",
+    "/exa-readiness/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
