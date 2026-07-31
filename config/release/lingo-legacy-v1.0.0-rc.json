@@ -29,6 +29,7 @@
     "/integration-links-register/",
     "/integration-ids-register/",
     "/integration-configurations/",
+    "/dashboard-integration-links/",
     "/auth0-details/",
     "/shopify-readiness/",
     "/exa-readiness/",
@@ -161,7 +162,8 @@
     "/integrations-dashboard-status/",
     "/integration-links-register/",
     "/integration-ids-register/",
-    "/integration-configurations/"
+    "/integration-configurations/",
+    "/dashboard-integration-links/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
