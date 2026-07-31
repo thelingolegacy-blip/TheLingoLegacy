@@ -15,6 +15,7 @@
     "/post-launch-ops/",
     "/vercel-hard-lock/",
     "/auth0-implementation/",
+    "/lingo-id/",
     "/release-notes/",
     "/live-test-run/",
     "/tester-feedback/",
@@ -117,7 +118,8 @@
     "/partner-brief/",
     "/press-kit-checklist/",
     "/launch-retrospective/",
-    "/auth0-implementation/"
+    "/auth0-implementation/",
+    "/lingo-id/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
