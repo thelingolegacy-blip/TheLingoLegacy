@@ -43,6 +43,9 @@
     "/creator-outreach/",
     "/launch-metrics-glossary/",
     "/content-approvals/",
+    "/partner-brief/",
+    "/press-kit-checklist/",
+    "/launch-retrospective/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -109,7 +112,10 @@
     "/feedback-summary/",
     "/creator-outreach/",
     "/launch-metrics-glossary/",
-    "/content-approvals/"
+    "/content-approvals/",
+    "/partner-brief/",
+    "/press-kit-checklist/",
+    "/launch-retrospective/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
