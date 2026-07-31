@@ -14,6 +14,7 @@
     "/launch-war-room/",
     "/post-launch-ops/",
     "/vercel-hard-lock/",
+    "/integrations-readiness/",
     "/auth0-implementation/",
     "/lingo-id/",
     "/account/",
@@ -125,7 +126,8 @@
     "/lingo-id/",
     "/account/",
     "/session-test/",
-    "/protected-routes/"
+    "/protected-routes/",
+    "/integrations-readiness/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
