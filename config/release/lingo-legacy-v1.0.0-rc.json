@@ -23,6 +23,7 @@
     "/installed-integrations/",
     "/integration-management/",
     "/marketplace-expansion/",
+    "/motherduck-readiness/",
     "/integration-decision-queue/",
     "/integration-dashboard-snapshot/",
     "/integrations-dashboard-status/",
@@ -165,7 +166,8 @@
     "/integration-ids-register/",
     "/integration-configurations/",
     "/dashboard-integration-links/",
-    "/exact-dashboard-links/"
+    "/exact-dashboard-links/",
+    "/motherduck-readiness/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
