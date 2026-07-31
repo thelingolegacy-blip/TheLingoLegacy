@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Non-secret environment variable contract for The Lingo Legacy production hard-lock. This file stores variable names and purposes only, never values.",
+  "environments": ["development", "preview", "production"],
+  "requiredProduction": [
+    {"key": "SITE_URL", "category": "site", "purpose": "Canonical production site URL used by server-side flows."},
+    {"key": "PUBLIC_SITE_URL", "category": "site", "purpose": "Explicit public production URL for checkout success/cancel URLs."},
+    {"key": "STRIPE_SECRET_KEY", "category": "stripe", "purpose": "Server-side Stripe Checkout session creation. Secret value stays in Vercel only."},
+    {"key": "STRIPE_PRICE_XP_PACK", "category": "stripe", "purpose": "Stripe Price ID for Digital XP Pack."},
+    {"key": "STRIPE_PRICE_MYSTERY_KEY_PACK", "category": "stripe", "purpose": "Stripe Price ID for Mystery Key Pack."},
+    {"key": "STRIPE_PRICE_AVALON_BADGE_SET", "category": "stripe", "purpose": "Stripe Price ID for Avalon House Badge Set."},
+    {"key": "NEXT_PUBLIC_TML_ASSET_BASE_URL", "category": "assets", "purpose": "Public base URL for TML asset paths."},
+    {"key": "NEXT_PUBLIC_TML_BRAND_PATH", "category": "assets", "purpose": "Brand asset path."},
+    {"key": "NEXT_PUBLIC_TML_SLOT_MACHINE_PATH", "category": "assets", "purpose": "Slot machine art path."},
+    {"key": "NEXT_PUBLIC_TML_REEL_SYMBOLS_PATH", "category": "assets", "purpose": "Reel symbols path."},
+    {"key": "NEXT_PUBLIC_TML_AUDIO_PATH", "category": "assets", "purpose": "Audio asset path."},
+    {"key": "NEXT_PUBLIC_FIREBASE_API_KEY", "category": "firebase", "purpose": "Public Firebase app config; not a database secret."},
+    {"key": "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "category": "firebase", "purpose": "Firebase Auth domain."},
+    {"key": "NEXT_PUBLIC_FIREBASE_PROJECT_ID", "category": "firebase", "purpose": "Firebase project ID."},
+    {"key": "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET", "category": "firebase", "purpose": "Firebase storage bucket."},
+    {"key": "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID", "category": "firebase", "purpose": "Firebase messaging sender ID."},
+    {"key": "NEXT_PUBLIC_FIREBASE_APP_ID", "category": "firebase", "purpose": "Firebase app ID."}
+  ],
+  "forbiddenInRepo": [
+    "STRIPE_SECRET_KEY value",
+    "Firebase service account JSON",
+    "private keys",
+    "API tokens",
+    "passwords",
+    "raw webhook secrets"
+  ],
+  "dashboardVerificationRequired": [
+    "Stripe live mode, products, prices, webhooks, receipts, tax, refunds, fraud protection",
+    "Firebase Auth, Firestore rules, Storage rules, backups, environment separation",
+    "Cloudflare Domain Connect recommended DNS update"
+  ]
+}
