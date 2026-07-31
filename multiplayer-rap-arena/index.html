@@ -26,5 +26,10 @@
     const rounds={quick:[["Hulldog","Steel paws, big jaws, I guard the vault lane. Lion wears gold, but I bring the chain game."],["Lion","Crown lit, mane bright, I move with pride. Bark all you want, I rule the night side."]],party:[["Player 1","Quick jab lands, crowd meter jumps."],["Player 2","Flow flips back, style bonus stacks."],["Kimba","Spy snap cuts through, fast reaction active."],["Jada","Wise nod: clean timing earns control."]],cypher:[["Kotton","Spark pop, quick hop, daily spin starts clean."],["Jada","Slow nod, wise code, keep the rules seen."],["Kimba","Spy snap, quick track, shadows move fast."],["Hulldog","Vault thump, prize jump, iron impact blast."],["Lion","Crown glow, roar flow, prestige built to last."]],ranked:[["Hulldog","I am the seismic strike, the iron bite, the noir light. You shine for glory, I guard the game through the night."],["Lion","I am the crown ascender, realm defender, gold contender. You guard the kingdom, I redefine the center."]]};
     const board=document.getElementById('battleLines');const buttons=[...document.querySelectorAll('.choice')];function render(key){board.innerHTML=rounds[key].map(([n,l])=>`<div class="verse pop-hard"><strong>${n}</strong>${l}</div>`).join('');buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.round===key)));}buttons.forEach(b=>b.addEventListener('click',()=>render(b.dataset.round)));render('quick');
   </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

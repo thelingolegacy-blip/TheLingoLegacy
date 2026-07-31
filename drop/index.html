@@ -120,5 +120,10 @@
     form.addEventListener('submit',event=>{event.preventDefault();const entry={name:nameInput.value.trim(),email:emailInput.value.trim(),tier:tier.value,note:noteInput.value.trim()};const savedOk=store.set('lingoLegacyDropClaim',JSON.stringify(entry));success.style.display='block';success.textContent=savedOk?`Saved locally. Opening email request for ${entry.tier}.`:`Opening email request for ${entry.tier}. Local saving is blocked in this browser.`;const subject=encodeURIComponent(`Lingo Legacy drop reservation: ${entry.tier}`);const body=encodeURIComponent(`Name: ${entry.name}\nEmail: ${entry.email}\nTier: ${entry.tier}\nNote: ${entry.note || 'N/A'}\n\nI want to reserve this Lingo Legacy founder micro-drop.`);location.href=`mailto:hello@thelingolegacy.com?subject=${subject}&body=${body}`});
   </script>
   <div class="sg-toast" data-sg-toast role="status" aria-live="polite"></div>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
