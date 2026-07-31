@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "releaseName": "LINGO_LEGACY_v1.0.0_RC",
+  "releaseType": "release-candidate",
+  "productionProject": "the-lingo-legacy",
+  "primaryDomain": "thelingolegacy.com",
+  "includedSurfaces": [
+    "/",
+    "/living-universe/",
+    "/studio-os/",
+    "/production-lock/",
+    "/launch-verification/",
+    "/live-readiness/",
+    "/launch-war-room/",
+    "/post-launch-ops/",
+    "/vercel-hard-lock/",
+    "/thats-my-lingo/",
+    "/app/",
+    "/loyalty-lane-apparel/",
+    "/kottons-code/",
+    "/kottons-code/book-1/",
+    "/monetization/",
+    "/contact/",
+    "/privacy/",
+    "/terms/"
+  ],
+  "verifiedGates": [
+    "Vercel production deployment ready",
+    "Custom domains assigned",
+    "TLS certificates present and auto-renewing",
+    "Static route validation passes",
+    "Web Analytics enabled and instrumented",
+    "Environment contract exists",
+    "Canon registry exists",
+    "Asset registry exists",
+    "Shared icon files exist"
+  ],
+  "pendingHardLocks": [
+    "Stripe live products, prices, webhooks, receipts, tax, refunds, fraud protection",
+    "Firebase Auth, Firestore rules, Storage rules, backups, environment separation",
+    "Cloudflare Domain Connect recommended DNS update",
+    "App store builds and listings",
+    "Real product photos, final artwork, and asset license verification",
+    "Customer support backend and help center automation"
+  ],
+  "rollbackReferences": [
+    "Vercel production deployment history",
+    "GitHub main branch history",
+    "Prior production deployment aliases"
+  ],
+  "monitoringReferences": [
+    "/launch-verification/",
+    "/production-lock/",
+    "/post-launch-ops/",
+    "/vercel-hard-lock/"
+  ],
+  "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
+}

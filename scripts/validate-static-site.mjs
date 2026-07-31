@@ -31,6 +31,15 @@ function requireJsonObject(file, requiredTopLevelKeys = []) {
     return null;
   }
 }
+
+const releaseManifest = requireJsonObject('config/release/lingo-legacy-v1.0.0-rc.json', ['schemaVersion', 'releaseName', 'includedSurfaces', 'verifiedGates', 'pendingHardLocks', 'rollbackReferences']);
+if (releaseManifest) {
+  if (releaseManifest.releaseName !== 'LINGO_LEGACY_v1.0.0_RC') errors.push('release manifest: unexpected releaseName');
+  for (const route of ['/', '/living-universe/', '/studio-os/', '/production-lock/', '/launch-verification/', '/post-launch-ops/']) {
+    if (!(releaseManifest.includedSurfaces || []).includes(route)) errors.push(`release manifest missing surface: ${route}`);
+  }
+}
+
 const canonRegistry = requireJsonObject('config/canon/canon-registry.json', ['schemaVersion', 'characters', 'brandRules']);
 if (canonRegistry) {
   for (const character of ['Kotton', 'Kimba', 'Jada']) {
