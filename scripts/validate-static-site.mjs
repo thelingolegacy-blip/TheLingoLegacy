@@ -76,6 +76,10 @@ if (fs.existsSync(envContractPath)) {
     for (const key of [
       'SITE_URL',
       'PUBLIC_SITE_URL',
+      'AUTH0_SECRET',
+      'AUTH0_DOMAIN',
+      'AUTH0_CLIENT_ID',
+      'AUTH0_CLIENT_SECRET',
       'STRIPE_SECRET_KEY',
       'STRIPE_PRICE_XP_PACK',
       'STRIPE_PRICE_MYSTERY_KEY_PACK',
