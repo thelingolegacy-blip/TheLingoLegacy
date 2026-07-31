@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Canon registry for public Lingo Legacy characters and brand rules. No private assets or secrets.",
+  "characters": {
+    "Kotton": {
+      "species": "Maltese",
+      "role": "Code Guide",
+      "world": "KottonsCode",
+      "traits": ["brave", "friendly", "curious"],
+      "approved": true
+    },
+    "Kimba": {
+      "species": "Cat",
+      "role": "Clue Helper",
+      "world": "KottonsCode",
+      "traits": ["energetic", "mysterious", "playful"],
+      "approved": true
+    },
+    "Jada": {
+      "species": "Cat",
+      "role": "Wise Teacher",
+      "world": "KottonsCode",
+      "traits": ["calm", "kind", "thoughtful"],
+      "approved": true
+    }
+  },
+  "brandRules": {
+    "LingoLegacy": {
+      "theme": "Industrial Noir",
+      "colors": ["Deep Onyx", "Metallic Slate", "Architect Gold", "Neon Lime", "Cyan"],
+      "noCashOutLanguageRequired": true
+    },
+    "ThatsMyLingo": {
+      "mode": "Entertainment-only virtual rewards",
+      "blocked": ["real-money wagering", "cash-out", "financial-value prizes"]
+    },
+    "KottonsCode": {
+      "requiresYouthPrivacyReview": true,
+      "tone": "playful, safe, adult-guided"
+    },
+    "LoyaltyLane": {
+      "commerceMode": "email-backed apparel launch until store backend is verified"
+    }
+  }
+}

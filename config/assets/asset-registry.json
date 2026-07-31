@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Master Asset Registry shell. Status values track repo visibility and production verification, not ownership of external asset libraries.",
+  "assets": [
+    {"assetId": "TLG-BRAND-LOGO-001", "name": "Lingo Legacy Logo Set", "category": "logos", "version": "1.0", "owner": "The Lingo Legacy", "usedBy": ["website", "studio-os", "living-universe"], "licenseStatus": "owned-brand", "productionStatus": "repo-present"},
+    {"assetId": "TLG-GAME-REEL-001", "name": "Lingo Slot Reel Symbols", "category": "game_assets", "version": "1.0", "owner": "The Lingo Legacy", "usedBy": ["thats-my-lingo"], "licenseStatus": "needs-final-review", "productionStatus": "pending-asset-verification"},
+    {"assetId": "TLG-KC-CHAR-001", "name": "Kotton Character Canon", "category": "characters", "version": "1.0", "owner": "KottonsCode", "usedBy": ["kottons-code"], "licenseStatus": "owned-character", "productionStatus": "canon-defined"},
+    {"assetId": "TLG-APPAREL-MOCK-001", "name": "Loyalty Lane Product Mockups", "category": "apparel", "version": "1.0", "owner": "Loyalty Lane", "usedBy": ["loyalty-lane-apparel"], "licenseStatus": "needs-final-review", "productionStatus": "pending-product-photos"}
+  ],
+  "requiredFields": ["assetId", "name", "category", "version", "owner", "usedBy", "licenseStatus", "productionStatus"]
+}
