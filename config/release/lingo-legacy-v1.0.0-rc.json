@@ -21,6 +21,7 @@
     "/provider-handoff/",
     "/integration-resource-assignment/",
     "/installed-integrations/",
+    "/integration-management/",
     "/auth0-details/",
     "/shopify-readiness/",
     "/exa-readiness/",
@@ -145,7 +146,8 @@
     "/integrations-console-checklist/",
     "/provider-handoff/",
     "/integration-resource-assignment/",
-    "/installed-integrations/"
+    "/installed-integrations/",
+    "/integration-management/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
