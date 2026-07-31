@@ -18,6 +18,39 @@ const warn=[];
 function rel(p){return path.relative(root,p)||'.'}
 
 
+
+function requireJsonObject(file, requiredTopLevelKeys = []) {
+  const p = path.join(root, file);
+  if (!fs.existsSync(p)) { errors.push(`${file}: missing registry file`); return null; }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(p, 'utf8'));
+    for (const key of requiredTopLevelKeys) if (!(key in parsed)) errors.push(`${file}: missing top-level key ${key}`);
+    return parsed;
+  } catch (e) {
+    errors.push(`${file}: invalid JSON: ${e.message}`);
+    return null;
+  }
+}
+const canonRegistry = requireJsonObject('config/canon/canon-registry.json', ['schemaVersion', 'characters', 'brandRules']);
+if (canonRegistry) {
+  for (const character of ['Kotton', 'Kimba', 'Jada']) {
+    if (!canonRegistry.characters?.[character]?.approved) errors.push(`canon registry: ${character} must be approved`);
+  }
+}
+const designTokens = requireJsonObject('config/design/design-tokens.json', ['schemaVersion', 'colors', 'typography', 'spacing', 'breakpoints']);
+if (designTokens && Number(designTokens.spacing?.minimumTouchTargetPx) < 48) errors.push('design tokens: minimum touch target must be at least 48px');
+const iconRegistry = requireJsonObject('config/icons/icon-registry.json', ['schemaVersion', 'icons']);
+if (iconRegistry) {
+  const icons = new Set((iconRegistry.icons || []).map((icon) => icon.id));
+  for (const icon of ['home', 'wallet', 'games', 'shop', 'studio', 'profile', 'rewards']) if (!icons.has(icon)) errors.push(`icon registry missing ${icon}`);
+}
+const assetRegistry = requireJsonObject('config/assets/asset-registry.json', ['schemaVersion', 'assets', 'requiredFields']);
+if (assetRegistry) {
+  for (const asset of assetRegistry.assets || []) {
+    for (const field of assetRegistry.requiredFields || []) if (!(field in asset)) errors.push(`asset registry ${asset.assetId || 'unknown'} missing ${field}`);
+  }
+}
+
 const envContractPath = path.join(root, 'config/production/env-contract.json');
 if (fs.existsSync(envContractPath)) {
   let contract;

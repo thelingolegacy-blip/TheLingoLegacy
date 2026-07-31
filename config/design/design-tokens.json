@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "colors": {
+    "deepOnyx": "#07050c",
+    "metallicSlate": "#273246",
+    "architectGold": "#f7ca4c",
+    "neonLime": "#72ff9a",
+    "cyan": "#58efff"
+  },
+  "typography": {
+    "headline": "Inter, system-ui, sans-serif",
+    "body": "Inter, system-ui, sans-serif",
+    "minimumBodySizePx": 16
+  },
+  "spacing": {
+    "basePx": 20,
+    "minimumTouchTargetPx": 48,
+    "radiusPx": 16
+  },
+  "breakpoints": {
+    "mobilePx": 320,
+    "tabletPx": 768,
+    "desktopPx": 1200,
+    "widePx": 1440
+  }
+}
