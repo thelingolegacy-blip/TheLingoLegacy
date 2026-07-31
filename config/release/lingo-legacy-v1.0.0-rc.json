@@ -15,6 +15,7 @@
     "/post-launch-ops/",
     "/vercel-hard-lock/",
     "/integrations-readiness/",
+    "/integration-action-plan/",
     "/auth0-details/",
     "/shopify-readiness/",
     "/exa-readiness/",
@@ -133,7 +134,8 @@
     "/integrations-readiness/",
     "/auth0-details/",
     "/shopify-readiness/",
-    "/exa-readiness/"
+    "/exa-readiness/",
+    "/integration-action-plan/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
