@@ -41,8 +41,14 @@ const designTokens = requireJsonObject('config/design/design-tokens.json', ['sch
 if (designTokens && Number(designTokens.spacing?.minimumTouchTargetPx) < 48) errors.push('design tokens: minimum touch target must be at least 48px');
 const iconRegistry = requireJsonObject('config/icons/icon-registry.json', ['schemaVersion', 'icons']);
 if (iconRegistry) {
-  const icons = new Set((iconRegistry.icons || []).map((icon) => icon.id));
+  const iconEntries = iconRegistry.icons || [];
+  const icons = new Set(iconEntries.map((icon) => icon.id));
   for (const icon of ['home', 'wallet', 'games', 'shop', 'studio', 'profile', 'rewards']) if (!icons.has(icon)) errors.push(`icon registry missing ${icon}`);
+  for (const icon of iconEntries) {
+    if (!icon.path) errors.push(`icon registry ${icon.id || 'unknown'} missing path`);
+    const iconPath = String(icon.path || '').replace(/^\//, '');
+    if (iconPath && !fs.existsSync(path.join(root, iconPath))) errors.push(`icon registry path missing for ${icon.id}: ${icon.path}`);
+  }
 }
 const assetRegistry = requireJsonObject('config/assets/asset-registry.json', ['schemaVersion', 'assets', 'requiredFields']);
 if (assetRegistry) {

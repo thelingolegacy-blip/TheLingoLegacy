@@ -1,13 +1,41 @@
 {
   "schemaVersion": "1.0",
   "icons": [
-    {"id": "home", "path": "/icons/home.svg", "status": "planned"},
-    {"id": "wallet", "path": "/icons/wallet.svg", "status": "planned"},
-    {"id": "games", "path": "/icons/games.svg", "status": "planned"},
-    {"id": "shop", "path": "/icons/shop.svg", "status": "planned"},
-    {"id": "studio", "path": "/icons/studio.svg", "status": "planned"},
-    {"id": "profile", "path": "/icons/profile.svg", "status": "planned"},
-    {"id": "rewards", "path": "/icons/rewards.svg", "status": "planned"}
+    {
+      "id": "home",
+      "path": "/icons/home.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "wallet",
+      "path": "/icons/wallet.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "games",
+      "path": "/icons/games.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "shop",
+      "path": "/icons/shop.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "studio",
+      "path": "/icons/studio.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "profile",
+      "path": "/icons/profile.svg",
+      "status": "repo-present"
+    },
+    {
+      "id": "rewards",
+      "path": "/icons/rewards.svg",
+      "status": "repo-present"
+    }
   ],
   "rule": "All future platforms should reference this shared icon registry instead of ad hoc icon names."
 }
