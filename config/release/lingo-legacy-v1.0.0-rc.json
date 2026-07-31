@@ -28,6 +28,9 @@
     "/beta-support/",
     "/rollback-drill/",
     "/content-calendar/",
+    "/launch-readiness-scorecard/",
+    "/tester-results-log/",
+    "/known-issues/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -79,7 +82,10 @@
     "/post-launch-recap/",
     "/beta-support/",
     "/rollback-drill/",
-    "/content-calendar/"
+    "/content-calendar/",
+    "/launch-readiness-scorecard/",
+    "/tester-results-log/",
+    "/known-issues/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
