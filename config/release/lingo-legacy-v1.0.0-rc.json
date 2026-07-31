@@ -17,6 +17,7 @@
     "/integrations-readiness/",
     "/integration-action-plan/",
     "/integration-qa-matrix/",
+    "/integrations-console-checklist/",
     "/auth0-details/",
     "/shopify-readiness/",
     "/exa-readiness/",
@@ -137,7 +138,8 @@
     "/shopify-readiness/",
     "/exa-readiness/",
     "/integration-action-plan/",
-    "/integration-qa-matrix/"
+    "/integration-qa-matrix/",
+    "/integrations-console-checklist/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
