@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lingo Legacy Tester Feedback & Bug Triage</title>
+  <meta name="description" content="Tester feedback and bug triage command sheet for the Lingo Legacy live beta, including severity levels, repro steps, ownership, cadence, and no-billing launch guardrails." />
+  <link rel="stylesheet" href="/assets/studio-grade.css" />
+  <style>
+    body{margin:0;background:#060706;color:#f9f3df;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}main{max-width:1120px;margin:0 auto;padding:48px 20px 72px}.hero{padding:34px;border-radius:28px;border:1px solid rgba(212,175,55,.34);background:linear-gradient(135deg,rgba(17,19,22,.96),rgba(5,7,6,.98));box-shadow:0 24px 80px rgba(0,0,0,.34)}.eyebrow{color:#d4af37;text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:900}h1{font-size:clamp(2.2rem,6vw,4.8rem);line-height:.96;margin:.35rem 0 1rem}h2{color:#d4af37;margin-top:0}.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:24px}.card{border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:22px;background:rgba(255,255,255,.045)}.sev{display:inline-flex;min-height:34px;align-items:center;border-radius:999px;padding:0 12px;font-weight:900;background:rgba(85,255,156,.12);color:#9cffc1}.p0{background:rgba(255,92,92,.14);color:#ffb8b8}.p1{background:rgba(255,196,87,.13);color:#ffd889}.p2{background:rgba(106,196,255,.12);color:#bde8ff}ul,ol{padding-left:1.15rem;margin-bottom:0}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.button{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 18px;border-radius:999px;text-decoration:none;font-weight:900;color:#080807;background:#d4af37}.button.secondary{background:transparent;color:#f9f3df;border:1px solid rgba(255,255,255,.24)}footer{border-top:1px solid rgba(255,255,255,.12);margin-top:44px;padding-top:18px;color:#b8b09a;font-size:.92rem}
+  </style>
+</head>
+<body><main>
+<section class="hero"><div class="eyebrow">Live beta command sheet</div><h1>Tester Feedback & Bug Triage</h1><p>Use this page during live beta to collect clean reports, rank launch blockers, and keep the August launch wave focused. Billing remains skipped: do not treat Stripe/payment findings as required for this non-billing test run.</p><div class="actions"><a class="button" href="/live-test-run/">Live Test Run</a><a class="button secondary" href="/launch-war-room/">Launch War Room</a><a class="button secondary" href="/release-notes/">Release Notes</a></div></section>
+<section class="grid" aria-label="Tester feedback workflow">
+  <article class="card"><span class="sev p0">P0 blocker</span><h2>Stop the launch wave</h2><ul><li>Homepage or core routes unavailable</li><li>That’s My Lingo cannot be opened</li><li>Privacy/Terms/Contact inaccessible</li><li>Security or data exposure concern</li><li>Repeated mobile crash/freeze reports</li></ul></article>
+  <article class="card"><span class="sev p1">P1 fix today</span><h2>Fix before expanding testers</h2><ul><li>Broken navigation or CTA</li><li>Missing critical image/icon</li><li>Unreadable mobile layout</li><li>Game controls unclear or blocked</li><li>Analytics/contact path not visible</li></ul></article>
+  <article class="card"><span class="sev p2">P2 polish</span><h2>Track for next pass</h2><ul><li>Copy improvements</li><li>Animation polish</li><li>Non-critical spacing issues</li><li>Extra media/gallery requests</li><li>Future billing or account enhancements</li></ul></article>
+  <article class="card"><span class="sev">Report format</span><h2>Required repro details</h2><ol><li>Page or route</li><li>Device and browser</li><li>What the tester clicked</li><li>Expected result</li><li>Actual result</li><li>Screenshot/video if available</li></ol></article>
+  <article class="card"><span class="sev">Daily cadence</span><h2>Review rhythm</h2><ul><li>Morning: review new reports</li><li>Midday: patch P0/P1 issues</li><li>Evening: verify fixes on production</li><li>Daily note: update Launch War Room</li></ul></article>
+  <article class="card"><span class="sev p1">No-billing guardrail</span><h2>Commerce scope</h2><ul><li>Storefront browsing is in scope</li><li>Reservation/interest CTAs are in scope</li><li>Payment, refunds, tax, receipts, subscriptions stay out of this test wave</li></ul></article>
+</section>
+<footer><a href="/live-test-run/">Live Test Run</a> · <a href="/launch-verification/">Launch Verification</a> · <a href="/post-launch-ops/">Post-Launch Ops</a> · <a href="/vercel-hard-lock/">Vercel Hard Lock</a></footer>
+</main></body></html>

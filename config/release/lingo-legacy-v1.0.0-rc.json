@@ -16,6 +16,7 @@
     "/vercel-hard-lock/",
     "/release-notes/",
     "/live-test-run/",
+    "/tester-feedback/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -55,7 +56,8 @@
     "/production-lock/",
     "/post-launch-ops/",
     "/vercel-hard-lock/",
-    "/live-test-run/"
+    "/live-test-run/",
+    "/tester-feedback/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
