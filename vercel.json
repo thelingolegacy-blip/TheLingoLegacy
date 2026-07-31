@@ -2,12 +2,7 @@
   "redirects": [
     {
       "source": "/apparel/",
-      "destination": "/loyalty-lane-cycles/",
-      "permanent": true
-    },
-    {
-      "source": "/loyalty-lane-apparel/",
-      "destination": "/loyalty-lane-cycles/",
+      "destination": "/loyalty-lane-apparel/",
       "permanent": true
     }
   ],
