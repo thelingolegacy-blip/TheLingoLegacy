@@ -111,5 +111,10 @@
     document.getElementById('perfCheck').addEventListener('click', () => { diagState.textContent = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'Reduced motion active' : 'Motion quality active'; });
     renderStep(0);
   </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

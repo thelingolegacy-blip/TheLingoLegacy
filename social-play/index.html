@@ -84,5 +84,10 @@
     function start(){pickOrder();index=0;score=0;streak=0;maxStreak=0;ids('score').textContent='0';ids('streak').textContent='0';ids('finalScore').textContent='0';ids('finalStreak').textContent='0';render();setShare();}
     ids('best').textContent=best();ids('start').addEventListener('click',start);ids('copyChallenge').addEventListener('click',async()=>{setShare();try{await navigator.clipboard.writeText(ids('shareText').value);ids('copyChallenge').textContent='Copied';setTimeout(()=>ids('copyChallenge').textContent='Copy Challenge Link',1400);}catch{ids('shareText').select();}});ids('nativeShare').addEventListener('click',async()=>{setShare();const text=ids('shareText').value;if(navigator.share){try{await navigator.share({title:'That’s My Lingo Social',text,url:`${location.origin}${location.pathname}?seed=${encodeURIComponent(todaySeed)}`});}catch{}}else{try{await navigator.clipboard.writeText(text);}catch{}}});setShare();
   </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

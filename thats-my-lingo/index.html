@@ -224,5 +224,10 @@
     el('heroSpin').addEventListener('click',spinReels);spin.addEventListener('click',spinReels);el('soundToggle').addEventListener('click',e=>{game.sound=!game.sound;e.currentTarget.textContent='Sound: '+(game.sound?'On':'Off');tone(520,.12,'triangle');});el('resetDemo').addEventListener('click',()=>{try{localStorage.removeItem('tml-engine-demo');}catch{}Object.assign(game,{bank:5000,bet:250,lastWin:0,spins:0,xp:0,tokens:0,streak:1,lastDaily:'',totalWon:0,biggestWin:0,scatterHits:0,multiplierHits:0,history:[]});renderGrid([['A','K','Q','J','CHIP'],['WILD','DICE','Q','MULT','SCATTER'],['A','10','K','CHIP','Q']]);renderHud();showToast('Demo reset.');});el('dailyReward').addEventListener('click',()=>{const today=new Date().toDateString();if(game.lastDaily===today){showToast('Daily reward already claimed today.');return;}game.bank+=500;game.tokens+=10;game.xp+=150;game.streak+=1;game.lastDaily=today;save();renderHud();coinShower(14);tone(700,.18,'triangle');showToast('Daily reward: 500 demo coins, 10 tokens, 150 XP.');});
     renderPaytable();renderGrid([['A','K','Q','J','CHIP'],['WILD','DICE','Q','MULT','SCATTER'],['A','10','K','CHIP','Q']]);renderHud();
   </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

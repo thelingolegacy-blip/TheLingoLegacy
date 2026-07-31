@@ -26,5 +26,10 @@
   <script>
     const el=document.getElementById('timer');function tick(){const now=new Date();const m=now.getMinutes();const s=now.getSeconds();const next=m<30?30:60;const rem=(next-m-1)*60+(60-s);const mm=String(Math.floor(rem/60)).padStart(2,'0');const ss=String(rem%60).padStart(2,'0');el.textContent=`${mm}:${ss}`;}tick();setInterval(tick,1000);
   </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
