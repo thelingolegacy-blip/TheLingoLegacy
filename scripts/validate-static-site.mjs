@@ -35,7 +35,7 @@ function requireJsonObject(file, requiredTopLevelKeys = []) {
 const releaseManifest = requireJsonObject('config/release/lingo-legacy-v1.0.0-rc.json', ['schemaVersion', 'releaseName', 'includedSurfaces', 'verifiedGates', 'pendingHardLocks', 'rollbackReferences']);
 if (releaseManifest) {
   if (releaseManifest.releaseName !== 'LINGO_LEGACY_v1.0.0_RC') errors.push('release manifest: unexpected releaseName');
-  for (const route of ['/', '/living-universe/', '/studio-os/', '/production-lock/', '/launch-verification/', '/post-launch-ops/', '/release-notes/', '/live-test-run/', '/tester-feedback/', '/tester-invite/', '/social-launch-rollout/', '/launch-media-kit/', '/email-announcement/', '/day-one-monitoring/', '/launch-countdown/', '/live-beta-faq/', '/post-launch-recap/', '/beta-support/', '/rollback-drill/', '/content-calendar/']) {
+  for (const route of ['/', '/living-universe/', '/studio-os/', '/production-lock/', '/launch-verification/', '/post-launch-ops/', '/release-notes/', '/live-test-run/', '/tester-feedback/', '/tester-invite/', '/social-launch-rollout/', '/launch-media-kit/', '/email-announcement/', '/day-one-monitoring/', '/launch-countdown/', '/live-beta-faq/', '/post-launch-recap/', '/beta-support/', '/rollback-drill/', '/content-calendar/', '/launch-readiness-scorecard/', '/tester-results-log/', '/known-issues/']) {
     if (!(releaseManifest.includedSurfaces || []).includes(route)) errors.push(`release manifest missing surface: ${route}`);
   }
 }
