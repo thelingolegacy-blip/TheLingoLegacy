@@ -19,6 +19,9 @@
     "/tester-feedback/",
     "/tester-invite/",
     "/social-launch-rollout/",
+    "/launch-media-kit/",
+    "/email-announcement/",
+    "/day-one-monitoring/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -61,7 +64,10 @@
     "/live-test-run/",
     "/tester-feedback/",
     "/tester-invite/",
-    "/social-launch-rollout/"
+    "/social-launch-rollout/",
+    "/launch-media-kit/",
+    "/email-announcement/",
+    "/day-one-monitoring/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
