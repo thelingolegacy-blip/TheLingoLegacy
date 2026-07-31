@@ -18,6 +18,7 @@
     "/live-test-run/",
     "/tester-feedback/",
     "/tester-invite/",
+    "/social-launch-rollout/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -59,7 +60,8 @@
     "/vercel-hard-lock/",
     "/live-test-run/",
     "/tester-feedback/",
-    "/tester-invite/"
+    "/tester-invite/",
+    "/social-launch-rollout/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
