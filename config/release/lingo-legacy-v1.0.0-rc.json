@@ -34,6 +34,9 @@
     "/launch-decision-log/",
     "/daily-standup/",
     "/stakeholder-update/",
+    "/launch-risk-register/",
+    "/asset-request-queue/",
+    "/next-sprint-plan/",
     "/thats-my-lingo/",
     "/app/",
     "/loyalty-lane-apparel/",
@@ -91,7 +94,10 @@
     "/known-issues/",
     "/launch-decision-log/",
     "/daily-standup/",
-    "/stakeholder-update/"
+    "/stakeholder-update/",
+    "/launch-risk-register/",
+    "/asset-request-queue/",
+    "/next-sprint-plan/"
   ],
   "secretPolicy": "No secrets, tokens, passwords, service accounts, webhook secrets, or private keys are stored in this manifest."
 }
