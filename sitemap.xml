@@ -90,4 +90,7 @@
   <url><loc>https://thelingolegacy.com/launch-retrospective/</loc></url>
   <url><loc>https://thelingolegacy.com/auth0-implementation/</loc></url>
   <url><loc>https://thelingolegacy.com/lingo-id/</loc></url>
+  <url><loc>https://thelingolegacy.com/account/</loc></url>
+  <url><loc>https://thelingolegacy.com/session-test/</loc></url>
+  <url><loc>https://thelingolegacy.com/protected-routes/</loc></url>
 </urlset>
