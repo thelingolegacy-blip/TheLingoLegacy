@@ -17,6 +17,30 @@ const errors=[];
 const warn=[];
 function rel(p){return path.relative(root,p)||'.'}
 
+
+const envContractPath = path.join(root, 'config/production/env-contract.json');
+if (fs.existsSync(envContractPath)) {
+  let contract;
+  try { contract = JSON.parse(fs.readFileSync(envContractPath, 'utf8')); }
+  catch (e) { errors.push(`config/production/env-contract.json: invalid JSON: ${e.message}`); }
+  if (contract) {
+    const required = new Set((contract.requiredProduction || []).map((item) => item.key));
+    for (const key of [
+      'SITE_URL',
+      'PUBLIC_SITE_URL',
+      'STRIPE_SECRET_KEY',
+      'STRIPE_PRICE_XP_PACK',
+      'STRIPE_PRICE_MYSTERY_KEY_PACK',
+      'STRIPE_PRICE_AVALON_BADGE_SET',
+      'NEXT_PUBLIC_FIREBASE_API_KEY',
+      'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
+      'NEXT_PUBLIC_FIREBASE_APP_ID',
+    ]) {
+      if (!required.has(key)) errors.push(`env contract missing required key: ${key}`);
+    }
+  }
+}
+
 for (const file of ['manifest.webmanifest','vercel.json']) {
   const p = path.join(root,file);
   if (fs.existsSync(p)) {
