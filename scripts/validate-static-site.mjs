@@ -80,6 +80,7 @@ if (fs.existsSync(envContractPath)) {
       'AUTH0_DOMAIN',
       'AUTH0_CLIENT_ID',
       'AUTH0_CLIENT_SECRET',
+      'MOTHERDUCK_TOKEN',
       'STRIPE_SECRET_KEY',
       'STRIPE_PRICE_XP_PACK',
       'STRIPE_PRICE_MYSTERY_KEY_PACK',

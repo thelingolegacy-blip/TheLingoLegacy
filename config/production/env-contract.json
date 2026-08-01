@@ -38,6 +38,11 @@
       "purpose": "Auth0 application client secret. Secret value stays in Vercel only."
     },
     {
+      "key": "MOTHERDUCK_TOKEN",
+      "category": "motherduck",
+      "purpose": "MotherDuck access token injected by the connected Vercel Marketplace resource. Secret value stays in Vercel/MotherDuck only."
+    },
+    {
       "key": "STRIPE_SECRET_KEY",
       "category": "stripe",
       "purpose": "Server-side Stripe Checkout session creation. Secret value stays in Vercel only."
@@ -121,15 +126,20 @@
     "passwords",
     "raw webhook secrets",
     "Auth0 client secret value",
-    "Auth0 session secret value"
+    "Auth0 session secret value",
+    "MotherDuck token value",
+    "MotherDuck connection string value"
   ],
   "dashboardVerificationRequired": [
     "Stripe live mode, products, prices, webhooks, receipts, tax, refunds, fraud protection",
     "Firebase Auth, Firestore rules, Storage rules, backups, environment separation",
-    "Cloudflare Domain Connect recommended DNS update"
+    "Cloudflare Domain Connect recommended DNS update",
+    "MotherDuck query smoke test and analytics retention policy"
   ],
   "verifiedProduction": [
     "Auth0 resource client-celeste-ridge connected to the-lingo-legacy",
-    "Auth0 environment variable names present for development, preview, and production"
+    "Auth0 environment variable names present for development, preview, and production",
+    "MotherDuck resource motherduck-cerise-pillar connected to the-lingo-legacy",
+    "MOTHERDUCK_TOKEN environment variable name present for preview and production"
   ]
 }
