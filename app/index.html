@@ -104,6 +104,7 @@
   <script defer src="/assets/studio-grade.js"></script>
   <link rel="stylesheet" href="/assets/premium-studio-refresh.css" />
   <script defer src="/assets/premium-studio-refresh.js"></script>
+  <link rel="stylesheet" href="/assets/studio-production-landing.css" />
 </head>
 <body class="studio-grade-mode">
   <header><nav class="wrap" aria-label="App navigation"><a class="brand" href="/"><span class="mark">LL</span><span>That’s My Lingo</span></a><div class="links"><a href="/">Home</a><a href="/landing/">Landing</a><a href="/assets/">Assets</a></div></nav></header>
@@ -135,6 +136,21 @@
         <div class="feedback" id="feedback" role="status">Press Start Game to begin.</div>
       </section>
     </section>
+
+    <section class="studio-production-landing" id="app-production-runway" aria-label="App landing production runway">
+      <div class="spl-header">
+        <div><span class="spl-kicker">App studio grade landing</span><h2>Playable demo with <span>production paths.</span></h2></div>
+        <p>The app page now frames the browser game as a polished landing surface: start the challenge, join the list, continue to the casino floor, or review the production and trust systems.</p>
+      </div>
+      <div class="spl-grid">
+        <article class="spl-card"><b>Immediate play</b><p>Five rounds, streaks, sound controls, and local best score remain front and center.</p></article>
+        <article class="spl-card"><b>Retention route</b><p>Launch list, universe, social play, and rewards language move players into the broader loop.</p></article>
+        <article class="spl-card"><b>Production route</b><p>Studio production and asset systems are reachable from the app without interrupting gameplay.</p></article>
+        <article class="spl-card"><b>Trust route</b><p>Virtual-only and privacy paths keep the demo ready for review and public sharing.</p></article>
+      </div>
+      <div class="spl-actions"><button class="spl-primary" type="button" id="productionStartGame">Start Game</button><a href="/landing/">Join Launch List</a><a href="/thats-my-lingo/">Open Casino Floor</a><a href="/trust-compliance/">Open Trust Core</a></div>
+    </section>
+
     <div class="feature-shell" aria-label="Live app feature overlay">
       <div class="feature-shell__head">
         <div><span class="badge">Live App Features</span><h2 style="margin-top:12px">Glass shell overlay</h2></div>
@@ -232,5 +248,12 @@
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+
+  <script>
+    document.getElementById('productionStartGame')?.addEventListener('click', () => {
+      document.getElementById('startGame')?.click();
+      document.getElementById('daily')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  </script>
 </body>
 </html>
