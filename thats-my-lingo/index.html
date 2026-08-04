@@ -49,6 +49,7 @@
   </style>
   <link rel="stylesheet" href="/assets/premium-studio-refresh.css" />
   <script defer src="/assets/premium-studio-refresh.js"></script>
+  <link rel="stylesheet" href="/assets/studio-production-landing.css" />
 </head>
 <body class="vegas-studio-mode studio-grade-mode">
   <header class="top"><nav class="wrap" aria-label="Primary navigation"><a class="brand" href="/"><img src="/assets/thats-my-lingo-mark.svg" alt="That’s My Lingo"><span>That’s My Lingo</span></a><div class="links"><a href="#play">Play</a><a href="#lobby">Lobby</a><a href="#platform">Platform</a><a href="#operations">Ops</a><a href="#roadmap">Roadmap</a><a href="#engine">Engine</a><a href="#paytable">Paytable</a><a href="/studio-assets/">Assets</a></div></nav></header>
@@ -58,6 +59,21 @@
       <div class="copy"><span class="eyebrow">Vegas Studio Mode v4.0</span><h1>Spin the <span>Lingo</span></h1><p class="lead">A Midnight Vegas Studio floor with carbon-black depth, gold spotlight bloom, cyan edge lighting, neon reflections, glass HUD panels, and animated studio atmosphere around a virtual-currency entertainment platform. No cash betting, no wagering, no cash-out.</p><div class="actions"><button class="button primary" id="heroSpin" type="button">Spin Now</button><button class="button" id="soundToggle" type="button">Sound: Off</button><button class="button" id="resetDemo" type="button">Reset Demo</button><a class="button primary" href="/drop/#stripe-checkout">Open Sweepstakes Visual Pass</a></div></div>
       <section class="machine" aria-label="That’s My Lingo social casino demo"><div class="marquee"><span class="lamp"></span><span id="marquee">Vegas studio floor online</span><span class="lamp"></span></div><div class="jackpot-board" aria-label="Vegas Studio jackpot display"><div class="jackpot-column"><div class="jackpot-meter"><small>Grand</small><strong>$25,000.00</strong></div><div class="jackpot-meter"><small>Major</small><strong>$2,500.00</strong></div></div><div class="lingo-sign"><b>That’s My</b><strong>Lingo</strong><span>Vegas Studio</span></div><div class="jackpot-column"><div class="jackpot-meter blue"><small>Minor</small><strong>$500.00</strong></div><div class="jackpot-meter green"><small>Mini</small><strong>$100.00</strong></div></div></div><div class="reel-window"><div class="reels" id="reels" aria-live="polite"></div></div><div class="table-dressing" aria-hidden="true"><div><span class="prop-chip"></span><span class="prop-chip"></span></div><div><span class="prop-card">A♠</span><span class="prop-card">A♥</span><span class="prop-card">A♦</span><span class="prop-dice"></span></div></div><div class="betbar" id="betControls" aria-label="Bet selector"></div><div class="console"><div class="meter">Bet<strong id="bet">250</strong></div><div class="meter">Bank<strong id="bank">5,000</strong></div><div class="meter">Win<strong id="win">0</strong></div><div class="meter">XP<strong id="xp">0</strong></div><div class="meter">Level<strong id="level">1</strong></div><button class="spinbtn" id="spin" type="button">SPIN</button></div><div class="status" id="status">Vegas Studio Mode active: dynamic lighting, glass UI, metallic trim, neon reflections, and 3D depth layers.</div><p class="compliance">Entertainment only. Demo Coins, Loyalty Bucks, Lingo Tokens, XP, badges, and rewards have no cash value and cannot be redeemed for money or prizes.</p></section>
     </section>
+
+    <section class="studio-production-landing" id="game-floor-production-runway" aria-label="Game floor production runway">
+      <div class="spl-header">
+        <div><span class="spl-kicker">Game floor production pass</span><h2>Casino-style demo with <span>review-ready guardrails.</span></h2></div>
+        <p>The game floor now has a dedicated production rail that separates play, monetization visuals, studio review, and safety verification while preserving entertainment-only language.</p>
+      </div>
+      <div class="spl-grid">
+        <article class="spl-card"><b>Play lane</b><p>Spin, wallet, missions, rewards, and roadmap panels are organized as a live-service entertainment demo.</p></article>
+        <article class="spl-card"><b>Monetization lane</b><p>Founder passes and cosmetic drops are positioned without cash-out, wagering, or prize-redemption language.</p></article>
+        <article class="spl-card"><b>Studio lane</b><p>Visual, sound, asset, and QA surfaces remain connected for production iteration.</p></article>
+        <article class="spl-card"><b>Compliance lane</b><p>Virtual currency disclosures and trust links are visible before deeper feature panels.</p></article>
+      </div>
+      <div class="spl-actions"><button class="spl-primary" type="button" id="productionSpin">Spin Now</button><a href="/drop/#stripe-checkout">Founder Checkout</a><a href="/studio-production/">Open Studio Production</a><a href="/trust-compliance/">Verify Trust Core</a></div>
+    </section>
+
 
     <section class="wrap lobby" id="lobby" aria-label="That’s My Lingo live-service lobby">
       <article class="lobby-panel hero-banner"><span class="eyebrow">Season 1 · Bridgeton to Philly</span><h2>Continue the Legacy Road.</h2><p>Daily missions, wallet balances, world progress, cosmetic rewards, and collection goals are staged around the reel engine without adding any cash-out or prize redemption path.</p><div class="actions"><a class="button primary" href="#play">Continue Playing</a><a class="button" href="#roadmap">Open Roadmap</a></div></article>
@@ -252,5 +268,12 @@
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+
+  <script>
+    document.getElementById('productionSpin')?.addEventListener('click', () => {
+      document.getElementById('heroSpin')?.click();
+      document.getElementById('play')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  </script>
 </body>
 </html>
