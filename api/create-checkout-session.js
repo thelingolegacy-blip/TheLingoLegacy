@@ -29,10 +29,27 @@ async function parseBody(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
+const FALLBACK_ORIGIN = 'https://thelingolegacy.com';
+
+function normalizeOrigin(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    if (!['https:', 'http:'].includes(url.protocol)) return '';
+    return url.origin;
+  } catch {
+    return '';
+  }
+}
+
 function originFromRequest(req) {
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
-  return `${protocol}://${host}`;
+  const configuredOrigin = normalizeOrigin(process.env.PUBLIC_SITE_URL);
+  if (configuredOrigin) return configuredOrigin;
+
+  const host = String(req.headers.host || '').split(',')[0].trim();
+  if (!host || /[\\/\s]/.test(host)) return FALLBACK_ORIGIN;
+
+  const protocol = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim() === 'http' ? 'http' : 'https';
+  return normalizeOrigin(`${protocol}://${host}`) || FALLBACK_ORIGIN;
 }
 
 function safeEmail(value = '') {
@@ -64,7 +81,7 @@ module.exports = async function handler(req, res) {
       return json(res, 503, {ok: false, error: `${tier.label} is not configured for checkout yet.`});
     }
 
-    const origin = process.env.PUBLIC_SITE_URL || originFromRequest(req);
+    const origin = originFromRequest(req);
     const params = new URLSearchParams({
       mode: 'payment',
       success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`,

@@ -167,6 +167,41 @@
           <article class="premium-money-card"><span class="tag">Square</span><h3>Square-ready checkout lane</h3><p>Reserve a second payment lane for Square invoices, subscriptions, point-of-sale offers, or backup checkout once account details are supplied.</p><button class="button" type="button" data-premium-square>Stage Square Lane</button></article>
           <article class="premium-money-card"><span class="tag">Guardrails</span><h3>Monetize without overrun</h3><p>Start with organic and manual posts, then enable paid boosts only after Vercel spend caps, ad budgets, refund policy, and support flow are ready.</p><a class="button" href="/trust-compliance/">Open Guardrails</a></article>
         </div>
+      </div>
+      <div class="premium-reward-hub" aria-label="First 1000 reward build-up framework">
+        <div class="section-head">
+          <h2>First 1000 reward build-up</h2>
+          <p>High-premium static framework for a time-limited first-1000 campaign with virtual rewards, referral boosts, bonus play, free spins, wilds, and jackpot-style entertainment milestones.</p>
+        </div>
+        <div class="premium-reward-meter" aria-label="First 1000 progress preview"><span style="width: 38%"></span></div>
+        <div class="premium-reward-grid">
+          <article class="premium-reward-card"><span class="tag">First 1000</span><h3>Founding player rewards</h3><p>Reserve cosmetic badges, XP boosts, virtual coins, bonus play, and founder profile frames for the first 1000 signups.</p><a class="button primary" href="/landing/">Join Launch List</a></article>
+          <article class="premium-reward-card"><span class="tag">Referrals</span><h3>Share and stack bonuses</h3><p>Referral links can unlock virtual bonus play, loyalty points, cosmetic wild cards, and social leaderboard status after backend approval.</p><button class="button" type="button" data-premium-referral>Generate Referral Copy</button></article>
+          <article class="premium-reward-card"><span class="tag">Timed Quest</span><h3>Complete before the timer</h3><p>Use a visible countdown for “join, share, follow, play, invite” tasks. This static layer does not verify social accounts yet.</p><button class="button" type="button" data-premium-timer>Preview Time Limit</button></article>
+        </div>
+        <div class="premium-jackpot-grid">
+          <article><b>Mini</b><span>Free spins + virtual badge</span></article>
+          <article><b>Minor</b><span>Bonus play + wild token</span></article>
+          <article><b>Major</b><span>Referral multiplier + VIP frame</span></article>
+          <article><b>Mega</b><span>Founder pack access lane</span></article>
+          <article><b>Grand</b><span>Top-tier virtual reward reveal</span></article>
+        </div>
+        <p class="premium-legal-note">Entertainment-only promotional framework. Rewards, spins, wilds, jackpot labels, XP, badges, bonus play, and virtual coins have no cash value and cannot be redeemed for money.</p>
+      </div>
+      <div class="premium-beacon-hub" aria-label="Local beacon alert text and maps framework">
+        <div class="section-head">
+          <h2>Beacon alert texts and local maps</h2>
+          <p>Permission-based local promotion copy for Philadelphia and Cumberland County near laundry hubs, bookstores, and streetwear stores. No automatic SMS, location collection, or geofencing is activated in this static build.</p>
+        </div>
+        <div class="premium-beacon-grid">
+          <article class="premium-beacon-card"><span class="tag">Laundry hub</span><h3>Near a wash spot</h3><p data-beacon-copy>Beacon: You’re near a laundry hub. Take a quick Lingo break, claim virtual bonus play, and send a referral before the timer ends.</p><a class="button primary" href="https://www.google.com/maps/search/laundry+near+Philadelphia+PA" target="_blank" rel="noopener">Philly Map</a><a class="button" href="https://www.google.com/maps/search/laundry+near+Cumberland+County+NJ" target="_blank" rel="noopener">Cumberland Map</a></article>
+          <article class="premium-beacon-card"><span class="tag">Bookstore</span><h3>Near a book stop</h3><p data-beacon-copy>Beacon: You’re near a bookstore. Open the Lingo Legacy story world, join the first-1000 rewards list, and share your referral.</p><a class="button primary" href="https://www.google.com/maps/search/bookstore+near+Philadelphia+PA" target="_blank" rel="noopener">Philly Map</a><a class="button" href="https://www.google.com/maps/search/bookstore+near+Cumberland+County+NJ" target="_blank" rel="noopener">Cumberland Map</a></article>
+          <article class="premium-beacon-card"><span class="tag">Streetwear</span><h3>Near a style shop</h3><p data-beacon-copy>Beacon: You’re near a streetwear store. Tap into Loyalty Lane, preview drops, and unlock virtual wild-card energy.</p><a class="button primary" href="https://www.google.com/maps/search/streetwear+store+near+Philadelphia+PA" target="_blank" rel="noopener">Philly Map</a><a class="button" href="https://www.google.com/maps/search/streetwear+store+near+Cumberland+County+NJ" target="_blank" rel="noopener">Cumberland Map</a></article>
+        </div>
+        <div class="premium-ai-static-grid">
+          <article><span class="tag">AI copy</span><h3>Static prompt bank</h3><p>Generate social captions, SMS drafts, poster text, 30-second ad reads, and referral copy from approved brand-safe templates.</p><button class="button" type="button" data-premium-ai-copy>Generate AI Prompt</button></article>
+          <article><span class="tag">Assets</span><h3>Studio assets + sound</h3><p>Use premium lights, burst animations, opt-in audio, store badges, map CTAs, and static banner cards across every entity.</p><button class="button" type="button" data-premium-burst>Trigger Studio Asset Burst</button></article>
+        </div>
       </div>`;
     if (footer) {
       footer.parentNode.insertBefore(dock, footer);
@@ -177,6 +212,9 @@
     dock.querySelectorAll('[data-premium-sound]').forEach((button) => button.addEventListener('click', () => { playTone('reward'); toast('Premium sound cue active'); }));
     dock.querySelector('[data-premium-survey]')?.addEventListener('click', () => toast('Survey prompt: Which platform should launch first: mobile, TV, web, or games?'));
     dock.querySelector('[data-premium-square]')?.addEventListener('click', () => toast('Square lane staged. Add approved Square checkout details before taking payments.'));
+    dock.querySelector('[data-premium-referral]')?.addEventListener('click', () => toast('Referral copy: Invite 3 friends, unlock virtual bonus play, and climb the founder board.'));
+    dock.querySelector('[data-premium-timer]')?.addEventListener('click', () => toast('Timed quest preview: complete join, share, follow, and play steps before the countdown ends.'));
+    dock.querySelector('[data-premium-ai-copy]')?.addEventListener('click', () => toast('AI prompt: Write a 30-second Philly/Cumberland Lingo Legacy promo with rewards, referrals, and no-cash-value copy.'));
   }
 
   function init() {
