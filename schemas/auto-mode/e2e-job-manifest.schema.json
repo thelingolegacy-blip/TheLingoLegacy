@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/auto-mode/e2e-job-manifest.schema.json",
+  "title": "Lingo Legacy E2E Job Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "suite_id", "environment", "version", "command", "safety"],
+  "properties": {
+    "job_id": {"type": "string", "minLength": 1},
+    "suite_id": {"type": "string", "minLength": 1},
+    "environment": {"enum": ["dev", "staging", "prod"]},
+    "version": {"type": "string", "minLength": 1},
+    "command": {"type": "string", "minLength": 1},
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["safety_gateway", "rule_engine", "audit"],
+      "properties": {
+        "safety_gateway": {"const": true},
+        "rule_engine": {"const": true},
+        "audit": {"const": true}
+      }
+    }
+  }
+}
