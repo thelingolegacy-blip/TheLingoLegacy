@@ -1,0 +1,46 @@
+service:
+  id: travel
+  name: "Lingo Travel OS"
+  version: 2.0.0
+  environments: [dev, staging, production]
+
+runtime:
+  mode: observe
+  event_namespace: travel.*
+  audit_required: true
+  platform_policy_required: true
+
+search:
+  parallel_supplier_queries: true
+  discard_expired_quotes: true
+  require_bookable_flag: true
+
+booking:
+  require_supplier_revalidation: true
+  require_payment_reference: true
+  require_supplier_confirmation: true
+  require_post_booking_verification: true
+
+production:
+  autonomous_booking: false
+  autonomous_refund: false
+
+prohibited:
+  - fabricated_inventory
+  - fabricated_price
+  - fabricated_confirmation
+  - raw_card_storage
+  - autonomous_financial_payout
+
+workers:
+  - travel-observer
+  - search-worker
+  - booking-worker
+  - supplier-worker
+  - price-worker
+  - support-worker
+  - passport-worker
+  - rewards-worker
+  - security-worker
+  - qa-worker
+  - analytics-worker
