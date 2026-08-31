@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "criticalGates": [
+    "source",
+    "build",
+    "tests",
+    "security",
+    "secrets",
+    "vercel-eradication",
+    "routes",
+    "interactions",
+    "apis",
+    "identity",
+    "games",
+    "commerce",
+    "assets",
+    "audio",
+    "motion",
+    "accessibility",
+    "performance",
+    "cloudflare",
+    "live-probes",
+    "rollback"
+  ],
+  "allowedWarningGates": [],
+  "statuses": ["PASS", "WARN", "FAIL", "NOT_RUN"],
+  "promotionRule": "ALL_CRITICAL_GATES_PASS",
+  "notRunCriticalIsBlocked": true
+}
