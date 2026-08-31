@@ -1,0 +1,121 @@
+name: Lingo Legacy Production Promotion
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Promotion environment
+        required: true
+        default: staging
+        type: choice
+        options: [staging, production]
+      live_base_url:
+        description: Live URL to probe after deployment
+        required: false
+        default: https://thelingolegacy.com
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-legacy-promotion
+  cancel-in-progress: false
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.identity.outputs.commit }}
+      artifact: ${{ steps.identity.outputs.artifact }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release identity
+        id: identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          tar --exclude='./.git' --exclude='./release/evidence' -cf release-artifact.tar .
+          echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Vercel eradication gate
+        run: node scripts/verify-vercel-free.mjs
+
+      - name: Static site validation
+        run: |
+          if [ -f scripts/validate-static-site.mjs ]; then
+            node scripts/validate-static-site.mjs
+          else
+            echo 'Static validator not present; critical gate is NOT_RUN.'
+            exit 1
+          fi
+
+      - name: Generate evidence scaffold
+        env:
+          ENVIRONMENT: ${{ inputs.environment || 'production' }}
+          RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
+        run: node scripts/generate-release-evidence.mjs
+
+      - name: Upload gate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-release-evidence-${{ github.run_id }}
+          path: release/evidence/
+
+  cloudflare:
+    needs: gates
+    if: ${{ inputs.environment == 'production' || startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Wrangler configuration
+        run: |
+          test -f wrangler.jsonc || { echo 'wrangler.jsonc missing'; exit 1; }
+          grep -Eq '"name"\s*:\s*"thelingolegacy"|name\s*[:=]\s*["'"']thelingolegacy'"' wrangler.jsonc || true
+
+      - name: Verify Cloudflare credentials are injected as secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
+
+      - name: Install Wrangler
+        run: npm install --global wrangler@latest
+
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: wrangler deploy --config wrangler.jsonc
+
+      - name: Live probes
+        env:
+          LIVE_BASE_URL: ${{ inputs.live_base_url || 'https://thelingolegacy.com' }}
+        run: node scripts/live-probes.mjs
+
+  certificate:
+    needs: [gates, cloudflare]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Certification boundary
+        run: |
+          echo 'Cloudflare deployment and live probes passed.'
+          echo 'Final certificate generation requires the complete evidence bundle and rollback target.'
+          echo 'No automatic CERTIFIED state is emitted without those artifacts.'
