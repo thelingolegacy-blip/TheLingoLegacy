@@ -20,8 +20,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: lingo-legacy-promotion
+  group: lingo-legacy-promotion-${{ inputs.environment || 'tag' }}
   cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
 
 jobs:
   gates:
@@ -69,9 +72,9 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'production' || startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.environment == 'staging' || inputs.environment == 'production')) || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}
     permissions:
       contents: read
     steps:
@@ -82,7 +85,7 @@ jobs:
       - name: Verify Wrangler configuration
         run: |
           test -f wrangler.jsonc || { echo 'wrangler.jsonc missing'; exit 1; }
-          grep -Eq '"name"\s*:\s*"thelingolegacy"|name\s*[:=]\s*["'"']thelingolegacy'"' wrangler.jsonc || true
+          grep -Eq '"name"\s*:\s*"thelingolegacy"|name\s*[:=]\s*["'"']thelingolegacy'"' wrangler.jsonc || { echo 'Worker name is not thelingolegacy'; exit 1; }
 
       - name: Verify Cloudflare credentials are injected as secrets
         env:
