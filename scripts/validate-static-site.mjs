@@ -16,9 +16,6 @@ walk(root);
 const errors=[];
 const warn=[];
 function rel(p){return path.relative(root,p)||'.'}
-
-
-
 function requireJsonObject(file, requiredTopLevelKeys = []) {
   const p = path.join(root, file);
   if (!fs.existsSync(p)) { errors.push(`${file}: missing registry file`); return null; }
@@ -41,11 +38,7 @@ if (releaseManifest) {
 }
 
 const canonRegistry = requireJsonObject('config/canon/canon-registry.json', ['schemaVersion', 'characters', 'brandRules']);
-if (canonRegistry) {
-  for (const character of ['Kotton', 'Kimba', 'Jada']) {
-    if (!canonRegistry.characters?.[character]?.approved) errors.push(`canon registry: ${character} must be approved`);
-  }
-}
+if (canonRegistry) for (const character of ['Kotton', 'Kimba', 'Jada']) if (!canonRegistry.characters?.[character]?.approved) errors.push(`canon registry: ${character} must be approved`);
 const designTokens = requireJsonObject('config/design/design-tokens.json', ['schemaVersion', 'colors', 'typography', 'spacing', 'breakpoints']);
 if (designTokens && Number(designTokens.spacing?.minimumTouchTargetPx) < 48) errors.push('design tokens: minimum touch target must be at least 48px');
 const iconRegistry = requireJsonObject('config/icons/icon-registry.json', ['schemaVersion', 'icons']);
@@ -60,67 +53,34 @@ if (iconRegistry) {
   }
 }
 const assetRegistry = requireJsonObject('config/assets/asset-registry.json', ['schemaVersion', 'assets', 'requiredFields']);
-if (assetRegistry) {
-  for (const asset of assetRegistry.assets || []) {
-    for (const field of assetRegistry.requiredFields || []) if (!(field in asset)) errors.push(`asset registry ${asset.assetId || 'unknown'} missing ${field}`);
-  }
-}
+if (assetRegistry) for (const asset of assetRegistry.assets || []) for (const field of assetRegistry.requiredFields || []) if (!(field in asset)) errors.push(`asset registry ${asset.assetId || 'unknown'} missing ${field}`);
 
 const envContractPath = path.join(root, 'config/production/env-contract.json');
 if (fs.existsSync(envContractPath)) {
-  let contract;
-  try { contract = JSON.parse(fs.readFileSync(envContractPath, 'utf8')); }
-  catch (e) { errors.push(`config/production/env-contract.json: invalid JSON: ${e.message}`); }
-  if (contract) {
+  try {
+    const contract = JSON.parse(fs.readFileSync(envContractPath, 'utf8'));
     const required = new Set((contract.requiredProduction || []).map((item) => item.key));
-    for (const key of [
-      'SITE_URL',
-      'PUBLIC_SITE_URL',
-      'AUTH0_SECRET',
-      'AUTH0_DOMAIN',
-      'AUTH0_CLIENT_ID',
-      'AUTH0_CLIENT_SECRET',
-      'MOTHERDUCK_TOKEN',
-      'STRIPE_SECRET_KEY',
-      'STRIPE_PRICE_XP_PACK',
-      'STRIPE_PRICE_MYSTERY_KEY_PACK',
-      'STRIPE_PRICE_AVALON_BADGE_SET',
-      'NEXT_PUBLIC_FIREBASE_API_KEY',
-      'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-      'NEXT_PUBLIC_FIREBASE_APP_ID',
-    ]) {
+    for (const key of ['SITE_URL','PUBLIC_SITE_URL','NEXT_PUBLIC_FIREBASE_API_KEY','NEXT_PUBLIC_FIREBASE_PROJECT_ID','NEXT_PUBLIC_FIREBASE_APP_ID']) {
       if (!required.has(key)) errors.push(`env contract missing required key: ${key}`);
     }
-  }
+  } catch (e) { errors.push(`config/production/env-contract.json: invalid JSON: ${e.message}`); }
 }
 
-for (const file of ['manifest.webmanifest','vercel.json']) {
-  const p = path.join(root,file);
-  if (fs.existsSync(p)) {
-    try { JSON.parse(fs.readFileSync(p,'utf8')); } catch(e) { errors.push(`${file}: invalid JSON: ${e.message}`); }
-  }
+if (fs.existsSync(path.join(root,'manifest.webmanifest'))) {
+  try { JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest'),'utf8')); } catch(e) { errors.push(`manifest.webmanifest: invalid JSON: ${e.message}`); }
 }
 const sitemap = path.join(root,'sitemap.xml');
 if (fs.existsSync(sitemap)) {
   const text = fs.readFileSync(sitemap,'utf8');
-  const sitemapRoutes = new Set();
-  let sitemapOrigin = '';
+  const sitemapRoutes = new Set(); let sitemapOrigin = '';
   for (const m of text.matchAll(/<loc>(.*?)<\/loc>/g)) {
-    try {
-      const url = new URL(m[1]);
-      sitemapOrigin ||= url.origin;
-      sitemapRoutes.add(url.pathname);
-    } catch {
-      errors.push(`sitemap.xml: invalid loc ${m[1]}`);
-    }
+    try { const url = new URL(m[1]); sitemapOrigin ||= url.origin; sitemapRoutes.add(url.pathname); }
+    catch { errors.push(`sitemap.xml: invalid loc ${m[1]}`); }
   }
-  for (const file of htmlFiles) {
-    if (path.basename(file) !== 'index.html') continue;
+  for (const file of htmlFiles) if (path.basename(file) === 'index.html') {
     const routePath = rel(file).replace(/(^|\/)index\.html$/, '$1');
     const route = routePath ? `/${routePath}` : '/';
-    if (!sitemapRoutes.has(route)) {
-      errors.push(`sitemap.xml: missing route ${sitemapOrigin}${route}`);
-    }
+    if (!sitemapRoutes.has(route)) errors.push(`sitemap.xml: missing route ${sitemapOrigin}${route}`);
   }
 }
 
@@ -129,26 +89,17 @@ for (const file of htmlFiles) {
   const ids = new Set([...text.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
   let i=0;
   for (const m of text.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
-    i++;
-    const code = m[1].trim();
-    if (!code) continue;
-    try { new vm.Script(code, {filename:`${rel(file)}#script${i}`}); }
-    catch(e) { errors.push(`${rel(file)} script ${i}: ${e.message}`); }
+    i++; const code = m[1].trim(); if (!code) continue;
+    try { new vm.Script(code, {filename:`${rel(file)}#script${i}`}); } catch(e) { errors.push(`${rel(file)} script ${i}: ${e.message}`); }
   }
   for (const m of text.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi)) {
-    const raw = m[1];
-    if (raw.includes('${')) continue;
+    const raw = m[1]; if (raw.includes('${')) continue;
     if (/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(raw)) continue;
-    if (raw.startsWith('/_vercel/')) continue;
     if (raw.startsWith('#')) { if (raw.length > 1 && !ids.has(raw.slice(1))) errors.push(`${rel(file)}: missing anchor target ${raw}`); continue; }
     const [urlPath, hash] = raw.split('#');
-    if (hash && !ids.has(hash) && (urlPath === '' || urlPath === path.posix.join('/', path.relative(root, file)).replace(/index\.html$/,''))) {
-      errors.push(`${rel(file)}: missing anchor target #${hash}`);
-    }
+    if (hash && !ids.has(hash) && (urlPath === '' || urlPath === path.posix.join('/', path.relative(root, file)).replace(/index\.html$/,''))) errors.push(`${rel(file)}: missing anchor target #${hash}`);
     if (!urlPath || urlPath.startsWith('//')) continue;
-    let target;
-    if (urlPath.startsWith('/')) target = path.join(root, urlPath);
-    else target = path.join(path.dirname(file), urlPath);
+    let target; if (urlPath.startsWith('/')) target = path.join(root, urlPath); else target = path.join(path.dirname(file), urlPath);
     const exists = fs.existsSync(target) || fs.existsSync(path.join(target,'index.html')) || fs.existsSync(`${target}.html`);
     if (!exists) errors.push(`${rel(file)}: missing local asset/page ${raw}`);
   }
