@@ -84,8 +84,24 @@ if (fs.existsSync(sitemap)) {
   }
 }
 
+const forbiddenActivePatterns = [
+  /\/_vercel\//i,
+  /vercel\.app/i,
+  /@vercel\//i,
+  /vercel\s+(?:deploy|build|env|link)/i,
+  /vercel\.com/i,
+  /Vercel web layer/i,
+  /Vercel deployment/i
+];
+
 for (const file of htmlFiles) {
   const text = fs.readFileSync(file,'utf8');
+  const activeFindings = [];
+  for (const pattern of forbiddenActivePatterns) {
+    if (pattern.test(text)) activeFindings.push(pattern.toString());
+  }
+  if (activeFindings.length) errors.push(`${rel(file)}: retired Vercel execution/instrumentation reference(s): ${activeFindings.join(', ')}`);
+
   const ids = new Set([...text.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
   let i=0;
   for (const m of text.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
