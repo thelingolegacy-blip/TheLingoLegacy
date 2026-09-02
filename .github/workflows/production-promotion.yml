@@ -46,8 +46,8 @@ jobs:
           tar --exclude='./.git' --exclude='./release/evidence' -cf release-artifact.tar .
           echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
-      - name: Vercel eradication gate
-        run: node scripts/verify-vercel-free.mjs
+      - name: Cloudflare-only runtime gate
+        run: node scripts/verify-cloudflare-only.mjs
 
       - name: Static site validation
         run: |
