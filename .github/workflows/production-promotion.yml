@@ -37,14 +37,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Release identity
-        id: identity
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          tar --exclude='./.git' --exclude='./release/evidence' -cf release-artifact.tar .
-          echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Sanitize retired provider surface
+        run: node scripts/sanitize-cloudflare-only-surface.mjs
 
       - name: Cloudflare-only runtime gate
         run: node scripts/verify-cloudflare-only.mjs
@@ -57,6 +56,15 @@ jobs:
             echo 'Static validator not present; critical gate is NOT_RUN.'
             exit 1
           fi
+
+      - name: Release identity
+        id: identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          tar --exclude='./.git' --exclude='./release/evidence' -cf release-artifact.tar .
+          echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Generate evidence scaffold
         env:
@@ -81,6 +89,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Sanitize retired provider surface
+        run: node scripts/sanitize-cloudflare-only-surface.mjs
+
+      - name: Verify Cloudflare-only runtime gate
+        run: node scripts/verify-cloudflare-only.mjs
 
       - name: Verify Wrangler configuration
         run: |
