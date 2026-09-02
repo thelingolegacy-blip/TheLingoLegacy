@@ -1,145 +1,32 @@
 {
-  "schemaVersion": "1.0",
-  "description": "Non-secret environment variable contract for The Lingo Legacy production hard-lock. This file stores variable names and purposes only, never values.",
-  "environments": [
-    "development",
-    "preview",
-    "production"
-  ],
+  "schemaVersion": "2.0",
+  "description": "Non-secret environment and runtime contract for The Lingo Legacy production hard-lock. This repository is Cloudflare-first; secret values never belong in source control.",
+  "environments": ["development", "preview", "production"],
   "requiredProduction": [
-    {
-      "key": "SITE_URL",
-      "category": "site",
-      "purpose": "Canonical production site URL used by server-side flows."
-    },
-    {
-      "key": "PUBLIC_SITE_URL",
-      "category": "site",
-      "purpose": "Explicit public production URL for checkout success/cancel URLs."
-    },
-    {
-      "key": "AUTH0_SECRET",
-      "category": "auth0",
-      "purpose": "Auth0 application secret used by Auth0 session handling. Secret value stays in Vercel only."
-    },
-    {
-      "key": "AUTH0_DOMAIN",
-      "category": "auth0",
-      "purpose": "Auth0 tenant/domain for authentication flows."
-    },
-    {
-      "key": "AUTH0_CLIENT_ID",
-      "category": "auth0",
-      "purpose": "Auth0 application client ID for the connected Vercel Auth0 resource."
-    },
-    {
-      "key": "AUTH0_CLIENT_SECRET",
-      "category": "auth0",
-      "purpose": "Auth0 application client secret. Secret value stays in Vercel only."
-    },
-    {
-      "key": "MOTHERDUCK_TOKEN",
-      "category": "motherduck",
-      "purpose": "MotherDuck access token injected by the connected Vercel Marketplace resource. Secret value stays in Vercel/MotherDuck only."
-    },
-    {
-      "key": "STRIPE_SECRET_KEY",
-      "category": "stripe",
-      "purpose": "Server-side Stripe Checkout session creation. Secret value stays in Vercel only."
-    },
-    {
-      "key": "STRIPE_PRICE_XP_PACK",
-      "category": "stripe",
-      "purpose": "Stripe Price ID for Digital XP Pack."
-    },
-    {
-      "key": "STRIPE_PRICE_MYSTERY_KEY_PACK",
-      "category": "stripe",
-      "purpose": "Stripe Price ID for Mystery Key Pack."
-    },
-    {
-      "key": "STRIPE_PRICE_AVALON_BADGE_SET",
-      "category": "stripe",
-      "purpose": "Stripe Price ID for Avalon House Badge Set."
-    },
-    {
-      "key": "NEXT_PUBLIC_TML_ASSET_BASE_URL",
-      "category": "assets",
-      "purpose": "Public base URL for TML asset paths."
-    },
-    {
-      "key": "NEXT_PUBLIC_TML_BRAND_PATH",
-      "category": "assets",
-      "purpose": "Brand asset path."
-    },
-    {
-      "key": "NEXT_PUBLIC_TML_SLOT_MACHINE_PATH",
-      "category": "assets",
-      "purpose": "Slot machine art path."
-    },
-    {
-      "key": "NEXT_PUBLIC_TML_REEL_SYMBOLS_PATH",
-      "category": "assets",
-      "purpose": "Reel symbols path."
-    },
-    {
-      "key": "NEXT_PUBLIC_TML_AUDIO_PATH",
-      "category": "assets",
-      "purpose": "Audio asset path."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_API_KEY",
-      "category": "firebase",
-      "purpose": "Public Firebase app config; not a database secret."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
-      "category": "firebase",
-      "purpose": "Firebase Auth domain."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
-      "category": "firebase",
-      "purpose": "Firebase project ID."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
-      "category": "firebase",
-      "purpose": "Firebase storage bucket."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
-      "category": "firebase",
-      "purpose": "Firebase messaging sender ID."
-    },
-    {
-      "key": "NEXT_PUBLIC_FIREBASE_APP_ID",
-      "category": "firebase",
-      "purpose": "Firebase app ID."
-    }
+    { "key": "SITE_URL", "category": "site", "purpose": "Canonical production site URL." },
+    { "key": "PUBLIC_SITE_URL", "category": "site", "purpose": "Explicit public production URL." },
+    { "key": "NEXT_PUBLIC_FIREBASE_API_KEY", "category": "firebase", "purpose": "Public Firebase app configuration." },
+    { "key": "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "category": "firebase", "purpose": "Firebase Auth domain." },
+    { "key": "NEXT_PUBLIC_FIREBASE_PROJECT_ID", "category": "firebase", "purpose": "Firebase project identifier." },
+    { "key": "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET", "category": "firebase", "purpose": "Firebase Storage bucket identifier." },
+    { "key": "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID", "category": "firebase", "purpose": "Firebase messaging sender ID." },
+    { "key": "NEXT_PUBLIC_FIREBASE_APP_ID", "category": "firebase", "purpose": "Firebase app ID." }
   ],
   "forbiddenInRepo": [
-    "STRIPE_SECRET_KEY value",
-    "Firebase service account JSON",
+    "Cloudflare API tokens",
+    "Firebase service-account JSON",
     "private keys",
     "API tokens",
     "passwords",
     "raw webhook secrets",
-    "Auth0 client secret value",
-    "Auth0 session secret value",
-    "MotherDuck token value",
-    "MotherDuck connection string value"
+    "payment provider secret keys"
   ],
   "dashboardVerificationRequired": [
-    "Stripe live mode, products, prices, webhooks, receipts, tax, refunds, fraud protection",
+    "Cloudflare Worker bindings and secrets",
+    "Cloudflare D1/KV/R2 resources where enabled",
     "Firebase Auth, Firestore rules, Storage rules, backups, environment separation",
-    "Cloudflare Domain Connect recommended DNS update",
-    "MotherDuck query smoke test and analytics retention policy"
-  ],
-  "verifiedProduction": [
-    "Auth0 resource client-celeste-ridge connected to the-lingo-legacy",
-    "Auth0 environment variable names present for development, preview, and production",
-    "MotherDuck resource motherduck-cerise-pillar connected to the-lingo-legacy",
-    "MOTHERDUCK_TOKEN environment variable name present for preview and production"
+    "Payment provider live-mode configuration, products, prices, webhooks, receipts, tax, refunds, and fraud controls when commerce is activated",
+    "DNS and custom-domain configuration",
+    "Analytics retention and access policy"
   ]
 }
