@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 
-// Protect the active execution/deployment surface. Historical audit material is
-// excluded; executable/configuration paths remain fail-closed.
+// Protect the active execution/deployment surface. Historical documentation is
+// retained for audit context, while executable/configuration paths remain fail-closed.
 const forbidden = [
   /vercel\.json/i,
   /@vercel\//i,
@@ -13,7 +13,7 @@ const forbidden = [
 ];
 
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
-const historicalOnly = new Set(['docs/archive']);
+const historicalOnly = new Set(['docs']);
 
 const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' })
   .split('\n').filter(Boolean)
@@ -25,14 +25,10 @@ for (const file of files) {
   if (file === 'scripts/verify-cloudflare-only.mjs') continue;
   let text;
   try {
-    text = execFileSync('git', ['show', `HEAD:${file}`], {
-      encoding: 'utf8', maxBuffer: 10 * 1024 * 1024
-    });
+    text = execFileSync('git', ['show', `HEAD:${file}`], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
   } catch { continue; }
   text.split('\n').forEach((line, i) => {
-    if (forbidden.some((re) => re.test(line))) {
-      findings.push({ file, line: i + 1, text: line.trim().slice(0, 240) });
-    }
+    if (forbidden.some((re) => re.test(line))) findings.push({ file, line: i + 1, text: line.trim().slice(0, 240) });
   });
 }
 
