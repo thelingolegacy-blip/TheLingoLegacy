@@ -1,4 +1,5 @@
-import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Protect the active execution/deployment surface. Historical documentation is
 // retained for audit context, while executable/configuration paths remain fail-closed.
@@ -9,24 +10,33 @@ const forbidden = [
   /VERCEL_[A-Z0-9_]+/i,
   /vercel\s+(?:deploy|build|env|link)/i,
   /vercel\.com/i,
-  /_vercel\//i
+  /_vercel\//i,
+  /\bVercel web layer\b/i,
+  /\bVercel deployment\b/i
 ];
 
+const root = process.cwd();
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
 const historicalOnly = new Set(['docs']);
+const files = [];
 
-const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' })
-  .split('\n').filter(Boolean)
-  .filter((p) => ![...ignored].some((x) => p === x || p.startsWith(`${x}/`)))
-  .filter((p) => ![...historicalOnly].some((x) => p === x || p.startsWith(`${x}/`)));
+function walk(dir) {
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (ignored.has(ent.name)) continue;
+    const p = path.join(dir, ent.name);
+    if (ent.isDirectory()) walk(p);
+    else files.push(path.relative(root, p));
+  }
+}
+walk(root);
 
 const findings = [];
 for (const file of files) {
+  if ([...historicalOnly].some((x) => file === x || file.startsWith(`${x}/`))) continue;
   if (file === 'scripts/verify-cloudflare-only.mjs') continue;
   let text;
-  try {
-    text = execFileSync('git', ['show', `HEAD:${file}`], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
-  } catch { continue; }
+  try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
+  catch { continue; }
   text.split('\n').forEach((line, i) => {
     if (forbidden.some((re) => re.test(line))) findings.push({ file, line: i + 1, text: line.trim().slice(0, 240) });
   });
