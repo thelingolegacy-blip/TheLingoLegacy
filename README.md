@@ -1,11 +1,10 @@
 # That’s My Lingo by The Lingo Legacy
 
-Static Vercel website for That’s My Lingo by The Lingo Legacy: a purple-and-gold culture game world with playable lingo rounds, district UI, community lanes, merch/marketplace framing, and launch-list capture.
-
+Static Cloudflare Worker website for That’s My Lingo by The Lingo Legacy: a purple-and-gold culture game world with playable lingo rounds, district UI, community lanes, merch/marketplace framing, and launch-list capture.
 
 ## Studio UI v2
 
-This live Vercel surface now loads `assets/studio-version.css`, the shared Studio UI refresh for stronger visual hierarchy, responsive polish, premium panels, motion-safe hover states, and consistent Lingo OS theming.
+This live Cloudflare surface loads `assets/studio-version.css`, the shared Studio UI refresh for stronger visual hierarchy, responsive polish, premium panels, motion-safe hover states, and consistent Lingo OS theming.
 
 ## Site map
 
@@ -37,7 +36,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 - `/live-casino-studio/` — Full Live Casino Studio launch shell for live dealer, dual-currency readiness, gated payment pipelines, bonus stores, motion, and operator architecture with regulated modules disabled pending approvals
 - `/payload-matrix/` — static payload URL matrix for reserved Lingo Legacy OS contracts across OS, AI, workflow, backend, app, nonprofit, and character systems
 - `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
-- `/integration-os/` — full front-to-back integration map for Flutter, Firebase, Cloudflare, Vercel, GitHub, Vercel Blob, Neon, Upstash Redis, and studio pipelines
+- `/integration-os/` — full front-to-back integration map for Flutter, Firebase, Cloudflare, GitHub, and studio pipelines
 - `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
 - `/studio-world-os/` — Silent World Constellation with fully individual entity worlds, seamless travel, sealed premium realms, and the unified cross-platform experience layer
 - `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
@@ -49,7 +48,7 @@ This live Vercel surface now loads `assets/studio-version.css`, the shared Studi
 
 ## Development
 
-This is a static HTML site with browser-side interactivity. There is no build step and no package manager install required.
+This is a static HTML site with browser-side interactivity. The production runtime is a Cloudflare Worker with static assets; there is no Vercel runtime or deployment dependency.
 
 The global OS skin lives in `assets/lingo-os.css` and `assets/lingo-os.js`. Together they inject the World Layer, HUD Layer, FX Layer, command bar, side rail, quick actions, Industrial Noir theme state, core OS modules, XP/wallet event feedback, and auto-cinematic overlay governance across the static site.
 
@@ -67,15 +66,13 @@ Run the static smoke test before opening a pull request or deploying:
 node scripts/validate-static-site.mjs
 ```
 
-It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, and required page metadata.
+It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, required page metadata, and retired-provider references.
 
 ## Deployment
 
-Deploy the repository as a static site on Vercel. The production entrypoint is `index.html` at the repository root.
+The production boundary is **GitHub → GitHub Actions gates → Cloudflare Worker → static assets → `thelingolegacy.com`**.
 
-See `docs/vercel-os-deployment-readiness.md` for the Vercel OS environment map, current static-site settings, and the checklist for a future Next.js App Router API/middleware migration.
-
-Contact: hello@thelingolegacy.com
+The Worker entrypoint is `worker.js` and the deployment configuration is `wrangler.jsonc`. Cloudflare runtime secrets are injected through the deployment environment; secret values never belong in source control.
 
 ## Blueprint Studio Phase 2
 
@@ -91,7 +88,7 @@ Security headers, advisory AI crawler blocks, no-cost service boundaries, and sa
 
 ## Launch operations
 
-Vercel-native launch checks, `/healthz`, rollback notes, and smoke-test guidance are documented in `docs/launch-operations-guardrails.md`.
+Cloudflare launch checks, `/healthz`, rollback notes, and smoke-test guidance are enforced through the production promotion workflow and live-probe scripts.
 
 ## Production launch foundation
 
