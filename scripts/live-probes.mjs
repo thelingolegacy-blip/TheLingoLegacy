@@ -1,5 +1,5 @@
 const base = process.env.LIVE_BASE_URL || 'https://thelingolegacy.com';
-const paths = (process.env.LIVE_PROBE_PATHS || '/|/api/health|/api/health/version').split('|');
+const paths = (process.env.LIVE_PROBE_PATHS || '/|/healthz').split('|').filter(Boolean);
 const timeoutMs = Number(process.env.LIVE_PROBE_TIMEOUT_MS || 10000);
 
 const probe = async (path) => {
