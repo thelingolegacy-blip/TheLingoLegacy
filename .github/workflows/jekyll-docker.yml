@@ -27,5 +27,8 @@ jobs:
         with:
           node-version: 22
 
+      - name: Sanitize retired provider surface
+        run: node scripts/sanitize-cloudflare-only-surface.mjs
+
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs
