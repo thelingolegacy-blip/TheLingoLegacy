@@ -1,0 +1,26 @@
+name: Lingo Legacy Actions Runner Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: actions-runner-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Runner reached execution stage
+        run: |
+          set -euo pipefail
+          echo "runner=reachable"
+          echo "os=$RUNNER_OS"
+          echo "arch=$RUNNER_ARCH"
+          echo "workspace=$GITHUB_WORKSPACE"
