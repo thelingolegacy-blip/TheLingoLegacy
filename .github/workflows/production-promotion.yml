@@ -48,6 +48,9 @@ jobs:
       - name: Cloudflare-only runtime gate
         run: node scripts/verify-cloudflare-only.mjs
 
+      - name: Cloudflare binding contract gate
+        run: node scripts/verify-cloudflare-bindings.mjs
+
       - name: Static site validation
         run: |
           if [ -f scripts/validate-static-site.mjs ]; then
@@ -101,6 +104,9 @@ jobs:
       - name: Verify Cloudflare-only runtime gate
         run: node scripts/verify-cloudflare-only.mjs
 
+      - name: Verify Cloudflare binding contract
+        run: node scripts/verify-cloudflare-bindings.mjs
+
       - name: Verify Wrangler configuration
         run: |
           test -f wrangler.jsonc || { echo 'wrangler.jsonc missing'; exit 1; }
@@ -138,6 +144,5 @@ jobs:
           fetch-depth: 0
       - name: Certification boundary
         run: |
-          echo 'Cloudflare deployment and live probes passed.'
-          echo 'Final certificate generation requires the complete evidence bundle and rollback target.'
-          echo 'No automatic CERTIFIED state is emitted without those artifacts.'
+          echo 'Certification boundary reached.'
+          echo 'CERTIFIED is withheld until the complete evidence bundle and rollback target are verified.'
