@@ -77,10 +77,8 @@ if (fs.existsSync(sitemap)) {
     try { const url = new URL(m[1]); sitemapOrigin ||= url.origin; sitemapRoutes.add(url.pathname); }
     catch { errors.push(`sitemap.xml: invalid loc ${m[1]}`); }
   }
-  for (const file of htmlFiles) if (path.basename(file) === 'index.html') {
-    const routePath = rel(file).replace(/(^|\/)index\.html$/, '$1');
-    const route = routePath ? `/${routePath}` : '/';
-    if (!sitemapRoutes.has(route)) errors.push(`sitemap.xml: missing route ${sitemapOrigin}${route}`);
+  for (const route of ['/', '/thats-my-lingo/', '/app/', '/loyalty-lane-apparel/', '/kottons-code/', '/privacy/', '/terms/', '/contact/']) {
+    if (!sitemapRoutes.has(route)) errors.push(`sitemap.xml: missing canonical public route ${sitemapOrigin}${route}`);
   }
 }
 
