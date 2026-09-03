@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -28,7 +29,17 @@ jobs:
           node-version: 22
 
       - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs
+        run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Validate release-critical static site
-        run: node scripts/validate-static-site.mjs
+        run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-legacy-static-ci-evidence
+          path: |
+            sanitize.log
+            validator.log
+          if-no-files-found: warn
