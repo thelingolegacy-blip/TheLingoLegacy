@@ -84,9 +84,28 @@ async function beaconAlerts(request, env) {
   return json({ ok: true, provider: result.provider, message: 'Beacon text alerts started.' });
 }
 
+function integrationState(env) {
+  return {
+    cloudflare_runtime: 'active',
+    firebase: 'unverified',
+    lingo_id: 'unverified',
+    universal_wallet: 'unverified',
+    xp_engine: 'unverified',
+    rewards_engine: 'unverified',
+    leaderboards: 'unverified',
+    cloud_save: 'unverified',
+    flutter_sync: 'unverified',
+    commerce: env.STRIPE_SECRET_KEY ? 'configured' : 'unconfigured',
+  };
+}
+
 function runtimeManifest(request, env) {
   const url = new URL(request.url);
   return { ok: true, runtime: 'cloudflare-worker', version: RUNTIME_VERSION, hostname: url.hostname, timestamp: new Date().toISOString(), dynamic: true, api: true, assets: 'worker-controlled', observability: true, integrations: { stripe: Boolean(env.STRIPE_SECRET_KEY), beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL), twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER) }, safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false } };
+}
+
+function platformStatus(request, env) {
+  return { ok: true, dynamic: true, generatedAt: new Date().toISOString(), environment: 'production', authority: { runtime: 'cloudflare', source: 'github', release_executor: 'controlled-local-wrangler' }, integrations: integrationState(env), safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false }, readiness: { firebase: 'hard-lock-until-authoritative-verification', application_services: 'hard-lock-until-authoritative-bindings', appdeploy: 'non-authoritative-provider-quota-exhausted' } };
 }
 
 export default {
@@ -95,6 +114,7 @@ export default {
     try {
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }));
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env));
+      if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env));
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404);
