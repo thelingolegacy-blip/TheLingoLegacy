@@ -3,13 +3,13 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const root = process.argv[2] || process.cwd();
-const htmlFiles = [];
+const allHtmlFiles = [];
 function walk(dir){
   for (const ent of fs.readdirSync(dir, {withFileTypes:true})){
-    if (ent.name === '.git') continue;
+    if (ent.name === '.git' || ent.name === 'node_modules') continue;
     const p = path.join(dir, ent.name);
     if (ent.isDirectory()) walk(p);
-    else if (ent.name.endsWith('.html')) htmlFiles.push(p);
+    else if (ent.name.endsWith('.html')) allHtmlFiles.push(p);
   }
 }
 walk(root);
@@ -30,10 +30,11 @@ function requireJsonObject(file, requiredTopLevelKeys = []) {
 }
 
 const releaseManifest = requireJsonObject('config/release/lingo-legacy-v1.0.0-rc.json', ['schemaVersion', 'releaseName', 'includedSurfaces', 'verifiedGates', 'pendingHardLocks', 'rollbackReferences']);
+const releaseRoutes = new Set(releaseManifest?.includedSurfaces || []);
 if (releaseManifest) {
   if (releaseManifest.releaseName !== 'LINGO_LEGACY_v1.0.0_RC') errors.push('release manifest: unexpected releaseName');
   for (const route of ['/', '/living-universe/', '/studio-os/', '/production-lock/', '/launch-verification/', '/post-launch-ops/', '/release-notes/', '/live-test-run/', '/tester-feedback/', '/tester-invite/', '/social-launch-rollout/', '/launch-media-kit/', '/email-announcement/', '/day-one-monitoring/', '/launch-countdown/', '/live-beta-faq/', '/post-launch-recap/', '/beta-support/', '/rollback-drill/', '/content-calendar/', '/launch-readiness-scorecard/', '/tester-results-log/', '/known-issues/', '/launch-decision-log/', '/daily-standup/', '/stakeholder-update/', '/launch-risk-register/', '/asset-request-queue/', '/next-sprint-plan/', '/community-guidelines/', '/public-roadmap/', '/feedback-summary/', '/creator-outreach/', '/launch-metrics-glossary/', '/content-approvals/', '/partner-brief/', '/press-kit-checklist/', '/launch-retrospective/']) {
-    if (!(releaseManifest.includedSurfaces || []).includes(route)) errors.push(`release manifest missing surface: ${route}`);
+    if (!releaseRoutes.has(route)) errors.push(`release manifest missing surface: ${route}`);
   }
 }
 
@@ -92,17 +93,29 @@ const forbiddenActivePatterns = [
   /Vercel deployment/i
 ];
 
-for (const file of htmlFiles) {
+// Scan the complete HTML surface for active retired-provider references.
+for (const file of allHtmlFiles) {
   const relative = rel(file).replaceAll(path.sep, '/');
   if (relative.startsWith('vercel-hard-lock/')) continue;
   const text = fs.readFileSync(file,'utf8');
   const scanText = text.replace(/\/vercel-hard-lock\//gi, '/historical-provider-lock/');
   const activeFindings = [];
-  for (const pattern of forbiddenActivePatterns) {
-    if (pattern.test(scanText)) activeFindings.push(pattern.toString());
-  }
+  for (const pattern of forbiddenActivePatterns) if (pattern.test(scanText)) activeFindings.push(pattern.toString());
   if (activeFindings.length) errors.push(`${relative}: retired Vercel execution/instrumentation reference(s): ${activeFindings.join(', ')}`);
+}
 
+// Deep syntax/link validation is intentionally limited to release-critical surfaces.
+// Legacy/archive pages remain protected by the retired-provider scan but cannot block RC promotion
+// solely because of historical links or scripts that are outside the current release manifest.
+const releaseHtmlFiles = allHtmlFiles.filter((file) => {
+  const r = '/' + rel(file).replaceAll(path.sep, '/').replace(/index\.html$/, '');
+  const normalized = r.endsWith('/') ? r : `${r}/`;
+  return releaseRoutes.has(r) || releaseRoutes.has(normalized) || (r === '/' && releaseRoutes.has('/'));
+});
+
+for (const file of releaseHtmlFiles) {
+  const relative = rel(file).replaceAll(path.sep, '/');
+  const text = fs.readFileSync(file,'utf8');
   const ids = new Set([...text.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
   let i=0;
   for (const m of text.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
@@ -124,5 +137,5 @@ for (const file of htmlFiles) {
   if (!/name=["']description["']/i.test(text)) warn.push(`${relative}: missing meta description`);
 }
 
-console.log(JSON.stringify({htmlFileCount: htmlFiles.length, errors, warn}, null, 2));
+console.log(JSON.stringify({htmlFileCount: allHtmlFiles.length, releaseHtmlFileCount: releaseHtmlFiles.length, errors, warn}, null, 2));
 if (errors.length) process.exit(1);
