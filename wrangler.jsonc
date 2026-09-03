@@ -3,6 +3,21 @@
   "name": "thelingolegacy",
   "main": "worker.js",
   "compatibility_date": "2026-07-27",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "www.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    }
+  ],
+  "vars": {
+    "CANONICAL_DOMAIN": "thelingolegacy.com",
+    "PUBLIC_SITE_URL": "https://thelingolegacy.com"
+  },
   "observability": {
     "enabled": true
   },
