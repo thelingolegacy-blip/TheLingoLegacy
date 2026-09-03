@@ -8,8 +8,9 @@ The Cloudflare-first production runtime is verified live through the current rel
 
 - Primary production domain: `https://thelingolegacy.com`
 - Deployment provider: Cloudflare
-- Dynamic runtime endpoints: `/healthz`, `/api/v1/runtime`, `/api/v1/platform/manifest`
+- Dynamic runtime endpoints: `/healthz`, `/api/v1/runtime`, `/api/v1/platform/manifest`, `/api/v1/platform/status`
 - Consolidated live-probe contract: reported PASS for `/`, `/healthz`, `/api/v1/runtime`, `/api/v1/platform/manifest`
+- Platform-status endpoint is included in the controlled production probe set
 - Local production executor: `scripts/deploy-production.mjs`
 - Production deploy requires explicit `--execute` and fails closed on preflight/probe failures
 
@@ -57,6 +58,8 @@ AppDeploy remains non-authoritative for production runtime because the provider'
 
 ## Next Evidence Required
 
+- Controlled local Wrangler dry-run and production deployment evidence for the current `production-deploy` commit
+- Five-route live-probe evidence: `/`, `/healthz`, `/api/v1/runtime`, `/api/v1/platform/manifest`, `/api/v1/platform/status`
 - Authoritative Firebase project/binding evidence
 - Authenticated Firebase smoke-test evidence
 - Cloudflare production binding inventory from the owning account
