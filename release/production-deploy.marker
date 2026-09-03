@@ -1,0 +1,3 @@
+Lingo Legacy controlled production promotion trigger.
+
+This marker exists only on the production-deploy branch and is used to initiate the governed Cloudflare promotion workflow after the workflow trigger was enabled.
