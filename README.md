@@ -1,90 +1,122 @@
 # That’s My Lingo by The Lingo Legacy
 
-Static Cloudflare Worker website for That’s My Lingo by The Lingo Legacy: a purple-and-gold culture game world with playable lingo rounds, district UI, community lanes, merch/marketplace framing, and launch-list capture.
+Cloudflare Worker production surface for That’s My Lingo by The Lingo Legacy: a purple-and-gold culture game world with playable lingo rounds, district UI, community lanes, merch/marketplace framing, and launch-list capture.
 
-## Studio UI v2
+## Production runtime contract
 
-This live Cloudflare surface loads `assets/studio-version.css`, the shared Studio UI refresh for stronger visual hierarchy, responsive polish, premium panels, motion-safe hover states, and consistent Lingo OS theming.
+The production surface is **dynamic-first and Worker-controlled**. The Cloudflare Worker is the runtime boundary for health, API routing, security headers, integration endpoints, runtime/manifest metadata, and frontend asset delivery through the `ASSETS` binding. Static files are presentation assets, not the production control plane.
+
+Authoritative runtime gates:
+
+- `/healthz` — edge health check
+- `/api/v1/runtime` — dynamic runtime contract
+- `/api/v1/platform/manifest` — platform/runtime manifest
+- `scripts/verify-dynamic-runtime.mjs` — repository contract gate
+- `scripts/live-probes.mjs` — live production probe harness
+
+The production deployment executor is `scripts/deploy-production.mjs`. It is fail-closed by default: it requires the `production-deploy` branch, a clean working tree, authenticated Wrangler, a dynamic-runtime contract pass, and a successful Wrangler dry-run before a live deployment. A live deployment requires the explicit `--execute` flag, followed by live probes.
+
+### Controlled production path
+
+**GitHub → controlled Mac Wrangler executor → Cloudflare Worker → Worker-controlled Assets → production domain**
+
+GitHub Actions remains a CI/evidence layer. Runner isolation or CI availability does not authorize bypassing production validation, and CI failure does not itself imply that the Cloudflare runtime is unhealthy.
+
+Firebase and Flutter remain integration/application layers and must use authoritative production bindings. No resource IDs, secrets, or credentials are invented or committed to source control.
 
 ## Site map
 
 - `/` — polished public Lingo Game Casino homepage with entertainment-only virtual casino play, daily app routes, merch, rewards, safety language, and launch calls to action
 - `/thats-my-lingo/` — production entertainment lane with 5x3 virtual reels, virtual wallet, progression, missions, ecosystem platform framing, live-ops readiness, compliance guardrails, demo store, rewards, opt-in sounds, and animations
-- `/loading/` — cinematic LoadingPage gateway with Vegas Studio boot sequence, LL monogram reveal, jackpot progress rail, status ticker, audio visualization, and demo diagnostics
-- `/studio-assets/` — studio-grade visuals, symbols, backgrounds, animations, glass panels, lighting, and user-triggered audio motifs
-- `/master-interface/` — guardrailed static master interface preview with entertainment-only virtual game suite, radio-style ambience, safe progression, and world links
-- `/landing/` — campaign landing page and waitlist call to action
-- `/drop/` — founder micro-drop landing page for XP, mystery key, and badge-set reservation requests
-- `/kottons-code/` — bright kids explorer world for Kotton, Kimba, Jada, play/learn/watch zones, storybook episodes, mini-games, and CSS animation cues
-- `/kottons-code/episodes/sunny-key/` and `/kottons-code/episodes/blue-clue-trail/` — static KottonsCode episode pages
-- `/kottons-code/educators/` — educator landing page with lesson prompts and safe-use notes
-- `/kottons-code/app-wireframes/` — static app screen wireframes for onboarding, stories, activities, progress, and educator review
-- `/tapstich/` — static apparel customization lane for patch drops, outfit boards, creator-safe merch concepts, and no-cost launch review
-- `/app/` — playable daily lingo game with browser-side scoring, streaks, sounds, and best-score saves
-- `/social-play/` — mobile-first social challenge page with five timed lingo prompts, scorecard, native share, copy-link, and same-seed friend replay
-- `/assets/` — existing brand asset library
-- `/lingo-ai/` — Ask Lingo / Start Lingo.ai static studio assistant for content, visuals, animation, and launch prompts
-- `/admin-command-center/` — production dashboard command center for assets, projects, studios, timeline, testing, publishing, and automation
-- `/casino-upgrade/` — casino-grade UI upgrade package for visual skin, motion timing, sound hooks, and rollout planning
-- `/casino-config/` — AI-light casino config command center for deterministic machines, economy, missions, events, worlds, admin screens, static config data, and safety guardrails
-- `/casino/` — entertainment-only play-money Lingo casino mini-game with animated reels, collectible background asset catalog, weighted symbols, virtual balance persistence, jackpot meter, and bonus hooks
-- `/visual-showcase/` — CSS-generated casino visual showcase with slot machine, mascot race, rap arena, prize vault, vehicle cards, and Industrial Noir scene blocks
-- `/visual-expansion/` — second-stage casino visual expansion with map blueprint, tournament bracket UI, race FX pack, avatar customization, and trailer storyboard panels
-- `/sweepstakes-visual-system/` — Industrial Noir CSS visual system for sweepstakes-style cards, buttons, dashboards, mascots, pop animations, prize tiers, and season pass surfaces
-- `/multiplayer-rap-arena/` — static multiplayer rap battle arena blueprint with modes, realtime event architecture, scoring, mascot reactions, and an interactive battle board
-- `/auto-racing-universe/` — static full-auto mascot/avatar racing universe blueprint with one main course, seven cheat paths, 30-minute tournaments, brackets, rewards, sponsors, and trailer hooks
-- `/live-casino-studio/` — Full Live Casino Studio launch shell for live dealer, dual-currency readiness, gated payment pipelines, bonus stores, motion, and operator architecture with regulated modules disabled pending approvals
-- `/payload-matrix/` — static payload URL matrix for reserved Lingo Legacy OS contracts across OS, AI, workflow, backend, app, nonprofit, and character systems
-- `/monetization-safety/` — static Monetization Safety OS blueprint for virtual currency, subscriptions, ads, surveys, geo consent, AI/plugin governance, and no-cash-out rules
-- `/integration-os/` — full front-to-back integration map for Flutter, Firebase, Cloudflare, GitHub, and studio pipelines
-- `/studio-production/` — studio production framework for graphics, animation, sound, gameplay systems, static systems, no-cost QA, the connected Lingo Legacy OS, and Blueprint Studio Phase 2 wireframes
-- `/studio-world-os/` — Silent World Constellation with fully individual entity worlds, seamless travel, sealed premium realms, and the unified cross-platform experience layer
-- `/universe/` — route map that connects the live web layer, game rooms, assets, command center, studio production, and brand-world expansion pages
-- `/outer-crown-expansion/` — HQ Mode multi-state expansion for NYC, Delaware, New Jersey, simulcast beacons, promo overlays, and ignition controls
-- `/full-entity-simulcast/` — Full-Entity Simulcast Mode for simultaneous 24-hour Beacon Blast staging across entities, platforms, geo-beacons, XP, and monetization lanes
-- `/trust-compliance/` — Lingo Safety Core trust layer for user protection, fair play, economy controls, responsible play, AI guardrails, role separation, and release readiness
-- `/economy-command-center/` — static economy monitoring scaffold for Bones flow, XP velocity, reward pressure, storefront health, fraud signals, AI recommendations, and data contracts
-- `/studio-ui-cleanup/` — Studio UI Cleanup Pass for visual separation, floating glass panels, depth hierarchy, animation priority, and mobile layout zones
+- `/loading/` — cinematic LoadingPage gateway
+- `/studio-assets/` — studio-grade visuals, symbols, backgrounds, animations, glass panels, lighting, and audio motifs
+- `/master-interface/` — guardrailed master interface preview
+- `/landing/` — campaign landing page and waitlist
+- `/drop/` — founder micro-drop landing page
+- `/kottons-code/` — bright kids explorer world for Kotton, Kimba, Jada, stories, mini-games, and learning zones
+- `/kottons-code/episodes/sunny-key/` and `/kottons-code/episodes/blue-clue-trail/` — KottonsCode episodes
+- `/kottons-code/educators/` — educator landing page
+- `/kottons-code/app-wireframes/` — app screen wireframes
+- `/tapstich/` — apparel customization lane
+- `/app/` — playable daily lingo game
+- `/social-play/` — mobile-first social challenge page
+- `/assets/` — brand asset library
+- `/lingo-ai/` — Ask Lingo / Start Lingo.ai studio assistant surface
+- `/admin-command-center/` — production dashboard command center
+- `/casino-upgrade/` — casino-grade UI upgrade package
+- `/casino-config/` — deterministic casino config command center
+- `/casino/` — entertainment-only play-money Lingo casino mini-game
+- `/visual-showcase/` — casino visual showcase
+- `/visual-expansion/` — second-stage casino visual expansion
+- `/sweepstakes-visual-system/` — Industrial Noir visual system
+- `/multiplayer-rap-arena/` — multiplayer rap battle arena blueprint
+- `/auto-racing-universe/` — mascot/avatar racing universe blueprint
+- `/live-casino-studio/` — regulated live-casino launch shell with restricted modules disabled pending approvals
+- `/payload-matrix/` — Lingo Legacy OS contract matrix
+- `/monetization-safety/` — Monetization Safety OS blueprint
+- `/integration-os/` — Flutter/Firebase/Cloudflare/GitHub/studio integration map
+- `/studio-production/` — studio production framework
+- `/studio-world-os/` — individual entity worlds and unified experience layer
+- `/universe/` — live web/game/studio route map
+- `/outer-crown-expansion/` — HQ Mode expansion
+- `/full-entity-simulcast/` — Full-Entity Simulcast staging
+- `/trust-compliance/` — Lingo Safety Core trust layer
+- `/economy-command-center/` — economy monitoring scaffold
+- `/studio-ui-cleanup/` — premium UI cleanup pass
 
 ## Development
 
-This is a static HTML site with browser-side interactivity. The production runtime is a Cloudflare Worker with static assets; there is no Vercel runtime or deployment dependency.
-
-The global OS skin lives in `assets/lingo-os.css` and `assets/lingo-os.js`. Together they inject the World Layer, HUD Layer, FX Layer, command bar, side rail, quick actions, Industrial Noir theme state, core OS modules, XP/wallet event feedback, and auto-cinematic overlay governance across the static site.
-
-Open `index.html` locally, or serve the folder with any static server:
-
-```bash
-python3 -m http.server 3000
-```
+Static assets remain part of the frontend, but the production control plane is the Cloudflare Worker. The global OS skin lives in `assets/lingo-os.css` and `assets/lingo-os.js`; together they provide the World Layer, HUD Layer, FX Layer, command bar, side rail, quick actions, Industrial Noir theme state, core OS modules, XP/wallet event feedback, and auto-cinematic overlay governance.
 
 ## Validation
 
-Run the static smoke test before opening a pull request or deploying:
+Run the dynamic runtime contract gate before deployment:
+
+```bash
+node scripts/verify-dynamic-runtime.mjs
+```
+
+Run the live production probe after deployment:
+
+```bash
+LIVE_BASE_URL="https://thelingolegacy.com" \
+LIVE_PROBE_PATHS="/|/healthz|/api/v1/runtime|/api/v1/platform/manifest" \
+node scripts/live-probes.mjs
+```
+
+The legacy static smoke test remains available for asset/link integrity:
 
 ```bash
 node scripts/validate-static-site.mjs
 ```
 
-It checks JSON config, sitemap URLs, internal links/assets, anchor targets, inline script syntax, required page metadata, and retired-provider references.
-
 ## Deployment
 
-The production boundary is **GitHub → GitHub Actions gates → Cloudflare Worker → static assets → `thelingolegacy.com`**.
+Use the controlled local executor from the canonical `production-deploy` checkout:
+
+```bash
+node scripts/deploy-production.mjs
+```
+
+This performs branch/worktree/authentication checks, repository dynamic-runtime validation, and a Wrangler dry-run without changing production. Only an explicit execution request performs the live deployment:
+
+```bash
+node scripts/deploy-production.mjs --execute
+```
+
+The live executor does not support bypass flags. If a gate fails, deployment stops.
 
 The Worker entrypoint is `worker.js` and the deployment configuration is `wrangler.jsonc`. Cloudflare runtime secrets are injected through the deployment environment; secret values never belong in source control.
-
-## Blueprint Studio Phase 2
-
-The shared Creative OS / Production Dashboard architecture is documented in `docs/blueprint-studio-phase-2.md` and surfaced on `/studio-production/`.
-
-## Premium Studio Production Layout System
-
-See `docs/premium-production-layout-system.md` for the shared high-premium layout language and reference-image placement plan. The crowding/depth cleanup system is documented in `docs/studio-ui-cleanup-pass.md` and surfaced on `/studio-ui-cleanup/`.
 
 ## Studio safety guardrails
 
 Security headers, advisory AI crawler blocks, no-cost service boundaries, and safe overlay rules are documented in `docs/studio-safety-guardrails.md`. The product-level Safety Core operating model is documented in `docs/lingo-safety-core.md` and surfaced on `/trust-compliance/`.
+
+The runtime safety contract remains:
+
+- Real-money gameplay: **OFF**
+- Cash-out: **OFF**
+- Harmful bypass: **OFF**
 
 ## Launch operations
 
@@ -96,12 +128,12 @@ The production shell disables startup friction, hides unfinished controls behind
 
 ## That’s My Lingo production foundation
 
-See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented in `docs/lingo-casino-config-system.md` and surfaced on `/casino-config/`.
+See `docs/thats-my-lingo-enterprise-foundation.md` for the enterprise entertainment-platform architecture, compliance guardrails, backend readiness, security gates, live-ops model, and QA checklist. The AI-light config foundation is documented on `/casino-config/`.
 
 ## Economy monitoring scaffold
 
-The static economy monitoring specification lives in `docs/lingo-economy-monitoring-master-spec.md`, the first dashboard shell lives at `/economy-command-center/`, and the JSON data contracts live in `config/economy/monitoring-contracts.json`. This scaffold is recommendation-only until backend services, security rules, and admin authorization are implemented.
+The economy monitoring specification lives in `docs/lingo-economy-monitoring-master-spec.md`, the dashboard shell lives at `/economy-command-center/`, and JSON data contracts live in `config/economy/monitoring-contracts.json`. This scaffold is recommendation-only until backend services, security rules, and admin authorization are implemented.
 
 ## Agent cost guardrails
 
-See `docs/agent-cost-guardrails.md` for the static-first operating rules, Spend Management recommendation, and billing review path.
+See `docs/agent-cost-guardrails.md` for static-first operating rules, Spend Management recommendations, and billing review guidance.
