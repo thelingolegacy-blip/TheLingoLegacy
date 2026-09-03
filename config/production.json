@@ -1,0 +1,31 @@
+{
+  "environment": "production",
+  "canonicalDomain": "thelingolegacy.com",
+  "release": {
+    "version": "2.4.0"
+  },
+  "activation": {
+    "failClosed": true,
+    "requireAllGates": true,
+    "minimumOperationalParts": 508,
+    "allowManualActivation": false,
+    "requireLiveProbePass": true,
+    "requireRollbackTarget": true,
+    "requireEvidenceLedger": true
+  },
+  "authorityChain": {
+    "source": "canonicalDomain",
+    "enforcement": "strict",
+    "propagation": [
+      "cloudflare",
+      "worker_pages",
+      "api",
+      "firebase",
+      "cors",
+      "websocket",
+      "live_probes",
+      "activation_gate"
+    ],
+    "onMismatch": "BLOCK"
+  }
+}
