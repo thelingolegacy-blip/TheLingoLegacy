@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "release": {
+    "status": "unverified",
+    "gitCommit": null,
+    "deploymentProvider": "cloudflare",
+    "cloudflareVersionId": null,
+    "deploymentTimestamp": null,
+    "primaryDomain": "https://thelingolegacy.com"
+  },
+  "liveProbes": {
+    "status": "unverified",
+    "baseUrl": "https://thelingolegacy.com",
+    "routes": [
+      { "path": "/", "status": "unverified" },
+      { "path": "/healthz", "status": "unverified" },
+      { "path": "/api/v1/runtime", "status": "unverified" },
+      { "path": "/api/v1/platform/manifest", "status": "unverified" },
+      { "path": "/api/v1/platform/status", "status": "unverified" }
+    ]
+  },
+  "cloudflare": {
+    "status": "unverified",
+    "worker": "thelingolegacy",
+    "bindingsVerified": false,
+    "bindingInventoryEvidence": null
+  },
+  "firebase": {
+    "status": "hard-locked",
+    "projectId": null,
+    "bindingsVerified": false,
+    "authSmokeTest": "unverified",
+    "firestoreSmokeTest": "unverified",
+    "storageSmokeTest": "unverified",
+    "backupRestoreEvidence": null
+  },
+  "applicationServices": {
+    "lingoId": "unverified",
+    "universalWallet": "unverified",
+    "xp": "unverified",
+    "rewards": "unverified",
+    "leaderboards": "unverified",
+    "cloudSave": "unverified",
+    "commerce": "unverified",
+    "flutterSync": "unverified"
+  },
+  "frontend": {
+    "routes": "unverified",
+    "interactions": "unverified",
+    "accessibility": "unverified",
+    "performance": "unverified"
+  },
+  "rollback": {
+    "status": "unverified",
+    "sourceCommit": null,
+    "cloudflareVersionId": null
+  },
+  "safety": {
+    "realMoneyGameplay": false,
+    "cashOut": false,
+    "harmfulBypass": false
+  },
+  "secretsPolicy": {
+    "secretsCommitted": false,
+    "secretMaterialIncluded": false
+  },
+  "operatorEvidence": {
+    "notes": null,
+    "operator": null,
+    "capturedAt": null
+  }
+}
