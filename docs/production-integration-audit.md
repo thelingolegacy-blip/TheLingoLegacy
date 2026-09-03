@@ -13,6 +13,12 @@ The Cloudflare-first production runtime is verified live through the current rel
 - Local production executor: `scripts/deploy-production.mjs`
 - Production deploy requires explicit `--execute` and fails closed on preflight/probe failures
 
+## Dynamic Platform Status
+
+`/api/v1/platform/status` is the governed, non-secret runtime status contract. It exposes operational states without exposing credentials, tokens, service-account material, or provider secrets.
+
+The endpoint deliberately reports Firebase and application services as `unverified` until authoritative production bindings are proven. This prevents the frontend, Flutter clients, and studio control surfaces from treating planned integrations as live integrations.
+
 ## Firebase Gate
 
 Firebase remains an integration hard-lock, not a claimed active production binding. The repository environment contract declares the required public Firebase configuration keys, but repository declarations do not prove that the authoritative Firebase project, Auth configuration, Firestore rules, Storage rules, backups, and environment separation are connected to production.
