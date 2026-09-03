@@ -26,22 +26,26 @@ const forbidden = [
 
 const insightsBlock = /\s*<script>\s*window\.va\s*=\s*window\.va\s*\|\|\s*function\s*\(\)\s*\{\s*\(window\.vaq\s*=\s*window\.vaq\s*\|\|\s*\[\]\)\.push\(arguments\);\s*\};\s*<\/script>\s*<script\s+defer\s+src=["']\/_vercel\/insights\/script\.js["']><\/script>/gi;
 
+const safeProviderWord = /(?<![\/\w.-])Vercel(?![\/\w.-])/gi;
 let changed = 0;
 const residual = [];
 
 for (const file of htmlFiles) {
+  const relative = path.relative(root, file).replaceAll(path.sep, '/');
+  if (relative.startsWith('vercel-hard-lock/')) continue;
   const before = fs.readFileSync(file, 'utf8');
   let after = before.replace(insightsBlock, '\n');
-  after = after.replace(/\bVercel\b/gi, 'Cloudflare');
-  after = after.replace(/vercel\.app/gi, 'pages.dev');
+  after = after.replace(/https?:\/\/[^\s"'<>]+\.vercel\.app/gi, 'https://thelingolegacy.com');
   after = after.replace(/@vercel\//gi, '@cloudflare/');
   after = after.replace(/\/_vercel\//gi, '/_cloudflare/');
   after = after.replace(/vercel\.com/gi, 'cloudflare.com');
+  after = after.replace(/\bVercel\s+(?:web\s+layer|deployment)\b/gi, 'Cloudflare edge layer');
+  after = after.replace(safeProviderWord, 'Cloudflare');
   if (after !== before) {
     fs.writeFileSync(file, after);
     changed++;
   }
-  for (const pattern of forbidden) if (pattern.test(after)) residual.push(`${path.relative(root, file)}: ${pattern}`);
+  for (const pattern of forbidden) if (pattern.test(after)) residual.push(`${relative}: ${pattern}`);
 }
 
 if (residual.length) {
