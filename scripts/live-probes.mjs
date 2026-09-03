@@ -7,10 +7,23 @@ const probe = async (path) => {
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const started = performance.now();
   try {
-    const response = await fetch(new URL(path, base), { signal: controller.signal, redirect: 'manual' });
-    return { path, expected: '2xx', actual: response.status, latencyMs: Math.round(performance.now() - started), status: response.ok ? 'PASS' : 'FAIL' };
+    const url = new URL(path, base);
+    const response = await fetch(url, { signal: controller.signal, redirect: 'manual' });
+    const contentType = response.headers.get('content-type') || '';
+    const body = path === '/healthz' && response.ok ? (await response.text()).trim() : null;
+    const bodyOk = path !== '/healthz' || body === 'ok';
+    const status = response.ok && bodyOk ? 'PASS' : 'FAIL';
+    return {
+      path,
+      expected: path === '/healthz' ? '200 + body ok' : '2xx',
+      actual: response.status,
+      contentType,
+      body: body ?? undefined,
+      latencyMs: Math.round(performance.now() - started),
+      status,
+    };
   } catch (error) {
-    return { path, expected: '2xx', actual: String(error?.message || error), latencyMs: Math.round(performance.now() - started), status: 'FAIL' };
+    return { path, expected: path === '/healthz' ? '200 + body ok' : '2xx', actual: String(error?.message || error), latencyMs: Math.round(performance.now() - started), status: 'FAIL' };
   } finally { clearTimeout(timer); }
 };
 
