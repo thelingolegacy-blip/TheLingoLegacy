@@ -14,13 +14,14 @@ on:
         required: false
         default: https://thelingolegacy.com
   push:
+    branches: ['production-deploy']
     tags: ['v*']
 
 permissions:
   contents: read
 
 concurrency:
-  group: lingo-legacy-promotion-${{ inputs.environment || 'tag' }}
+  group: lingo-legacy-promotion-${{ github.ref_name }}
   cancel-in-progress: false
 
 env:
@@ -58,7 +59,7 @@ jobs:
           echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
       - name: Generate evidence scaffold
         env:
-          ENVIRONMENT: ${{ inputs.environment || 'production' }}
+          ENVIRONMENT: production
           RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
         run: node scripts/generate-release-evidence.mjs
       - name: Upload gate evidence
@@ -69,9 +70,9 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.environment == 'staging' || inputs.environment == 'production')) || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.environment == 'staging' || inputs.environment == 'production')) }}
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}
+    environment: production
     permissions:
       contents: read
     steps:
@@ -110,7 +111,7 @@ jobs:
         run: wrangler deploy --config wrangler.jsonc
       - name: Live probes
         env:
-          LIVE_BASE_URL: ${{ inputs.live_base_url || 'https://thelingolegacy.com' }}
+          LIVE_BASE_URL: https://thelingolegacy.com
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: node scripts/live-probes.mjs
 
