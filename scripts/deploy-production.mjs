@@ -5,7 +5,7 @@ const args = new Set(process.argv.slice(2));
 const execute = args.has('--execute');
 const skipPull = args.has('--skip-pull');
 const liveBase = process.env.LIVE_BASE_URL || 'https://thelingolegacy.com';
-const probePaths = process.env.LIVE_PROBE_PATHS || '/|/healthz|/api/v1/runtime|/api/v1/platform/manifest';
+const probePaths = process.env.LIVE_PROBE_PATHS || '/|/healthz|/api/v1/runtime|/api/v1/platform/manifest|/api/v1/platform/status';
 
 function run(command, commandArgs, options = {}) {
   console.log(`\n$ ${command} ${commandArgs.join(' ')}`);
