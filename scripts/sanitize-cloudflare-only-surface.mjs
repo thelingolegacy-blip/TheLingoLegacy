@@ -32,8 +32,11 @@ const residual = [];
 for (const file of htmlFiles) {
   const before = fs.readFileSync(file, 'utf8');
   let after = before.replace(insightsBlock, '\n');
-  after = after.replace(/\bVercel web layer\b/gi, 'Cloudflare edge layer');
-  after = after.replace(/\bVercel deployment\b/gi, 'Cloudflare deployment');
+  after = after.replace(/\bVercel\b/gi, 'Cloudflare');
+  after = after.replace(/vercel\.app/gi, 'pages.dev');
+  after = after.replace(/@vercel\//gi, '@cloudflare/');
+  after = after.replace(/\/_vercel\//gi, '/_cloudflare/');
+  after = after.replace(/vercel\.com/gi, 'cloudflare.com');
   if (after !== before) {
     fs.writeFileSync(file, after);
     changed++;
