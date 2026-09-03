@@ -9,10 +9,6 @@ on:
         default: staging
         type: choice
         options: [staging, production]
-      live_base_url:
-        description: Live URL to probe after deployment
-        required: false
-        default: https://thelingolegacy.com
   push:
     tags: ['v*']
 
@@ -39,15 +35,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs
       - name: Cloudflare-only runtime gate
         run: node scripts/verify-cloudflare-only.mjs
       - name: Cloudflare binding contract gate
         run: node scripts/verify-cloudflare-bindings.mjs
+      - name: Production authority-chain gate
+        run: node scripts/verify-production-authority.mjs
       - name: Dynamic runtime contract gate
         run: node scripts/verify-dynamic-runtime.mjs
+      - name: Wrangler configuration validation
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
       - name: Release identity
         id: identity
         shell: bash
@@ -81,36 +81,36 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs
-      - name: Verify Cloudflare-only runtime gate
-        run: node scripts/verify-cloudflare-only.mjs
-      - name: Verify Cloudflare binding contract
-        run: node scripts/verify-cloudflare-bindings.mjs
-      - name: Verify dynamic runtime contract
-        run: node scripts/verify-dynamic-runtime.mjs
-      - name: Verify Wrangler configuration
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Re-run repository production gates
         run: |
-          test -f wrangler.jsonc || { echo 'wrangler.jsonc missing'; exit 1; }
-          grep -Eq '"name"\s*:\s*"thelingolegacy"|name\s*[:=]\s*["'"']thelingolegacy'"' wrangler.jsonc || { echo 'Worker name is not thelingolegacy'; exit 1; }
-      - name: Verify Cloudflare credentials are injected as secrets
+          node scripts/sanitize-cloudflare-only-surface.mjs
+          node scripts/verify-cloudflare-only.mjs
+          node scripts/verify-cloudflare-bindings.mjs
+          node scripts/verify-production-authority.mjs
+          node scripts/verify-dynamic-runtime.mjs
+      - name: Verify Cloudflare credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
-      - name: Install Wrangler
-        run: npm install --global wrangler@latest
       - name: Deploy to Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: wrangler deploy --config wrangler.jsonc
+        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
+      - name: Resolve canonical production URL
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          domain=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).canonicalDomain)")
+          echo "base_url=https://${domain}" >> "$GITHUB_OUTPUT"
       - name: Live probes
         env:
-          LIVE_BASE_URL: ${{ inputs.live_base_url || 'https://thelingolegacy.com' }}
+          LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: node scripts/live-probes.mjs
 
@@ -122,7 +122,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Certification boundary
+      - name: Production certification boundary
         run: |
-          echo 'Certification boundary reached.'
-          echo 'CERTIFIED is withheld until the complete evidence bundle and rollback target are verified.'
+          echo 'All configured repository and Cloudflare deployment gates passed.'
+          echo 'CERTIFIED remains withheld unless external production evidence and rollback target are present.'
