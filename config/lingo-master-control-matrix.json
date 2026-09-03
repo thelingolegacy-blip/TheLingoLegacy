@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "The Lingo Legacy",
+  "canonicalRepository": "thelingolegacy-blip/TheLingoLegacy",
+  "productionHost": "thelingolegacy.com",
+  "authority": {
+    "runnerGate": "FAIL",
+    "productionDeployment": "BLOCKED",
+    "activation": "BLOCKED",
+    "lastKnownGood": "PRESERVED",
+    "rule": "No production mutation or activation is permitted until genuine GitHub-hosted runner execution evidence exists."
+  },
+  "statusVocabulary": ["verified", "implemented", "deployed-unverified", "blocked", "unverified", "not_applicable"],
+  "integrationPlanes": {
+    "github": "implementation truth, CI, release evidence",
+    "appdeploy": "app build/deploy/QA surface; deployment does not equal certification",
+    "canva": "brand design",
+    "figma": "product design system",
+    "adobe": "creative assets",
+    "gameStudio": "game design/assets/build/playtest",
+    "dataAnalytics": "measured telemetry and operational analysis",
+    "deepResearch": "evidence and research",
+    "clinicalTrialsGov": "public registry research only"
+  },
+  "pages": [
+    {"id":"home","route":"/","entity":"The Lingo Legacy","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"thats-my-lingo","route":"/thats-my-lingo/","entity":"That’s My Lingo","status":"implemented","githubPath":"README.md","appDeployAppId":"that-s-my-lingo-casino-studio-2xntye"},
+    {"id":"loading","route":"/loading/","entity":"Lingo Loading","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"studio-assets","route":"/studio-assets/","entity":"Studio Assets","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"master-interface","route":"/master-interface/","entity":"Master Interface","status":"implemented","githubPath":"README.md","appDeployAppId":"lingo-legacy-master-project-plan-rkh6r6"},
+    {"id":"landing","route":"/landing/","entity":"Legacy Landing","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"drop","route":"/drop/","entity":"Legacy Drop","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"kottons-code","route":"/kottons-code/","entity":"Kotton’s Code","status":"implemented","githubPath":"README.md","appDeployAppId":"kotton-s-code-cartoon-studio-509py3"},
+    {"id":"tapstich","route":"/tapstich/","entity":"Tap Stitch","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"app","route":"/app/","entity":"Lingo App Surface","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"social-play","route":"/social-play/","entity":"Social Play","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"lingo-ai","route":"/lingo-ai/","entity":"Lingo AI / Sonic Boom","status":"implemented","githubPath":"README.md","appDeployAppId":"lingo-ai-sonic-boom-2030-7plgl2"},
+    {"id":"admin-command-center","route":"/admin-command-center/","entity":"Admin Command Center","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"casino","route":"/casino/","entity":"Casino","status":"implemented","githubPath":"README.md","appDeployAppId":"that-s-my-lingo-casino-studio-2xntye"},
+    {"id":"visual-showcase","route":"/visual-showcase/","entity":"Visual Showcase","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"visual-expansion","route":"/visual-expansion/","entity":"Visual Expansion","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"multiplayer-rap-arena","route":"/multiplayer-rap-arena/","entity":"Multiplayer Rap Arena","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"auto-racing-universe","route":"/auto-racing-universe/","entity":"Auto Racing Universe","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"live-casino-studio","route":"/live-casino-studio/","entity":"Live Casino Studio","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"integration-os","route":"/integration-os/","entity":"Integration OS","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"studio-production","route":"/studio-production/","entity":"Studio Production","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"studio-world-os","route":"/studio-world-os/","entity":"Studio World OS","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"universe","route":"/universe/","entity":"Lingo Universe","status":"implemented","githubPath":"README.md","appDeployAppId":"crazy-weasels-0j3ujc"},
+    {"id":"trust-compliance","route":"/trust-compliance/","entity":"Trust & Compliance","status":"implemented","githubPath":"README.md","appDeployAppId":null},
+    {"id":"economy-command-center","route":"/economy-command-center/","entity":"Economy Command Center","status":"implemented","githubPath":"README.md","appDeployAppId":null}
+  ],
+  "knownAppDeploySurfaces": [
+    {"appId":"hello-the-lingo-legacy-ois1rj","status":"deployed","certification":"unverified"},
+    {"appId":"lingo-ai-sonic-boom-2030-7plgl2","status":"deployed","certification":"unverified"},
+    {"appId":"crazy-weasels-0j3ujc","status":"deployed","certification":"unverified"},
+    {"appId":"lingo-traveltm-uyd57n","status":"deployed","certification":"unverified"},
+    {"appId":"kotton-s-code-cartoon-studio-509py3","status":"deployed","certification":"unverified"},
+    {"appId":"lingo-legacy-master-project-plan-rkh6r6","status":"deployed","certification":"unverified"},
+    {"appId":"that-s-my-lingo-casino-studio-2xntye","status":"deployed","certification":"unverified"}
+  ],
+  "releaseGates": [
+    "real GitHub-hosted runner assigned",
+    "executable job and step created",
+    "step reaches execution state",
+    "step logs exist",
+    "repair and repository validation execute",
+    "deployment dry-run executes",
+    "credentials are verified without exposing secrets",
+    "live probes execute after deployment",
+    "evidence artifact is retained",
+    "certification passes before activation"
+  ],
+  "securityRules": [
+    "no secrets in source",
+    "no authentication tokens in URLs",
+    "no synthetic production evidence",
+    "no runner-gate bypass",
+    "no unverified live deployment",
+    "LKG is preserved on failure"
+  ]
+}
