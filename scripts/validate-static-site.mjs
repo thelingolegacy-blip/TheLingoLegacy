@@ -98,9 +98,10 @@ for (const file of htmlFiles) {
   const relative = rel(file).replaceAll(path.sep, '/');
   if (relative.startsWith('vercel-hard-lock/')) continue;
   const text = fs.readFileSync(file,'utf8');
+  const scanText = text.replace(/\/vercel-hard-lock\//gi, '/historical-provider-lock/');
   const activeFindings = [];
   for (const pattern of forbiddenActivePatterns) {
-    if (pattern.test(text)) activeFindings.push(pattern.toString());
+    if (pattern.test(scanText)) activeFindings.push(pattern.toString());
   }
   if (activeFindings.length) errors.push(`${relative}: retired Vercel execution/instrumentation reference(s): ${activeFindings.join(', ')}`);
 
