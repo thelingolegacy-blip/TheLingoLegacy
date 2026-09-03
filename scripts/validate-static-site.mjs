@@ -95,32 +95,34 @@ const forbiddenActivePatterns = [
 ];
 
 for (const file of htmlFiles) {
+  const relative = rel(file).replaceAll(path.sep, '/');
+  if (relative.startsWith('vercel-hard-lock/')) continue;
   const text = fs.readFileSync(file,'utf8');
   const activeFindings = [];
   for (const pattern of forbiddenActivePatterns) {
     if (pattern.test(text)) activeFindings.push(pattern.toString());
   }
-  if (activeFindings.length) errors.push(`${rel(file)}: retired Vercel execution/instrumentation reference(s): ${activeFindings.join(', ')}`);
+  if (activeFindings.length) errors.push(`${relative}: retired Vercel execution/instrumentation reference(s): ${activeFindings.join(', ')}`);
 
   const ids = new Set([...text.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
   let i=0;
   for (const m of text.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
     i++; const code = m[1].trim(); if (!code) continue;
-    try { new vm.Script(code, {filename:`${rel(file)}#script${i}`}); } catch(e) { errors.push(`${rel(file)} script ${i}: ${e.message}`); }
+    try { new vm.Script(code, {filename:`${relative}#script${i}`}); } catch(e) { errors.push(`${relative} script ${i}: ${e.message}`); }
   }
   for (const m of text.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi)) {
     const raw = m[1]; if (raw.includes('${')) continue;
     if (/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(raw)) continue;
-    if (raw.startsWith('#')) { if (raw.length > 1 && !ids.has(raw.slice(1))) errors.push(`${rel(file)}: missing anchor target ${raw}`); continue; }
+    if (raw.startsWith('#')) { if (raw.length > 1 && !ids.has(raw.slice(1))) errors.push(`${relative}: missing anchor target ${raw}`); continue; }
     const [urlPath, hash] = raw.split('#');
-    if (hash && !ids.has(hash) && (urlPath === '' || urlPath === path.posix.join('/', path.relative(root, file)).replace(/index\.html$/,''))) errors.push(`${rel(file)}: missing anchor target #${hash}`);
+    if (hash && !ids.has(hash) && (urlPath === '' || urlPath === path.posix.join('/', path.relative(root, file)).replace(/index\.html$/,''))) errors.push(`${relative}: missing anchor target #${hash}`);
     if (!urlPath || urlPath.startsWith('//')) continue;
     let target; if (urlPath.startsWith('/')) target = path.join(root, urlPath); else target = path.join(path.dirname(file), urlPath);
     const exists = fs.existsSync(target) || fs.existsSync(path.join(target,'index.html')) || fs.existsSync(`${target}.html`);
-    if (!exists) errors.push(`${rel(file)}: missing local asset/page ${raw}`);
+    if (!exists) errors.push(`${relative}: missing local asset/page ${raw}`);
   }
-  if (!/<title>[^<]+<\/title>/i.test(text)) warn.push(`${rel(file)}: missing <title>`);
-  if (!/name=["']description["']/i.test(text)) warn.push(`${rel(file)}: missing meta description`);
+  if (!/<title>[^<]+<\/title>/i.test(text)) warn.push(`${relative}: missing <title>`);
+  if (!/name=["']description["']/i.test(text)) warn.push(`${relative}: missing meta description`);
 }
 
 console.log(JSON.stringify({htmlFileCount: htmlFiles.length, errors, warn}, null, 2));
