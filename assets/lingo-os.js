@@ -99,7 +99,7 @@
       <div class="os-status" aria-label="System status">
         <span class="os-chip" data-os-chip="system"><span>System</span><b>${status}</b></span>
         <span class="os-chip" data-os-chip="mode"><span>Mode</span><b>${online}</b></span>
-        <span class="os-chip" data-os-chip="wallet"><span>Wallet</span><b>Keys armed</b></span>
+        <span class="os-chip" data-os-chip="wallet"><span>Wallet</span><b>Unverified</b></span>
       </div>
       <div class="os-actions">
         <button class="os-action" type="button" data-os-toggle-fx>Performance</button>
@@ -139,6 +139,7 @@
   applyFeatureFlags(hud);
   applyFeatureFlags(cinematic);
   setSoundEnabled(soundEnabled, false);
+  fetchPlatformStatus();
 
   hud.querySelector('[data-os-toggle-fx]')?.addEventListener('click', () => {
     body.classList.toggle('fx-disabled');
@@ -190,11 +191,10 @@
       spotlight(event.clientX, event.clientY);
     }
 
-    if (target.matches('a, button, [role=\"button\"]')) {
+    if (target.matches('a, button, [role="button"]')) {
       playTone(target.classList.contains('primary') || target.classList.contains('os-action--primary') ? 'reward' : 'click');
     }
   });
-
 
   function setSoundEnabled(enabled, announce) {
     soundEnabled = Boolean(enabled);
@@ -383,6 +383,37 @@
     }
   }
 
+  async function fetchPlatformStatus() {
+    try {
+      const response = await fetch('/api/v1/platform/status', {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      if (!response.ok) throw new Error(`status-${response.status}`);
+      const payload = await response.json();
+      if (payload?.ok !== true || payload?.dynamic !== true) throw new Error('invalid-status-contract');
+      const integrations = payload.integrations || {};
+      const runtime = integrations.cloudflare_runtime || 'unverified';
+      const wallet = integrations.universal_wallet || 'unverified';
+      setChip('system', runtime === 'active' ? 'Cloudflare Online' : titleCase(runtime));
+      setChip('wallet', titleCase(wallet));
+      body.dataset.platformStatus = 'ready';
+      body.dataset.platformRuntime = runtime;
+      body.dataset.universalWalletStatus = wallet;
+      toast('Platform status', `Runtime ${titleCase(runtime)} · Wallet ${titleCase(wallet)}.`);
+    } catch {
+      body.dataset.platformStatus = 'unavailable';
+      setChip('system', 'Status unavailable');
+      setChip('wallet', 'Unverified');
+    }
+  }
+
+  function titleCase(value) {
+    return String(value || 'unverified').replace(/[_-]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
   function applyProductionStartup() {
     if (!productionConfig.startup.firstRunAnimations || prefersReducedMotion) body.classList.add('startup-animations-disabled');
     if (!productionConfig.startup.debugBanners) body.classList.add('debug-banners-disabled');
@@ -409,6 +440,7 @@
     window.addEventListener('online', () => {
       body.classList.remove('offline-aware');
       toast('Network restored', 'Background sync may resume.');
+      fetchPlatformStatus();
     });
     window.addEventListener('offline', () => {
       body.classList.add('offline-aware');
@@ -523,6 +555,6 @@
   }
 
   function escapeHtml(value) {
-    return String(value).replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    return String(value).replace(/[&<>\"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[char]));
   }
 })();
