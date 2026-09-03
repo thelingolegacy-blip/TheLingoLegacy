@@ -1,5 +1,5 @@
 const base = process.env.LIVE_BASE_URL || 'https://thelingolegacy.com';
-const paths = (process.env.LIVE_PROBE_PATHS || '/|/healthz|/api/v1/runtime').split('|').filter(Boolean);
+const paths = (process.env.LIVE_PROBE_PATHS || '/|/healthz|/api/v1/runtime|/api/v1/platform/manifest|/api/v1/platform/status').split('|').filter(Boolean);
 const timeoutMs = Number(process.env.LIVE_PROBE_TIMEOUT_MS || 10000);
 const probe = async (path) => {
   const controller = new AbortController();
