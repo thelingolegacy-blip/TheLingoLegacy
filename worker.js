@@ -16,14 +16,28 @@ const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
 const rateBuckets = new Map();
 
+const SECURITY_HEADERS = {
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'SAMEORIGIN',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+};
+
+function withSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
+  return withSecurityHeaders(new Response(JSON.stringify(body), {
     status,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
     },
-  });
+  }));
 }
 
 function requestOrigin(request) {
@@ -179,17 +193,17 @@ export default {
 
     try {
       if (url.pathname === '/healthz') {
-        return new Response('ok\n', {
+        return withSecurityHeaders(new Response('ok\n', {
           status: 200,
           headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
-        });
+        }));
       }
 
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404);
 
-      return env.ASSETS.fetch(request);
+      return withSecurityHeaders(await env.ASSETS.fetch(request));
     } catch {
       return json({ ok: false, error: 'Request could not be completed right now.' }, 500);
     }
