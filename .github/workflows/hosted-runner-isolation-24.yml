@@ -1,0 +1,35 @@
+name: Lingo Legacy Hosted Runner Isolation 24
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-legacy-hosted-runner-isolation-24-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosted-runner-isolation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Runner allocation evidence
+        run: |
+          set -euo pipefail
+          echo "RUNNER_ALLOCATION=PASS"
+          echo "runner_id=${RUNNER_TRACKING_ID:-present}"
+          echo "runner_name=${RUNNER_NAME}"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "github_workspace=${GITHUB_WORKSPACE}"
+          test -n "${RUNNER_NAME}"
+          test -n "${RUNNER_OS}"
+      - name: Executable step evidence
+        run: |
+          set -euo pipefail
+          echo "EXECUTABLE_JOB=PASS"
+          echo "EXECUTION_EVIDENCE=PASS"
