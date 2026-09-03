@@ -6,7 +6,7 @@ const htmlFiles = [];
 
 function walk(dir) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ent.name === '.git' || ent.name === 'node_modules' || ent.name === 'release') continue;
+    if (ent.name === '.git' || ent.name === 'node_modules') continue;
     const p = path.join(dir, ent.name);
     if (ent.isDirectory()) walk(p);
     else if (ent.name.endsWith('.html')) htmlFiles.push(p);
