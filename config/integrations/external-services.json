@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "The Lingo Legacy",
+  "environmentPolicy": "fail-closed",
+  "canonicalRepository": "thelingolegacy-blip/TheLingoLegacy",
+  "productionHost": "thelingolegacy.com",
+  "productionPath": "GitHub Actions -> Cloudflare Worker -> static assets",
+  "services": {
+    "appdeploy": { "role": "app-build-deploy-qa", "mutation": "gated" },
+    "github": { "role": "repository-ci-release-evidence", "mutation": "allowed", "production": "gated" },
+    "canva": { "role": "brand-design", "mutation": "authorized-designs-only" },
+    "figma": { "role": "product-design-system", "mutation": "authorized-files-only" },
+    "adobe": { "role": "creative-assets", "mutation": "explicit-workflow-only" },
+    "dataAnalytics": { "role": "telemetry-and-operational-analysis", "mutation": "measured-data-only" },
+    "gameStudio": { "role": "game-design-assets-builds-playtest", "mutation": "release-gated" },
+    "deepResearch": { "role": "evidence-and-research", "mutation": "read-and-synthesis" },
+    "clinicalTrialsGov": { "role": "public-clinical-trial-registry-research", "mutation": "read-only" }
+  },
+  "prohibitions": [
+    "no-secret-values-in-source",
+    "no-auth-tokens-in-urls",
+    "no-synthetic-production-evidence",
+    "no-runner-gate-bypass",
+    "no-unverified-live-deployment",
+    "no-clinical-claims-from-registry-data-alone"
+  ],
+  "runnerGate": {
+    "required": true,
+    "runnerLabel": "ubuntu-latest",
+    "requires": ["runner_id", "runner_name", "executable_step", "step_execution", "step_logs"]
+  },
+  "currentAuthority": {
+    "runnerGate": "FAIL",
+    "productionDeployment": "BLOCKED",
+    "activation": "BLOCKED",
+    "lastKnownGood": "PRESERVED"
+  }
+}
