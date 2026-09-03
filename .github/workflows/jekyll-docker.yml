@@ -31,6 +31,9 @@ jobs:
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
+      - name: Verify Cloudflare binding contract
+        run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
@@ -41,5 +44,6 @@ jobs:
           name: lingo-legacy-static-ci-evidence
           path: |
             sanitize.log
+            bindings.log
             validator.log
           if-no-files-found: warn
