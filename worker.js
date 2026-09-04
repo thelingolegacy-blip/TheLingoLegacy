@@ -17,6 +17,7 @@ const SECURITY_HEADERS = {
   'referrer-policy': 'strict-origin-when-cross-origin',
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
   'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests",
 };
 
 function canonicalOrigin(env) {

@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Run production deployment after repair gates
+        description: Run production deployment after all repair and QA gates pass
         required: true
-        default: true
+        default: false
         type: boolean
 
 permissions:
-  contents: write
+  contents: read
   actions: read
   deployments: write
 
@@ -61,14 +61,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in \
-            scripts/sanitize-cloudflare-only-surface.mjs \
-            scripts/verify-cloudflare-only.mjs \
-            scripts/verify-cloudflare-bindings.mjs \
-            scripts/verify-production-authority.mjs \
-            scripts/verify-dynamic-runtime.mjs; do
-            if [ -f "$f" ]; then node "$f"; fi
-          done
+          node scripts/sanitize-cloudflare-only-surface.mjs
+          node scripts/verify-cloudflare-only.mjs
+          node scripts/verify-cloudflare-bindings.mjs
+          node scripts/verify-production-authority.mjs
+          node scripts/verify-dynamic-runtime.mjs
+          node scripts/validate-static-site.mjs
+          node scripts/smoke-static-site.mjs
       - name: Validate Wrangler configuration
         run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
       - name: Run Node tests when defined
@@ -76,8 +75,13 @@ jobs:
         run: |
           set -euo pipefail
           if [ -f package.json ]; then
-            node -e "const p=require('./package.json'); process.exit(p.scripts?.test ? 0 : 1)" \
-              && npm test --if-present || true
+            if node -e "const p=require('./package.json'); process.exit(p.scripts?.test ? 0 : 1)"; then
+              npm test
+            else
+              echo 'No executable Node test script declared; no test result is fabricated.'
+            fi
+          else
+            echo 'No Node package manifest; static repository gates remain authoritative.'
           fi
       - name: Run Flutter checks when present
         shell: bash
@@ -91,28 +95,16 @@ jobs:
           else
             echo 'No Flutter project in this repository; no Flutter source was fabricated.'
           fi
-      - name: Commit deterministic repair evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add release/evidence/lingo-autorepair-report.json
-          if git diff --cached --quiet; then
-            echo 'No repair evidence changes to commit.'
-          else
-            git commit -m 'chore(evidence): record full-stack auto-repair result'
-            git push origin HEAD:main
-          fi
       - name: Upload repair evidence
         uses: actions/upload-artifact@v4
         with:
           name: lingo-full-stack-auto-repair-${{ github.run_id }}
           path: release/evidence/lingo-autorepair-report.json
+          if-no-files-found: error
 
   deploy-cloudflare:
     needs: repair
-    if: ${{ success() && (github.event_name == 'push' || inputs.deploy == true) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true && success() }}
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -134,17 +126,44 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
-      - name: Probe canonical production runtime
-        env:
-          LIVE_BASE_URL: https://thelingolegacy.com
-          LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: |
-          if [ -f scripts/live-probes.mjs ]; then node scripts/live-probes.mjs; else echo 'live-probes.mjs missing'; exit 1; fi
+          set -euo pipefail
+          mkdir -p release/evidence
+          npx --yes wrangler@4 deploy --config wrangler.jsonc 2>&1 | tee release/evidence/cloudflare-deploy.log
+      - name: Resolve canonical production URL
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          domain=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).canonicalDomain)")
+          echo "base_url=https://${domain}" >> "$GITHUB_OUTPUT"
+      - name: Live probes
+        env:
+          LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
+          LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
+        run: node scripts/live-probes.mjs
+      - name: Record deployment verification evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "release_id=LL-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            echo "commit=${GITHUB_SHA}"
+            echo "provider=cloudflare"
+            echo "deployment_step=PASS"
+            echo "live_probe_step=PASS"
+            echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > release/evidence/deployment-verification.txt
+      - name: Upload deployment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-deployment-evidence-${{ github.run_id }}
+          path: release/evidence/
+          if-no-files-found: error
 
   deploy-firebase:
     needs: repair
-    if: ${{ success() && (github.event_name == 'push' || inputs.deploy == true) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true && success() }}
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -172,15 +191,30 @@ jobs:
           firebase deploy --non-interactive --token "$FIREBASE_TOKEN"
       - name: Record Firebase not-present state
         if: steps.firebase.outputs.present != 'true'
-        run: echo 'No firebase.json in canonical repository; Firebase deployment is not fabricated.'
+        run: |
+          mkdir -p release/evidence
+          echo "firebase_surface=NOT_PRESENT" > release/evidence/firebase-verification.txt
+          echo "deployment_not_attempted=true" >> release/evidence/firebase-verification.txt
+      - name: Upload Firebase evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: firebase-deployment-evidence-${{ github.run_id }}
+          path: release/evidence/firebase-verification.txt
+          if-no-files-found: error
 
   certification:
-    needs: [deploy-cloudflare, deploy-firebase]
-    if: success()
+    needs: [runner-gate, repair, deploy-cloudflare, deploy-firebase]
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true && success() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Production deployment certification
+      - uses: actions/checkout@v4
+      - name: Certification boundary
+        shell: bash
         run: |
-          echo 'CLOUDflare deployment job completed.'
-          echo 'Firebase deployment job completed or was correctly marked not-present.'
-          echo 'Production certification is based on executable job evidence, not assumed access.'
+          set -euo pipefail
+          echo "RUNNER_GATE=PASS"
+          echo "REPAIR_GATE=PASS"
+          echo "DEPLOYMENT_JOBS=PASS"
+          echo "LIVE_PROBES=PASS"
+          echo "CERTIFICATION=WITHHELD"
+          echo "Reason: independent rollback-target evidence and an immutable release evidence ledger must be assembled before CERTIFIED/ACTIVATED."
