@@ -1,0 +1,11 @@
+{
+  "schemaVersion":"1.0.0",
+  "status":"STAGED",
+  "dynamic":true,
+  "surfaces":["/","/hub","/ask","/room","/stage","/nest","/craft","/vault","/pulse","/flow","/sync","/care","/guide","/camp","/crew","/account","/billing","/settings","/notifications","/security","/integrations","/marketplace","/support","/docs","/onboarding","/community","/blog","/developer","/legal","/404","/500","/offline","/maintenance"],
+  "engines":["identity","wallet","xp","rewards","commerce","content","world","media","analytics","notification","search","automation","generator"],
+  "runtime":{"configuration":true,"apiData":true,"sessionState":true,"featureFlags":true,"assetManifests":true,"worldConfiguration":true},
+  "experience":{"responsive":["mobile","tablet","desktop"],"flutterParity":true,"mediaOptimization":true,"animation":true,"optionalSound":true,"reducedMotion":true,"accessibility":true,"loadingStates":true,"errorStates":true,"emptyStates":true},
+  "infrastructure":{"github":true,"ciCd":true,"cloudflare":"verify_actual_configuration","firebase":"use_only_when_configured","secureEnvironment":true,"observability":true,"healthEndpoints":true},
+  "release":{"requiresRealCiEvidence":true,"requiresLiveVerification":true,"requiresCertification":true,"requiresProductionPromotion":true,"lkgPreservedUntilPromotion":true}
+}
