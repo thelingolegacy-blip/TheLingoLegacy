@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"1.0.0",
+  "status":"STAGED",
+  "theme":"dark-default",
+  "colors":{"obsidian":"#0A0A0C","starCore":"#F5F5F7","legacyGold":"#D4A857","pulseBlue":"#3AB8FF","syncViolet":"#7C4DFF","flowGreen":"#00D68F"},
+  "typography":{"display":"heavy-wide-sans","suffix":"light-narrow-sans","body":"high-readability-sans"},
+  "components":["angular-button","layered-card","modular-panel","floating-glass-modal","verb-loader","metallic-badge","cosmic-grid-navigation"],
+  "motion":{"fastTransitions":true,"glitchMicroAnimations":true,"particleTrails":true,"cosmicDust":true,"universeCollisionTransitions":true,"reducedMotionRequired":true},
+  "surfaces":{"darkDefault":true,"highContrast":true,"metallicGradients":true,"glassLayers":true,"textureNoise":true},
+  "responsive":{"mobile":true,"tablet":true,"desktop":true,"touchFirst":true},
+  "accessibility":{"reducedMotion":true,"keyboardNavigation":true,"focusVisible":true,"semanticLandmarks":true,"altTextRequired":true}
+}
