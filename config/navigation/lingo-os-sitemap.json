@@ -1,0 +1,38 @@
+{
+  "schemaVersion":"1.0.0",
+  "status":"STAGED",
+  "primary":[
+    {"id":"hub","label":"LINGOhub","route":"/hub"},
+    {"id":"ask","label":"AskLINGO","route":"/ask"},
+    {"id":"room","label":"LINGOroom","route":"/room"},
+    {"id":"stage","label":"LINGOstage","route":"/stage"},
+    {"id":"nest","label":"LINGOnest","route":"/nest"},
+    {"id":"craft","label":"LINGOcraft","route":"/craft"},
+    {"id":"vault","label":"LINGOvault","route":"/vault"},
+    {"id":"pulse","label":"LINGOpulse","route":"/pulse"},
+    {"id":"flow","label":"LINGOflow","route":"/flow"},
+    {"id":"sync","label":"LINGOsync","route":"/sync"}
+  ],
+  "support":[
+    {"id":"care","label":"LINGOcare","route":"/care"},
+    {"id":"guide","label":"LINGOguide","route":"/guide"},
+    {"id":"camp","label":"LINGOcamp","route":"/camp"},
+    {"id":"crew","label":"LINGOcrew","route":"/crew"}
+  ],
+  "membership":[
+    {"id":"one","label":"LINGOone","route":"/tiers/one"},
+    {"id":"pro","label":"LINGOpro","route":"/tiers/pro"},
+    {"id":"prime","label":"LINGOprime","route":"/tiers/prime"},
+    {"id":"core","label":"LINGOcore","route":"/tiers/core"}
+  ],
+  "independentWorlds":[
+    {"id":"loyalty-lane","label":"Loyalty Lane Designs","host":"loyaltylane.thelingolegacy.com","route":"/"},
+    {"id":"kottons-code","label":"KottonsCode","host":"kottonscode.thelingolegacy.com","route":"/"},
+    {"id":"games","label":"Games","host":"games.thelingolegacy.com","route":"/"},
+    {"id":"books","label":"Books","host":"books.thelingolegacy.com","route":"/"},
+    {"id":"media","label":"Media","host":"media.thelingolegacy.com","route":"/"}
+  ],
+  "systemPages":["/account","/billing","/settings","/notifications","/security","/integrations","/marketplace","/support","/docs","/onboarding","/community","/blog","/developer","/legal","/404","/500","/offline","/maintenance"],
+  "dynamic":true,
+  "sourceOfTruth":"config/navigation/lingo-os-sitemap.json"
+}
