@@ -1,0 +1,13 @@
+{
+  "schemaVersion":"1.0.0",
+  "status":"STAGED",
+  "independent":true,
+  "brands":[
+    {"id":"loyalty-lane","name":"Loyalty Lane Designs","host":"loyaltylane.thelingolegacy.com","vibe":"luxury streetwear","features":["shop","collections","drops","lookbooks","campaigns","behind-the-scenes","booking"]},
+    {"id":"kottons-code","name":"KottonsCode","host":"kottonscode.thelingolegacy.com","vibe":"animated playful character universe","features":["characters","episodes","books","games","merch"]},
+    {"id":"games","name":"Standalone Games","host":"games.thelingolegacy.com","vibe":"arcade high-energy","features":["library","leaderboards","tournaments","mobile experiences"]},
+    {"id":"books","name":"Books","host":"books.thelingolegacy.com","vibe":"lore storytelling education","features":["catalog","previews","author notes","reading guides"]},
+    {"id":"media","name":"Media","host":"media.thelingolegacy.com","vibe":"cinematic studio","features":["trailers","series","music","behind-the-scenes","press kit"]}
+  ],
+  "policy":{"lingoOsBranding":false,"sharedPlatformContracts":true,"independentVisualIdentity":true,"independentEditorialVoice":true}
+}
