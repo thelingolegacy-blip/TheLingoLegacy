@@ -12,6 +12,9 @@ concurrency:
   group: lingo-legacy-production-gate-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NODE_VERSION: '22'
+
 jobs:
   runner_gate:
     name: Runner Gate
@@ -23,64 +26,142 @@ jobs:
       - name: Prove runner execution
         id: runner
         shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
         run: |
           set -euo pipefail
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
+          test -n "$RUNNER_NAME"
+          test -n "$RUNNER_OS_VALUE"
+          test -n "$RUNNER_ARCH_VALUE"
           echo "runner=reachable"
-          echo "runner_os=${RUNNER_OS}"
-          echo "runner_arch=${RUNNER_ARCH}"
-          echo "runner_name=${RUNNER_NAME}"
-          echo "workspace=${GITHUB_WORKSPACE}"
+          echo "runner_id=$RUNNER_ID"
+          echo "runner_name=$RUNNER_NAME"
+          echo "runner_os=$RUNNER_OS_VALUE"
+          echo "runner_arch=$RUNNER_ARCH_VALUE"
+          echo "workspace=$GITHUB_WORKSPACE"
           echo "reached=true" >> "$GITHUB_OUTPUT"
 
       - name: Capture runner evidence
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p evidence
+          mkdir -p release/evidence
           {
-            echo "release_id=${GITHUB_RUN_ID}"
+            echo "release_id=LL-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
             echo "request_id=${GITHUB_RUN_ID}"
+            echo "trace_id=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
             echo "commit=${GITHUB_SHA}"
+            echo "runner_id=${RUNNER_ID}"
             echo "runner=${RUNNER_NAME}"
-            echo "os=${RUNNER_OS}"
-            echo "arch=${RUNNER_ARCH}"
+            echo "os=${RUNNER_OS_VALUE}"
+            echo "arch=${RUNNER_ARCH_VALUE}"
             echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "runner_gate=PASS"
-          } | tee evidence/runner-gate.txt
+          } | tee release/evidence/runner-gate.txt
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
 
       - name: Upload runner evidence
         uses: actions/upload-artifact@v4
         with:
           name: runner-gate-evidence-${{ github.run_id }}
-          path: evidence/runner-gate.txt
+          path: release/evidence/runner-gate.txt
           if-no-files-found: error
 
-  source_gate:
-    name: Source Gate
+  source_and_qa_gate:
+    name: Source + QA Gate
     runs-on: ubuntu-latest
     needs: runner_gate
     if: needs.runner_gate.outputs.runner_reached == 'true'
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Validate repository contracts
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Validate canonical repository surface
         shell: bash
         run: |
           set -euo pipefail
-          test -f package.json
-          test -f .github/workflows/actions-runner-smoke.yml
-          test -f .github/workflows/production-gate.yml
-          echo "source_gate=PASS"
-          echo "commit=${GITHUB_SHA}"
+          test -f index.html
+          test -f 404.html
+          test -f wrangler.jsonc
+          test -f worker.js
+          test -f config/production.json
+          test -f scripts/validate-static-site.mjs
+          test -f scripts/smoke-static-site.mjs
+          test -f scripts/live-probes.mjs
+          echo "repository_surface=PASS"
 
-      - name: Validate no false activation marker
+      - name: Reject false activation state markers
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R "activation.*FULL_CAPACITY" --include='*.ts' --include='*.tsx' backend src 2>/dev/null | grep -vE 'test|spec|docs'; then
-            echo "ERROR: static FULL_CAPACITY activation marker found in runtime source."
+          if grep -R -nE "activation[[:space:]]*[:=].*FULL_CAPACITY|status[[:space:]]*[:=].*ACTIVATED" \
+            --include='*.js' --include='*.mjs' --include='*.ts' --include='*.tsx' --include='*.json' \
+            . 2>/dev/null | grep -vE '/(docs|release/evidence|node_modules)/'; then
+            echo "ERROR: static activation-success marker found in runtime/config source."
             exit 1
           fi
-          echo "activation_marker_gate=PASS"
+          echo "activation_invariant=PASS"
+
+      - name: Validate static release surface
+        run: node scripts/validate-static-site.mjs
+
+      - name: Run executable static smoke QA
+        run: node scripts/smoke-static-site.mjs
+
+      - name: Create immutable candidate artifact digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence
+          tar --exclude='./.git' --exclude='./release/evidence' -cf release/candidate.tar .
+          sha256sum release/candidate.tar | tee release/evidence/candidate-artifact.sha256
+          echo "artifact_status=BUILT" >> release/evidence/candidate-artifact.txt
+          echo "artifact_digest=$(sha256sum release/candidate.tar | cut -d' ' -f1)" >> release/evidence/candidate-artifact.txt
+          echo "commit=${GITHUB_SHA}" >> release/evidence/candidate-artifact.txt
+
+      - name: Upload candidate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-build-evidence-${{ github.run_id }}
+          path: release/evidence/
+          if-no-files-found: error
+
+  gate_summary:
+    name: Gate Summary
+    runs-on: ubuntu-latest
+    needs: [runner_gate, source_and_qa_gate]
+    if: always()
+    steps:
+      - name: Enforce fail-closed candidate gate
+        shell: bash
+        env:
+          RUNNER_RESULT: ${{ needs.runner_gate.result }}
+          SOURCE_QA_RESULT: ${{ needs.source_and_qa_gate.result }}
+        run: |
+          set -euo pipefail
+          echo "runner_gate=${RUNNER_RESULT}"
+          echo "source_qa_gate=${SOURCE_QA_RESULT}"
+          if [ "$RUNNER_RESULT" != "success" ] || [ "$SOURCE_QA_RESULT" != "success" ]; then
+            echo "PRODUCTION_GATE=FAIL"
+            echo "NO DEPLOYMENT / NO CERTIFICATION / NO ACTIVATION"
+            exit 1
+          fi
+          echo "PRODUCTION_GATE=PASS"
+          echo "Candidate is validated only; deployment, live verification, certification and activation remain separate gates."
