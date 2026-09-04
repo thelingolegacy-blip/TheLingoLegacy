@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Lingo Legacy Premium Dynamic Experience",
+  "type":"object",
+  "required":["version","worldId","identity","features","assets","motion","audio","navigation"],
+  "properties":{
+    "version":{"type":"string"},
+    "worldId":{"type":"string"},
+    "identity":{"type":"object","required":["name","theme"],"properties":{"name":{"type":"string"},"theme":{"type":"string"},"description":{"type":"string"}}},
+    "features":{"type":"array","items":{"type":"string"}},
+    "assets":{"type":"object","properties":{"hero":{"type":"string"},"background":{"type":"string"},"icon":{"type":"string"},"gallery":{"type":"array","items":{"type":"string"}}}},
+    "motion":{"type":"object","required":["enabled","reducedMotionFallback"],"properties":{"enabled":{"type":"boolean"},"reducedMotionFallback":{"type":"boolean"},"preset":{"type":"string"}}},
+    "audio":{"type":"object","required":["enabledByUser"],"properties":{"enabledByUser":{"type":"boolean"},"ambient":{"type":"string"},"interaction":{"type":"string"}}},
+    "navigation":{"type":"array","items":{"type":"object","required":["label","route"],"properties":{"label":{"type":"string"},"route":{"type":"string"},"visible":{"type":"boolean"}}}},
+    "generator":{"type":"object","properties":{"world":{"type":"boolean"},"image":{"type":"boolean"},"visual":{"type":"boolean"},"animation":{"type":"boolean"},"sound":{"type":"boolean"},"scene":{"type":"boolean"},"promo":{"type":"boolean"}}}
+  }
+}
