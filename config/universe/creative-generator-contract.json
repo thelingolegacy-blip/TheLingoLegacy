@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "STAGED",
+  "generators": {
+    "world": {"inputs":["worldId","theme","palette","lore"],"outputs":["world-card","background","portal-transition","metadata"]},
+    "image": {"inputs":["worldId","subject","style","aspectRatio"],"outputs":["png-or-webp","alt-text","asset-manifest-entry"]},
+    "visual": {"inputs":["worldId","scene","lighting","composition"],"outputs":["hero","panel-art","environment-plate"]},
+    "animation": {"inputs":["worldId","motionPreset","duration","reducedMotion"],"outputs":["css-or-web-animation","timing-token"]},
+    "sound": {"inputs":["worldId","event","enabledByUser"],"outputs":["audio-hook","fallback-state","volume-policy"]},
+    "scene": {"inputs":["worldId","components","effects"],"outputs":["scene-config","responsive-layout"]},
+    "promo": {"inputs":["worldId","campaign","copy","image"],"outputs":["social-card","banner","thumbnail"]}
+  },
+  "assetRules": {
+    "noSecretsInAssets": true,
+    "noProductionCredentials": true,
+    "lazyLoadNonCritical": true,
+    "respectReducedMotion": true,
+    "audioOptIn": true,
+    "altTextRequired": true,
+    "copyrightReviewRequired": true
+  },
+  "delivery": {
+    "sourceControl": "GitHub",
+    "edgeRuntime": "Cloudflare",
+    "mobileRuntime": "Flutter",
+    "dataServices": "Firebase-optional",
+    "designWorkspace": "Canva/Adobe-ready"
+  }
+}
