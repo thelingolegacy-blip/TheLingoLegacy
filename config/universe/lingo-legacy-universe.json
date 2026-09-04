@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "STAGED",
+  "activation": "NOT_AUTHORIZED",
+  "productionMutation": false,
+  "universe": "The Lingo Legacy",
+  "experienceContract": {
+    "frontend": "Flutter + responsive web",
+    "backend": "Firebase services where required",
+    "edge": "Cloudflare Worker + static assets",
+    "source": "GitHub",
+    "creative": "Canva/Adobe-ready asset pipeline",
+    "animation": "CSS/Web Animations + runtime motion hooks",
+    "sound": "optional, user-triggered, world-specific audio hooks",
+    "generators": ["world", "visual", "image", "animation", "sound", "scene", "promo"]
+  },
+  "worlds": [
+    {"id":"thats-my-lingo","name":"That’s My Lingo","theme":"Vegas / entertainment","motion":"reels, lights, celebratory FX","sound":"optional arcade/casino ambience","access":"public"},
+    {"id":"loyalty-lane","name":"Loyalty Lane","theme":"Industrial Noir streetwear","motion":"fabric, stitch, chrome UI","sound":"optional R&B/hip-hop-inspired ambience","access":"public"},
+    {"id":"kottons-code","name":"Kotton’s Code","theme":"cartoon explorer","motion":"soft bounce, sparkle, playful transitions","sound":"optional playful cues","access":"public"},
+    {"id":"lingo-legacy-hq","name":"Lingo Legacy HQ","theme":"cinematic command center","motion":"camera drift, glass, light sweeps","sound":"optional cinematic bed","access":"public"},
+    {"id":"sonic-boom","name":"Sonic Boom","theme":"futuristic command","motion":"energy pulses, scanlines, HUD transitions","sound":"optional futuristic cues","access":"public"},
+    {"id":"lingo-campus","name":"LingoCampus","theme":"future educational social network","motion":"learning progress, social reactions, achievement FX","sound":"optional study/achievement cues","access":"public"},
+    {"id":"outer-crown","name":"Outer Crown","theme":"sealed constellation / travel layer","motion":"constellation links and portal transitions","sound":"optional spatial travel cue","access":"sealed-until-authorized"}
+  ],
+  "sharedCapabilities": {
+    "identity": ["Lingo ID"],
+    "progression": ["XP Engine", "Rewards Engine"],
+    "wallet": ["Universal Legacy Wallet"],
+    "assets": ["images", "SVG", "backgrounds", "icons", "motion presets", "audio hooks"],
+    "quality": ["responsive", "reduced-motion", "lazy loading", "asset preloading", "error recovery"]
+  },
+  "safety": {
+    "realMoneyWagers": false,
+    "realMoneyPayouts": false,
+    "cashOutFlows": false,
+    "productionActivation": false,
+    "deploymentGateBypass": false,
+    "LKGMutation": false
+  }
+}
