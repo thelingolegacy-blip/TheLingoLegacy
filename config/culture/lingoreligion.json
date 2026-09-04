@@ -1,0 +1,16 @@
+{
+  "schemaVersion":"1.0.0",
+  "status":"STAGED",
+  "id":"lingoreligion",
+  "name":"LINGOreligion",
+  "classification":"cultural-movement",
+  "notARealWorldReligion":true,
+  "purpose":"A fictional cultural layer within the Lingo Legacy universe centered on identity, belonging, acceptance, unity, elevation, and becoming.",
+  "principles":["acceptance","elevation","unity","transformation","belonging","no_discrimination","no_judgment"],
+  "creed":"We don’t judge. We don’t discriminate. We don’t divide. Everyone’s accepted. Everyone can become.",
+  "manifesto":"LINGOreligion is the culture of becoming. No judgment. No discrimination. No limits. Step into the LINGO world and discover a universe built around acceptance, elevation, unity, transformation, and belonging.",
+  "experience":{"visual":"LINGO OS cosmic streetwear","audio":"optional world ambience","motion":"cinematic glitch and universe-collision transitions","accessibility":"required reduced-motion and non-audio alternatives"},
+  "osMapping":{"LINGOcrew":"community","LINGOcamp":"learning_and_onboarding","LINGOguide":"knowledge","LINGOcare":"support_and_safety","LINGOcore":"foundation","LINGOprime":"aspiration","LINGOroom":"gathering","LINGOstage":"broadcast","LINGOnest":"personal_space","LINGOhub":"central_command"},
+  "safety":{"no_coercion":true,"no_exclusion":true,"no_discrimination":true,"no_real_world_religious_authority_claim":true,"user_controlled_participation":true,"no_required_donations":true},
+  "contentPolicy":{"respect_real_world_religions":true,"no_targeting_or_denigration":true,"no_claim_of_divine_authority":true}
+}
