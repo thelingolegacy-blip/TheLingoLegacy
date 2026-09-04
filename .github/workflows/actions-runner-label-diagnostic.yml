@@ -1,0 +1,26 @@
+name: Lingo Legacy Actions Runner Label Diagnostic
+
+on:
+  push:
+    branches: [ "fix/**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Ubuntu 24.04 Runner Diagnostic
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Runner reached executable stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "runner=reachable"
+          echo "runner_id=${{ runner.id }}"
+          echo "runner_name=${{ runner.name }}"
+          echo "runner_os=${{ runner.os }}"
+          echo "runner_arch=${{ runner.arch }}"
+          echo "github_sha=${GITHUB_SHA}"
