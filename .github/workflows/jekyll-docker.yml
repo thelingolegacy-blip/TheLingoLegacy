@@ -2,9 +2,10 @@ name: Lingo Legacy Static CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "staged/universe-experience-integration-2026-09-04" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,6 +21,21 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Runner execution telemetry
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "runner.name=${RUNNER_NAME}"
+          echo "runner.os=${RUNNER_OS}"
+          echo "runner.arch=${RUNNER_ARCH}"
+          echo "runner.environment=${RUNNER_ENVIRONMENT}"
+          echo "github.run_id=${GITHUB_RUN_ID}"
+          echo "github.run_attempt=${GITHUB_RUN_ATTEMPT}"
+          echo "github.sha=${GITHUB_SHA}"
+          test -n "${RUNNER_NAME}"
+          test -n "${GITHUB_RUN_ID}"
+          test -n "${GITHUB_SHA}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
