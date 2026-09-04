@@ -18,9 +18,21 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Runner reached execution stage
+        shell: bash
         run: |
           set -euo pipefail
           echo "runner=reachable"
-          echo "os=$RUNNER_OS"
-          echo "arch=$RUNNER_ARCH"
-          echo "workspace=$GITHUB_WORKSPACE"
+          echo "runner_id=${RUNNER_ID:-unknown}"
+          echo "runner_name=${RUNNER_NAME:-unknown}"
+          echo "runner_os=${RUNNER_OS:-unknown}"
+          echo "runner_arch=${RUNNER_ARCH:-unknown}"
+          echo "github_sha=${GITHUB_SHA:-unknown}"
+          echo "workspace=${GITHUB_WORKSPACE:-unknown}"
+
+      - name: Emit execution sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "RUNNER_EXECUTION_SENTINEL=PASS"
+          test -n "${RUNNER_NAME:-}"
+          test -n "${GITHUB_SHA:-}"
