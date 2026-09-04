@@ -1,0 +1,86 @@
+name: Lingo Legacy Production Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "fix/**" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-legacy-production-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runner_gate:
+    name: Runner Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      runner_reached: ${{ steps.runner.outputs.reached }}
+    steps:
+      - name: Prove runner execution
+        id: runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "runner=reachable"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "runner_name=${RUNNER_NAME}"
+          echo "workspace=${GITHUB_WORKSPACE}"
+          echo "reached=true" >> "$GITHUB_OUTPUT"
+
+      - name: Capture runner evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "release_id=${GITHUB_RUN_ID}"
+            echo "request_id=${GITHUB_RUN_ID}"
+            echo "commit=${GITHUB_SHA}"
+            echo "runner=${RUNNER_NAME}"
+            echo "os=${RUNNER_OS}"
+            echo "arch=${RUNNER_ARCH}"
+            echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "runner_gate=PASS"
+          } | tee evidence/runner-gate.txt
+
+      - name: Upload runner evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-gate-evidence-${{ github.run_id }}
+          path: evidence/runner-gate.txt
+          if-no-files-found: error
+
+  source_gate:
+    name: Source Gate
+    runs-on: ubuntu-latest
+    needs: runner_gate
+    if: needs.runner_gate.outputs.runner_reached == 'true'
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Validate repository contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f package.json
+          test -f .github/workflows/actions-runner-smoke.yml
+          test -f .github/workflows/production-gate.yml
+          echo "source_gate=PASS"
+          echo "commit=${GITHUB_SHA}"
+
+      - name: Validate no false activation marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R "activation.*FULL_CAPACITY" --include='*.ts' --include='*.tsx' backend src 2>/dev/null | grep -vE 'test|spec|docs'; then
+            echo "ERROR: static FULL_CAPACITY activation marker found in runtime source."
+            exit 1
+          fi
+          echo "activation_marker_gate=PASS"
