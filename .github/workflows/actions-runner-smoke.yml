@@ -14,25 +14,37 @@ concurrency:
 
 jobs:
   smoke:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Runner reached execution stage
+        id: assert
         shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
-          echo "runner=reachable"
-          echo "runner_id=${RUNNER_ID:-unknown}"
-          echo "runner_name=${RUNNER_NAME:-unknown}"
-          echo "runner_os=${RUNNER_OS:-unknown}"
-          echo "runner_arch=${RUNNER_ARCH:-unknown}"
-          echo "github_sha=${GITHUB_SHA:-unknown}"
-          echo "workspace=${GITHUB_WORKSPACE:-unknown}"
+          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
+          test -n "$RUNNER_NAME"
+          test -n "$RUNNER_OS_VALUE"
+          test -n "$RUNNER_ARCH_VALUE"
+          test -n "$GITHUB_SHA_VALUE"
+          echo "RUNNER_GATE=PASS" >> "$GITHUB_OUTPUT"
+          echo "runner_id=$RUNNER_ID"
+          echo "runner_name=$RUNNER_NAME"
+          echo "runner_os=$RUNNER_OS_VALUE"
+          echo "runner_arch=$RUNNER_ARCH_VALUE"
+          echo "github_sha=$GITHUB_SHA_VALUE"
 
       - name: Emit execution sentinel
         shell: bash
+        env:
+          RUNNER_GATE: ${{ steps.assert.outputs.runner_gate }}
         run: |
           set -euo pipefail
+          test "$RUNNER_GATE" = "PASS"
           echo "RUNNER_EXECUTION_SENTINEL=PASS"
-          test -n "${RUNNER_NAME:-}"
-          test -n "${GITHUB_SHA:-}"
