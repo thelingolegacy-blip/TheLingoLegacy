@@ -1,178 +1,31 @@
 {
-  "version": "2026.07.28-full-front-back-stack-map",
-  "mode": "static-blueprint-only",
+  "version": "2026.09.05-production-stack-contract",
+  "mode": "cloudflare-canonical-firebase-flutter-contract",
   "liveInterfaceUpdating": true,
   "liveBackendWrites": false,
   "livePayments": false,
   "liveExternalServiceCalls": false,
-  "vercelFunctions": false,
-  "guardrails": [
-    "no_real_money_wagering",
-    "no_cash_out",
-    "no_cash_equivalent_prizes",
-    "static_contracts_until_backend_activation",
-    "live_interface_updates_without_external_writes",
-    "auth_validation_audit_required_before_live_services",
-    "domain_verification_required_before_cloudflare_changes",
-    "no_committed_secrets"
-  ],
+  "deploymentSource": "github",
+  "webRuntime": "cloudflare-worker",
+  "webAssets": "cloudflare-worker-assets",
+  "mobileRuntime": "flutter",
+  "appBackend": "firebase",
+  "appBackendStatus": "contract_only",
+  "guardrails": ["fail_closed","no_real_money_wagering","no_real_money_payouts","no_cash_out","server_authoritative_wallet_xp_rewards_game_commerce","auth_validation_app_check_audit_required_before_live_firebase_writes","domain_verification_required_before_dns_changes","no_committed_secrets","live_evidence_required_for_certification"],
   "surfaces": [
-    {
-      "id": "frontend_web",
-      "name": "Vercel Static Web Frontend",
-      "role": "Public HQ, game, studio, world, safety, payload, master-interface, and integration pages.",
-      "status": "active_static",
-      "activation": "Already deploys as static HTML on Vercel. Live interface updating is enabled for safe preview UI state without external writes."
-    },
-    {
-      "id": "flutter_app",
-      "name": "Flutter App Layer",
-      "role": "Future mobile shells for splash, world home, Lingo ID, profile, XP, virtual wallet display, store previews, notifications surface, and settings.",
-      "status": "contract_only",
-      "activation": "Add mobile runtime contracts only after auth, consent, no-cash-out enforcement, and app-store review language exist."
-    },
-    {
-      "id": "firebase",
-      "name": "Firebase Optional App Services",
-      "role": "Optional Auth, App Check, Firestore, Cloud Storage, FCM, Crashlytics, Analytics, and Remote Config.",
-      "status": "contract_only",
-      "activation": "Do not enable Cloud Functions, Firestore writes, app telemetry, or Firebase Storage from this static repo without a separate backend plan."
-    },
-    {
-      "id": "cloudflare",
-      "name": "Cloudflare DNS and Edge Boundary",
-      "role": "Optional DNS, redirect, cache, bot/security, or edge boundary in front of Vercel-owned deployments.",
-      "status": "manual_external",
-      "activation": "Keep Vercel as deployment source of truth; DNS and edge changes require domain-specific verification before edits."
-    },
-    {
-      "id": "vercel",
-      "name": "Vercel Delivery Layer",
-      "role": "Static hosting, deployments, previews, domains, headers, aliases, and Vercel Blob for file storage.",
-      "status": "active_static",
-      "activation": "No new Functions are active in this blueprint."
-    },
-    {
-      "id": "github",
-      "name": "GitHub Source and PR Layer",
-      "role": "Source control, pull requests, validation workflow, review, and Vercel deployment trigger source.",
-      "status": "active_source",
-      "activation": "Use focused PRs; avoid broad auto-build loops."
-    },
-    {
-      "id": "blob_storage",
-      "name": "Vercel Blob File Storage",
-      "role": "First-party file storage for images, documents, generated assets, profile uploads, and media.",
-      "status": "planned",
-      "activation": "Use immutable blob URLs and separate pointers for mutable content."
-    },
-    {
-      "id": "neon_postgres",
-      "name": "Neon Relational Storage via Vercel Marketplace",
-      "role": "Future relational data for users, entitlements, audit logs, configs, purchases, and economy state.",
-      "status": "planned_marketplace",
-      "activation": "Vercel Postgres is no longer first-party; existing databases migrated to Neon via Vercel Marketplace in December 2024."
-    },
-    {
-      "id": "upstash_redis",
-      "name": "Upstash Redis Cache via Vercel Marketplace",
-      "role": "Future cache, rate counters, idempotency keys, queues, and AI flavor dedupe.",
-      "status": "planned_marketplace",
-      "activation": "Vercel KV is no longer first-party; existing stores migrated to Upstash Redis via Vercel Marketplace in December 2024."
-    }
+    {"id":"frontend_web","name":"Cloudflare Dynamic Web Frontend","role":"Public HQ, games, studio, worlds, safety, commerce, payload and integration surfaces.","status":"active_production","activation":"Cloudflare Worker controls the API boundary and ASSETS delivery for thelingolegacy.com."},
+    {"id":"flutter_app","name":"Flutter App Layer","role":"Mobile shells for Lingo ID, worlds, profile, XP, virtual wallet display, games, commerce and settings.","status":"contract_only","activation":"Connect only after Firebase Auth, App Check, security rules, consent and mobile release evidence pass."},
+    {"id":"firebase","name":"Firebase App Backend","role":"Auth, App Check, Firestore, Storage, FCM, Crashlytics, Analytics and Remote Config where approved.","status":"contract_only","activation":"No Firebase writes are certified until a real project, rules, credentials and executable deployment evidence exist."},
+    {"id":"cloudflare","name":"Cloudflare Edge and Runtime","role":"Canonical DNS, Worker API boundary, asset delivery, security headers and observability.","status":"active_production","activation":"Canonical domain and Worker binding remain authoritative; DNS changes require verification."},
+    {"id":"github","name":"GitHub Source and CI Layer","role":"Canonical source, review, validation, release evidence and deployment trigger.","status":"active_source","activation":"Hosted runner execution must produce verified evidence before promotion."},
+    {"id":"appdeploy","name":"AppDeploy Studio QA Surface","role":"Studio-grade preview, backend QA, responsive snapshots and deployment validation.","status":"connected_non_authoritative","activation":"AppDeploy does not override the canonical GitHub and Cloudflare production boundary."}
   ],
   "pipelines": [
-    {
-      "id": "source_to_preview",
-      "name": "GitHub to Vercel Preview",
-      "steps": [
-        "focused_branch",
-        "static_validation",
-        "pull_request",
-        "vercel_preview",
-        "review"
-      ]
-    },
-    {
-      "id": "preview_to_production",
-      "name": "Preview to Production",
-      "steps": [
-        "merge_to_main",
-        "production_deployment",
-        "sitemap_static_routes",
-        "post_deploy_smoke_check"
-      ]
-    },
-    {
-      "id": "flutter_to_firebase_contract",
-      "name": "Flutter to Firebase Contract",
-      "steps": [
-        "screen_contract",
-        "auth_model",
-        "rules_review",
-        "app_check",
-        "consent_copy",
-        "no_cash_out_review"
-      ]
-    },
-    {
-      "id": "cloudflare_to_vercel_boundary",
-      "name": "Cloudflare to Vercel Boundary",
-      "steps": [
-        "domain_debug",
-        "dns_plan",
-        "vercel_domain_verification",
-        "cloudflare_record_review",
-        "rollback_dns_plan"
-      ]
-    },
-    {
-      "id": "future_backend_activation",
-      "name": "Future Backend Activation",
-      "steps": [
-        "auth",
-        "schema_validation",
-        "rate_limits",
-        "audit_logs",
-        "spend_guardrails",
-        "rollback_plan",
-        "then_live_endpoint"
-      ]
-    },
-    {
-      "id": "asset_pipeline",
-      "name": "Studio Asset Pipeline",
-      "steps": [
-        "asset_intake",
-        "static_preview",
-        "blob_storage_when_approved",
-        "metadata_pointer",
-        "cdn_cache_review"
-      ]
-    }
+    {"id":"web_source_to_production","name":"GitHub to Cloudflare Production","steps":["source","runner_gate","static_validation","runtime_contracts","wrangler_dry_run","deploy","live_probes","rollback_evidence"]},
+    {"id":"flutter_to_firebase","name":"Flutter to Firebase","steps":["screen_contract","Lingo_ID_auth","App_Check","Firestore_schema","security_rules","consent","no_cash_out_review","mobile_QA","release_evidence"]},
+    {"id":"flutter_to_cloudflare","name":"Flutter to Cloudflare API Boundary","steps":["Flutter_client","HTTPS_API","Cloudflare_Worker","validation","server_authoritative_state","Firebase_contract","response"]},
+    {"id":"studio_qa","name":"Studio QA and AppDeploy","steps":["build","responsive_QA","runtime_errors","network_errors","snapshot_review","release_candidate","rollback_target"]}
   ],
-  "studioModules": [
-    "animation",
-    "sound",
-    "visual_fx",
-    "asset",
-    "cinematic_ui",
-    "world_building",
-    "character",
-    "motion",
-    "monetization_safety",
-    "payload_contracts"
-  ],
-  "cloudflareChanges": false,
-  "firebaseWrites": false,
-  "flutterRuntimeConnected": false,
-  "appDimensions": {
-    "web": "Vercel static pages and previews",
-    "flutter": "future mobile app screens and contracts",
-    "firebase": "optional app services after protected activation",
-    "cloudflare": "optional DNS/edge boundary after domain verification",
-    "github": "source control and PR review",
-    "vercel": "deployment, domains, previews, static hosting, Blob",
-    "liveInterfaceUpdating": "enabled for static preview UI refresh state"
-  }
+  "stateAuthority": {"server_authoritative":["identity","wallet","xp","rewards","game_session","commerce","entitlements"],"client_authoritative":["ui","navigation","audio_preferences"],"sync":"event-driven-idempotent"},
+  "certification": {"contract_ready":true,"configured":false,"executing":false,"deployed":true,"live":true,"certified":false,"activated":false,"rule":"No verified evidence means no certification or activation."}
 }
