@@ -25,7 +25,7 @@ env:
 
 jobs:
   runner-gate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
@@ -50,7 +50,7 @@ jobs:
   repair:
     needs: runner-gate
     if: needs.runner-gate.outputs.runner_gate == 'PASS'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -105,7 +105,7 @@ jobs:
   deploy-cloudflare:
     needs: repair
     if: ${{ success() && (github.event_name == 'push' || inputs.deploy == true) }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -137,7 +137,7 @@ jobs:
   deploy-firebase:
     needs: repair
     if: ${{ success() && (github.event_name == 'push' || inputs.deploy == true) }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: actions/checkout@v4
@@ -172,7 +172,7 @@ jobs:
   certification:
     needs: [deploy-cloudflare, deploy-firebase]
     if: success()
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Production certification boundary
         run: |
