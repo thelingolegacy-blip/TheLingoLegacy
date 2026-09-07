@@ -9,7 +9,7 @@ const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-cro
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
 const rateBuckets = new Map();
-const RUNTIME_VERSION = '3.0.1-production';
+const RUNTIME_VERSION = '4.0.0-dynamic-studio';
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
@@ -46,6 +46,8 @@ function withSecurityHeaders(response, request, env) {
   const headers = new Headers(response.headers);
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
   for (const [name, value] of Object.entries(corsHeaders(request, env))) headers.set(name, value);
+  headers.set('x-lingo-runtime', RUNTIME_VERSION);
+  headers.set('x-lingo-dynamic', 'true');
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
@@ -109,7 +111,57 @@ async function beaconAlerts(request, env) {
 
 function runtimeManifest(request, env) {
   const url = new URL(request.url);
-  return { ok: true, runtime: 'cloudflare-worker', version: RUNTIME_VERSION, hostname: url.hostname, canonical_domain: String(env.CANONICAL_DOMAIN || ''), timestamp: new Date().toISOString(), dynamic: true, api: true, assets: 'worker-controlled', observability: true, integrations: { stripe: Boolean(env.STRIPE_SECRET_KEY), beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL), twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER) }, safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false }, realtime: { websocket: false, status: 'NOT_IMPLEMENTED' } };
+  return {
+    ok: true,
+    runtime: 'cloudflare-worker',
+    version: RUNTIME_VERSION,
+    hostname: url.hostname,
+    canonical_domain: String(env.CANONICAL_DOMAIN || ''),
+    timestamp: new Date().toISOString(),
+    dynamic: true,
+    api: true,
+    edge_rendering: true,
+    assets: 'worker-controlled',
+    observability: true,
+    integrations: {
+      stripe: Boolean(env.STRIPE_SECRET_KEY),
+      beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
+      twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER),
+      d1: Boolean(env.DB),
+      kv: Boolean(env.STUDIO_KV),
+      r2: Boolean(env.ASSET_BUCKET),
+      firebase: Boolean(env.FIREBASE_PROJECT_ID),
+    },
+    safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false },
+    realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'READY' },
+  };
+}
+
+function platformStatus(request, env) {
+  const manifest = runtimeManifest(request, env);
+  return {
+    ...manifest,
+    status: 'OPERATIONAL',
+    control_planes: ['security', 'devops', 'data', 'safety', 'parent', 'ai', 'applications'],
+    deployment_authority: 'github-cloudflare',
+    retired_providers: ['vercel'],
+    domain_authority: 'cloudflare',
+    release_policy: 'fail-closed',
+    dynamic_contract: 'active',
+  };
+}
+
+async function renderDynamicHtml(request, env, response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('text/html') || request.method !== 'GET') return response;
+  const html = await response.text();
+  const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
+  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
+  const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
+  const headers = new Headers(response.headers);
+  headers.set('content-type', 'text/html; charset=utf-8');
+  headers.set('cache-control', 'no-store, must-revalidate');
+  return new Response(rendered, { status: response.status, statusText: response.statusText, headers });
 }
 
 export default {
@@ -119,10 +171,13 @@ export default {
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
-      return withSecurityHeaders(await env.ASSETS.fetch(request), request, env);
+      const assetResponse = await env.ASSETS.fetch(request);
+      return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
     } catch { return json({ ok: false, error: 'Request could not be completed right now.' }, 500, request, env); }
   },
 };
