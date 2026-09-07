@@ -1,0 +1,126 @@
+name: Nexus HQ Browser QA
+
+on:
+  push:
+    branches:
+      - 'preview/nexus-visual-proof-2026-09-07'
+    paths:
+      - 'preview/nexus-hq/**'
+      - '.github/workflows/nexus-hq-browser-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    name: Browser QA — Nexus HQ Preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start isolated preview server
+        run: |
+          python3 -m http.server 4173 --directory preview/nexus-hq > /tmp/nexus-hq-server.log 2>&1 &
+          echo $! > /tmp/nexus-hq-server.pid
+          sleep 2
+
+      - name: Run desktop and mobile visual/interaction checks
+        run: |
+          node <<'NODE'
+          const { chromium, devices } = require('playwright');
+          const fs = require('fs');
+          const path = require('path');
+
+          (async () => {
+            const browser = await chromium.launch({headless:true});
+            const cases = [
+              {name:'desktop', viewport:{width:1440,height:1000}},
+              {name:'mobile', ...devices['iPhone 13']}
+            ];
+            const failures = [];
+
+            for (const c of cases) {
+              const context = await browser.newContext(c.viewport ? {viewport:c.viewport} : c);
+              const page = await context.newPage();
+              const errors = [];
+              page.on('pageerror', e => errors.push(`pageerror: ${e.message}`));
+              page.on('console', m => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
+
+              await page.goto('http://127.0.0.1:4173/', {waitUntil:'networkidle'});
+              await page.screenshot({path:`qa-${c.name}.png`, fullPage:true});
+
+              const title = await page.title();
+              const hero = await page.locator('h1').innerText();
+              const worldCount = await page.locator('#worlds .card').count();
+              const nexus = await page.locator('#experience').isVisible();
+              const enter = await page.locator('a[href="#worlds"]').first().isVisible();
+              const black = await page.evaluate(() => {
+                const b = document.body;
+                const s = getComputedStyle(b);
+                const text = (b.innerText || '').trim();
+                return !text || (s.display === 'none') || (b.getBoundingClientRect().height < 100);
+              });
+
+              if (!title.includes('The Lingo Legacy')) failures.push(`${c.name}: title mismatch`);
+              if (!hero.includes('THE LINGO')) failures.push(`${c.name}: hero missing`);
+              if (worldCount !== 6) failures.push(`${c.name}: expected 6 world cards, got ${worldCount}`);
+              if (!nexus || !enter) failures.push(`${c.name}: primary sections/CTA not visible`);
+              if (black) failures.push(`${c.name}: black/empty render detected`);
+              if (errors.length) failures.push(`${c.name}: runtime errors: ${errors.join(' | ')}`);
+
+              await context.close();
+            }
+
+            await browser.close();
+
+            fs.writeFileSync('qa-result.json', JSON.stringify({
+              gate:'NEXUS_HQ_BROWSER_QA',
+              desktop_mobile:true,
+              screenshots:['qa-desktop.png','qa-mobile.png'],
+              failures
+            }, null, 2));
+
+            if (failures.length) {
+              console.error('NEXUS_HQ_BROWSER_QA=FAIL');
+              console.error(failures.join('\n'));
+              process.exit(1);
+            }
+            console.log('NEXUS_HQ_BROWSER_QA=PASS');
+            console.log('VISUAL_BROWSER_PROOF=PASS');
+            console.log('PRODUCTION_DEPLOYMENT=BLOCKED');
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-hq-browser-evidence
+          path: |
+            qa-desktop.png
+            qa-mobile.png
+            qa-result.json
+            /tmp/nexus-hq-server.log
+          retention-days: 7
+
+      - name: Enforce fail-closed production boundary
+        if: always()
+        run: |
+          echo 'PRODUCTION_DEPLOYMENT=BLOCKED'
+          echo 'CLOUDFLARE_MUTATION=NONE'
+          echo 'DNS_MUTATION=NONE'
+          echo 'MAIN_BRANCH_MUTATION=NONE'
+          echo 'VERCEL=PROHIBITED'
