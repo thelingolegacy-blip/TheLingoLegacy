@@ -1,0 +1,59 @@
+name: Nexus Visual Proof Artifact
+
+on:
+  push:
+    branches:
+      - 'preview/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'preview/**'
+      - '.github/workflows/nexus-visual-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  visual-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+      - name: Validate artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s preview/nexus-visual-proof.html
+          grep -q 'PREVIEW ARTIFACT' preview/nexus-visual-proof.html
+          grep -q 'production locked' preview/nexus-visual-proof.html
+          grep -q 'thelingolegacy.com' preview/nexus-visual-proof.html
+          echo 'NEXUS_VISUAL_PROOF=PASS'
+          echo 'PRODUCTION_DEPLOYMENT=BLOCKED'
+      - name: Package one-time preview artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact
+          cp preview/nexus-visual-proof.html artifact/index.html
+          cat > artifact/PREVIEW-MANIFEST.txt <<'EOF'
+NEXUS VISUAL PROOF
+Mode: preview-only
+Production deployment: blocked
+Canonical domain target: thelingolegacy.com
+Alternate host: www.thelingolegacy.com
+Cloudflare production mutation: none
+Firebase production mutation: none
+Vercel: prohibited
+Review the artifact locally before any production merge/deploy.
+EOF
+          cd artifact
+          zip -9 -r ../nexus-visual-proof.zip .
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-visual-proof
+          path: nexus-visual-proof.zip
+          if-no-files-found: error
+          retention-days: 7
