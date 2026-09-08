@@ -1,74 +1,53 @@
-# That’s My Lingo by The Lingo Legacy
+# Lingo Legacy Empire — Sovereign Production Core
 
-Cloudflare Worker–controlled, dynamic Studio web experience for That’s My Lingo and the wider Lingo Legacy ecosystem. The interface uses the shared Lingo OS visual language with premium Industrial Noir / Vegas presentation, runtime APIs, feature state, observability, commerce hooks, and production safety controls.
+> **Authoritative Source of Truth:** `thelingolegacy-blip/TheLingoLegacy` (`main` branch)  
+> **Sovereign Runtime:** Cloudflare Edge Workers & Pages  
+> **Status:** Fully Autonomous / Production Grade  
 
-## Studio Runtime — v4
+---
 
-The production surface is **dynamic-runtime-first**. HTML/CSS/JS assets are build artifacts controlled by the Cloudflare Worker; the product is not classified or operated as a static-only site.
+## 🏛️ Ecosystem Architecture
+The Lingo Legacy Empire is consolidated under a single, authoritative, studio-grade infrastructure:
+- **`thelingolegacy.com` & `www`**: Master Hub & Game Floor (*That's My Lingo*)
+- **`apparel.thelingolegacy.com`**: Loyalty Lane Apparel Studio & Stripe Gateway
+- **`arena.thelingolegacy.com`**: LINGOarena Virtual Arcade & Casino Floor
+- **`reads.thelingolegacy.com`**: LINGOreads Virtual Theater & Literary Hallway
+- **`media.thelingolegacy.com`**: LINGOmedia Sonic Branding & Mixtape Nexus
+- **`ai.thelingolegacy.com`**: AskLINGO ⭐️ AI Omni-Oracle Neural Core
 
-The Worker provides runtime headers, edge HTML transformation, platform context, health, manifest, status, checkout, and beacon APIs. Runtime feature state can be consumed from `/api/v1/site/context` and platform status from `/api/v1/platform/status`.
+---
 
-## Site map
+## ⚡ Deployment Pipeline
+All deployments are managed natively via Cloudflare Edge Workers and GitHub Actions. Legacy hosting providers such as Vercel are retired and are not part of the production architecture.
 
-The existing world routes remain available as Studio surfaces, including That’s My Lingo, LoadingPage, Studio Assets, Kotton’s Code, Tap Stitch, games, Ask Lingo, Admin Command Center, Casino Studio, Multiplayer Rap Arena, Auto Racing Universe, Studio World OS, Trust & Compliance, Economy Command Center, and the broader Universe map.
+---
 
-## Canonical stack
+## 🧱 Runtime Contract
+The production surface is dynamic-runtime-first. The Cloudflare Worker controls runtime headers, edge HTML transformation, platform context, health, manifest, status, checkout, beacon APIs, and asset delivery.
 
-- **Source control:** GitHub
-- **CI/CD:** GitHub Actions with fail-closed production gates
-- **Web/runtime:** Cloudflare Workers
-- **Edge/site routing:** Cloudflare
-- **Data:** Cloudflare D1/KV/R2 where provisioned; Firebase Auth/Firestore/Storage for designated ecosystem services
-- **Mobile:** Flutter
-- **AI:** shared Ask Lingo ⭐ / Lingo.AI architecture with product-specific knowledge layers
-- **Commerce:** Stripe/Shopify integrations where configured
-- **Observability:** Cloudflare + application telemetry + release evidence
-- **Domain:** `thelingolegacy.com` and `www.thelingolegacy.com`, Cloudflare-authoritative
+Production authority:
 
-**Vercel is retired. It is not a runtime, deployment provider, DNS authority, or production dependency.**
+`GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → canonical domain`
 
-## Runtime endpoints
+The Worker entrypoint is `worker.js`; Cloudflare configuration is `wrangler.jsonc`.
+
+---
+
+## 🔎 Verification Contract
+A successful build alone never marks production LIVE. Repository state, CI evidence, Worker deployment, domain routing, backend bindings, observability, safety controls, and live probes must agree.
+
+Required runtime probes include:
 
 - `/healthz`
 - `/api/v1/runtime`
 - `/api/v1/platform/manifest`
 - `/api/v1/platform/status`
 - `/api/v1/site/context`
-- `/api/create-checkout-session`
-- `/api/beacon-text-alerts`
 
-## Premium Studio capabilities
+---
 
-- cinematic LoadingPage / LL monogram boot experience
-- responsive command-center navigation and world switching
-- runtime feature flags and platform context
-- live health/status telemetry
-- role-aware operational surfaces
-- Lingo ID / wallet / XP / rewards integration points
-- Ask Lingo ⭐ product assistant integration points
-- commerce and launch capture APIs
-- analytics and audit-event architecture
-- motion-safe animation and resilient error recovery
-- product-specific visual worlds under one Lingo OS
-
-## Development
-
-Run the repository's validation and deployment checks through GitHub Actions. Local development may use a static file server only as a developer preview; that does **not** define the production architecture.
-
-## Deployment
-
-Production authority is:
-
-`GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → thelingolegacy.com`
-
-The Worker entrypoint is `worker.js`; Cloudflare configuration is `wrangler.jsonc`. Secrets are injected by the owning deployment environment and never committed.
-
-## Production gate
+## 🛡️ Production Gate
 
 `RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
 
-A successful build alone never marks production LIVE. Repository state, CI evidence, Worker deployment, domain routing, backend bindings, data, analytics/observability, safety controls, and live probes must agree.
-
-## Canonical contract
-
-See `docs/studio-stack-runtime-contract-2026-09.md` and the ecosystem contract in `LINGO_LEGACY_HQ/07_DOCS/studio-stack-development-contract-2026-09.md`.
+The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
