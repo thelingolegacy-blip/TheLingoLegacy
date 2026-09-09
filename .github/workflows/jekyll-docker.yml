@@ -59,3 +59,5 @@ jobs:
             bindings.log
             validator.log
           if-no-files-found: warn
+
+# Evidence-trigger commit: force a fresh PR verification run.
