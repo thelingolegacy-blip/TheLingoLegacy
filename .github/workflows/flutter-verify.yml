@@ -14,15 +14,27 @@ on:
 permissions:
   contents: read
 
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
+
 concurrency:
   group: flutter-verify-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Runner diagnostics
+        run: |
+          echo "runner_name=${RUNNER_NAME}"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "runner_temp=${RUNNER_TEMP}"
+          uname -a
+
       - name: Checkout
         uses: actions/checkout@v4
 
