@@ -1,9 +1,13 @@
 {
-  "projectId": "lingo-legacy-production",
-  "storageBucket": "lingo-legacy-production.appspot.com",
-  "apiKey": "YOUR_FIREBASE_API_KEY",
-  "authDomain": "lingo-legacy-production.firebaseapp.com",
-  "databaseURL": "https://lingo-legacy-production-default-rtdb.firebaseio.com",
-  "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
-  "appId": "YOUR_APP_ID"
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firebase.client.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
+  }
 }
