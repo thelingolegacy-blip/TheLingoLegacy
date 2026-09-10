@@ -10,6 +10,10 @@ permissions:
   contents: read
   actions: write
 
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
+
 concurrency:
   group: static-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -20,6 +24,27 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Runner allocation diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set -u
+          {
+            echo "runner_name=${RUNNER_NAME:-}";
+            echo "runner_os=${RUNNER_OS:-}";
+            echo "runner_arch=${RUNNER_ARCH:-}";
+            echo "runner_temp=${RUNNER_TEMP:-}";
+            echo "runner_workspace=${GITHUB_WORKSPACE:-}";
+            echo "run_id=${GITHUB_RUN_ID:-}";
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT:-}";
+            echo "job=${GITHUB_JOB:-}";
+            echo "sha=${GITHUB_SHA:-}";
+            echo "ref=${GITHUB_REF:-}";
+            echo "event=${GITHUB_EVENT_NAME:-}";
+            echo "hostname=$(hostname)";
+            echo "uname=$(uname -a)";
+          } | tee runner-evidence.log
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -43,6 +68,7 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
+            runner-evidence.log
             sanitize.log
             bindings.log
             validator.log
