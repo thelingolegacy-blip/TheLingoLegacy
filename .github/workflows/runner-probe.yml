@@ -1,6 +1,8 @@
 name: Lingo Legacy Runner Probe
 
 on:
+  push:
+    branches: [ "feat/dynamic-master-hub-runtime" ]
   pull_request:
     branches: [ "main" ]
 
