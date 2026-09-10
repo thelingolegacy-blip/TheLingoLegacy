@@ -112,6 +112,11 @@ function runtimeManifest(request, env) {
   return { ok: true, runtime: 'cloudflare-worker', version: RUNTIME_VERSION, hostname: url.hostname, canonical_domain: String(env.CANONICAL_DOMAIN || ''), timestamp: new Date().toISOString(), dynamic: true, api: true, assets: 'worker-controlled', observability: true, integrations: { stripe: Boolean(env.STRIPE_SECRET_KEY), beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL), twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER) }, safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false }, realtime: { websocket: false, status: 'NOT_IMPLEMENTED' } };
 }
 
+function platformStatus(request, env) {
+  const manifest = runtimeManifest(request, env);
+  return { ...manifest, status: 'OPERATIONAL', control_planes: ['security', 'devops', 'data', 'safety', 'parent', 'ai', 'applications'], deployment_authority: 'github-cloudflare', retired_providers: ['vercel'], domain_authority: 'cloudflare', release_policy: 'fail-closed', dynamic_contract: 'active' };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -119,6 +124,7 @@ export default {
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
