@@ -2,21 +2,20 @@ name: Lingo Legacy Static CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main", "feat/dynamic-master-hub-runtime"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
-  actions: write
-
-env:
-  ACTIONS_RUNNER_DEBUG: true
-  ACTIONS_STEP_DEBUG: true
 
 concurrency:
   group: static-ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
 
 jobs:
   validate:
@@ -45,13 +44,16 @@ jobs:
             echo "uname=$(uname -a)";
           } | tee runner-evidence.log
 
-      - name: Checkout
+      - name: Checkout exact revision
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
+
+      - name: Verify Worker syntax
+        run: node --check worker.js
 
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
