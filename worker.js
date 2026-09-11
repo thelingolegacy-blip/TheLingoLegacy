@@ -6,10 +6,20 @@ const CHECKOUT_TIERS = {
 
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
+const ROUTE_ALIASES = new Map([
+  ['/theater/', '/master-interface/'],
+  ['/library/', '/studio-assets/'],
+  ['/games/', '/thats-my-lingo/'],
+  ['/loyalty-cycles/', '/loyalty-lane-cycles/'],
+  ['/ask-lingo/', '/lingo-ai/'],
+  ['/loyalty-lane/', '/loyalty-lane-apparel/'],
+  ['/shop/', '/loyalty-lane-apparel/'],
+  ['/coming-soon/', '/universe/'],
+]);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
 const rateBuckets = new Map();
-const RUNTIME_VERSION = '4.0.0-dynamic-studio';
+const RUNTIME_VERSION = '4.1.0-dynamic-master-hub';
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
@@ -109,6 +119,15 @@ async function beaconAlerts(request, env) {
   return json({ ok: true, provider: result.provider, message: 'Beacon text alerts started.' }, 200, request, env);
 }
 
+async function platformRoutes(request, env) {
+  const source = await env.ASSETS.fetch(new Request(new URL('/sitemap.xml', request.url), request));
+  if (!source.ok) return json({ ok: false, error: 'Route registry unavailable.' }, 503, request, env);
+  const xml = await source.text();
+  const routes = [...xml.matchAll(/<loc>https?:\/\/[^/]+([^<]*)<\/loc>/g)].map((match) => match[1] || '/');
+  const unique = [...new Set(routes.map((path) => path || '/'))];
+  return json({ ok: true, dynamic: true, generated_at: new Date().toISOString(), source: '/sitemap.xml', count: unique.length, aliases: Object.fromEntries(ROUTE_ALIASES), routes: unique }, 200, request, env);
+}
+
 function runtimeManifest(request, env) {
   const url = new URL(request.url);
   return {
@@ -123,6 +142,7 @@ function runtimeManifest(request, env) {
     edge_rendering: true,
     assets: 'worker-controlled',
     observability: true,
+    navigation: { mode: 'dynamic', registry: '/api/v1/platform/routes', homepage: '/', master_interface: '/master-interface/' },
     integrations: {
       stripe: Boolean(env.STRIPE_SECRET_KEY),
       beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
@@ -151,12 +171,27 @@ function platformStatus(request, env) {
   };
 }
 
-async function renderDynamicHtml(request, env, response) {
+function resolveAssetPath(pathname) {
+  if (pathname === '/') return '/master-interface/';
+  return ROUTE_ALIASES.get(pathname) || pathname;
+}
+
+async function renderDynamicHtml(request, env, response, sourcePath = null) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
-  const html = await response.text();
-  const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
-  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
+  let html = await response.text();
+  const aliasPath = new URL(request.url).pathname;
+  const canonicalPath = sourcePath || aliasPath;
+  html = html
+    .replaceAll('Static Vercel page', 'Cloudflare Edge dynamic runtime')
+    .replaceAll('built for Vercel preview deployment', 'built for the live Cloudflare edge runtime')
+    .replaceAll('while staying static', 'through the live edge runtime')
+    .replaceAll('static, entertainment-only', 'dynamic, entertainment-only');
+  if (canonicalPath !== aliasPath) {
+    html = html.replace(/<link rel="canonical" href="[^"]+"\s*\/>/i, `<link rel="canonical" href="${canonicalOrigin(env)}${aliasPath}" />`);
+  }
+  const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com'), path: aliasPath, source_path: canonicalPath, dynamic: true, route_registry: '/api/v1/platform/routes' }).replace(/</g, '\\u003c');
+  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><script>window.__LINGO_RUNTIME__=${runtime};fetch('/api/v1/platform/routes',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v){window.__LINGO_ROUTES__=v.routes;document.documentElement.dataset.lingoRoutes=String(v.count)}}).catch(()=>{});</script>`;
   const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
   const headers = new Headers(response.headers);
   headers.set('content-type', 'text/html; charset=utf-8');
@@ -172,12 +207,16 @@ export default {
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
-      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
+      if (url.pathname === '/api/v1/platform/routes') return await platformRoutes(request, env);
+      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', route_registry: '/api/v1/platform/routes', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
-      const assetResponse = await env.ASSETS.fetch(request);
-      return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
+      const assetPath = resolveAssetPath(url.pathname);
+      const assetUrl = new URL(assetPath, request.url);
+      const assetRequest = new Request(assetUrl.toString(), request);
+      const assetResponse = await env.ASSETS.fetch(assetRequest);
+      return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse, assetPath), request, env);
     } catch { return json({ ok: false, error: 'Request could not be completed right now.' }, 500, request, env); }
   },
 };
