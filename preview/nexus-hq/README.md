@@ -19,3 +19,6 @@ Open `preview/nexus-hq/index.html` from this branch or package it as the preview
 - Spades Is My Lingo
 - Lingo Legacy Games
 - Sonic Boom
+
+## Browser QA trigger
+This non-production README update intentionally touches `preview/nexus-hq/**` so the existing Nexus HQ browser-QA workflow can execute against the preview branch. No production, DNS, Cloudflare, or main-branch mutation is performed by this change.
