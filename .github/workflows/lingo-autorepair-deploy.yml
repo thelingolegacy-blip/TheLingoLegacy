@@ -1,3 +1,4 @@
+# Canonical production execution workflow: GitHub Actions -> Cloudflare -> live verification
 name: Lingo Legacy Full-Stack Auto Repair + Deploy
 
 on:
