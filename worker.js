@@ -169,6 +169,11 @@ export default {
     const url = new URL(request.url);
     try {
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
+      if (url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
+        const canonical = new URL(request.url);
+        canonical.hostname = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
+        return withSecurityHeaders(Response.redirect(canonical.toString(), 301), request, env);
+      }
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
