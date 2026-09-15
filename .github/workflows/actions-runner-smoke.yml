@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   smoke:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Runner reached execution stage
@@ -33,7 +33,7 @@ jobs:
           test -n "$RUNNER_OS_VALUE"
           test -n "$RUNNER_ARCH_VALUE"
           test -n "$GITHUB_SHA_VALUE"
-          echo "RUNNER_GATE=PASS" >> "$GITHUB_OUTPUT"
+          echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
           echo "runner_id=$RUNNER_ID"
           echo "runner_name=$RUNNER_NAME"
           echo "runner_os=$RUNNER_OS_VALUE"
