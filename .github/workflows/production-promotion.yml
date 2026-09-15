@@ -9,14 +9,13 @@ on:
         default: staging
         type: choice
         options: [staging, production]
-  push:
-    tags: ['v*']
+  # Tags do not authorize production mutation. Production promotion is explicit via workflow_dispatch.
 
 permissions:
   contents: read
 
 concurrency:
-  group: lingo-legacy-promotion-${{ inputs.environment || 'tag' }}
+  group: lingo-legacy-promotion-${{ inputs.environment || 'manual' }}
   cancel-in-progress: false
 
 env:
@@ -24,7 +23,7 @@ env:
 
 jobs:
   runner-gate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
@@ -69,7 +68,7 @@ jobs:
   gates:
     needs: runner-gate
     if: ${{ needs.runner-gate.outputs.runner_gate == 'PASS' }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     outputs:
       commit: ${{ steps.identity.outputs.commit }}
       artifact: ${{ steps.identity.outputs.artifact }}
@@ -103,7 +102,7 @@ jobs:
           echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
       - name: Generate evidence scaffold
         env:
-          ENVIRONMENT: ${{ inputs.environment || 'production' }}
+          ENVIRONMENT: ${{ inputs.environment }}
           RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
         run: node scripts/generate-release-evidence.mjs
       - name: Upload gate evidence
@@ -114,9 +113,9 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.environment == 'staging' || inputs.environment == 'production')) || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
-    runs-on: ubuntu-24.04
-    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}
+    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     permissions:
       contents: read
     steps:
@@ -162,7 +161,7 @@ jobs:
   certificate:
     needs: [gates, cloudflare]
     if: ${{ success() }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
