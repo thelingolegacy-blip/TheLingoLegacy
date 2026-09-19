@@ -1,4 +1,6 @@
-import fs from 'node:fs';\n\nconst base = process.env.LIVE_BASE_URL || 'https://thelingolegacy.com';
+import fs from 'node:fs';
+
+const base = process.env.LIVE_BASE_URL || 'https://thelingolegacy.com';
 const paths = (process.env.LIVE_PROBE_PATHS || '/|/healthz|/api/v1/runtime').split('|').filter(Boolean);
 const timeoutMs = Number(process.env.LIVE_PROBE_TIMEOUT_MS || 10000);
 const probe = async (path) => {
@@ -20,6 +22,9 @@ const probe = async (path) => {
 };
 const probes = [];
 for (const path of paths) probes.push(await probe(path));
-const result = { gate: 'live-probes', base, timestamp: new Date().toISOString(), status: probes.every((p) => p.status === 'PASS') ? 'PASS' : 'FAIL', probes };\nfs.mkdirSync('release/evidence', { recursive: true });\nfs.writeFileSync('release/evidence/live-probes.json', JSON.stringify(result, null, 2) + '\\n');
+const result = { gate: 'live-probes', base, timestamp: new Date().toISOString(), status: probes.every((p) => p.status === 'PASS') ? 'PASS' : 'FAIL', probes };
+fs.mkdirSync('release/evidence', { recursive: true });
+fs.writeFileSync('release/evidence/live-probes.json', JSON.stringify(result, null, 2) + '\
+');
 console.log(JSON.stringify(result, null, 2));
 if (result.status !== 'PASS') process.exit(1);
