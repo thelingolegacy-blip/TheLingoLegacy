@@ -16,10 +16,21 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
 
     steps:
+      - name: Runner diagnostics
+        run: |
+          set -euxo pipefail
+          echo "runner.name=${RUNNER_NAME}"
+          echo "runner.os=${RUNNER_OS}"
+          echo "runner.arch=${RUNNER_ARCH}"
+          echo "runner.temp=${RUNNER_TEMP}"
+          node --version
+          npm --version
+          git --version
+
       - name: Checkout
         uses: actions/checkout@v4
 
