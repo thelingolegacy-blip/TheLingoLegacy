@@ -1,0 +1,43 @@
+name: Lingo Legacy CI Runtime Probe
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Runner probe
+        shell: bash
+        run: |
+          set -euxo pipefail
+          printf 'RUNNER_NAME=%s\n' "$RUNNER_NAME"
+          printf 'RUNNER_OS=%s\n' "$RUNNER_OS"
+          printf 'RUNNER_ARCH=%s\n' "$RUNNER_ARCH"
+          printf 'GITHUB_SHA=%s\n' "$GITHUB_SHA"
+          node --version
+          npm --version
+          git --version
+
+      - name: Checkout probe
+        uses: actions/checkout@v4
+
+      - name: Artifact probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-probe
+          printf 'CI_RUNTIME_PROBE=PASS\nSHA=%s\n' "$GITHUB_SHA" > ci-probe/result.txt
+
+      - name: Upload probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-legacy-ci-runtime-probe
+          path: ci-probe/result.txt
+          if-no-files-found: error
