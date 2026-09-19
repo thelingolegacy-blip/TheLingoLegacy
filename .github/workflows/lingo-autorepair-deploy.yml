@@ -165,8 +165,7 @@ jobs:
     if: success()
     runs-on: ubuntu-latest
     steps:
-      - name: Production certification boundary
+      - name: Verify certification evidence boundary
         run: |
           set -euo pipefail
-          echo 'Cloudflare and Firebase deployment jobs completed with executable evidence.'
-          echo 'Certification may proceed only when live evidence and rollback evidence are present.'
+          node scripts/verify-certification-evidence.mjs
