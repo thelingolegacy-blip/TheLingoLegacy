@@ -19,19 +19,35 @@ function collectEvidence() {
   const verifierStdoutPath = process.env.CONSTELLATION_VERIFIER_STDOUT_PATH || '';
   const verifierStderrPath = process.env.CONSTELLATION_VERIFIER_STDERR_PATH || '';
   const verifierMetaPath = process.env.CONSTELLATION_VERIFIER_META_PATH || '';
+  const sentinelStdoutPath = process.env.CONSTELLATION_SENTINEL_STDOUT_PATH || '';
+  const sentinelMetaPath = process.env.CONSTELLATION_SENTINEL_META_PATH || '';
   const verifierMeta = verifierMetaPath && fs.existsSync(verifierMetaPath)
     ? JSON.parse(fs.readFileSync(verifierMetaPath, 'utf8'))
     : null;
+  const sentinelMeta = sentinelMetaPath && fs.existsSync(sentinelMetaPath)
+    ? JSON.parse(fs.readFileSync(sentinelMetaPath, 'utf8'))
+    : null;
 
+  const sentinelStdout = readIfPresent(sentinelStdoutPath);
   const verifierStdout = readIfPresent(verifierStdoutPath);
   const verifierStderr = readIfPresent(verifierStderrPath);
   const stepStartedAt = verifierMeta?.startedAt || '';
   const stepCompletedAt = verifierMeta?.completedAt || '';
   const durationMs = Number(verifierMeta?.durationMs);
   const exitCode = Number.isInteger(verifierMeta?.exitCode) ? verifierMeta.exitCode : null;
-  const hasActualLogs = requiredString(verifierStdout) || requiredString(verifierStderr);
+  const hasActualLogs = requiredString(sentinelStdout) || requiredString(verifierStdout) || requiredString(verifierStderr);
 
   const steps = [{
+    stepId: 'sentinel',
+    jobName: process.env.GITHUB_JOB || '',
+    name: 'Execution sentinel',
+    startedAt: sentinelMeta?.startedAt || '',
+    completedAt: sentinelMeta?.completedAt || '',
+    durationMs: Number.isFinite(Number(sentinelMeta?.durationMs)) ? Number(sentinelMeta.durationMs) : -1,
+    exitCode: Number.isInteger(sentinelMeta?.exitCode) ? sentinelMeta.exitCode : null,
+    status: sentinelMeta?.exitCode === 0 ? 'SUCCESS' : 'FAILURE',
+    logs: { stdout: sentinelStdout, stderr: '' }
+  }, {
     stepId: 'verifier',
     jobName: process.env.GITHUB_JOB || '',
     name: 'Constellation contract gate',
@@ -95,6 +111,7 @@ function collectEvidence() {
         toolCache: requiredString(toolCache)
       },
       actualLogCapture: hasActualLogs,
+      actualSentinelCapture: Boolean(sentinelMeta && requiredString(sentinelStdout)),
       actualExitCodeCapture: exitCode !== null,
       actualTimestampCapture: Boolean(stepStartedAt && stepCompletedAt)
     }
