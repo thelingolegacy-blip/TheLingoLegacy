@@ -33,5 +33,7 @@ jobs:
           test "$RUNNER_OS_VALUE" = "Linux"
           test -n "$GITHUB_SHA_VALUE"
           echo "RUNNER_GATE=PASS"
+      - name: Read-only evidence evaluator tests
+        run: node --test tests/evaluate-runner-evidence.test.mjs
       - name: Constellation contract gate
         run: node scripts/verify-constellation-contract.mjs
