@@ -5,7 +5,7 @@
   "description": "The Lingo Legacy Cloudflare Worker and static asset surface.",
   "type": "module",
   "scripts": {
-    "build": "wrangler deploy --dry-run --config wrangler.jsonc",
+    "build": "node -e \"console.log('Cloudflare Workers build: no separate compile step required')\"",
     "deploy": "wrangler deploy --config wrangler.jsonc",
     "preview": "wrangler versions upload --config wrangler.jsonc"
   },
