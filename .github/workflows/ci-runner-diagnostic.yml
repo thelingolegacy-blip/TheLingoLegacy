@@ -1,0 +1,40 @@
+name: Lingo Legacy Runner Diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["fix/final-production-gates-2026-09-19"]
+
+permissions:
+  contents: read
+
+jobs:
+  runner-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Prove runner execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-runner-diagnostic
+          {
+            echo "RUNNER_DIAGNOSTIC=PASS"
+            echo "RUNNER_ID=$RUNNER_ID"
+            echo "RUNNER_NAME=$RUNNER_NAME"
+            echo "RUNNER_OS=$RUNNER_OS"
+            echo "RUNNER_ARCH=$RUNNER_ARCH"
+            echo "GITHUB_SHA=$GITHUB_SHA"
+            echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+            node --version
+            npm --version
+            git --version
+          } | tee ci-runner-diagnostic/result.txt
+
+      - name: Upload runner evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-legacy-runner-diagnostic
+          path: ci-runner-diagnostic/result.txt
+          if-no-files-found: error
