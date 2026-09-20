@@ -2,17 +2,20 @@ name: Lingo Legacy Static CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main", "feat/dynamic-master-hub-runtime"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
 
 jobs:
   validate:
@@ -20,13 +23,37 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Checkout
+      - name: Runner allocation diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set -u
+          {
+            echo "runner_name=${RUNNER_NAME:-}";
+            echo "runner_os=${RUNNER_OS:-}";
+            echo "runner_arch=${RUNNER_ARCH:-}";
+            echo "runner_temp=${RUNNER_TEMP:-}";
+            echo "runner_workspace=${GITHUB_WORKSPACE:-}";
+            echo "run_id=${GITHUB_RUN_ID:-}";
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT:-}";
+            echo "job=${GITHUB_JOB:-}";
+            echo "sha=${GITHUB_SHA:-}";
+            echo "ref=${GITHUB_REF:-}";
+            echo "event=${GITHUB_EVENT_NAME:-}";
+            echo "hostname=$(hostname)";
+            echo "uname=$(uname -a)";
+          } | tee runner-evidence.log
+
+      - name: Checkout exact revision
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
+
+      - name: Verify Worker syntax
+        run: node --check worker.js
 
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
@@ -43,6 +70,7 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
+            runner-evidence.log
             sanitize.log
             bindings.log
             validator.log

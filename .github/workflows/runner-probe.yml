@@ -1,0 +1,35 @@
+name: Lingo Legacy Runner Probe
+
+on:
+  push:
+    branches: [ "feat/dynamic-master-hub-runtime" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  runner-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Runner allocation probe
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "runner_name=${RUNNER_NAME}"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "run_id=${GITHUB_RUN_ID}"
+          echo "job=${GITHUB_JOB}"
+          echo "sha=${GITHUB_SHA}"
+          echo "ref=${GITHUB_REF}"
+          echo "event=${GITHUB_EVENT_NAME}"
+          uname -a
+          printf 'runner-probe=ok\n' > runner-probe.txt
+      - name: Upload runner probe evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-legacy-runner-probe
+          path: runner-probe.txt
