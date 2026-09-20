@@ -49,6 +49,7 @@ test('complete six-layer bundle passes but cannot authorize promotion', () => {
   assert.equal(verdict.lkg, 'PROTECTED');
   assert.equal(verdict.productionMutation, 'NOT_PERFORMED');
   assert.deepEqual(verdict.failures, []);
+  assert.match(verdict.digest, /^[a-f0-9]{64}$/);
 });
 
 const negativeCases = [
