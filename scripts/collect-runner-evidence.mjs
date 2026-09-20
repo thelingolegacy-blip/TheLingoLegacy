@@ -7,6 +7,7 @@ function requiredString(value) {
 
 function collectEvidence() {
   const now = new Date().toISOString();
+  const steps = JSON.parse(process.env.CONSTELLATION_STEPS_JSON || '[]');
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
   const temp = process.env.RUNNER_TEMP || os.tmpdir();
   const toolCache = process.env.RUNNER_TOOL_CACHE || '';
@@ -38,18 +39,21 @@ function collectEvidence() {
       runId: Number(process.env.GITHUB_RUN_ID || 0),
       jobName: process.env.GITHUB_JOB || '',
       headSha: process.env.GITHUB_SHA || '',
-      status: 'in_progress',
-      conclusion: null
+      status: process.env.CONSTELLATION_WORKFLOW_STATUS || 'completed',
+      conclusion: process.env.CONSTELLATION_WORKFLOW_CONCLUSION || 'success',
+      startedAt: process.env.CONSTELLATION_JOB_STARTED_AT || now,
+      completedAt: process.env.CONSTELLATION_JOB_COMPLETED_AT || now,
+      durationMs: Number(process.env.CONSTELLATION_JOB_DURATION_MS || 0)
     },
-    steps: [],
+    steps,
     logs: {
-      available: false,
+      available: process.env.CONSTELLATION_LOGS_AVAILABLE === 'true',
       source: 'workflow-step-capture'
     },
     verifier: {
-      invoked: false,
-      exitCode: null,
-      gate: null
+      invoked: process.env.CONSTELLATION_VERIFIER_INVOKED === 'true',
+      exitCode: process.env.CONSTELLATION_VERIFIER_EXIT_CODE === undefined ? null : Number(process.env.CONSTELLATION_VERIFIER_EXIT_CODE),
+      gate: process.env.CONSTELLATION_VERIFIER_GATE || null
     },
     syntheticEvidence: false,
     collection: {
