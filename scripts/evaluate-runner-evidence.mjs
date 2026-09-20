@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { correlationResult } from './correlate-runner-evidence.mjs';
 
 function nonEmpty(value) {
@@ -121,6 +122,8 @@ function evaluateEvidenceSignature(bundle, expectedSha) {
     productionMutation: 'NOT_PERFORMED'
   };
 
+  const digestInput = JSON.stringify(verdict);
+  verdict.digest = crypto.createHash('sha256').update(digestInput, 'utf8').digest('hex');
   return verdict;
 }
 
