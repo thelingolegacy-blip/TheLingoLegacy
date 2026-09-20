@@ -1,0 +1,35 @@
+name: Hosted Runner Bridge Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe-windows:
+    name: Windows hosted runner
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Runner telemetry
+        shell: pwsh
+        run: |
+          Write-Host "RUNNER_NAME=$env:RUNNER_NAME"
+          Write-Host "RUNNER_ID=$env:RUNNER_ID"
+          Write-Host "RUNNER_OS=$env:RUNNER_OS"
+          if ([string]::IsNullOrWhiteSpace($env:RUNNER_NAME) -or $env:RUNNER_ID -eq "0") { exit 1 }
+
+  probe-macos:
+    name: macOS hosted runner
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: Runner telemetry
+        shell: bash
+        run: |
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_ID=$RUNNER_ID"
+          echo "RUNNER_OS=$RUNNER_OS"
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_ID" != "0"
