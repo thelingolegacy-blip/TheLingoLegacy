@@ -157,6 +157,13 @@ jobs:
           LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: node scripts/live-probes.mjs
+      - name: Upload live probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-live-probes-${{ github.run_id }}
+          path: release/evidence/live-probes.json
+          if-no-files-found: error
 
   certificate:
     needs: [gates, cloudflare]
@@ -166,13 +173,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Production certification boundary
+      - name: Download live probe evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: lingo-live-probes-${{ github.run_id }}
+          path: release/evidence
+      - name: Generate repository evidence report
+        run: node scripts/lingo-autorepair.mjs
+      - name: Verify certification evidence
+        run: node scripts/verify-certification-evidence.mjs
+      - name: Certification boundary
         shell: bash
         run: |
           set -euo pipefail
-          test -f config/production.json
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.failClosed)")" = "true"
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireLiveProbePass)")" = "true"
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireRollbackTarget)")" = "true"
-          echo 'Configured repository and Cloudflare gates passed.'
-          echo 'CERTIFIED remains withheld unless live evidence and rollback target are actually present.'
+          echo 'CERTIFICATION=PASS'
