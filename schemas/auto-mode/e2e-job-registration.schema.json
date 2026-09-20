@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://thelingolegacy.com/schemas/auto-mode/e2e-job-registration.schema.json",
+  "title":"Lingo Legacy E2E Job Registration",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","job_id","suite_id","deployment_version","environment","registration_status","approval_required"],
+  "properties":{
+    "schema_version":{"type":"string","const":"1.0"},
+    "job_id":{"type":"string","minLength":1},
+    "suite_id":{"type":"string","minLength":1},
+    "deployment_version":{"type":"string","minLength":1},
+    "environment":{"enum":["dev","staging","prod"]},
+    "registration_status":{"enum":["PENDING","REGISTERED","REJECTED"]},
+    "approval_required":{"type":"boolean","const":true},
+    "approval_id":{"type":["string","null"]},
+    "created_at":{"type":"string","format":"date-time"}
+  }
+}
