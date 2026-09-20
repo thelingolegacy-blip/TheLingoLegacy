@@ -39,8 +39,8 @@ function collectEvidence() {
       runId: Number(process.env.GITHUB_RUN_ID || 0),
       jobName: process.env.GITHUB_JOB || '',
       headSha: process.env.GITHUB_SHA || '',
-      status: process.env.CONSTELLATION_WORKFLOW_STATUS || 'completed',
-      conclusion: process.env.CONSTELLATION_WORKFLOW_CONCLUSION || 'success',
+      status: process.env.CONSTELLATION_WORKFLOW_STATUS || 'in_progress',
+      conclusion: process.env.CONSTELLATION_WORKFLOW_CONCLUSION || null,
       startedAt: process.env.CONSTELLATION_JOB_STARTED_AT || now,
       completedAt: process.env.CONSTELLATION_JOB_COMPLETED_AT || now,
       durationMs: Number(process.env.CONSTELLATION_JOB_DURATION_MS || 0)
