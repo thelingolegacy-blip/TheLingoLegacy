@@ -257,10 +257,41 @@ jobs:
 
       - name: Generate repository evidence report
         run: node scripts/lingo-autorepair.mjs
-      - name: Verify certification evidence
+      - name: Verify pre-certificate evidence
         env:
           ROLLBACK_FILE: release/evidence/current/rollback.json
         run: node scripts/verify-certification-evidence.mjs
+
+      - name: Generate release certificate
+        env:
+          EVIDENCE_MANIFEST: release/evidence/current/manifest.json
+          GATES_FILE: release/evidence/current/gates.json
+          LIVE_PROBES_FILE: release/evidence/current/live-probes.json
+          ROLLBACK_FILE: release/evidence/current/rollback.json
+          CERTIFICATE_OUTPUT: release/evidence/current/certificate.json
+        run: node scripts/generate-release-certificate.mjs
+
+      - name: Finalize rollback certificate identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+          const rollbackPath = 'release/evidence/current/rollback.json';
+          const certificate = JSON.parse(fs.readFileSync('release/evidence/current/certificate.json','utf8'));
+          if (certificate.status !== 'CERTIFIED' || typeof certificate.certificateDigest !== 'string' || !certificate.certificateDigest) {
+            throw new Error('Certificate was not legitimately issued; rollback certificate identity cannot be finalized');
+          }
+          const rollback = JSON.parse(fs.readFileSync(rollbackPath,'utf8'));
+          rollback.certificateId = certificate.certificateDigest;
+          fs.writeFileSync(rollbackPath, JSON.stringify(rollback, null, 2) + '\\n');
+          NODE
+
+      - name: Final certification evidence verification
+        env:
+          ROLLBACK_FILE: release/evidence/current/rollback.json
+        run: node scripts/verify-certification-evidence.mjs
+
       - name: Certification boundary
         shell: bash
         run: |
