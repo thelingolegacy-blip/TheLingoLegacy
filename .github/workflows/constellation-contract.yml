@@ -14,6 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Execution sentinel
+        id: sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/constellation-evidence"
+          started="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
+          echo "CONSTELLATION_EXECUTION_SENTINEL=PASS"
+          echo "RUN_ID=$GITHUB_RUN_ID"
+          echo "JOB=$GITHUB_JOB"
+          echo "SHA=$GITHUB_SHA"
+          echo "RUNNER_ID=$RUNNER_ID"
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_OS=$RUNNER_OS"
+          echo "RUNNER_ARCH=$RUNNER_ARCH"
+          echo "STARTED_AT=$started" | tee "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
