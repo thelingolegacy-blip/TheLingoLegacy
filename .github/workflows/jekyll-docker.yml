@@ -62,4 +62,4 @@ jobs:
             sanitize.log
             bindings.log
             validator.log
-          if-no-files-found: warn
+          if-no-files-found: error
