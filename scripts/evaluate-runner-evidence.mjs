@@ -111,16 +111,23 @@ function evaluateEvidenceSignature(bundle, expectedSha) {
     evaluatedCommit: expectedSha,
     evidence: failures.length === 0 ? 'PRESENT' : 'INCOMPLETE',
     verification: failures.length === 0 ? 'PASS' : 'BLOCKED',
-    acceptance: failures.length === 0 ? 'PASS' : 'BLOCKED',
-    contractAuth: failures.length === 0 ? 'READY' : 'BLOCKED',
+    acceptance: 'BLOCKED',
+    contractAuth: 'BLOCKED',
     promotion: 'BLOCKED',
     lkg: 'PROTECTED',
     layers,
     correlation,
     failures,
     syntheticEvidence: bundle?.syntheticEvidence === true,
+    authoritativeEvidence: bundle?.authoritativeEvidence === true,
     productionMutation: 'NOT_PERFORMED'
   };
+
+  if (failures.length === 0 && bundle?.authoritativeEvidence !== true) {
+    verdict.failures.push('authoritativeEvidence');
+    verdict.evidence = 'INCOMPLETE';
+    verdict.verification = 'BLOCKED';
+  }
 
   const digestInput = JSON.stringify(verdict);
   verdict.digest = crypto.createHash('sha256').update(digestInput, 'utf8').digest('hex');
