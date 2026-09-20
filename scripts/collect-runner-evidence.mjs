@@ -5,26 +5,43 @@ function requiredString(value) {
   return typeof value === 'string' && value.trim() !== '';
 }
 
+function readIfPresent(path) {
+  if (!path || !fs.existsSync(path)) return '';
+  return fs.readFileSync(path, 'utf8');
+}
+
 function collectEvidence() {
   const now = new Date().toISOString();
-  const verifierOutcome = process.env.CONSTELLATION_VERIFIER_OUTCOME || 'failure';
+  const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
+  const temp = process.env.RUNNER_TEMP || os.tmpdir();
+  const toolCache = process.env.RUNNER_TOOL_CACHE || '';
+  const verifierOutcome = process.env.CONSTELLATION_VERIFIER_OUTCOME || '';
+  const verifierStdoutPath = process.env.CONSTELLATION_VERIFIER_STDOUT_PATH || '';
+  const verifierStderrPath = process.env.CONSTELLATION_VERIFIER_STDERR_PATH || '';
+  const verifierMetaPath = process.env.CONSTELLATION_VERIFIER_META_PATH || '';
+  const verifierMeta = verifierMetaPath && fs.existsSync(verifierMetaPath)
+    ? JSON.parse(fs.readFileSync(verifierMetaPath, 'utf8'))
+    : null;
+
+  const verifierStdout = readIfPresent(verifierStdoutPath);
+  const verifierStderr = readIfPresent(verifierStderrPath);
+  const stepStartedAt = verifierMeta?.startedAt || '';
+  const stepCompletedAt = verifierMeta?.completedAt || '';
+  const durationMs = Number(verifierMeta?.durationMs);
+  const exitCode = Number.isInteger(verifierMeta?.exitCode) ? verifierMeta.exitCode : null;
+  const hasActualLogs = requiredString(verifierStdout) || requiredString(verifierStderr);
+
   const steps = [{
     stepId: 'verifier',
     jobName: process.env.GITHUB_JOB || '',
     name: 'Constellation contract gate',
-    startedAt: process.env.CONSTELLATION_VERIFIER_STARTED_AT || now,
-    completedAt: process.env.CONSTELLATION_VERIFIER_COMPLETED_AT || now,
-    durationMs: Number(process.env.CONSTELLATION_VERIFIER_DURATION_MS || 0),
-    exitCode: verifierOutcome === 'success' ? 0 : 1,
-    status: verifierOutcome === 'success' ? 'SUCCESS' : 'FAILURE',
-    logs: {
-      stdout: process.env.CONSTELLATION_VERIFIER_STDOUT || '',
-      stderr: process.env.CONSTELLATION_VERIFIER_STDERR || ''
-    }
+    startedAt: stepStartedAt,
+    completedAt: stepCompletedAt,
+    durationMs: Number.isFinite(durationMs) && durationMs >= 0 ? durationMs : -1,
+    exitCode,
+    status: exitCode === 0 ? 'SUCCESS' : 'FAILURE',
+    logs: { stdout: verifierStdout, stderr: verifierStderr }
   }];
-  const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-  const temp = process.env.RUNNER_TEMP || os.tmpdir();
-  const toolCache = process.env.RUNNER_TOOL_CACHE || '';
 
   return {
     schemaVersion: '1.0.0',
@@ -53,21 +70,21 @@ function collectEvidence() {
       runId: Number(process.env.GITHUB_RUN_ID || 0),
       jobName: process.env.GITHUB_JOB || '',
       headSha: process.env.GITHUB_SHA || '',
-      status: process.env.CONSTELLATION_WORKFLOW_STATUS || 'in_progress',
-      conclusion: process.env.CONSTELLATION_WORKFLOW_CONCLUSION || null,
+      status: 'in_progress',
+      conclusion: null,
       startedAt: process.env.CONSTELLATION_JOB_STARTED_AT || now,
-      completedAt: process.env.CONSTELLATION_JOB_COMPLETED_AT || now,
-      durationMs: Number(process.env.CONSTELLATION_JOB_DURATION_MS || 0)
+      completedAt: null,
+      durationMs: null
     },
     steps,
     logs: {
-      available: process.env.CONSTELLATION_LOGS_AVAILABLE === 'true',
-      source: 'workflow-step-capture'
+      available: hasActualLogs,
+      source: hasActualLogs ? 'captured-verifier-files' : 'missing'
     },
     verifier: {
       invoked: process.env.CONSTELLATION_VERIFIER_INVOKED === 'true',
-      exitCode: process.env.CONSTELLATION_VERIFIER_EXIT_CODE === undefined ? null : Number(process.env.CONSTELLATION_VERIFIER_EXIT_CODE),
-      gate: process.env.CONSTELLATION_VERIFIER_GATE || null
+      exitCode,
+      gate: exitCode === 0 && verifierOutcome === 'success' ? 'PASS' : 'FAIL'
     },
     syntheticEvidence: false,
     collection: {
@@ -76,7 +93,10 @@ function collectEvidence() {
         workspace: requiredString(workspace),
         temp: requiredString(temp),
         toolCache: requiredString(toolCache)
-      }
+      },
+      actualLogCapture: hasActualLogs,
+      actualExitCodeCapture: exitCode !== null,
+      actualTimestampCapture: Boolean(stepStartedAt && stepCompletedAt)
     }
   };
 }
@@ -92,9 +112,9 @@ console.log(JSON.stringify({
   runnerName: evidence.runner.name,
   runnerOs: evidence.runner.os,
   runnerArch: evidence.runner.arch,
-  workspaceCaptured: evidence.collection.runtimeEnvFields.workspace,
-  tempCaptured: evidence.collection.runtimeEnvFields.temp,
-  toolCacheCaptured: evidence.collection.runtimeEnvFields.toolCache
+  actualLogCapture: evidence.collection.actualLogCapture,
+  actualExitCodeCapture: evidence.collection.actualExitCodeCapture,
+  actualTimestampCapture: evidence.collection.actualTimestampCapture
 }, null, 2));
 
 export { collectEvidence };
