@@ -35,7 +35,8 @@ function validBundle() {
     workflow: { runId: 100, jobName: 'contract', headSha: sha, status: 'completed', conclusion: 'success' },
     commit: { sha },
     expectedSha: sha,
-    syntheticEvidence: false
+    syntheticEvidence: false,
+    authoritativeEvidence: true
   };
 }
 
@@ -43,8 +44,8 @@ test('complete six-layer bundle passes but cannot authorize promotion', () => {
   const verdict = evaluateEvidenceSignature(validBundle(), sha);
   assert.equal(verdict.evidence, 'PRESENT');
   assert.equal(verdict.verification, 'PASS');
-  assert.equal(verdict.acceptance, 'PASS');
-  assert.equal(verdict.contractAuth, 'READY');
+  assert.equal(verdict.acceptance, 'BLOCKED');
+  assert.equal(verdict.contractAuth, 'BLOCKED');
   assert.equal(verdict.promotion, 'BLOCKED');
   assert.equal(verdict.lkg, 'PROTECTED');
   assert.equal(verdict.productionMutation, 'NOT_PERFORMED');
