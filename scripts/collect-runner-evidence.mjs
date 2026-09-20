@@ -19,7 +19,7 @@ function collectEvidence() {
       headSha: process.env.GITHUB_SHA || ''
     },
     job: {
-      id: Number(process.env.GITHUB_JOB_ID || 0),
+      jobName: process.env.GITHUB_JOB || '',
       runId: Number(process.env.GITHUB_RUN_ID || 0),
       workspace
     },
@@ -36,6 +36,7 @@ function collectEvidence() {
     },
     workflow: {
       runId: Number(process.env.GITHUB_RUN_ID || 0),
+      jobName: process.env.GITHUB_JOB || '',
       headSha: process.env.GITHUB_SHA || '',
       status: 'in_progress',
       conclusion: null
