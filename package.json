@@ -1,0 +1,15 @@
+{
+  "name": "thelingolegacy",
+  "private": true,
+  "version": "4.0.0-dynamic-studio",
+  "description": "The Lingo Legacy Cloudflare Worker and static asset surface.",
+  "type": "module",
+  "scripts": {
+    "build": "wrangler deploy --dry-run --config wrangler.jsonc",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "preview": "wrangler versions upload --config wrangler.jsonc"
+  },
+  "devDependencies": {
+    "wrangler": "4.68.0"
+  }
+}
