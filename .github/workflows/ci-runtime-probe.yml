@@ -2,7 +2,10 @@ name: Lingo Legacy CI Runtime Probe
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  push:
+    branches: ["fix/final-production-gates-2026-09-19"]
+  workflow_dispatch:
 
 permissions:
   contents: read
