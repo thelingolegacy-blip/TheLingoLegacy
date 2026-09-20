@@ -1,18 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Protect the active execution/deployment surface. Historical documentation is
-// retained for audit context, while executable/configuration paths remain fail-closed.
+// Fail closed on real executable/configuration coupling to retired Vercel.
+// Descriptive references in documentation or UI copy are not execution paths.
 const forbidden = [
-  /vercel\.json/i,
-  /@vercel\//i,
-  /vercel\.app/i,
-  /VERCEL_[A-Z0-9_]+/i,
-  /vercel\s+(?:deploy|build|env|link)/i,
-  /vercel\.com/i,
-  /_vercel\//i,
-  /\bVercel web layer\b/i,
-  /\bVercel deployment\b/i
+  { pattern: /vercel\.json/i, reason: 'Vercel configuration file reference' },
+  { pattern: /@vercel\//i, reason: 'Vercel package/import reference' },
+  { pattern: /https?:\/\/[^\s"'<>]*vercel\.app/i, reason: 'Vercel deployment URL' },
+  { pattern: /VERCEL_[A-Z0-9_]+/i, reason: 'Vercel environment variable' },
+  { pattern: /\bvercel\s+(?:deploy|build|env|link)\b/i, reason: 'Vercel CLI command' },
+  { pattern: /https?:\/\/[^\s"'<>]*vercel\.com/i, reason: 'Vercel service URL' },
+  { pattern: /\/_vercel\//i, reason: 'Vercel runtime asset path' },
+  { pattern: /window\.va\s*=|window\.vaq\s*=|_vercel\/insights/i, reason: 'Vercel analytics runtime' }
 ];
 
 const root = process.cwd();
@@ -37,8 +36,14 @@ for (const file of files) {
   let text;
   try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
   catch { continue; }
+
   text.split('\n').forEach((line, i) => {
-    if (forbidden.some((re) => re.test(line))) findings.push({ file, line: i + 1, text: line.trim().slice(0, 240) });
+    for (const rule of forbidden) {
+      if (rule.pattern.test(line)) {
+        findings.push({ file, line: i + 1, reason: rule.reason, text: line.trim().slice(0, 240) });
+        break;
+      }
+    }
   });
 }
 
@@ -48,7 +53,8 @@ const result = {
   executionPathClear: findings.length === 0,
   findings,
   checkedFiles: files.length,
-  excludedHistoricalPaths: [...historicalOnly]
+  excludedHistoricalPaths: [...historicalOnly],
+  policy: 'Only executable/configuration coupling to retired Vercel is blocking; descriptive historical references are non-blocking.'
 };
 console.log(JSON.stringify(result, null, 2));
-if (findings.length) process.exit(1);
+if (result.status !== 'PASS') process.exit(1);

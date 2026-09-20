@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -20,6 +19,17 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Runner diagnostics
+        run: |
+          set -euxo pipefail
+          echo "runner.name=${RUNNER_NAME}"
+          echo "runner.os=${RUNNER_OS}"
+          echo "runner.arch=${RUNNER_ARCH}"
+          echo "runner.temp=${RUNNER_TEMP}"
+          node --version
+          npm --version
+          git --version
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -29,13 +39,19 @@ jobs:
           node-version: 22
 
       - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
+        run: |
+          set -o pipefail
+          node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
-        run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+        run: |
+          set -o pipefail
+          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
       - name: Validate release-critical static site
-        run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+        run: |
+          set -o pipefail
+          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
       - name: Upload validation evidence
         if: always()
@@ -46,4 +62,4 @@ jobs:
             sanitize.log
             bindings.log
             validator.log
-          if-no-files-found: warn
+          if-no-files-found: error

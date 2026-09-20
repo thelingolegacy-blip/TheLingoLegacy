@@ -29,6 +29,10 @@ jobs:
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Prove executable GitHub runner
         id: assert
         shell: bash
@@ -124,6 +128,13 @@ jobs:
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: |
           if [ -f scripts/live-probes.mjs ]; then node scripts/live-probes.mjs; else echo 'live-probes.mjs missing'; exit 1; fi
+      - name: Upload live probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-live-probes-${{ github.run_id }}
+          path: release/evidence/live-probes.json
+          if-no-files-found: error
 
   deploy-firebase:
     needs: repair
@@ -165,8 +176,21 @@ jobs:
     if: success()
     runs-on: ubuntu-latest
     steps:
-      - name: Production certification boundary
+      - name: Checkout certification source and contracts
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download repair evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: lingo-full-stack-auto-repair-${{ github.run_id }}
+          path: release/evidence
+      - name: Download live probe evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: lingo-live-probes-${{ github.run_id }}
+          path: release/evidence
+      - name: Verify certification evidence boundary
         run: |
           set -euo pipefail
-          echo 'Cloudflare and Firebase deployment jobs completed with executable evidence.'
-          echo 'Certification may proceed only when live evidence and rollback evidence are present.'
+          node scripts/verify-certification-evidence.mjs

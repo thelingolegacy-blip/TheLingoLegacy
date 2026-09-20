@@ -1,0 +1,51 @@
+name: Lingo Legacy CI Runtime Probe
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["fix/final-production-gates-2026-09-19"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 5
+    steps:
+      - name: Runner probe
+        shell: bash
+        run: |
+          set -euxo pipefail
+          printf 'RUNNER_DIAGNOSTIC=PASS\n'
+          printf 'RUNNER_NAME=%s\n' "$RUNNER_NAME"
+          printf 'RUNNER_ID=%s\n' "$RUNNER_ID"
+          printf 'RUNNER_OS=%s\n' "$RUNNER_OS"
+          printf 'RUNNER_ARCH=%s\n' "$RUNNER_ARCH"
+          printf 'RUNNER_LABEL=%s\n' "${{ matrix.runner }}"
+          printf 'GITHUB_SHA=%s\n' "$GITHUB_SHA"
+          printf 'GITHUB_RUN_ID=%s\n' "$GITHUB_RUN_ID"
+          node --version
+          npm --version
+          git --version
+
+      - name: Artifact probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-probe
+          printf 'CI_RUNTIME_PROBE=PASS\nRUNNER=%s\nRUNNER_ID=%s\nSHA=%s\n' "${{ matrix.runner }}" "$RUNNER_ID" "$GITHUB_SHA" > ci-probe/result.txt
+
+      - name: Upload probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-legacy-ci-runtime-probe-${{ matrix.runner }}
+          path: ci-probe/result.txt
+          if-no-files-found: error
