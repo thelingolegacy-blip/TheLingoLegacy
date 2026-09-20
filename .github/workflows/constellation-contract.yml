@@ -29,7 +29,21 @@ jobs:
           echo "RUNNER_NAME=$RUNNER_NAME"
           echo "RUNNER_OS=$RUNNER_OS"
           echo "RUNNER_ARCH=$RUNNER_ARCH"
-          echo "STARTED_AT=$started" | tee "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          completed="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
+          start_epoch="$(date -u -d "$started" +%s%3N)"
+          end_epoch="$(date -u -d "$completed" +%s%3N)"
+          duration="$((end_epoch - start_epoch))"
+          echo "CONSTELLATION_EXECUTION_SENTINEL=PASS" | tee "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "RUN_ID=$GITHUB_RUN_ID" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "JOB=$GITHUB_JOB" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "SHA=$GITHUB_SHA" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "RUNNER_ID=$RUNNER_ID" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "RUNNER_NAME=$RUNNER_NAME" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "RUNNER_OS=$RUNNER_OS" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "RUNNER_ARCH=$RUNNER_ARCH" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "STARTED_AT=$started" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          echo "COMPLETED_AT=$completed" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          printf '{"startedAt":"%s","completedAt":"%s","durationMs":%s,"exitCode":0}\n' "$started" "$completed" "$duration" > "$RUNNER_TEMP/constellation-evidence/sentinel.meta.json"
 
       - uses: actions/checkout@v4
 
@@ -103,6 +117,8 @@ jobs:
           GITHUB_JOB: ${{ github.job }}
           CONSTELLATION_VERIFIER_OUTCOME: ${{ steps.verifier.outcome }}
           CONSTELLATION_VERIFIER_INVOKED: "true"
+          CONSTELLATION_SENTINEL_STDOUT_PATH: ${{ runner.temp }}/constellation-evidence/sentinel.stdout
+          CONSTELLATION_SENTINEL_META_PATH: ${{ runner.temp }}/constellation-evidence/sentinel.meta.json
           CONSTELLATION_VERIFIER_STDOUT_PATH: ${{ runner.temp }}/constellation-evidence/verifier.stdout
           CONSTELLATION_VERIFIER_STDERR_PATH: ${{ runner.temp }}/constellation-evidence/verifier.stderr
           CONSTELLATION_VERIFIER_META_PATH: ${{ runner.temp }}/constellation-evidence/verifier.meta.json
