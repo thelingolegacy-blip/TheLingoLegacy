@@ -26,10 +26,19 @@ if (repair && Array.isArray(repair.failures) && repair.failures.length) {
 
 if (!probes || probes.status !== 'PASS' || !Array.isArray(probes.probes) || probes.probes.length === 0) {
   failures.push('live probe evidence is not a complete PASS artifact');
+} else {
+  if (probes.base !== 'https://thelingolegacy.com') failures.push('live probe evidence base does not match canonical production domain');
+  if (typeof probes.timestamp !== 'string' || Number.isNaN(Date.parse(probes.timestamp))) failures.push('live probe evidence timestamp is missing or invalid');
+  for (const probe of probes.probes) {
+    if (!probe || probe.status !== 'PASS') failures.push('live probe evidence contains a non-PASS probe');
+    if (typeof probe.path !== 'string' || probe.path.trim() === '') failures.push('live probe evidence contains a probe without a path');
+    if (!Number.isFinite(probe.actual)) failures.push('live probe evidence contains a probe without a numeric HTTP status');
+  }
 }
 
 const fields = ['commitSha', 'artifactDigest', 'deploymentId', 'certificateId'];
 if (rollback) {
+  if (rollback.schemaVersion !== '1.0') failures.push('rollback manifest schemaVersion is not 1.0');
   for (const field of fields) {
     if (typeof rollback[field] !== 'string' || rollback[field].trim() === '') {
       failures.push(`rollback manifest field is not populated: ${field}`);
