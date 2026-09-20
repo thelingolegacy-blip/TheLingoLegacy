@@ -50,3 +50,7 @@ Rotation cadence is documented as policy. The values themselves must be provisio
 SOURCE -> EVIDENCE -> VERIFICATION -> ACCEPTANCE -> PASSED -> AUTHORIZATION -> PROMOTION -> POST-PROMOTION
 
 Each gate is independent. Passing one gate never implies another.
+
+## Staging execution probe
+
+This marker is intentionally documentation-only. It exists to produce a new staging-branch push event so the already-staged Constellation contract workflow can be observed. It grants no authority, performs no production mutation, changes no DNS, and does not alter LKG.
