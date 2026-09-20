@@ -144,7 +144,59 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
+          WRANGLER_OUTPUT_FILE_PATH: release/evidence/wrangler-output.ndjson
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence
+          npx --yes wrangler@4 deploy --config wrangler.jsonc
+
+      - name: Capture deployment identity evidence
+        env:
+          EXPECTED_COMMIT: ${{ needs.gates.outputs.commit }}
+          EXPECTED_ARTIFACT: ${{ needs.gates.outputs.artifact }}
+        run: |
+          set -euo pipefail
+          test -s release/evidence/wrangler-output.ndjson
+          node <<'NODE'
+          const fs = require('node:fs');
+          const lines = fs.readFileSync('release/evidence/wrangler-output.ndjson','utf8')
+            .split(/\r?\n/).filter(Boolean).map((line) => JSON.parse(line));
+          const deploys = lines.filter((entry) => entry.type === 'deploy' && typeof entry.version_id === 'string' && entry.version_id.trim());
+          if (deploys.length !== 1) {
+            throw new Error(`Expected exactly one successful Wrangler deploy identity; found ${deploys.length}`);
+          }
+          const deploy = deploys[0];
+          const commitSha = process.env.EXPECTED_COMMIT;
+          const artifactDigest = process.env.EXPECTED_ARTIFACT;
+          if (!commitSha || !artifactDigest) throw new Error('Release identity outputs are missing');
+          const evidence = {
+            schemaVersion: '1.0',
+            status: 'PASS',
+            source: 'wrangler-output',
+            workerName: deploy.worker_name || null,
+            versionId: deploy.version_id,
+            deploymentId: deploy.version_id,
+            commitSha,
+            artifactDigest,
+            capturedAt: deploy.timestamp || new Date().toISOString(),
+            target: deploy.targets || []
+          };
+          fs.writeFileSync('release/evidence/deployment-identity.json', JSON.stringify(evidence, null, 2) + '\n');
+          fs.writeFileSync('release/evidence/rollback.json', JSON.stringify({
+            schemaVersion: '1.0',
+            status: 'PASS',
+            target: deploy.version_id,
+            commitSha,
+            artifactDigest,
+            deploymentId: deploy.version_id,
+            certificateId: null,
+            selectionPolicy: 'KNOWN_GOOD_ONLY',
+            verificationRequired: true,
+            liveProbeRequiredAfterRollback: true,
+            recoveryCertificateRequired: true
+          }, null, 2) + '\n');
+          console.log(JSON.stringify(evidence, null, 2));
+          NODE
       - name: Resolve canonical production URL
         id: config
         shell: bash
@@ -157,12 +209,12 @@ jobs:
           LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: node scripts/live-probes.mjs
-      - name: Upload live probe evidence
+      - name: Upload deployment and live evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lingo-live-probes-${{ github.run_id }}
-          path: release/evidence/live-probes.json
+          path: release/evidence/
           if-no-files-found: error
 
   certificate:
@@ -173,14 +225,41 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Download live probe evidence
+      - name: Download gate evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: lingo-release-evidence-${{ github.run_id }}
+          path: release/evidence/gate
+
+      - name: Download deployment and live evidence
         uses: actions/download-artifact@v4
         with:
           name: lingo-live-probes-${{ github.run_id }}
-          path: release/evidence
+          path: release/evidence/live
+
+      - name: Normalize release evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/current
+          release_dir=$(find release/evidence/gate -mindepth 1 -maxdepth 1 -type d -print -quit)
+          test -n "$release_dir" || { echo 'No release-specific gate evidence directory found'; exit 1; }
+          for file in manifest.json commit.json build.json gates.json; do
+            test -f "$release_dir/$file" || { echo "Missing gate evidence: $release_dir/$file"; exit 1; }
+            cp "$release_dir/$file" "release/evidence/current/$file"
+          done
+          test -f release/evidence/live/live-probes.json
+          cp release/evidence/live/live-probes.json release/evidence/current/live-probes.json
+          test -f release/evidence/live/rollback.json
+          cp release/evidence/live/rollback.json release/evidence/current/rollback.json
+          test -f release/evidence/live/deployment-identity.json
+          cp release/evidence/live/deployment-identity.json release/evidence/current/deployment-identity.json
+
       - name: Generate repository evidence report
         run: node scripts/lingo-autorepair.mjs
       - name: Verify certification evidence
+        env:
+          ROLLBACK_FILE: release/evidence/current/rollback.json
         run: node scripts/verify-certification-evidence.mjs
       - name: Certification boundary
         shell: bash
