@@ -1,0 +1,36 @@
+name: Self-Hosted Recovery Tunnel Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-runner:
+    name: Recovery runner handshake
+    runs-on: [self-hosted, lingo-recovery]
+    timeout-minutes: 10
+    steps:
+      - name: Runner identity
+        shell: bash
+        run: |
+          set -eu
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_ID=$RUNNER_ID"
+          echo "RUNNER_OS=$RUNNER_OS"
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_ID" != "0"
+
+      - name: Connectivity bridge
+        shell: bash
+        run: |
+          set -eu
+          curl --fail --silent --show-error --head https://github.com/ >/dev/null
+          echo "GITHUB_OUTBOUND_HTTPS=PASS"
+
+      - name: Recovery acceptance marker
+        shell: bash
+        run: |
+          set -eu
+          echo "RECOVERY_RUNNER_EXECUTION=PASS"
