@@ -12,7 +12,11 @@ permissions:
 
 jobs:
   probe:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 5
     steps:
       - name: Runner probe
@@ -22,6 +26,7 @@ jobs:
           printf 'RUNNER_NAME=%s\n' "$RUNNER_NAME"
           printf 'RUNNER_OS=%s\n' "$RUNNER_OS"
           printf 'RUNNER_ARCH=%s\n' "$RUNNER_ARCH"
+          printf 'RUNNER_LABEL=%s\n' "${{ matrix.runner }}"
           printf 'GITHUB_SHA=%s\n' "$GITHUB_SHA"
           node --version
           npm --version
