@@ -1,48 +1,72 @@
-name: Lingo Legacy CI Runtime Probe
+name: Lingo Legacy Diagnostic Bridge
 
 on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["fix/final-production-gates-2026-09-19", "route/vercel-preview-2026-09-20"]
+    branches:
+      - "route/vercel-preview-2026-09-20"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: diagnostic-bridge-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  probe:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [ubuntu-22.04, ubuntu-24.04]
-    runs-on: ${{ matrix.runner }}
+  bridge:
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - name: Runner probe
-        shell: bash
-        run: |
-          set -euxo pipefail
-          printf 'RUNNER_NAME=%s\n' "$RUNNER_NAME"
-          printf 'RUNNER_OS=%s\n' "$RUNNER_OS"
-          printf 'RUNNER_ARCH=%s\n' "$RUNNER_ARCH"
-          printf 'RUNNER_LABEL=%s\n' "${{ matrix.runner }}"
-          printf 'GITHUB_SHA=%s\n' "$GITHUB_SHA"
-          node --version
-          npm --version
-          git --version
-
-      - name: Artifact probe
+      - name: Runner identity evidence
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p ci-probe
-          printf 'CI_RUNTIME_PROBE=PASS\nSHA=%s\n' "$GITHUB_SHA" > ci-probe/result.txt
+          mkdir -p release/evidence
+          {
+            printf 'DIAGNOSTIC_BRIDGE=STARTED
+'
+            printf 'RUNNER_NAME=%s
+' "$RUNNER_NAME"
+            printf 'RUNNER_OS=%s
+' "$RUNNER_OS"
+            printf 'RUNNER_ARCH=%s
+' "$RUNNER_ARCH"
+            printf 'RUNNER_LABEL=ubuntu-24.04
+'
+            printf 'GITHUB_SHA=%s
+' "$GITHUB_SHA"
+            printf 'GITHUB_REF=%s
+' "$GITHUB_REF"
+            printf 'GITHUB_EVENT_NAME=%s
+' "$GITHUB_EVENT_NAME"
+            node --version
+            npm --version
+            git --version
+          } | tee release/evidence/diagnostic-runtime.txt
 
-      - name: Upload probe evidence
+      - name: Static route evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f app/verification/index.html
+          printf 'VERIFICATION_ROUTE_SOURCE=FOUND
+' | tee release/evidence/diagnostic-route.txt
+
+      - name: Finalize diagnostic evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'DIAGNOSTIC_BRIDGE=PASS
+SHA=%s
+' "$GITHUB_SHA" > release/evidence/diagnostic-result.txt
+
+      - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lingo-legacy-ci-runtime-probe
-          path: ci-probe/result.txt
+          name: lingo-legacy-diagnostic-bridge-${{ github.run_id }}
+          path: release/evidence
           if-no-files-found: error
