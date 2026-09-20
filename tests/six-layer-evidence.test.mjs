@@ -7,7 +7,7 @@ const sha = 'a'.repeat(40);
 function validBundle() {
   return {
     run: { id: 100, headSha: sha },
-    job: { id: 200, runId: 100, workspace: '/workspace' },
+    job: { jobName: 'contract', runId: 100, workspace: '/workspace' },
     runner: {
       id: 42,
       name: 'GitHub Actions runner',
@@ -21,7 +21,7 @@ function validBundle() {
     },
     steps: [{
       stepId: 'verify',
-      jobId: 200,
+      jobName: 'contract',
       name: 'Verifier',
       startedAt: '2026-09-20T14:00:10.000Z',
       completedAt: '2026-09-20T14:00:20.000Z',
@@ -32,7 +32,7 @@ function validBundle() {
     }],
     verifier: { invoked: true, exitCode: 0, gate: 'PASS' },
     logs: { available: true },
-    workflow: { runId: 100, headSha: sha, status: 'completed', conclusion: 'success' },
+    workflow: { runId: 100, jobName: 'contract', headSha: sha, status: 'completed', conclusion: 'success' },
     commit: { sha },
     expectedSha: sha,
     syntheticEvidence: false
@@ -62,9 +62,9 @@ const negativeCases = [
   ['logs', b => { b.logs.available = false; }],
   ['workflow', b => { b.workflow.conclusion = 'failure'; }],
   ['runJobCorrelation', b => { b.job.runId = 999; }],
-  ['jobStepCorrelation', b => { b.steps[0].jobId = 999; }],
+  ['jobStepCorrelation', b => { b.steps[0].jobName = 'wrong-job'; }],
   ['runnerJobCorrelation', b => { b.runner.workspace = '/wrong'; }],
-  ['workflowJobCorrelation', b => { b.workflow.runId = 999; }],
+  ['workflowJobCorrelation', b => { b.workflow.jobName = 'wrong-job'; }],
   ['commitIntegrity', b => { b.commit.sha = 'b'.repeat(40); }],
   ['syntheticEvidence', b => { b.syntheticEvidence = true; }]
 ];
