@@ -53,9 +53,22 @@ jobs:
         env:
           CONSTELLATION_VERIFIER_INVOKED: "true"
         run: |
-          set -euo pipefail
-          node scripts/verify-constellation-contract.mjs | tee verifier.log
-          echo "VERIFIER_GATE=PASS" >> "$GITHUB_STEP_SUMMARY"
+          set +e
+          mkdir -p "$RUNNER_TEMP/constellation-evidence"
+          started="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
+          node scripts/verify-constellation-contract.mjs             >"$RUNNER_TEMP/constellation-evidence/verifier.stdout"             2>"$RUNNER_TEMP/constellation-evidence/verifier.stderr"
+          rc=$?
+          completed="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
+          start_epoch="$(date -u -d "$started" +%s%3N)"
+          end_epoch="$(date -u -d "$completed" +%s%3N)"
+          duration="$((end_epoch - start_epoch))"
+          printf '{"startedAt":"%s","completedAt":"%s","durationMs":%s,"exitCode":%s}\n'             "$started" "$completed" "$duration" "$rc"             >"$RUNNER_TEMP/constellation-evidence/verifier.meta.json"
+          if [ "$rc" -eq 0 ]; then
+            echo "VERIFIER_GATE=PASS" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "VERIFIER_GATE=FAIL" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$rc"
 
       - name: Capture runtime evidence
         if: always()
@@ -72,22 +85,21 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_JOB: ${{ github.job }}
           CONSTELLATION_VERIFIER_OUTCOME: ${{ steps.verifier.outcome }}
-          CONSTELLATION_LOGS_AVAILABLE: "true"
           CONSTELLATION_VERIFIER_INVOKED: "true"
-          CONSTELLATION_VERIFIER_EXIT_CODE: ${{ steps.verifier.outcome == 'success' && '0' || '1' }}
-          CONSTELLATION_VERIFIER_GATE: ${{ steps.verifier.outcome == 'success' && 'PASS' || 'FAIL' }}
-          CONSTELLATION_WORKFLOW_STATUS: "in_progress"
+          CONSTELLATION_VERIFIER_STDOUT_PATH: ${{ runner.temp }}/constellation-evidence/verifier.stdout
+          CONSTELLATION_VERIFIER_STDERR_PATH: ${{ runner.temp }}/constellation-evidence/verifier.stderr
+          CONSTELLATION_VERIFIER_META_PATH: ${{ runner.temp }}/constellation-evidence/verifier.meta.json
         run: |
-          set +e
+          set -euo pipefail
           node scripts/collect-runner-evidence.mjs constellation-evidence.json
           test -s constellation-evidence.json
-          echo "Evidence bundle captured."
-          exit 0
 
       - name: Upload evidence bundle
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: constellation-evidence-${{ github.run_id }}
-          path: constellation-evidence.json
+          path: |
+            constellation-evidence.json
+            ${{ runner.temp }}/constellation-evidence/
           if-no-files-found: error
