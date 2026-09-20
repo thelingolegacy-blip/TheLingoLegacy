@@ -1,39 +1,125 @@
 import fs from 'node:fs';
+import { correlationResult } from './correlate-runner-evidence.mjs';
+
+function nonEmpty(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
+function validTimestamp(value) {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
+function evaluateLayer(present, valid, correlated) {
+  return { present, valid, correlated, pass: present && valid && correlated };
+}
 
 function evaluateEvidenceSignature(bundle, expectedSha) {
-  const verdict = {
-    evidence: 'INCOMPLETE',
-    verification: 'BLOCKED',
-    acceptance: 'BLOCKED',
-    contractAuth: 'BLOCKED',
-    promotion: 'BLOCKED',
-    lkg: 'PROTECTED',
-    failures: []
+  const correlation = correlationResult(
+    bundle?.run,
+    bundle?.job,
+    bundle?.steps,
+    bundle?.runner,
+    bundle?.logs,
+    bundle?.workflow,
+    expectedSha
+  );
+
+  const runnerPresent = Boolean(bundle?.runner);
+  const runnerValid =
+    Number(bundle?.runner?.id) > 0 &&
+    nonEmpty(bundle?.runner?.name) &&
+    bundle?.runner?.os === 'Linux' &&
+    nonEmpty(bundle?.runner?.arch) &&
+    nonEmpty(bundle?.runner?.temp) &&
+    nonEmpty(bundle?.runner?.workspace) &&
+    nonEmpty(bundle?.runner?.toolCache) &&
+    validTimestamp(bundle?.runner?.allocatedAt);
+
+  const stepsPresent = Array.isArray(bundle?.steps) && bundle.steps.length > 0;
+  const stepsValid = stepsPresent && bundle.steps.every(step =>
+    nonEmpty(step?.stepId) &&
+    nonEmpty(step?.name) &&
+    validTimestamp(step?.startedAt) &&
+    validTimestamp(step?.completedAt) &&
+    Number.isFinite(Number(step?.durationMs)) &&
+    Number(step?.durationMs) >= 0 &&
+    Number.isInteger(Number(step?.exitCode)) &&
+    (step?.status === 'SUCCESS' || step?.status === 'FAILURE') &&
+    (nonEmpty(step?.logs?.stdout) || nonEmpty(step?.logs?.stderr))
+  );
+
+  const verifierPresent = bundle?.verifier?.invoked === true;
+  const verifierValid =
+    bundle?.verifier?.exitCode === 0 &&
+    bundle?.verifier?.gate === 'PASS';
+
+  const logsPresent = bundle?.logs?.available === true;
+  const logsValid = logsPresent;
+
+  const workflowPresent = Boolean(bundle?.workflow);
+  const workflowValid =
+    bundle?.workflow?.status === 'completed' &&
+    bundle?.workflow?.conclusion === 'success';
+
+  const commitPresent = Boolean(bundle?.commit?.sha) && nonEmpty(expectedSha);
+  const commitValid =
+    bundle?.commit?.sha === expectedSha &&
+    bundle?.run?.headSha === expectedSha &&
+    bundle?.workflow?.headSha === expectedSha &&
+    bundle?.syntheticEvidence === false;
+
+  const layers = {
+    runnerIdentity: evaluateLayer(
+      runnerPresent,
+      runnerValid,
+      correlation.runnerJob
+    ),
+    executedSteps: evaluateLayer(
+      stepsPresent,
+      stepsValid,
+      correlation.jobSteps
+    ),
+    verifierInvocation: evaluateLayer(
+      verifierPresent,
+      verifierValid,
+      correlation.stepsLogs
+    ),
+    logEvidence: evaluateLayer(
+      logsPresent,
+      logsValid,
+      correlation.stepsLogs
+    ),
+    workflowConclusion: evaluateLayer(
+      workflowPresent,
+      workflowValid,
+      correlation.workflowJob
+    ),
+    commitIntegrity: evaluateLayer(
+      commitPresent,
+      commitValid,
+      correlation.commitMatch
+    )
   };
 
-  const checks = [
-    ['runner.id', Number(bundle?.runner?.id) > 0],
-    ['runner.name', typeof bundle?.runner?.name === 'string' && bundle.runner.name.trim() !== ''],
-    ['runner.os', bundle?.runner?.os === 'Linux'],
-    ['runner.arch', typeof bundle?.runner?.arch === 'string' && bundle.runner.arch.trim() !== ''],
-    ['executed_step_count', Number(bundle?.executed_step_count) > 0],
-    ['verifier_invoked', bundle?.verifier_invoked === true],
-    ['verifier_exit_code', bundle?.verifier_exit_code === 0],
-    ['verifier_gate', bundle?.verifier_gate === 'PASS'],
-    ['logs_present', bundle?.logs_present === true],
-    ['workflow_conclusion', bundle?.workflow_conclusion === 'success'],
-    ['commit_sha', bundle?.commit_sha === expectedSha],
-    ['synthetic_evidence', bundle?.synthetic_evidence === false]
-  ];
+  const failures = Object.entries(layers)
+    .filter(([, layer]) => !layer.pass)
+    .map(([name]) => name);
 
-  for (const [field, pass] of checks) if (!pass) verdict.failures.push(field);
-
-  if (verdict.failures.length === 0) {
-    verdict.evidence = 'PRESENT';
-    verdict.verification = 'PASS';
-    verdict.acceptance = 'PASS';
-    verdict.contractAuth = 'READY';
-  }
+  const verdict = {
+    schemaVersion: '1.0.0',
+    evaluatedCommit: expectedSha,
+    evidence: failures.length === 0 ? 'PRESENT' : 'INCOMPLETE',
+    verification: failures.length === 0 ? 'PASS' : 'BLOCKED',
+    acceptance: failures.length === 0 ? 'PASS' : 'BLOCKED',
+    contractAuth: failures.length === 0 ? 'READY' : 'BLOCKED',
+    promotion: 'BLOCKED',
+    lkg: 'PROTECTED',
+    layers,
+    correlation,
+    failures,
+    syntheticEvidence: bundle?.syntheticEvidence === true,
+    productionMutation: 'NOT_PERFORMED'
+  };
 
   return verdict;
 }
