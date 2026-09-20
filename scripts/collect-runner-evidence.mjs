@@ -7,7 +7,21 @@ function requiredString(value) {
 
 function collectEvidence() {
   const now = new Date().toISOString();
-  const steps = JSON.parse(process.env.CONSTELLATION_STEPS_JSON || '[]');
+  const verifierOutcome = process.env.CONSTELLATION_VERIFIER_OUTCOME || 'failure';
+  const steps = [{
+    stepId: 'verifier',
+    jobName: process.env.GITHUB_JOB || '',
+    name: 'Constellation contract gate',
+    startedAt: process.env.CONSTELLATION_VERIFIER_STARTED_AT || now,
+    completedAt: process.env.CONSTELLATION_VERIFIER_COMPLETED_AT || now,
+    durationMs: Number(process.env.CONSTELLATION_VERIFIER_DURATION_MS || 0),
+    exitCode: verifierOutcome === 'success' ? 0 : 1,
+    status: verifierOutcome === 'success' ? 'SUCCESS' : 'FAILURE',
+    logs: {
+      stdout: process.env.CONSTELLATION_VERIFIER_STDOUT || '',
+      stderr: process.env.CONSTELLATION_VERIFIER_STDERR || ''
+    }
+  }];
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
   const temp = process.env.RUNNER_TEMP || os.tmpdir();
   const toolCache = process.env.RUNNER_TOOL_CACHE || '';
