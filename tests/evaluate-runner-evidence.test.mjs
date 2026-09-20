@@ -13,7 +13,8 @@ function complete() {
     logs: { available: true },
     workflow: { runId: 100, jobName: 'contract', headSha: sha, status: 'completed', conclusion: 'success' },
     commit: { sha },
-    syntheticEvidence: false
+    syntheticEvidence: false,
+    authoritativeEvidence: true
   };
 }
 
