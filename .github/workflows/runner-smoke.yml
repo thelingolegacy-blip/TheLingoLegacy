@@ -1,0 +1,31 @@
+name: Lingo Legacy Runner Smoke
+
+on:
+  push:
+    branches:
+      - fix/final-production-gates-2026-09-19
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Prove hosted runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_ID}"
+          test "${RUNNER_ID}" != "0"
+          test -n "${RUNNER_NAME}"
+          test -n "${RUNNER_OS}"
+          echo "RUNNER_SMOKE=PASS"
+          echo "runner_id=${RUNNER_ID}"
+          echo "runner_name=${RUNNER_NAME}"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "github_run_id=${GITHUB_RUN_ID}"
+          echo "github_sha=${GITHUB_SHA}"
