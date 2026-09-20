@@ -71,13 +71,12 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_JOB: ${{ github.job }}
-          CONSTELLATION_STEPS_JSON: '[{"stepId":"verifier","jobName":"${{ github.job }}","name":"Constellation contract gate","startedAt":"${{ github.run_started_at }}","completedAt":"${{ github.run_started_at }}","durationMs":0,"exitCode":${{ steps.verifier.outcome == ''success'' && 0 || 1 }},"status":"${{ steps.verifier.outcome == ''success'' && ''SUCCESS'' || ''FAILURE'' }}","logs":{"stdout":"VERIFIER_GATE=PASS","stderr":""}}]'
+          CONSTELLATION_VERIFIER_OUTCOME: ${{ steps.verifier.outcome }}
           CONSTELLATION_LOGS_AVAILABLE: "true"
           CONSTELLATION_VERIFIER_INVOKED: "true"
           CONSTELLATION_VERIFIER_EXIT_CODE: ${{ steps.verifier.outcome == 'success' && '0' || '1' }}
           CONSTELLATION_VERIFIER_GATE: ${{ steps.verifier.outcome == 'success' && 'PASS' || 'FAIL' }}
-          CONSTELLATION_WORKFLOW_STATUS: "completed"
-          CONSTELLATION_WORKFLOW_CONCLUSION: ${{ job.status == 'success' && 'success' || 'failure' }}
+          CONSTELLATION_WORKFLOW_STATUS: "in_progress"
         run: |
           set +e
           node scripts/collect-runner-evidence.mjs constellation-evidence.json
