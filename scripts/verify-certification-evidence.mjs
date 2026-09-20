@@ -6,14 +6,30 @@ const requiredFiles = [
   'release/evidence/current/rollback.json'
 ];
 
-const failures = [];
-for (const file of requiredFiles) {
-  if (!fs.existsSync(file)) failures.push(`missing required evidence: ${file}`);
-}
+const contractPath = 'config/release/rollback-manifest.json';
 
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch (error) { failures.push(`invalid JSON: ${file}: ${error.message}`); return null; }
+}
+
+const contract = fs.existsSync(contractPath) ? readJson(contractPath) : null;
+if (!contract) {
+  failures.push(`missing rollback contract: ${contractPath}`);
+} else {
+  if (!Array.isArray(contract.requiredFields)) {
+    failures.push('rollback contract requiredFields must be an array');
+  } else {
+    for (const field of ['commitSha', 'artifactDigest', 'deploymentId', 'certificateId']) {
+      if (!contract.requiredFields.includes(field)) {
+        failures.push(`rollback contract requiredFields missing: ${field}`);
+      }
+    }
+  }
+}
+
+for (const file of requiredFiles) {
+  if (!fs.existsSync(file)) failures.push(`missing required evidence: ${file}`);
 }
 
 const repair = fs.existsSync(requiredFiles[0]) ? readJson(requiredFiles[0]) : null;
