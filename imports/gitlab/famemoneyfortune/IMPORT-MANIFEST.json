@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceAuthority": "gitlab",
+  "targetAuthority": "github",
+  "sourceProjects": [
+    {
+      "path": "thatsmylingo/FameMoneyFortune",
+      "id": "75092379"
+    },
+    {
+      "path": "zavionecook/FameMoneyFortune",
+      "id": "75092923",
+      "forkOf": "75092379"
+    }
+  ],
+  "sourceCommit": "dc6f1e077095cb53776a385341446c349e593d99",
+  "targetRepository": "thelingolegacy-blip/TheLingoLegacy",
+  "targetBranch": "studio/constellation-os-2026-09-20",
+  "importMode": "QUARANTINED",
+  "productionMutation": false,
+  "runtimeConnected": false,
+  "ciAuthority": "github",
+  "productionAuthority": "cloudflare",
+  "syntheticEvidence": false
+}
