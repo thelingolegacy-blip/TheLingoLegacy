@@ -2,9 +2,18 @@ name: Constellation OS Contract
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'config/constellation/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/constellation-contract.yml'
   push:
     branches:
       - studio/constellation-os-2026-09-20
+      - fix/s4-evidence-boundary-2026-09-20
 
 permissions:
   contents: read
@@ -33,16 +42,18 @@ jobs:
           start_epoch="$(date -u -d "$started" +%s%3N)"
           end_epoch="$(date -u -d "$completed" +%s%3N)"
           duration="$((end_epoch - start_epoch))"
-          echo "CONSTELLATION_EXECUTION_SENTINEL=PASS" | tee "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "RUN_ID=$GITHUB_RUN_ID" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "JOB=$GITHUB_JOB" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "SHA=$GITHUB_SHA" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "RUNNER_ID=$RUNNER_ID" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "RUNNER_NAME=$RUNNER_NAME" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "RUNNER_OS=$RUNNER_OS" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "RUNNER_ARCH=$RUNNER_ARCH" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "STARTED_AT=$started" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
-          echo "COMPLETED_AT=$completed" | tee -a "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
+          {
+            echo "CONSTELLATION_EXECUTION_SENTINEL=PASS"
+            echo "RUN_ID=$GITHUB_RUN_ID"
+            echo "JOB=$GITHUB_JOB"
+            echo "SHA=$GITHUB_SHA"
+            echo "RUNNER_ID=$RUNNER_ID"
+            echo "RUNNER_NAME=$RUNNER_NAME"
+            echo "RUNNER_OS=$RUNNER_OS"
+            echo "RUNNER_ARCH=$RUNNER_ARCH"
+            echo "STARTED_AT=$started"
+            echo "COMPLETED_AT=$completed"
+          } | tee "$RUNNER_TEMP/constellation-evidence/sentinel.stdout"
           printf '{"startedAt":"%s","completedAt":"%s","durationMs":%s,"exitCode":0}\n' "$started" "$completed" "$duration" > "$RUNNER_TEMP/constellation-evidence/sentinel.meta.json"
 
       - uses: actions/checkout@v4
@@ -76,24 +87,22 @@ jobs:
           echo "RUNNER_GATE=PASS"
 
       - name: Read-only evidence evaluator tests
-        run: node --test tests/evaluate-runner-evidence.test.mjs tests/six-layer-evidence.test.mjs
+        run: node --test tests/evaluate-runner-evidence.test.mjs tests/six-layer-evidence.test.mjs tests/verify-s4-evidence.test.mjs
 
       - name: Constellation contract gate
         id: verifier
         shell: bash
-        env:
-          CONSTELLATION_VERIFIER_INVOKED: "true"
         run: |
           set +e
           mkdir -p "$RUNNER_TEMP/constellation-evidence"
           started="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
-          node scripts/verify-constellation-contract.mjs             >"$RUNNER_TEMP/constellation-evidence/verifier.stdout"             2>"$RUNNER_TEMP/constellation-evidence/verifier.stderr"
+          node scripts/verify-constellation-contract.mjs >"$RUNNER_TEMP/constellation-evidence/verifier.stdout" 2>"$RUNNER_TEMP/constellation-evidence/verifier.stderr"
           rc=$?
           completed="$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
           start_epoch="$(date -u -d "$started" +%s%3N)"
           end_epoch="$(date -u -d "$completed" +%s%3N)"
           duration="$((end_epoch - start_epoch))"
-          printf '{"startedAt":"%s","completedAt":"%s","durationMs":%s,"exitCode":%s}\n'             "$started" "$completed" "$duration" "$rc"             >"$RUNNER_TEMP/constellation-evidence/verifier.meta.json"
+          printf '{"startedAt":"%s","completedAt":"%s","durationMs":%s,"exitCode":%s}\n' "$started" "$completed" "$duration" "$rc" >"$RUNNER_TEMP/constellation-evidence/verifier.meta.json"
           if [ "$rc" -eq 0 ]; then
             echo "VERIFIER_GATE=PASS" >> "$GITHUB_STEP_SUMMARY"
           else
