@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["fix/final-production-gates-2026-09-19"]
+    branches: ["fix/final-production-gates-2026-09-19", "route/vercel-preview-2026-09-20"]
   workflow_dispatch:
 
 permissions:
