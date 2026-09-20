@@ -21,5 +21,17 @@
   "runtimeConnected": false,
   "ciAuthority": "github",
   "productionAuthority": "cloudflare",
-  "syntheticEvidence": false
+  "syntheticEvidence": false,
+  "importedFiles": [
+    ".gitignore",
+    ".gitlab-ci.yml",
+    ".gitpod.yml",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "Program.cs",
+    "README.md",
+    "app.js",
+    "dotnetcore.csproj"
+  ],
+  "importCompleteness": "COMPLETE"
 }
