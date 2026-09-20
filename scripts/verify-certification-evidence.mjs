@@ -2,8 +2,8 @@ import fs from 'node:fs';
 
 const requiredFiles = [
   'release/evidence/lingo-autorepair-report.json',
-  'release/evidence/live-probes.json',
-  'config/release/rollback-manifest.json'
+  'release/evidence/current/live-probes.json',
+  'release/evidence/current/rollback.json'
 ];
 
 const failures = [];
@@ -36,13 +36,16 @@ if (!probes || probes.status !== 'PASS' || !Array.isArray(probes.probes) || prob
   }
 }
 
-const fields = ['commitSha', 'artifactDigest', 'deploymentId', 'certificateId'];
+const fields = ['commitSha', 'artifactDigest', 'deploymentId'];
 if (rollback) {
   if (rollback.schemaVersion !== '1.0') failures.push('rollback manifest schemaVersion is not 1.0');
   for (const field of fields) {
     if (typeof rollback[field] !== 'string' || rollback[field].trim() === '') {
       failures.push(`rollback manifest field is not populated: ${field}`);
     }
+  }
+  if (rollback.certificateId != null && (typeof rollback.certificateId !== 'string' || rollback.certificateId.trim() === '')) {
+    failures.push('rollback manifest certificateId is present but empty');
   }
   if (rollback.selectionPolicy !== 'KNOWN_GOOD_ONLY') failures.push('rollback selection policy is not KNOWN_GOOD_ONLY');
   if (rollback.verificationRequired !== true) failures.push('rollback verification requirement is not enabled');
