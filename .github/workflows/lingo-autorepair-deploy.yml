@@ -29,6 +29,10 @@ jobs:
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Prove executable GitHub runner
         id: assert
         shell: bash
