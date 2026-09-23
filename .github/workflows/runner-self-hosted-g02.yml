@@ -1,0 +1,35 @@
+name: G02 Self-Hosted Runner Sentinel
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [infra/self-hosted-runner-v1]
+
+permissions:
+  contents: read
+
+jobs:
+  runner-sentinel:
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+    steps:
+      - name: Runner identity sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "RUNNER_EXECUTION_SENTINEL=PASS"
+          echo "RUNNER_ID=${{ runner.id }}"
+          echo "RUNNER_NAME=${{ runner.name }}"
+          echo "RUNNER_OS=${{ runner.os }}"
+          echo "RUNNER_ARCH=${{ runner.arch }}"
+          echo "RUNNER_SCOPE=${{ runner.environment }}"
+          test "${{ runner.id }}" != "0"
+          test -n "${{ runner.name }}"
+      - name: Host diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -a
+          git --version
+          df -h /
+          free -h || true
