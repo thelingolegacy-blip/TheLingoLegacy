@@ -1,0 +1,23 @@
+name: Runner Dispatch Diagnostic
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-sentinel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Runner sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "RUNNER_SENTINEL=EXECUTED"
+          echo "RUNNER_ID=${RUNNER_ID:-unknown}"
+          echo "RUNNER_NAME=${RUNNER_NAME:-unknown}"
+          echo "RUNNER_OS=${RUNNER_OS:-unknown}"
