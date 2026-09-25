@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   runner-sentinel:
@@ -15,37 +16,29 @@ jobs:
 
     steps:
       - name: Establish runner identity
-        id: runner
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
-          RUNNER_OS: ${{ runner.os }}
-          RUNNER_ARCH: ${{ runner.arch }}
-          GITHUB_SHA_VALUE: ${{ github.sha }}
+          RUNNER_ID: \${{ runner.id }}
+          RUNNER_NAME: \${{ runner.name }}
+          RUNNER_OS: \${{ runner.os }}
+          RUNNER_ARCH: \${{ runner.arch }}
+          GITHUB_SHA_VALUE: \${{ github.sha }}
         run: |
           set -euo pipefail
-          test -n "$RUNNER_ID"
-          test "$RUNNER_ID" != "0"
-          test -n "$RUNNER_NAME"
-          test -n "$RUNNER_OS"
-          test -n "$RUNNER_ARCH"
+          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
+          test -n "$RUNNER_NAME" -a -n "$RUNNER_OS" -a -n "$RUNNER_ARCH"
           test -n "$GITHUB_SHA_VALUE"
-          echo "runner_id=$RUNNER_ID"
-          echo "runner_name=$RUNNER_NAME"
-          echo "runner_os=$RUNNER_OS"
-          echo "runner_arch=$RUNNER_ARCH"
-          echo "github_sha=$GITHUB_SHA_VALUE"
+          printf 'runner_id=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\ngithub_sha=%s\n' \
+            "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$GITHUB_SHA_VALUE"
 
       - name: Execute G02 sentinel
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_ID: \${{ runner.id }}
+          RUNNER_NAME: \${{ runner.name }}
         run: |
           set -euo pipefail
-          test -n "$RUNNER_ID"
-          test "$RUNNER_ID" != "0"
+          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
           test -n "$RUNNER_NAME"
           echo "RUNNER_EXECUTION_SENTINEL=PASS"
 
@@ -54,3 +47,101 @@ jobs:
         run: |
           set -euo pipefail
           echo "G02_FORENSIC_EXIT_STATUS=0"
+
+      - name: Build G02 evidence envelope
+        shell: bash
+        env:
+          RUN_ID: \${{ github.run_id }}
+          WORKFLOW_NAME: \${{ github.workflow }}
+          COMMIT_SHA: \${{ github.sha }}
+          EVENT_NAME: \${{ github.event_name }}
+          RUN_ATTEMPT: \${{ github.run_attempt }}
+          JOB_NAME: \${{ github.job }}
+          RUNNER_ID: \${{ runner.id }}
+          RUNNER_NAME: \${{ runner.name }}
+          RUNNER_OS: \${{ runner.os }}
+          RUNNER_ARCH: \${{ runner.arch }}
+          REPOSITORY: \${{ github.repository }}
+          TOKEN: \${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          api="https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100"
+          jobs="$(curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" "$api")"
+
+          python3 - "$jobs" "$JOB_NAME" "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
+            "$RUN_ID" "$WORKFLOW_NAME" "$COMMIT_SHA" "$EVENT_NAME" "$RUN_ATTEMPT" \
+            > g02-evidence/01_run_identity.json <<'PY'
+          import json,sys
+          d=json.loads(sys.argv[1]); name=sys.argv[2]
+          m=[j for j in d["jobs"] if j["name"]==name]
+          if len(m)!=1: raise SystemExit("job correlation failure")
+          j=m[0]
+          print(json.dumps({
+            "run_id":int(sys.argv[7]),"workflow":sys.argv[8],"commit_sha":sys.argv[9],
+            "event":sys.argv[10],"run_attempt":int(sys.argv[11]),
+            "timestamps":{"job_started_at":j.get("started_at"),"job_completed_at":j.get("completed_at")}
+          },indent=2))
+          PY
+
+          python3 - "$jobs" "$JOB_NAME" "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
+            > g02-evidence/02_job_identity.json <<'PY'
+          import json,sys
+          d=json.loads(sys.argv[1]); name=sys.argv[2]
+          m=[j for j in d["jobs"] if j["name"]==name]
+          if len(m)!=1: raise SystemExit("job correlation failure")
+          j=m[0]
+          print(json.dumps({
+            "job_id":j["id"],"job_name":j["name"],"status":j["status"],
+            "conclusion":j.get("conclusion"),"runner_id":int(sys.argv[3]),
+            "runner_name":sys.argv[4],"started_at":j.get("started_at"),
+            "completed_at":j.get("completed_at")
+          },indent=2))
+          PY
+
+          python3 - "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
+            > g02-evidence/03_runner_telemetry.json <<'PY'
+          import json,sys
+          print(json.dumps({
+            "runner_id":int(sys.argv[1]),"runner_name":sys.argv[2],
+            "runner_os":sys.argv[3],"runner_arch":sys.argv[4],
+            "assignment":["self-hosted","linux","x64","lingo-g02"]
+          },indent=2))
+          PY
+
+          python3 - <<'PY' > g02-evidence/04_step_telemetry.json
+          import json
+          print(json.dumps({"steps":[
+            {"name":"Establish runner identity","outcome":"success"},
+            {"name":"Execute G02 sentinel","outcome":"success"},
+            {"name":"Emit forensic exit marker","outcome":"success"},
+            {"name":"Build G02 evidence envelope","outcome":"success"}
+          ]},indent=2))
+          PY
+
+          printf '%s\n' 'RUNNER_EXECUTION_SENTINEL=PASS' > g02-evidence/05_sentinel.log
+          printf '%s\n' 'G02_FORENSIC_EXIT_STATUS=0' > g02-evidence/06_exit_status.json
+
+          printf '%s\n' \
+            'RAW GITHUB JOB LOGS ARE AN INDEPENDENT RETRIEVAL REQUIREMENT.' \
+            "run_id=$RUN_ID" "job_id=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["jobs"][0]["id"])' <<<"$jobs")" \
+            > g02-evidence/07_raw_job_logs
+
+          sha256sum g02-evidence/01_run_identity.json \
+            g02-evidence/02_job_identity.json \
+            g02-evidence/03_runner_telemetry.json \
+            g02-evidence/04_step_telemetry.json \
+            g02-evidence/05_sentinel.log \
+            g02-evidence/06_exit_status.json \
+            g02-evidence/07_raw_job_logs > g02-evidence/08_integrity.json
+
+      - name: Upload G02 evidence envelope
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-live-evidence-\${{ github.run_id }}-\${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
