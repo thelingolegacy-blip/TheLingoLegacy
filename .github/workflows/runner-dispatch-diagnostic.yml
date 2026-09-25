@@ -49,7 +49,7 @@ jobs:
 
   evidence-collector:
     if: ${{ always() }}
-    needs: runner-sentinel
+    # Evidence collection is intentionally independent of runner execution.
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -67,6 +67,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p g02-evidence
+          sleep 10
           api="https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100"
           jobs="$(curl --fail-with-body --silent --show-error \
             -H "Accept: application/vnd.github+json" \
