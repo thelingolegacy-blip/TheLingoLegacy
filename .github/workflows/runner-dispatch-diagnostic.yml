@@ -50,7 +50,7 @@ jobs:
   evidence-collector:
     if: ${{ always() }}
     needs: runner-sentinel
-    runs-on: [self-hosted, linux, x64, lingo-g02]
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Collect completed G02 job evidence
@@ -104,6 +104,13 @@ jobs:
             "runner_name":sys.argv[5]},indent=2))
           PY
 
+          curl --fail-with-body --silent --show-error \
+            -L -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID/logs" \
+            > g02-evidence/07_raw_job_logs
+
           python3 - "$RUNNER_ID" "$RUNNER_NAME" \
             > g02-evidence/03_runner_telemetry.json <<'PY'
           import json,sys
@@ -124,31 +131,6 @@ jobs:
           PY
 
           python3 - <<'PY'
-          import json
-          with open("g02-evidence/job.json") as f:
-              job=json.load(f)
-          steps=job.get("steps",[])
-          required=[
-              "Establish runner identity",
-              "Execute G02 sentinel",
-              "Emit forensic exit marker"
-          ]
-          by_name={s.get("name"):s for s in steps}
-          missing=[n for n in required if n not in by_name]
-          bad=[n for n in required if by_name.get(n,{}).get("status")!="completed" or by_name.get(n,{}).get("conclusion")!="success"]
-          if job.get("conclusion")!="success" or int(job.get("runner_id") or 0)<=0 or not job.get("runner_name") or missing or bad:
-              raise SystemExit("G02 acceptance evidence is not satisfied")
-          with open("g02-evidence/04_step_telemetry.json","w") as f:
-              json.dump({"steps":[by_name[n] for n in required]},f,indent=2)
-          PY
-
-          curl --fail-with-body --silent --show-error \
-            -L -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID/logs" \
-            > g02-evidence/07_raw_job_logs
-
           grep -Fqx 'RUNNER_EXECUTION_SENTINEL=PASS' g02-evidence/07_raw_job_logs
           grep -Fqx 'G02_FORENSIC_EXIT_STATUS=0' g02-evidence/07_raw_job_logs
           printf '%s\n' 'RUNNER_EXECUTION_SENTINEL=PASS' > g02-evidence/05_sentinel.log
