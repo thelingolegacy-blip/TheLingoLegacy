@@ -9,7 +9,18 @@ const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-cro
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
 const rateBuckets = new Map();
-const RUNTIME_VERSION = '4.0.0-dynamic-studio';
+const RUNTIME_VERSION = '5.0.0-studio-platform';
+const RELEASE_GATES = Object.freeze({
+  G00_SOURCE_AUTHORITY: 'PASS', G01_REPOSITORY: 'PASS', G02_RUNNER: 'FAIL / UNVERIFIED',
+  G03_CI_EXECUTION: 'BLOCKED', G04_CERTIFICATION: 'BLOCKED', G05_RELEASE_CANDIDATE: 'BLOCKED',
+  G06_DEPLOYMENT: 'BLOCKED', G07_LIVE_VALIDATION: 'BLOCKED', G08_SYNCHRONIZATION: 'BLOCKED',
+  G09_ACTIVATION: 'BLOCKED', G10_POST_ACTIVATION: 'BLOCKED', G11_ACCEPTANCE: 'BLOCKED'
+});
+const PLATFORM_MODULES = Object.freeze([
+  'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle',
+  'lingoslots','thats-my-lingo','rewards','missions','xp-engine','universal-legacy-wallet',
+  'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
+]);
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
@@ -141,12 +152,18 @@ function platformStatus(request, env) {
   const manifest = runtimeManifest(request, env);
   return {
     ...manifest,
-    status: 'OPERATIONAL',
-    control_planes: ['security', 'devops', 'data', 'safety', 'parent', 'ai', 'applications'],
+    status: 'SERVING / RELEASE-LOCKED',
+    platform_modules: PLATFORM_MODULES,
+    control_planes: ['security','devops','data','safety','ai','commerce','games','rewards','studio','applications'],
     deployment_authority: 'github-cloudflare',
     retired_providers: ['vercel'],
     domain_authority: 'cloudflare',
     release_policy: 'fail-closed',
+    production_mutation: 'FROZEN',
+    lkg: 'PROTECTED',
+    gates: RELEASE_GATES,
+    authorization: { production_promotion: false, activation: false, real_money_gameplay: false, cash_out: false },
+    acceptance_predicate: 'P1..P9 all true required for G02 PASS',
     dynamic_contract: 'active',
   };
 }
@@ -177,6 +194,8 @@ export default {
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
+      if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
