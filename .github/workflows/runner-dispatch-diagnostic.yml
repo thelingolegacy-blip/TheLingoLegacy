@@ -111,7 +111,7 @@ jobs:
             "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID/logs" \
             > g02-evidence/07_raw_job_logs
 
-          python3 - "$RUNNER_ID" "$RUNNER_NAME" \
+          python3 - "$RUNNER_ID" "$RUNNER_NAME" "$STATUS" "$CONCLUSION" \
             > g02-evidence/03_runner_telemetry.json <<'PY'
           import json,sys
           with open("g02-evidence/07_raw_job_logs",errors="replace") as f:
@@ -128,6 +128,16 @@ jobs:
           print(json.dumps({"runner_id":rid,"runner_name":name,
             "runner_os":os_name,"runner_arch":arch,
             "assignment":["self-hosted","linux","x64","lingo-g02"]},indent=2))
+          PY
+
+          python3 - <<'PY' > g02-evidence/04_step_telemetry.json
+          import json
+          with open("g02-evidence/job.json") as f:
+              job=json.load(f)
+          steps=job.get("steps") or []
+          if not steps:
+              raise SystemExit("step telemetry unavailable: job has no instantiated steps")
+          print(json.dumps({"steps": steps}, indent=2))
           PY
 
           python3 - <<'PY'
