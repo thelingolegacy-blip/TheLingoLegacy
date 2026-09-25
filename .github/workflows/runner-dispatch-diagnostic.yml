@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   runner-sentinel:
-    runs-on: [self-hosted, linux, x64, lingo-g02]
+    runs-on: self-hosted
     timeout-minutes: 5
     steps:
       - name: Establish runner identity
