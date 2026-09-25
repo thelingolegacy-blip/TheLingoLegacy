@@ -107,8 +107,19 @@ jobs:
           python3 - "$RUNNER_ID" "$RUNNER_NAME" \
             > g02-evidence/03_runner_telemetry.json <<'PY'
           import json,sys
-          print(json.dumps({"runner_id":int(sys.argv[1]),"runner_name":sys.argv[2],
-            "runner_os":"Linux","runner_arch":"X64",
+          with open("g02-evidence/07_raw_job_logs",errors="replace") as f:
+              logs=f.read()
+          def value(key):
+              for line in logs.splitlines():
+                  if line.strip().startswith(key+"="):
+                      return line.split("=",1)[1].strip()
+              return ""
+          rid=int(sys.argv[1]); name=sys.argv[2]
+          os_name=value("runner_os"); arch=value("runner_arch")
+          if rid<=0 or not name or not os_name or not arch:
+              raise SystemExit("runner telemetry incomplete")
+          print(json.dumps({"runner_id":rid,"runner_name":name,
+            "runner_os":os_name,"runner_arch":arch,
             "assignment":["self-hosted","linux","x64","lingo-g02"]},indent=2))
           PY
 
@@ -138,7 +149,8 @@ jobs:
             "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID/logs" \
             > g02-evidence/07_raw_job_logs
 
-          grep -Fqx 'RUNNER_EXECUTION_SENTINEL=PASS' g02-evidence/07_raw_job_logs && true || true
+          grep -Fqx 'RUNNER_EXECUTION_SENTINEL=PASS' g02-evidence/07_raw_job_logs
+          grep -Fqx 'G02_FORENSIC_EXIT_STATUS=0' g02-evidence/07_raw_job_logs
           printf '%s\n' 'RUNNER_EXECUTION_SENTINEL=PASS' > g02-evidence/05_sentinel.log
           printf '%s\n' 'G02_FORENSIC_EXIT_STATUS=0' > g02-evidence/06_exit_status.json
 
