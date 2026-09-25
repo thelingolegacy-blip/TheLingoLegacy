@@ -169,3 +169,5 @@ jobs:
           path: g02-evidence/
           if-no-files-found: error
           retention-days: 14
+
+# G02 execution trigger: controlled push
