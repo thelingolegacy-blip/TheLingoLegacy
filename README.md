@@ -2,7 +2,7 @@
 
 > **Authoritative Source of Truth:** `thelingolegacy-blip/TheLingoLegacy` (`main` branch)  
 > **Sovereign Runtime:** Cloudflare Edge Workers & Pages  
-> **Status:** Fully Autonomous / Production Grade  
+> **Status:** Studio Platform Complete / Production Promotion Fail-Closed  
 
 ---
 
@@ -38,6 +38,9 @@ A successful build alone never marks production LIVE. Repository state, CI evide
 
 Required runtime probes include:
 
+- `/api/v1/platform/gates`
+- `/api/v1/platform/modules`
+
 - `/healthz`
 - `/api/v1/runtime`
 - `/api/v1/platform/manifest`
@@ -45,6 +48,16 @@ Required runtime probes include:
 - `/api/v1/site/context`
 
 ---
+
+## 🧭 Studio Platform Completion
+
+The platform surface is organized across flagship, Loyalty Lane World, LINGOslots / That’s My Lingo, rewards, Lingo ID, Universal Legacy Wallet architecture, askLINGO, commerce, Legacy Club, media, Studio, documentation, and governance. Virtual/demo gameplay and presentation layers are separated from real-value transaction and prize activation.
+
+Production state is evidence-driven:
+
+`EVIDENCE → VERIFICATION → ACCEPTANCE → AUTHORITY → TRANSITION`
+
+Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `MUTATION FREEZE = ACTIVE`, `LKG = PROTECTED`, downstream promotion/activation = `BLOCKED`.
 
 ## 🛡️ Production Gate
 
