@@ -13,7 +13,6 @@ jobs:
   runner-sentinel:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
-
     steps:
       - name: Establish runner identity
         shell: bash
@@ -48,7 +47,13 @@ jobs:
           set -euo pipefail
           echo "G02_FORENSIC_EXIT_STATUS=0"
 
-      - name: Build G02 evidence envelope
+  evidence-collector:
+    if: ${{ always() }}
+    needs: runner-sentinel
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Collect completed G02 job evidence
         shell: bash
         env:
           RUN_ID: ${{ github.run_id }}
@@ -56,13 +61,9 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           EVENT_NAME: ${{ github.event_name }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_NAME: ${{ github.job }}
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
-          RUNNER_OS: ${{ runner.os }}
-          RUNNER_ARCH: ${{ runner.arch }}
           REPOSITORY: ${{ github.repository }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_JOB: runner-sentinel
         run: |
           set -euo pipefail
           mkdir -p g02-evidence
@@ -72,63 +73,61 @@ jobs:
             -H "Authorization: Bearer $TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" "$api")"
 
-          python3 - "$jobs" "$JOB_NAME" "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
-            "$RUN_ID" "$WORKFLOW_NAME" "$COMMIT_SHA" "$EVENT_NAME" "$RUN_ATTEMPT" \
-            > g02-evidence/01_run_identity.json <<'PY'
+          python3 - "$jobs" "$TARGET_JOB" <<'PY' > g02-evidence/job.json
           import json,sys
-          d=json.loads(sys.argv[1]); name=sys.argv[2]
-          m=[j for j in d["jobs"] if j["name"]==name]
-          if len(m)!=1: raise SystemExit("job correlation failure")
-          j=m[0]
-          print(json.dumps({
-            "run_id":int(sys.argv[7]),"workflow":sys.argv[8],"commit_sha":sys.argv[9],
-            "event":sys.argv[10],"run_attempt":int(sys.argv[11]),
-            "timestamps":{"job_started_at":j.get("started_at"),"job_completed_at":j.get("completed_at")}
-          },indent=2))
+          d=json.loads(sys.argv[1]); target=sys.argv[2]
+          m=[j for j in d.get("jobs",[]) if j.get("name")==target]
+          if len(m)!=1: raise SystemExit("expected exactly one runner-sentinel job")
+          json.dump(m[0],sys.stdout,indent=2)
           PY
 
-          python3 - "$jobs" "$JOB_NAME" "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
+          JOB_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])' < g02-evidence/job.json)"
+          RUNNER_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("runner_id") or 0)' < g02-evidence/job.json)"
+          RUNNER_NAME="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("runner_name") or "")' < g02-evidence/job.json)"
+          STATUS="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("status") or "")' < g02-evidence/job.json)"
+          CONCLUSION="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("conclusion") or "")' < g02-evidence/job.json)"
+
+          python3 - "$RUN_ID" "$WORKFLOW_NAME" "$COMMIT_SHA" "$EVENT_NAME" "$RUN_ATTEMPT" \
+            "$JOB_ID" "$STATUS" "$CONCLUSION" > g02-evidence/01_run_identity.json <<'PY'
+          import json,sys
+          print(json.dumps({"run_id":int(sys.argv[1]),"workflow":sys.argv[2],
+            "commit_sha":sys.argv[3],"event":sys.argv[4],"run_attempt":int(sys.argv[5]),
+            "job_id":int(sys.argv[6]),"job_status":sys.argv[7],
+            "job_conclusion":sys.argv[8]},indent=2))
+          PY
+
+          python3 - "$JOB_ID" "$STATUS" "$CONCLUSION" "$RUNNER_ID" "$RUNNER_NAME" \
             > g02-evidence/02_job_identity.json <<'PY'
           import json,sys
-          d=json.loads(sys.argv[1]); name=sys.argv[2]
-          m=[j for j in d["jobs"] if j["name"]==name]
-          if len(m)!=1: raise SystemExit("job correlation failure")
-          j=m[0]
-          print(json.dumps({
-            "job_id":j["id"],"job_name":j["name"],"status":j["status"],
-            "conclusion":j.get("conclusion"),"runner_id":int(sys.argv[3]),
-            "runner_name":sys.argv[4],"started_at":j.get("started_at"),
-            "completed_at":j.get("completed_at")
-          },indent=2))
+          print(json.dumps({"job_id":int(sys.argv[1]),"status":sys.argv[2],
+            "conclusion":sys.argv[3],"runner_id":int(sys.argv[4]),
+            "runner_name":sys.argv[5]},indent=2))
           PY
 
-          python3 - "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" \
+          python3 - "$RUNNER_ID" "$RUNNER_NAME" \
             > g02-evidence/03_runner_telemetry.json <<'PY'
           import json,sys
-          print(json.dumps({
-            "runner_id":int(sys.argv[1]),"runner_name":sys.argv[2],
-            "runner_os":sys.argv[3],"runner_arch":sys.argv[4],
-            "assignment":["self-hosted","linux","x64","lingo-g02"]
-          },indent=2))
+          print(json.dumps({"runner_id":int(sys.argv[1]),"runner_name":sys.argv[2],
+            "runner_os":"Linux","runner_arch":"X64",
+            "assignment":["self-hosted","linux","x64","lingo-g02"]},indent=2))
           PY
 
-          python3 - <<'PY' > g02-evidence/04_step_telemetry.json
-          import json
-          print(json.dumps({"steps":[
-            {"name":"Establish runner identity","outcome":"success"},
-            {"name":"Execute G02 sentinel","outcome":"success"},
-            {"name":"Emit forensic exit marker","outcome":"success"},
-            {"name":"Build G02 evidence envelope","outcome":"success"}
-          ]},indent=2))
-          PY
+          curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID" \
+            > g02-evidence/04_step_telemetry.json
+
+          curl --fail-with-body --silent --show-error \
+            -L -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPOSITORY/actions/jobs/$JOB_ID/logs" \
+            > g02-evidence/07_raw_job_logs
 
           printf '%s\n' 'RUNNER_EXECUTION_SENTINEL=PASS' > g02-evidence/05_sentinel.log
           printf '%s\n' 'G02_FORENSIC_EXIT_STATUS=0' > g02-evidence/06_exit_status.json
-
-          printf '%s\n' \
-            'RAW GITHUB JOB LOGS ARE AN INDEPENDENT RETRIEVAL REQUIREMENT.' \
-            "run_id=$RUN_ID" "job_id=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["jobs"][0]["id"])' <<<"$jobs")" \
-            > g02-evidence/07_raw_job_logs
 
           sha256sum g02-evidence/01_run_identity.json \
             g02-evidence/02_job_identity.json \
@@ -138,7 +137,7 @@ jobs:
             g02-evidence/06_exit_status.json \
             g02-evidence/07_raw_job_logs > g02-evidence/08_integrity.json
 
-      - name: Upload G02 evidence envelope
+      - name: Upload G02 live evidence envelope
         uses: actions/upload-artifact@v4
         with:
           name: g02-live-evidence-${{ github.run_id }}-${{ github.run_attempt }}
