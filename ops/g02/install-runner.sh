@@ -61,7 +61,7 @@ if [[ -f "$RUNNER_DIR/.runner" ]]; then
   runuser -u actions-runner -- "$RUNNER_DIR/config.sh" remove --token "$RUNNER_TOKEN" || true
 fi
 
-sudo -u actions-runner env RUNNER_ALLOW_RUNASROOT=0 \
+runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   "$RUNNER_DIR/config.sh" \
   --unattended \
   --url "$REPO_URL" \
