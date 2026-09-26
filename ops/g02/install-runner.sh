@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# G02 host bootstrap for thel ingolegacy-blip/TheLingoLegacy.
+# G02 host bootstrap for thelingolegacy-blip/TheLingoLegacy.
 # This script never changes the G02 acceptance predicate.
 # Supply a short-lived GitHub Actions runner registration token via RUNNER_TOKEN.
 # Do not commit the token or place it in this file.
@@ -58,7 +58,7 @@ chown -R actions-runner:actions-runner "$RUNNER_DIR"
 
 # Remove only a stale local registration for this runner name; no repository state is changed.
 if [[ -f "$RUNNER_DIR/.runner" ]]; then
-  sudo -u actions-runner "$RUNNER_DIR/config.sh" remove --token "$RUNNER_TOKEN" || true
+  runuser -u actions-runner -- "$RUNNER_DIR/config.sh" remove --token "$RUNNER_TOKEN" || true
 fi
 
 sudo -u actions-runner env RUNNER_ALLOW_RUNASROOT=0 \
@@ -72,8 +72,14 @@ sudo -u actions-runner env RUNNER_ALLOW_RUNASROOT=0 \
   --replace
 
 "$RUNNER_DIR/svc.sh" install actions-runner
-systemctl enable actions.runner.*.service || true
-systemctl restart actions.runner.*.service
+service_unit="$(systemctl list-unit-files 'actions.runner.*.service' --no-legend | awk 'NR==1 {print $1}')"
+if [[ -z "$service_unit" ]]; then
+  echo "Runner service was not installed." >&2
+  exit 1
+fi
+systemctl enable "$service_unit"
+systemctl restart "$service_unit"
+systemctl --no-pager --full status "$service_unit" --lines=20
 
 echo
 echo "Host bootstrap complete."
