@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   runner-sentinel:
@@ -15,16 +16,18 @@ jobs:
     steps:
       - name: Runner identity sentinel
         shell: bash
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
         run: |
           set -euo pipefail
-          echo "RUNNER_EXECUTION_SENTINEL=PASS"
-          echo "RUNNER_ID=${{ runner.id }}"
-          echo "RUNNER_NAME=${{ runner.name }}"
-          echo "RUNNER_OS=${{ runner.os }}"
-          echo "RUNNER_ARCH=${{ runner.arch }}"
-          echo "RUNNER_SCOPE=${{ runner.environment }}"
-          test "${{ runner.id }}" != "0"
-          test -n "${{ runner.name }}"
+          test -n "$RUNNER_NAME"
+          test -n "$RUNNER_OS"
+          test -n "$RUNNER_ARCH"
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\n'             "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT"
+
       - name: Host diagnostics
         shell: bash
         run: |
