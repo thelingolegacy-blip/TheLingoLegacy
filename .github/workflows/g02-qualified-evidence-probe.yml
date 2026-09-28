@@ -30,7 +30,17 @@ jobs:
           set -euo pipefail
           trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$?"' EXIT
 
-          printf '%s\\n'             "G02_QUALIFIED_PROBE=START"             "run_id=$RUN_ID"             "run_number=$RUN_NUMBER"             "job_name=$JOB_ID"             "runner_id=$RUNNER_ID"             "runner_name=$RUNNER_NAME"             "runner_os=$RUNNER_OS"             "runner_arch=$RUNNER_ARCH"             "runner_environment=$RUNNER_ENVIRONMENT"             "github_sha=$SHA"
+          printf '%s\\n' \
+            "G02_QUALIFIED_PROBE=START" \
+            "run_id=$RUN_ID" \
+            "run_number=$RUN_NUMBER" \
+            "job_name=$JOB_ID" \
+            "runner_id=$RUNNER_ID" \
+            "runner_name=$RUNNER_NAME" \
+            "runner_os=$RUNNER_OS" \
+            "runner_arch=$RUNNER_ARCH" \
+            "runner_environment=$RUNNER_ENVIRONMENT" \
+            "github_sha=$SHA"
 
           test -n "$RUNNER_ID"
           test "$RUNNER_ID" != "0"
@@ -41,5 +51,33 @@ jobs:
           test -n "$SHA"
 
           echo "G02_RUNNER_ASSIGNMENT=PASS"
+
+          # The inner Node diagnostic is deliberately bounded below the job-level
+          # timeout. If Node stalls, the OS timeout kills it and the fallback
+          # diagnostic path records time/exit telemetry without bypassing G02.
+          set +e
+          timeout --foreground --signal=TERM --kill-after=10s 240s \
+            node --input-type=module -e '
+              const started = Date.now();
+              console.log("G02_NODE_DIAGNOSTIC=START");
+              console.log("G02_NODE_VERSION=" + process.version);
+              console.log("G02_NODE_PID=" + process.pid);
+              console.log("G02_NODE_STARTED_MS=" + started);
+              await new Promise(resolve => setTimeout(resolve, 0));
+              console.log("G02_NODE_DIAGNOSTIC=PASS");
+            '
+          NODE_RC=$?
+          set -e
+
+          if [ "$NODE_RC" -ne 0 ]; then
+            echo "G02_NODE_DIAGNOSTIC=TIMEOUT_OR_FAILURE"
+            echo "G02_NODE_EXIT_STATUS=$NODE_RC"
+            echo "G02_FALLBACK_DIAGNOSTIC=START"
+            date -Is
+            /usr/bin/time -p true
+            echo "G02_FALLBACK_DIAGNOSTIC=PASS"
+            exit "$NODE_RC"
+          fi
+
           echo "G02_EXECUTION_SENTINEL=PASS"
           echo "G02_QUALIFIED_PROBE=PASS"
