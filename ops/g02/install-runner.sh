@@ -20,6 +20,7 @@ fi
 
 command -v curl >/dev/null || { echo "curl is required" >&2; exit 2; }
 command -v tar >/dev/null || { echo "tar is required" >&2; exit 2; }
+command -v systemctl >/dev/null || { echo "systemctl is required" >&2; exit 2; }
 
 id actions-runner >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash actions-runner
 install -d -o actions-runner -g actions-runner "$RUNNER_DIR"
@@ -72,14 +73,21 @@ runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   --replace
 
 "$RUNNER_DIR/svc.sh" install actions-runner
-service_unit="$(systemctl list-unit-files 'actions.runner.*.service' --no-legend | awk 'NR==1 {print $1}')"
+
+# Select only the service corresponding to this runner name. Never restart an
+# unrelated actions.runner.* service when multiple runners exist on the host.
+service_unit="$(systemctl list-unit-files 'actions.runner.*.service' --no-legend |
+  awk -v name="$RUNNER_NAME" 'index($1, name) {print $1; exit}')"
+
 if [[ -z "$service_unit" ]]; then
-  echo "Runner service was not installed." >&2
+  echo "No Actions Runner service matching RUNNER_NAME=$RUNNER_NAME was installed." >&2
+  systemctl list-unit-files 'actions.runner.*.service' --no-legend >&2 || true
   exit 1
 fi
+
 systemctl enable "$service_unit"
 systemctl restart "$service_unit"
-systemctl --no-pager --full status "$service_unit" --lines=20
+systemctl --no-pager --full status "$service_unit" --lines=30
 
 echo
 echo "Host bootstrap complete."
