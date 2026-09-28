@@ -1,0 +1,45 @@
+name: G02 Qualified Evidence Probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  qualified-evidence:
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Capture qualified runner evidence
+        id: evidence
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          JOB_ID: ${{ github.job }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$?"' EXIT
+
+          printf '%s\\n'             "G02_QUALIFIED_PROBE=START"             "run_id=$RUN_ID"             "run_number=$RUN_NUMBER"             "job_name=$JOB_ID"             "runner_id=$RUNNER_ID"             "runner_name=$RUNNER_NAME"             "runner_os=$RUNNER_OS"             "runner_arch=$RUNNER_ARCH"             "runner_environment=$RUNNER_ENVIRONMENT"             "github_sha=$SHA"
+
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          test -n "$RUN_ID"
+          test -n "$SHA"
+
+          echo "G02_RUNNER_ASSIGNMENT=PASS"
+          echo "G02_EXECUTION_SENTINEL=PASS"
+          echo "G02_QUALIFIED_PROBE=PASS"
