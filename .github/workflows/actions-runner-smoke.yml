@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   smoke:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
       - name: Runner reached execution stage
@@ -29,9 +29,9 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
-          test -n "$RUNNER_NAME"
-          test -n "$RUNNER_OS_VALUE"
-          test -n "$RUNNER_ARCH_VALUE"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS_VALUE" = "Linux"
+          test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
           echo "runner_id=$RUNNER_ID"
