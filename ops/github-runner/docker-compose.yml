@@ -1,0 +1,13 @@
+services:
+  github-runner:
+    build:
+      context: .
+      args:
+        RUNNER_VERSION: "2.337.0"
+    restart: "no"
+    environment:
+      GITHUB_URL: "https://github.com/thelingolegacy-blip/TheLingoLegacy"
+      RUNNER_TOKEN: "${RUNNER_TOKEN}"
+      RUNNER_NAME: "${RUNNER_NAME:-lingo-g02-01}"
+      RUNNER_LABELS: "self-hosted,linux,x64,lingo-g02"
+      RUNNER_GROUP: "Lingo-G02"
