@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-future<void> main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -11,7 +11,7 @@ future<void> main() async {
 }
 
 class LingoLegacyApp extends StatelessWidget {
-  const LingoLegacyApp({Key? key}) : super(key: key);
+  const LingoLegacyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class LingoLegacyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         useMaterial3: true,
-        colorScheme: ColorScheme.dark(
+        colorScheme: const ColorScheme.dark(
           primary: Color(0xFFF7C84B),
           secondary: Color(0xFF56EFFF),
           surface: Color(0xFF050507),
@@ -32,7 +32,7 @@ class LingoLegacyApp extends StatelessWidget {
 }
 
 class CasinoDashboard extends StatelessWidget {
-  const CasinoDashboard({Key? key}) : super(key: key);
+  const CasinoDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
