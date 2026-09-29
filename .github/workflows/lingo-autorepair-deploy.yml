@@ -128,7 +128,7 @@ jobs:
         run: |
           if [ -f scripts/live-probes.mjs ]; then node scripts/live-probes.mjs; else echo 'live-probes.mjs missing'; exit 1; fi
 
-  deploy-firebase:
+  firebase-contract:
     needs: repair
     if: ${{ success() && inputs.deploy == true }}
     runs-on: ubuntu-latest
@@ -137,39 +137,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Determine Firebase surface
-        id: firebase
+      - name: Verify Firebase remains contract-only
         shell: bash
         run: |
-          if [ -f firebase.json ]; then echo 'present=true' >> "$GITHUB_OUTPUT"; else echo 'present=false' >> "$GITHUB_OUTPUT"; fi
-      - name: Install Firebase CLI
-        if: steps.firebase.outputs.present == 'true'
-        run: npm install --global firebase-tools
-      - name: Deploy Firebase surface
-        if: steps.firebase.outputs.present == 'true'
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: |
           set -euo pipefail
-          test -n "$FIREBASE_TOKEN"
-          firebase deploy --non-interactive --token "$FIREBASE_TOKEN"
-      - name: Block false Firebase certification
-        if: steps.firebase.outputs.present != 'true'
-        run: |
+          test -f firebase.json
           echo 'FIREBASE_DEPLOYMENT=BLOCKED'
-          echo 'No firebase.json exists in the canonical repository; Firebase activation cannot be certified.'
-          exit 1
+          echo 'Firebase is contract-only in the canonical production stack.'
+          echo 'No Firebase Hosting/backend mutation is authorized by this workflow.'
+          echo 'Use a separately certified Firebase release path only after real project, Auth, App Check, rules, consent, and executable evidence are established.'
 
   certification:
-    needs: [deploy-cloudflare, deploy-firebase]
+    needs: [deploy-cloudflare, firebase-contract]
     if: success()
     runs-on: ubuntu-latest
     steps:
       - name: Production certification boundary
         run: |
           set -euo pipefail
-          echo 'Cloudflare and Firebase deployment jobs completed with executable evidence.'
+          echo 'Cloudflare deployment completed with executable evidence; Firebase remains explicitly contract-only.'
           echo 'Certification may proceed only when live evidence and rollback evidence are present.'
