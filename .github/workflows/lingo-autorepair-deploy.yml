@@ -24,7 +24,8 @@ env:
 
 jobs:
   runner-gate:
-    runs-on: ubuntu-latest
+    # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
@@ -40,10 +41,12 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
-          test -n "$RUNNER_NAME"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
+          test "${{ runner.arch }}" = "X64"
           test -n "$GITHUB_SHA_VALUE"
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
+          echo "G02_RUNNER_ASSIGNMENT=PASS"
           echo "RUNNER_GATE=PASS runner_id=$RUNNER_ID runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE github_sha=$GITHUB_SHA_VALUE"
 
   repair:
