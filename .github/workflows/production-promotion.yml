@@ -23,7 +23,8 @@ env:
 
 jobs:
   runner-gate:
-    runs-on: ubuntu-latest
+    # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
@@ -43,13 +44,14 @@ jobs:
           set -euo pipefail
           test -n "$RUNNER_ID" || { echo 'RUNNER_ID missing'; exit 1; }
           test "$RUNNER_ID" != "0" || { echo 'RUNNER_ID is zero'; exit 1; }
-          test -n "$RUNNER_NAME" || { echo 'RUNNER_NAME missing'; exit 1; }
-          test -n "$RUNNER_OS_VALUE" || { echo 'RUNNER_OS missing'; exit 1; }
-          test -n "$RUNNER_ARCH_VALUE" || { echo 'RUNNER_ARCH missing'; exit 1; }
+          test "$RUNNER_NAME" = "lingo-legacy-g02" || { echo 'RUNNER_NAME mismatch'; exit 1; }
+          test "$RUNNER_OS_VALUE" = "Linux" || { echo 'RUNNER_OS missing'; exit 1; }
+          test "$RUNNER_ARCH_VALUE" = "X64" || { echo 'RUNNER_ARCH mismatch'; exit 1; }
           test -n "$GITHUB_SHA_VALUE" || { echo 'GITHUB_SHA missing'; exit 1; }
           echo "RUNNER_GATE=PASS" >> "$GITHUB_OUTPUT"
           echo "runner_id=$RUNNER_ID" >> "$GITHUB_OUTPUT"
           echo "runner_name=$RUNNER_NAME" >> "$GITHUB_OUTPUT"
+          echo "G02_RUNNER_ASSIGNMENT=PASS"
           echo "RUNNER_GATE=PASS"
           echo "RUNNER_ID=$RUNNER_ID"
           echo "RUNNER_NAME=$RUNNER_NAME"
