@@ -28,6 +28,7 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
+          echo "G02_PROBE_GENERATION=2026-09-30-g02-retry-01"
           trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$?"' EXIT
 
           printf '%s\\n' \
