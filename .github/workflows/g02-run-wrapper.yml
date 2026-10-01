@@ -1,0 +1,175 @@
+name: G02 Run Wrapper — Trigger → Allocations → Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to dispatch the G02 qualified evidence probe from"
+        required: true
+        default: "main"
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: g02-run-wrapper
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    name: "1 · Trigger"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      target_run_id: ${{ steps.dispatch.outputs.target_run_id }}
+      target_run_url: ${{ steps.dispatch.outputs.target_run_url }}
+    steps:
+      - name: Dispatch G02 qualified evidence probe
+        id: dispatch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_REF: ${{ inputs.ref }}
+          TARGET_WORKFLOW: ".github/workflows/g02-qualified-evidence-probe.yml"
+          WRAPPER_STARTED_AT: ${{ github.run_started_at }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh workflow run "$TARGET_WORKFLOW" --repo "$GITHUB_REPOSITORY" --ref "$TARGET_REF"
+
+          target_run_id=""
+          for attempt in {1..20}; do
+            target_run_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$TARGET_WORKFLOW" --branch "$TARGET_REF" --limit 20 --json databaseId,createdAt --jq '.[] | select(.createdAt >= "'"$WRAPPER_STARTED_AT"'") | .databaseId' | head -n 1)"
+            [ -n "$target_run_id" ] && break
+            sleep 3
+          done
+
+          test -n "$target_run_id"
+          target_run_url="$(gh run view "$target_run_id" --repo "$GITHUB_REPOSITORY" --json url --jq '.url')"
+
+          printf '%s\n' \
+            "G02_WRAPPER_TRIGGER=PASS" \
+            "G02_TARGET_WORKFLOW=$TARGET_WORKFLOW" \
+            "G02_TARGET_RUN_ID=$target_run_id" \
+            "G02_TARGET_RUN_URL=$target_run_url" | tee trigger-evidence.txt
+
+          echo "target_run_id=$target_run_id" >> "$GITHUB_OUTPUT"
+          echo "target_run_url=$target_run_url" >> "$GITHUB_OUTPUT"
+
+      - name: Upload trigger evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-wrapper-trigger-evidence
+          path: trigger-evidence.txt
+          if-no-files-found: error
+
+  allocations:
+    name: "2 · Allocations"
+    needs: trigger
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      runner_id: ${{ steps.allocate.outputs.runner_id }}
+      runner_name: ${{ steps.allocate.outputs.runner_name }}
+      target_job_id: ${{ steps.allocate.outputs.target_job_id }}
+    steps:
+      - name: Verify target job allocation
+        id: allocate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_RUN_ID: ${{ needs.trigger.outputs.target_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          runner_id=""
+          runner_name=""
+          target_job_id=""
+
+          for attempt in {1..60}; do
+            job_json="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/jobs?per_page=100" --jq '.jobs | map(select(.name == "qualified-evidence")) | .[0] // empty')"
+
+            if [ -n "$job_json" ]; then
+              target_job_id="$(jq -r '.id // empty' <<<"$job_json")"
+              runner_id="$(jq -r '.runner_id // empty' <<<"$job_json")"
+              runner_name="$(jq -r '.runner_name // empty' <<<"$job_json")"
+              if [ -n "$runner_id" ] && [ "$runner_id" != "0" ] && [ -n "$runner_name" ]; then break; fi
+            fi
+
+            sleep 10
+          done
+
+          test -n "$target_job_id"
+          test -n "$runner_id"
+          test "$runner_id" != "0"
+          test "$runner_name" = "lingo-legacy-g02"
+
+          printf '%s\n' \
+            "G02_WRAPPER_ALLOCATION=PASS" \
+            "G02_TARGET_RUN_ID=$TARGET_RUN_ID" \
+            "G02_TARGET_JOB_ID=$target_job_id" \
+            "G02_RUNNER_ID=$runner_id" \
+            "G02_RUNNER_NAME=$runner_name" | tee allocation-evidence.txt
+
+          echo "runner_id=$runner_id" >> "$GITHUB_OUTPUT"
+          echo "runner_name=$runner_name" >> "$GITHUB_OUTPUT"
+          echo "target_job_id=$target_job_id" >> "$GITHUB_OUTPUT"
+
+      - name: Upload allocation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-wrapper-allocation-evidence
+          path: allocation-evidence.txt
+          if-no-files-found: error
+
+  execution:
+    name: "3 · Execution"
+    needs: [trigger, allocations]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for target execution and verify completion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_RUN_ID: ${{ needs.trigger.outputs.target_run_id }}
+          TARGET_JOB_ID: ${{ needs.allocations.outputs.target_job_id }}
+          RUNNER_ID: ${{ needs.allocations.outputs.runner_id }}
+          RUNNER_NAME: ${{ needs.allocations.outputs.runner_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=""
+          conclusion=""
+
+          for attempt in {1..60}; do
+            status="$(gh run view "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --json status --jq '.status')"
+            conclusion="$(gh run view "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion // ""')"
+            echo "G02_TARGET_STATUS=$status"
+            echo "G02_TARGET_CONCLUSION=$conclusion"
+            [ "$status" = "completed" ] && break
+            sleep 10
+          done
+
+          test "$status" = "completed"
+          test "$conclusion" = "success"
+
+          gh api "/repos/$GITHUB_REPOSITORY/actions/jobs/$TARGET_JOB_ID" --jq '{id,name,status,conclusion,runner_id,runner_name,started_at,completed_at}' | tee execution-evidence.json
+
+          jq -e --arg rid "$RUNNER_ID" --arg rname "$RUNNER_NAME"             '.runner_id != null and (.runner_id|tostring) == $rid and .runner_name == $rname and .status == "completed" and .conclusion == "success"'             execution-evidence.json >/dev/null
+
+          printf '%s\n' \
+            "G02_WRAPPER_EXECUTION=PASS" \
+            "G02_TARGET_RUN_ID=$TARGET_RUN_ID" \
+            "G02_TARGET_JOB_ID=$TARGET_JOB_ID" \
+            "G02_RUNNER_ID=$RUNNER_ID" \
+            "G02_RUNNER_NAME=$RUNNER_NAME" \
+            "G02_EXECUTION_CREDIT=ELIGIBLE_FOR_GATE_VERIFICATION" | tee execution-summary.txt
+
+      - name: Upload execution evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-wrapper-execution-evidence
+          path: |
+            execution-evidence.json
+            execution-summary.txt
+          if-no-files-found: error
