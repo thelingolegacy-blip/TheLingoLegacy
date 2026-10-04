@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "mode": "centralized-studio",
+  "production": false,
+  "shared": {
+    "loading": true,
+    "errorBoundary": true,
+    "emptyStates": true,
+    "responsive": true,
+    "accessibility": true,
+    "reducedMotion": true,
+    "audioMuteFirst": true,
+    "assetIntegrityRequired": true
+  },
+  "media": {
+    "visuals": [
+      "hero",
+      "worlds",
+      "cards",
+      "backgrounds",
+      "logos",
+      "icons"
+    ],
+    "sounds": [
+      "ui",
+      "navigation",
+      "game",
+      "world",
+      "ambient"
+    ],
+    "motion": [
+      "entrance",
+      "hover",
+      "route-transition",
+      "ambient",
+      "game"
+    ],
+    "video": [
+      "trailers",
+      "cinematics",
+      "story"
+    ],
+    "assets": [
+      "images",
+      "svg",
+      "audio",
+      "video",
+      "fonts"
+    ]
+  },
+  "features": {
+    "askLINGO": "shared",
+    "navigation": "shared",
+    "identity": "boundary",
+    "health": "shared-contract",
+    "telemetry": "contract-only-until-verified",
+    "commerce": "Loyalty Lane / Shopify boundary",
+    "game": "Thats My Lingo",
+    "story": "KOTTONSCODE",
+    "media": "Rise of Zavione"
+  },
+  "routes": [
+    "/",
+    "/arcade",
+    "/game",
+    "/kottons-code",
+    "/lane",
+    "/media",
+    "/assets",
+    "/store",
+    "/ai"
+  ]
+}
