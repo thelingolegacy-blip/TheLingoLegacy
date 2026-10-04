@@ -7,7 +7,7 @@ const path = require("node:path");
 const root = process.cwd();
 const contract = JSON.parse(fs.readFileSync(path.join(root,"studio/surface-contracts.json"),"utf8"));
 const routes = JSON.parse(fs.readFileSync(path.join(root,"studio/routes.json"),"utf8"));
-const featureManifest = JSON.parse(fs.readFileSync(path.join(root,"studio/production-feature-manifest.json"),"utf8"));\nconst requiredFiles = contract.shared.requiredFiles || [];
+const featureManifest = JSON.parse(fs.readFileSync(path.join(root,"studio/production-feature-manifest.json"),"utf8"));\nconst routeEntries = routes.routes || [];\nconst routeMap = new Map(routeEntries.map(entry=>[entry.surface, entry.path]));\nconst requiredFiles = contract.shared.requiredFiles || [];
 
 const failures = [];
 const checked = [];
@@ -25,7 +25,7 @@ function fail(code,message){
 for(const surface of contract.surfaces){
   const html=read(surface.entrypoint);
   const id=surface.identity;
-  const routeExists=JSON.stringify(routes).includes(surface.path);
+  const routeExists=JSON.stringify(routes).includes(surface.path);\n  const canonicalRouteMatches=routeMap.get(id)===surface.path || (id==="lingoarcade" && routeMap.get(id)==="/arcade") || (id==="thats-my-lingo" && routeMap.get(id)==="/game");
   const featureExists=JSON.stringify(featureManifest).includes(surface.path);
   const runtimeLinked=!!html && html.includes("studio/runtime/studio-runtime.js");
   const adapterLinked=!!html && html.includes("studio/runtime/studio-surface.js");
@@ -47,7 +47,7 @@ for(const surface of contract.surfaces){
   if(html && !runtimeLinked) fail("RUNTIME_LINK_MISSING",id);
   if(html && !adapterLinked) fail("ADAPTER_LINK_MISSING",id);
   if(html && !identityDeclared) fail("IDENTITY_MISSING",id);
-  if(!routeExists) fail("ROUTE_MISSING",`${id}: ${surface.path}`);
+  if(!routeExists) fail("ROUTE_MISSING",`${id}: ${surface.path}`);\n  if(!canonicalRouteMatches) fail("ROUTE_DRIFT",`${id}: expected ${surface.path}, registry has ${routeMap.get(id)||"none"}`);
   if(!featureExists) fail("MANIFEST_ROUTE_MISSING",`${id}: ${surface.path}`);
 }
 
