@@ -1,0 +1,30 @@
+/* LINGO Studio Runtime Layer v1
+   Shared loading, media, motion, audio-control and state primitives. */
+:root{
+  --studio-crimson:#d20f2f;
+  --studio-white:#fff;
+  --studio-noire:#050507;
+  --studio-line:rgba(255,255,255,.12);
+  --studio-glow:0 0 44px rgba(255,33,70,.20);
+}
+.studio-boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--studio-noire);transition:opacity .35s ease,visibility .35s ease}
+.studio-boot[data-ready="true"]{opacity:0;visibility:hidden;pointer-events:none}
+.studio-boot__mark{width:72px;height:72px;border:2px solid var(--studio-crimson);border-radius:22px;display:grid;place-items:center;box-shadow:var(--studio-glow);animation:studioPulse 1.5s ease-in-out infinite}
+.studio-boot__mark::after{content:"LINGO";font:900 11px system-ui;letter-spacing:.16em}
+.studio-progress{position:absolute;bottom:18%;width:min(260px,60vw);height:2px;background:#222}
+.studio-progress::after{content:"";display:block;height:100%;width:45%;background:var(--studio-crimson);animation:studioLoad 1.25s ease-in-out infinite}
+.studio-state{border:1px solid var(--studio-line);border-radius:18px;padding:18px;background:rgba(255,255,255,.04);box-shadow:0 20px 70px #0009}
+.studio-state[data-state="error"]{border-color:rgba(255,70,90,.55)}
+.studio-media{display:block;width:100%;height:auto;object-fit:cover}
+.studio-media--lazy{content-visibility:auto}
+.studio-motion{transition:transform .25s ease,opacity .25s ease,filter .25s ease}
+.studio-motion:hover{transform:translateY(-3px)}
+.studio-audio-control{position:fixed;left:16px;bottom:16px;z-index:50;width:42px;height:42px;border:1px solid var(--studio-line);border-radius:50%;background:#09090b;color:#fff;cursor:pointer}
+.studio-focus:focus-visible{outline:2px solid #ff536d;outline-offset:4px}
+@keyframes studioPulse{50%{transform:scale(1.06);box-shadow:0 0 60px rgba(255,33,70,.28)}}
+@keyframes studioLoad{0%{transform:translateX(-110%)}100%{transform:translateX(250%)}}
+@media(prefers-reduced-motion:reduce){
+ .studio-boot__mark,.studio-progress::after{animation:none}
+ .studio-motion{transition:none}
+ .studio-motion:hover{transform:none}
+}
