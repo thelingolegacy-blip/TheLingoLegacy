@@ -1,0 +1,4 @@
+const EVENT_PREFIX="lingo.nexus.";
+export const NEXUS_EVENTS=Object.freeze({WORLD_INTENT:EVENT_PREFIX+"world.intent",WORLD_ENTER:EVENT_PREFIX+"world.enter",WORLD_READY:EVENT_PREFIX+"world.ready",CONTROL_INTERACT:EVENT_PREFIX+"control.interact",GAME_LAUNCH:EVENT_PREFIX+"game.launch",VISUAL_RESOLVED:EVENT_PREFIX+"visual.resolved",VISUAL_FALLBACK:EVENT_PREFIX+"visual.fallback",AUDIO_STATE:EVENT_PREFIX+"audio.state",ERROR:EVENT_PREFIX+"error"});
+export function nexusEvent(type,payload={},context={}){return {schema:"lingo-nexus/event/v1",type,timestamp:new Date().toISOString(),sessionId:context.sessionId||null,worldId:context.worldId||null,gameId:context.gameId||null,payload};}
+export function emitNexusEvent(type,payload={},context={}){const event=nexusEvent(type,payload,context);try{globalThis.dispatchEvent?.(new CustomEvent("lingo:nexus",{detail:event}));}catch{}return event;}
