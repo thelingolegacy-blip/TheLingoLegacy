@@ -120,7 +120,12 @@
     "identity": "games/lingo-worldline/visual-identity.json",
     "identityAssets": "games/lingo-worldline/identity-assets.svg",
     "slots": "games/lingo-nexus/slots-premium-content.json",
-    "slotsMath": "games/lingo-nexus/slots-game-framework.json"
+    "slotsMath": "games/lingo-nexus/slots-game-framework.json",
+    "productionReadiness": "games/lingo-worldline/production-readiness.json",
+    "crossDevice": "games/lingo-worldline/cross-device-contract.json",
+    "assetProvenance": "games/lingo-worldline/asset-provenance-contract.json",
+    "releaseTrain": "games/lingo-worldline/release-train.json",
+    "slotsReadiness": "games/lingo-nexus/slots-production-readiness.json"
   },
   "governance": {
     "implementationCompleteForDefinedScope": true,
@@ -130,5 +135,11 @@
     "g02Dependency": true,
     "failClosed": true,
     "lkgProtected": true
+  },
+  "integrity": {
+    "registryVersion": "v4",
+    "sharedRuntime": "lingo-nexus",
+    "contentPackReferencesResolved": true,
+    "governanceReferencesResolved": true
   }
 }
