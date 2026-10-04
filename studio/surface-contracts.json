@@ -1,0 +1,106 @@
+{
+  "schema": "lingo-studio-surface-contracts",
+  "version": "1.0.0",
+  "sourceAuthority": "thelingolegacy-blip/TheLingoLegacy@main",
+  "runtimeAuthority": "Cloudflare Workers",
+  "productionMutation": false,
+  "shared": {
+    "runtime": "studio/runtime/studio-runtime.js",
+    "surfaceAdapter": "studio/runtime/studio-surface.js",
+    "runtimeContract": "studio/runtime/studio-runtime-contract.json",
+    "featureManifest": "studio/production-feature-manifest.json",
+    "mediaManifest": "assets/studio/manifests/runtime-media.json",
+    "audioManifest": "assets/studio/manifests/audio.json"
+  },
+  "surfaces": [
+    {
+      "id": "legacy-hq",
+      "sourceRepository": "thelingolegacy-blip/TheLingoLegacy",
+      "entrypoint": "index.html",
+      "path": "/",
+      "identity": "legacy-hq",
+      "adapter": "shared"
+    },
+    {
+      "id": "lingoarcade",
+      "sourceRepository": "thelingolegacy-blip/TheLingoLegacy",
+      "entrypoint": "lingoarcade/index.html",
+      "path": "/lingoarcade/",
+      "identity": "lingoarcade",
+      "adapter": "shared"
+    },
+    {
+      "id": "thats-my-lingo",
+      "sourceRepository": "thelingolegacy-blip/THATS-MY-LINGO",
+      "entrypoint": "thats-my-lingo/index.html",
+      "path": "/thats-my-lingo/",
+      "identity": "thats-my-lingo",
+      "adapter": "shared",
+      "boundary": "game-runtime-module"
+    },
+    {
+      "id": "kottonscode",
+      "sourceRepository": "thelingolegacy-blip/kottens-code-engine",
+      "entrypoint": "kottons-code/index.html",
+      "path": "/kottons-code/",
+      "identity": "kottonscode",
+      "adapter": "shared",
+      "boundary": "story-runtime-module"
+    },
+    {
+      "id": "loyalty-lane",
+      "sourceRepository": "thelingolegacy-blip/Loyaltylaneapparel",
+      "entrypoint": "lane/index.html",
+      "path": "/lane/",
+      "identity": "loyalty-lane",
+      "adapter": "shared",
+      "boundary": "commerce-module"
+    },
+    {
+      "id": "rise-of-zavione",
+      "sourceRepository": "thelingolegacy-blip/Theriseofzavione",
+      "entrypoint": "media/index.html",
+      "path": "/media/",
+      "identity": "rise-of-zavione",
+      "adapter": "shared",
+      "boundary": "media-module"
+    },
+    {
+      "id": "lingo-assets",
+      "sourceRepository": "thelingolegacy-blip/lingo_assets",
+      "entrypoint": "assets/index.html",
+      "path": "/assets/",
+      "identity": "lingo-assets",
+      "adapter": "shared",
+      "boundary": "asset-library"
+    },
+    {
+      "id": "nextjs-storefront",
+      "sourceRepository": "thelingolegacy-blip/nextjs-lingolegacy",
+      "entrypoint": "store/index.html",
+      "path": "/store/",
+      "identity": "nextjs-storefront",
+      "adapter": "shared",
+      "boundary": "framework-build-required"
+    },
+    {
+      "id": "askLINGO",
+      "sourceRepository": "thelingolegacy-blip/TheLingoLegacy",
+      "entrypoint": "ai/index.html",
+      "path": "/ai/",
+      "identity": "askLINGO",
+      "adapter": "shared",
+      "boundary": "ai-runtime"
+    }
+  ],
+  "requiredChecks": [
+    "entrypoint-present",
+    "shared-runtime-linked",
+    "surface-adapter-linked",
+    "identity-declared",
+    "route-registered",
+    "build-verified",
+    "runtime-observed",
+    "behavior-verified"
+  ]
+}
