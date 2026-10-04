@@ -1,0 +1,3 @@
+name = "lingo-legacy-studio-build"
+main = "cloudflare/studio-worker.js"
+compatibility_date = "2026-10-04"
