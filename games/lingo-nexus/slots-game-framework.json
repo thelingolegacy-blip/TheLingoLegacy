@@ -1,0 +1,26 @@
+{
+  "schema":"lingo-nexus/slots-game-framework/v1",
+  "status":"IMPLEMENTATION_STANDARD",
+  "scope":"All registered LINGOslots games.",
+  "math":{
+    "reels":5,
+    "rows":3,
+    "paylineModel":"20 fixed paylines baseline; game may add approved feature lines",
+    "outcomeModel":"server-authoritative seeded virtual outcome when online; deterministic local demo mode offline",
+    "rng":"cryptographically suitable platform RNG or audited equivalent",
+    "rtp":"per-title configuration target; never represented as a guarantee",
+    "volatility":["low","medium","high"],
+    "hitRate":"per-title configured and testable",
+    "featureFrequency":"per-title configured and testable",
+    "maxWin":"per-title bounded virtual reward cap",
+    "virtualOnly":true,
+    "cashOut":false,
+    "realMoneyWagering":false
+  },
+  "symbolMath":{"wild":{"substitutes":true},"scatter":{"featureTrigger":true},"multiplier":{"bounded":true},"bonus":{"deterministicFromSeed":true}},
+  "session":{"spinStates":["idle","armed","spinning","settling","result","reward","cooldown"],"spinTimelineMs":{"input":0,"reelStart":100,"stagger":160,"settle":720,"result":900,"reward":1100}},
+  "progression":{"XPPerSpin":2,"featureBonusXP":8,"sessionStreakCap":25},
+  "economy":{"demoCoins":true,"LoyaltyBucks":true,"LingoTokens":true,"bonesToCoinsWhereApplicable":true},
+  "responsibleDesign":{"noCashOut":true,"noRealMoneyWagering":true,"ageRatingMetadataRequired":true,"sessionLimitsSupported":true,"clearVirtualCurrencyLabels":true},
+  "qa":{"mathSimulationRequired":true,"seedReplayRequired":true,"millionTrialMinimumForFinalMathPackage":true,"evidenceRequiredBeforeCertification":true}
+}
