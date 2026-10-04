@@ -229,6 +229,12 @@ export default {
         if (!media.ok) return json({ ok: false, error: 'Google photo retrieval failed.' }, 502, request, env);
         return Response.redirect(media.url, 302);
       }
+      if (url.pathname === '/api/v1/nexus/telemetry') {
+        if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+        const event = await parseJson(request);
+        if (!event || typeof event.type !== 'string' || !event.type.startsWith('lingo.nexus.')) return json({ ok: false, error: 'Invalid Nexus event.' }, 400, request, env);
+        return json({ ok: true, accepted: true, persisted: Boolean(env.DB || env.STUDIO_KV), governance: 'telemetry-is-observability-not-authorization', event_type: event.type, received_at: new Date().toISOString() }, 202, request, env);
+      }
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
