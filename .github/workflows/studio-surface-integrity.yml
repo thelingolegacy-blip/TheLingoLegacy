@@ -7,6 +7,7 @@ on:
     paths:
       - "studio/**"
       - "assets/studio/**"
+      - "cloudflare/**"
       - "*.html"
       - "**/index.html"
       - ".github/workflows/studio-surface-integrity.yml"
@@ -15,9 +16,9 @@ permissions:
   contents: read
 
 jobs:
-  integrity:
+  integrity-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -30,7 +31,30 @@ jobs:
       - name: Run deterministic surface integrity check
         run: node studio/runtime/surface-integrity.js
 
-      - name: Emit source-only result
+      - name: Syntax check runtime JavaScript
+        run: |
+          set -euo pipefail
+          node --check studio/runtime/studio-runtime.js
+          node --check studio/runtime/studio-surface.js
+          node --check studio/runtime/surface-integrity.js
+          node --check cloudflare/studio-worker.js
+
+      - name: Validate JSON manifests
+        run: |
+          set -euo pipefail
+          node -e 'for (const f of process.argv.slice(1)) JSON.parse(require("fs").readFileSync(f,"utf8"));' \
+            studio/surface-contracts.json \
+            studio/routes.json \
+            studio/production-feature-manifest.json \
+            studio/runtime/studio-runtime-contract.json \
+            assets/studio/manifests/runtime-media.json \
+            assets/studio/manifests/audio.json
+
+      - name: Cloudflare Worker dry-run build
+        run: npx --yes wrangler@latest deploy --dry-run --config cloudflare/wrangler.toml
+
+      - name: Emit source/build-only result
         run: |
           echo "SOURCE_INTEGRITY=VERIFIED_BY_SCRIPT"
+          echo "BUILD_DRY_RUN=EXECUTED_IF_JOB_REACHES_THIS_STEP"
           echo "PRODUCTION_STATE=NOT_INFERRED"
