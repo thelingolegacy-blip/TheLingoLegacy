@@ -7,3 +7,10 @@
 .lingo-control:hover .lingo-control__type,.lingo-control:focus-visible .lingo-control__type,.lingo-control[aria-expanded="true"] .lingo-control__type{opacity:1;transform:none}
 .lingo-control:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){.lingo-control,.lingo-control::before,.lingo-control__type{transition:none}}
+.lingo-check{position:relative;display:inline-flex;align-items:center;width:28px;height:28px;border:0;padding:0;background:transparent;color:#f4f0e7;cursor:pointer;transition:width 320ms var(--lingo-motion),background 320ms var(--lingo-motion),border-color 220ms ease,box-shadow 320ms ease}
+.lingo-check__mark{display:block;width:14px;height:14px;border-left:3px solid var(--lingo-gold);border-bottom:3px solid var(--lingo-gold);transform:translate(5px,-1px) rotate(0deg);transition:transform 280ms var(--lingo-motion)}
+.lingo-check__type{max-width:0;overflow:hidden;opacity:0;white-space:nowrap;margin-left:0;transition:max-width 280ms var(--lingo-motion),opacity 180ms ease,margin-left 220ms ease}
+.lingo-check[aria-checked="true"]{width:190px;border:1px solid rgba(200,168,78,.55);border-radius:10px;background:rgba(7,7,8,.82);box-shadow:0 0 0 1px rgba(109,42,168,.35),0 12px 42px rgba(109,42,168,.18)}
+.lingo-check[aria-checked="true"] .lingo-check__mark{transform:translate(7px,-1px) rotate(-45deg)}
+.lingo-check[aria-checked="true"] .lingo-check__type{max-width:150px;opacity:1;margin-left:13px}
+@media(prefers-reduced-motion:reduce){.lingo-check,.lingo-check__mark,.lingo-check__type{transition:none}}
