@@ -125,7 +125,12 @@
     "crossDevice": "games/lingo-worldline/cross-device-contract.json",
     "assetProvenance": "games/lingo-worldline/asset-provenance-contract.json",
     "releaseTrain": "games/lingo-worldline/release-train.json",
-    "slotsReadiness": "games/lingo-nexus/slots-production-readiness.json"
+    "slotsReadiness": "games/lingo-nexus/slots-production-readiness.json",
+    "buildProcedure": "games/lingo-worldline/build-procedure.json",
+    "qaMatrix": "games/lingo-worldline/qa-matrix.json",
+    "evidenceLedger": "games/lingo-worldline/evidence-ledger-schema.json",
+    "finalReleaseManifest": "games/lingo-worldline/final-release-manifest.json",
+    "finalRunbook": "docs/LINGO-WORLDLINE-FINAL-RUNBOOK.md"
   },
   "governance": {
     "implementationCompleteForDefinedScope": true,
@@ -141,5 +146,15 @@
     "sharedRuntime": "lingo-nexus",
     "contentPackReferencesResolved": true,
     "governanceReferencesResolved": true
+  },
+  "finalization": {
+    "implementationProceduresDefined": true,
+    "qaDefined": true,
+    "evidenceLedgerDefined": true,
+    "releaseManifestDefined": true,
+    "runbookDefined": true,
+    "productionCertified": false,
+    "promotion": false,
+    "activation": false
   }
 }
