@@ -1,0 +1,32 @@
+{
+  "schema": "lingo-2027/evidence-ledger/v1",
+  "status": "SPECIFICATION",
+  "entry": {
+    "required": [
+      "evidenceId",
+      "gate",
+      "source",
+      "artifact",
+      "sha256",
+      "capturedAt",
+      "environment",
+      "scope",
+      "testResult",
+      "verifier",
+      "verificationResult"
+    ],
+    "optional": [
+      "notes",
+      "relatedEvidenceIds",
+      "failureCode"
+    ]
+  },
+  "rules": {
+    "immutableAfterAcceptance": true,
+    "oneEvidenceIdPerArtifact": true,
+    "noInference": true,
+    "noSelfCertificationForIndependentVerification": true,
+    "scopeBound": true
+  },
+  "acceptance": "Evidence is accepted only when provenance, integrity, completeness, scope and correlation are verified."
+}
