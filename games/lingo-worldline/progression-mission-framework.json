@@ -1,0 +1,11 @@
+{
+  "schema":"lingo-worldline/progression-mission-framework/v1",
+  "status":"IMPLEMENTATION_STANDARD",
+  "missionTypes":["main","character","rival","villain","world","side","activity","challenge","collection","seasonal"],
+  "stateMachine":["locked","available","accepted","active","objectiveComplete","rewardPending","complete","failed","replayable"],
+  "rewards":["XP","virtualCurrency","cosmetic","gear","recipe","vehicle","homeItem","lore","abilityUpgrade","worldAccess"],
+  "relationship":{"states":["unknown","friendly","trusted","rival","hostile","redeemed"],"changes":"choice-and-mission-driven"},
+  "worldState":{"persistentFlags":true,"branchingConsequences":true,"rollback":"checkpoint-or-save-slot-only"},
+  "liveOps":{"seasonalStories":true,"rotatingActivities":true,"newCosmetics":true,"noForcedCompetitivePowerSales":true},
+  "completion":{"campaign":"100% optional side content","postgame":"repeatable activities + narrative epilogues","newGamePlus":"supported where genre appropriate"}
+}
