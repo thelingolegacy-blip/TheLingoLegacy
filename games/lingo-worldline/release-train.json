@@ -1,0 +1,33 @@
+{
+  "schema": "lingo-2027/release-train/v1",
+  "status": "IMPLEMENTATION_ONLY",
+  "phases": [
+    "content-lock",
+    "asset-lock",
+    "integration-build",
+    "automated-qa",
+    "device-qa",
+    "accessibility-qa",
+    "security-review",
+    "math-certification",
+    "evidence-capture",
+    "independent-verification",
+    "release-candidate",
+    "promotion",
+    "activation",
+    "post-activation-validation"
+  ],
+  "gates": {
+    "runner": "G02 prerequisite",
+    "production": "fail-closed",
+    "lkg": "protected"
+  },
+  "promotionRule": "No verified evidence -> no promotion",
+  "activationRule": "No independent verification -> no activation",
+  "rollback": "preserve LKG and require verified rollback evidence",
+  "scope": [
+    "Worldline five games",
+    "LINGOslots catalog",
+    "shared Nexus services"
+  ]
+}
