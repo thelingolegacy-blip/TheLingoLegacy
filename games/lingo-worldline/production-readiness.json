@@ -1,0 +1,75 @@
+{
+  "schema": "lingo-worldline/production-readiness/v1",
+  "status": "IMPLEMENTATION_ONLY",
+  "tier": "STUDIO_GRADE_PREMIUM",
+  "readiness": [
+    "content-complete",
+    "character-complete",
+    "mission-complete",
+    "movement-complete",
+    "economy-contract-complete",
+    "store-contract-complete",
+    "identity-complete",
+    "platform-packaging-defined",
+    "accessibility-defined",
+    "telemetry-defined",
+    "security-defined",
+    "qa-defined"
+  ],
+  "platforms": {
+    "ios": {
+      "sdk": "27+",
+      "minimum": "15+"
+    },
+    "android": {
+      "targetApi": 36
+    },
+    "webOS": {
+      "version": "26",
+      "engine": "Chromium 132",
+      "inputs": [
+        "dpad",
+        "OK",
+        "Back",
+        "pointer"
+      ]
+    },
+    "web": {
+      "standard": "HTML5/CSS/JS"
+    }
+  },
+  "quality": {
+    "cinematic": true,
+    "lifelikeMovement": true,
+    "dynamicWorlds": true,
+    "adaptiveAudio": true,
+    "spatialAudio": true,
+    "haptics": true,
+    "photoMode": true,
+    "streamingAssets": true,
+    "offlineRecovery": true,
+    "crossDeviceResume": true
+  },
+  "gates": {
+    "G00": "PASS",
+    "G01": "PASS",
+    "G02": "FAIL_UNVERIFIED",
+    "G03": "BLOCKED",
+    "G04": "BLOCKED",
+    "G05": "BLOCKED",
+    "G06": "BLOCKED",
+    "G07": "BLOCKED",
+    "G08": "BLOCKED",
+    "G09": "BLOCKED",
+    "G10": "BLOCKED",
+    "G11": "BLOCKED"
+  },
+  "activation": {
+    "productionPromotion": false,
+    "activation": false,
+    "lkg": "PROTECTED",
+    "mutationFreeze": true,
+    "failClosed": true
+  },
+  "evidenceRequirement": "implementation artifacts are not production evidence"
+}
