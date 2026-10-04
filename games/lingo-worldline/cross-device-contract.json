@@ -1,0 +1,71 @@
+{
+  "schema": "lingo-worldline/cross-device/v1",
+  "status": "IMPLEMENTATION_STANDARD",
+  "identity": "LINGO ID",
+  "saveAuthority": "server-authoritative-when-online",
+  "platforms": [
+    "iOS/iPadOS",
+    "Android/Google Play",
+    "LG webOS TV",
+    "Web"
+  ],
+  "state": [
+    "profile",
+    "campaign",
+    "missions",
+    "relationships",
+    "inventory",
+    "cosmetics",
+    "vehicles",
+    "homes",
+    "achievements",
+    "world-flags",
+    "settings",
+    "accessibility"
+  ],
+  "offline": {
+    "localQueue": true,
+    "reconciliation": true,
+    "conflictPolicy": "server-authoritative-merge-with-idempotent-transactions"
+  },
+  "input": {
+    "mobile": [
+      "tap",
+      "hold",
+      "swipe",
+      "drag",
+      "virtual-stick"
+    ],
+    "controller": [
+      "dpad",
+      "sticks",
+      "face-buttons",
+      "shoulders",
+      "triggers"
+    ],
+    "tv": [
+      "dpad",
+      "OK",
+      "Back",
+      "pointer"
+    ],
+    "keyboard": [
+      "WASD",
+      "arrows",
+      "space",
+      "shift",
+      "E",
+      "Q",
+      "R"
+    ]
+  },
+  "continuity": {
+    "resumeAcrossDevices": true,
+    "sessionRecovery": true
+  },
+  "security": {
+    "transactionIdempotency": true,
+    "serverValidation": true,
+    "telemetryCannotAuthorize": true
+  }
+}
