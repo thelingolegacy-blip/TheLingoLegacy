@@ -1,0 +1,18 @@
+{
+  "schema":"lingo-worldline/game-math/v1",
+  "status":"IMPLEMENTATION_STANDARD",
+  "purpose":"Shared deterministic math contracts for progression, combat, traversal, missions, economy and difficulty.",
+  "principles":["server_authoritative_when_online","deterministic_seeded_events","no_pay_to_win","difficulty_never_changes_story_outcomes_without_player_choice"],
+  "xp":{"baseMission":100,"sideMissionMultiplier":0.55,"activityMultiplier":0.35,"discoveryMultiplier":0.2,"streakBonusCap":0.25,"formula":"XP=base*completionQuality*(1+streakBonus)+discoveryBonus"},
+  "leveling":{"formula":"requiredXP(L)=round(500*pow(L,1.35))","maxLevel":100},
+  "health":{"formula":"effectiveHealth=baseHealth+gearHealth+progressionHealth","regen":"genre-specific"},
+  "stamina":{"formula":"staminaDrain=actionCost*surfaceModifier*encumbranceModifier","recovery":"contextual"},
+  "movement":{"formula":"speed=baseSpeed*surfaceModifier*stateModifier*equipmentModifier","airControl":"clamped by character contract"},
+  "missions":{"qualityScore":"0.35*objectiveCompletion+0.25*survival+0.20*style+0.20*optionalObjectives","replayable":true},
+  "economy":{"currency":["Loyalty Bucks","Lingo Tokens","game-earned credits"],"priceBands":{"common":100,"uncommon":300,"rare":900,"epic":2500,"legendary":7500},"cosmeticOnlyPremiumPath":true},
+  "loot":{"weightedTables":true,"pityProtection":true,"duplicateProtectionForFeaturedCosmetics":true,"noCashOut":true},
+  "difficulty":{"modes":["story","standard","hard","challenge"],"adaptive":"adjust encounter pressure, not core narrative truth","coopScaling":"partySizeAware"},
+  "combat":{"damage":"baseDamage*moveMultiplier*gearMultiplier*stateMultiplier","critical":"bounded","friendlyFireDefault":false},
+  "platforming":{"checkpointSpacing":"genre-dependent","assistMode":true,"inputBufferMs":120},
+  "antiExploit":{"transactionIdempotency":true,"serverValidationOnline":true,"offlineQueueReconciliation":true,"negativeBalanceBlocked":true}
+}
