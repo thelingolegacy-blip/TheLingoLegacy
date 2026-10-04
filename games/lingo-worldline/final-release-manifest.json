@@ -1,0 +1,50 @@
+{
+  "schema": "lingo-2027/final-release-manifest/v1",
+  "status": "PRE_RELEASE_IMPLEMENTATION",
+  "suite": "LINGO Worldline + LINGOslots",
+  "titles": [
+    "tricias-escape",
+    "doughboys-oasis",
+    "crazy-weasols",
+    "jerseyshore-the-undead",
+    "silly-in-philly-the-streets",
+    "thats-my-lingo",
+    "lingo-lions-eruptions",
+    "cashman-lingo-mania"
+  ],
+  "platforms": [
+    "ios",
+    "android",
+    "lg-webos",
+    "web"
+  ],
+  "sharedRuntime": "LINGO Nexus",
+  "contentPacks": [
+    "premium-game-content",
+    "character-ecosystem",
+    "game-math",
+    "progression-mission-framework",
+    "store-system",
+    "visual-identity",
+    "cross-device-contract",
+    "asset-provenance-contract",
+    "slots-game-framework",
+    "slots-premium-content"
+  ],
+  "releaseStatus": "NOT_CERTIFIED",
+  "productionPromotion": false,
+  "activation": false,
+  "requiredFinalEvidence": [
+    "build-artifact",
+    "automated-qa",
+    "device-qa",
+    "accessibility-qa",
+    "security-review",
+    "math-certification",
+    "asset-provenance",
+    "runtime-validation",
+    "gate-verification"
+  ],
+  "rollbackPackageRequired": true,
+  "lkgProtected": true
+}
