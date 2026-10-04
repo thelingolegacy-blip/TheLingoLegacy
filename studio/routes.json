@@ -62,6 +62,36 @@
       "path": "/lingonexus/",
       "surface": "lingonexus",
       "source": "LINGO Nexus Game Engine"
+    },
+    {
+      "path": "/lingoworldline/",
+      "surface": "lingoworldline",
+      "source": "LINGO Worldline"
+    },
+    {
+      "path": "/tricias-escape/",
+      "surface": "tricias-escape",
+      "source": "Tricia's Escape"
+    },
+    {
+      "path": "/doughboys-oasis/",
+      "surface": "doughboys-oasis",
+      "source": "Doughboy's Oasis"
+    },
+    {
+      "path": "/crazy-weasols/",
+      "surface": "crazy-weasols",
+      "source": "Crazy Weasol's"
+    },
+    {
+      "path": "/jerseyshore-the-undead/",
+      "surface": "jerseyshore-the-undead",
+      "source": "Jerseyshore: The Undead"
+    },
+    {
+      "path": "/silly-in-philly/",
+      "surface": "silly-in-philly-the-streets",
+      "source": "Silly in Philly: The Streets"
     }
   ],
   "fallback": "shared-studio-shell",
