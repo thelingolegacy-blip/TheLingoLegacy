@@ -1,1 +1,71 @@
-{"schema":"lingo-worldline/slate/v1","games":[{"id":"tricias-escape","title":"Tricia's Escape","genre":"mythic puzzle-adventure","world":"The Verdant Labyrinth","greed":"control","core":"explore ancient living ruins, solve environmental puzzles, rescue trapped memories","signature":"thread-sight","ratingTarget":"T"},{"id":"doughboys-oasis","title":"Doughboy's Oasis","genre":"connected-world action RPG","world":"Oasis Grid","greed":"status","core":"enter a massive shared digital oasis, build reputation, craft identity, defeat exploitative factions","signature":"gridshift","ratingTarget":"T"},{"id":"crazy-weasols","title":"Crazy Weasol's","genre":"surreal precision platformer","world":"Crashwild","greed":"consumption","core":"rapid traversal through unstable cartoon physics while recovering stolen world-fragments","signature":"weasol-flip","ratingTarget":"E10+"},{"id":"jerseyshore-the-undead","title":"Jerseyshore: The Undead","genre":"co-op survival action","world":"The Shoreline Afterdark","greed":"fear","core":"survive escalating infected zones, rescue civilians, fortify safehouses","signature":"shorebreak","ratingTarget":"M"},{"id":"silly-in-philly-the-streets","title":"Silly in Philly: The Streets","genre":"open-city narrative sandbox","world":"Bellblock City","greed":"power","core":"build a neighborhood crew, complete stories, compete in street games, protect community territory","signature":"blocktalk","ratingTarget":"T"}]}
+{
+  "schema": "lingo-worldline/slate/v2",
+  "games": [
+    {
+      "id": "tricias-escape",
+      "title": "Tricia's Escape",
+      "genre": "mythic puzzle-adventure",
+      "world": "The Verdant Labyrinth",
+      "greed": "control",
+      "core": "explore ancient living ruins, solve environmental puzzles, rescue trapped memories",
+      "signature": "thread-sight",
+      "ratingTarget": "T"
+    },
+    {
+      "id": "doughboys-oasis",
+      "title": "Doughboy's Oasis",
+      "genre": "connected-world action RPG",
+      "world": "Oasis Grid",
+      "greed": "status",
+      "core": "enter a massive shared digital oasis, build reputation, craft identity, defeat exploitative factions",
+      "signature": "gridshift",
+      "ratingTarget": "T"
+    },
+    {
+      "id": "crazy-weasols",
+      "title": "Crazy Weasol's",
+      "genre": "surreal precision platformer",
+      "world": "Crashwild",
+      "greed": "consumption",
+      "core": "rapid traversal through unstable cartoon physics while recovering stolen world-fragments",
+      "signature": "weasol-flip",
+      "ratingTarget": "E10+"
+    },
+    {
+      "id": "jerseyshore-the-undead",
+      "title": "Jerseyshore: The Undead",
+      "genre": "co-op survival action",
+      "world": "The Shoreline Afterdark",
+      "greed": "fear",
+      "core": "survive escalating infected zones, rescue civilians, fortify safehouses",
+      "signature": "shorebreak",
+      "ratingTarget": "M"
+    },
+    {
+      "id": "silly-in-philly-the-streets",
+      "title": "Silly in Philly: The Streets",
+      "genre": "open-city narrative sandbox",
+      "world": "Bellblock City",
+      "greed": "power",
+      "core": "build a neighborhood crew, complete stories, compete in street games, protect community territory",
+      "signature": "blocktalk",
+      "ratingTarget": "T"
+    }
+  ],
+  "productionTier": "STUDIO_GRADE_PREMIUM",
+  "sharedContentPacks": [
+    "games/lingo-worldline/premium-game-content.json",
+    "games/lingo-worldline/character-ecosystem.json",
+    "games/lingo-worldline/game-math.json",
+    "games/lingo-worldline/progression-mission-framework.json",
+    "games/lingo-worldline/store-system.json",
+    "games/lingo-worldline/visual-identity.json"
+  ],
+  "governance": {
+    "implementationExpanded": true,
+    "certificationRequired": true,
+    "productionPromotion": false,
+    "activation": false,
+    "g02Dependency": true
+  }
+}
