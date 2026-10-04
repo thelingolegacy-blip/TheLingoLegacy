@@ -1,0 +1,125 @@
+{
+  "schema": "lingo-2027/build-procedure/v1",
+  "status": "IMPLEMENTATION_PROCEDURE",
+  "phases": [
+    {
+      "id": "P01",
+      "name": "source-freeze",
+      "actions": [
+        "freeze approved manifests",
+        "record branch/ref",
+        "capture source hashes"
+      ]
+    },
+    {
+      "id": "P02",
+      "name": "dependency-install",
+      "actions": [
+        "install locked dependencies",
+        "verify runtime versions",
+        "fail on lockfile drift"
+      ]
+    },
+    {
+      "id": "P03",
+      "name": "schema-validation",
+      "actions": [
+        "validate JSON contracts",
+        "validate registry references",
+        "validate asset manifests"
+      ]
+    },
+    {
+      "id": "P04",
+      "name": "runtime-build",
+      "actions": [
+        "build Worldline runtime",
+        "build Nexus runtime",
+        "compile platform bundles",
+        "emit build manifest"
+      ]
+    },
+    {
+      "id": "P05",
+      "name": "asset-build",
+      "actions": [
+        "process textures",
+        "package animations",
+        "compile audio",
+        "package cinematics",
+        "generate icons and logos"
+      ]
+    },
+    {
+      "id": "P06",
+      "name": "automated-qa",
+      "actions": [
+        "unit tests",
+        "contract tests",
+        "math simulations",
+        "seed replay",
+        "save/reconcile tests",
+        "accessibility checks",
+        "security checks"
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "device-qa",
+      "actions": [
+        "iOS matrix",
+        "Android matrix",
+        "LG webOS TV matrix",
+        "web browser matrix",
+        "controller/touch/remote matrix"
+      ]
+    },
+    {
+      "id": "P08",
+      "name": "evidence-capture",
+      "actions": [
+        "capture immutable build artifacts",
+        "capture test reports",
+        "capture runtime telemetry",
+        "record environment"
+      ]
+    },
+    {
+      "id": "P09",
+      "name": "independent-verification",
+      "actions": [
+        "verify hashes",
+        "verify test evidence",
+        "verify scope",
+        "verify reproducibility",
+        "accept or reject gate"
+      ]
+    },
+    {
+      "id": "P10",
+      "name": "release-candidate",
+      "actions": [
+        "freeze RC",
+        "generate release manifest",
+        "generate store metadata",
+        "generate rollback package"
+      ]
+    },
+    {
+      "id": "P11",
+      "name": "promotion",
+      "condition": "only after applicable gates PASS"
+    },
+    {
+      "id": "P12",
+      "name": "activation",
+      "condition": "only after independent verification and authorization"
+    },
+    {
+      "id": "P13",
+      "name": "post-activation",
+      "condition": "only after activation evidence exists"
+    }
+  ],
+  "invariant": "No verified evidence -> no gate pass -> no authorization -> no promotion -> no activation"
+}
