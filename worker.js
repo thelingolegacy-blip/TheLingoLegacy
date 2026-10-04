@@ -19,7 +19,7 @@ const RELEASE_GATES = Object.freeze({
 const PLATFORM_MODULES = Object.freeze([
   'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle',
   'lingoslots','thats-my-lingo','lingoarcade','lingolibrary','lingomedia','lingoworld','lingoai','asklingo','lingoboom',
-  'lingotravel','lingocampus','lingosupport','lingowifi','lingovoice','lingoshield','lingolounge','lingodonations','legacyxclub',
+  'lingotravel','lingocampus','lingosupport','lingowifi','lingovoice','lingoshield','lingolounge','lingodonations','legacyxclub','lingonexus',
   'rewards','missions','xp-engine','universal-legacy-wallet','lingo-id','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
@@ -197,6 +197,38 @@ export default {
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
+      if (url.pathname === '/api/v1/games/registry') {
+        const registry = await env.ASSETS.fetch(new URL('/games/lingo-nexus/registry.json', request.url));
+        if (!registry.ok) return json({ ok: false, error: 'Game registry unavailable.' }, 503, request, env);
+        return new Response(await registry.text(), { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+      }
+      if (url.pathname === '/api/v1/visual/google') {
+        if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+        if (!env.GOOGLE_PLACES_API_KEY) return json({ ok: false, error: 'Google visual provider is not configured.' }, 503, request, env);
+        const query = String(url.searchParams.get('q') || '').trim().slice(0, 160);
+        const width = Math.min(1600, Math.max(320, Number(url.searchParams.get('width') || 1200)));
+        if (!query) return json({ ok: false, error: 'Missing q.' }, 400, request, env);
+        const search = await fetch('https://places.googleapis.com/v1/places:searchText', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'X-Goog-Api-Key': env.GOOGLE_PLACES_API_KEY, 'X-Goog-FieldMask': 'places.id,places.displayName,places.photos' },
+          body: JSON.stringify({ textQuery: query, maxResultCount: 1 })
+        });
+        if (!search.ok) return json({ ok: false, error: 'Google visual search failed.' }, 502, request, env);
+        const data = await search.json();
+        const photo = data?.places?.[0]?.photos?.[0];
+        if (!photo?.name) return json({ ok: false, error: 'No Google photo found.' }, 404, request, env);
+        return json({ ok: true, provider: 'google-places', name: data.places[0].displayName?.text || query, photo_url: `/api/v1/visual/google/photo?name=${encodeURIComponent(photo.name)}&width=${width}` }, 200, request, env);
+      }
+      if (url.pathname === '/api/v1/visual/google/photo') {
+        if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+        if (!env.GOOGLE_PLACES_API_KEY) return json({ ok: false, error: 'Google visual provider is not configured.' }, 503, request, env);
+        const name = String(url.searchParams.get('name') || '').trim();
+        const width = Math.min(1600, Math.max(320, Number(url.searchParams.get('width') || 1200)));
+        if (!name.startsWith('places/')) return json({ ok: false, error: 'Invalid Google photo reference.' }, 400, request, env);
+        const media = await fetch(`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${width}&key=${encodeURIComponent(env.GOOGLE_PLACES_API_KEY)}`, { redirect: 'follow' });
+        if (!media.ok) return json({ ok: false, error: 'Google photo retrieval failed.' }, 502, request, env);
+        return Response.redirect(media.url, 302);
+      }
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
