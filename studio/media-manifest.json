@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "status": "SOURCE_CONTRACT",
+  "production": false,
+  "theme": "crimson-white-shadow-noire",
+  "lanes": {
+    "visuals": "/assets/visuals",
+    "audio": "/assets/audio",
+    "animation": "/assets/animation",
+    "icons": "/assets/icons",
+    "video": "/assets/video",
+    "manifests": "/assets/manifests"
+  },
+  "requirements": {
+    "preload": [
+      "brand-mark",
+      "critical-ui-icons"
+    ],
+    "lazy": [
+      "route-media",
+      "video",
+      "noncritical-audio"
+    ],
+    "reducedMotion": true,
+    "muteFirst": true,
+    "accessibility": true,
+    "integrityRequired": true
+  }
+}
