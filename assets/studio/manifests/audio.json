@@ -1,0 +1,18 @@
+{
+  "schema": "lingo-studio-audio",
+  "version": "1.0.0",
+  "defaultState": "muted",
+  "categories": {
+    "ui": [],
+    "navigation": [],
+    "ambient": [],
+    "game": [],
+    "cinematic": []
+  },
+  "rules": {
+    "userGestureRequired": true,
+    "reducedMotionMayReduceAudio": true,
+    "persistentPreferenceAllowed": true,
+    "failureMustNotBlockNavigation": true
+  }
+}
