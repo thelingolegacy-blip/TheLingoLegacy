@@ -12,5 +12,16 @@
     "motion": "reduced-motion-aware",
     "accessibility": "required",
     "productionState": "never-inferred"
+  },
+  "surfaceAdapter": {
+    "script": "studio/runtime/studio-surface.js",
+    "css": "studio/runtime/studio-surface.css",
+    "version": "1.0.0",
+    "guarantees": [
+      "sharedNavigation",
+      "runtimeDiagnostics",
+      "surfaceIdentity",
+      "stateAwareNavigation"
+    ]
   }
 }
