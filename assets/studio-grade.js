@@ -19,7 +19,7 @@
   }
 
   function playMotif(type = 'chime') {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const AudioContext = window.AudioContext || window.webkitAudioContext || null;
     if (!AudioContext) {
       show('Audio API unavailable in this browser.');
       return;
