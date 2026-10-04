@@ -1,0 +1,36 @@
+{
+  "schema": "lingo-nexus/slots-production-readiness/v1",
+  "status": "IMPLEMENTATION_ONLY",
+  "scope": "All current LINGOslots titles",
+  "titles": [
+    "thats-my-lingo",
+    "lingo-lions-eruptions",
+    "cashman-lingo-mania"
+  ],
+  "requiredEvidence": [
+    "math-simulation",
+    "seed-replay",
+    "payout-validation",
+    "client-server-reconciliation",
+    "device-matrix",
+    "accessibility",
+    "performance",
+    "security",
+    "store-metadata"
+  ],
+  "mathGate": {
+    "millionTrialMinimum": true,
+    "independentVerificationRequired": true
+  },
+  "economy": {
+    "virtualOnly": true,
+    "realMoneyWagering": false,
+    "cashOut": false
+  },
+  "activation": {
+    "productionPromotion": false,
+    "activation": false,
+    "g02Dependency": true,
+    "failClosed": true
+  }
+}
