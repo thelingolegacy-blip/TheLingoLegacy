@@ -1,0 +1,41 @@
+{
+  "schema": "lingo-worldline/asset-provenance/v1",
+  "status": "IMPLEMENTATION_STANDARD",
+  "everyAssetRequires": [
+    "assetId",
+    "source",
+    "licenseOrOriginalStatus",
+    "creatorOrVendor",
+    "version",
+    "checksum",
+    "usageScope",
+    "qaStatus"
+  ],
+  "categories": [
+    "characters",
+    "environments",
+    "textures",
+    "materials",
+    "animations",
+    "vfx",
+    "audio",
+    "music",
+    "voice",
+    "ui",
+    "icons",
+    "logos",
+    "store-items",
+    "cinematics"
+  ],
+  "rules": {
+    "originalIPPreferred": true,
+    "thirdPartyAssetRightsRequired": true,
+    "unverifiedAssetsBlockedFromProduction": true,
+    "storeItemsRequireQA": true
+  },
+  "evidence": {
+    "hashable": true,
+    "reviewable": true,
+    "scopeBound": true
+  }
+}
