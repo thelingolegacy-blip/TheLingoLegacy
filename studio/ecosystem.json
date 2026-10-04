@@ -34,7 +34,7 @@
       "id": "lingoarcade",
       "source": "TheLingoLegacy",
       "runtime": "same Cloudflare Worker",
-      "path": "/arcade",
+      "path": "/lingoarcade/",
       "mode": "integrated"
     },
     {
