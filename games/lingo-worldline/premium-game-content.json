@@ -1,0 +1,63 @@
+{
+  "schema":"lingo-worldline/premium-game-content/v1",
+  "status":"IMPLEMENTATION_ONLY",
+  "productionTier":"STUDIO_GRADE_PREMIUM",
+  "sharedFeatures":["cinematic-intros","in-game-cinematics","lifelike-locomotion","contextual-animation","facial-animation-ready","dynamic-lighting","volumetric-atmosphere","adaptive-audio","spatial-audio","haptics","photo-mode","accessibility","cloud-save","offline-recovery","cross-device-resume","world-events","stores","collectibles","achievements","telemetry","live-ops"],
+  "games":{
+    "tricias-escape":{
+      "identity":{"icon":"TE","logo":"TRICIA'S ESCAPE","description":"A cinematic mythic adventure through a living kingdom where memories have become prisons."},
+      "story":{"premise":"Tricia awakens inside a kingdom frozen by a council that believes controlling memory will prevent loss.","actStructure":["The Door That Remembers","Roots Beneath","The Seven Locks","Council of Glass","Crown of Memory","After the Crown"],"themes":["control","memory","grief","self-determination"]},
+      "movement":{"base":["walk","run","jump","dodge","crouch"],"signature":["thread-sight","grapple","air-dash","wall-cling","parry"],"advanced":["thread-swing","memory-phase","sanctum-dash"],"assist":["auto-aim","extended-input-window","fall-recovery"]},
+      "systems":["puzzle-state","relic-crafting","companion-ai","stamina","health","memory-branches","fast-travel","photo-mode","secret-sanctums"],
+      "missions":{"main":["The Door That Remembers","Roots Beneath","The Seven Locks","Council of Glass","Crown of Memory"],"side":["Lost Lanterns","Mossgate Recipes","Echo Hunt","Milo's Map","The Orchard Promise"],"activities":["relic-races","memory-runs","fishing","thread-trials","photo-challenges"]},
+      "store":["relics","outfits","companion-items","crafting","home-decor","emotes","photo-filters"],
+      "bosses":["Glass Warden","The Orchard Colossus","Council of Echoes","The Echo"],
+      "endings":["rise","sacrifice","restore"],
+      "infrastructure":["world-streaming","save-slots","quest-service","inventory-service","npc-schedule-service","cinematic-sequencer","accessibility-service"]
+    },
+    "doughboys-oasis":{
+      "identity":{"icon":"DO","logo":"DOUGHBOY'S OASIS","description":"A premium connected-world action RPG where every district presents a different greed to overcome."},
+      "story":{"premise":"Doughboy enters Oasis Grid, a glamorous world whose prestige economy quietly drains the people who keep it alive.","districts":[{"id":"spawn-plaza","greed":"STATUS","story":"Who gets seen and who gets ignored?"},{"id":"neon-bazaar","greed":"OWNERSHIP","story":"When does owning become hoarding?"},{"id":"skyline-loop","greed":"SPEED","story":"What happens when faster is never enough?"},{"id":"creator-quarter","greed":"ATTENTION","story":"Can art survive when attention becomes currency?"},{"id":"undergrid","greed":"SCARCITY","story":"Who profits when everyone is told there is not enough?"},{"id":"mirror-mall","greed":"IDENTITY","story":"What remains when a person becomes a brand?"},{"id":"oasis-core","greed":"CONTROL","story":"Who should control the system that controls everyone?"}],"actStructure":["Welcome to Oasis","First Rep","Below the Plaza","The Prestige Engine","Gridbreak","Corefall","Rise Beyond the Grid"]},
+      "movement":{"base":["walk","run","jump","vault","slide"],"signature":["gridshift","wall-run","grind","parkour-vault","vehicle-mount"],"advanced":["air-gridshift","rail-transfer","rooftop-chain"],"social":["dance","pose","emote","photo-mode"]},
+      "systems":["persistent-hub","guilds","crafting","avatar-builder","vehicle-system","homes","dynamic-events","creator-challenges","market-system","social-spaces","world-bosses","cross-device-resume"],
+      "missions":{"main":["Welcome to Oasis","First Rep","Below the Plaza","The Prestige Engine","Gridbreak","Corefall"],"side":["Creator Contracts","Rare Drop Hunt","Bazaar Relay","Guild Challenges","Lost Avatars"],"activities":["street-races","dance-offs","build-contests","arcade-cabinets","treasure-hunts","photo-safaris","guild-events","market-discovery"]},
+      "store":["streetwear","avatars","vehicles","gadgets","fictional-virtual-weapons","homes","guild-items","emotes","music","world-themes"],
+      "bosses":["Rep Baron","Scarcity Broker","Mirror Host","The Curator","The Score"],
+      "economy":{"districtGreed":"each district has a distinct greed metric","sinkOrRise":"player choices change reputation, access and district outcomes","competitivePowerPaywall":false},
+      "infrastructure":["persistent-world-state","guild-service","matchmaking","inventory-service","catalog-service","economy-ledger","vehicle-service","world-event-service","anti-cheat","telemetry"]
+    },
+    "crazy-weasols":{
+      "identity":{"icon":"CW","logo":"CRAZY WEASOL'S","description":"A kinetic surreal platformer where an inventor must repair six broken dimensions before the Blank eats reality."},
+      "story":{"premise":"Weasol cracks reality while trying to invent the perfect machine, scattering world-fragments across unstable dimensions.","actStructure":["Oops","Scrap Sprint","Bounce Theory","Time Is Weird","Kitchen Panic","Into the Blank","The Last Invention"],"themes":["consumption","creation","failure","responsibility"]},
+      "movement":{"base":["run","jump","slide","duck"],"signature":["weasol-flip","wall-jump","ground-pound","tail-grapple","glide"],"advanced":["dimension-swap","reality-bounce","blank-dash"],"assist":["slow-motion","safe-platforms","checkpoint-plus"]},
+      "systems":["precision-platforming","physics","collectibles","time-trials","boss-runs","secret-levels","movement-upgrades","ghost-runs","assist-mode"],
+      "missions":{"main":["Oops","Scrap Sprint","Bounce Theory","Time Is Weird","Kitchen Panic","Into the Blank"],"side":["Lost Gears","Weasol Mail","Three-Star Runs","Hidden Cartoon Reels"],"activities":["races","combo-challenges","score-attack","ghost-runs","dimension-hunts"]},
+      "store":["costumes","movement-effects","collectibles","challenge-modifiers","animations","sound-packs","photo-filters"],
+      "bosses":["Crank Engine","Chef Chaos XL","Clockjaw","The Collector","Blank"],
+      "infrastructure":["physics-runtime","checkpoint-service","leaderboards","ghost-service","asset-streaming","challenge-service","replay-service"]
+    },
+    "jerseyshore-the-undead":{
+      "identity":{"icon":"JU","logo":"JERSEYSHORE: THE UNDEAD","description":"A cinematic coastal survival story beginning with an offshore mystery that washes ashore and changes the Shore overnight."},
+      "story":{"premise":"An unidentified vessel disappears after an offshore incident. Debris and unexplained biological material wash onto the Jersey coast. The first recovered body moves.","openingChain":["unknown-vessel","offshore-incident","ocean-drift","ship-disappearance","debris-washup","first-body","shoreline-outbreak","regional-spread"],"locations":["Wildwood","Atlantic City","Ocean City","Seaside Heights","Sandy Hook","fictional connecting coastal zones"],"themes":["fear","trust","survival","community","unknown"],"actStructure":["Lights Out","Boardwalk Zero","No Ferry Home","Signal in the Surf","Stormwall","The Last Lifeguard"]},
+      "movement":{"base":["walk","run","sprint","crouch","vault","climb"],"signature":["shorebreak","dodge","slide","revive-carry","barricade-vault"],"combat":["melee","ranged-fictional","throw","block","dodge","team-revive"],"coop":["ping","cover","carry","assist","group-interaction"]},
+      "systems":["co-op-1-4","enemy-director","safehouses","crafting","rescue","scavenge","dynamic-weather","day-night","vehicle-lite","difficulty-scaling","ping-system","controller-haptics"],
+      "missions":{"main":["Lights Out","Boardwalk Zero","No Ferry Home","Signal in the Surf","Stormwall","The Last Lifeguard"],"side":["Missing Crew","Supply Runs","Safehouse Upgrades","Rescue Calls","Night Watch"],"activities":["holdout","time-rescue","scavenge-runs","boss-events","shoreline-search","safehouse-defense"]},
+      "store":["survival-gear","outfits","safehouse-items","fictional-virtual-weapons","emblems","animations","photo-filters"],
+      "bosses":["The Drowned Walker","Boardwalk Brute","Signal Carrier","The Lifeguard","The Tide"],
+      "infrastructure":["co-op-session-service","matchmaking","enemy-director","safehouse-service","inventory-service","loot-service","voice-or-ping-service","anti-cheat","telemetry"],
+      "ratingControls":{"violence":"configurable where platform policy permits","friendlyFire":false}
+    },
+    "silly-in-philly-the-streets":{
+      "identity":{"icon":"SP","logo":"SILLY IN PHILLY: THE STREETS","description":"A fictional open-city story about reputation, neighborhood pride, competition, community and street code."},
+      "story":{"premise":"Zay enters Bellblock City determined to build a legacy without letting power erase the people who made the block worth protecting.","locations":["Bellblock","Market Row","Riverfront","Uptown Heights","Southline","Westside Courts","Old Station","The Loop"],"themes":["power","community","identity","competition","legacy"],"actStructure":["Welcome to Bellblock","Know Your Block","Market Pressure","Festival Run","The Big Meeting","Legacy Day","The Loop"]},
+      "movement":{"base":["walk","run","sprint","jump","vault","climb","swim"],"signature":["blocktalk","wall-vault","rail-grind","rooftop-run","contextual-interaction"],"vehicle":["enter","exit","drive-lite","bike","skate"],"social":["handshake","dance","court-gesture","emote","photo-mode"]},
+      "systems":["open-city-traversal","branching-dialogue","driving-lite","street-games","crew-reputation","businesses","collectibles","dynamic-events","photo-mode","community-state"],
+      "missions":{"main":["Welcome to Bellblock","Know Your Block","Market Pressure","Festival Run","The Big Meeting","Legacy Day"],"side":["Court Kings","Food Truck Frenzy","Mural Hunt","Courier Dash","Block Cleanup","Lost-and-Found"],"activities":["basketball","double-dutch","skate-lines","dance-battles","delivery-races","arcade-challenges","photo-challenges"]},
+      "store":["streetwear","vehicles","sports-items","business-decor","emotes","collectibles","music","photo-filters"],
+      "bosses":["Drex Rival Finale","Kiki Market War","The Developer","The Fixer","The Loop"],
+      "rules":{"fictionalCity":true,"originalCharacters":true,"communityReputationCanOutperformIntimidation":true,"streetCode":"respect, reciprocity, consequences, and player choice; never instructions for real-world wrongdoing"},
+      "infrastructure":["city-streaming","npc-schedule-service","dialogue-service","business-service","reputation-service","vehicle-service","event-service","photo-service","telemetry"]
+    }
+  },
+  "governance":{"implementationDoesNotEqualCertification":true,"productionActivation":false,"g02Dependency":true,"promotionRequiresVerifiedEvidence":true}
+}
