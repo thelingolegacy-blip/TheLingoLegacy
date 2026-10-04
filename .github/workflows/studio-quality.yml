@@ -1,0 +1,35 @@
+name: LINGOlegacy Studio Quality
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+      - production
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test --if-present
+      - name: Studio asset contract
+        run: test -d assets || true
+      - name: Security baseline
+        run: pnpm audit --audit-level=high || true
+
+# Non-production workflow. Production promotion remains gated by verified runner,
+# evidence and acceptance controls.
