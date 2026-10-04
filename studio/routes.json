@@ -1,76 +1,24 @@
 {
-  "version": "1.0.0",
-  "runtime": "cloudflare-worker",
-  "canonicalHost": "thelingolegacy.com",
-  "routes": [
-    {
-      "path": "/",
-      "surface": "legacy-hq",
-      "source": "TheLingoLegacy"
-    },
-    {
-      "path": "/arcade",
-      "surface": "lingoarcade",
-      "source": "TheLingoLegacy"
-    },
-    {
-      "path": "/game",
-      "surface": "thats-my-lingo",
-      "source": "THATS-MY-LINGO"
-    },
-    {
-      "path": "/kottons-code",
-      "surface": "kottonscode",
-      "source": "kottens-code-engine"
-    },
-    {
-      "path": "/lane",
-      "surface": "loyalty-lane",
-      "source": "Loyaltylaneapparel"
-    },
-    {
-      "path": "/media",
-      "surface": "rise-of-zavione",
-      "source": "Theriseofzavione"
-    },
-    {
-      "path": "/assets",
-      "surface": "lingo-assets",
-      "source": "lingo_assets"
-    },
-    {
-      "path": "/store",
-      "surface": "nextjs-storefront",
-      "source": "nextjs-lingolegacy"
-    },
-    {
-      "path": "/ai",
-      "surface": "askLINGO",
-      "source": "TheLingoLegacy"
-    },
-    {
-      "path": "/lingoarcade",
-      "surface": "lingoarcade",
-      "source": "TheLingoLegacy"
-    },
-    {
-      "path": "/thats-my-lingo",
-      "surface": "thats-my-lingo",
-      "source": "THATS-MY-LINGO"
-    }
+  "version":"1.0.0",
+  "runtime":"cloudflare-worker",
+  "canonicalHost":"thelingolegacy.com",
+  "routes":[
+    {"path":"/","surface":"legacy-hq","source":"TheLingoLegacy"},
+    {"path":"/arcade","surface":"lingoarcade","source":"TheLingoLegacy"},
+    {"path":"/game","surface":"thats-my-lingo","source":"THATS-MY-LINGO"},
+    {"path":"/kottons-code/","surface":"kottonscode","source":"kottens-code-engine"},
+    {"path":"/lane/","surface":"loyalty-lane","source":"Loyaltylaneapparel"},
+    {"path":"/media/","surface":"rise-of-zavione","source":"Theriseofzavione"},
+    {"path":"/assets/","surface":"lingo-assets","source":"lingo_assets"},
+    {"path":"/store/","surface":"nextjs-storefront","source":"nextjs-lingolegacy"},
+    {"path":"/ai/","surface":"askLINGO","source":"TheLingoLegacy"},
+    {"path":"/lingoarcade/","surface":"lingoarcade","source":"TheLingoLegacy"},
+    {"path":"/thats-my-lingo/","surface":"thats-my-lingo","source":"THATS-MY-LINGO"}
   ],
-  "fallback": "shared-studio-shell",
-  "productionMutation": "disabled-until-verified",
-  "aliases": [
-    {
-      "from": "/arcade",
-      "to": "/lingoarcade",
-      "status": "SOURCE_ALIAS"
-    },
-    {
-      "from": "/game",
-      "to": "/thats-my-lingo",
-      "status": "SOURCE_ALIAS"
-    }
+  "fallback":"shared-studio-shell",
+  "productionMutation":"disabled-until-verified",
+  "aliases":[
+    {"from":"/arcade","to":"/lingoarcade/","status":"SOURCE_ALIAS"},
+    {"from":"/game","to":"/thats-my-lingo/","status":"SOURCE_ALIAS"}
   ]
 }
