@@ -69,5 +69,16 @@
     "/assets",
     "/store",
     "/ai"
-  ]
+  ],
+  "surfaces": {
+    "legacy-hq": "/",
+    "lingoarcade": "/lingoarcade/",
+    "thats-my-lingo": "/thats-my-lingo/",
+    "kottonscode": "/kottons-code/",
+    "loyalty-lane": "/lane/",
+    "rise-of-zavione": "/media/",
+    "lingo-assets": "/assets/",
+    "nextjs-storefront": "/store/",
+    "askLINGO": "/ai/"
+  }
 }
