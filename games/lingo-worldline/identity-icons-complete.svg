@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+<title id="title">LINGO Game Identity Marks</title>
+<desc id="desc">Original geometric identity marks for Worldline and LINGOslots titles.</desc>
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#f4d27a"/><stop offset="1" stop-color="#a66b18"/></linearGradient><linearGradient id="p" x1="0" x2="1"><stop stop-color="#9a66ff"/><stop offset="1" stop-color="#40217e"/></linearGradient></defs>
+<rect width="1400" height="900" fill="#07080b"/>
+<g font-family="Arial,Helvetica,sans-serif" font-weight="800" fill="#f5f2eb">
+<g transform="translate(60 60)"><path d="M10 80 Q80 0 150 80 Q80 160 10 80Z" fill="none" stroke="url(#g)" stroke-width="10"/><path d="M35 80H125" stroke="url(#p)" stroke-width="10"/><text x="180" y="92" font-size="38">TRICIA'S ESCAPE</text></g>
+<g transform="translate(60 165)"><circle cx="80" cy="80" r="65" fill="none" stroke="url(#g)" stroke-width="10"/><path d="M80 18V142M18 80H142" stroke="url(#p)" stroke-width="8"/><text x="180" y="92" font-size="38">DOUGHBOY'S OASIS</text></g>
+<g transform="translate(60 270)"><path d="M15 120Q80 5 145 120M35 120Q80 48 125 120" fill="none" stroke="url(#g)" stroke-width="10"/><text x="180" y="92" font-size="38">CRAZY WEASOL'S</text></g>
+<g transform="translate(60 375)"><path d="M10 25L150 25L112 105L48 105Z" fill="none" stroke="url(#g)" stroke-width="10"/><path d="M20 82Q80 22 140 82" fill="none" stroke="url(#p)" stroke-width="8"/><text x="180" y="72" font-size="32">JERSEYSHORE: THE UNDEAD</text></g>
+<g transform="translate(60 480)"><path d="M10 105V35H150V105M35 35V15M125 35V15M55 72H105" fill="none" stroke="url(#g)" stroke-width="10"/><text x="180" y="82" font-size="34">SILLY IN PHILLY: THE STREETS</text></g>
+<g transform="translate(760 60)"><path d="M20 100L80 25L140 100L80 140Z" fill="none" stroke="url(#g)" stroke-width="10"/><text x="170" y="95" font-size="38">THAT'S MY LINGO</text></g>
+<g transform="translate(760 165)"><circle cx="80" cy="80" r="62" fill="none" stroke="url(#g)" stroke-width="10"/><path d="M80 15L92 65L145 80L92 95L80 145L68 95L15 80L68 65Z" fill="none" stroke="url(#p)" stroke-width="8"/><text x="170" y="92" font-size="34">LINGO LIONS: ERUPTIONS</text></g>
+<g transform="translate(760 270)"><path d="M18 120Q80 10 142 120M35 95Q80 48 125 95" fill="none" stroke="url(#g)" stroke-width="10"/><circle cx="80" cy="92" r="18" fill="none" stroke="url(#p)" stroke-width="7"/><text x="170" y="92" font-size="34">CASHMAN LINGO MANIA</text></g>
+<g transform="translate(760 390)" fill="#a7a7ad"><text x="0" y="0" font-size="22">LINGO WORLDLINE / NEXUS</text><text x="0" y="42" font-size="18">ORIGINAL-IP • PREMIUM CINEMATIC • VIRTUAL ECONOMY</text><text x="0" y="76" font-size="18">LOYALTY. LEGACY. LANGUAGE.</text></g>
+</g></svg>
