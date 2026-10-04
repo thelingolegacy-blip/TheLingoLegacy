@@ -32,11 +32,17 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 <article class="card"><div class="visual"></div><span class="tag">Nexus</span><h2>Game Vault</h2><p>New LINGO games register here first, with their own worlds, assets, motion and sonic profiles.</p><button class="btn launch" data-registry>Load registry →</button></article>
 </section>
 </main>
+<div id="nexus-status" style="margin:-35px 0 45px;padding:16px;border:1px solid rgba(200,168,78,.18);border-radius:16px;background:rgba(0,0,0,.22);color:#aaa6b0">Nexus visual fabric ready · approved assets → Google edge provider → procedural scene → gradient.</div>
 <footer style="padding:35px 0 60px;border-top:1px solid rgba(255,255,255,.1);color:#8f8b94">Loyalty. Legacy. Language. · Virtual entertainment layer · Real-money wagering disabled</footer>
 </div>
 <script>
 const control=document.querySelector('[data-expand]');
-control?.addEventListener('click',()=>control.setAttribute('aria-checked',String(control.getAttribute('aria-checked')!=='true')));
+control?.addEventListener('click',()=>{const expanded=control.getAttribute('aria-checked')!=='true';control.setAttribute('aria-checked',String(expanded));window.dispatchEvent(new CustomEvent('lingo:nexus',{detail:{type:'lingo.nexus.control.interact',payload:{control:'world-explorer',expanded}}}));});
+async function resolveNexusVisual(query){
+  try{const r=await fetch('/api/v1/visual/google?q='+encodeURIComponent(query)+'&width=1200');if(r.ok){const d=await r.json();if(d.photo_url)return d.photo_url;}}catch{}
+  return null;
+}
+document.querySelectorAll('.card').forEach((card,index)=>{card.addEventListener('click',async()=>{const queries=['luxury casino interior neon gold purple','modern performance arena stage purple gold','luxury game vault interior gold purple'];const image=await resolveNexusVisual(queries[index]||queries[2]);if(image)card.querySelector('.visual').style.backgroundImage='linear-gradient(135deg,rgba(5,5,7,.45),rgba(109,42,168,.28)),url("'+image+'")';});});
 document.querySelector('[data-registry]')?.addEventListener('click',async e=>{
  const b=e.currentTarget;b.disabled=true;b.textContent='Loading…';
  try{const r=await fetch('/api/v1/games/registry');const d=await r.json();b.textContent=d.games?.length?d.games.length+' worlds registered':'Registry ready';}
