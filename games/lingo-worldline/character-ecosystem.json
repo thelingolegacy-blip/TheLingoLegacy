@@ -1,0 +1,46 @@
+{
+  "schema":"lingo-worldline/character-ecosystem/v1",
+  "status":"IMPLEMENTATION_ONLY",
+  "purpose":"Fully loaded narrative character architecture for all five Worldline titles.",
+  "rules":{
+    "originalIP":true,
+    "everyHeroHasArc":true,
+    "everyRivalHasMotivation":true,
+    "everyVillainHasSystemicCause":true,
+    "companionRelationshipsPersist":true,
+    "npcSchedulesPersistWhenSupported":true,
+    "choicesCanChangeRelationships":true
+  },
+  "games":{
+    "tricias-escape":{
+      "hero":{"id":"tricia","role":"memory-runner","arc":"from controlled memory keeper to self-determined liberator"},
+      "allies":[{"id":"milo","role":"companion-cartographer","arc":"fearful helper to brave witness"},{"id":"sela","role":"relic-smith","arc":"protective village artisan"},{"id":"orin","role":"memory-keeper","arc":"learns to release the past"}],
+      "rivals":[{"id":"vessa","role":"sanctum-racer","motivation":"prove freedom requires strength alone"},{"id":"kael","role":"council-heir","motivation":"restore his family's authority"}],
+      "villains":[{"id":"warden-ora","role":"memory-warden","motivation":"preserve the kingdom by controlling every painful memory"},{"id":"the-echo","role":"mystery-antagonist","motivation":"exist through memories that refuse to disappear"}]
+    },
+    "doughboys-oasis":{
+      "hero":{"id":"doughboy","role":"gridrunner","arc":"from prestige seeker to community builder"},
+      "allies":[{"id":"mara","role":"builder","arc":"turns abandoned districts into living neighborhoods"},{"id":"patch","role":"rogue-ai","arc":"chooses people over optimization"},{"id":"juno","role":"market-curator","arc":"exposes manufactured scarcity"}],
+      "rivals":[{"id":"rico-rep","role":"status-rival","motivation":"win every social leaderboard"},{"id":"nova","role":"creator-rival","motivation":"own attention rather than share it"},{"id":"silk","role":"mobility-rival","motivation":"prove speed is the only currency"}],
+      "villains":[{"id":"the-curator","role":"prestige-architect","motivation":"convert human identity into measurable status"},{"id":"the-score","role":"distributed-system-antagonist","motivation":"maximize engagement regardless of human cost"}]
+    },
+    "crazy-weasols":{
+      "hero":{"id":"weasol","role":"reality-inventor","arc":"from compulsive creator to responsible creator"},
+      "allies":[{"id":"zip","role":"speed-scout","arc":"learns patience without losing wonder"},{"id":"chef-chaos","role":"dimension-cook","arc":"turns absurdity into invention"},{"id":"midge","role":"repair-bug","arc":"proves tiny fixes can save giant worlds"}],
+      "rivals":[{"id":"fizz","role":"invention-rival","motivation":"out-create Weasol at any cost"},{"id":"crank","role":"speed-rival","motivation":"turn every challenge into a race"}],
+      "villains":[{"id":"blank","role":"physics-eater","motivation":"consume rules until nothing has meaning"},{"id":"the-collector","role":"dimension-hoarder","motivation":"possess every world-fragment"}]
+    },
+    "jerseyshore-the-undead":{
+      "hero":{"id":"jay","role":"field-lead","arc":"from survival-first leader to protector of a fractured community"},
+      "allies":[{"id":"nia","role":"scout","arc":"turns isolation into leadership"},{"id":"vince","role":"engineer","arc":"builds safety from salvage"},{"id":"cass","role":"lifeguard-responder","arc":"uncovers the shoreline mystery"}],
+      "rivals":[{"id":"maddox","role":"survival-rival","motivation":"believe only ruthless groups deserve supplies"},{"id":"rook","role":"scavenger-rival","motivation":"profit from every crisis"}],
+      "villains":[{"id":"the-lifeguard","role":"masked-mystery","motivation":"protect a secret buried offshore"},{"id":"the-tide","role":"environmental-threat","motivation":"spread the unknown signal through connected coastal systems"},{"id":"the-director","role":"enemy-system","motivation":"adapt the outbreak against survivor behavior"}]
+    },
+    "silly-in-philly-the-streets":{
+      "hero":{"id":"zay","role":"blockrunner","arc":"from proving himself to building legacy"},
+      "allies":[{"id":"tia","role":"fixer","arc":"turns connections into community power"},{"id":"drex","role":"rival-ally","arc":"learns competition does not require betrayal"},{"id":"uncle-moe","role":"mentor","arc":"passes street wisdom without romanticizing old conflicts"}],
+      "rivals":[{"id":"drex","role":"street-rival","motivation":"earn respect through competition"},{"id":"kiki","role":"business-rival","motivation":"control the neighborhood economy"},{"id":"ace","role":"event-rival","motivation":"win every city challenge"}],
+      "villains":[{"id":"the-developer","role":"power-broker","motivation":"turn community identity into disposable real estate"},{"id":"the-fixer","role":"corrupt-networker","motivation":"make every favor transactional"},{"id":"the-loop","role":"citywide-system","motivation":"keep neighborhoods competing instead of cooperating"}]
+    }
+  }
+}
