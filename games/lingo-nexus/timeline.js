@@ -1,0 +1,1 @@
+export const LINGO_TIMELINES={micro:{press:[0,80],response:[80,180],settle:[180,320]},worldEntry:{input:0,control:100,environment:260,sound:320,transition:650,arrival:1000,interactive:1150},slotSpin:{anticipation:0,reelStart:100,reelStagger:160,settle:720,result:900,reward:1100},arcadeRound:{countdown:0,arenaLock:500,action:700,impact:900,score:1150,nextState:1500}};
