@@ -6,6 +6,34 @@
   const KEY="lingo-studio-audio";
   const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  function setState(state){
+    if(document.body) document.body.dataset.studioState=state;
+    document.documentElement.dataset.studioState=state;
+    const label=document.querySelector(".studio-state");
+    if(label) label.textContent=state;
+  }
+
+  function ensureBoot(){
+    if(document.querySelector(".studio-boot")) return;
+    const boot=document.createElement("div");
+    boot.className="studio-boot";
+    boot.setAttribute("role","status");
+    boot.setAttribute("aria-live","polite");
+    boot.innerHTML='<div class="studio-boot__mark" aria-hidden="true">LINGO</div><div class="studio-progress" aria-hidden="true"><span></span></div><div class="studio-state">LOADING</div>';
+    document.body?.prepend(boot);
+  }
+
+  function ensureAudioControl(){
+    if(document.querySelector("[data-studio-audio]")) return;
+    const control=document.createElement("button");
+    control.type="button";
+    control.className="studio-audio-control";
+    control.dataset.studioAudio="";
+    control.setAttribute("aria-label","Toggle studio sound");
+    control.textContent="Sound Off";
+    document.body?.append(control);
+  }
+
   function ready(){
     setState("READY");
     const boot=document.querySelector(".studio-boot");
@@ -51,9 +79,9 @@
 
   function init(){
     setState("LOADING");
-    ensureBoot();
-    ensureAudioControl();
     try {
+      ensureBoot();
+      ensureAudioControl();
       setupMedia();
       setupAudio();
       setupMotion();
