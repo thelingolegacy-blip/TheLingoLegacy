@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "authority": {
+    "source": "github",
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "branch": "main",
+    "runtime": "cloudflare-workers",
+    "productionMutation": "fail-closed"
+  },
+  "consolidation": {
+    "goal": "one source of truth and one edge runtime where technically compatible",
+    "doNotDuplicateProductionRuntimes": true,
+    "sharedShell": "cloudflare/studio-worker.js",
+    "sharedContracts": [
+      "askLINGO",
+      "Lingo ID",
+      "navigation",
+      "health",
+      "studio visual system",
+      "security headers",
+      "observability contract"
+    ]
+  },
+  "surfaces": [
+    {
+      "id": "legacy-hq",
+      "canonical": true,
+      "source": "TheLingoLegacy",
+      "runtime": "Cloudflare Worker",
+      "host": "thelingolegacy.com",
+      "mode": "integrated"
+    },
+    {
+      "id": "lingoarcade",
+      "source": "TheLingoLegacy",
+      "runtime": "same Cloudflare Worker",
+      "path": "/arcade",
+      "mode": "integrated"
+    },
+    {
+      "id": "thats-my-lingo",
+      "source": "THATS-MY-LINGO",
+      "integration": "embed-or-build-export into shared runtime",
+      "mode": "consolidate"
+    },
+    {
+      "id": "kottonscode",
+      "source": "kottens-code-engine",
+      "integration": "engine/module behind shared route",
+      "mode": "consolidate"
+    },
+    {
+      "id": "loyalty-lane",
+      "source": "Loyaltylaneapparel",
+      "integration": "commerce module / routed surface",
+      "mode": "consolidate"
+    },
+    {
+      "id": "lingo-assets",
+      "source": "lingo_assets",
+      "integration": "shared assets package",
+      "mode": "consolidate"
+    },
+    {
+      "id": "rise-of-zavione",
+      "source": "Theriseofzavione",
+      "integration": "media/story module",
+      "mode": "consolidate"
+    },
+    {
+      "id": "nextjs-storefront",
+      "source": "nextjs-lingolegacy",
+      "integration": "preserve source until Cloudflare-compatible build is verified",
+      "mode": "source-only"
+    }
+  ],
+  "externalSystems": {
+    "shopify": "commerce backend only",
+    "firebase": "identity/data backend where required",
+    "github": "source and CI authority",
+    "cloudflare": "edge/runtime authority"
+  },
+  "retiredAsProductionAuthorities": [
+    "vercel",
+    "appdeploy"
+  ],
+  "rule": "A project repository may remain specialized, but production runtime authority is centralized unless the surface requires a separate runtime by technical necessity."
+}
