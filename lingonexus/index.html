@@ -23,7 +23,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 <p>One discovery layer for LINGOslots, LINGOarcade, worlds, progression, motion, music and game identity. Every tile is a doorway, not just a link.</p>
 <div class="actions">
 <a class="btn primary" href="#games">Enter the Nexus</a>
-<button class="lingo-control" type="button" aria-expanded="false" data-expand><span class="lingo-control__type">Explore game worlds</span></button>
+<button class="lingo-check" type="button" role="checkbox" aria-checked="false" data-expand><span class="lingo-check__mark" aria-hidden="true"></span><span class="lingo-check__type">Explore game worlds</span></button>
 </div>
 </section>
 <section id="games" class="grid" aria-label="LINGO games">
@@ -36,7 +36,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 </div>
 <script>
 const control=document.querySelector('[data-expand]');
-control?.addEventListener('click',()=>control.setAttribute('aria-expanded',String(control.getAttribute('aria-expanded')!=='true')));
+control?.addEventListener('click',()=>control.setAttribute('aria-checked',String(control.getAttribute('aria-checked')!=='true')));
 document.querySelector('[data-registry]')?.addEventListener('click',async e=>{
  const b=e.currentTarget;b.disabled=true;b.textContent='Loading…';
  try{const r=await fetch('/api/v1/games/registry');const d=await r.json();b.textContent=d.games?.length?d.games.length+' worlds registered':'Registry ready';}
