@@ -1,0 +1,107 @@
+{
+  "schema": "lingo-2027/qa-matrix/v1",
+  "status": "IMPLEMENTATION_PROCEDURE",
+  "suites": {
+    "functional": [
+      "startup",
+      "navigation",
+      "save-load",
+      "mission-state",
+      "inventory",
+      "store",
+      "settings",
+      "photo-mode",
+      "achievements",
+      "world-state"
+    ],
+    "movement": [
+      "locomotion",
+      "jump",
+      "dodge",
+      "signature-moves",
+      "collision",
+      "camera",
+      "input-buffer",
+      "assist-mode"
+    ],
+    "narrative": [
+      "dialogue",
+      "branching",
+      "relationship-state",
+      "mission-dependencies",
+      "ending-state",
+      "lore-unlocks"
+    ],
+    "economy": [
+      "currency-ledger",
+      "purchase",
+      "refund-policy",
+      "duplicate-protection",
+      "offline-reconciliation",
+      "negative-balance-block"
+    ],
+    "slots": [
+      "RNG-seed-replay",
+      "paytable",
+      "20-payline-evaluation",
+      "wild",
+      "scatter",
+      "bonus",
+      "feature-frequency",
+      "million-trial-simulation"
+    ],
+    "multiplayer": [
+      "session-create",
+      "join",
+      "reconnect",
+      "party-scaling",
+      "revive",
+      "state-reconciliation"
+    ],
+    "platform": [
+      "iOS",
+      "Android",
+      "LG-webOS",
+      "Web",
+      "touch",
+      "controller",
+      "TV-remote",
+      "keyboard"
+    ],
+    "accessibility": [
+      "reduced-motion",
+      "captions",
+      "text-scaling",
+      "contrast",
+      "input-remap",
+      "audio-independent-comprehension"
+    ],
+    "performance": [
+      "startup",
+      "frame-time",
+      "memory",
+      "asset-streaming",
+      "network-loss",
+      "thermal-behavior"
+    ],
+    "security": [
+      "auth",
+      "authorization",
+      "transaction-idempotency",
+      "input-validation",
+      "telemetry-integrity",
+      "secret-boundaries"
+    ]
+  },
+  "severity": {
+    "blocker": "must pass",
+    "critical": "must pass",
+    "major": "must pass or formally waived",
+    "minor": "tracked"
+  },
+  "evidence": {
+    "required": true,
+    "immutableArtifact": true,
+    "independentVerification": true
+  }
+}
