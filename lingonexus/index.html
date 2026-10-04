@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LINGO Nexus — the game universe for LINGOslots and LINGOarcade.">
+<title>LINGO Nexus — The Lingo Legacy</title>
+<link rel="stylesheet" href="/games/lingo-nexus/l-shaped-control.css">
+<style>
+:root{color-scheme:dark;--gold:#c8a84e;--purple:#6d2aa8;--ink:#070708;--panel:#101014}
+*{box-sizing:border-box}body{margin:0;background:#050507;color:#f6f1e8;font-family:Inter,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 72% 15%,rgba(109,42,168,.32),transparent 32%),radial-gradient(circle at 18% 78%,rgba(200,168,78,.13),transparent 28%),linear-gradient(135deg,#030304,#17111f 52%,#050507)}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:44px 44px}
+.wrap{width:min(1180px,calc(100% - 32px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}.brand{font-weight:900;letter-spacing:.12em}.hero{padding:90px 0 55px}.eyebrow{color:var(--gold);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase}.hero h1{font-size:clamp(4rem,12vw,9rem);line-height:.82;letter-spacing:-.08em;margin:18px 0}.hero h1 span{color:var(--gold)}.hero p{max-width:720px;color:#c7c3cb;font-size:1.1rem;line-height:1.7}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 18px;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,.04);cursor:pointer}.btn.primary{border-color:rgba(200,168,78,.55);background:linear-gradient(135deg,rgba(200,168,78,.18),rgba(109,42,168,.2))}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;padding:32px 0 80px}.card{position:relative;min-height:260px;padding:26px;border:1px solid rgba(255,255,255,.11);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.02));overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s}.card:hover{transform:translateY(-8px);border-color:rgba(200,168,78,.45);box-shadow:0 25px 70px rgba(0,0,0,.35)}.card h2{margin:12px 0 8px}.card p{color:#aaa6b0;line-height:1.6}.tag{display:inline-block;color:var(--gold);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}.launch{position:absolute;bottom:22px;left:26px}.visual{height:110px;margin:-26px -26px 20px;background:radial-gradient(circle at 75% 25%,rgba(200,168,78,.25),transparent 22%),linear-gradient(135deg,#09090b,#28143b 60%,#080809);animation:drift 7s ease-in-out infinite alternate}@keyframes drift{to{transform:scale(1.06) translateX(6px)}}@media(prefers-reduced-motion:reduce){.card,.visual{transition:none;animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a class="brand" href="/" style="color:#fff;text-decoration:none">THE LINGO LEGACY</a><a class="btn" href="/lingoarcade/">Arcade</a></header>
+<main>
+<section class="hero">
+<span class="eyebrow">Five-engine game universe</span>
+<h1>LINGO<span>Nexus</span></h1>
+<p>One discovery layer for LINGOslots, LINGOarcade, worlds, progression, motion, music and game identity. Every tile is a doorway, not just a link.</p>
+<div class="actions">
+<a class="btn primary" href="#games">Enter the Nexus</a>
+<button class="lingo-control" type="button" aria-expanded="false" data-expand><span class="lingo-control__type">Explore game worlds</span></button>
+</div>
+</section>
+<section id="games" class="grid" aria-label="LINGO games">
+<article class="card"><div class="visual"></div><span class="tag">LINGOslots</span><h2>That's My Lingo</h2><p>5×3 virtual-reel entertainment engine with progression, missions and bonus-state hooks.</p><a class="btn primary launch" href="/thats-my-lingo/">Enter world →</a></article>
+<article class="card"><div class="visual"></div><span class="tag">LINGOarcade</span><h2>Rap Arena</h2><p>Round-based arcade battle world with scoring, mascots, events and multiplayer-ready state.</p><a class="btn launch" href="/multiplayer-rap-arena/">Enter world →</a></article>
+<article class="card"><div class="visual"></div><span class="tag">Nexus</span><h2>Game Vault</h2><p>New LINGO games register here first, with their own worlds, assets, motion and sonic profiles.</p><button class="btn launch" data-registry>Load registry →</button></article>
+</section>
+</main>
+<footer style="padding:35px 0 60px;border-top:1px solid rgba(255,255,255,.1);color:#8f8b94">Loyalty. Legacy. Language. · Virtual entertainment layer · Real-money wagering disabled</footer>
+</div>
+<script>
+const control=document.querySelector('[data-expand]');
+control?.addEventListener('click',()=>control.setAttribute('aria-expanded',String(control.getAttribute('aria-expanded')!=='true')));
+document.querySelector('[data-registry]')?.addEventListener('click',async e=>{
+ const b=e.currentTarget;b.disabled=true;b.textContent='Loading…';
+ try{const r=await fetch('/api/v1/games/registry');const d=await r.json();b.textContent=d.games?.length?d.games.length+' worlds registered':'Registry ready';}
+ catch{b.textContent='Registry unavailable';}
+});
+</script>
+</body></html>
