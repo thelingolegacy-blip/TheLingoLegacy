@@ -1,0 +1,15 @@
+{
+  "schema":"lingo-worldline/visual-identity/v1",
+  "status":"IMPLEMENTATION_STANDARD",
+  "sharedBrand":{"aesthetic":"Industrial Noir meets premium cinematic game UI","primary":"obsidian","accent":["gold","royal-purple"],"tagline":"Loyalty. Legacy. Language."},
+  "games":{
+    "tricias-escape":{"logo":"TRICIA'S ESCAPE","icon":"TE","shape":"threaded-key","motifs":["memory-thread","leaf","ancient-gold"],"description":"A cinematic mythic puzzle adventure about memory, control and the courage to let the past change."},
+    "doughboys-oasis":{"logo":"DOUGHBOY'S OASIS","icon":"DO","shape":"grid-sun","motifs":["neon-grid","sun","status-ring"],"description":"A connected action-RPG where every district tests a different form of greed: sink into it or rise above it."},
+    "crazy-weasols":{"logo":"CRAZY WEASOL'S","icon":"CW","shape":"broken-spiral","motifs":["reality-tear","tail-swoosh","comic-impact"],"description":"A kinetic precision platformer where an inventor must repair worlds he accidentally broke."},
+    "jerseyshore-the-undead":{"logo":"JERSEYSHORE: THE UNDEAD","icon":"JU","shape":"wave-skull","motifs":["shoreline","warning-light","storm-signal"],"description":"A cinematic coastal survival story born from a mystery that washes ashore and refuses to stay buried."},
+    "silly-in-philly-the-streets":{"logo":"SILLY IN PHILLY: THE STREETS","icon":"SP","shape":"street-sign","motifs":["block-grid","street-sign","bell-tower"],"description":"A fictional open-city story about reputation, community, competition and the street code."},
+    "thats-my-lingo":{"logo":"THAT'S MY LINGO","icon":"TML","shape":"lingo-crown","motifs":["crown","reels","gold-purple"]},
+    "lingo-lions-eruptions":{"logo":"LINGO LIONS: ERUPTIONS","icon":"LLE","shape":"lion-sunburst","motifs":["lion","volcano","eruption"]},
+    "cashman-lingo-mania":{"logo":"CASHMAN LINGO MANIA","icon":"CLM","shape":"money-burst","motifs":["coin","mania-lines","neon-gold"]}
+  }
+}
