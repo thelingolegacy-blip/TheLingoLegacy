@@ -1,0 +1,16 @@
+{
+  "schema":"lingo-nexus/slots-premium-content/v1",
+  "status":"IMPLEMENTATION_ONLY",
+  "scope":"All current LINGOslots titles.",
+  "shared":{"reels":"5x3","paylines":20,"virtualOnly":true,"realMoneyWagering":false,"cashOut":false,"cinematicPresentation":true,"adaptiveAudio":true,"haptics":true,"mobileTouch":true,"controller":true,"tvRemote":true,"web":true},
+  "games":{
+    "thats-my-lingo":{
+      "logo":"THAT'S MY LINGO","icon":"TML","story":"A flagship LINGO casino-world journey where every spin reveals another piece of the player's Legacy identity.","characters":["The Host","Lingo Lion","The Dealer","The Vault Keeper"],"rivals":["The House Poet","The Oddskeeper"],"villains":["The House Shadow"],"symbols":["lingo-crown","legacy-lock","tap-stitch","gold-word","purple-word","wild-lingo","scatter-seal"],"features":["wild","scatter","reel-expansion","free-spins","multiplier","bonus-pick","progressive-virtual-meter"],"mathProfile":{"volatility":"medium","featureFrequency":"configured-by-title-math-package","maxVirtualWin":"bounded"},"progression":["spin-xp","collection-book","achievement-track","cosmetic-unlocks"],"store":["themes","avatar-items","emotes","sound-packs","virtual-collectibles"]},
+    "lingo-lions-eruptions":{
+      "logo":"LINGO LIONS: ERUPTIONS","icon":"LLE","story":"A volcanic LINGO expedition where the pride climbs an eruption cycle to recover the Legacy Crown.","characters":["Rex Lingo","Maya Flame","The Cartographer"],"rivals":["Ash Runner","Crown Chaser"],"villains":["The Eruption King","The Ash Collector"],"symbols":["lion","volcano","lava-gem","crown","eruption-wild","fire-scatter"],"features":["eruption-meter","expanding-wilds","volcano-bonus","free-spins","retrigger","multiplier-trail"],"mathProfile":{"volatility":"high","featureFrequency":"configured-by-title-math-package","maxVirtualWin":"bounded"},"progression":["expedition-xp","relic-collection","achievement-track","cosmetic-unlocks"],"store":["lion-costumes","volcanic-themes","emotes","relics","audio-packs"]},
+    "cashman-lingo-mania":{
+      "logo":"CASHMAN LINGO MANIA","icon":"CLM","story":"A fast, flashy virtual arcade show where contestants chase a fictional jackpot meter without real-money wagering.","characters":["Cashman","Lingo MC","The Banker"],"rivals":["The Counter","The Challenger"],"villains":["The Jackpot Phantom"],"symbols":["coin-stack","neon-7","lingo-bell","vault","wild-coin","mania-scatter"],"features":["mania-mode","reel-lock","symbol-upgrade","bonus-wheel","free-spins","multiplier-chain"],"mathProfile":{"volatility":"high","featureFrequency":"configured-by-title-math-package","maxVirtualWin":"bounded"},"progression":["mania-xp","collection-book","achievement-track","cosmetic-unlocks"],"store":["show-themes","avatar-items","emotes","music","virtual-collectibles"]}
+  },
+  "qa":{"required":"math simulation, seed replay, payout-table validation, client/server reconciliation, accessibility, animation timing, device matrix","millionTrialMinimum":true},
+  "governance":{"virtualEconomyOnly":true,"noCashOut":true,"noRealMoneyWagering":true,"productionActivation":false,"certificationRequired":true,"g02Dependency":true}
+}
