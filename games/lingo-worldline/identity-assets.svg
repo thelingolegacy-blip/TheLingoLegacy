@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<title id="title">LINGO Worldline Identity Asset Sheet</title>
+<desc id="desc">Original geometric logo marks for the five LINGO Worldline games.</desc>
+<defs>
+  <linearGradient id="gold" x1="0" x2="1"><stop stop-color="#f4d27a"/><stop offset="1" stop-color="#a66b18"/></linearGradient>
+  <linearGradient id="purple" x1="0" x2="1"><stop stop-color="#8f5cff"/><stop offset="1" stop-color="#3b1f78"/></linearGradient>
+</defs>
+<rect width="1200" height="600" fill="#08090c"/>
+<g font-family="Arial,Helvetica,sans-serif" font-weight="800" fill="#f4f1ea">
+  <g transform="translate(60 70)">
+    <path d="M0 80 Q80 0 160 80 Q80 160 0 80Z" fill="none" stroke="url(#gold)" stroke-width="12"/><path d="M30 80 H130" stroke="url(#purple)" stroke-width="12"/>
+    <text x="190" y="90" font-size="42">TRICIA'S ESCAPE</text><text x="190" y="125" font-size="16" fill="#a7a7ad">THREAD • MEMORY • FREEDOM</text>
+  </g>
+  <g transform="translate(60 190)">
+    <circle cx="80" cy="80" r="66" fill="none" stroke="url(#gold)" stroke-width="12"/><path d="M80 14 V146 M14 80 H146" stroke="url(#purple)" stroke-width="8"/>
+    <text x="190" y="90" font-size="42">DOUGHBOY'S OASIS</text><text x="190" y="125" font-size="16" fill="#a7a7ad">GRID • GREED • RISE</text>
+  </g>
+  <g transform="translate(60 310)">
+    <path d="M15 110 Q80 5 145 110" fill="none" stroke="url(#gold)" stroke-width="12"/><path d="M35 110 Q80 45 125 110" fill="none" stroke="url(#purple)" stroke-width="8"/>
+    <text x="190" y="90" font-size="42">CRAZY WEASOL'S</text><text x="190" y="125" font-size="16" fill="#a7a7ad">CHAOS • CREATION • REPAIR</text>
+  </g>
+  <g transform="translate(60 430)">
+    <path d="M10 20 L150 20 L110 100 L50 100Z" fill="none" stroke="url(#gold)" stroke-width="12"/><path d="M20 80 Q80 20 140 80" fill="none" stroke="url(#purple)" stroke-width="9"/>
+    <text x="190" y="65" font-size="38">JERSEYSHORE: THE UNDEAD</text><text x="190" y="100" font-size="16" fill="#a7a7ad">STORM • SIGNAL • SURVIVAL</text>
+  </g>
+</g>
+</svg>
