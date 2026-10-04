@@ -1,0 +1,16 @@
+{
+  "schema": "lingo-studio-runtime",
+  "version": "1.0.0",
+  "bootstrap": "studio/runtime/studio-runtime.js",
+  "css": "studio/studio-runtime.css",
+  "mediaManifest": "assets/studio/manifests/runtime-media.json",
+  "audioManifest": "assets/studio/manifests/audio.json",
+  "guarantees": {
+    "boot": "shared",
+    "mediaFallback": "nonfatal",
+    "audio": "muted-by-default",
+    "motion": "reduced-motion-aware",
+    "accessibility": "required",
+    "productionState": "never-inferred"
+  }
+}
