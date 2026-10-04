@@ -18,8 +18,9 @@ const RELEASE_GATES = Object.freeze({
 });
 const PLATFORM_MODULES = Object.freeze([
   'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle',
-  'lingoslots','thats-my-lingo','rewards','missions','xp-engine','universal-legacy-wallet',
-  'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
+  'lingoslots','thats-my-lingo','lingoarcade','lingolibrary','lingomedia','lingoworld','lingoai','asklingo','lingoboom',
+  'lingotravel','lingocampus','lingosupport','lingowifi','lingovoice','lingoshield','lingolounge','lingodonations','legacyxclub',
+  'rewards','missions','xp-engine','universal-legacy-wallet','lingo-id','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
 const SECURITY_HEADERS = {
