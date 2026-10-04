@@ -1,0 +1,132 @@
+{
+  "schema": "lingo-ecosystem/v1",
+  "canonical": {
+    "root": "https://thelingolegacy.com",
+    "www": "https://www.thelingolegacy.com",
+    "www_policy": "301-to-root"
+  },
+  "identity": {
+    "parent": "LINGOlegacy",
+    "family": "LoyaltyLane",
+    "motto": "#StayLoyaltoYourOwnLane",
+    "hashtag": "#StayLoyal"
+  },
+  "edge": {
+    "provider": "cloudflare-workers",
+    "zone": "thelingolegacy.com",
+    "worker": "thelingolegacy",
+    "routing": "routes",
+    "fail_closed": true
+  },
+  "app": {
+    "flutter": true,
+    "firebase_project": "lingo-legacy-production",
+    "firebase_auth": "required",
+    "firestore": "required"
+  },
+  "commerce": {
+    "primary_store": "Shopify",
+    "store_name": "Loyalty Lane",
+    "tapstitch": "Tapstitch",
+    "payments": "Stripe",
+    "legacy_square_url": "https://loyaltylaneapparel.square.site",
+    "migration_mode": "square-to-shopify"
+  },
+  "platforms": {
+    "flagship": {
+      "path": "/",
+      "label": "LINGOlegacy",
+      "style": "command-center"
+    },
+    "lane": {
+      "path": "/lingolane/",
+      "label": "LINGOlane",
+      "style": "fashion-commerce"
+    },
+    "slots": {
+      "path": "/lingoslots/",
+      "label": "LINGOslots",
+      "style": "casino-entertainment"
+    },
+    "arcade": {
+      "path": "/lingoarcade/",
+      "label": "LINGOarcade",
+      "style": "arcade"
+    },
+    "library": {
+      "path": "/lingolibrary/",
+      "label": "LINGOlibrary",
+      "style": "editorial-archive"
+    },
+    "media": {
+      "path": "/lingomedia/",
+      "label": "LINGOmedia",
+      "style": "cinematic-studio"
+    },
+    "world": {
+      "path": "/lingoworld/",
+      "label": "LINGOworld",
+      "style": "immersive-world"
+    },
+    "ai": {
+      "path": "/lingoai/",
+      "label": "LINGOai",
+      "style": "future-tech"
+    },
+    "ask": {
+      "path": "/asklingo/",
+      "label": "askLINGO",
+      "style": "conversation"
+    },
+    "boom": {
+      "path": "/lingoboom/",
+      "label": "LINGOboom",
+      "style": "launch-energy"
+    },
+    "travel": {
+      "path": "/lingotravel/",
+      "label": "LINGOtravel",
+      "style": "exploration"
+    },
+    "campus": {
+      "path": "/lingocampus/",
+      "label": "LINGOcampus",
+      "style": "learning"
+    },
+    "support": {
+      "path": "/lingosupport/",
+      "label": "LINGOsupport",
+      "style": "service"
+    },
+    "wifi": {
+      "path": "/lingowifi/",
+      "label": "LINGOwifi",
+      "style": "connectivity"
+    },
+    "voice": {
+      "path": "/lingovoice/",
+      "label": "LINGOvoice",
+      "style": "audio"
+    },
+    "shield": {
+      "path": "/lingoshield/",
+      "label": "LINGOshield",
+      "style": "security"
+    },
+    "lounge": {
+      "path": "/lingolounge/",
+      "label": "LINGOlounge",
+      "style": "community"
+    },
+    "donations": {
+      "path": "/lingodonations/",
+      "label": "LINGOdonations",
+      "style": "impact"
+    },
+    "club": {
+      "path": "/legacyxclub/",
+      "label": "LegacyXclub",
+      "style": "premium-club"
+    }
+  }
+}
