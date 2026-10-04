@@ -213,7 +213,7 @@
 
   function playTone(type = 'click', options = {}) {
     if (!soundEnabled && !options.force) return;
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const AudioContext = window.AudioContext || window.webkitAudioContext || null;
     if (!AudioContext) return;
     try {
       audioContext ||= new AudioContext();
