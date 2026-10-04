@@ -1,0 +1,23 @@
+{
+  "schema": "lingo-studio-media",
+  "version": "1.0.0",
+  "assets": [],
+  "integrityPolicy": {
+    "required": true,
+    "algorithm": "sha256",
+    "sourceRequired": true,
+    "versionRequired": true,
+    "ownerRequired": true
+  },
+  "loadingPolicy": {
+    "critical": "preload",
+    "standard": "lazy",
+    "video": "lazy",
+    "audio": "user-initiated"
+  },
+  "accessibility": {
+    "altRequiredForMeaningfulVisuals": true,
+    "decorativeVisualsRequireEmptyAlt": true,
+    "reducedMotionSupported": true
+  }
+}
