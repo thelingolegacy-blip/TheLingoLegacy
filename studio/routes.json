@@ -47,8 +47,30 @@
       "path": "/ai",
       "surface": "askLINGO",
       "source": "TheLingoLegacy"
+    },
+    {
+      "path": "/lingoarcade",
+      "surface": "lingoarcade",
+      "source": "TheLingoLegacy"
+    },
+    {
+      "path": "/thats-my-lingo",
+      "surface": "thats-my-lingo",
+      "source": "THATS-MY-LINGO"
     }
   ],
   "fallback": "shared-studio-shell",
-  "productionMutation": "disabled-until-verified"
+  "productionMutation": "disabled-until-verified",
+  "aliases": [
+    {
+      "from": "/arcade",
+      "to": "/lingoarcade",
+      "status": "SOURCE_ALIAS"
+    },
+    {
+      "from": "/game",
+      "to": "/thats-my-lingo",
+      "status": "SOURCE_ALIAS"
+    }
+  ]
 }
