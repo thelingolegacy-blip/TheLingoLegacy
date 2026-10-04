@@ -7,6 +7,7 @@
   const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function ready(){
+    setState("READY");
     const boot=document.querySelector(".studio-boot");
     if(boot){ boot.dataset.ready="true"; setTimeout(()=>boot.remove(),500); }
     document.documentElement.dataset.studioReady="true";
@@ -49,12 +50,20 @@
   }
 
   function init(){
+    setState("LOADING");
     ensureBoot();
     ensureAudioControl();
-    setupMedia();
-    setupAudio();
-    setupMotion();
-    requestAnimationFrame(ready);
+    try {
+      setupMedia();
+      setupAudio();
+      setupMotion();
+      requestAnimationFrame(ready);
+    } catch(error) {
+      setState("ERROR");
+      const label=document.querySelector(".studio-state");
+      if(label) label.textContent="Studio runtime error";
+      window.LingoStudioRuntimeError=String(error&&error.message||error);
+    }
   }
 
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init,{once:true});
