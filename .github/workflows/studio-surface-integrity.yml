@@ -1,0 +1,36 @@
+name: Lingo Studio Surface Integrity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "studio/**"
+      - "assets/studio/**"
+      - "*.html"
+      - "**/index.html"
+      - ".github/workflows/studio-surface-integrity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Verify Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run deterministic surface integrity check
+        run: node studio/runtime/surface-integrity.js
+
+      - name: Emit source-only result
+        run: |
+          echo "SOURCE_INTEGRITY=VERIFIED_BY_SCRIPT"
+          echo "PRODUCTION_STATE=NOT_INFERRED"
