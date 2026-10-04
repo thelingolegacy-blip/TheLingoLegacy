@@ -49,6 +49,8 @@
   }
 
   function init(){
+    ensureBoot();
+    ensureAudioControl();
     setupMedia();
     setupAudio();
     setupMotion();
