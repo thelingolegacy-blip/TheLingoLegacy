@@ -7,7 +7,7 @@ const path = require("node:path");
 const root = process.cwd();
 const contract = JSON.parse(fs.readFileSync(path.join(root,"studio/surface-contracts.json"),"utf8"));
 const routes = JSON.parse(fs.readFileSync(path.join(root,"studio/routes.json"),"utf8"));
-const featureManifest = JSON.parse(fs.readFileSync(path.join(root,"studio/production-feature-manifest.json"),"utf8"));
+const featureManifest = JSON.parse(fs.readFileSync(path.join(root,"studio/production-feature-manifest.json"),"utf8"));\nconst requiredFiles = contract.shared.requiredFiles || [];
 
 const failures = [];
 const checked = [];
