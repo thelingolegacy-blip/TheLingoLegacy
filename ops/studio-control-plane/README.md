@@ -8,9 +8,9 @@ SOURCE → CHANGESET → VALIDATE → TEST → SECURITY → EVIDENCE → VERIFY 
 
 ## Provider Federation
 - GitHub: canonical repository/control surface for current LINGO repository work.
-- GitLab: beta federation lane; no accessible LINGO project is currently exposed to the connected account.
+- GitLab: beta federation lane; current connector evidence exposes the LINGO `FameMoneyFortune` project and user fork.
 - AppDeploy: deployment/build/QA surface; READY is not equivalent to production authorization.
-- Canva: design/media creation and asset management surface.
+- Canva: design/media creation and asset management surface; no Brand Kit is currently discovered.
 - Product Design: UX research, design QA, and implementation review surface.
 - Media: voice, explainer video, images, animation, and game-production surfaces remain governed creative inputs/outputs.
 
