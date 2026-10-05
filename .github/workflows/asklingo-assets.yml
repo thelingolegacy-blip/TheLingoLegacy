@@ -1,0 +1,26 @@
+name: askLINGO Asset Contract
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ai/**'
+      - 'assets/studio/manifests/**'
+      - 'lib/services/asklingo_*.dart'
+      - 'worker.js'
+      - 'scripts/validate-asklingo-assets.mjs'
+      - '.github/workflows/asklingo-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate JSON and runtime contract
+        run: node scripts/validate-asklingo-assets.mjs
+      - name: Syntax check worker
+        run: node --check worker.js
