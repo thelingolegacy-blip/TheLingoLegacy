@@ -43,13 +43,8 @@
 
     dataChannel = peer.createDataChannel('oai-events');
     dataChannel.onopen = () => {
-      dataChannel.send(JSON.stringify({
-        type: 'session.update',
-        session: {
-          type: 'realtime',
-          instructions: selected.instruction
-        }
-      }));
+      // Mode policy is selected and signed by the server-issued session.
+      // The client never sends authoritative instructions to the realtime session.
       emit('ready', { mode });
     };
     dataChannel.onmessage = event => {
@@ -90,7 +85,6 @@
 
   async function respond(text, mode = 'chat', context = {}) {
     const config = await loadModes();
-    const selected = config.modes[mode] || config.modes.chat;
     const response = await fetch(config.responseEndpoint, {
       method: 'POST',
       headers: {'content-type':'application/json'},
