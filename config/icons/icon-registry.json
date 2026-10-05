@@ -35,6 +35,22 @@
       "id": "rewards",
       "path": "/icons/rewards.svg",
       "status": "repo-present"
+    },
+    {
+      "id": "lingolibrary",
+      "path": "/assets/brand/lingolibrary/icon.svg",
+      "status": "repo-present",
+      "variants": [
+        "icon.svg",
+        "icon-maskable.svg"
+      ],
+      "purpose": "publishing-discovery"
+    },
+    {
+      "id": "lingolibrary-read",
+      "path": "/assets/brand/lingolibrary/icon.svg",
+      "status": "repo-present",
+      "purpose": "reader-navigation"
     }
   ],
   "rule": "All future platforms should reference this shared icon registry instead of ad hoc icon names."
