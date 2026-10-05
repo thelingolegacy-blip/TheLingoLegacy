@@ -85,8 +85,41 @@ if [[ -z "$service_unit" ]]; then
   exit 1
 fi
 
+# Install a bounded self-healing policy for this runner only.
+# A hung start is terminated after 5 minutes; a stopped/crashed daemon is
+# restarted automatically. This does not alter the G02 acceptance predicate.
+dropin_dir="/etc/systemd/system/${service_unit}.d"
+install -d "$dropin_dir"
+cat > "$dropin_dir/10-g02-recovery.conf" <<'EOF'
+[Service]
+TimeoutStartSec=300
+TimeoutStopSec=30
+Restart=always
+RestartSec=5
+EOF
+
+systemctl daemon-reload
 systemctl enable "$service_unit"
 systemctl restart "$service_unit"
+
+echo
+echo "Waiting up to 5 minutes for runner daemon activation..."
+deadline=$(($(date +%s) + 300))
+while true; do
+  state="$(systemctl is-active "$service_unit" 2>/dev/null || true)"
+  if [[ "$state" == "active" ]]; then
+    echo "RUNNER_DAEMON_STATE=active"
+    break
+  fi
+  if (( $(date +%s) >= deadline )); then
+    echo "RUNNER_CONNECT_WINDOW=TIMEOUT" >&2
+    systemctl --no-pager --full status "$service_unit" --lines=50 || true
+    journalctl -u "$service_unit" --no-pager -n 100 || true
+    exit 1
+  fi
+  sleep 5
+done
+
 systemctl --no-pager --full status "$service_unit" --lines=30
 
 echo
