@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "purpose": "Cross-platform capability and evidence ownership map",
+  "providers": {
+    "github": {
+      "state": "ACTIVE",
+      "role": [
+        "repository",
+        "branch",
+        "review",
+        "CI",
+        "evidence"
+      ]
+    },
+    "gitlab": {
+      "state": "BETA_NO_PROJECT_EXPOSED",
+      "role": [
+        "federation",
+        "MR",
+        "pipeline"
+      ]
+    },
+    "appdeploy": {
+      "state": "READY_SURFACES",
+      "role": [
+        "build",
+        "deploy",
+        "QA"
+      ],
+      "production_authority": "BLOCKED_UNTIL_INDEPENDENT_GATE_ACCEPTANCE"
+    },
+    "canva": {
+      "state": "CONNECTED_NO_BRAND_KIT_DISCOVERED",
+      "role": [
+        "design",
+        "visual-assets"
+      ]
+    },
+    "product_design": {
+      "state": "AVAILABLE",
+      "role": [
+        "UX",
+        "design-QA",
+        "prototype-review"
+      ]
+    },
+    "game_studio": {
+      "state": "CONNECTED_SURFACES_EXIST",
+      "role": [
+        "game-production",
+        "release-assets"
+      ]
+    },
+    "ai_voice": {
+      "state": "AVAILABLE",
+      "role": [
+        "voiceover",
+        "audio"
+      ]
+    },
+    "explain_video": {
+      "state": "AVAILABLE",
+      "role": [
+        "narrated-explainers",
+        "documentation-video"
+      ]
+    },
+    "runway": {
+      "state": "AUTHENTICATED_IMAGE_CAPABLE_VIDEO_PLAN_GATED",
+      "role": [
+        "image",
+        "animation",
+        "media"
+      ]
+    }
+  },
+  "governance": {
+    "establishment": "ESTABLISHED(T+1) iff P(T+1) && E(T+1) && V(T+1) && A(T+1)",
+    "fail_closed": true,
+    "agent_self_authorization": false,
+    "provider_self_authorization": false,
+    "production_promotion": "BLOCKED_WHILE_REQUIRED_GATE_UNVERIFIED"
+  },
+  "current_blockers": [
+    "G02 runner live execution evidence",
+    "Firebase production configuration placeholders",
+    "public apex wire-level responder correlation"
+  ],
+  "current_ready_surfaces": [
+    "AppDeploy flagship",
+    "AppDeploy HQ"
+  ],
+  "acceptance_required_before_production": true
+}
