@@ -40,5 +40,5 @@ if (workerHasLiteralEscapes(worker)) throw new Error('Worker contains literal es
 const realtimeClient = fs.readFileSync('ai/asklingo-runtime.js', 'utf8');
 if (realtimeClient.includes("type: 'session.update'")) throw new Error('Client must not override server-authoritative realtime instructions');
 function workerHasLiteralEscapes(source) {
-  return /\\\\n/.test(source);
+  return /\\n/.test(source);
 }
