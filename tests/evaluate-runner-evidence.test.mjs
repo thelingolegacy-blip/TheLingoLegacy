@@ -21,8 +21,8 @@ function complete() {
 const pass = evaluateEvidenceSignature(complete(), sha);
 assert.equal(pass.evidence, 'PRESENT');
 assert.equal(pass.verification, 'PASS');
-assert.equal(pass.acceptance, 'PASS');
-assert.equal(pass.contractAuth, 'READY');
+assert.equal(pass.acceptance, 'BLOCKED');
+assert.equal(pass.contractAuth, 'BLOCKED');
 assert.equal(pass.promotion, 'BLOCKED');
 assert.equal(pass.lkg, 'PROTECTED');
 assert.equal(pass.productionMutation, 'NOT_PERFORMED');
