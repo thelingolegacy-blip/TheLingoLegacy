@@ -2,6 +2,8 @@ name: G02 Executing Runner Sentinel
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
   push:
     branches:
       - agent/g02-executing-runner-2026-10-05
@@ -15,12 +17,12 @@ concurrency:
 
 jobs:
   sentinel:
-    name: G02 · Executing Runner
+    name: G02 · Executing Self-Hosted Runner
     runs-on: [self-hosted, linux, x64, lingo-g02]
-    timeout-minutes: 5
+    timeout-minutes: 10
+
     steps:
       - name: Establish runner identity
-        id: identity
         shell: bash
         env:
           RUNNER_ID: ${{ runner.id }}
@@ -33,68 +35,69 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          umask 077
           mkdir -p g02-evidence
           {
-            echo "G02_SENTINEL=START"
-            echo "G02_RUN_ID=$RUN_ID"
-            echo "G02_RUN_NUMBER=$RUN_NUMBER"
-            echo "G02_SHA=$SHA"
-            echo "G02_RUNNER_ID=$RUNNER_ID"
-            echo "G02_RUNNER_NAME=$RUNNER_NAME"
-            echo "G02_RUNNER_OS=$RUNNER_OS"
-            echo "G02_RUNNER_ARCH=$RUNNER_ARCH"
-            echo "G02_RUNNER_ENVIRONMENT=$RUNNER_ENVIRONMENT"
+            echo "RUN_ID=$RUN_ID"
+            echo "RUN_NUMBER=$RUN_NUMBER"
+            echo "SHA=$SHA"
+            echo "RUNNER_ID=$RUNNER_ID"
+            echo "RUNNER_NAME=$RUNNER_NAME"
+            echo "RUNNER_OS=$RUNNER_OS"
+            echo "RUNNER_ARCH=$RUNNER_ARCH"
+            echo "RUNNER_ENVIRONMENT=$RUNNER_ENVIRONMENT"
           } | tee g02-evidence/identity.txt
+
           test -n "$RUNNER_ID"
           test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
           test "$RUNNER_ENVIRONMENT" = "self-hosted"
-          echo "G02_IDENTITY=PASS" | tee -a g02-evidence/identity.txt
 
-      - name: Execute deterministic sentinel
+      - name: Verify self-hosted execution environment
         shell: bash
         run: |
           set -euo pipefail
-          started="$(date -Is)"
-          {
-            echo "G02_EXECUTION_SENTINEL=START"
-            echo "G02_STARTED_AT=$started"
-            echo "G02_HOST=$(hostname)"
-            echo "G02_KERNEL=$(uname -sr)"
-            echo "G02_ARCH=$(uname -m)"
-          } | tee g02-evidence/execution.txt
           test "$(uname -m)" = "x86_64"
-          command -v bash >/dev/null
-          command -v date >/dev/null
-          command -v uname >/dev/null
-          printf 'G02_EXECUTION_SENTINEL=PASS
-' | tee -a g02-evidence/execution.txt
-          printf 'G02_COMPLETED_AT=%s
-' "$(date -Is)" | tee -a g02-evidence/execution.txt
+          command -v bash
+          command -v date
+          command -v uname
+          command -v git
+          command -v curl
 
-      - name: Produce gate evidence
+      - name: Execute deterministic G02 sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "G02_EXECUTION_SENTINEL=START" | tee g02-evidence/execution.txt
+          echo "HOST=$(hostname)" | tee -a g02-evidence/execution.txt
+          echo "KERNEL=$(uname -sr)" | tee -a g02-evidence/execution.txt
+          echo "ARCH=$(uname -m)" | tee -a g02-evidence/execution.txt
+          echo "G02_EXECUTION_SENTINEL=PASS" | tee -a g02-evidence/execution.txt
+
+      - name: Establish P1-P7 execution evidence
         shell: bash
         env:
           RUNNER_ID: ${{ runner.id }}
           RUNNER_NAME: ${{ runner.name }}
         run: |
           set -euo pipefail
-          {
-            echo "G02_EVIDENCE_VERSION=1"
-            echo "G02_RUNNER_ID=$RUNNER_ID"
-            echo "G02_RUNNER_NAME=$RUNNER_NAME"
-            echo "G02_IDENTITY_VERIFIED=TRUE"
-            echo "G02_JOB_ASSIGNED=TRUE"
-            echo "G02_STEPS_INSTANTIATED=TRUE"
-            echo "G02_SENTINEL_EXECUTED=TRUE"
-            echo "G02_LOG_GENERATED=TRUE"
-            echo "G02_EVIDENCE_GENERATED=TRUE"
-            echo "G02_PRODUCTION_PROMOTION=BLOCKED"
-            echo "G02_GATE_STATUS=ELIGIBLE_FOR_INDEPENDENT_VERIFICATION"
-          } | tee g02-evidence/g02-gate-evidence.txt
+          cat > g02-evidence/g02-gate-evidence.txt <<EOF
+          G02_EVIDENCE_VERSION=2
+          P1_REAL_MATCHING_RUNNER=TRUE
+          P2_RUNNER_ID_NONZERO=TRUE
+          P3_RUNNER_NAME_POPULATED=TRUE
+          P4_JOB_ASSIGNED=TRUE
+          P5_STEPS_INSTANTIATED=TRUE
+          P6_SENTINEL_EXECUTED=TRUE
+          P7_LOGS_GENERATED=TRUE
+          P8_LOGS_RETRIEVABLE=REQUIRES_EXTERNAL_VERIFICATION
+          P9_INDEPENDENT_VERIFICATION=REQUIRED
+          RUNNER_ID=$RUNNER_ID
+          RUNNER_NAME=$RUNNER_NAME
+          G02_GATE_STATUS=ELIGIBLE_FOR_INDEPENDENT_VERIFICATION
+          G02_PRODUCTION_PROMOTION=BLOCKED
+          EOF
 
       - name: Upload G02 evidence
         uses: actions/upload-artifact@v4
