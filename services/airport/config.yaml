@@ -1,0 +1,41 @@
+service:
+  id: airport
+  label: "service: airport"
+  version: 2.0.0
+  environments: [dev, staging, production]
+
+runtime:
+  mode: observe
+  heartbeat_seconds: 30
+  event_namespace: airport.*
+  audit_required: true
+  policy_required_for_mutations: true
+
+reconciliation:
+  enabled: true
+  interval_seconds: 30
+  auto_repair:
+    dev: true
+    staging: true
+    production: false
+  allowed_actions:
+    - restart_workers
+    - resync_config
+  prohibited_actions:
+    - physical_aviation_control
+    - physical_security_control
+    - financial_payout
+    - auth_bypass
+    - destructive_db_change
+
+workers:
+  - observer-worker
+  - airport-worker
+  - terminal-worker
+  - gate-worker
+  - flight-worker
+  - citizen-worker
+  - passport-worker
+  - qa-worker
+  - security-worker
+  - analytics-worker
