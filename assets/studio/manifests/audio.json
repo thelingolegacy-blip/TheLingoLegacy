@@ -1,18 +1,26 @@
 {
   "schema": "lingo-studio-audio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "defaultState": "muted",
   "categories": {
-    "ui": [],
+    "ui": ["asklingo-listen","asklingo-stop","asklingo-ready"],
     "navigation": [],
-    "ambient": [],
+    "ambient": ["lingo-books-library-bed"],
     "game": [],
-    "cinematic": []
+    "cinematic": [],
+    "books": ["kottonscode","the-block-i-grew-up-on","say-it-again","lightborne","dice-shift-hotel","lowdown","legacy-legend-lingo-city"],
+    "voice": ["askLINGO-realtime"]
+  },
+  "manifests": {
+    "books": "/assets/studio/manifests/books-audio.json",
+    "asklingoVoice": "/assets/studio/manifests/asklingo-voice.json"
   },
   "rules": {
     "userGestureRequired": true,
     "reducedMotionMayReduceAudio": true,
     "persistentPreferenceAllowed": true,
-    "failureMustNotBlockNavigation": true
+    "failureMustNotBlockNavigation": true,
+    "microphonePermissionRequiredForVoice": true,
+    "voiceSecretsServerOnly": true
   }
 }
