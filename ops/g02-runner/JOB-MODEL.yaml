@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 
 workflow:
   id: "g02-runner-validation"
@@ -84,6 +84,54 @@ workflow:
         - "retrievable logs"
         - "artifact correlation"
 
+  qualified_evidence:
+    purpose: "Define when raw execution evidence becomes admissible evidence for G02 acceptance."
+    required_properties:
+      authenticity:
+        required: true
+        rule: "Evidence originates from the actual GitHub run/job/runner execution path."
+      integrity:
+        required: true
+        rule: "Evidence is preserved without unexplained alteration or substitution."
+      completeness:
+        required: true
+        rule: "Required P1-P9 evidence is present; missing required evidence blocks qualification."
+      scope:
+        required: true
+        rule: "Evidence proves the exact lingo-legacy-g02 runner and exact G02 workflow/job."
+      correlation:
+        required: true
+        rule: "run_id, job_id, runner_id, runner_name, steps, logs, and artifacts correlate to the same execution."
+      retrievability:
+        required: true
+        rule: "Evidence can be independently retrieved and inspected."
+      independent_verification:
+        required: true
+        rule: "A verifier other than the executing step validates the evidence chain."
+
+    qualification_rule: >
+      QUALIFIED_EVIDENCE
+      iff
+      AUTHENTIC
+      AND INTEGRITY_VALID
+      AND COMPLETE
+      AND IN_SCOPE
+      AND CORRELATED
+      AND RETRIEVABLE
+      AND INDEPENDENTLY_VERIFIED
+
+    inadmissible:
+      - "configuration-only evidence"
+      - "queued-job evidence without assignment"
+      - "Online/Idle runner status without job execution"
+      - "workflow existence without execution"
+      - "self-asserted pass without external verification"
+      - "unretrievable logs"
+      - "unexplained or substituted artifacts"
+      - "evidence from a different runner"
+      - "evidence from a different run/job"
+      - "incomplete P1-P9 evidence"
+
   acceptance:
     predicate:
       P1: "REAL MATCHING RUNNER"
@@ -96,7 +144,7 @@ workflow:
       P8: "LOGS RETRIEVABLE"
       P9: "INDEPENDENT VERIFICATION"
 
-    rule: "G02_PASS iff P1 AND P2 AND P3 AND P4 AND P5 AND P6 AND P7 AND P8 AND P9"
+    rule: "G02_PASS iff P1 AND P2 AND P3 AND P4 AND P5 AND P6 AND P7 AND P8 AND P9 AND QUALIFIED_EVIDENCE"
 
   fail_closed:
     any_false: "BLOCK"
@@ -107,7 +155,8 @@ workflow:
     workflow_existence_is_not_execution: true
     runner_online_idle_is_not_execution: true
     execution_without_verification_is_not_pass: true
+    unqualified_evidence_is_not_acceptance: true
 
   state:
-    g02_verified: "NOT_ESTABLISHED_UNLESS_P1_P9_VERIFIED"
+    g02_verified: "NOT_ESTABLISHED_UNLESS_P1_P9_AND_QUALIFIED_EVIDENCE_VERIFIED"
     production_authority: "NONE"
