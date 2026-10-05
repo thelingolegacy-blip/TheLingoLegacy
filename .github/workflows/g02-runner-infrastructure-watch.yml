@@ -1,0 +1,76 @@
+name: G02 Runner Infrastructure Watch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 */6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  infrastructure:
+    name: G02 · Self-Hosted Infrastructure Watch
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+
+    steps:
+      - name: Validate exact runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_ID:-}"
+          test "${RUNNER_ID}" != "0"
+          test "${RUNNER_NAME}" = "lingo-legacy-g02"
+          test "${RUNNER_OS}" = "Linux"
+          test "${RUNNER_ARCH}" = "X64"
+          test "${RUNNER_ENVIRONMENT}" = "self-hosted"
+
+      - name: Validate host capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = "x86_64"
+          for cmd in bash curl git tar gzip sha256sum; do
+            command -v "$cmd"
+          done
+
+      - name: Execute infrastructure sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          {
+            echo "G02_INFRASTRUCTURE_SENTINEL=PASS"
+            echo "RUN_ID=${GITHUB_RUN_ID}"
+            echo "RUN_NUMBER=${GITHUB_RUN_NUMBER}"
+            echo "RUNNER_ID=${RUNNER_ID}"
+            echo "RUNNER_NAME=${RUNNER_NAME}"
+            echo "RUNNER_OS=${RUNNER_OS}"
+            echo "RUNNER_ARCH=${RUNNER_ARCH}"
+          } | tee g02-evidence/infrastructure.txt
+
+      - name: Record gate boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > g02-evidence/g02-boundary.txt <<EOF
+          P1_REAL_MATCHING_RUNNER=TRUE
+          P2_RUNNER_ID_NONZERO=TRUE
+          P3_RUNNER_NAME_POPULATED=TRUE
+          P4_JOB_ASSIGNED=TRUE
+          P5_STEPS_INSTANTIATED=TRUE
+          P6_SENTINEL_EXECUTED=TRUE
+          P7_LOGS_GENERATED=TRUE
+          P8_LOGS_RETRIEVABLE=REQUIRES_EXTERNAL_VERIFICATION
+          P9_INDEPENDENT_VERIFICATION=REQUIRED
+          G02_GATE_STATUS=ELIGIBLE_FOR_INDEPENDENT_VERIFICATION
+          PRODUCTION_AUTHORITY=NONE
+          EOF
+
+      - name: Upload infrastructure evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-infrastructure-evidence-${{ github.run_id }}
+          path: g02-evidence/
+          if-no-files-found: error
