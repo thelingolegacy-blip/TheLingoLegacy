@@ -104,7 +104,8 @@ echo "$RUNNER_SHA256  $tmp" | sha256sum --check --status || fail "runner archive
 tar -xzf "$tmp" --no-same-owner
 chown -R "$RUNNER_USER:$RUNNER_USER" "$RUNNER_DIR"
 
-runuser -u "$RUNNER_USER" -- "$RUNNER_DIR/bin/installdependencies.sh" || fail "GitHub runner dependency installation failed"
+"$RUNNER_DIR/bin/installdependencies.sh" || fail "GitHub runner dependency installation failed"
+chown -R "$RUNNER_USER:$RUNNER_USER" "$RUNNER_DIR"
 
 if [[ -f "$RUNNER_DIR/.runner" ]]; then
   runuser -u "$RUNNER_USER" -- "$RUNNER_DIR/config.sh" remove --token "$REG_TOKEN" || true
