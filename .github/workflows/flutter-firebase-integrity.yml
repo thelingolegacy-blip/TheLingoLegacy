@@ -1,0 +1,68 @@
+name: Flutter Firebase Integrity
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - '.github/workflows/flutter-firebase-integrity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  flutter-firebase:
+    name: Flutter + Firebase integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Flutter setup
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Verify Firebase project contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .firebaserc
+          test -f lib/firebase_options.dart
+          project_id="$(node -e "console.log(require('./.firebaserc').projects.default)")"
+          test "$project_id" = "lingo-legacy-production"
+
+          if grep -R "YOUR_.*_API_KEY\|YOUR_.*_APP_ID\|YOUR_MESSAGING_SENDER_ID" lib/firebase_options.dart; then
+            echo "Firebase client configuration still contains placeholders."
+            echo "Provide the real Firebase app configuration before release certification."
+            exit 1
+          fi
+
+      - name: Flutter dependencies
+        run: flutter pub get
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Flutter unit and widget tests
+        run: flutter test
+
+      - name: Flutter web build
+        run: flutter build web --release
+
+      - name: Flutter Android debug build
+        run: flutter build apk --debug
+
+      - name: Firebase hosting configuration check
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
