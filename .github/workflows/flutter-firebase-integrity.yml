@@ -37,14 +37,7 @@ jobs:
           set -euo pipefail
           test -f .firebaserc
           test -f lib/firebase_options.dart
-          project_id="$(node -e "console.log(require('./.firebaserc').projects.default)")"
-          test "$project_id" = "lingo-legacy-production"
-
-          if grep -R "YOUR_.*_API_KEY\|YOUR_.*_APP_ID\|YOUR_MESSAGING_SENDER_ID" lib/firebase_options.dart; then
-            echo "Firebase client configuration still contains placeholders."
-            echo "Provide the real Firebase app configuration before release certification."
-            exit 1
-          fi
+          node scripts/verify-flutter-firebase.mjs
 
       - name: Flutter dependencies
         run: flutter pub get
