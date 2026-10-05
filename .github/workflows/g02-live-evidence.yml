@@ -1,0 +1,54 @@
+name: G02 Live Evidence Sentinel
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, feat/asklingo-voice-books-modes-2026-10-05]
+permissions:
+  contents: read
+jobs:
+  g02-live-evidence:
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    steps:
+      - name: Runner identity telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/g02
+          {
+            echo "G02_EVIDENCE_VERSION=1"
+            echo "CAPTURED_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "RUNNER_ID=$RUNNER_ID"
+            echo "RUNNER_NAME=$RUNNER_NAME"
+            echo "RUNNER_OS=$RUNNER_OS"
+            echo "RUNNER_ARCH=$RUNNER_ARCH"
+            echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+            echo "GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
+            echo "GITHUB_JOB=$GITHUB_JOB"
+            echo "G02_SENTINEL=STARTED"
+          } | tee evidence/g02/runner-telemetry.txt
+          test -n "$RUNNER_ID"
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+      - name: Execution sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "G02_EXECUTION=PASS" | tee evidence/g02/execution-sentinel.txt
+          echo "G02_EXIT=0" | tee -a evidence/g02/execution-sentinel.txt
+      - name: Environment telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "HOSTNAME=$(hostname)"
+            echo "KERNEL=$(uname -sr)"
+            echo "ARCH=$(uname -m)"
+            echo "UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee evidence/g02/host-telemetry.txt
+      - name: Upload G02 evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-live-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/g02/
+          if-no-files-found: error
