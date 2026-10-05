@@ -1,0 +1,33 @@
+name: LINGOsheilds Contract Validation
+
+on:
+  pull_request:
+    paths:
+      - 'apps/lingosheilds/**'
+      - '.github/workflows/lingosheilds-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate JSON contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "for (const f of ['apps/lingosheilds/CONTROL-CONTRACT.json','apps/lingosheilds/PLATFORM-MODULES.json','apps/lingosheilds/contracts/evidence-record.schema.json','apps/lingosheilds/contracts/agent-work-order.schema.json','apps/lingosheilds/policy/production-gates.json','apps/lingosheilds/security/DEPENDENCY-POLICY.json']) JSON.parse(require('fs').readFileSync(f,'utf8')); console.log('LINGOSHEILDS_JSON_CONTRACTS=PASS')"
+      - name: Validate prohibited production authority
+        run: |
+          set -euo pipefail
+          ! grep -RniE 'agentProductionAuthority[^\n]*true|production_access[^\n]*true|autoPromote[^\n]*true' apps/lingosheilds
+      - name: Validate required fail-closed language
+        run: |
+          set -euo pipefail
+          grep -Rni 'fail-closed' apps/lingosheilds >/dev/null
+          echo 'LINGOSHEILDS_FAIL_CLOSED=PASS'
