@@ -85,18 +85,6 @@ class AskLingoRealtime {
       RTCSessionDescription(answer.body, 'answer'),
     );
 
-    _events!.send(
-      RTCDataChannelMessage(
-        jsonEncode({
-          'type': 'session.update',
-          'session': {
-            'type': 'realtime',
-            'instructions': token['mode']?.toString() ?? mode,
-          },
-        }),
-      ),
-    );
-
     onEvent?.call({'type': 'session_started', 'mode': mode});
   }
 
