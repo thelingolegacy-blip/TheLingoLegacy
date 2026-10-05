@@ -1,0 +1,24 @@
+{
+  "name": "LINGOlibrary",
+  "short_name": "LINGOlibrary",
+  "description": "Write, publish, listen, own, and build worlds with LINGOlibrary.",
+  "start_url": "/library/",
+  "scope": "/library/",
+  "display": "standalone",
+  "background_color": "#050509",
+  "theme_color": "#0b0715",
+  "icons": [
+    {
+      "src": "/assets/brand/lingolibrary/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/brand/lingolibrary/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

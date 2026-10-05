@@ -2,13 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Central AI surface. AI availability is runtime-dependent; source presence does not imply live model availability.">
+<meta name="description" content="askLINGO — conversational voice, research, generation, teaching, training and governance modes for the LINGO platform.">
 <title>askLINGO — The Lingo Legacy</title>
 <link rel="stylesheet" href="/assets/lingo-crimson-studio.css">
 <link rel="stylesheet" href="/studio/studio-runtime.css">
+<link rel="stylesheet" href="/studio/runtime/studio-surface.css">
 <script defer src="/studio/runtime/studio-runtime.js"></script>
-  <link rel="stylesheet" href="/studio/runtime/studio-surface.css">
-  <script defer src="/studio/runtime/studio-surface.js"></script>
+<script defer src="/studio/runtime/studio-surface.js"></script>
+<script defer src="/ai/asklingo-runtime.js"></script>
+<style>
+  .ask-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+  .mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+  .mode{cursor:pointer;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:inherit;border-radius:12px;padding:12px;text-align:left}
+  .mode.active{outline:2px solid #f7c84b;background:rgba(247,200,75,.1)}
+  .book-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  .composer{display:flex;gap:10px;flex-wrap:wrap}
+  .composer input{flex:1;min-width:220px;background:#09090d;color:inherit;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:13px}
+  .status{min-height:24px;opacity:.75}
+  @media(max-width:850px){.ask-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body class="lingo-crimson-studio" data-lingo-surface="askLINGO" data-studio-state="BOOT">
 <header class="top"><nav class="wrap" style="height:74px;display:flex;align-items:center;justify-content:space-between;gap:16px">
@@ -16,13 +28,75 @@
 <div style="display:flex;gap:10px;flex-wrap:wrap">
 <a class="button" href="/">Legacy</a><a class="button" href="/lane/">Lane</a><a class="button primary" href="/ai/">askLINGO</a>
 </div></nav></header>
-<main class="wrap" style="padding:72px 0"><section class="card" style="padding:34px">
-<p style="letter-spacing:.18em;text-transform:uppercase;opacity:.7">Studio Surface</p>
+<main class="wrap" style="padding:56px 0">
+<section class="card" style="padding:30px">
+<p style="letter-spacing:.18em;text-transform:uppercase;opacity:.7">Lingo Intelligence</p>
 <h1 style="font-size:clamp(2.4rem,6vw,5rem);margin:.2em 0">askLINGO</h1>
-<p style="max-width:780px;opacity:.82">Central AI surface. AI availability is runtime-dependent; source presence does not imply live model availability.</p>
-<div class="grid" style="margin-top:28px">
-<article class="card"><strong>Shared runtime</strong><p>Boot, loading, ready, error, media fallback, audio preference, reduced-motion support.</p></article>
-<article class="card"><strong>Integration boundary</strong><p>askLINGO</p></article>
-<article class="card"><strong>Production truth</strong><p>Live availability is established only through runtime evidence and verification.</p></article>
-</div></section></main>
+<p style="max-width:820px;opacity:.84">Talk with askLINGO, switch operating modes, research current information, generate content, learn, train, and ask about LINGO books. Professional-domain modes are educational and do not replace qualified professionals or local protocols.</p>
+</section>
+
+<section class="ask-grid" style="margin-top:18px">
+<div class="card" style="padding:24px">
+<h2>Operating modes</h2>
+<div id="modes" class="mode-grid"></div>
+<div class="composer" style="margin-top:18px">
+<input id="prompt" placeholder="Ask askLINGO anything…" autocomplete="off">
+<button id="send" class="button primary">Respond</button>
+<button id="talk" class="button">Talk</button>
+<button id="stop" class="button">Stop</button>
+</div>
+<p id="status" class="status" aria-live="polite">Ready. Voice starts only after you press Talk.</p>
+<article id="answer" class="card" style="margin-top:16px;display:none;white-space:pre-wrap"></article>
+</div>
+
+<div class="card" style="padding:24px">
+<h2>LINGO Books — Audio</h2>
+<p style="opacity:.75">Each title is wired for narrated chapters, resume position, speed control, and “ask about this chapter.” Audio files are published independently through the media pipeline.</p>
+<div id="books"></div>
+</div>
+</section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const modesEl=document.getElementById('modes');
+  const booksEl=document.getElementById('books');
+  const statusEl=document.getElementById('status');
+  const answerEl=document.getElementById('answer');
+  const promptEl=document.getElementById('prompt');
+  let mode='chat';
+  const cfg=await window.askLINGO.loadModes();
+  Object.entries(cfg.modes).forEach(([id,m])=>{
+    const b=document.createElement('button'); b.className='mode'+(id===mode?' active':''); b.textContent=m.label;
+    b.onclick=()=>{mode=id;document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');statusEl.textContent='Mode: '+m.label;};
+    modesEl.appendChild(b);
+  });
+  const books=await fetch('/assets/studio/manifests/books-audio.json',{cache:'no-store'}).then(r=>r.json());
+  books.books.forEach(book=>{
+    const row=document.createElement('div'); row.className='book-row';
+    row.innerHTML='<div><strong>'+book.title+'</strong><div style="opacity:.6;font-size:.85rem">'+book.category+'</div></div>';
+    const b=document.createElement('button'); b.className='button'; b.textContent='Ask about book';
+    b.onclick=()=>{promptEl.value='Tell me about '+book.title+' and help me learn it.';mode='teach';statusEl.textContent='Book context selected: '+book.title;};
+    row.appendChild(b); booksEl.appendChild(row);
+  });
+  document.getElementById('send').onclick=async()=>{
+    const text=promptEl.value.trim(); if(!text)return;
+    statusEl.textContent='Thinking…'; answerEl.style.display='none';
+    try{const r=await window.askLINGO.respond(text,mode);answerEl.textContent=r.text||'No response returned.';answerEl.style.display='block';statusEl.textContent='Response ready.';}
+    catch(e){statusEl.textContent=e.message;}
+  };
+  document.getElementById('talk').onclick=async()=>{
+    statusEl.textContent='Requesting microphone and realtime voice…';
+    try{await window.askLINGO.startVoice(mode);statusEl.textContent='Listening. Speak naturally to askLINGO.';}
+    catch(e){statusEl.textContent=e.message;}
+  };
+  document.getElementById('stop').onclick=async()=>{await window.askLINGO.stopVoice();statusEl.textContent='Voice stopped.';};
+  window.addEventListener('asklingo:ready',()=>statusEl.textContent='Voice session ready.');
+  window.addEventListener('asklingo:started',()=>statusEl.textContent='askLINGO is talking/listening.');
+  window.addEventListener('asklingo:event',e=>{
+    const d=e.detail||{};
+    if(d.type==='error') statusEl.textContent=d.error?.message||'Realtime voice error.';
+  });
+});
+</script>
 </body></html>

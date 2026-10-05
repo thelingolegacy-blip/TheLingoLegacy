@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">LINGOlibrary</title><desc id="desc">Gold open book with crown and LL monogram on a dark purple background.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050509"/><stop offset=".55" stop-color="#24104f"/><stop offset="1" stop-color="#070711"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff1a6"/><stop offset=".35" stop-color="#f5c451"/><stop offset="1" stop-color="#a96b08"/></linearGradient></defs>
+<rect width="512" height="512" fill="url(#bg)"/><rect x="42" y="42" width="428" height="428" rx="96" fill="none" stroke="#f5c451" stroke-width="5" opacity=".3"/>
+<path d="M86 350c54-35 110-42 170-13 60-29 116-22 170 13v55c-54-29-110-33-170-8-60-25-116-21-170 8z" fill="#11111a" stroke="url(#gold)" stroke-width="12"/>
+<path d="M92 336c53-34 108-39 164-11V188c-59-25-112-19-164 17zM420 336c-53-34-108-39-164-11V188c59-25 112-19 164 17z" fill="#17131f" stroke="url(#gold)" stroke-width="12"/>
+<path d="M256 116l12 24 27 4-20 19 5 27-24-13-24 13 5-27-20-19 27-4z" fill="url(#gold)"/>
+<path d="M214 116l42-34 42 34-20 8-22-17-22 17z" fill="url(#gold)"/>
+<text x="256" y="304" text-anchor="middle" font-family="Georgia,serif" font-size="132" font-weight="700" fill="url(#gold)">LL</text>
+<path d="M104 382h304" stroke="#9a4ae8" stroke-width="8" stroke-linecap="round"/>
+</svg>

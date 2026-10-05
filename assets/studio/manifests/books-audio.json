@@ -1,0 +1,48 @@
+{
+  "schema": "lingo-books-audio",
+  "version": "1.0.0",
+  "delivery": {
+    "formats": ["mp3", "m4a", "opus"],
+    "streaming": true,
+    "download": false,
+    "preload": "metadata",
+    "fallback": "text",
+    "storage": "cloudflare-r2"
+  },
+  "player": {
+    "autoplay": false,
+    "userGestureRequired": true,
+    "resumePosition": true,
+    "speedOptions": [0.75, 1, 1.25, 1.5, 2],
+    "reducedMotionCompatible": true
+  },
+  "books": [
+    {"id":"kottonscode","title":"KottonsCode","category":"kids-media","narration":"pending"},
+    {"id":"the-block-i-grew-up-on","title":"The Block I Grew Up On","category":"memoir","narration":"pending"},
+    {"id":"say-it-again","title":"Say It Again","category":"language-and-recovery","narration":"pending"},
+    {"id":"lightborne","title":"Lightborne","category":"mythology","narration":"pending"},
+    {"id":"dice-shift-hotel","title":"Dice Shift Hotel","category":"animation-fiction","narration":"pending"},
+    {"id":"lowdown","title":"Lowdown","category":"fiction","narration":"pending"},
+    {"id":"legacy-legend-lingo-city","title":"Legacy Legend: Lingo City","category":"world-fiction","narration":"pending"}
+  ],
+  "pipeline": [
+    "manuscript",
+    "chapter-split",
+    "narration-script",
+    "voice-generation",
+    "audio-qc",
+    "loudness-normalization",
+    "metadata",
+    "r2-upload",
+    "cdn-delivery",
+    "flutter-player",
+    "web-player",
+    "acceptance"
+  ],
+  "integrity": {
+    "sha256Required": true,
+    "sourceRequired": true,
+    "voiceVersionRequired": true,
+    "chapterVersionRequired": true
+  }
+}
