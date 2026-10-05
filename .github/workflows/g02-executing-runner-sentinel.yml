@@ -1,0 +1,104 @@
+name: G02 Executing Runner Sentinel
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-executing-runner-sentinel
+  cancel-in-progress: false
+
+jobs:
+  sentinel:
+    name: G02 · Executing Runner
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Establish runner identity
+        id: identity
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p g02-evidence
+
+          {
+            echo "G02_SENTINEL=START"
+            echo "G02_RUN_ID=$RUN_ID"
+            echo "G02_RUN_NUMBER=$RUN_NUMBER"
+            echo "G02_SHA=$SHA"
+            echo "G02_RUNNER_ID=$RUNNER_ID"
+            echo "G02_RUNNER_NAME=$RUNNER_NAME"
+            echo "G02_RUNNER_OS=$RUNNER_OS"
+            echo "G02_RUNNER_ARCH=$RUNNER_ARCH"
+            echo "G02_RUNNER_ENVIRONMENT=$RUNNER_ENVIRONMENT"
+          } | tee g02-evidence/identity.txt
+
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          test "$RUNNER_ENVIRONMENT" = "self-hosted"
+
+          echo "G02_IDENTITY=PASS" | tee -a g02-evidence/identity.txt
+
+      - name: Execute deterministic sentinel
+        shell: bash
+        run: |
+          set -euo pipefail
+          started="$(date -Is)"
+          {
+            echo "G02_EXECUTION_SENTINEL=START"
+            echo "G02_STARTED_AT=$started"
+            echo "G02_HOST=$(hostname)"
+            echo "G02_KERNEL=$(uname -sr)"
+            echo "G02_ARCH=$(uname -m)"
+          } | tee g02-evidence/execution.txt
+
+          test "$(uname -m)" = "x86_64"
+          command -v bash >/dev/null
+          command -v date >/dev/null
+          command -v uname >/dev/null
+
+          printf 'G02_EXECUTION_SENTINEL=PASS\n' | tee -a g02-evidence/execution.txt
+          printf 'G02_COMPLETED_AT=%s\n' "$(date -Is)" | tee -a g02-evidence/execution.txt
+
+      - name: Produce gate evidence
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+          set -euo pipefail
+          {
+            echo "G02_EVIDENCE_VERSION=1"
+            echo "G02_RUNNER_ID=$RUNNER_ID"
+            echo "G02_RUNNER_NAME=$RUNNER_NAME"
+            echo "G02_IDENTITY_VERIFIED=TRUE"
+            echo "G02_JOB_ASSIGNED=TRUE"
+            echo "G02_STEPS_INSTANTIATED=TRUE"
+            echo "G02_SENTINEL_EXECUTED=TRUE"
+            echo "G02_LOG_GENERATED=TRUE"
+            echo "G02_EVIDENCE_GENERATED=TRUE"
+            echo "G02_PRODUCTION_PROMOTION=BLOCKED"
+            echo "G02_GATE_STATUS=ELIGIBLE_FOR_INDEPENDENT_VERIFICATION"
+          } | tee g02-evidence/g02-gate-evidence.txt
+
+      - name: Upload G02 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-executing-runner-evidence-${{ github.run_id }}
+          path: g02-evidence/
+          if-no-files-found: error
