@@ -3,7 +3,8 @@ import fs from 'node:fs';
 const files = [
   'ai/asklingo-modes.json',
   'assets/studio/manifests/books-audio.json',
-  'assets/studio/manifests/asklingo-voice.json'
+  'assets/studio/manifests/asklingo-voice.json',
+  'library/manifest.webmanifest'
 ];
 
 for (const file of files) {
@@ -27,3 +28,17 @@ if (!worker.includes('OPENAI_API_KEY')) throw new Error('OpenAI secret contract 
 console.log('ASKLINGO_ASSET_CONTRACT=PASS');
 console.log('ASKLINGO_MODES=13');
 console.log('LINGO_BOOKS=7');
+
+const libraryManifest = JSON.parse(fs.readFileSync('library/manifest.webmanifest', 'utf8'));
+if (libraryManifest.short_name !== 'LINGOlibrary') throw new Error('LINGOlibrary manifest identity mismatch');
+if (!Array.isArray(libraryManifest.icons) || libraryManifest.icons.length < 2) throw new Error('LINGOlibrary icon set incomplete');
+for (const icon of ['assets/brand/lingolibrary/icon.svg','assets/brand/lingolibrary/icon-maskable.svg']) {
+  const svg = fs.readFileSync(icon, 'utf8');
+  if (!svg.includes('<svg')) throw new Error(`Invalid icon asset: ${icon}`);
+}
+if (workerHasLiteralEscapes(worker)) throw new Error('Worker contains literal escaped newlines in executable source');
+const realtimeClient = fs.readFileSync('ai/asklingo-runtime.js', 'utf8');
+if (realtimeClient.includes("type: 'session.update'")) throw new Error('Client must not override server-authoritative realtime instructions');
+function workerHasLiteralEscapes(source) {
+  return source.includes("\\\\n      if (url.pathname === '/api/asklingo");
+}
