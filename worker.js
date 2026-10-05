@@ -147,7 +147,7 @@ async function askLingoRealtimeToken(request, env) {
   if (!env.OPENAI_API_KEY) return json({ ok: false, error: 'askLINGO realtime is not configured.' }, 503, request, env);
   const body = await parseJson(request);
   const mode = askLingoMode(body.mode);
-  const configuredInstruction = String(body.instruction || ASK_LINGO_MODES[mode].instruction).slice(0, 4000);
+  const configuredInstruction = ASK_LINGO_MODES[mode].instruction;
   const upstream = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
@@ -172,7 +172,7 @@ async function askLingoRespond(request, env) {
   if (!text) return json({ ok: false, error: 'A non-empty text prompt is required.' }, 400, request, env);
   const mode = askLingoMode(body.mode);
   const policy = ASK_LINGO_MODES[mode];
-  const research = Boolean(body.research ?? policy.research);
+  const research = policy.research;
   const context = body.context && typeof body.context === 'object' ? JSON.stringify(body.context).slice(0, 8000) : '{}';
   const input = [
     { role: 'system', content: [{ type: 'input_text', text: policy.instruction }] },
