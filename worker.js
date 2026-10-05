@@ -278,7 +278,9 @@ export default {
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
-      if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);\n      if (url.pathname === '/api/asklingo/realtime-token') return await askLingoRealtimeToken(request, env);\n      if (url.pathname === '/api/asklingo/respond') return await askLingoRespond(request, env);
+      if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
+      if (url.pathname === '/api/asklingo/realtime-token') return await askLingoRealtimeToken(request, env);
+      if (url.pathname === '/api/asklingo/respond') return await askLingoRespond(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       const assetResponse = await env.ASSETS.fetch(request);
       return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
