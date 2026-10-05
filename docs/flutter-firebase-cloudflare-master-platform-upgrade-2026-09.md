@@ -146,7 +146,7 @@ Persistent wallet/economy state must never depend on client-trusted calculations
 ## 4. Cloudflare runtime contract
 
 Current authoritative configuration:
-- Worker: thelingolegacy
+- Worker: thelingolegacyv-5
 - entrypoint: worker.js
 - configuration: wrangler.jsonc
 - canonical domain: thelingolegacy.com
