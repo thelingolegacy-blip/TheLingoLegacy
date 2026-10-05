@@ -1,0 +1,71 @@
+name: LINGO Integration Receiver
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  intake:
+    if: startsWith(github.head_ref, 'vercel-agent/') || startsWith(github.head_ref, 'fix/') || startsWith(github.head_ref, 'agent/') || startsWith(github.head_ref, 'feature/') || startsWith(github.head_ref, 'studio/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Intake metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          echo "INTEGRATION_RECEIVER=START"
+          echo "PR=$PR_NUMBER"
+          echo "HEAD=$HEAD"
+          echo "BASE=$BASE"
+
+      - name: Enforce protected target
+        env:
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          case "$BASE" in
+            main|agent/*|fix/*|studio/*) ;;
+            *) echo "Unsupported integration target: $BASE"; exit 1 ;;
+          esac
+
+      - name: Inspect changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100"             --jq '.[].filename' | tee changed-files.txt
+          test -s changed-files.txt
+
+      - name: Block obvious credential/authority hazards
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          files="$(gh api "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')"
+          if printf '%s\n' "$files" | grep -E '(^|/)(\.env|firebase.*secret|service-account|credentials)' >/dev/null; then
+            echo "Potential credential-bearing file detected."
+            exit 1
+          fi
+
+      - name: Publish intake decision
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$REPO" --body "LINGO Integration Receiver: intake workflow completed with status=$JOB_STATUS. This receiver prepares work for controlled merge; it does not grant production authorization or bypass fail-closed gates."

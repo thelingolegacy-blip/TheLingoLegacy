@@ -1,0 +1,45 @@
+name: LINGO Controlled Integration Merge
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-to-integration:
+    if: github.event.label.name == 'integration-approved' && github.event.pull_request.base.ref == 'agent/lingo-integration-receiver'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify source branch family
+        env:
+          HEAD: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          case "$HEAD" in
+            vercel-agent/*|fix/*|agent/*|feature/*|studio/*) ;;
+            *) echo "Source branch is not approved for integration intake: $HEAD"; exit 1 ;;
+          esac
+
+      - name: Merge approved integration PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          gh pr merge "$PR" --repo "$REPO" --squash --delete-branch=false
+
+      - name: Record integration event
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "INTEGRATION_MERGE=PASS"
+          echo "PR=$PR"
+          echo "SOURCE=$HEAD"
+          echo "TARGET=agent/lingo-integration-receiver"
+          echo "PRODUCTION_PROMOTION=BLOCKED"
