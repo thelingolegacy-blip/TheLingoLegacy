@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "Constellation OS",
+  "mode": "staged-fail-closed",
+  "sourceAuthority": "github",
+  "productionAuthority": "cloudflare",
+  "lastKnownGood": "protected",
+  "universes": [
+    {
+      "id": "avalon",
+      "name": "Avalon",
+      "status": "readiness-required"
+    },
+    {
+      "id": "game143",
+      "name": "Game143",
+      "status": "readiness-required"
+    },
+    {
+      "id": "legacyos",
+      "name": "LegacyOS",
+      "status": "readiness-required"
+    }
+  ],
+  "routing": {
+    "worker": "thelingolegacy",
+    "canonicalDomain": "thelingolegacy.com",
+    "apex": "splitter",
+    "www": "redirect-to-apex",
+    "origins": {
+      "A": "main.thelingolegacy.com",
+      "B": "dup.thelingolegacy.com",
+      "C": "recovery-preview.thelingolegacy.com"
+    },
+    "reservedPaths": [
+      "/dup",
+      "/recovery"
+    ],
+    "stateStore": "ROUTING_CONFIG"
+  },
+  "governance": {
+    "promotionApi": "internal-api.thelingolegacy.com",
+    "dashboard": "admin.thelingolegacy.com",
+    "auth": "Cloudflare Access",
+    "secretsServerSide": true,
+    "mutationPolicy": "fail-closed"
+  },
+  "deployment": {
+    "primary": "GitHub Actions -> Cloudflare Worker",
+    "hybridPipelines": true,
+    "runnerGate": {
+      "required": true,
+      "label": "ubuntu-latest",
+      "evidence": [
+        "runner_id",
+        "runner_name",
+        "executable_step",
+        "step_execution",
+        "step_logs"
+      ]
+    },
+    "productionPromotionRequires": [
+      "runner_gate_pass",
+      "static_validation_pass",
+      "runtime_contracts_pass",
+      "cloudflare_deploy_pass",
+      "live_probes_pass",
+      "rollback_target_present",
+      "evidence_ledger_complete"
+    ]
+  },
+  "recovery": {
+    "vaultSync": "vault-sync-recovery.sh",
+    "origin": "C",
+    "validationPath": "/recovery",
+    "checksumRequired": true,
+    "productionActivation": false
+  },
+  "telemetry": {
+    "dispatcher": "webhook-dispatcher.js",
+    "events": [
+      "promotion",
+      "recovery_toggle",
+      "gate_readiness",
+      "vault_sync",
+      "unauthorized_access",
+      "health_probe_failure"
+    ],
+    "credentialsServerSide": true
+  },
+  "secrets": {
+    "neverCommitValues": true,
+    "tiers": [
+      "edge",
+      "ci_cd",
+      "vault",
+      "human_dashboard"
+    ],
+    "rotation": {
+      "adminApiSecret": "quarterly",
+      "recoveryAccessToken": "biannual",
+      "deployKeys": "monthly"
+    }
+  },
+  "acceptance": {
+    "sequence": [
+      "source",
+      "evidence",
+      "verification",
+      "acceptance",
+      "passed",
+      "authorization",
+      "promotion",
+      "post-promotion"
+    ],
+    "certificationIndependent": true,
+    "noSyntheticEvidence": true
+  }
+}
