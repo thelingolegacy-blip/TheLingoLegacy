@@ -29,7 +29,7 @@ install_packages() {
     apt-get update
     apt-get install -y --no-install-recommends \
       bash ca-certificates curl git tar gzip unzip zip jq \
-      sha256sum coreutils systemd sudo rsync \
+      coreutils systemd sudo rsync \
       build-essential python3 python3-pip python3-venv \
       openssh-client gnupg lsb-release
   elif command -v dnf >/dev/null 2>&1; then
