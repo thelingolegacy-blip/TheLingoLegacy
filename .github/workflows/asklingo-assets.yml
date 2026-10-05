@@ -6,6 +6,8 @@ on:
     paths:
       - 'ai/**'
       - 'assets/studio/manifests/**'
+      - 'library/**'
+      - 'assets/brand/lingolibrary/**'
       - 'lib/services/asklingo_*.dart'
       - 'worker.js'
       - 'scripts/validate-asklingo-assets.mjs'
