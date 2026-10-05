@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "thelingolegacy",
+  "name": "thelingolegacyv-5",
   "main": "worker.js",
   "compatibility_date": "2026-07-27",
   "workers_dev": false,
