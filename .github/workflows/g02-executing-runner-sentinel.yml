@@ -2,6 +2,9 @@ name: G02 Executing Runner Sentinel
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - agent/g02-executing-runner-2026-10-05
 
 permissions:
   contents: read
@@ -32,7 +35,6 @@ jobs:
           set -euo pipefail
           umask 077
           mkdir -p g02-evidence
-
           {
             echo "G02_SENTINEL=START"
             echo "G02_RUN_ID=$RUN_ID"
@@ -44,14 +46,12 @@ jobs:
             echo "G02_RUNNER_ARCH=$RUNNER_ARCH"
             echo "G02_RUNNER_ENVIRONMENT=$RUNNER_ENVIRONMENT"
           } | tee g02-evidence/identity.txt
-
           test -n "$RUNNER_ID"
           test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
           test "$RUNNER_ENVIRONMENT" = "self-hosted"
-
           echo "G02_IDENTITY=PASS" | tee -a g02-evidence/identity.txt
 
       - name: Execute deterministic sentinel
@@ -66,14 +66,14 @@ jobs:
             echo "G02_KERNEL=$(uname -sr)"
             echo "G02_ARCH=$(uname -m)"
           } | tee g02-evidence/execution.txt
-
           test "$(uname -m)" = "x86_64"
           command -v bash >/dev/null
           command -v date >/dev/null
           command -v uname >/dev/null
-
-          printf 'G02_EXECUTION_SENTINEL=PASS\n' | tee -a g02-evidence/execution.txt
-          printf 'G02_COMPLETED_AT=%s\n' "$(date -Is)" | tee -a g02-evidence/execution.txt
+          printf 'G02_EXECUTION_SENTINEL=PASS
+' | tee -a g02-evidence/execution.txt
+          printf 'G02_COMPLETED_AT=%s
+' "$(date -Is)" | tee -a g02-evidence/execution.txt
 
       - name: Produce gate evidence
         shell: bash
