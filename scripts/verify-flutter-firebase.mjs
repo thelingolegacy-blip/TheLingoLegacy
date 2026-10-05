@@ -15,6 +15,8 @@ const placeholders = [
   'YOUR_ANDROID_APP_ID',
   'YOUR_IOS_API_KEY',
   'YOUR_IOS_APP_ID',
+  'YOUR_MACOS_API_KEY',
+  'YOUR_MACOS_APP_ID',
   'YOUR_MESSAGING_SENDER_ID',
 ];
 
