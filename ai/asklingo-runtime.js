@@ -25,7 +25,7 @@
     const tokenResponse = await fetch(config.voice.tokenEndpoint, {
       method: 'POST',
       headers: {'content-type':'application/json'},
-      body: JSON.stringify({ mode, instruction: selected.instruction })
+      body: JSON.stringify({ mode })
     });
     const token = await tokenResponse.json();
     if (!tokenResponse.ok || !token.client_secret) throw new Error(token.error || 'Voice session could not be created.');
@@ -94,7 +94,7 @@
     const response = await fetch(config.responseEndpoint, {
       method: 'POST',
       headers: {'content-type':'application/json'},
-      body: JSON.stringify({ text, mode, context, instruction: selected.instruction, research: selected.research })
+      body: JSON.stringify({ text, mode, context })
     });
     const body = await response.json();
     if (!response.ok) throw new Error(body.error || 'askLINGO response failed.');
