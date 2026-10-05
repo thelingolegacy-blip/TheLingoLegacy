@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "name": "LINGO Integration Receiver",
+  "purpose": "Receive work from external/parallel branches and prepare it for controlled integration.",
+  "acceptedHeadPatterns": [
+    "vercel-agent/*",
+    "fix/*",
+    "agent/*",
+    "feature/*",
+    "studio/*"
+  ],
+  "protectedBranches": ["main"],
+  "requiredChecks": [
+    "source-diff-reviewed",
+    "static-validation",
+    "governance-contract",
+    "security-scan"
+  ],
+  "autoMerge": false,
+  "autoPromote": false,
+  "productionMutation": "FAIL_CLOSED",
+  "rule": "Incoming work may be prepared for merge but cannot self-authorize promotion."
+}
