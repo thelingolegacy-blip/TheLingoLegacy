@@ -23,7 +23,7 @@
     }
   ],
   "routing": {
-    "worker": "thelingolegacy",
+    "worker": "thelingolegacyv-5",
     "canonicalDomain": "thelingolegacy.com",
     "apex": "splitter",
     "www": "redirect-to-apex",
