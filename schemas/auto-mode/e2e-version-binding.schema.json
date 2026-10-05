@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://thelingolegacy.com/schemas/auto-mode/e2e-version-binding.schema.json",
+  "title":"Lingo Legacy E2E Version Binding",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","suite_id","deployment_version","environment","binding_status"],
+  "properties":{
+    "schema_version":{"type":"string","const":"1.0"},
+    "suite_id":{"type":"string"},
+    "deployment_version":{"type":"string","minLength":1},
+    "environment":{"enum":["dev","staging","prod"]},
+    "binding_status":{"enum":["PENDING","BOUND","REJECTED"]},
+    "bound_at":{"type":["string","null"],"format":"date-time"},
+    "bound_by":{"type":["string","null"]},
+    "requires_approval":{"type":"boolean","const":true}
+  }
+}

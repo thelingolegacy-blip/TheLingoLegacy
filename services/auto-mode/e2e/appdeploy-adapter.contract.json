@@ -1,0 +1,8 @@
+{
+  "schema_version":"1.0",
+  "adapter":"appdeploy-e2e",
+  "constitutional_chain":["CI","MANIFEST","SAFETY_GATEWAY","RULE_ENGINE","APPROVAL","APPDEPLOY","E2E","VERIFY","AUDIT"],
+  "registration":{"required_approval":true,"allowed_environments":["dev","staging","prod"],"statuses":["PENDING","REGISTERED","REJECTED"]},
+  "forbidden":{"silent_production_registration":true,"bypass_safety":true,"bypass_rule_engine":true,"bypass_approval":true},
+  "operations":["register","status","verify","audit"]
+}

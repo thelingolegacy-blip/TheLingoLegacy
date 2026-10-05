@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://thelingolegacy.com/schemas/auto-mode/e2e-audit-event.schema.json",
+  "title":"Lingo Legacy Auto Mode E2E Audit Event",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["event_type","actor","action","environment","decision","policy_id","approval_required","timestamp","trace_id"],
+  "properties":{
+    "event_type":{"const":"AUTO_MODE_E2E_ACTION"},
+    "actor":{"type":"string","minLength":1},
+    "action":{"enum":["REGISTER","STATUS","VERIFY","SIMULATE","ENABLE","DISABLE","DRY_RUN"]},
+    "environment":{"enum":["dev","staging","prod"]},
+    "decision":{"enum":["ALLOW","DENY","LIMIT","REQUIRE_APPROVAL"]},
+    "policy_id":{"type":"string","minLength":1},
+    "approval_required":{"type":"boolean","const":true},
+    "approval_id":{"type":["string","null"]},
+    "timestamp":{"type":"string","format":"date-time"},
+    "trace_id":{"type":"string","minLength":1},
+    "result":{"enum":["SUCCESS","BLOCKED","PENDING","FAILED"]}
+  }
+}
