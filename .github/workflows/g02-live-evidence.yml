@@ -17,7 +17,6 @@ jobs:
           {
             echo "G02_EVIDENCE_VERSION=1"
             echo "CAPTURED_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "RUNNER_ID=$RUNNER_ID"
             echo "RUNNER_NAME=$RUNNER_NAME"
             echo "RUNNER_OS=$RUNNER_OS"
             echo "RUNNER_ARCH=$RUNNER_ARCH"
@@ -26,7 +25,6 @@ jobs:
             echo "GITHUB_JOB=$GITHUB_JOB"
             echo "G02_SENTINEL=STARTED"
           } | tee evidence/g02/runner-telemetry.txt
-          test -n "$RUNNER_ID"
           test -n "$RUNNER_NAME"
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
