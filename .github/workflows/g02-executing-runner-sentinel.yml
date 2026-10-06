@@ -7,9 +7,6 @@ on:
   push:
     branches:
       - agent/g02-executing-runner-2026-10-05
-  pull_request:
-    branches:
-      - agent/studio-control-plane-2026-10-05
 
 permissions:
   contents: read
