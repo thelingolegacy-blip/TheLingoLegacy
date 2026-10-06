@@ -1,0 +1,162 @@
+schema_version: "1.1"
+
+workflow:
+  id: "g02-runner-validation"
+  name: "G02 Runner Validation"
+  purpose: "Validate the exact self-hosted runner execution path without establishing G02 by configuration alone."
+
+  runner:
+    name: "lingo-legacy-g02"
+    labels:
+      - "self-hosted"
+      - "linux"
+      - "x64"
+      - "lingo-g02"
+
+  jobs:
+    - id: "allocation"
+      purpose: "Prove GitHub assigned the job to the intended runner."
+      required_evidence:
+        - "runner_id > 0"
+        - "runner_name = lingo-legacy-g02"
+
+    - id: "identity"
+      purpose: "Prove the assigned machine matches the G02 runner contract."
+      required_evidence:
+        - "Linux"
+        - "X64"
+        - "exact runner identity"
+        - "required labels"
+
+    - id: "host-validation"
+      purpose: "Prove the runner can execute commands."
+      required_evidence:
+        - "shell execution"
+        - "filesystem access"
+        - "required environment"
+
+    - id: "dependency-validation"
+      purpose: "Prove required execution dependencies exist."
+      required_evidence:
+        - "bash"
+        - "curl"
+        - "git"
+        - "jq"
+        - "tar"
+        - "zip"
+        - "systemctl"
+
+    - id: "docker-validation"
+      purpose: "Prove Docker execution where required."
+      required_evidence:
+        - "Docker CLI"
+        - "Docker daemon"
+        - "docker run --rm hello-world"
+
+    - id: "sentinel"
+      purpose: "Execute the deterministic G02 sentinel."
+      required_evidence:
+        - "sentinel starts"
+        - "sentinel completes"
+        - "expected result recorded"
+
+    - id: "evidence-capture"
+      purpose: "Produce machine-readable execution evidence."
+      required_evidence:
+        - "run_id"
+        - "job_id"
+        - "runner_id"
+        - "runner_name"
+        - "execution timestamps"
+        - "results"
+
+    - id: "artifact-publication"
+      purpose: "Preserve evidence for independent inspection."
+      required_evidence:
+        - "artifact generated"
+        - "artifact retrievable"
+
+    - id: "independent-verification"
+      purpose: "Verify the complete execution chain outside the executing step."
+      required_evidence:
+        - "run/job/runner correlation"
+        - "instantiated steps"
+        - "retrievable logs"
+        - "artifact correlation"
+
+  qualified_evidence:
+    purpose: "Define when raw execution evidence becomes admissible evidence for G02 acceptance."
+    required_properties:
+      authenticity:
+        required: true
+        rule: "Evidence originates from the actual GitHub run/job/runner execution path."
+      integrity:
+        required: true
+        rule: "Evidence is preserved without unexplained alteration or substitution."
+      completeness:
+        required: true
+        rule: "Required P1-P9 evidence is present; missing required evidence blocks qualification."
+      scope:
+        required: true
+        rule: "Evidence proves the exact lingo-legacy-g02 runner and exact G02 workflow/job."
+      correlation:
+        required: true
+        rule: "run_id, job_id, runner_id, runner_name, steps, logs, and artifacts correlate to the same execution."
+      retrievability:
+        required: true
+        rule: "Evidence can be independently retrieved and inspected."
+      independent_verification:
+        required: true
+        rule: "A verifier other than the executing step validates the evidence chain."
+
+    qualification_rule: >
+      QUALIFIED_EVIDENCE
+      iff
+      AUTHENTIC
+      AND INTEGRITY_VALID
+      AND COMPLETE
+      AND IN_SCOPE
+      AND CORRELATED
+      AND RETRIEVABLE
+      AND INDEPENDENTLY_VERIFIED
+
+    inadmissible:
+      - "configuration-only evidence"
+      - "queued-job evidence without assignment"
+      - "Online/Idle runner status without job execution"
+      - "workflow existence without execution"
+      - "self-asserted pass without external verification"
+      - "unretrievable logs"
+      - "unexplained or substituted artifacts"
+      - "evidence from a different runner"
+      - "evidence from a different run/job"
+      - "incomplete P1-P9 evidence"
+
+  acceptance:
+    predicate:
+      P1: "REAL MATCHING RUNNER"
+      P2: "runner_id > 0"
+      P3: "runner_name populated"
+      P4: "JOB ASSIGNED"
+      P5: "STEPS INSTANTIATED"
+      P6: "SENTINEL EXECUTED"
+      P7: "LOGS GENERATED"
+      P8: "LOGS RETRIEVABLE"
+      P9: "INDEPENDENT VERIFICATION"
+
+    rule: "G02_PASS iff P1 AND P2 AND P3 AND P4 AND P5 AND P6 AND P7 AND P8 AND P9 AND QUALIFIED_EVIDENCE"
+
+  fail_closed:
+    any_false: "BLOCK"
+    any_unknown: "BLOCK"
+    any_unverified: "BLOCK"
+    configuration_is_not_execution: true
+    queue_state_is_not_assignment: true
+    workflow_existence_is_not_execution: true
+    runner_online_idle_is_not_execution: true
+    execution_without_verification_is_not_pass: true
+    unqualified_evidence_is_not_acceptance: true
+
+  state:
+    g02_verified: "NOT_ESTABLISHED_UNLESS_P1_P9_AND_QUALIFIED_EVIDENCE_VERIFIED"
+    production_authority: "NONE"

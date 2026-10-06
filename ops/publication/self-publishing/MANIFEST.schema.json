@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LINGO Self-Publishing Release Manifest",
+  "type": "object",
+  "required": ["work_id", "media_type", "version", "publication_state", "assets"],
+  "properties": {
+    "work_id": {"type": "string", "minLength": 1},
+    "media_type": {"enum": ["book", "game", "music"]},
+    "version": {"type": "string", "minLength": 1},
+    "publication_state": {
+      "enum": ["PUBLICATION-READY", "SUBMITTED", "APPROVED", "LISTED", "COMMERCIALLY-PUBLISHED"]
+    },
+    "channel": {"type": "string"},
+    "platform": {"type": "string"},
+    "submission_reference": {"type": "string"},
+    "submitted_at": {"type": "string"},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^[A-Fa-f0-9]{64}$"}
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

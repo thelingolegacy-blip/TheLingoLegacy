@@ -1,0 +1,93 @@
+name: G02 Runner Dependency Provisioning
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "07 */6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  dependencies:
+    name: Provision and validate runner dependencies
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 15
+
+    env:
+      RUNNER_ID: ${{ runner.id }}
+      RUNNER_NAME: ${{ runner.name }}
+      RUNNER_OS: ${{ runner.os }}
+      RUNNER_ARCH: ${{ runner.arch }}
+      RUNNER_ENVIRONMENT: ${{ runner.environment }}
+    steps:
+      - name: Validate package manager
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v apt-get >/dev/null 2>&1; then
+            echo "PACKAGE_MANAGER=apt"
+          elif command -v dnf >/dev/null 2>&1; then
+            echo "PACKAGE_MANAGER=dnf"
+          elif command -v yum >/dev/null 2>&1; then
+            echo "PACKAGE_MANAGER=yum"
+          else
+            echo "No supported package manager found" >&2
+            exit 1
+          fi
+
+      - name: Validate required commands
+        shell: bash
+        run: |
+          set -euo pipefail
+          for cmd in bash curl git tar gzip sha256sum jq unzip zip systemctl; do
+            command -v "$cmd" >/dev/null || { echo "MISSING_COMMAND=$cmd" >&2; exit 1; }
+            echo "COMMAND_PRESENT=$cmd"
+          done
+
+      - name: Validate Docker CLI and daemon
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v docker >/dev/null
+          docker --version
+          docker info >/dev/null
+          echo "DOCKER_CLI=PASS"
+          echo "DOCKER_DAEMON=PASS"
+
+      - name: Validate Docker execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm hello-world >/tmp/g02-docker-test.log
+          grep -q "Hello from Docker!" /tmp/g02-docker-test.log
+          echo "DOCKER_EXECUTION=PASS"
+
+      - name: Record dependency evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          {
+            echo "G02_DEPENDENCY_EVIDENCE_VERSION=1"
+            echo "RUN_ID=${GITHUB_RUN_ID}"
+            echo "RUNNER_ID=${RUNNER_ID}"
+            echo "RUNNER_NAME=${RUNNER_NAME}"
+            echo "RUNNER_OS=${RUNNER_OS}"
+            echo "RUNNER_ARCH=${RUNNER_ARCH}"
+            echo "BASH=$(bash --version | head -1)"
+            echo "GIT=$(git --version)"
+            echo "CURL=$(curl --version | head -1)"
+            echo "JQ=$(jq --version)"
+            echo "DOCKER=$(docker --version)"
+            echo "DOCKER_INFO=PASS"
+            echo "DOCKER_EXECUTION=PASS"
+            echo "PRODUCTION_AUTHORITY=NONE"
+          } | tee g02-evidence/dependencies.txt
+
+      - name: Upload dependency evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-runner-dependency-evidence-${{ github.run_id }}
+          path: g02-evidence/
+          if-no-files-found: error
