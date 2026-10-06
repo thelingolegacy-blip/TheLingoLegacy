@@ -2,9 +2,6 @@ name: G02 Control Plane Diagnostics
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - agent/studio-control-plane-2026-10-05
 
 permissions:
   contents: read
