@@ -4,6 +4,7 @@ set -euo pipefail
 REPO="thelingolegacy-blip/TheLingoLegacy"
 RUNNER_NAME="lingo-legacy-g02"
 ENV_FILE=".env"
+RUNNER_STARTED=0
 # The runner is registered as ephemeral and should unregister after its one job.
 # Never delete remote runners by name during cleanup: a same-name registration could
 # belong to a different process/operator. If interrupted, inspect the runner inventory
