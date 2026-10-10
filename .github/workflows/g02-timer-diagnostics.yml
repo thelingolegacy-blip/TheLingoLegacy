@@ -31,6 +31,8 @@ jobs:
           report="g02-timer-evidence/g02-timer-diagnostics.txt"
           jobs_json="g02-timer-evidence/latest-jobs.json"
           runs_json="g02-timer-evidence/latest-runs.json"
+          printf '{"workflow_runs":[]}\n' > "$runs_json"
+          printf '{"jobs":[]}\n' > "$jobs_json"
           {
             echo "G02_TIMER_DIAGNOSTICS_VERSION=1"
             echo "CAPTURED_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -41,9 +43,7 @@ jobs:
           if ! gh api "repos/$GH_REPO/actions/workflows/g02-qualified-evidence-probe.yml/runs?per_page=10" > "$runs_json"; then
             echo "G02_DIAGNOSTIC_RESULT=API_QUERY_FAILED" >> "$report"
             echo "G02_ACCEPTANCE=BLOCKED" >> "$report"
-            exit 0
-          fi
-
+          else
           run_id="$(jq -r '[.workflow_runs[]?] | sort_by(.created_at) | last | .id // empty' "$runs_json")"
           if [ -z "$run_id" ]; then
             echo "G02_DIAGNOSTIC_RESULT=NO_QUALIFIED_PROBE_RUN_FOUND" >> "$report"
@@ -73,6 +73,7 @@ jobs:
               echo "G02_DIAGNOSTIC_RESULT=JOB_QUERY_FAILED" >> "$report"
               echo "G02_ACCEPTANCE=BLOCKED" >> "$report"
             fi
+          fi
           fi
 
           (cd g02-timer-evidence && sha256sum *.json *.txt > SHA256SUMS)
