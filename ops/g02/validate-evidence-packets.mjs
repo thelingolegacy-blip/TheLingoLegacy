@@ -70,6 +70,7 @@ if (!Number.isInteger(B.runner_id) || B.runner_id <= 0) fail("Packet B runner ID
 if (A.runner.runner_id !== B.runner_id) fail("Runner IDs do not match across packets.");
 if (typeof B.commit_sha !== "string" || !/^[a-f0-9]{40}$/i.test(B.commit_sha)) fail("Invalid commit SHA.");
 if (B.job_status !== "completed") fail("Sentinel job is not completed.");
+if (B.job_assigned !== true) fail("Job assignment is not explicitly verified.");
 if (B.job_steps_instantiated !== true) fail("Job steps were not independently confirmed as instantiated.");
 if (B.sentinel_exit_code !== 0) fail("Sentinel exit code is not zero.");
 if (B.raw_logs?.retrievable !== true || !isSha256(B.raw_logs?.sha256)) fail("Raw logs are missing, unavailable, or unhashed.");
@@ -79,12 +80,13 @@ if (A.redaction_reviewed !== true || B.redaction_reviewed !== true) fail("Redact
 if (!isUtc(A.collected_at_utc) || !isUtc(B.started_at_utc) || !isUtc(B.completed_at_utc)) fail("Timestamps must be explicit UTC timestamps.");
 if (Date.parse(B.completed_at_utc) < Date.parse(B.started_at_utc)) fail("Completion timestamp precedes start timestamp.");
 if (!isSha256(A.manifest_sha256) || !isSha256(B.manifest_sha256)) fail("Packet manifest SHA-256 is missing or invalid.");
+if (A.manifest_sha256 === B.manifest_sha256) fail("Packet A and Packet B must have distinct manifest hashes.");
 
 const predicates = {
   P1_real_matching_runner: A.runner.registration_state === "verified" && A.runner.observed_name === B.runner_name,
   P2_runner_id_gt_zero: Number.isInteger(B.runner_id) && B.runner_id > 0,
   P3_expected_runner_name: B.runner_name === "lingo-legacy-g02",
-  P4_job_assigned: B.job_status === "completed" && B.runner_id > 0,
+  P4_job_assigned: B.job_assigned === true && B.job_status === "completed" && B.runner_id > 0,
   P5_steps_instantiated: B.job_steps_instantiated === true,
   P6_sentinel_exit_zero: B.sentinel_exit_code === 0,
   P7_raw_logs_generated: B.raw_logs?.retrievable === true && isSha256(B.raw_logs?.sha256),
