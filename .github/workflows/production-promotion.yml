@@ -175,11 +175,15 @@ jobs:
           const cfg = JSON.parse(fs.readFileSync('wrangler.staging.jsonc', 'utf8'));
           const u = new URL(process.env.STAGING_BASE_URL);
           const errors = [];
-          if (!/^thelingolegacy-staging(?:-|$)/.test(cfg.name || '')) errors.push('Worker name must use thelingolegacy-staging prefix');
+          if (cfg.name !== 'thelingolegacy-staging') errors.push('Staging Worker name must be exactly thelingolegacy-staging');
           if (Array.isArray(cfg.routes) && cfg.routes.length) errors.push('Staging config must not declare custom routes');
           if (cfg.workers_dev !== true) errors.push('Staging config must explicitly enable workers.dev for isolated testing');
           if (u.protocol !== 'https:' || !u.hostname.endsWith('.workers.dev')) errors.push('STAGING_BASE_URL must be an HTTPS workers.dev hostname');
+          if (u.hostname.split('.')[0] !== cfg.name) errors.push('STAGING_BASE_URL hostname must begin with the exact staging Worker name');
           if (['thelingolegacy.com', 'www.thelingolegacy.com'].includes(u.hostname)) errors.push('STAGING_BASE_URL must not be a production hostname');
+          if (cfg.vars?.CANONICAL_DOMAIN !== u.hostname) errors.push('CANONICAL_DOMAIN must match the staging hostname');
+          if (cfg.vars?.PUBLIC_SITE_URL !== u.origin) errors.push('PUBLIC_SITE_URL must match the staging origin');
+          if (cfg.vars?.LINGO_ENVIRONMENT !== 'staging') errors.push('LINGO_ENVIRONMENT must equal staging');
           if (errors.length) { console.error('STAGING_DEPLOYMENT=BLOCKED'); for (const e of errors) console.error(e); process.exit(1); }
           console.log('STAGING_TARGET=ISOLATED');
           console.log('STAGING_WORKER=' + cfg.name);
