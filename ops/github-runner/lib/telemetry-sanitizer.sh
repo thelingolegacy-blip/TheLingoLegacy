@@ -2,8 +2,6 @@
 # Shared line-oriented sanitizer for telemetry streams.
 # Usage: source this file; sanitize_telemetry < input.txt > sanitized.txt
 # Preserves ordinary telemetry while redacting common credential forms.
-set -euo pipefail
-
 sanitize_telemetry() {
   sed -E \
     -e 's/(Authorization:[[:space:]]*Bearer[[:space:]]+)[^[:space:]]+/\1[REDACTED]/Ig' \
