@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lingo-recovery-sandbox-2026-10-10",
+  "main": "infra/recovery/sandbox-worker.js",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "RECOVERY_SANDBOX": "true",
+    "PRODUCTION_PROMOTION": "disabled"
+  }
+}
