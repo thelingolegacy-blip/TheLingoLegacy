@@ -4,7 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - ops/g02-infrastructure-bridge-2026-10-10
+      - ops/g02-infrastructure-bridge-target-2026-10-10
+
+# Bound duplicate bridge runs to one active run per ref. A newer run cancels
+# an older in-progress run for this same workflow/ref; it cannot cancel jobs
+# from other workflows or force-assign a runner.
+concurrency:
+  group: g02-infrastructure-bridge-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -133,8 +140,8 @@ jobs:
               commit_sha:$commit_sha,
               runner:{id:$runner_id,name:$runner_name,os:$runner_os,
               architecture:$runner_arch,environment:$runner_environment},
-              jobs_api_curl_exit_status:$api_exit_status,
-              correlated_job_record_exit_status:$job_record_exit_status,
+              jobs_api_curl_exit_status:$api_status,
+              correlated_job_record_exit_status:$job_record_status,
               captured_at_utc:$captured_at_utc,
               acceptance:"PENDING independent verification"}' \
             > bridge-evidence/self-hosted/manifest.json
