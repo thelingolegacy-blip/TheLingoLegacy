@@ -35,6 +35,8 @@ jobs:
         run: |
           set -euo pipefail
           test -s infra/recovery/route-framework.yaml
+          test -s wrangler.recovery.jsonc
+          test -s infra/recovery/sandbox-worker.js
           test -s wrangler.jsonc
           test -s worker.js
           test -s firebase.json
@@ -44,18 +46,22 @@ jobs:
           ruby -rjson -e 'JSON.parse(File.read("firebase.json")); JSON.parse(File.read("firebase.client.json")); puts "FIREBASE_JSON_SYNTAX=PASS"'
           echo "SOURCE_SHA=${GITHUB_SHA}"
 
-      - name: Report Firebase and Flutter readiness without secrets
-        id: readiness
+      - name: Validate Firebase Hosting output and report client readiness
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
           const fs = require('fs');
+          const hosting = JSON.parse(fs.readFileSync('firebase.json', 'utf8')).hosting;
           const c = JSON.parse(fs.readFileSync('firebase.client.json', 'utf8'));
+          if (hosting.public !== 'build/web') {
+            throw new Error('Firebase Hosting must serve only build/web; found: ' + hosting.public);
+          }
+          console.log('FIREBASE_HOSTING_PUBLIC_DIR=build/web');
           const placeholders = ['YOUR_FIREBASE_API_KEY', 'YOUR_MESSAGING_SENDER_ID', 'YOUR_APP_ID'];
-          const missing = placeholders.filter(k => Object.values(c).includes(k));
+          const hasPlaceholder = placeholders.some(k => Object.values(c).includes(k));
           console.log('FIREBASE_PROJECT_ID=' + (c.projectId || 'MISSING'));
-          console.log('FIREBASE_CLIENT_VALUES=' + (missing.length ? 'BLOCKED_PLACEHOLDERS_PRESENT' : 'NO_KNOWN_PLACEHOLDERS'));
+          console.log('FIREBASE_CLIENT_VALUES=' + (hasPlaceholder ? 'BLOCKED_PLACEHOLDERS_PRESENT' : 'NO_KNOWN_PLACEHOLDERS'));
           console.log('FLUTTER_MANIFEST=' + (fs.existsSync('pubspec.yaml') ? 'PRESENT' : 'MISSING'));
           console.log('BACKEND_AUTHZ_REVIEW=REQUIRED');
           NODE
@@ -77,7 +83,15 @@ jobs:
             if (!s.includes(route)) throw new Error('Expected production route missing: ' + route);
           }
           if (!s.includes('"name": "thelingolegacyv-5"')) throw new Error('Unexpected production Worker name');
-          console.log('PRODUCTION_ROUTE_INVENTORY=PASS');
+          const recovery = JSON.parse(fs.readFileSync('wrangler.recovery.jsonc', 'utf8'));
+          if (recovery.name !== 'lingo-recovery-sandbox-2026-10-10' || recovery.workers_dev !== true) {
+            throw new Error('Recovery config does not target the isolated workers.dev sandbox');
+          }
+          if (recovery.routes || recovery.d1_databases || recovery.kv_namespaces) {
+            throw new Error('Recovery config must not define production routes or data bindings');
+          }
+          console.log('PRODUCTION_ROUTE_GUARDRAILS=PASS');
+          console.log('RECOVERY_SANDBOX_ISOLATION=PASS');
           console.log('PRODUCTION_MUTATION=NOT_REQUESTED');
           NODE
 
