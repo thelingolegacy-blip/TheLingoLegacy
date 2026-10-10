@@ -81,5 +81,6 @@
     "Host collector is committed but has not been executed on the actual Linux host.",
     "Host capture alone cannot establish GitHub job assignment or G02 acceptance.",
     "Latest connector observations show runs 38077915045 and 38077908781 failed with steps null, logs_url null, and empty artifact lists."
-  ]
+  ],
+  "final_review": "FINAL-REVIEW.md"
 }
