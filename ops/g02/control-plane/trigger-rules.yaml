@@ -1,0 +1,74 @@
+schema: lingo.g02.trigger-rules.v1
+status: specification-only
+default_decision: DENY
+
+runner_identity:
+  name: lingo-legacy-g02
+  required_labels: [self-hosted, linux, x64, lingo-g02]
+  repository: thelingolegacy-blip/TheLingoLegacy
+  production_credentials_allowed: false
+
+triggers:
+  sentinel:
+    mode: manual_only
+    github_event: workflow_dispatch
+    push: false
+    pull_request: false
+    schedule: false
+    repository_dispatch: false
+    allowed_ref: refs/heads/main
+    requires:
+      - authorized_operator
+      - approved_change_review
+      - runner_inventory_verified
+      - host_preflight_pass
+    effect: run_read_only_sentinel_only
+  diagnostic:
+    mode: manual_only
+    allowed_operations:
+      - host_identity
+      - runner_process_inventory
+      - service_status_read
+      - runner_labels_read
+      - log_inventory_read
+    prohibited_operations:
+      - print_secrets
+      - create_or_delete_runner
+      - rotate_or_revoke_credentials_automatically
+      - restart_services_without_operator_review
+      - mutate_dns_or_worker_routes
+      - deploy_or_activate_production
+  evidence_capture:
+    requires:
+      - positive_runner_id
+      - populated_runner_name
+      - instantiated_steps
+      - successful_sentinel_exit
+      - retrievable_logs
+      - artifact_hash_manifest
+      - candidate_sha_correlation
+    missing_requirement_action: BLOCK
+  promotion:
+    allowed: false
+    requires_separate_release_authorization: true
+    production_mutation_freeze: ACTIVE
+    last_known_good: PROTECTED
+
+concurrency:
+  group: lingo-g02-runner-sentinel
+  cancel_in_progress: false
+
+secrets_policy:
+  registration_token: host_only_short_lived_never_logged
+  production_secrets: forbidden
+  artifact_redaction: required
+
+trigger_acceptance:
+  require_real_workflow_run: true
+  require_job_runner_id_gt_zero: true
+  require_runner_name: lingo-legacy-g02
+  require_nonempty_steps: true
+  require_retrievable_logs: true
+  require_artifact: true
+  require_independent_review: true
+  synthetic_or_local_evidence_counts: false
