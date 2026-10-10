@@ -1,0 +1,96 @@
+name: LINGO Recovery Foundation Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      checkpoint:
+        description: "Diagnostic checkpoint to record (does not activate production)"
+        required: true
+        type: choice
+        options:
+          - source-and-policy
+          - runner-evidence
+          - public-reachability
+      operator_ack:
+        description: "Type ISOLATED_RECOVERY_ONLY"
+        required: true
+        type: string
+  pull_request:
+    branches: [main]
+    paths:
+      - "ops/recovery/**"
+      - ".github/workflows/recovery-foundation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-recovery-foundation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  foundation-validation:
+    name: Static foundation and fail-closed gate tests
+    if: github.event_name != 'workflow_dispatch' || inputs.operator_ack == 'ISOLATED_RECOVERY_ONLY'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Record source and execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovery-evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "checkpoint=${{ inputs.checkpoint }}"
+            echo "timestamp_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee recovery-evidence/execution-context.txt
+
+      - name: Validate JSON manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in [Path("ops/recovery/evidence-template.json"), Path("ops/recovery/quarantine-manifest.json")]:
+              json.loads(path.read_text(encoding="utf-8"))
+              print(f"JSON_VALID={path}")
+          PY
+
+      - name: Run fail-closed gate unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile ops/recovery/checkpoint_gate.py
+          python -m unittest discover -s ops/recovery/tests -v 2>&1 | tee recovery-evidence/unit-tests.txt
+
+      - name: Verify incomplete template stays blocked
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python ops/recovery/checkpoint_gate.py --evidence ops/recovery/evidence-template.json --expected-sha "${GITHUB_SHA}" > recovery-evidence/template-gate.txt 2>&1
+          rc=$?
+          set -e
+          cat recovery-evidence/template-gate.txt
+          test "$rc" -eq 1
+          grep -q '^RESULT=BLOCKED$' recovery-evidence/template-gate.txt
+          echo "FAIL_CLOSED_TEMPLATE=PASS" | tee -a recovery-evidence/execution-context.txt
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-recovery-foundation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: recovery-evidence/
+          if-no-files-found: warn
+          retention-days: 14
