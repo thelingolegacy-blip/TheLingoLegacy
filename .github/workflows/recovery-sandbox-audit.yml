@@ -1,0 +1,96 @@
+name: Recovery Sandbox Audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/recovery/**"
+      - "firebase.client.json"
+      - "firebase.json"
+      - "pubspec.yaml"
+      - "worker.js"
+      - "wrangler.jsonc"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: recovery-sandbox-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Read-only stack and route audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout pinned source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate route framework and config syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s infra/recovery/route-framework.yaml
+          test -s wrangler.jsonc
+          test -s worker.js
+          test -s firebase.json
+          test -s firebase.client.json
+          test -s pubspec.yaml
+          ruby -e 'require "yaml"; YAML.load_file("infra/recovery/route-framework.yaml", aliases: false); puts "ROUTE_FRAMEWORK_YAML=PASS"'
+          ruby -rjson -e 'JSON.parse(File.read("firebase.json")); JSON.parse(File.read("firebase.client.json")); puts "FIREBASE_JSON_SYNTAX=PASS"'
+          echo "SOURCE_SHA=${GITHUB_SHA}"
+
+      - name: Report Firebase and Flutter readiness without secrets
+        id: readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const c = JSON.parse(fs.readFileSync('firebase.client.json', 'utf8'));
+          const placeholders = ['YOUR_FIREBASE_API_KEY', 'YOUR_MESSAGING_SENDER_ID', 'YOUR_APP_ID'];
+          const missing = placeholders.filter(k => Object.values(c).includes(k));
+          console.log('FIREBASE_PROJECT_ID=' + (c.projectId || 'MISSING'));
+          console.log('FIREBASE_CLIENT_VALUES=' + (missing.length ? 'BLOCKED_PLACEHOLDERS_PRESENT' : 'NO_KNOWN_PLACEHOLDERS'));
+          console.log('FLUTTER_MANIFEST=' + (fs.existsSync('pubspec.yaml') ? 'PRESENT' : 'MISSING'));
+          console.log('BACKEND_AUTHZ_REVIEW=REQUIRED');
+          NODE
+          if command -v flutter >/dev/null 2>&1; then
+            flutter --version
+            echo "FLUTTER_TOOLCHAIN=AVAILABLE"
+          else
+            echo "FLUTTER_TOOLCHAIN=NOT_INSTALLED_ON_AUDIT_RUNNER"
+          fi
+
+      - name: Check production route guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const s = fs.readFileSync('wrangler.jsonc', 'utf8');
+          for (const route of ['thelingolegacy.com/*', 'www.thelingolegacy.com/*']) {
+            if (!s.includes(route)) throw new Error('Expected production route missing: ' + route);
+          }
+          if (!s.includes('"name": "thelingolegacyv-5"')) throw new Error('Unexpected production Worker name');
+          console.log('PRODUCTION_ROUTE_INVENTORY=PASS');
+          console.log('PRODUCTION_MUTATION=NOT_REQUESTED');
+          NODE
+
+      - name: Publish sanitized audit summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Recovery sandbox audit"
+            echo "- Source SHA: `$GITHUB_SHA`"
+            echo "- Mode: read-only / fail-closed"
+            echo "- No production deploy, DNS mutation, Access-policy change, or cache purge was run."
+            echo "- Firebase values must be checked in Firebase Console; this job never prints credentials."
+            echo "- Flutter compilation requires an approved runner with Flutter SDK installed."
+            echo "- D1-backed API authorization review remains a release gate."
+          } >> "$GITHUB_STEP_SUMMARY"
