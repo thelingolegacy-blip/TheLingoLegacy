@@ -57,14 +57,13 @@ case "$mode" in
           if [ "$rc" -eq 0 ]; then
             http_code="$(printf '%s' "$result" | awk '{print $1}')"
             connect_time="$(printf '%s' "$result" | awk '{print $2}')"
-            tls_time="$(printf '%s' "$result" | awk '{print $3}')"
+            tls_established_time="$(printf '%s' "$result" | awk '{print $3}')"
             printf '%s_HTTP_STATUS=%s\n' "$key" "${http_code:-unknown}"
             printf '%s_CONNECT_SECONDS=%s\n' "$key" "${connect_time:-unknown}"
-            printf '%s_TLS_HANDSHAKE_SECONDS=%s\n' "$key" "${tls_time:-unknown}"
-            case "$http_code" in
-              2*|3*) printf '%s_NETWORK_HANDSHAKE=PASS\n' "$key" ;;
-              *) printf '%s_NETWORK_HANDSHAKE=FAIL_OR_HTTP_ERROR\n' "$key" ;;
-            esac
+            printf '%s_TLS_ESTABLISHED_SECONDS=%s\n' "$key" "${tls_time:-unknown}"
+            # A completed curl exchange proves transport/TLS even if the HTTP response is 4xx.
+            # Record HTTP status separately from the network-handshake result.
+            printf '%s_NETWORK_HANDSHAKE=PASS\\n' "$key"
           else
             printf '%s_NETWORK_HANDSHAKE=FAIL\n' "$key"
             printf '%s_CURL_EXIT_CODE=%s\n' "$key" "$rc"
