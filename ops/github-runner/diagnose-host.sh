@@ -24,20 +24,25 @@ trap 'rm -f -- "$tmp"' EXIT
 mkdir -p -- "$(dirname -- "$out")" || exit 1
 
 emit_resolution() {
-  local host="$1" key="$2" count=0 rc=0
-  if command -v getent >/dev/null 2>&1; then
-    getent ahosts "$host" >/dev/null 2>&1
-    rc=$?
-    if [[ "$rc" -eq 0 ]]; then
-      count="$(getent ahosts "$host" 2>/dev/null | awk '!seen[$1]++ {n++} END {print n+0}')"
-      printf '%s_DNS=PASS\n' "$key"
-      printf '%s_DNS_ADDRESS_COUNT=%s\n' "$key" "$count"
-    else
-      printf '%s_DNS=FAIL\n' "$key"
-      printf '%s_DNS_EXIT_CODE=%s\n' "$key" "$rc"
-    fi
-  else
+  local host="$1" key="$2" count=0 rc=0 addresses=""
+  if ! command -v getent >/dev/null 2>&1; then
     printf '%s_DNS=UNAVAILABLE_GETENT_MISSING\n' "$key"
+    return
+  fi
+  if command -v timeout >/dev/null 2>&1; then
+    addresses="$(timeout 8s getent ahosts "$host" 2>/dev/null)"
+    rc=$?
+  else
+    addresses="$(getent ahosts "$host" 2>/dev/null)"
+    rc=$?
+  fi
+  if [[ "$rc" -eq 0 ]]; then
+    count="$(printf '%s\n' "$addresses" | awk 'NF && !seen[$1]++ {n++} END {print n+0}')"
+    printf '%s_DNS=PASS\n' "$key"
+    printf '%s_DNS_ADDRESS_COUNT=%s\n' "$key" "$count"
+  else
+    printf '%s_DNS=FAIL\n' "$key"
+    printf '%s_DNS_EXIT_CODE=%s\n' "$key" "$rc"
   fi
 }
 
@@ -88,9 +93,15 @@ emit_https() {
 
   printf 'RUNNER_SERVICE_UNITS_BEGIN\n'
   if command -v systemctl >/dev/null 2>&1; then
-    systemctl list-units --type=service --all --no-legend 2>/dev/null |
-      awk 'tolower($0) ~ /actions\.runner|github\.runner/ {print $1, $3, $4}' |
-      head -n 20
+    if command -v timeout >/dev/null 2>&1; then
+      timeout 8s systemctl list-units --type=service --all --no-legend 2>/dev/null |
+        awk 'tolower($0) ~ /actions\.runner|github\.runner/ {print $1, $3, $4}' |
+        head -n 20
+    else
+      systemctl list-units --type=service --all --no-legend 2>/dev/null |
+        awk 'tolower($0) ~ /actions\.runner|github\.runner/ {print $1, $3, $4}' |
+        head -n 20
+    fi
     printf 'RUNNER_SERVICE_UNITS_END\n'
   else
     printf 'SYSTEMCTL=UNAVAILABLE\nRUNNER_SERVICE_UNITS_END\n'
@@ -104,11 +115,22 @@ emit_https() {
 
   if command -v docker >/dev/null 2>&1; then
     printf 'DOCKER_ENGINE=AVAILABLE\n'
-    if docker info >/dev/null 2>&1; then
+    if command -v timeout >/dev/null 2>&1; then
+      timeout 8s docker info >/dev/null 2>&1
+    else
+      docker info >/dev/null 2>&1
+    fi
+    docker_info_rc=$?
+    if [[ "$docker_info_rc" -eq 0 ]]; then
       printf 'DOCKER_DAEMON=PASS\n'
       printf 'RUNNER_CONTAINERS_BEGIN\n'
-      docker ps -a --format '{{.Names}}|{{.Status}}|{{.Image}}' 2>/dev/null |
-        awk 'tolower($0) ~ /runner|github.actions/ {print}' | head -n 20
+      if command -v timeout >/dev/null 2>&1; then
+        timeout 8s docker ps -a --format '{{.Names}}|{{.Status}}|{{.Image}}' 2>/dev/null |
+          awk 'tolower($0) ~ /runner|github.actions/ {print}' | head -n 20
+      else
+        docker ps -a --format '{{.Names}}|{{.Status}}|{{.Image}}' 2>/dev/null |
+          awk 'tolower($0) ~ /runner|github.actions/ {print}' | head -n 20
+      fi
       printf 'RUNNER_CONTAINERS_END\n'
     else
       printf 'DOCKER_DAEMON=FAIL_OR_PERMISSION_DENIED\n'
