@@ -80,8 +80,8 @@ function fixture(t) {
     packet_type: "LINGO_G02_G12_GATE_ACCEPTANCE",
     status: "EVIDENCE_COLLECTED",
     candidate: { repository: "thelingolegacy-blip/TheLingoLegacy", commit_sha: commit, environment: "non-production" },
-    generated_at_utc: "2026-10-10T21:00:00Z",
-    independent_verifier: { identity: "independent-reviewer", reviewed_at_utc: "2026-10-10T21:10:00Z" },
+    generated_at_utc: "2026-10-10T21:15:00Z",
+    independent_verifier: { identity: "independent-reviewer", reviewed_at_utc: "2026-10-10T21:20:00Z" },
     gates: {},
     promotion: { authorized: false, authorization_reference: null, production_mutation_performed: false }
   };
@@ -175,6 +175,23 @@ test("invalid UTC timestamp fails closed", t => {
   assert.equal(r.status, 2);
   assert.match(r.stderr, /malformed evidence record/i);
 });
+test("evidence verified after packet generation fails closed", t => {
+  const f = fixture(t);
+  f.packet.gates.G02.evidence[0].verified_at_utc = "2026-10-10T21:16:00Z";
+  fs.writeFileSync(f.packetPath, JSON.stringify(f.packet));
+  const r = run(f.packetPath);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /evidence verification timestamp is after packet generation/i);
+});
+test("independent review before packet generation fails closed", t => {
+  const f = fixture(t);
+  f.packet.independent_verifier.reviewed_at_utc = "2026-10-10T21:10:00Z";
+  fs.writeFileSync(f.packetPath, JSON.stringify(f.packet));
+  const r = run(f.packetPath);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /Independent review timestamp precedes gate packet generation/i);
+});
+
 test("production mutation claims are rejected", t => {
   const f = fixture(t);
   f.packet.promotion.production_mutation_performed = true;
