@@ -1,0 +1,92 @@
+schemaVersion: 1
+framework: lingo-recovery-route-framework
+createdAt: "2026-10-10"
+mode: isolated-sandbox
+governance:
+  failClosed: true
+  productionMutation: false
+  dnsMutation: false
+  accessPolicyMutation: false
+  cachePurge: false
+  deploymentPromotion: false
+  requireEvidenceBeforePromotion: true
+source:
+  repository: thelingolegacy-blip/TheLingoLegacy
+  baseBranch: main
+  implementationBranch: infra/recovery-route-framework-2026-10-10
+  productionWorker: thelingolegacy
+  workerConfig: wrangler.jsonc
+  workerEntrypoint: worker.js
+routes:
+  production:
+    apex:
+      pattern: "thelingolegacy.com/*"
+      target: thelingolegacy
+      changeAllowed: false
+    www:
+      pattern: "www.thelingolegacy.com/*"
+      target: thelingolegacy
+      changeAllowed: false
+  sandbox:
+    hostnameType: workers.dev
+    customDomain: false
+    productionRoute: false
+    d1Bindings: false
+    kvBindings: false
+    secrets: false
+    purpose:
+      - health-check
+      - frontend-origin-smoke-test
+      - release-evidence
+deployment:
+  primaryAlternative: cloudflare-workers-builds
+  previewOnly: true
+  promoteOnPush: false
+  requiredChecks:
+    - source-revision-pinned
+    - build-success
+    - healthz-response
+    - frontend-origin-check
+    - firebase-config-placeholder-check
+    - flutter-toolchain-check
+    - backend-authz-review
+    - evidence-correlated-to-commit
+  prohibited:
+    - production-dns-change
+    - production-worker-route-change
+    - unverified-d1-binding
+    - public-cache-purge
+    - unauthenticated-database-api
+cache:
+  policy:
+    html: "no-cache, must-revalidate"
+    hashedAssets: "public, max-age=31536000, immutable"
+    api: "no-store"
+  cleanup:
+    mode: audit-first
+    allowed:
+      - report-stale-local-build-output
+      - remove-ephemeral-runner-temp-files
+    prohibited:
+      - purge-cloudflare-production-cache
+      - delete-kv-or-r2-data
+      - clear-production-database
+firebase:
+  projectIdFromRepository: lingo-legacy-production
+  configFile: firebase.client.json
+  status: blocked-until-real-client-values-and-project-access-verified
+  deployAllowed: false
+flutter:
+  manifest: pubspec.yaml
+  buildCommand: flutter build web --release
+  status: not-run-no-connected-build-host
+  deployAllowed: false
+backend:
+  productionWorker: thelingolegacy
+  separateD1BoundWorkerReviewRequired: nextjs-lingolegacy
+  status: security-review-required-before-any-route-promotion
+acceptance:
+  requireActualRuntimeProbe: true
+  requireRetrievableLogs: true
+  requireExactCommitCorrelation: true
+  requireIndependentVerification: true
