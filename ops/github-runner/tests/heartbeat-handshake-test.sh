@@ -21,5 +21,19 @@ if bash "$SCRIPT" verify "$tmp/heartbeat.txt" "$tmp/heartbeat.txt.sha256" >/dev/
   exit 1
 fi
 
+# A completed TLS/HTTP exchange is a network handshake even when the server
+# responds with 403; HTTP status and transport success must remain distinct.
+mkdir -p "$tmp/fakebin"
+cat > "$tmp/fakebin/curl" <<'FAKECURL'
+#!/usr/bin/env bash
+printf '403 0.001 0.002\\n'
+FAKECURL
+chmod 700 "$tmp/fakebin/curl"
+PATH="$tmp/fakebin:$PATH" bash "$SCRIPT" capture "$tmp/http-403.txt" >/dev/null
+grep -q '^API_GITHUB_COM_HTTP_STATUS=403 "$tmp/http-403.txt"
+grep -q '^API_GITHUB_COM_NETWORK_HANDSHAKE=PASS "$tmp/http-403.txt"
+grep -q '^GITHUB_COM_HTTP_STATUS=403 "$tmp/http-403.txt"
+grep -q '^GITHUB_COM_NETWORK_HANDSHAKE=PASS "$tmp/http-403.txt"
+
 echo "G02_HEARTBEAT_HANDSHAKE_TEST=PASS"
 echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
