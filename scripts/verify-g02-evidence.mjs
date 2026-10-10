@@ -61,7 +61,11 @@ if (job) {
   else pass('runner assignment has a real runner ID');
   if (job.runner_name !== 'lingo-legacy-g02') fail('P4: runner_name must equal lingo-legacy-g02');
   else pass('runner name matches lingo-legacy-g02');
-  if (job.runner_os !== 'Linux' || job.runner_arch !== 'X64') fail('runner OS/architecture must be Linux/X64');
+  const labels = Array.isArray(job.labels) ? job.labels.map((label) => String(label).toLowerCase()) : [];
+  for (const label of ['self-hosted','linux','x64','lingo-g02']) {
+    if (!labels.includes(label)) fail(`job labels missing required label: ${label}`);
+  }
+  if (job.status !== 'completed' || job.conclusion !== 'success') fail('sentinel job must be completed with conclusion=success');
   if (job.status !== 'completed' || job.conclusion !== 'success') fail('sentinel job must be completed with conclusion=success');
 }
 if (run && job) {
@@ -80,6 +84,8 @@ if (logs) {
   if (!text.trim()) fail('P6: retrieved job logs are blank');
   else if (!text.includes('RUNNER_EXECUTION_SENTINEL=PASS')) fail('retrieved logs do not contain RUNNER_EXECUTION_SENTINEL=PASS');
   else pass('retrieved logs contain execution sentinel');
+  if (!text.includes('runner_os=Linux') || !text.includes('runner_arch=X64')) fail('logs must include Linux/X64 runner telemetry');
+  if (!text.includes('runner_environment=self-hosted')) fail('logs must include self-hosted runner environment telemetry');
   if (text.includes('G02_FORENSIC_EXIT_STATUS=0')) pass('logs contain zero-exit forensic marker');
   else fail('logs must contain G02_FORENSIC_EXIT_STATUS=0');
 }
