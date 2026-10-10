@@ -108,7 +108,7 @@ jobs:
             -o bridge-evidence/self-hosted/jobs-api.json || api_status=$?
           job_record_status=1
           if [ "$api_status" -eq 0 ]; then
-            jq -ce --arg name "$GITHUB_JOB" --argjson attempt "$RUN_ATTEMPT" \
+            jq -ce --arg name "g02-self-hosted-sentinel" --argjson attempt "$RUN_ATTEMPT" \
               '[.jobs[] | select(.name == $name and .run_attempt == $attempt)] |
                if length == 1 then .[0] else error("expected exactly one matching job") end' \
               bridge-evidence/self-hosted/jobs-api.json \
