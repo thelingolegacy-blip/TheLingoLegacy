@@ -97,20 +97,15 @@ case "$mode" in
       usage >&2
       exit 2
     fi
-    if (cd "$(dirname "$hash_file")" && sha256sum --check --status "$(basename "$hash_file")"); then
-      computed="$(sha256sum "$report" | awk '{print $1}')"
-      expected="$(awk 'NR==1 {print $1}' "$hash_file")"
-      if [ "$computed" = "$expected" ]; then
-        echo 'HASH_VERIFICATION=PASS'
-        echo "SHA256=$computed"
-      else
-        echo 'HASH_VERIFICATION=FAIL_MISMATCH'
-        echo "EXPECTED_SHA256=$expected"
-        echo "COMPUTED_SHA256=$computed"
-        exit 1
-      fi
+    computed="$(sha256sum "$report" | awk '{print $1}')"
+    expected="$(awk 'NR==1 {print $1}' "$hash_file")"
+    if [[ "$expected" =~ ^[[:xdigit:]]{64}$ ]] && [ "$computed" = "$expected" ]; then
+      echo 'HASH_VERIFICATION=PASS'
+      echo "SHA256=$computed"
     else
-      echo 'HASH_VERIFICATION=FAIL_CHECKSUM'
+      echo 'HASH_VERIFICATION=FAIL_MISMATCH'
+      echo "EXPECTED_SHA256=$expected"
+      echo "COMPUTED_SHA256=$computed"
       exit 1
     fi
     ;;
