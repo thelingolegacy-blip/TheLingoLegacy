@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "packet_root": "evidence/qualified-packets/2026-10-10",
+  "created_date": "2026-10-10",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "branch": "infra/g02-runner-agents-diagnostics-2026-10-10",
+  "governance": {
+    "mode": "FAIL_CLOSED",
+    "production_mutation_freeze": "ACTIVE",
+    "last_known_good": "PROTECTED",
+    "deployment_authorized": false
+  },
+  "gates": [
+    {
+      "id": "G00",
+      "status": "RECORDED_PASS_NOT_REVERIFIED",
+      "path": "G00/packet.json"
+    },
+    {
+      "id": "G01",
+      "status": "RECORDED_PASS_NOT_REVERIFIED",
+      "path": "G01/packet.json"
+    },
+    {
+      "id": "G02",
+      "status": "FAIL",
+      "path": "G02/packet.json"
+    },
+    {
+      "id": "G03",
+      "status": "BLOCKED",
+      "path": "G03/packet.json"
+    },
+    {
+      "id": "G04",
+      "status": "BLOCKED",
+      "path": "G04/packet.json"
+    },
+    {
+      "id": "G05",
+      "status": "BLOCKED",
+      "path": "G05/packet.json"
+    },
+    {
+      "id": "G06",
+      "status": "BLOCKED",
+      "path": "G06/packet.json"
+    },
+    {
+      "id": "G07",
+      "status": "BLOCKED",
+      "path": "G07/packet.json"
+    },
+    {
+      "id": "G08",
+      "status": "BLOCKED",
+      "path": "G08/packet.json"
+    },
+    {
+      "id": "G09",
+      "status": "BLOCKED",
+      "path": "G09/packet.json"
+    },
+    {
+      "id": "G10",
+      "status": "BLOCKED",
+      "path": "G10/packet.json"
+    },
+    {
+      "id": "G11",
+      "status": "BLOCKED",
+      "path": "G11/packet.json"
+    }
+  ],
+  "observations": "observations/github-actions-runs-2026-10-10.json",
+  "qualification_rules": "QUALIFICATION-RULES.md",
+  "note": "Repository-resident packet files are real artifacts; their existence does not imply that underlying gates passed. G00/G01 dispositions are historical only; G02 is supported by partial connector metadata; all other packets await qualified evidence."
+}
