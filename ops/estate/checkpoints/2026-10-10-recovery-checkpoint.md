@@ -47,3 +47,10 @@ Interpretation: the job failed before step initialization. The workflow commands
 
 ## Credential handling
 No PAT, runner registration token, API token, or private key was created by this checkpoint. Registration tokens must be short-lived and supplied directly to the approved host setup process, never committed or pasted into chat.
+
+## Estate branch CI follow-up
+- Estate/control-plane PR: [#259](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/259)
+- Tracking issue: [#260](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/260)
+- Run [38077706507](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38077706507), job `114288045738`, on commit `138d0733a44c34a39b40675b6caf32fe5e4e2550`, also failed before steps with `runner_id=0`, empty runner name, and `steps=[]`.
+- The estate checkpoint workflow has not been manually dispatched. The artifact described by the workflow has not been generated.
+- New repositories, rulesets, host machines, bot services, and credentials remain uncreated/unverified.
