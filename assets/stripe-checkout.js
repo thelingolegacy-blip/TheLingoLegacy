@@ -23,14 +23,14 @@
   if (checkout === 'success') {
     const status = document.querySelector('[data-stripe-status]');
     if (status) {
-      status.textContent = 'Checkout complete. Your founder drop confirmation is ready for fulfillment.';
-      status.dataset.state = 'success';
+      status.textContent = 'Stripe returned to this page, but payment status has not been verified by this site. Do not fulfill an order until the matching payment is confirmed in Stripe.';
+      status.dataset.state = 'pending';
     }
   }
   if (checkout === 'cancelled') {
     const status = document.querySelector('[data-stripe-status]');
     if (status) {
-      status.textContent = 'Checkout cancelled. You can retry Stripe checkout or send an email request.';
+      status.textContent = 'Checkout was cancelled; no paid order is confirmed. You can send an email request instead.';
       status.dataset.state = 'error';
     }
   }
@@ -40,7 +40,7 @@
       const original = button.textContent;
       button.disabled = true;
       button.textContent = 'Opening Stripe...';
-      setStatus(button, 'Creating secure Stripe Checkout session...', 'info');
+      setStatus(button, 'Checking whether secure checkout is configured...', 'info');
 
       try {
         const response = await fetch('/api/create-checkout-session', {
