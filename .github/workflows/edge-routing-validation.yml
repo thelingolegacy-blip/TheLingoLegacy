@@ -6,6 +6,7 @@ on:
       - 'wrangler.jsonc'
       - 'worker.js'
       - 'scripts/verify-edge-routing.mjs'
+      - 'scripts/verify-g02-evidence.mjs'
       - '.github/workflows/edge-routing-validation.yml'
   push:
     branches:
@@ -59,6 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check scripts/verify-edge-routing.mjs
+          node --check scripts/verify-g02-evidence.mjs
           node scripts/verify-edge-routing.mjs 2>&1 | tee evidence/edge-routing-verification.log
 
       - name: Upload routing verification evidence
