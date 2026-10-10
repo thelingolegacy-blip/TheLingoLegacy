@@ -3,7 +3,7 @@
   "mode": "reserved-static-contracts",
   "guardrails": {
     "liveEndpoints": false,
-    "vercelFunctions": false,
+    "providerSpecificFrameworkFunctions": false,
     "externalServiceCalls": false,
     "purpose": "Document payload URL contracts before any authenticated backend wiring is approved.",
     "activationRule": "A reserved payload URL becomes live only after auth, validation, rate limits, audit logs, service ownership, and rollback controls are implemented."
