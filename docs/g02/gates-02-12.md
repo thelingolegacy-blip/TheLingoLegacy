@@ -16,6 +16,23 @@ This matrix defines what evidence is required to accept each gate. The matrix is
 | G11 | Operational acceptance | Named operational owner, runbook, alerting/on-call coverage, incident/rollback procedure, and signed acceptance |
 | G12 | Final acceptance | Complete G02–G11 evidence chain, independent audit, no unresolved critical findings, and separately recorded final authorization |
 
+## Machine-enforced evidence-type minimums
+The gate evaluator requires at least one separately hashed evidence file for each listed type. One artifact may support multiple gates, but a gate cannot reuse the same path/hash twice to satisfy multiple requirements. A synthetic fixture can test validator behavior only; it is never production evidence.
+
+- **G02:** `host_telemetry`, `sentinel_execution`, `raw_logs`, `artifact_manifest`, `correlation_report`, `validator_report`
+- **G03:** `workflow_job`, `workflow_logs`, `required_checks_report`
+- **G04:** `certification_report`, `criteria_matrix`
+- **G05:** `release_manifest`, `build_metadata`, `release_notes`, `acceptance_review`
+- **G06:** `change_approval`, `deployment_plan`, `rollback_plan`, `artifact_sha_linkage`
+- **G07:** `live_probe_response`, `expected_status_headers`, `independent_probe_review`
+- **G08:** `revision_inventory`, `configuration_drift_report`, `checksum_reconciliation`
+- **G09:** `activation_approval`, `activation_record`, `rollback_readiness`
+- **G10:** `health_checks`, `telemetry_window`, `user_path_tests`, `threshold_comparison`
+- **G11:** `operations_owner_acceptance`, `runbook`, `alerting_oncall_coverage`, `incident_rollback_procedure`
+- **G12:** `gates_02_11_chain`, `independent_audit`, `final_authorization`
+
+These type labels are schema checks, not proof that an artifact actually contains the named evidence. Independent reviewers must inspect source authority, content, scope, candidate SHA, timestamps, and integrity before accepting a gate.
+
 ## Status semantics
 - `ACCEPTED`: every required predicate has verifiable evidence and an independent reviewer has accepted it.
 - `BLOCKED`: evidence is missing or a prerequisite is not satisfied.
