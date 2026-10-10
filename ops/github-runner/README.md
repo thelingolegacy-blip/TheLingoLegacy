@@ -12,6 +12,7 @@ The repository owner `thelingolegacy-blip` is a personal account, not an organiz
 - Dedicated custom label: `lingo-g02`.
 - Use only for this repository and the G02 sentinel workflow.
 - Do not run untrusted pull-request code on this host. The repository is public; enable only the necessary workflow triggers and keep the host isolated.
+- Never paste credential values, runner tokens, environment files, or raw runner diagnostic logs into issues or chat.
 
 ## Host requirements
 - Dedicated Linux x64 host.
@@ -19,13 +20,29 @@ The repository owner `thelingolegacy-blip` is a personal account, not an organiz
 - GitHub CLI authenticated as a repository administrator.
 - Outbound HTTPS access to GitHub and Docker image/package registries.
 
+## Read-only host preflight
+From the repository root, run:
+
+```bash
+bash ops/github-runner/diagnose-host.sh /tmp/g02-host-preflight.txt
+```
+
+The script records host identity, repository SHA/worktree state, DNS/HTTPS status for GitHub, runner listener/service presence, Docker daemon/container status, disk/memory summary, and a SHA-256 sidecar. It avoids recording DNS addresses, arbitrary curl stderr, process command lines, or credential values. It does not restart services, modify DNS, register a runner, or establish that the runner is polling GitHub.
+
+Review both files before sharing them:
+
+- `/tmp/g02-host-preflight.txt`
+- `/tmp/g02-host-preflight.txt.sha256`
+
+A successful capture means only that the report was written and hashed. `G02_ACCEPTANCE=NOT_EVALUATED` is deliberate.
+
 ## Bootstrap
 1. Open repository Settings → Actions → Runners: https://github.com/thelingolegacy-blip/TheLingoLegacy/settings/actions/runners
-2. Inspect the existing runner inventory first. If `lingo-legacy-g02` is already registered, repair that daemon or remove the stale registration through the Settings UI; do not create a duplicate.
+2. Inspect the existing runner inventory first. If `lingo-legacy-g02` is already registered, repair its existing daemon or investigate the exact stale registration; do not create a duplicate.
 3. On the dedicated host, check out branch `infra/g02-runner-recovery-clean-2026-10-09`.
 4. Run from `ops/github-runner`:
    `bash ./bootstrap.sh`
-5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, removes its local `.env` on exit, and cleans up a registered runner if the run is interrupted.
+5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, and removes its local `.env` on exit. It deliberately does not delete a remote runner registration automatically.
 6. Confirm the runner is online with labels `self-hosted, linux, x64, lingo-g02`.
 7. Let the queued **G02 Self-Hosted Runner Sentinel** execute. Do not interrupt it while it is working.
 
@@ -45,7 +62,7 @@ Accept only when all evidence is actual, complete, retrievable, correlated, inde
 The artifact records execution data. It cannot self-assert independent verification or formal acceptance.
 
 ## Recovery if interrupted
-The bootstrap tries to remove the registered ephemeral runner with the authenticated host-side GitHub CLI and deletes its local `.env`. If runner removal fails, inspect repository Settings → Actions → Runners and remove only the stale runner created by this bootstrap. Never publish token values or logs containing credentials.
+The bootstrap deletes its local `.env` on exit and leaves remote runner cleanup to the ephemeral runner lifecycle. If execution is interrupted and a stale registration remains, inspect repository Settings → Actions → Runners and verify the exact runner ID and creation context before removing it. Never delete runners by name alone. Never publish token values or logs containing credentials.
 
 ## Authority boundary
 ```text
