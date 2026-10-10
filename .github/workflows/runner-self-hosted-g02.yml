@@ -28,6 +28,7 @@ jobs:
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
+          trap 'rc=$?; printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$rc"; exit "$rc"' EXIT
 
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
