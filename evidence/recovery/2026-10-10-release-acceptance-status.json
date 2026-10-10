@@ -1,6 +1,6 @@
 {
   "schema": "lingo.release-recovery-evidence.v1",
-  "captured_at_utc": "2026-10-10T21:42:01Z",
+  "captured_at_utc": "2026-10-10T21:42:45Z",
   "status": "OBSERVED_BLOCKED",
   "scope": "isolated recovery branch only; no production mutation",
   "source": {
@@ -12,7 +12,7 @@
     "target_branch": "main",
     "draft": true,
     "merged": false,
-    "latest_reviewed_pr_head_before_packet_refresh": "a451276e6075253a721d013f9716ac3789160d89"
+    "latest_reviewed_pr_head_before_packet_refresh": "794c21cf325c4d073ec3cedfffe7e5054f89d172"
   },
   "configuration": {
     "promotion_workflow": "source guards observed",
@@ -83,6 +83,32 @@
       "artifacts": [],
       "log_retrieval": "HTTP 404 BlobNotFound",
       "interpretation": "Second observed run also lacks retrievable steps/logs; cannot establish validation steps executed."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088629589,
+      "run_number": 4,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320298483,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "Not retrievable in latest job record; steps/log URL remain null",
+      "interpretation": "Third observed run still provides no retrievable step-level execution evidence."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088629640,
+      "run_number": 1011,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320298426,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "Not retrievable in latest job record; steps/log URL remain null",
+      "interpretation": "Third observed run still provides no retrievable step-level execution evidence."
     }
   ],
   "external_checks": [
@@ -91,6 +117,13 @@
       "state": "failure",
       "target_url": "https://vercel.com/knowledge/why-is-my-account-deployment-blocked",
       "interpretation": "Vercel check is failing; not evidence of a successful build or deploy."
+    },
+    {
+      "context": "Vercel – the-lingo-legacy",
+      "state": "failure",
+      "target_url": "https://vercel.com/shop-c54e0277?upgradeToPro=build-rate-limit",
+      "observed_at_utc": "2026-10-10T21:42:45Z",
+      "interpretation": "Latest observed status points to a Vercel build-rate-limit/upgrade gate; no successful deployment evidence."
     }
   ],
   "related_blockers": [
