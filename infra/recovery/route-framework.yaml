@@ -14,6 +14,7 @@ source:
   repository: thelingolegacy-blip/TheLingoLegacy
   baseBranch: main
   implementationBranch: infra/recovery-route-framework-2026-10-10
+  recoveryCommitVerifiedByCloudflareBuild: "67fb8eb73c6a1552416ae6acb0d109106bfdb9a2"
   productionRouteTargetObserved: thelingolegacy
   workerConfig: wrangler.jsonc
   workerConfigNameInSource: thelingolegacyv-5
@@ -42,6 +43,11 @@ routes:
     kvBindings: false
     secrets: false
     previewUrls: false
+    build:
+      provider: Cloudflare Workers Builds
+      buildUuid: "2bb69a60-708b-45dd-b13f-a81d36124641"
+      outcome: success
+      deployedVersion: "fc2767b9-3503-46b9-a82d-2d59c4db609d"
     purpose:
       - health-check
       - readiness-check
@@ -60,6 +66,7 @@ deployment:
     - firebase-config-placeholder-check
     - flutter-toolchain-check
     - backend-authz-review
+    - independent-runtime-probe
     - evidence-correlated-to-commit
   prohibited:
     - production-dns-change
