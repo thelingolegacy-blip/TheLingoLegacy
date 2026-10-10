@@ -1,0 +1,66 @@
+schema: lingo.g02.assignment-timer.v1
+status: SPECIFICATION_ONLY_NOT_INSTALLED
+purpose: controlled assignment-watch timer with explicit reset action
+
+identity:
+  repository: thelingolegacy-blip/TheLingoLegacy
+  runner_name: lingo-legacy-g02
+  required_labels: [self-hosted, linux, x64, lingo-g02]
+
+timer:
+  unit: lingo-g02-assignment-watch.timer
+  service: lingo-g02-assignment-watch.service
+  interval: 15m
+  persistent: false
+  enabled_by_default: false
+  start_allowed_only_after:
+    - host_preflight_pass
+    - existing_runner_inventory_captured
+    - duplicate_registration_check_pass
+    - operator_authorizes_host_installation
+
+trigger:
+  mode: read_only_watch
+  actions:
+    - capture_host_identity
+    - inspect_runner_listener_process
+    - inspect_runner_service_status
+    - inspect_local_runner_diagnostic_logs
+    - record_timestamp_and_exit_status
+  prohibited:
+    - register_or_delete_runner
+    - restart_runner_service
+    - cancel_or_requeue_jobs
+    - print_or_store_tokens
+    - production_deployment_or_activation
+  on_missing_runner:
+    result: BLOCKED_HOST_UNVERIFIED
+    retry_automatically: false
+  on_unverified_or_malformed_evidence:
+    result: BLOCKED
+    fail_closed: true
+
+reset:
+  command: ops/g02/control-plane/assignment-timer-control.sh reset
+  semantics:
+    - restart_only_the_assignment_watch_timer
+    - do_not_restart_or_re-register_the_runner
+    - do_not_cancel_or_requeue_github_jobs
+    - capture_pre_reset_and_post_reset_status
+  requires:
+    - operator_on_authorized_linux_host
+    - timer_unit_exists
+    - systemd_available
+  if_preconditions_fail: exit_nonzero_without_mutation
+
+acceptance:
+  require_timer_installed: true
+  require_timer_status_evidence: true
+  require_read_only_probe_exit_code: true
+  require_timestamped_logs: true
+  live_runner_acceptance_remains_separate: true
+
+production:
+  mutation_freeze: ACTIVE
+  last_known_good: PROTECTED
+  promotion_allowed: false
