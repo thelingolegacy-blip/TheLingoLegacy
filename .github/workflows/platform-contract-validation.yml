@@ -28,12 +28,16 @@ jobs:
           persist-credentials: false
       - name: Validate JSON contract and fail-closed invariants
         run: node ops/architecture/validate-contract.mjs
-      - name: Verify no provider key is committed in the contract
+      - name: Check architecture docs for likely literal Gemini keys
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE 'AIza[0-9A-Za-z_-]{20,}|GEMINI_API_KEY[[:space:]]*[:=][[:space:]]*["'\''][^"'\'']+["'\'']' ops/architecture docs/integrations/google-ai-studio.md; then
-            echo "Potential provider key or literal secret found; failing closed."
+          if grep -RInF "AIza" ops/architecture docs/integrations/google-ai-studio.md; then
+            echo "Potential provider key detected; failing closed."
             exit 1
           fi
-          echo "No literal Gemini key detected in architecture contract."
+          if grep -RInE 'GEMINI_API_KEY[[:space:]]*=[[:space:]]*[^[:space:]]+' ops/architecture docs/integrations/google-ai-studio.md; then
+            echo "Potential literal GEMINI_API_KEY assignment detected; failing closed."
+            exit 1
+          fi
+          echo "No likely literal Gemini key detected in architecture files."
