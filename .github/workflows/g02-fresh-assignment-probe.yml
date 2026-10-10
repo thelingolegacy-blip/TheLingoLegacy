@@ -58,6 +58,7 @@ jobs:
             "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS_VALUE" "$RUNNER_ARCH_VALUE" "$GITHUB_SHA_VALUE"
 
       - name: Emit execution sentinel
+        id: sentinel
         shell: bash
         env:
           RUNNER_ID: ${{ steps.identity.outputs.runner_id }}
@@ -68,10 +69,52 @@ jobs:
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           echo "RUNNER_EXECUTION_SENTINEL=PASS"
 
+      - name: Write sanitized correlated evidence
+        if: always()
+        shell: bash
+        env:
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_NUMBER: ${{ github.run_number }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          IDENTITY_OUTCOME: ${{ steps.identity.outcome }}
+          SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
+          RUNNER_ID: ${{ steps.identity.outputs.runner_id }}
+          RUNNER_NAME: ${{ steps.identity.outputs.runner_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/g02
+          node -e '
+            const fs = require("node:fs");
+            const runnerId = Number(process.env.RUNNER_ID || 0);
+            const valid = process.env.IDENTITY_OUTCOME === "success"
+              && process.env.SENTINEL_OUTCOME === "success"
+              && runnerId > 0
+              && process.env.RUNNER_NAME === "lingo-legacy-g02"
+              && Boolean(process.env.GH_SHA);
+            const evidence = {
+              schemaVersion: "1.0",
+              workflow: "G02 Fresh Assignment Probe",
+              runId: process.env.GH_RUN_ID,
+              runNumber: process.env.GH_RUN_NUMBER,
+              runAttempt: process.env.GH_RUN_ATTEMPT,
+              commitSha: process.env.GH_SHA,
+              ref: process.env.GH_REF,
+              runnerId: runnerId || null,
+              runnerName: process.env.RUNNER_NAME || null,
+              identityOutcome: process.env.IDENTITY_OUTCOME || "not_run",
+              sentinelOutcome: process.env.SENTINEL_OUTCOME || "not_run",
+              status: valid ? "EXECUTION_SENTINEL_PASS" : "NOT_ESTABLISHED",
+              generatedAt: new Date().toISOString()
+            };
+            fs.writeFileSync("release/evidence/g02/runner-assignment.json", JSON.stringify(evidence, null, 2) + "\n");
+          '
+
       - name: Upload G02 execution evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: g02-assignment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/_diag/
+          path: release/evidence/g02/runner-assignment.json
           if-no-files-found: warn
