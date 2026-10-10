@@ -7,22 +7,71 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   assignment-probe:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Prove runner assignment
+      - name: Prove runner assignment with GitHub API job record
+        id: identity
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
           echo "G02_ASSIGNMENT_PROBE=START"
-          echo "runner_id=${{ runner.id }}"
-          echo "runner_name=${{ runner.name }}"
-          echo "runner_os=${{ runner.os }}"
-          echo "runner_arch=${{ runner.arch }}"
-          test -n "${{ runner.id }}"
-          test "${{ runner.id }}" != "0"
-          test "${{ runner.name }}" = "lingo-legacy-g02"
-          echo "G02_ASSIGNMENT_PROBE=PASS"
+          jobs_json="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}/jobs?per_page=100")"
+          runner_identity="$(printf '%s' "$jobs_json" | node -e '
+            let raw = "";
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              const payload = JSON.parse(raw);
+              const job = (payload.jobs || []).find(item => item.name === "assignment-probe");
+              if (!job || job.runner_id == null || !job.runner_name) process.exit(2);
+              process.stdout.write(String(job.runner_id) + "\n" + job.runner_name);
+            });
+          ')" || { echo 'No real runner assignment in GitHub job record'; exit 1; }
+          RUNNER_ID="$(printf '%s\n' "$runner_identity" | sed -n '1p')"
+          RUNNER_NAME="$(printf '%s\n' "$runner_identity" | sed -n '2p')"
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS_VALUE" = "Linux"
+          test "$RUNNER_ARCH_VALUE" = "X64"
+          test -n "$GITHUB_SHA_VALUE"
+          {
+            echo "runner_id=$RUNNER_ID"
+            echo "runner_name=$RUNNER_NAME"
+          } >> "$GITHUB_OUTPUT"
+          printf 'G02_ASSIGNMENT_PROBE=PASS\nrunner_id=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\ngithub_sha=%s\n' \
+            "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS_VALUE" "$RUNNER_ARCH_VALUE" "$GITHUB_SHA_VALUE"
+
+      - name: Emit execution sentinel
+        shell: bash
+        env:
+          RUNNER_ID: ${{ steps.identity.outputs.runner_id }}
+          RUNNER_NAME: ${{ steps.identity.outputs.runner_name }}
+        run: |
+          set -euo pipefail
+          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          echo "RUNNER_EXECUTION_SENTINEL=PASS"
+
+      - name: Upload G02 execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-assignment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/_diag/
+          if-no-files-found: warn

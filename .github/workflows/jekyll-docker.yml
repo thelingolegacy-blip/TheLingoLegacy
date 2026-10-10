@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: read
-  actions: write
+  actions: read
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -37,13 +37,32 @@ jobs:
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
+      - name: Write CI execution metadata
+        if: always()
+        shell: bash
+        env:
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          GH_EVENT: ${{ github.event_name }}
+          GH_JOB: ${{ github.job }}
+        run: |
+          set -euo pipefail
+          node -e '
+            const fs=require("node:fs");
+            const out={workflow:"Lingo Legacy Static CI",runId:process.env.GH_RUN_ID,runAttempt:process.env.GH_RUN_ATTEMPT,commitSha:process.env.GH_SHA,ref:process.env.GH_REF,event:process.env.GH_EVENT,job:process.env.GH_JOB,generatedAt:new Date().toISOString()};
+            fs.writeFileSync("ci-run-metadata.json",JSON.stringify(out,null,2)+"\n");
+          '
+
       - name: Upload validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lingo-legacy-static-ci-evidence
+          name: lingo-legacy-static-ci-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             sanitize.log
             bindings.log
             validator.log
+            ci-run-metadata.json
           if-no-files-found: warn

@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: actions-runner-smoke-${{ github.ref }}
@@ -17,28 +18,48 @@ jobs:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Runner reached execution stage
+      - name: Establish real runner identity from GitHub job record
         id: assert
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
-          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
+          jobs_json="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}/jobs?per_page=100")"
+          runner_identity="$(printf '%s' "$jobs_json" | node -e '
+            let raw = "";
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              const payload = JSON.parse(raw);
+              const job = (payload.jobs || []).find(item => item.name === "smoke");
+              if (!job || job.runner_id == null || !job.runner_name) process.exit(2);
+              process.stdout.write(String(job.runner_id) + "\n" + job.runner_name);
+            });
+          ')" || { echo 'GitHub API did not return a real runner assignment'; exit 1; }
+          RUNNER_ID="$(printf '%s\n' "$runner_identity" | sed -n '1p')"
+          RUNNER_NAME="$(printf '%s\n' "$runner_identity" | sed -n '2p')"
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
-          echo "runner_id=$RUNNER_ID"
-          echo "runner_name=$RUNNER_NAME"
-          echo "runner_os=$RUNNER_OS_VALUE"
-          echo "runner_arch=$RUNNER_ARCH_VALUE"
-          echo "github_sha=$GITHUB_SHA_VALUE"
+          {
+            echo "runner_gate=PASS"
+            echo "runner_id=$RUNNER_ID"
+            echo "runner_name=$RUNNER_NAME"
+          } >> "$GITHUB_OUTPUT"
+          printf 'RUNNER_ID=%s\nRUNNER_NAME=%s\nRUNNER_OS=%s\nRUNNER_ARCH=%s\nGITHUB_SHA=%s\n' \
+            "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS_VALUE" "$RUNNER_ARCH_VALUE" "$GITHUB_SHA_VALUE"
 
       - name: Emit execution sentinel
         shell: bash
@@ -48,3 +69,45 @@ jobs:
           set -euo pipefail
           test "$RUNNER_GATE" = "PASS"
           echo "RUNNER_EXECUTION_SENTINEL=PASS"
+
+      - name: Write sanitized runner evidence
+        if: always()
+        shell: bash
+        env:
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_NUMBER: ${{ github.run_number }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          RUNNER_ID: ${{ steps.assert.outputs.runner_id }}
+          RUNNER_NAME: ${{ steps.assert.outputs.runner_name }}
+          RUNNER_GATE: ${{ steps.assert.outputs.runner_gate }}
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/g02
+          node -e '
+            const fs = require("fs");
+            const out = {
+              schemaVersion: "1.0",
+              workflow: "Lingo Legacy Actions Runner Smoke",
+              runId: process.env.GH_RUN_ID,
+              runNumber: process.env.GH_RUN_NUMBER,
+              runAttempt: process.env.GH_RUN_ATTEMPT,
+              commitSha: process.env.GH_SHA,
+              ref: process.env.GH_REF,
+              runnerId: process.env.RUNNER_ID || null,
+              runnerName: process.env.RUNNER_NAME || null,
+              runnerGate: process.env.RUNNER_GATE || "NOT_ESTABLISHED",
+              sentinel: "PASS only when runner assignment and execution steps both pass",
+              generatedAt: new Date().toISOString()
+            };
+            fs.writeFileSync("release/evidence/g02/runner-assignment.json", JSON.stringify(out, null, 2) + "\n");
+          '
+
+      - name: Upload sanitized execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-smoke-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release/evidence/g02/runner-assignment.json
+          if-no-files-found: warn

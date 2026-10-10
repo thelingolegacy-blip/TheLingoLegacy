@@ -13,7 +13,7 @@ if (config.authorityChain?.source !== 'canonicalDomain') failures.push('authorit
 if (config.authorityChain?.enforcement !== 'strict') failures.push('authorityChain enforcement must be strict');
 if (config.authorityChain?.onMismatch !== 'BLOCK') failures.push('authorityChain onMismatch must be BLOCK');
 for (const item of required) if (!config.authorityChain.propagation.includes(item)) failures.push(`authorityChain missing ${item}`);
-if (!wrangler.includes('"name": "thelingolegacyv-5"')) failures.push('Worker name mismatch');
+if (!wrangler.includes('"name": "thelingolegacy"')) failures.push('Worker name mismatch');
 if (!wrangler.includes('"main": "worker.js"')) failures.push('Worker entrypoint mismatch');
 if (!wrangler.includes('"binding": "ASSETS"')) failures.push('ASSETS binding missing');
 if (!worker.includes("url.pathname === '/healthz'")) failures.push('healthz route missing');
@@ -23,7 +23,7 @@ const result = {
   gate: 'production-authority',
   status: failures.length ? 'FAIL' : 'PASS',
   canonicalDomain: domain,
-  worker: 'thelingolegacyv-5',
+  worker: 'thelingolegacy',
   entrypoint: 'worker.js',
   failures,
   rule: 'Any authority-chain mismatch blocks activation.'
