@@ -4,18 +4,15 @@ set -euo pipefail
 REPO="thelingolegacy-blip/TheLingoLegacy"
 RUNNER_NAME="lingo-legacy-g02"
 ENV_FILE=".env"
-RUNNER_STARTED=0
-
+# The runner is registered as ephemeral and should unregister after its one job.
+# Never delete remote runners by name during cleanup: a same-name registration could
+# belong to a different process/operator. If interrupted, inspect the runner inventory
+# and remove only the exact stale registration after independently verifying its ID.
 cleanup() {
   rm -f -- "$ENV_FILE"
-  if [[ "$RUNNER_STARTED" == "1" ]]; then
-    local runner_ids=""
-    runner_ids="$(gh api --paginate "repos/${REPO}/actions/runners?per_page=100" --jq '.runners[]? | select(.name == "lingo-legacy-g02") | .id' 2>/dev/null || true)"
-    while IFS= read -r runner_id; do
-      [[ -n "$runner_id" ]] || continue
-      gh api --method DELETE "repos/${REPO}/actions/runners/${runner_id}" >/dev/null 2>&1 || \
-        echo "WARNING: could not remove runner id ${runner_id}; check repository Settings -> Actions -> Runners." >&2
-    done <<< "$runner_ids"
+  if [[ "${RUNNER_STARTED}" == "1" ]]; then
+    echo "NOTE: bootstrap ended after starting the ephemeral runner. Verify its status in repository Settings -> Actions -> Runners." >&2
+    echo "Do not automatically delete a remote runner by name; remove a stale registration only after verifying its exact runner ID." >&2
   fi
 }
 trap cleanup EXIT
