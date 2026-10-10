@@ -31,5 +31,17 @@
     "role": "Independent evidence reviewer",
     "identity": "UNASSIGNED",
     "status": "PENDING"
+  },
+  "evidence_collection_tools": [
+    "evidence/qualified-packets/2026-10-10/G02/INTAKE.md",
+    "ops/estate/diagnostics/capture-g02-host-evidence.sh",
+    "ops/estate/diagnostics/verify-g02-evidence.sh"
+  ],
+  "tool_validation": {
+    "capture_script_syntax": "PASS — bash -n on a local copy of the fetched script content",
+    "capture_script_executed_on_authorized_host": "NOT_RUN",
+    "host_telemetry": "NOT_CAPTURED",
+    "runner_inventory": "NOT_VERIFIED",
+    "sentinel_evidence": "NOT_CAPTURED"
   }
 }
