@@ -1,13 +1,18 @@
 {
   "hosting": {
-    "public": ".",
+    "public": "build/web",
     "ignore": [
       "firebase.json",
-      "firebase.client.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "cleanUrls": true,
-    "trailingSlash": false
+    "cleanUrls": false,
+    "trailingSlash": false,
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
