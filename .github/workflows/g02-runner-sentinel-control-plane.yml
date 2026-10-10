@@ -1,0 +1,64 @@
+name: G02 Runner Sentinel — Manual Only
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: lingo-g02-runner-sentinel
+  cancel-in-progress: false
+
+jobs:
+  sentinel:
+    name: Verify canonical G02 runner and emit evidence
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Capture runner identity and assert contract
+        id: sentinel
+        shell: bash
+        env:
+          EXPECTED_RUNNER_NAME: lingo-legacy-g02
+        run: |
+          set -euo pipefail
+          mkdir -p evidence-out
+          test "${RUNNER_NAME:-}" = "$EXPECTED_RUNNER_NAME"
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          test -n "${GITHUB_SHA:-}"
+          test -n "${GITHUB_RUN_ID:-}"
+          test -n "${GITHUB_JOB:-}"
+
+          observed_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          {
+            printf 'schema=lingo.g02.sentinel.v1\n'
+            printf 'observed_at_utc=%s\n' "$observed_at"
+            printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'ref=%s\n' "$GITHUB_REF"
+            printf 'candidate_sha=%s\n' "$GITHUB_SHA"
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
+            printf 'job=%s\n' "$GITHUB_JOB"
+            printf 'runner_name=%s\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+            printf 'uname_system=%s\n' "$(uname -s)"
+            printf 'uname_machine=%s\n' "$(uname -m)"
+            printf 'sentinel_result=PASS\n'
+          } > evidence-out/sentinel.env
+
+          sha256sum evidence-out/sentinel.env > evidence-out/SHA256SUMS
+          cat evidence-out/sentinel.env
+          cat evidence-out/SHA256SUMS
+
+      - name: Upload correlated sentinel evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-sentinel-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence-out/
+          if-no-files-found: error
+          retention-days: 7
