@@ -1,0 +1,41 @@
+{
+  "packet_type": "LINGO_G02_PACKET_B_SENTINEL_EXECUTION",
+  "schema_version": "1.0",
+  "status": "TEMPLATE_NOT_EVIDENCE",
+  "correlation_id": null,
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "workflow_name": null,
+  "workflow_run_id": null,
+  "run_attempt": null,
+  "job_id": null,
+  "commit_sha": null,
+  "runner_id": null,
+  "runner_name": null,
+  "runner_labels": [],
+  "job_status": "unknown",
+  "job_steps_instantiated": null,
+  "sentinel_exit_code": null,
+  "started_at_utc": null,
+  "completed_at_utc": null,
+  "raw_logs": {
+    "retrievable": null,
+    "source_reference": null,
+    "sha256": null
+  },
+  "artifacts": [],
+  "predicate_results": {
+    "P1_real_matching_runner": "UNKNOWN",
+    "P2_runner_id_gt_zero": "UNKNOWN",
+    "P3_expected_runner_name": "UNKNOWN",
+    "P4_job_assigned": "UNKNOWN",
+    "P5_steps_instantiated": "UNKNOWN",
+    "P6_sentinel_exit_zero": "UNKNOWN",
+    "P7_raw_logs_generated": "UNKNOWN",
+    "P8_logs_artifacts_retrievable": "UNKNOWN",
+    "P9_independent_correlation": "UNKNOWN"
+  },
+  "manifest_sha256": null,
+  "redaction_reviewed": false,
+  "independent_verification": "pending",
+  "notes": "Populate from actual GitHub run/job/log/artifact responses. A completed workflow with no job, runner_id=0, empty runner name, missing steps, missing logs, or missing artifacts cannot satisfy G02."
+}
