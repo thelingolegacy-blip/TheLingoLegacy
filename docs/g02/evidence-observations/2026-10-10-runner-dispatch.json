@@ -1,40 +1,38 @@
 {
   "evidence_type": "LINGO_G02_GITHUB_RUNNER_DISPATCH_OBSERVATION",
   "status": "OBSERVED_FAILURE_NOT_ACCEPTANCE",
-  "collected_at_utc": "2026-10-10T21:04:53Z",
+  "collected_at_utc": "2026-10-10T21:46:30Z",
   "collector": "GitHub repository API via connected GitHub integration",
   "read_only": true,
   "repository": "thelingolegacy-blip/TheLingoLegacy",
   "branch": "infra/g02-evidence-architecture-2026-10-10",
-  "commit_sha": "7d371ef86047e86d428ebf3dcab415541988a2e5",
+  "commit_sha": "70bdf2aa549ee92e6e534ded3ecc73288c0eb807",
   "workflow_run": {
-    "id": 38086241361,
+    "id": 38088396812,
     "name": "Lingo Legacy Static CI",
     "event": "pull_request",
-    "attempt": 1,
     "status": "completed",
     "conclusion": "failure",
-    "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38086241361",
-    "created_at_utc": "2026-10-10T21:04:50Z",
-    "started_at_utc": "2026-10-10T21:04:50Z",
-    "completed_at_utc": "2026-10-10T21:04:54Z"
+    "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38088396812",
+    "created_at_utc": null,
+    "started_at_utc": null,
+    "completed_at_utc": null
   },
   "job": {
-    "id": 114313226294,
+    "id": 114319617859,
     "name": "validate",
     "status": "completed",
     "conclusion": "failure",
     "runner_id": 0,
     "runner_name": "",
     "steps": [],
-    "started_at_utc": "2026-10-10T21:04:51Z",
-    "completed_at_utc": "2026-10-10T21:04:53Z"
+    "logs_url": null
   },
   "logs": {
     "retrievable": false,
     "result": "BlobNotFound",
-    "observed_at_utc": "2026-10-10T21:02:43Z",
-    "note": "The log retrieval timestamp refers to earlier jobs in the same repeated failure series; this latest job's steps are empty. Latest job log retrieval was not separately confirmed."
+    "observed_at_utc": "2026-10-10T21:46:22Z",
+    "note": "Direct retrieval of this job's logs returned BlobNotFound. Job steps endpoint returned an empty list."
   },
   "artifacts": {
     "count": 0,
@@ -57,8 +55,9 @@
   "conclusion": "G02_BLOCKED",
   "redaction_reviewed": true,
   "limitations": [
-    "This record proves the observed GitHub API state only; it does not identify the root cause on the Linux host.",
+    "Record proves observed GitHub API state only; it does not identify the root cause on the Linux host.",
     "No host command, workflow dispatch, runner restart, registration, merge, or production mutation was performed.",
-    "This observation is not Packet A or a successful Packet B."
+    "This observation is not Packet A or a successful Packet B.",
+    "Latest workflow run was associated with commit 70bdf2aa549ee92e6e534ded3ecc73288c0eb807. Job had runner_id 0, no runner name, no steps, no artifacts, and direct log retrieval returned BlobNotFound."
   ]
 }
