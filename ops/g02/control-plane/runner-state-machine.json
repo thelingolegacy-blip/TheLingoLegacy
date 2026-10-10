@@ -1,0 +1,172 @@
+{
+  "schema": "lingo.g02.runner-state-machine.v1",
+  "owner": "LINGO Legacy Recovery",
+  "runner": {
+    "name": "lingo-legacy-g02",
+    "labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "scope": "single-repository",
+    "host_class": "dedicated-isolated-linux-x64"
+  },
+  "initial_state": "BLOCKED_HOST_UNVERIFIED",
+  "states": [
+    "BLOCKED_HOST_UNVERIFIED",
+    "HOST_PREFLIGHT_PASS",
+    "REGISTRATION_AUTHORIZED",
+    "REGISTERED_OFFLINE",
+    "ONLINE_IDLE",
+    "ELIGIBLE",
+    "JOB_ASSIGNED",
+    "SENTINEL_EXECUTING",
+    "EVIDENCE_CAPTURED",
+    "INDEPENDENTLY_VERIFIED",
+    "G02_ACCEPTED",
+    "QUARANTINED",
+    "BLOCKED"
+  ],
+  "transitions": [
+    {
+      "from": "BLOCKED_HOST_UNVERIFIED",
+      "to": "HOST_PREFLIGHT_PASS",
+      "requires": [
+        "host_identity_captured",
+        "linux_x64_confirmed",
+        "existing_install_inventory_captured",
+        "no_duplicate_runner_confirmed",
+        "secrets_redacted"
+      ]
+    },
+    {
+      "from": "HOST_PREFLIGHT_PASS",
+      "to": "REGISTRATION_AUTHORIZED",
+      "requires": [
+        "repo_admin_approval",
+        "fresh_short_lived_registration_token_obtained_on_host",
+        "token_never_logged_or_committed"
+      ]
+    },
+    {
+      "from": "REGISTRATION_AUTHORIZED",
+      "to": "REGISTERED_OFFLINE",
+      "requires": [
+        "runner_registered_once",
+        "canonical_name_matches",
+        "required_labels_match",
+        "repository_scope_confirmed"
+      ]
+    },
+    {
+      "from": "REGISTERED_OFFLINE",
+      "to": "ONLINE_IDLE",
+      "requires": [
+        "runner_daemon_connected",
+        "listener_healthy",
+        "service_telemetry_captured"
+      ]
+    },
+    {
+      "from": "ONLINE_IDLE",
+      "to": "ELIGIBLE",
+      "requires": [
+        "runner_online",
+        "runner_idle",
+        "labels_match",
+        "repository_access_allowed",
+        "no_unapproved_prod_credentials"
+      ]
+    },
+    {
+      "from": "ELIGIBLE",
+      "to": "JOB_ASSIGNED",
+      "requires": [
+        "github_job_runner_id_gt_zero",
+        "github_runner_name_matches",
+        "job_id_correlated"
+      ]
+    },
+    {
+      "from": "JOB_ASSIGNED",
+      "to": "SENTINEL_EXECUTING",
+      "requires": [
+        "workflow_steps_instantiated",
+        "sentinel_step_started"
+      ]
+    },
+    {
+      "from": "SENTINEL_EXECUTING",
+      "to": "EVIDENCE_CAPTURED",
+      "requires": [
+        "sentinel_exit_code_zero",
+        "logs_retrievable",
+        "artifact_uploaded",
+        "sha256_manifest_created"
+      ]
+    },
+    {
+      "from": "EVIDENCE_CAPTURED",
+      "to": "INDEPENDENTLY_VERIFIED",
+      "requires": [
+        "candidate_sha_matches",
+        "run_job_runner_correlated",
+        "artifact_hashes_verified",
+        "independent_reviewer_distinct_from_collector"
+      ]
+    },
+    {
+      "from": "INDEPENDENTLY_VERIFIED",
+      "to": "G02_ACCEPTED",
+      "requires": [
+        "all_P1_through_P9_true",
+        "acceptance_record_signed_or_attributed",
+        "no_gate_bypass"
+      ]
+    },
+    {
+      "from": "*",
+      "to": "BLOCKED",
+      "on": [
+        "missing_evidence",
+        "unknown_identity",
+        "missing_logs",
+        "missing_artifact",
+        "correlation_mismatch",
+        "policy_denial"
+      ]
+    },
+    {
+      "from": "*",
+      "to": "QUARANTINED",
+      "on": [
+        "unexpected_runner_identity",
+        "unexpected_labels",
+        "credential_exposure",
+        "unapproved_privilege",
+        "production_access_detected"
+      ]
+    }
+  ],
+  "invariants": [
+    "No transition may be inferred from a draft, plan, local-only test, or synthetic fixture.",
+    "A state transition requires durable evidence with UTC timestamp and candidate commit SHA.",
+    "G02_ACCEPTED is terminal only for G02; it never authorizes production promotion or activation.",
+    "No duplicate registration, destructive runner cleanup, service restart, or host rebuild without operator review.",
+    "Fail closed on absent, malformed, stale, uncorrelated, or unverifiable evidence."
+  ],
+  "acceptance_predicates": {
+    "P1": "real_matching_runner",
+    "P2": "runner_id_gt_zero",
+    "P3": "runner_name_populated_and_canonical",
+    "P4": "job_assigned_to_runner",
+    "P5": "steps_instantiated",
+    "P6": "sentinel_passed",
+    "P7": "logs_generated",
+    "P8": "logs_retrievable",
+    "P9": "evidence_independently_verified"
+  },
+  "current_observed_state": "BLOCKED_HOST_UNVERIFIED",
+  "status": "SPECIFICATION_ONLY_NOT_A_LIVE_RUNNER"
+}
