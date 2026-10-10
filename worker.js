@@ -81,13 +81,58 @@ async function createCheckout(request, env) {
   const price = env[tier.priceEnv];
   if (!price) return json({ ok: false, error: `${tier.label} is not configured for checkout yet.` }, 503, request, env);
   const origin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
-  const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
+  const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}&session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
   const customerEmail = safeEmail(body.email);
   if (customerEmail) params.set('customer_email', customerEmail);
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params });
   const result = await response.json();
   if (!response.ok) return json({ ok: false, error: result.error?.message || 'Stripe checkout failed.' }, response.status, request, env);
   return json({ ok: true, url: result.url }, 200, request, env);
+}
+
+async function checkoutStatus(request, env) {
+  if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  const secret = env.STRIPE_SECRET_KEY;
+  if (!secret) return json({ ok: false, error: 'Checkout status verification is not configured.' }, 503, request, env);
+  const sessionId = String(new URL(request.url).searchParams.get('session_id') || '').trim();
+  if (!/^cs_(?:test|live)_[A-Za-z0-9]+$/.test(sessionId)) {
+    return json({ ok: false, error: 'A valid Checkout session ID is required.' }, 400, request, env);
+  }
+
+  let response;
+  let session;
+  try {
+    response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${secret}`, Accept: 'application/json' },
+      cache: 'no-store',
+    });
+    session = await response.json();
+  } catch {
+    return json({ ok: false, error: 'Checkout status could not be verified.' }, 502, request, env);
+  }
+  if (!response.ok) {
+    return json({ ok: false, error: 'Checkout status could not be verified.' }, 502, request, env);
+  }
+
+  const tier = String(session?.metadata?.tier || '');
+  const belongsToStore = session?.mode === 'payment'
+    && session?.metadata?.source === 'lingo-legacy-drop'
+    && Object.prototype.hasOwnProperty.call(CHECKOUT_TIERS, tier);
+  if (!belongsToStore) {
+    return json({ ok: false, error: 'This Checkout session does not match the store.' }, 400, request, env);
+  }
+
+  const paid = session.status === 'complete' && session.payment_status === 'paid';
+  const state = paid ? 'paid' : session.status === 'expired' ? 'expired' : 'pending';
+  return json({
+    ok: true,
+    verified: true,
+    paid,
+    status: state,
+    tier,
+    message: paid ? 'Stripe confirms this Checkout session is paid.' : 'Stripe does not yet confirm a paid Checkout session.',
+  }, 200, request, env);
 }
 
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
@@ -198,6 +243,7 @@ export default {
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
+      if (url.pathname === '/api/checkout-status') return await checkoutStatus(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       const assetResponse = await env.ASSETS.fetch(request);
