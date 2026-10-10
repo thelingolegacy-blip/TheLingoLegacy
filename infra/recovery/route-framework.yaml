@@ -14,9 +14,12 @@ source:
   repository: thelingolegacy-blip/TheLingoLegacy
   baseBranch: main
   implementationBranch: infra/recovery-route-framework-2026-10-10
-  productionWorker: thelingolegacy
+  productionRouteTargetObserved: thelingolegacy
   workerConfig: wrangler.jsonc
+  workerConfigNameInSource: thelingolegacyv-5
   workerEntrypoint: worker.js
+  routeConfigDrift: true
+  routeConfigDriftStatus: blocked-until-owner-reconciles-source-name-and-live-route
 routes:
   production:
     apex:
@@ -50,6 +53,7 @@ deployment:
     - build-success
     - healthz-response
     - readyz-response
+    - worker-config-route-name-reconciled
     - firebase-config-placeholder-check
     - flutter-toolchain-check
     - backend-authz-review
