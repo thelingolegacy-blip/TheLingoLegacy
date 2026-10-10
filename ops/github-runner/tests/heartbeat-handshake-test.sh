@@ -33,7 +33,29 @@ PATH="$tmp/fakebin:$PATH" bash "$SCRIPT" capture "$tmp/http-403.txt" >/dev/null
 grep -q '^API_GITHUB_COM_HTTP_STATUS=403$' "$tmp/http-403.txt"
 grep -q '^API_GITHUB_COM_NETWORK_HANDSHAKE=PASS$' "$tmp/http-403.txt"
 grep -q '^GITHUB_COM_HTTP_STATUS=403$' "$tmp/http-403.txt"
-grep -q '^GITHUB_COM_NETWORK_HANDSHAKE=PASS$' "$tmp/http-403.txt"
+grep -q '^GITHUB_COM_NETWORK_HANDSHAKE=PASS
+echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
+ "$tmp/http-403.txt"
+
+# Transport failure must be reported as FAIL with the actual curl exit code.
+cat > "$tmp/fakebin/curl" <<'FAKECURLFAIL'
+#!/usr/bin/env bash
+exit 7
+FAKECURLFAIL
+chmod 700 "$tmp/fakebin/curl"
+PATH="$tmp/fakebin:$PATH" bash "$SCRIPT" capture "$tmp/network-failure.txt" >/dev/null
+grep -q '^API_GITHUB_COM_NETWORK_HANDSHAKE=FAIL
+echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
+ "$tmp/network-failure.txt"
+grep -q '^API_GITHUB_COM_CURL_EXIT_CODE=7
+echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
+ "$tmp/network-failure.txt"
+grep -q '^GITHUB_COM_NETWORK_HANDSHAKE=FAIL
+echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
+ "$tmp/network-failure.txt"
+grep -q '^GITHUB_COM_CURL_EXIT_CODE=7
+echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
+ "$tmp/network-failure.txt"
 
 echo "G02_HEARTBEAT_HANDSHAKE_TEST=PASS"
 echo "AUTHORITATIVE_G02_ACCEPTANCE=NOT_EVALUATED"
