@@ -7,12 +7,73 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 
 const validator = path.resolve("ops/g02/validate-gates-02-12.mjs");
+const requiredEvidenceTypes = {
+  "G02": [
+    "host_telemetry",
+    "sentinel_execution",
+    "raw_logs",
+    "artifact_manifest",
+    "correlation_report",
+    "validator_report"
+  ],
+  "G03": [
+    "workflow_job",
+    "workflow_logs",
+    "required_checks_report"
+  ],
+  "G04": [
+    "certification_report",
+    "criteria_matrix"
+  ],
+  "G05": [
+    "release_manifest",
+    "build_metadata",
+    "release_notes",
+    "acceptance_review"
+  ],
+  "G06": [
+    "change_approval",
+    "deployment_plan",
+    "rollback_plan",
+    "artifact_sha_linkage"
+  ],
+  "G07": [
+    "live_probe_response",
+    "expected_status_headers",
+    "independent_probe_review"
+  ],
+  "G08": [
+    "revision_inventory",
+    "configuration_drift_report",
+    "checksum_reconciliation"
+  ],
+  "G09": [
+    "activation_approval",
+    "activation_record",
+    "rollback_readiness"
+  ],
+  "G10": [
+    "health_checks",
+    "telemetry_window",
+    "user_path_tests",
+    "threshold_comparison"
+  ],
+  "G11": [
+    "operations_owner_acceptance",
+    "runbook",
+    "alerting_oncall_coverage",
+    "incident_rollback_procedure"
+  ],
+  "G12": [
+    "gates_02_11_chain",
+    "independent_audit",
+    "final_authorization"
+  ]
+};
 function sha256(file) { return crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"); }
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lingo-g02-gates-"));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const evidencePath = path.join(dir, "evidence.json");
-  fs.writeFileSync(evidencePath, JSON.stringify({ authoritative: "test-fixture", outcome: "synthetic" }) + "\n");
   const commit = "a".repeat(40);
   const packet = {
     schema_version: "1.0",
@@ -24,22 +85,26 @@ function fixture(t) {
     gates: {},
     promotion: { authorized: false, authorization_reference: null, production_mutation_performed: false }
   };
-  for (let n = 2; n <= 12; n++) {
-    packet.gates["G" + String(n).padStart(2, "0")] = {
-      status: "ACCEPTED",
-      evidence: [{
+  for (const [gate, types] of Object.entries(requiredEvidenceTypes)) {
+    const evidence = [];
+    for (const type of types) {
+      const evidencePath = path.join(dir, gate + "-" + type + ".json");
+      fs.writeFileSync(evidencePath, JSON.stringify({ gate, evidence_type: type, outcome: "synthetic-fixture" }) + "\n");
+      evidence.push({
+        evidence_type: type,
         path: evidencePath,
         sha256: sha256(evidencePath),
         source_reference: "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/123",
         verified_by: "evidence-collector",
         verified_at_utc: "2026-10-10T21:05:00Z",
         candidate_commit_sha: commit
-      }]
-    };
+      });
+    }
+    packet.gates[gate] = { status: "ACCEPTED", evidence };
   }
   const packetPath = path.join(dir, "packet.json");
   fs.writeFileSync(packetPath, JSON.stringify(packet, null, 2) + "\n");
-  return { dir, packet, packetPath, evidencePath };
+  return { dir, packet, packetPath };
 }
 function run(packetPath) { return spawnSync(process.execPath, [validator, packetPath], { encoding: "utf8" }); }
 
@@ -56,7 +121,7 @@ test("missing packet fails closed", () => {
   assert.match(r.stderr, /LINGO_GATE_EVALUATION=BLOCKED/);
   assert.doesNotMatch(r.stdout + "\n" + r.stderr, /LINGO_GATE_EVALUATION=PASS/);
 });
-test("synthetic complete packet passes structural and hash checks", t => {
+test("synthetic packet with every gate-specific evidence type passes structural and hash checks", t => {
   const f = fixture(t);
   const r = run(f.packetPath);
   assert.equal(r.status, 0, r.stdout + "\n" + r.stderr);
@@ -73,7 +138,7 @@ test("candidate SHA mismatch fails closed", t => {
 });
 test("tampered evidence file fails hash verification", t => {
   const f = fixture(t);
-  fs.appendFileSync(f.evidencePath, "tampered\n");
+  fs.appendFileSync(f.packet.gates.G02.evidence[0].path, "tampered\n");
   const r = run(f.packetPath);
   assert.equal(r.status, 2);
   assert.match(r.stderr, /SHA-256 mismatch/i);
@@ -93,6 +158,14 @@ test("missing gate acceptance fails closed", t => {
   const r = run(f.packetPath);
   assert.equal(r.status, 2);
   assert.match(r.stderr, /G12: missing gate record/);
+});
+test("missing gate-specific evidence type fails closed", t => {
+  const f = fixture(t);
+  f.packet.gates.G02.evidence = f.packet.gates.G02.evidence.filter(e => e.evidence_type !== "sentinel_execution");
+  fs.writeFileSync(f.packetPath, JSON.stringify(f.packet));
+  const r = run(f.packetPath);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /G02: required evidence type missing: sentinel_execution/);
 });
 test("invalid UTC timestamp fails closed", t => {
   const f = fixture(t);
