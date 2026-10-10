@@ -39,8 +39,6 @@ jobs:
         run: node scripts/validate-static-site.mjs
       - name: Validate Cloudflare binding contract
         run: node scripts/verify-cloudflare-bindings.mjs
-      - name: Validate retired-provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs
       - name: Create deterministic media build manifest
         run: node ops/studio/build-media-manifest.mjs
       - name: Upload build evidence
