@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09090d">
+  <meta name="description" content="LINGO Studio operations dashboard for CI, runner evidence, media assets, and release gates.">
+  <title>LINGO Studio — Operations</title>
+  <link rel="stylesheet" href="./studio.css">
+  <script defer src="./studio.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="LINGO Studio home"><span class="brand-mark">L</span><span><b>LINGO</b><small>STUDIO / OPERATIONS</small></span></a>
+    <div class="topbar-status"><span class="status-dot"></span> PROTECTED HOLD <span class="divider">/</span> <span id="clock">UTC</span></div>
+  </header>
+  <main id="main" class="shell">
+    <section class="hero">
+      <div class="eyebrow">THE LINGO LEGACY · CONTROL PLANE</div>
+      <h1>Build with <em>proof.</em></h1>
+      <p>One workspace for runner assignment, CI evidence, media delivery, and release readiness. A green card never overrides a failed gate.</p>
+      <div class="hero-actions"><a class="button primary" href="https://github.com/thelingolegacy-blip/TheLingoLegacy/actions" rel="noreferrer">Open Actions ↗</a><a class="button" href="https://github.com/thelingolegacy-blip/TheLingoLegacy/pulls" rel="noreferrer">Review pull requests ↗</a></div>
+    </section>
+    <section class="gate-banner" aria-labelledby="gate-heading">
+      <div class="gate-icon" aria-hidden="true">!</div><div><div class="eyebrow">RELEASE AUTHORITY</div><h2 id="gate-heading">G02 — Runner dispatch unresolved</h2><p>Latest recorded jobs had runner ID 0 and no steps. Source validation has not been proven by CI.</p></div><span class="pill fail">BLOCKED</span>
+    </section>
+    <section class="section-head"><div><div class="eyebrow">01 / PIPELINE HEALTH</div><h2>Control surfaces</h2></div><span class="muted">Snapshot · 10 Oct 2026</span></section>
+    <section class="cards" aria-label="Pipeline control surfaces">
+      <article class="card"><div class="card-top"><span class="card-icon">01</span><span class="pill fail">FAIL / UNVERIFIED</span></div><h3>Runner assignment</h3><p>Confirm the real runner, matching labels, daemon check-in, and executed sentinel.</p><a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/242">Host recovery issue ↗</a></article>
+      <article class="card"><div class="card-top"><span class="card-icon">02</span><span class="pill hold">HOLD</span></div><h3>CI evidence</h3><p>Require real step records, retrievable logs, artifact integrity, and commit correlation.</p><a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/actions">Inspect workflow runs ↗</a></article>
+      <article class="card"><div class="card-top"><span class="card-icon">03</span><span class="pill ready">DEFINED</span></div><h3>Media pipeline</h3><p>Registry-driven asset validation, local references, license records, and SHA-256 manifests.</p><a href="../assets/asset-registry.json">Open asset registry ↗</a></article>
+      <article class="card"><div class="card-top"><span class="card-icon">04</span><span class="pill hold">NOT AUTHORIZED</span></div><h3>Production promotion</h3><p>Cloudflare remains the production runtime. Candidate promotion is a separate approval.</p><a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/257">Review isolated work ↗</a></article>
+    </section>
+    <section class="section-head"><div><div class="eyebrow">02 / RELEASE MATRIX</div><h2>Fail-closed gate ledger</h2></div></section>
+    <section class="ledger" aria-label="Release gate status">
+      <div class="ledger-row"><span>G00 · Source authority</span><span class="pill ready">PASS</span></div>
+      <div class="ledger-row"><span>G01 · Repository integrity</span><span class="pill ready">PASS</span></div>
+      <div class="ledger-row"><span>G02 · Runner assignment</span><span class="pill fail">FAIL / UNVERIFIED</span></div>
+      <div class="ledger-row"><span>G03 · CI execution</span><span class="pill hold">BLOCKED</span></div>
+      <div class="ledger-row"><span>G04–G08 · Certification / live validation</span><span class="pill hold">BLOCKED</span></div>
+      <div class="ledger-row"><span>G09–G11 · Activation / acceptance</span><span class="pill hold">BLOCKED</span></div>
+    </section>
+    <section class="section-head"><div><div class="eyebrow">03 / EVIDENCE WORKBENCH</div><h2>Local evidence inspector</h2></div></section>
+    <section class="inspector card">
+      <p>Load a downloaded runner-probe JSON artifact to inspect its structure locally. This tool does not upload the file or change any release gate.</p>
+      <label class="file-picker">Choose evidence JSON<input id="evidence-file" type="file" accept=".json,application/json"></label>
+      <div id="evidence-result" class="evidence-result" role="status" aria-live="polite">No file selected.</div>
+    </section>
+    <footer><span>LOYALTY. LEGACY. LANGUAGE.</span><span>LINGO STUDIO · ISOLATED OPERATIONS VIEW</span></footer>
+  </main>
+</body>
+</html>
