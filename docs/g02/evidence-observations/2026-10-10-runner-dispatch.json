@@ -1,0 +1,64 @@
+{
+  "evidence_type": "LINGO_G02_GITHUB_RUNNER_DISPATCH_OBSERVATION",
+  "status": "OBSERVED_FAILURE_NOT_ACCEPTANCE",
+  "collected_at_utc": "2026-10-10T21:04:53Z",
+  "collector": "GitHub repository API via connected GitHub integration",
+  "read_only": true,
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "branch": "infra/g02-evidence-architecture-2026-10-10",
+  "commit_sha": "7d371ef86047e86d428ebf3dcab415541988a2e5",
+  "workflow_run": {
+    "id": 38086241361,
+    "name": "Lingo Legacy Static CI",
+    "event": "pull_request",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38086241361",
+    "created_at_utc": "2026-10-10T21:04:50Z",
+    "started_at_utc": "2026-10-10T21:04:50Z",
+    "completed_at_utc": "2026-10-10T21:04:54Z"
+  },
+  "job": {
+    "id": 114313226294,
+    "name": "validate",
+    "status": "completed",
+    "conclusion": "failure",
+    "runner_id": 0,
+    "runner_name": "",
+    "steps": [],
+    "started_at_utc": "2026-10-10T21:04:51Z",
+    "completed_at_utc": "2026-10-10T21:04:53Z"
+  },
+  "logs": {
+    "retrievable": false,
+    "result": "BlobNotFound",
+    "observed_at_utc": "2026-10-10T21:02:43Z",
+    "note": "The log retrieval timestamp refers to earlier jobs in the same repeated failure series; this latest job's steps are empty. Latest job log retrieval was not separately confirmed."
+  },
+  "artifacts": {
+    "count": 0,
+    "names": []
+  },
+  "predicates": {
+    "runner_id_gt_zero": false,
+    "runner_name_populated": false,
+    "job_assigned_to_expected_runner": false,
+    "steps_instantiated": false,
+    "sentinel_exit_zero": "UNKNOWN",
+    "raw_logs_retrievable": false,
+    "artifact_available": false,
+    "independent_host_correlation": "UNKNOWN"
+  },
+  "host_telemetry": {
+    "available": false,
+    "reason": "This integration can inspect repository-visible GitHub data but cannot execute commands on the private Linux host."
+  },
+  "conclusion": "G02_BLOCKED",
+  "redaction_reviewed": true,
+  "limitations": [
+    "This record proves the observed GitHub API state only; it does not identify the root cause on the Linux host.",
+    "No host command, workflow dispatch, runner restart, registration, merge, or production mutation was performed.",
+    "This observation is not Packet A or a successful Packet B."
+  ]
+}
