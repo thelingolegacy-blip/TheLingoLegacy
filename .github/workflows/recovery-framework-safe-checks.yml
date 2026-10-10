@@ -1,6 +1,13 @@
 name: Recovery Framework Safe Checks
 
 on:
+  push:
+    branches:
+      - 'dev/isolated-workspace-2026-10-10'
+    paths:
+      - 'infra/recovery/**'
+      - 'ops/legacy-recovery/**'
+      - '.github/workflows/recovery-framework-safe-checks.yml'
   workflow_dispatch:
   pull_request:
     paths:
