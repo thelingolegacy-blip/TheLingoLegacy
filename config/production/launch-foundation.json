@@ -36,6 +36,6 @@
   "observability": {
     "paidTelemetryDefault": false,
     "crashCapture": "local session marker only",
-    "performanceMonitoring": "manual smoke checks and Vercel deployment status until approved"
+    "performanceMonitoring": "manual smoke checks and Cloudflare runtime status until approved"
   }
 }
