@@ -66,7 +66,6 @@ if (job) {
     if (!labels.includes(label)) fail(`job labels missing required label: ${label}`);
   }
   if (job.status !== 'completed' || job.conclusion !== 'success') fail('sentinel job must be completed with conclusion=success');
-  if (job.status !== 'completed' || job.conclusion !== 'success') fail('sentinel job must be completed with conclusion=success');
 }
 if (run && job) {
   if (String(job.run_id) !== String(run.id)) fail('run/job IDs are not correlated');
