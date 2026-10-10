@@ -1,6 +1,6 @@
 {
   "schema": "lingo.release-recovery-evidence.v1",
-  "captured_at_utc": "2026-10-10T21:41:24Z",
+  "captured_at_utc": "2026-10-10T21:42:01Z",
   "status": "OBSERVED_BLOCKED",
   "scope": "isolated recovery branch only; no production mutation",
   "source": {
@@ -11,7 +11,8 @@
     "pull_request_url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/264",
     "target_branch": "main",
     "draft": true,
-    "merged": false
+    "merged": false,
+    "latest_reviewed_pr_head_before_packet_refresh": "a451276e6075253a721d013f9716ac3789160d89"
   },
   "configuration": {
     "promotion_workflow": "source guards observed",
@@ -56,6 +57,32 @@
       "artifacts": [],
       "log_retrieval": "HTTP 404 BlobNotFound",
       "interpretation": "Execution evidence unavailable; cannot establish whether validation steps ran."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088602235,
+      "run_number": 3,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320212630,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Second observed run also lacks retrievable steps/logs; cannot establish validation steps executed."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088602232,
+      "run_number": 1010,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320212914,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Second observed run also lacks retrievable steps/logs; cannot establish validation steps executed."
     }
   ],
   "external_checks": [
@@ -108,5 +135,11 @@
     "Confirmed STAGING_DEPLOYMENT_APPROVED repository variable and Cloudflare credentials, without disclosing secret values.",
     "Successful isolated staging deployment and live probes on the expected workers.dev origin.",
     "Independent verification of source, build, runtime, rollback target, evidence correlation, and all release acceptance predicates."
-  ]
+  ],
+  "local_static_check": {
+    "status": "PASS",
+    "runtime": "Node.js v22.16.0",
+    "assertions": 10,
+    "scope": "static staging configuration predicates only; configuration values matched the source read from GitHub; not a Cloudflare deployment and not G02 acceptance"
+  }
 }
