@@ -22,7 +22,27 @@ env:
   NODE_VERSION: '22'
 
 jobs:
+  release-mode-guard:
+    name: Fail-closed release mode guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Block production deployment pending independent acceptance
+        shell: bash
+        env:
+          REQUESTED_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          set -euo pipefail
+          if [[ "$REQUESTED_ENVIRONMENT" != "staging" ]]; then
+            echo "PRODUCTION_PROMOTION=BLOCKED"
+            echo "REASON=Independent P(T+1), E(T+1), V(T+1), and A(T+1) acceptance is not established."
+            exit 1
+          fi
+          echo "RELEASE_MODE=STAGING_ONLY"
+
   runner-gate:
+    needs: release-mode-guard
+    if: ${{ needs.release-mode-guard.result == 'success' }}
     # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
@@ -115,7 +135,7 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
@@ -168,7 +188,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Production certification boundary
+      - name: Non-certifying staging release boundary
         shell: bash
         run: |
           set -euo pipefail
@@ -176,5 +196,5 @@ jobs:
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.failClosed)")" = "true"
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireLiveProbePass)")" = "true"
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireRollbackTarget)")" = "true"
-          echo 'Configured repository and Cloudflare gates passed.'
-          echo 'CERTIFIED remains withheld unless live evidence and rollback target are actually present.'
+          echo 'Repository configuration predicates passed for this staging-only run.'
+          echo 'PRODUCTION_CERTIFICATION=WITHHELD; independent P(T+1), E(T+1), V(T+1), A(T+1) acceptance and a verified rollback target are still required.'
