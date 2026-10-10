@@ -25,6 +25,10 @@ SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → PASSED → AUTHORIZATION
 
 See `manifest.json`, `QUALIFICATION-RULES.md`, `observations/github-actions-runs-2026-10-10.json`, and each gate's `packet.json`.
 
+## G02 intake helpers
+- `G02/INTAKE.md` — how to collect actual host inventory and GitHub sentinel evidence.
+- `ops/estate/diagnostics/capture-g02-host-evidence.sh` — read-only host telemetry collector. It does not configure services, access runner credentials, or synthesize a successful sentinel.
+
 ## Redaction and integrity
 Redact tokens, passwords, private keys, runner registration tokens, authorization headers, and personal data. Preserve timestamps, error strings, labels, status, exit codes, run/job/commit identifiers, and checksums. Keep raw restricted artifacts in approved private storage and commit sanitized copies/metadata only.
 
