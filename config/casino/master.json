@@ -6,9 +6,9 @@
     "outcomes": "no-ai-payouts",
     "deployment": "Cloudflare Worker asset delivery with static JSON contracts and server-controlled API boundaries",
     "storagePlan": {
-      "relational": "Neon through Vercel Marketplace for production Postgres tables",
-      "cache": "Upstash Redis through Vercel Marketplace for AI cache, rate counters, and transient state",
-      "assets": "Vercel Blob for generated media, cosmetics, and uploadable assets"
+      "relational": "Neon through a separately approved provider marketplace for production Postgres tables; not configured or verified",
+      "cache": "Upstash Redis through a separately approved provider marketplace for AI cache, rate counters, and transient state; not configured or verified",
+      "assets": "Object storage provider to be selected and verified before production media uploads; not configured"
     }
   },
   "machines": [
