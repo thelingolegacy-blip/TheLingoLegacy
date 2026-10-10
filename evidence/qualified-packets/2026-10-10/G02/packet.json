@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G02-RUNNER_DISPATCH-2026-10-10",
+  "gate_id": "G02",
+  "gate_name": "RUNNER_DISPATCH",
+  "scope": "thelingolegacy-blip/TheLingoLegacy",
+  "disposition": "FAIL",
+  "objective": "Prove matching runner registration, nonzero ID/name, job assignment, steps, sentinel execution, logs, artifact, checksums, and independent correlation.",
+  "provenance": {
+    "source_ref": "infra/g02-runner-agents-diagnostics-2026-10-10",
+    "source_commit": "RECORD_EXACT_SHA_AT_CAPTURE",
+    "captured_at_utc": "RECORD_ACTUAL_CAPTURE_TIME",
+    "collector": "RECORD_TOOL_OR_OPERATOR",
+    "collection_method": "RECORD_EXACT_METHOD"
+  },
+  "observed_evidence": [
+    "evidence/qualified-packets/2026-10-10/observations/github-actions-runs-2026-10-10.json — connector-retrieved run/job metadata; failures, steps null, logs_url null, artifacts empty."
+  ],
+  "missing_items": [
+    "Current runner inventory and last check-in for lingo-legacy-g02",
+    "Current Actions policy and restrictions",
+    "Authorized host diagnostic output and exit code",
+    "Successful controlled sentinel on matching runner",
+    "Runner ID > 0 and populated name, instantiated steps, sentinel exit code",
+    "Retrievable logs and uploaded artifact",
+    "SHA-256 verification and independent correlation/acceptance"
+  ],
+  "acceptance_rule": "PASS only after every gate predicate is supported by immutable source evidence and independently verified.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION; no merge, deploy, activation, promotion, secret changes, or gate bypass.",
+  "reviewer": {
+    "role": "Independent evidence reviewer",
+    "identity": "UNASSIGNED",
+    "status": "PENDING"
+  }
+}
