@@ -36,3 +36,7 @@ The evidence template is deliberately incomplete and must fail closed. Do not re
 ## Current known blocker
 
 The latest recorded G02 job was queued with `runner_id=0`, empty `runner_name`, no runner group, and `steps=[]`. The hosted sidecar CI job also failed before step initialization. These facts demonstrate unassigned jobs, but do not conclusively identify why dispatch failed. An authorized repository/org administrator and host operator must inspect runner availability, service polling, group access, and Actions policy.
+
+## Destructive-operation containment
+
+The runner bootstrap has been hardened to remove only its local temporary `.env` file automatically. It no longer issues a broad DELETE across every registration matching the runner name. Runner registration removal, host reboot, service restart, DNS/Worker retirement, and artifact deletion require exact target identity plus separate operator approval. The quarantine manifest remains inventory-only. This is intentional: preserve forensic evidence and avoid deleting an active or unrelated resource during recovery.
