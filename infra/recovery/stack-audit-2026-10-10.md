@@ -10,7 +10,7 @@
 | New sandbox | `lingo-recovery-sandbox-2026-10-10`, `workers.dev` enabled, preview URLs disabled, no database/storage bindings | Deployed; independent runtime probe pending |
 | Cloudflare Git connection | Repository connection restored/updated for GitHub repo ID `1279436411`; connection UUID `da80dc1d-3b08-4fbd-bfc6-4645156558c9` | API PASS |
 | Cloudflare build | Build `2bb69a60-708b-45dd-b13f-a81d36124641`, pinned commit `67fb8eb73c6a1552416ae6acb0d109106bfdb9a2`, outcome `success` | PASS |
-| Deployed sandbox version | `7e7a83d2-b4c5-48e9-9939-c1d01e136a0a` (latest); prior version `fc2767b9-3503-46b9-a82d-2d59c4db609d` | Cloudflare build/deploy logs PASS |
+| Deployed sandbox version | `caf4b7f9-ee55-4eb4-87f0-0c5714fd3d15` (latest); prior versions `7e7a83d2-b4c5-48e9-9939-c1d01e136a0a`, `fc2767b9-3503-46b9-a82d-2d59c4db609d` | Cloudflare build/deploy logs PASS |
 | Sandbox runtime response | Available web/connector fetch tools reject this hostname before a Worker response can be verified | UNVERIFIED |
 | Firebase client config | `firebase.client.json` contains placeholder API key, sender ID, and app ID | BLOCKED |
 | Firebase Hosting config | Draft branch now serves only `build/web` and rewrites Flutter routes to `/index.html` | CONFIG FIX IN DRAFT — not merged or deployed; Firebase client placeholders still block deployment |
@@ -29,7 +29,7 @@
 - Source commit: `67fb8eb73c6a1552416ae6acb0d109106bfdb9a2`
 - Build outcome: `success`
 - Deployed version: `fc2767b9-3503-46b9-a82d-2d59c4db609d`
-- Both build logs include `RECOVERY_SANDBOX_SOURCE_VALIDATION=PASS`, `Success: Build command completed`, `Deployed lingo-recovery-sandbox-2026-10-10`, and `Success: Deploy command completed`.
+- All three build logs include `RECOVERY_SANDBOX_SOURCE_VALIDATION=PASS`, `Success: Build command completed`, `Deployed lingo-recovery-sandbox-2026-10-10`, and `Success: Deploy command completed`.
 - Workers.dev subdomain: enabled; preview URLs disabled.
 - Bindings are limited to non-secret text flags `RECOVERY_SANDBOX=true` and `PRODUCTION_PROMOTION=disabled`; no D1/KV/R2, secrets, custom domains, or production routes.
 - Production route inventory rechecked after deployment: apex and www still target `thelingolegacy`; no sandbox production route exists.
