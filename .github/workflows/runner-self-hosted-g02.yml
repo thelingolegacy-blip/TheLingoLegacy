@@ -14,6 +14,16 @@ jobs:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     steps:
+      - name: Initialize forensic evidence directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          cat > g02-evidence/g02-status.txt <<'EOF'
+          G02_EXECUTION_STATUS=NOT_STARTED
+          EVIDENCE_NOTE=This placeholder proves only that the workflow reached step initialization; it is not a sentinel pass.
+          EOF
+
       - name: Runner identity and execution sentinel
         id: sentinel
         shell: bash
