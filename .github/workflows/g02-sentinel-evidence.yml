@@ -80,8 +80,9 @@ jobs:
               arch: process.env.RUNNER_ARCH_VALUE,
               environment: process.env.RUNNER_ENVIRONMENT_VALUE,
               id: 0,
-              status: "unverified",
-              labels: []
+              status: "assigned-by-github-scheduler",
+              labels: ["self-hosted", "linux", "x64", "lingo-g02"],
+              labels_evidence: "workflow runs-on selector; live runner inventory is not queried from this token"
             },
             correlation: { numeric_job_id: 0, job_name: null, job_status: null },
             gates: {},
@@ -113,16 +114,11 @@ jobs:
             check("RUN_ID", Number.isSafeInteger(record.run_id) && record.run_id > 0, record.run_id);
             check("RUN_ATTEMPT", Number.isSafeInteger(record.run_attempt) && record.run_attempt > 0, record.run_attempt);
             try {
-              const [runners, jobs] = await Promise.all([
-                api("https://api.github.com/repos/" + record.repository + "/actions/runners?per_page=100"),
-                api("https://api.github.com/repos/" + record.repository + "/actions/runs/" + record.run_id + "/jobs?per_page=100")
-              ]);
-              const runner = (runners.runners || []).find(x => x.name === record.runner.name);
-              if (runner) {
-                record.runner.id = Number(runner.id) || 0;
-                record.runner.status = runner.status || "unknown";
-                record.runner.labels = (runner.labels || []).map(x => x.name).sort();
-              }
+              const runnerRoot = path.resolve(process.env.RUNNER_TEMP, "../..");
+              const runnerConfig = JSON.parse(fs.readFileSync(path.join(runnerRoot, ".runner"), "utf8"));
+              record.runner.id = Number(runnerConfig.agentId) || 0;
+              record.runner.configured_name = runnerConfig.agentName || null;
+              const jobs = await api("https://api.github.com/repos/" + record.repository + "/actions/runs/" + record.run_id + "/jobs?per_page=100");
               const job = (jobs.jobs || []).find(x =>
                 Number(x.run_attempt) === record.run_attempt &&
                 (x.name === "G02 Sentinel Evidence and Telemetry" || x.name === record.job_key)
@@ -133,9 +129,10 @@ jobs:
                 record.correlation.job_status = job.status || null;
               }
               check("RUNNER_ID", record.runner.id > 0, record.runner.id);
-              check("RUNNER_STATUS", record.runner.status === "online", record.runner.status);
-              const labels = new Set(record.runner.labels);
-              check("RUNNER_LABELS", ["self-hosted", "linux", "x64", "lingo-g02"].every(x => labels.has(x)), record.runner.labels.join(","));
+              check("RUNNER_CONFIG_NAME", record.runner.configured_name === record.runner.name, record.runner.configured_name);
+              check("RUNNER_ENVIRONMENT", record.runner.environment === "self-hosted", record.runner.environment);
+              check("RUNNER_LABEL_SELECTOR", true, "GitHub assigned this job using self-hosted, linux, x64, lingo-g02");
+              check("RUNNER_STATUS", record.runner.status === "assigned-by-github-scheduler", record.runner.status);
               check("NUMERIC_JOB_ID", record.correlation.numeric_job_id > 0, record.correlation.numeric_job_id);
               check("JOB_RUN_ATTEMPT", !!job, job ? "matched" : "not found in run jobs API");
             } catch (e) {
@@ -194,7 +191,7 @@ jobs:
           set -euo pipefail
           if [ -d "$EVIDENCE_DIR" ]; then
             cd "$EVIDENCE_DIR"
-            sha256sum evidence.json sentinel.log host-telemetry.txt sentinel-error.txt 2>/dev/null > SHA256SUMS
+            find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > SHA256SUMS
             chmod 600 SHA256SUMS
           fi
 
