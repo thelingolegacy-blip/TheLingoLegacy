@@ -9,16 +9,22 @@ A successful hosted probe is diagnostic only. It does not satisfy or substitute 
 
 ## Target
 Workflow: `.github/workflows/g02-infrastructure-bridge.yml`
-Branch: `ops/g02-infrastructure-bridge-2026-10-10`
+Branch: `ops/g02-infrastructure-bridge-target-2026-10-10`
 Dispatch URL: https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/workflows/g02-infrastructure-bridge.yml
 
-The workflow runs on `workflow_dispatch` and on pushes to this isolated branch. It does not deploy, modify DNS, change Cloudflare Workers, merge pull requests, or mutate production.
+The workflow runs on `workflow_dispatch` and on pushes to `ops/g02-infrastructure-bridge-target-2026-10-10`. The push filter is intentionally aligned to the actual PR branch so a branch push can trigger the bridge. It does not deploy, modify DNS, change Cloudflare Workers, merge pull requests, or mutate production.
 
 ## Evidence artifacts
 - `g02-bridge-hosted-<run_id>`: hosted runner identity, API response, run/commit context.
 - `g02-bridge-self-hosted-<run_id>`: self-hosted runner identity, API job record, host diagnostics, manifest, and checksums.
 
 Artifacts are evidence captures, not self-accepting certification. Review run ID, attempt, job ID, full commit SHA, runner ID/name/OS/architecture/environment, final job state, logs, and artifact contents independently.
+
+## Containment and time limits
+- Workflow-level concurrency uses `g02-infrastructure-bridge-${{ github.ref }}` with `cancel-in-progress: true`, preventing duplicate in-progress bridge runs on the same ref from accumulating.
+- The hosted diagnostic job has a 5-minute execution timeout; the self-hosted diagnostic job has a 10-minute execution timeout after assignment.
+- These timeout limits do not terminate a job that remains queued without runner assignment, and this workflow cannot cancel jobs belonging to other workflows. A queued job with `runner_id=0` still requires Actions policy/runner-host diagnosis or an authorized cancellation through GitHub.
+- Concurrency is containment, not a fix for the runner dispatch/control-plane fault. No acceptance gate is relaxed.
 
 ## Interpreting outcomes
 - Both jobs queued with no steps: execution dispatch/platform policy remains the first blocker; inspect repository/account Actions policy and open a GitHub Support case with the run and job IDs.
