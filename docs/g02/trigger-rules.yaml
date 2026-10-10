@@ -7,6 +7,17 @@ automatic_promotion: false
 
 triggers:
   permitted:
+    - id: hourly_read_only_diagnostics
+      event: schedule
+      requires:
+        - read_only_github_telemetry
+        - no_sentinel_dispatch
+        - no_gate_acceptance
+        - no_production_mutations
+        - bounded_artifact_retention
+      effects:
+        - diagnostic_artifact_only
+        - never_authorize_promotion
     - id: operator_manual_dispatch
       event: workflow_dispatch
       requires:
@@ -20,7 +31,9 @@ triggers:
     - pull_request
     - pull_request_target
     - automatic_production_push
-    - schedule
+    - scheduled_sentinel_dispatch
+    - scheduled_gate_acceptance
+    - scheduled_production_promotion
     - workflow_run_promotion
     - unreviewed_branch_dispatch
 
