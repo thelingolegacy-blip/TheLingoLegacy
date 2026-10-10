@@ -17,7 +17,9 @@ COLLECTOR="$REPO_ROOT/ops/github-runner/collect-host-telemetry.sh"
   echo "[FAIL] Required production helper or collector is missing." >&2
   exit 1
 }
-bash -n "$SANITIZER" "$SCHEMA_VALIDATOR" "$COLLECTOR"
+for script in "$SANITIZER" "$SCHEMA_VALIDATOR" "$COLLECTOR"; do
+  bash -n "$script"
+done
 
 # shellcheck source=/dev/null
 source "$SANITIZER"
