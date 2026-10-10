@@ -1,0 +1,55 @@
+name: LINGO Studio Infrastructure CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "studio/ops/**"
+      - "studio/assets/**"
+      - "infra/ci/**"
+      - "ops/studio/**"
+      - ".github/workflows/studio-platform-ci.yml"
+      - ".github/workflows/g02-runner-assignment-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-platform-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Studio, CI, UI, and media contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Validate infrastructure contracts
+        run: node ops/studio/validate-infrastructure.mjs
+      - name: Validate existing release-critical site
+        run: node scripts/validate-static-site.mjs
+      - name: Validate Cloudflare binding contract
+        run: node scripts/verify-cloudflare-bindings.mjs
+      - name: Validate retired-provider surface
+        run: node scripts/sanitize-cloudflare-only-surface.mjs
+      - name: Create deterministic media build manifest
+        run: node ops/studio/build-media-manifest.mjs
+      - name: Upload build evidence
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.6.2
+        with:
+          name: lingo-studio-ci-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .build/studio-media-manifest.json
+            .build/studio-media-manifest.sha256
+          if-no-files-found: warn
+          retention-days: 14
