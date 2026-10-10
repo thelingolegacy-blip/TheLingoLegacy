@@ -9,13 +9,8 @@ RUNNER_STARTED=0
 cleanup() {
   rm -f -- "$ENV_FILE"
   if [[ "$RUNNER_STARTED" == "1" ]]; then
-    local runner_ids=""
-    runner_ids="$(gh api --paginate "repos/${REPO}/actions/runners?per_page=100" --jq '.runners[]? | select(.name == "lingo-legacy-g02") | .id' 2>/dev/null || true)"
-    while IFS= read -r runner_id; do
-      [[ -n "$runner_id" ]] || continue
-      gh api --method DELETE "repos/${REPO}/actions/runners/${runner_id}" >/dev/null 2>&1 || \
-        echo "WARNING: could not remove runner id ${runner_id}; check repository Settings -> Actions -> Runners." >&2
-    done <<< "$runner_ids"
+    echo "INFO: automatic runner deletion is disabled for safety." >&2
+    echo "INFO: allow the ephemeral runner to unregister itself; if it remains, inspect repository Settings -> Actions -> Runners and remove only the exact stale registration after verifying its identity." >&2
   fi
 }
 trap cleanup EXIT
