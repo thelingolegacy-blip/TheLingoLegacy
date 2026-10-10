@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "brand": "The Lingo Legacy",
+  "visualIdentity": {
+    "theme": "Industrial Noir",
+    "palette": {
+      "obsidian": "#09090D",
+      "graphite": "#17171F",
+      "steel": "#8D929E",
+      "gold": "#D6B15E",
+      "royalPurple": "#6941C6",
+      "paper": "#F3F0E8"
+    },
+    "tagline": "Loyalty. Legacy. Language."
+  },
+  "inputs": {
+    "directory": "studio/assets/source",
+    "manifest": "studio/assets/asset-registry.json",
+    "acceptedExtensions": [
+      ".avif",
+      ".gif",
+      ".jpeg",
+      ".jpg",
+      ".json",
+      ".mp3",
+      ".mp4",
+      ".ogg",
+      ".png",
+      ".svg",
+      ".wav",
+      ".webm",
+      ".webp"
+    ],
+    "rejectSymlinks": true,
+    "externalRemoteAssetsAllowed": false
+  },
+  "transforms": {
+    "images": {
+      "formats": [
+        "avif",
+        "webp"
+      ],
+      "responsiveWidths": [
+        320,
+        640,
+        960,
+        1280,
+        1920
+      ],
+      "preserveOriginal": true,
+      "stripMetadata": true
+    },
+    "audio": {
+      "formats": [
+        "mp3",
+        "ogg"
+      ],
+      "loudnessNormalization": false,
+      "keepOriginal": true
+    },
+    "video": {
+      "formats": [
+        "webm",
+        "mp4"
+      ],
+      "posterRequired": true,
+      "keepOriginal": true
+    },
+    "vector": {
+      "sanitizeSvg": true,
+      "disallowExternalReferences": true
+    }
+  },
+  "qualityGates": {
+    "requireLicenseRecord": true,
+    "requireAltTextForInformativeImages": true,
+    "requireCaptionTrackForSpokenVideo": true,
+    "verifyLocalReferences": true,
+    "deterministicSha256": true,
+    "noCredentialsInMetadata": true
+  },
+  "outputs": {
+    "directory": ".build/media",
+    "manifest": ".build/studio-media-manifest.json",
+    "checksum": ".build/studio-media-manifest.sha256"
+  },
+  "publishing": {
+    "uploadAutomatically": false,
+    "productionPublishAllowed": false,
+    "requiresReleaseAuthorization": true
+  }
+}
