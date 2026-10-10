@@ -116,3 +116,39 @@ The following remain **NOT ESTABLISHED / BLOCKED** until verified:
 - independent rollback target and release-evidence correlation.
 
 **No production deployment, activation, merge, or new last-known-good baseline is authorized by this audit.**
+
+
+## Additional findings staged in the recovery branch
+
+### 10. Public release pages had unsupported green/ready claims
+The flagship homepage, launch-verification page, release-notes page, Production Lock page, integration map, digital-drop page, universe map, and Live Casino Studio concept contained text implying a production deployment, checkout, analytics, or launch state was ready/verified. These were source-text assertions and did not match the actual CI/G02 evidence state.
+
+**Source repair:** the affected pages now say source present, blocked, staged, or unverified as appropriate; old analytics script loaders were removed from the audited core pages. This updates the recovery branch only. It does not change the currently deployed public site until a reviewed release is authorized.
+
+### 11. Release manifest and integration status contract overstated acceptance
+The original release manifest listed TLS/domain aliases, static validation, and Vercel analytics as verified gates despite the current Actions run exposing no executed validation steps and no artifacts. The integration contract also reported `deployed=true` and `live=true` alongside `certified=false` without an accepted current evidence chain.
+
+**Source repair:** the release manifest now states `BLOCKED_NOT_CERTIFIED`, lists only source-contract facts as verified, and moves CI, G02, staging, external reachability/TLS, rollback, Stripe/Firebase, and GitLab execution into pending hard locks. The integration contract now reports deployment/live evidence as not established and labels Worker/Cloudflare surfaces `configured_release_locked`. Static configuration inspection also confirmed required manifest source routes, canon entries, 48px minimum touch target, required icon entries/files, asset registry required fields, environment contract keys, and required sitemap URLs are present in the recovery branch. This is a manual readback, not a CI pass or live-route proof.
+
+### 12. Stripe return flow could falsely imply a successful payment
+The previous drop-page script interpreted `?checkout=success` as a completed checkout without checking the Stripe session. A user could manually supply that query parameter. The Worker success URL also did not include a session ID.
+
+**Source repair staged:** the Stripe return URL now includes `{CHECKOUT_SESSION_ID}`; the Worker draft adds `GET /api/checkout-status` to retrieve the session from Stripe and checks payment status and store metadata; the browser only displays a paid status when the server returns a verified `paid=true`. The UI still warns that fulfillment requires a matching order record.
+
+**Still required before payment can be activated:** edge-level abuse/rate controls, verified Stripe environment configuration, signature-verified/idempotent webhook handling, durable order records, amount/tier/currency/order binding and full test-mode end-to-end tests. This is tracked in [Issue #241](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/241). Nothing has been deployed.
+
+### 13. Latest GitHub Actions failure re-confirms a provider-side blocker
+Latest observed Static CI run when this audit was updated: [run 38009850298](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38009850298), job `114087075726`, commit `1a44e169876e68f19c59169eca0ca3f747259bf6`. The API returns failure, runner ID `0`, empty runner name, label `ubuntu-latest`, empty steps, no log URL and no artifacts.
+
+**Interpretation:** this run did not execute the repository validators. The exact dispatch/platform cause remains unproven; repository/account Actions policy, account resource limits, runner-group/host registration and GitHub backend telemetry must be checked. If both hosted and self-hosted jobs continue failing before step initialization, escalation to GitHub Support with run/job identifiers is necessary.
+
+### Current recovery tracker
+- [#236 — G02 runner assignment and evidence](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/236)
+- [#237 — Actions pre-step failures and missing logs](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/237)
+- [#238 — Cloudflare triggers, route ownership, and build commands](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/238)
+- [#239 — production root asset directory exposure review](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/239)
+- [#241 — Stripe session verification, abuse controls, and order evidence](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/241)
+
+## Final recovery posture
+
+The current draft includes useful source repairs and clearer release truth, but **it is not a validated release**. The Cloudflare triggers remain contained; no staging or production deployment has occurred; the branch has not been merged; G02 and Actions execution remain unestablished; GitLab remains blocked by identity verification; and production activation remains blocked. Do not promote until the exact reviewed SHA receives real runner assignment, executed CI steps, retrievable logs/artifacts, successful staging probes, valid rollback/evidence acceptance and a separate explicit production authorization.
