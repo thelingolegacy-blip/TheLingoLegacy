@@ -7,13 +7,16 @@
 | GitHub source | `thelingolegacy-blip/TheLingoLegacy`, default branch `main`; isolated recovery branch created | Source available |
 | Production Cloudflare routes | Apex and www route to existing `thelingolegacy` Worker | Protected; unchanged |
 | Source-to-live Worker naming | `wrangler.jsonc` names `thelingolegacyv-5`, while live apex/www routes target `thelingolegacy` | BLOCKED — reconcile only after reviewing source/version intent |
-| New sandbox | `lingo-recovery-sandbox-2026-10-10`, `workers.dev` enabled, preview URLs disabled, zero bindings | Created; runtime probe pending |
-| Sandbox source/config | `infra/recovery/sandbox-worker.js` and `wrangler.recovery.jsonc` committed to the isolated branch | Source scaffold available |
+| New sandbox | `lingo-recovery-sandbox-2026-10-10`, `workers.dev` enabled, preview URLs disabled, no database/storage bindings | Deployed; independent runtime probe pending |
+| Cloudflare Git connection | Repository connection restored/updated for GitHub repo ID `1279436411`; connection UUID `da80dc1d-3b08-4fbd-bfc6-4645156558c9` | API PASS |
+| Cloudflare build | Build `2bb69a60-708b-45dd-b13f-a81d36124641`, pinned commit `67fb8eb73c6a1552416ae6acb0d109106bfdb9a2`, outcome `success` | PASS |
+| Deployed sandbox version | `fc2767b9-3503-46b9-a82d-2d59c4db609d` | Cloudflare build/deploy logs PASS |
+| Sandbox runtime response | Available web/connector fetch tools reject this hostname before a Worker response can be verified | UNVERIFIED |
 | Firebase client config | `firebase.client.json` contains placeholder API key, sender ID, and app ID | BLOCKED |
-| Firebase Hosting config | `firebase.json` uses `public: "."` | BLOCKED — repository root is too broad to publish safely |
+| Firebase Hosting config | `firebase.json` uses `public: ". "` (actual value: `.`) | BLOCKED — repository root is too broad to publish safely |
 | Flutter | Root `pubspec.yaml` exists with Firebase packages | Build not run; no connected Flutter shell/toolchain |
 | Backend | Separate `nextjs-lingolegacy` Worker has a D1 binding and Access public-bypass configuration was observed in prior read-only audit | Security review required; do not add public route |
-| CI runner | G02 runner execution evidence still absent; the new Recovery Sandbox Audit run failed before steps were instantiated (`steps=null`, `logs_url=null`) | BLOCKED |
+| CI runner | G02 runner execution evidence still absent; the GitHub Recovery Sandbox Audit run failed before steps were instantiated (`steps=null`, `logs_url=null`) | BLOCKED |
 | Cache cleanup | No production cache purge performed | Audit-first |
 | Vercel alternative | Project reports `live=false`; latest production-target deployment is `READY` | Not a verified active origin |
 | AppDeploy alternative | Existing project snapshots were previously recorded ready, but deployment quota was previously exhausted | Do not rely on new deployment capacity without verifying quota |
@@ -21,19 +24,16 @@
 ## Sandbox deployment evidence
 
 - Worker: `lingo-recovery-sandbox-2026-10-10`
-- Deployment ID: `3cb43f72-2e3d-4ff6-aa9d-31552290cea0`
-- Version ID: `e9d59f4f-9d9f-40d7-b507-7e3c9453e3b7`
-- Cloudflare API upload: HTTP 200; active deployment reports 100% on the new version.
+- Initial API deployment ID: `3cb43f72-2e3d-4ff6-aa9d-31552290cea0`
+- Cloudflare Workers Builds build UUID: `2bb69a60-708b-45dd-b13f-a81d36124641`
+- Source commit: `67fb8eb73c6a1552416ae6acb0d109106bfdb9a2`
+- Build outcome: `success`
+- Deployed version: `fc2767b9-3503-46b9-a82d-2d59c4db609d`
+- Logs include `RECOVERY_SANDBOX_SOURCE_VALIDATION=PASS`, `Success: Build command completed`, `Deployed lingo-recovery-sandbox-2026-10-10`, and `Success: Deploy command completed`.
 - Workers.dev subdomain: enabled; preview URLs disabled.
-- Bindings: none; no secrets, D1/KV/R2, custom domains, or production routes.
-- Production route inventory rechecked after creation: apex and www still target `thelingolegacy`; no sandbox production route exists.
-- Independent HTTP verification is pending because the available fetch environment blocks requests to this host; its 403 is a tool egress policy response, not proof of the Worker response.
-
-## Sandbox endpoints
-
-- `/healthz` — JSON health response, `Cache-Control: no-store`.
-- `/readyz` — readiness response; explicitly reports that promotion and production routes are disabled.
-- Other paths return JSON 404.
+- Bindings are limited to non-secret text flags `RECOVERY_SANDBOX=true` and `PRODUCTION_PROMOTION=disabled`; no D1/KV/R2, secrets, custom domains, or production routes.
+- Production route inventory rechecked after deployment: apex and www still target `thelingolegacy`; no sandbox production route exists.
+- Independent HTTP verification is pending because the available fetch environment blocks requests to this host before returning Worker content. Do not interpret that fetch block as the Worker status.
 
 ## Required repairs before original connection can be restored
 
