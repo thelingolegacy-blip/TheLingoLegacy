@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   contract:
-    name: Static architecture contract
+    name: Static architecture and AI safety contract
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -28,6 +28,8 @@ jobs:
           persist-credentials: false
       - name: Validate JSON contract and fail-closed invariants
         run: node ops/architecture/validate-contract.mjs
+      - name: Run mocked Gemini adapter safety tests
+        run: node --test ops/architecture/gemini-adapter.test.mjs
       - name: Check architecture docs for likely literal Gemini keys
         shell: bash
         run: |
