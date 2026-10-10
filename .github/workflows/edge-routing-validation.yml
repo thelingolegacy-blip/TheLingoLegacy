@@ -16,6 +16,7 @@ on:
       - 'wrangler.jsonc'
       - 'worker.js'
       - 'scripts/verify-edge-routing.mjs'
+      - 'scripts/verify-g02-evidence.mjs'
       - '.github/workflows/edge-routing-validation.yml'
   workflow_dispatch:
 
