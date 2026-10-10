@@ -75,3 +75,17 @@ The same signature was also present on commit `8715bd79ee623dc46e85e3882be4f909b
 All four jobs completed as failures within approximately one second, with no instantiated steps. The GitHub API jobs payload explicitly reported `runner_id=0`, empty `runner_name`, and `steps=[]`. This makes a source-level test failure an unsupported explanation for these specific runs. Both a pre-existing CI workflow and the newly added sandbox guard fail before executing commands.
 
 **Updated finding:** G02 is blocked at the runner allocation/initialization layer across both the custom-runner recovery effort and GitHub-hosted `ubuntu-latest` jobs. Repository workflow edits alone have not repaired dispatch. Escalate with these run/job IDs to GitHub Support and verify account/organization Actions policy and hosted-runner availability. Do not rerun repeatedly without a change in provider/host conditions.
+
+
+## Final branch-head confirmation
+
+After committing the evidence report itself, GitHub ran both workflows again against branch head `6eaa828b5fd8249e02e012eb3fc0530c5f6c9bd6`:
+
+| Workflow run | Job | Runner ID | Runner name | Steps | Conclusion |
+|---|---:|---:|---|---|---|
+| [Studio Sandbox Guard #38076892083](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076892083) | 114285643465 | 0 | empty | `[]` | failure |
+| [Lingo Legacy Static CI #38076892062](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076892062) | 114285643511 | 0 | empty | `[]` | failure |
+
+Both jobs requested `ubuntu-latest` and completed as failures within roughly two seconds, without instantiated steps. This confirms the failure continued on the latest branch head, not only on an earlier commit. The PR remains open and draft; the branch comparison reports 13 commits ahead of `main`, zero behind. The Vercel status context remains failed with the account deployment-blocked/build-rate-limit destination.
+
+No runner, host, policy, production Worker, DNS route, or secret was changed as part of this evidence collection.
