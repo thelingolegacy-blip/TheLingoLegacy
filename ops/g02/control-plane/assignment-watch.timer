@@ -1,0 +1,12 @@
+[Unit]
+Description=Periodic LINGO G02 read-only assignment watch
+
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=15m
+AccuracySec=1m
+Persistent=false
+Unit=lingo-g02-assignment-watch.service
+
+[Install]
+WantedBy=timers.target
