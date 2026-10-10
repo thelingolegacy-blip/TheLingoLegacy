@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "system": "LINGOsonic Nexus machine and diagnostic inventory",
+  "updatedAtUtc": "2026-10-10",
+  "policy": {
+    "productionMutation": "FROZEN",
+    "mainMerge": "PROHIBITED_UNTIL_ACCEPTED",
+    "unknownStatus": "UNVERIFIED_NOT_ONLINE",
+    "evidenceChain": ["SOURCE", "EVIDENCE", "VERIFICATION", "ACCEPTANCE", "PASSED", "AUTHORIZATION", "PROMOTION"]
+  },
+  "machines": [
+    {
+      "id": "M01-GITHUB-CONTROL",
+      "name": "GitHub Actions control plane",
+      "kind": "managed-control-plane",
+      "purpose": "Accept workflow dispatches, assign jobs, expose steps/logs/artifacts",
+      "currentStatus": "PARTIAL_FAILURE",
+      "knownEvidence": ["PR #249 workflow jobs previously completed with failure and empty step arrays", "log retrieval returned BlobNotFound", "retry request accepted but latest observed job was queued"],
+      "requiredTelemetry": ["workflow_run_id", "workflow_job_id", "head_sha", "status", "conclusion", "runner_id", "runner_name", "started_at", "completed_at", "steps", "log_uri", "artifact_ids"],
+      "ownerRole": "CI_PLATFORM_OPERATOR",
+      "mutationAllowed": "DIAGNOSTIC_ONLY"
+    },
+    {
+      "id": "M02-GITHUB-HOSTED-RUNNER",
+      "name": "GitHub-hosted ubuntu-latest runner",
+      "kind": "ephemeral-managed-runner",
+      "purpose": "Execute sidecar build, frontend tests, Python tests, artifact generation",
+      "currentStatus": "UNVERIFIED_NO_EXECUTION_EVIDENCE",
+      "requiredTelemetry": ["runner_id_gt_zero", "runner_name", "first_step_started", "checkout_sha", "step_conclusions", "log_retrieval", "artifact_digest"],
+      "ownerRole": "CI_PLATFORM_OPERATOR",
+      "mutationAllowed": "ISOLATED_CI_ONLY"
+    },
+    {
+      "id": "M03-SELF-HOSTED-G02",
+      "name": "lingo-legacy-g02 self-hosted runner",
+      "kind": "user-managed-host",
+      "requiredLabels": ["self-hosted", "linux", "x64", "lingo-g02"],
+      "purpose": "Diagnose G02 assignment and run a harmless sentinel job",
+      "currentStatus": "NOT_VERIFIED_ONLINE_OR_POLLING",
+      "historicalSignal": "Runner UI was reported Online Idle, but jobs remained queued and runner_id was 0; active daemon polling with matching labels was not established",
+      "requiredTelemetry": ["host_reachable", "runner_service_active", "last_check_in_utc", "runner_group", "labels", "runner_id_gt_zero", "job_assignment", "sentinel_exit_code", "logs_retrievable"],
+      "ownerRole": "RUNNER_HOST_ADMIN",
+      "mutationAllowed": "DIAGNOSTIC_ONLY"
+    },
+    {
+      "id": "M04-OPERATOR-WORKSTATION",
+      "name": "Operator local workstation",
+      "kind": "physical-or-virtual-workstation",
+      "purpose": "Optional independent execution of validation script and local tool checks",
+      "currentStatus": "NOT_CONNECTED_TO_THIS_DIAGNOSTIC_SESSION",
+      "requiredTelemetry": ["os_version", "git_sha", "git_status", "node_version", "npm_version", "python_version", "docker_version_if_available", "test_exit_codes", "log_hashes"],
+      "ownerRole": "REPOSITORY_OPERATOR",
+      "mutationAllowed": "READ_ONLY_CHECKOUT_OR_ISOLATED_BRANCH"
+    },
+    {
+      "id": "M05-SIDECAR-WEB",
+      "name": "LINGOsonic Nexus React/Vite sidecar",
+      "kind": "application-build-target",
+      "purpose": "Build static frontend and generate dist artifact",
+      "currentStatus": "SOURCE_PRESENT_BUILD_UNVERIFIED",
+      "requiredTelemetry": ["head_sha", "npm_ci_exit_code", "build_exit_code", "dist_file_manifest", "artifact_sha256", "dependency_audit"],
+      "ownerRole": "APPLICATION_ENGINEER",
+      "mutationAllowed": "ISOLATED_BRANCH_ONLY"
+    },
+    {
+      "id": "M06-PYTHON-LAMBDA",
+      "name": "Python job-intake handler",
+      "kind": "serverless-source-and-runtime-target",
+      "purpose": "Validate requests and enqueue job records/messages",
+      "currentStatus": "SOURCE_PRESENT_TESTS_UNVERIFIED_RUNTIME_NOT_DEPLOYED",
+      "requiredTelemetry": ["python_compile_exit_code", "unit_test_exit_code", "correlation_id", "request_validation_result", "queue_publish_result", "dynamodb_write_result", "error_class_without_secrets"],
+      "ownerRole": "BACKEND_ENGINEER",
+      "mutationAllowed": "SOURCE_TESTS_ONLY"
+    },
+    {
+      "id": "M07-DOCKER-BUILDER",
+      "name": "Docker build host",
+      "kind": "local-or-CI-container-engine",
+      "purpose": "Build and inspect isolated sidecar container",
+      "currentStatus": "AVAILABILITY_UNVERIFIED",
+      "requiredTelemetry": ["docker_version", "daemon_reachable", "build_exit_code", "image_digest", "non_root_check", "healthcheck_result"],
+      "ownerRole": "CONTAINER_PLATFORM_OPERATOR",
+      "mutationAllowed": "LOCAL_OR_CI_IMAGE_ONLY"
+    },
+    {
+      "id": "M08-AWS-VALIDATION",
+      "name": "AWS identity and CloudFormation validation target",
+      "kind": "cloud-account-target",
+      "purpose": "Verify account identity and validate template without provisioning",
+      "currentStatus": "IDENTITY_UNVERIFIED_NO_RESOURCES_DEPLOYED",
+      "requiredTelemetry": ["caller_account_id_redacted", "principal_arn_redacted_if_needed", "region", "validate_template_result", "template_sha256", "estimated_cost_review"],
+      "ownerRole": "CLOUD_PLATFORM_OPERATOR",
+      "mutationAllowed": "READ_ONLY_IDENTITY_AND_TEMPLATE_VALIDATION",
+      "explicitlyNotProvisioned": ["Lambda", "API Gateway", "SQS", "DynamoDB", "S3", "RDS", "MSK/Kafka", "ECS", "Amplify"]
+    },
+    {
+      "id": "M09-CLOUDFLARE-EDGE",
+      "name": "Cloudflare DNS, Worker and public edge",
+      "kind": "production-edge",
+      "purpose": "Flagship routing and public reachability",
+      "currentStatus": "PRODUCTION_FROZEN_PUBLIC_REACHABILITY_UNVERIFIED",
+      "requiredTelemetry": ["authoritative_dns_snapshot", "worker_route_snapshot", "edge_http_status", "redirect_chain", "request_id", "body_digest", "external_probe_timestamp"],
+      "ownerRole": "EDGE_OPERATOR",
+      "mutationAllowed": "READ_ONLY_PROBES_ONLY"
+    },
+    {
+      "id": "M10-FIREBASE",
+      "name": "Firebase Auth/Firestore/Functions",
+      "kind": "backend-service",
+      "purpose": "Identity, application data, functions",
+      "currentStatus": "GATE_BLOCKED_RUNTIME_UNVERIFIED",
+      "requiredTelemetry": ["project_identity", "auth_health", "function_health", "rules_validation", "error_rate", "read_only_probe_result"],
+      "ownerRole": "BACKEND_PLATFORM_OPERATOR",
+      "mutationAllowed": "READ_ONLY_PROBES_ONLY"
+    },
+    {
+      "id": "M11-VERCEL",
+      "name": "Vercel status integration",
+      "kind": "deployment-provider",
+      "purpose": "Report linked deployment status",
+      "currentStatus": "BLOCKED_ACCOUNT_STATUS",
+      "knownEvidence": ["Commit status reported failure with account-deployment-blocked target"],
+      "requiredTelemetry": ["project_id", "account_status", "deployment_id", "build_logs", "preview_url", "HTTP_probe"],
+      "ownerRole": "DEPLOYMENT_OPERATOR",
+      "mutationAllowed": "READ_ONLY_DIAGNOSTICS"
+    },
+    {
+      "id": "M12-OBSERVABILITY",
+      "name": "Telemetry and evidence collector",
+      "kind": "logical-service-not-yet-deployed",
+      "purpose": "Correlate workflow, build, test, artifact, cloud validation and public probes",
+      "currentStatus": "SPECIFICATION_ONLY",
+      "requiredTelemetry": ["correlation_id", "repository", "branch", "head_sha", "run_id", "job_id", "check_name", "status", "started_at_utc", "finished_at_utc", "log_sha256", "artifact_sha256", "evidence_uri"],
+      "ownerRole": "RELIABILITY_ENGINEER",
+      "mutationAllowed": "EVIDENCE_CAPTURE_ONLY"
+    }
+  ]
+}

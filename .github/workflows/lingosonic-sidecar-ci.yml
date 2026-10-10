@@ -1,0 +1,78 @@
+name: LINGOsonic Nexus Sidecar CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon/**"
+      - ".github/workflows/lingosonic-sidecar-ci.yml"
+  push:
+    branches:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon-2026-10-10"
+    paths:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon/**"
+      - ".github/workflows/lingosonic-sidecar-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sidecar/lingosonic-nextus-v8-nitro-canon
+    steps:
+      - name: Clock and execution correlation (bot/CI side)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "correlation_id=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${GITHUB_SHA}"
+          echo "source_sha=${GITHUB_SHA}"
+          echo "workflow_run_id=${GITHUB_RUN_ID}"
+          echo "workflow_attempt=${GITHUB_RUN_ATTEMPT}"
+          echo "runner_name=${RUNNER_NAME:-unknown}"
+          echo "runner_os=${RUNNER_OS:-unknown}"
+          echo "runner_arch=${RUNNER_ARCH:-unknown}"
+          echo "clock_started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          date -u '+%s epoch seconds'
+          if command -v timedatectl >/dev/null 2>&1; then timedatectl show -p NTPSynchronized --value || true; else echo 'ntp_sync_status=unavailable'; fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci --no-audit
+      - run: npm run build
+      - name: Check for accidentally committed secret files
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find sidecar/lingosonic-nextus-v8-nitro-canon -type f \( -name ".env" -o -name "*.pem" -o -name "*.key" \) | grep -q .; then
+            echo "Potential secret file detected" >&2
+            exit 1
+          fi
+      - name: Python syntax check
+        run: python3 -m py_compile lambda/app.py
+      - name: Python unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: End-of-job clock and correlation marker
+        if: always()
+        shell: bash
+        working-directory: .
+        run: |
+          echo "correlation_id=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${GITHUB_SHA}"
+          echo "source_sha=${GITHUB_SHA}"
+          echo "clock_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      - name: Preserve build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingosonic-sidecar-evidence-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            sidecar/lingosonic-nextus-v8-nitro-canon/dist/**
+            sidecar/lingosonic-nextus-v8-nitro-canon/validation-evidence.json
+            sidecar/lingosonic-nextus-v8-nitro-canon/.validation-*.log
