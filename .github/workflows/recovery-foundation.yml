@@ -1,6 +1,12 @@
 name: LINGO Recovery Foundation Gate
 
 on:
+  push:
+    branches:
+      - "recovery/foundation-bridge-2026-10-10"
+    paths:
+      - "ops/recovery/**"
+      - ".github/workflows/recovery-foundation.yml"
   workflow_dispatch:
     inputs:
       checkpoint:
