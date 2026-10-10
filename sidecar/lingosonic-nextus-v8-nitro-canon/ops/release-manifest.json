@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "LINGOsonicNextusV8NitroCanon",
+  "codename": "LINGOsonic Nexus",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "sourceBranch": "sidecar/lingosonic-nextus-v8-nitro-canon-2026-10-10",
+  "pullRequest": 249,
+  "targetBranch": "main",
+  "environment": "isolated-sidecar",
+  "releaseChannel": "draft",
+  "latestKnownHeadSha": "e1e6c4b54196913456b7bffe975e3d2365aaeb68",
+  "gates": {
+    "sourceIsolation": "PASS",
+    "sourceReview": "IN_PROGRESS",
+    "frontendBuild": "BLOCKED_UNVERIFIED",
+    "pythonTests": "BLOCKED_UNVERIFIED",
+    "dockerBuild": "NOT_RUN",
+    "dependencyAudit": "NOT_RUN",
+    "secretScan": "BLOCKED_UNVERIFIED",
+    "cloudFormationValidation": "NOT_RUN",
+    "awsIdentity": "UNVERIFIED",
+    "securityReview": "IN_PROGRESS",
+    "integrationTests": "NOT_STARTED",
+    "backupRestoreDrill": "NOT_STARTED",
+    "independentEvidenceVerification": "BLOCKED",
+    "acceptance": "BLOCKED",
+    "merge": "BLOCKED",
+    "activation": "BLOCKED",
+    "publicReachability": "FAIL_UNVERIFIED"
+  },
+  "controls": {
+    "productionDnsMutation": false,
+    "cloudflareMutation": false,
+    "firebaseMutation": false,
+    "awsProvisioning": false,
+    "mergeToMain": false,
+    "deployToProduction": false,
+    "secretsStored": false,
+    "bypassG02": false
+  },
+  "evidencePolicy": "SOURCE -> EVIDENCE -> VERIFICATION -> ACCEPTANCE -> PASSED -> AUTHORIZATION -> PROMOTION",
+  "lastKnownBlocker": "GitHub Actions runner dispatch failed before step initialization; job steps/logs unavailable. Vercel commit status reported account blocked.",
+  "nextActions": [
+    "Obtain a real assigned runner or verified local build environment.",
+    "Run frontend build, Python unit tests, Python syntax check, Docker build, dependency audit, and secret scan against the exact head SHA.",
+    "Validate CloudFormation against the intended AWS account after confirming identity and approved budget.",
+    "Review DynamoDB/SQS partial-write recovery and security/cost findings.",
+    "Independently verify and accept the complete evidence bundle before changing any gate to PASS."
+  ]
+}
