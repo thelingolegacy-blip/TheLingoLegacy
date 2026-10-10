@@ -1,0 +1,24 @@
+[Unit]
+Description=LINGO G02 read-only assignment and runner watch
+Documentation=https://github.com/thelingolegacy-blip/TheLingoLegacy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=lingo-runner
+Group=lingo-runner
+UMask=0077
+Environment=LC_ALL=C
+ExecStart=/usr/bin/bash /opt/lingo-g02/ops/g02/control-plane/assignment-watch.sh
+TimeoutStartSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/lingo-g02
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
