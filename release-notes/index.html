@@ -1,49 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lingo Legacy v1.0.0 RC Release Notes</title>
-  <meta name="description" content="Public release notes for the Lingo Legacy v1.0.0 release candidate, including included launch surfaces, verified gates, pending hard-locks, and monitoring references." />
-  <link rel="stylesheet" href="/assets/studio-grade.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lingo Legacy v1.0.0 RC — Release Status</title>
+  <meta name="description" content="Fail-closed release status for Lingo Legacy v1.0.0 RC. Source surfaces are tracked separately from CI, staging, rollback, and production acceptance.">
+  <link rel="stylesheet" href="/assets/studio-grade.css">
   <style>
-    body{margin:0;background:#070807;color:#f7f2df;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
-    main{max-width:1100px;margin:0 auto;padding:48px 20px 72px}
-    .hero{border:1px solid rgba(212,175,55,.35);border-radius:28px;padding:32px;background:linear-gradient(135deg,rgba(20,24,28,.92),rgba(8,10,10,.98));box-shadow:0 24px 80px rgba(0,0,0,.35)}
-    .eyebrow{color:#d4af37;text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:800}
-    h1{font-size:clamp(2.2rem,6vw,5rem);line-height:.95;margin:.4rem 0 1rem}
-    h2{color:#d4af37;margin-top:0}
-    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:24px}
-    .card{border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:22px;background:rgba(255,255,255,.045)}
-    .status{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:rgba(85,255,156,.12);color:#9cffc1;font-weight:800}
-    .pending{background:rgba(255,196,87,.12);color:#ffd889}
-    ul{padding-left:1.2rem;margin-bottom:0}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}.button{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 18px;border-radius:999px;text-decoration:none;font-weight:800;color:#080807;background:#d4af37}.button.secondary{background:transparent;color:#f7f2df;border:1px solid rgba(255,255,255,.24)}
-    footer{border-top:1px solid rgba(255,255,255,.12);margin-top:44px;padding-top:18px;color:#b8b09a;font-size:.92rem}
+    body{margin:0;background:#070807;color:#f7f2df;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}main{max-width:1100px;margin:0 auto;padding:48px 20px 72px}.hero{border:1px solid rgba(212,175,55,.35);border-radius:28px;padding:32px;background:linear-gradient(135deg,rgba(20,24,28,.92),rgba(8,10,10,.98));box-shadow:0 24px 80px rgba(0,0,0,.35)}.eyebrow{color:#d4af37;text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:800}h1{font-size:clamp(2.2rem,6vw,5rem);line-height:.95;margin:.4rem 0 1rem}h2{color:#d4af37;margin-top:0}.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:24px}.card{border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:22px;background:rgba(255,255,255,.045)}.status{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:rgba(85,255,156,.12);color:#9cffc1;font-weight:800}.pending{background:rgba(255,196,87,.12);color:#ffd889}.blocked{background:rgba(255,105,120,.13);color:#ff9ca5}ul{padding-left:1.2rem;margin-bottom:0}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}.button{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 18px;border-radius:999px;text-decoration:none;font-weight:800;color:#080807;background:#d4af37}.button.secondary{background:transparent;color:#f7f2df;border:1px solid rgba(255,255,255,.24)}footer{border-top:1px solid rgba(255,255,255,.12);margin-top:44px;padding-top:18px;color:#b8b09a;font-size:.92rem}
   </style>
 </head>
 <body>
   <main>
     <section class="hero">
-      <div class="eyebrow">LINGO_LEGACY_v1.0.0_RC</div>
-      <h1>Release Notes</h1>
-      <p>This release candidate records the launch-ready Lingo Legacy web surfaces and the remaining hard-lock items that still require external dashboard verification. Billing is intentionally skipped for this pass and remains a separate no-go gate before scaled commerce promotion.</p>
-      <div class="actions">
-        <a class="button" href="/">Enter the ecosystem</a>
-        <a class="button secondary" href="/launch-verification/">Launch verification</a>
-        <a class="button secondary" href="/docs/release-candidate-v1.md">Manifest notes</a>
-      </div>
+      <div class="eyebrow">LINGO_LEGACY_v1.0.0_RC — NOT CERTIFIED</div>
+      <h1>Release Status</h1>
+      <p>This repository contains source surfaces for the Lingo Legacy ecosystem, but source presence is not live-release evidence. Production promotion remains blocked: CI jobs are failing before steps start, G02 is not established, staging has not been independently probed, and rollback acceptance is not established.</p>
+      <div class="actions"><a class="button" href="/">Browse source surfaces</a><a class="button secondary" href="/launch-verification/">Launch verification</a><a class="button secondary" href="https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/235">Draft recovery PR</a></div>
     </section>
-
     <section class="grid" aria-label="Release summary">
-      <article class="card"><span class="status">Ready</span><h2>Included surfaces</h2><ul><li>Homepage and universe entry</li><li>Studio OS, Production Lock, Launch Verification</li><li>Live Readiness, Launch War Room, Post-Launch Ops</li><li>That’s My Lingo, Loyalty Lane Apparel, KottonsCode, Monetization</li><li>Privacy, Terms, Contact</li></ul></article>
-      <article class="card"><span class="status">Verified</span><h2>Locked gates</h2><ul><li>Vercel production deployment ready</li><li>Custom domains assigned</li><li>TLS certificates present and auto-renewing</li><li>Static route validation passes</li><li>Web Analytics enabled and instrumented</li><li>Environment, canon, asset, and icon registries exist</li></ul></article>
-      <article class="card"><span class="status pending">Pending</span><h2>Skipped / external hard-locks</h2><ul><li>Stripe billing, receipts, refunds, tax, and webhooks</li><li>Firebase Auth, Firestore/Storage rules, backups</li><li>Cloudflare Domain Connect DNS update</li><li>App store builds and listing assets</li><li>Final product photos, artwork, licenses, support backend</li></ul></article>
-      <article class="card"><span class="status">Operate</span><h2>Monitoring references</h2><ul><li><a href="/launch-verification/">Launch verification</a></li><li><a href="/production-lock/">Production Lock</a></li><li><a href="/post-launch-ops/">Post-Launch Ops</a></li><li><a href="/vercel-hard-lock/">Vercel Hard Lock</a></li></ul></article>
+      <article class="card"><span class="status">Source inventory</span><h2>Tracked surfaces</h2><ul><li>Homepage and universe route sources</li><li>Studio OS and Production Lock sources</li><li>That’s My Lingo, Loyalty Lane Apparel, KottonsCode</li><li>Privacy, Terms, Contact source pages</li></ul><p>These are source-level facts only; route reachability and behavior are not certified.</p></article>
+      <article class="card"><span class="status blocked">Blocked</span><h2>Release gates</h2><ul><li>G02 runner assignment: not established</li><li>GitHub Actions steps/logs/artifacts: unavailable</li><li>Static validators: not proven to have executed</li><li>Staging deployment/probes: not run</li><li>Rollback target and evidence ledger: not accepted</li><li>Production promotion/activation: blocked</li></ul></article>
+      <article class="card"><span class="status pending">Pending</span><h2>External hard-locks</h2><ul><li>Stripe credentials, prices, webhooks and refund process</li><li>Firebase Auth, Firestore/Storage rules and backups</li><li>Asset licensing, product photos and support route</li><li>Independent public domain/TLS probes</li><li>GitLab CI after identity verification</li></ul></article>
+      <article class="card"><span class="status">Operate</span><h2>Recovery references</h2><ul><li><a href="/launch-verification/">Launch verification</a></li><li><a href="/production-lock/">Production Lock</a></li><li><a href="/post-launch-ops/">Post-Launch Ops</a></li><li><a href="/vercel-hard-lock/">Historical provider lock</a></li></ul></article>
     </section>
-
     <footer>
-      <a href="/production-lock/">Production Lock</a> · <a href="/launch-war-room/">Launch War Room</a> · <a href="/post-launch-ops/">Post-Launch Ops</a> · <a href="/docs/release-candidate-v1.md">Release Candidate Manifest</a>
-     · <a href="/live-test-run/">Live Test Run</a> · <a href="/tester-feedback/">Tester Feedback</a> · <a href="/tester-invite/">Tester Invite</a> · <a href="/social-launch-rollout/">Social Launch</a> · <a href="/launch-media-kit/">Media Kit</a> · <a href="/email-announcement/">Email Announcement</a> · <a href="/day-one-monitoring/">Day-One Monitoring</a> · <a href="/launch-countdown/">Countdown</a> · <a href="/live-beta-faq/">Live Beta FAQ</a> · <a href="/post-launch-recap/">Launch Recap</a></footer>
+      <a href="/production-lock/">Production Lock</a> · <a href="/launch-war-room/">Launch War Room</a> · <a href="/post-launch-ops/">Post-Launch Ops</a> · <a href="/docs/release-candidate-v1.md">Release Candidate Manifest</a> · <a href="/live-test-run/">Live Test Run</a> · <a href="/tester-feedback/">Tester Feedback</a>
+    </footer>
   </main>
 </body>
 </html>
