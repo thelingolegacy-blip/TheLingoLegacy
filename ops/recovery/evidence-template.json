@@ -1,0 +1,23 @@
+{
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "branch": "REPLACE_WITH_EXACT_BRANCH",
+  "source_sha": null,
+  "run_id": null,
+  "run_attempt": null,
+  "job_id": null,
+  "job_status": "unknown",
+  "job_conclusion": null,
+  "runner_id": 0,
+  "runner_name": "",
+  "runner_group_name": "",
+  "runner_labels": [],
+  "steps_count": 0,
+  "sentinel": null,
+  "logs_retrievable": false,
+  "artifact_count": 0,
+  "artifact_sha256": null,
+  "independently_verified": false,
+  "public_apex_status": null,
+  "public_www_status": null,
+  "notes": "Template only. Populate from actual run/job/artifact telemetry; never infer PASS."
+}
