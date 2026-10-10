@@ -1,6 +1,6 @@
 {
   "schema": "lingo.release-recovery-evidence.v1",
-  "captured_at_utc": "2026-10-10T21:42:45Z",
+  "captured_at_utc": "2026-10-10T21:45:00Z",
   "status": "OBSERVED_BLOCKED",
   "scope": "isolated recovery branch only; no production mutation",
   "source": {
@@ -12,7 +12,8 @@
     "target_branch": "main",
     "draft": true,
     "merged": false,
-    "latest_reviewed_pr_head_before_packet_refresh": "794c21cf325c4d073ec3cedfffe7e5054f89d172"
+    "latest_reviewed_pr_head_before_packet_refresh": "794c21cf325c4d073ec3cedfffe7e5054f89d172",
+    "latest_tested_commit_sha": "37f260fed155d8e412ac29ba9b284d00bc775421"
   },
   "configuration": {
     "promotion_workflow": "source guards observed",
@@ -109,6 +110,32 @@
       "artifacts": [],
       "log_retrieval": "Not retrievable in latest job record; steps/log URL remain null",
       "interpretation": "Third observed run still provides no retrievable step-level execution evidence."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088662734,
+      "run_number": 5,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320391890,
+      "steps": [],
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Latest run associated with recovery head; job has no instantiated steps or retrievable logs. Cannot prove validation ran."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088662890,
+      "run_number": 1012,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320392335,
+      "steps": [],
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Latest run associated with recovery head; job has no instantiated steps or retrievable logs. Cannot prove validation ran."
     }
   ],
   "external_checks": [
@@ -124,6 +151,12 @@
       "target_url": "https://vercel.com/shop-c54e0277?upgradeToPro=build-rate-limit",
       "observed_at_utc": "2026-10-10T21:42:45Z",
       "interpretation": "Latest observed status points to a Vercel build-rate-limit/upgrade gate; no successful deployment evidence."
+    },
+    {
+      "context": "Cloudflare G02 control-agent live probe via connected execution environment",
+      "state": "BLOCKED_BY_REQUEST_POLICY",
+      "observed_at_utc": "2026-10-10T21:44:00Z",
+      "interpretation": "The connected execution environment rejected fetch requests to the workers.dev hostname with 403 'requests ... are not allowed'; this is a tool/network policy restriction, not evidence that the Worker itself returned 403 or is unhealthy."
     }
   ],
   "related_blockers": [
@@ -167,7 +200,8 @@
     "Successful static staging contract run and its artifact/logs.",
     "Confirmed STAGING_DEPLOYMENT_APPROVED repository variable and Cloudflare credentials, without disclosing secret values.",
     "Successful isolated staging deployment and live probes on the expected workers.dev origin.",
-    "Independent verification of source, build, runtime, rollback target, evidence correlation, and all release acceptance predicates."
+    "Independent verification of source, build, runtime, rollback target, evidence correlation, and all release acceptance predicates.",
+    "Confirm rotation/revocation of the previously exposed GitLab runner-registration credential."
   ],
   "local_static_check": {
     "status": "PASS",
