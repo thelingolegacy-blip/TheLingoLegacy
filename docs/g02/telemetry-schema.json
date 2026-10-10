@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/g02-telemetry.schema.json",
+  "title": "LINGO G02 Runner Telemetry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "correlation_id", "collected_at_utc", "source", "host", "runner", "service", "platform", "evidence_integrity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "correlation_id": {"type": "string", "minLength": 8},
+    "collected_at_utc": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "collector", "read_only"],
+      "properties": {
+        "kind": {"enum": ["authorized_host", "github_api", "operator_attestation"]},
+        "collector": {"type": "string", "minLength": 1},
+        "collector_version": {"type": "string"},
+        "read_only": {"const": true}
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hostname", "os", "architecture"],
+      "properties": {
+        "hostname": {"type": "string", "minLength": 1},
+        "os": {"type": "string"},
+        "architecture": {"type": "string"},
+        "runner_install_dir": {"type": "string"},
+        "runner_config_present": {"type": ["boolean", "null"]}
+      }
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_name", "observed_name", "runner_id", "labels", "registration_state"],
+      "properties": {
+        "expected_name": {"const": "lingo-legacy-g02"},
+        "observed_name": {"type": ["string", "null"]},
+        "runner_id": {"type": ["integer", "null"], "minimum": 0},
+        "labels": {"type": "array", "items": {"type": "string"}},
+        "registration_state": {"enum": ["verified", "unverified", "missing", "unknown"]}
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manager", "unit_found", "enabled", "active", "listener_process_found"],
+      "properties": {
+        "manager": {"type": "string"},
+        "unit_found": {"type": ["boolean", "null"]},
+        "enabled": {"type": ["boolean", "null"]},
+        "active": {"type": ["boolean", "null"]},
+        "listener_process_found": {"type": ["boolean", "null"]},
+        "last_exit_code": {"type": ["integer", "null"]}
+      }
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "workflow_run_id", "run_attempt", "job_id", "commit_sha", "runner_id", "runner_name", "steps_instantiated", "sentinel_exit_code"],
+      "properties": {
+        "repository": {"type": "string"},
+        "workflow_run_id": {"type": ["integer", "null"]},
+        "run_attempt": {"type": ["integer", "null"], "minimum": 1},
+        "job_id": {"type": ["integer", "null"]},
+        "commit_sha": {"type": ["string", "null"], "pattern": "^[0-9a-fA-F]{40}$"},
+        "runner_id": {"type": ["integer", "null"], "minimum": 0},
+        "runner_name": {"type": ["string", "null"]},
+        "steps_instantiated": {"type": ["boolean", "null"]},
+        "sentinel_exit_code": {"type": ["integer", "null"]},
+        "logs_retrievable": {"type": ["boolean", "null"]},
+        "artifacts_retrievable": {"type": ["boolean", "null"]},
+        "started_at_utc": {"type": ["string", "null"], "format": "date-time"},
+        "completed_at_utc": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "evidence_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_sha256", "redaction_reviewed"],
+      "properties": {
+        "manifest_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "redaction_reviewed": {"type": "boolean"},
+        "raw_response_reference": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
