@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Read-only G02 host telemetry collector. Does not prune, restart, register, or mutate services.
 set -uo pipefail
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# Shared production sanitizer; sourcing defines functions without running collection.
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/lib/telemetry-sanitizer.sh"
 OUT="${1:-g02-host-telemetry-$(date -u +%Y%m%dT%H%M%SZ).txt}"
 umask 077
 {
@@ -54,7 +58,7 @@ umask 077
   fi
   echo
   echo "=== RUNNER PROCESS / SERVICE ==="
-  (pgrep -af 'Runner.Listener|runsvc.sh|run.sh|config.sh' 2>/dev/null | sed -E 's/(--token[ =]+)[^ ]+/\1[REDACTED]/g; s/(RUNNER_TOKEN=)[^ ]+/\1[REDACTED]/g' || true)
+  (pgrep -af 'Runner.Listener|runsvc.sh|run.sh|config.sh' 2>/dev/null | sanitize_telemetry || true)
   (systemctl --no-pager --type=service --state=running 2>/dev/null | grep -iE 'actions.runner|github.runner' || true)
   echo
   echo "=== RUNNER DIAGNOSTIC FILE INVENTORY (NO LOG CONTENT) ==="
