@@ -42,3 +42,14 @@ jobs:
         run: python3 -m py_compile lambda/app.py
       - name: Python unit tests
         run: python3 -m unittest discover -s tests -v
+      - name: Preserve build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingosonic-sidecar-evidence-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            sidecar/lingosonic-nextus-v8-nitro-canon/dist/**
+            sidecar/lingosonic-nextus-v8-nitro-canon/validation-evidence.json
+            sidecar/lingosonic-nextus-v8-nitro-canon/.validation-*.log
