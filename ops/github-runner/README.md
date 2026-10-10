@@ -19,9 +19,9 @@ Purpose: provide an isolated, ephemeral self-hosted runner lane for the G02 exec
 ## Bootstrap
 1. GitHub repository Settings -> Actions -> Runners -> New self-hosted runner.
 2. Obtain the short-lived registration token.
-3. On the runner host, create a local `.env` file with `RUNNER_TOKEN` and `RUNNER_NAME=lingo-g02-01`.
+3. On the dedicated runner host, use the acceptance-required name `lingo-legacy-g02`. If running the bootstrap script, invoke it as `RUNNER_NAME=lingo-legacy-g02 bash ./bootstrap.sh`; the compose default is aligned with that name.
 4. Never commit `.env`.
-5. Run `docker compose up --build`.
+5. Run `RUNNER_NAME=lingo-legacy-g02 bash ./bootstrap.sh` from this directory. The script creates a permission-restricted `.env` and removes it on exit, including on failure.
 6. Confirm the runner is online with labels `self-hosted, linux, x64, lingo-g02`.
 7. Dispatch the **G02 Self-Hosted Runner Sentinel** workflow.
 8. Do not treat Online/Idle or queue state as execution proof.
@@ -83,6 +83,6 @@ NO DOWNSTREAM PROMOTION
 
 ## Runner lifecycle
 
-The package uses an ephemeral runner. The registration token is requested at launch, written only to a local permission-restricted `.env`, consumed by the runner, and removed after the process exits. The credential must never be committed or copied into evidence artifacts.
+The package uses an ephemeral runner. The registration token is requested at launch, written only to a local permission-restricted `.env`, consumed by the runner, and removed after the process exits. The bootstrap installs an exit trap so `.env` is deleted if Docker setup or execution fails. The credential must never be committed or copied into evidence artifacts.
 
 The package is pinned to Actions Runner v2.337.0. Runner availability can vary because GitHub rolls releases out progressively.
