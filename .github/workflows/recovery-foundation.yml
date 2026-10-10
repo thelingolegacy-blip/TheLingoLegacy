@@ -72,6 +72,13 @@ jobs:
               print(f"JSON_VALID={path}")
           PY
 
+      - name: Validate read-only bridge adapter syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n ops/recovery/bridge-adapter.sh
+          echo "BRIDGE_ADAPTER_SYNTAX=PASS" | tee recovery-evidence/bridge-adapter-check.txt
+
       - name: Run fail-closed gate unit tests
         shell: bash
         run: |
