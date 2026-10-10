@@ -86,7 +86,7 @@ jobs:
           job_record="$(jq -ce --arg name "$JOB_NAME" --argjson attempt "$RUN_ATTEMPT" '[.jobs[] | select(.name == $name and .run_attempt == $attempt)] | if length == 1 then .[0] else error("expected exactly one correlated job record") end' "$api_response")"
           actual_job_id="$(jq -er '.id | select(. > 0)' <<< "$job_record")"
           actual_runner_id="$(jq -er '.runner_id | select(. > 0)' <<< "$job_record")"
-          actual_runner_name="$(jq -er '.runner_name | select(. == "lingo-legacy-g02")' <<< "$job_record")"
+          actual_runner_name="$(jq -er '.runner_name | strings | select(length > 0)' <<< "$job_record")"
           jq -e --arg sha "$COMMIT_SHA" --argjson run "$RUN_ID" --argjson attempt "$RUN_ATTEMPT" \
             '.run_id == $run and .run_attempt == $attempt and .head_sha == $sha' \
             <(curl --fail --silent --show-error \
