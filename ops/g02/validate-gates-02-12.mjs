@@ -43,7 +43,70 @@ if (!isUtc(packet.generated_at_utc)) stop("Gate packet generation timestamp must
 if (!packet.independent_verifier?.identity || !isUtc(packet.independent_verifier?.reviewed_at_utc)) {
   stop("Independent verifier identity/timestamp missing or invalid.");
 }
-const requiredGates = Array.from({ length: 11 }, (_, i) => "G" + String(i + 2).padStart(2, "0"));
+const requiredEvidenceTypes = {
+  "G02": [
+    "host_telemetry",
+    "sentinel_execution",
+    "raw_logs",
+    "artifact_manifest",
+    "correlation_report",
+    "validator_report"
+  ],
+  "G03": [
+    "workflow_job",
+    "workflow_logs",
+    "required_checks_report"
+  ],
+  "G04": [
+    "certification_report",
+    "criteria_matrix"
+  ],
+  "G05": [
+    "release_manifest",
+    "build_metadata",
+    "release_notes",
+    "acceptance_review"
+  ],
+  "G06": [
+    "change_approval",
+    "deployment_plan",
+    "rollback_plan",
+    "artifact_sha_linkage"
+  ],
+  "G07": [
+    "live_probe_response",
+    "expected_status_headers",
+    "independent_probe_review"
+  ],
+  "G08": [
+    "revision_inventory",
+    "configuration_drift_report",
+    "checksum_reconciliation"
+  ],
+  "G09": [
+    "activation_approval",
+    "activation_record",
+    "rollback_readiness"
+  ],
+  "G10": [
+    "health_checks",
+    "telemetry_window",
+    "user_path_tests",
+    "threshold_comparison"
+  ],
+  "G11": [
+    "operations_owner_acceptance",
+    "runbook",
+    "alerting_oncall_coverage",
+    "incident_rollback_procedure"
+  ],
+  "G12": [
+    "gates_02_11_chain",
+    "independent_audit",
+    "final_authorization"
+  ]
+};
+const requiredGates = Object.keys(requiredEvidenceTypes);
 const failures = [];
 const seenEvidence = new Set();
 for (const gate of requiredGates) {
@@ -54,8 +117,10 @@ for (const gate of requiredGates) {
     failures.push(gate + ": no evidence references");
     continue;
   }
+  const actualEvidenceTypes = new Set();
   for (const evidence of record.evidence) {
     if (!evidence || typeof evidence.path !== "string" || !evidence.path.trim() ||
+        typeof evidence.evidence_type !== "string" || !evidence.evidence_type.trim() ||
         !isHash(evidence.sha256) || typeof evidence.source_reference !== "string" ||
         !evidence.source_reference.trim() || !evidence.verified_by ||
         !isUtc(evidence.verified_at_utc) ||
@@ -63,6 +128,7 @@ for (const gate of requiredGates) {
       failures.push(gate + ": malformed evidence record (path/hash/source/verifier/time/candidate SHA required)");
       continue;
     }
+    actualEvidenceTypes.add(evidence.evidence_type);
     if (evidence.candidate_commit_sha.toLowerCase() !== packet.candidate.commit_sha.toLowerCase()) {
       failures.push(gate + ": evidence candidate SHA does not match packet candidate SHA");
       continue;
@@ -85,6 +151,9 @@ for (const gate of requiredGates) {
     } catch (e) {
       failures.push(gate + ": evidence file cannot be hashed: " + evidence.path);
     }
+  }
+  for (const neededType of requiredEvidenceTypes[gate]) {
+    if (!actualEvidenceTypes.has(neededType)) failures.push(gate + ": required evidence type missing: " + neededType);
   }
 }
 failIf(packet.promotion?.authorized === true && !packet.promotion?.authorization_reference,
