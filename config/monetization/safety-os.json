@@ -5,7 +5,7 @@
   "liveAds": false,
   "liveSurveys": false,
   "liveBackendWrites": false,
-  "vercelFunctions": false,
+  "providerSpecificFrameworkFunctions": false,
   "hardLines": [
     "no_real_money_wagers",
     "no_real_money_payouts",
