@@ -26,8 +26,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: npm
-          cache-dependency-path: sidecar/lingosonic-nextus-v8-nitro-canon/package-lock.json
       - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci --no-audit
       - run: npm run build
@@ -40,3 +38,5 @@ jobs:
             echo "Potential secret file detected" >&2
             exit 1
           fi
+      - name: Python syntax check
+        run: python3 -m py_compile lambda/app.py
