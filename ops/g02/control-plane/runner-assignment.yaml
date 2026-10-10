@@ -1,0 +1,49 @@
+schema: lingo.g02.runner-assignment.v1
+status: NOT_PROVISIONED
+repository: thelingolegacy-blip/TheLingoLegacy
+runner:
+  name: lingo-legacy-g02
+  labels:
+    - self-hosted
+    - linux
+    - x64
+    - lingo-g02
+  scope: repository
+  host:
+    required: dedicated-isolated-linux-x64
+    hostname: NOT_CAPTURED
+    architecture: x86_64
+    os: Linux
+    provisioned: false
+    runner_daemon_active: false
+  workload:
+    permitted:
+      - controlled_g02_sentinel
+      - read_only_recovery_diagnostics
+      - isolated_static_validation
+    forbidden:
+      - production_deployment
+      - production_activation
+      - production_secret_access
+      - unreviewed_docker_socket_access
+      - arbitrary_untrusted_pull_request_code
+  assignment_requirements:
+    - github_runner_id_gt_zero
+    - runner_name_populated_and_exact
+    - runner_labels_match
+    - job_id_matches_observed_run
+    - workflow_steps_nonempty
+    - sentinel_exit_code_zero
+    - logs_retrievable
+    - artifact_manifest_sha256_valid
+    - candidate_commit_sha_matches
+    - independent_reviewer_is_distinct
+  duplicate_registration_policy: inspect_existing_installation_first
+  credential_policy:
+    registration_token: fresh_short_lived_token_obtained_on_host_only
+    token_logging: prohibited
+    token_committing: prohibited
+  production:
+    deployment_allowed: false
+    activation_allowed: false
+    last_known_good_protected: true
