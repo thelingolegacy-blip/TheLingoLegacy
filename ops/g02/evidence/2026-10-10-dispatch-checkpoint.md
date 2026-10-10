@@ -58,3 +58,20 @@ The isolated branch includes the G02 sentinel, Studio Control Center, LINGO AI s
 ## Decision
 
 Keep the PR in draft and maintain the protected hold. A passing source review or an AI-generated diagnosis cannot replace the missing runner/job/log/artifact evidence.
+
+## Repeated dispatch failure confirmed after adding sandbox guard
+
+At 2026-10-10 18:42 UTC, two separate workflow jobs on the latest branch commit (`1c20b69c59ddcca1f8a941d7e19167ded180f7b8`) reproduced the same signature:
+
+| Workflow run | Job | Requested labels | Runner ID | Runner name | Steps | Conclusion |
+|---|---:|---|---:|---|---|---|
+| [Studio Sandbox Guard #38076850060](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076850060) | 114285514743 | `ubuntu-latest` | 0 | empty | `[]` | failure |
+| [Lingo Legacy Static CI #38076850062](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076850062) | 114285514623 | `ubuntu-latest` | 0 | empty | `[]` | failure |
+
+The same signature was also present on commit `8715bd79ee623dc46e85e3882be4f909b77586c5`:
+- Studio Sandbox Guard run `38076793713`, job `114285344938`
+- Lingo Legacy Static CI run `38076793697`, job `114285344450`
+
+All four jobs completed as failures within approximately one second, with no instantiated steps. The GitHub API jobs payload explicitly reported `runner_id=0`, empty `runner_name`, and `steps=[]`. This makes a source-level test failure an unsupported explanation for these specific runs. Both a pre-existing CI workflow and the newly added sandbox guard fail before executing commands.
+
+**Updated finding:** G02 is blocked at the runner allocation/initialization layer across both the custom-runner recovery effort and GitHub-hosted `ubuntu-latest` jobs. Repository workflow edits alone have not repaired dispatch. Escalate with these run/job IDs to GitHub Support and verify account/organization Actions policy and hosted-runner availability. Do not rerun repeatedly without a change in provider/host conditions.
