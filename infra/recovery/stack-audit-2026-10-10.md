@@ -8,12 +8,15 @@
 | Production Cloudflare routes | Apex and www route to existing `thelingolegacy` Worker | Protected; unchanged |
 | Source-to-live Worker naming | `wrangler.jsonc` names `thelingolegacyv-5`, while live apex/www routes target `thelingolegacy` | BLOCKED — reconcile only after reviewing source/version intent |
 | New sandbox | `lingo-recovery-sandbox-2026-10-10`, `workers.dev` enabled, preview URLs disabled, zero bindings | Created; runtime probe pending |
+| Sandbox source/config | `infra/recovery/sandbox-worker.js` and `wrangler.recovery.jsonc` committed to the isolated branch | Source scaffold available |
 | Firebase client config | `firebase.client.json` contains placeholder API key, sender ID, and app ID | BLOCKED |
 | Firebase Hosting config | `firebase.json` uses `public: "."` | BLOCKED — repository root is too broad to publish safely |
 | Flutter | Root `pubspec.yaml` exists with Firebase packages | Build not run; no connected Flutter shell/toolchain |
 | Backend | Separate `nextjs-lingolegacy` Worker has a D1 binding and Access public-bypass configuration was observed in prior read-only audit | Security review required; do not add public route |
 | CI runner | G02 runner execution evidence still absent; the new Recovery Sandbox Audit run failed before steps were instantiated (`steps=null`, `logs_url=null`) | BLOCKED |
 | Cache cleanup | No production cache purge performed | Audit-first |
+| Vercel alternative | Project reports `live=false`; latest production-target deployment is `READY` | Not a verified active origin |
+| AppDeploy alternative | Existing project snapshots were previously recorded ready, but deployment quota was previously exhausted | Do not rely on new deployment capacity without verifying quota |
 
 ## Sandbox deployment evidence
 
