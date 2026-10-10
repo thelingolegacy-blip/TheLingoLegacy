@@ -26,7 +26,7 @@ fi
 mkdir -p "$tmp/fakebin"
 cat > "$tmp/fakebin/curl" <<'FAKECURL'
 #!/usr/bin/env bash
-printf '403 0.001 0.002\\n'
+printf '403 0.001 0.002\n'
 FAKECURL
 chmod 700 "$tmp/fakebin/curl"
 PATH="$tmp/fakebin:$PATH" bash "$SCRIPT" capture "$tmp/http-403.txt" >/dev/null
