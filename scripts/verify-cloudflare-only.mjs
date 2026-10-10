@@ -17,7 +17,8 @@ const forbidden = [
 
 const root = process.cwd();
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
-const historicalOnly = new Set(['docs']);
+// Quarantined legacy provider content is retained for historical audit only; it is not part of the executable release surface.
+const historicalOnly = new Set(['docs', 'vercel-hard-lock']);
 const files = [];
 
 function walk(dir) {
