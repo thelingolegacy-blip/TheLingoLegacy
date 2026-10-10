@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lingo-legacy-integration-check",
+  "main": "worker.integration-check.js",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": true,
+  "observability": { "enabled": true }
+}
