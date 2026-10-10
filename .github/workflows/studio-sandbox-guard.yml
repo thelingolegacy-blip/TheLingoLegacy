@@ -1,0 +1,33 @@
+name: Studio Sandbox Guard
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'studio/**'
+      - 'docs/google-ai-studio-lingo-workstream.md'
+      - 'docs/creative-experience-upgrade.md'
+      - 'ops/studio/validate-sandbox.sh'
+      - '.github/workflows/studio-sandbox-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-sandbox-guard
+  cancel-in-progress: true
+
+jobs:
+  validate-sandbox:
+    name: Read-only Studio sandbox validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate sandbox guardrails
+        shell: bash
+        run: bash ops/studio/validate-sandbox.sh
