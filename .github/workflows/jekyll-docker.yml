@@ -17,7 +17,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -29,39 +29,111 @@ jobs:
           node-version: 22
 
       - name: Sanitize retired provider surface
+        id: sanitize
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
+          set -o pipefail
           node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
+        id: bindings
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
+          set -o pipefail
           node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
-      - name: Validate release-critical static site
+      - name: Verify Cloudflare-only active surface
+        id: cloudflare_only
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
+          set -o pipefail
+          node scripts/verify-cloudflare-only.mjs 2>&1 | tee cloudflare-only.log
+
+      - name: Verify production authority chain
+        id: authority
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/verify-production-authority.mjs 2>&1 | tee authority.log
+
+      - name: Verify dynamic runtime contract
+        id: dynamic_runtime
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/verify-dynamic-runtime.mjs 2>&1 | tee dynamic-runtime.log
+
+      - name: Validate release-critical static site
+        id: validator
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
           node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
-      - name: Write CI execution metadata
+      - name: Validate production and staging Wrangler configs without deployment
+        id: wrangler
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -u
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc 2>&1 | tee wrangler-production.log
+          production_rc=${PIPESTATUS[0]}
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc 2>&1 | tee wrangler-staging.log
+          staging_rc=${PIPESTATUS[0]}
+          printf 'PRODUCTION_WRANGLER_RC=%s\\nSTAGING_WRANGLER_RC=%s\\n' "$production_rc" "$staging_rc" | tee wrangler-summary.log
+          test "$production_rc" -eq 0 && test "$staging_rc" -eq 0
+
+      - name: Write correlated CI execution metadata
         if: always()
         shell: bash
         env:
           GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_NUMBER: ${{ github.run_number }}
           GH_RUN_ATTEMPT: ${{ github.run_attempt }}
           GH_SHA: ${{ github.sha }}
           GH_REF: ${{ github.ref }}
           GH_EVENT: ${{ github.event_name }}
-          GH_JOB: ${{ github.job }}
+          SANITIZE: ${{ steps.sanitize.outcome }}
+          BINDINGS: ${{ steps.bindings.outcome }}
+          CLOUDFLARE_ONLY: ${{ steps.cloudflare_only.outcome }}
+          AUTHORITY: ${{ steps.authority.outcome }}
+          DYNAMIC_RUNTIME: ${{ steps.dynamic_runtime.outcome }}
+          STATIC_VALIDATOR: ${{ steps.validator.outcome }}
+          WRANGLER: ${{ steps.wrangler.outcome }}
         run: |
           set -euo pipefail
           node -e '
             const fs=require("node:fs");
-            const out={workflow:"Lingo Legacy Static CI",runId:process.env.GH_RUN_ID,runAttempt:process.env.GH_RUN_ATTEMPT,commitSha:process.env.GH_SHA,ref:process.env.GH_REF,event:process.env.GH_EVENT,job:process.env.GH_JOB,generatedAt:new Date().toISOString()};
-            fs.writeFileSync("ci-run-metadata.json",JSON.stringify(out,null,2)+"\n");
+            const outcomes={
+              sanitize:process.env.SANITIZE,
+              bindings:process.env.BINDINGS,
+              cloudflareOnly:process.env.CLOUDFLARE_ONLY,
+              authority:process.env.AUTHORITY,
+              dynamicRuntime:process.env.DYNAMIC_RUNTIME,
+              staticValidator:process.env.STATIC_VALIDATOR,
+              wrangler:process.env.WRANGLER
+            };
+            const passed=Object.values(outcomes).every(x=>x==="success");
+            const out={
+              schemaVersion:"1.0",
+              workflow:"Lingo Legacy Static CI",
+              runId:process.env.GH_RUN_ID,
+              runNumber:process.env.GH_RUN_NUMBER,
+              runAttempt:process.env.GH_RUN_ATTEMPT,
+              commitSha:process.env.GH_SHA,
+              ref:process.env.GH_REF,
+              event:process.env.GH_EVENT,
+              status:passed?"PASS":"FAIL",
+              gateOutcomes:outcomes,
+              generatedAt:new Date().toISOString()
+            };
+            fs.writeFileSync("ci-run-metadata.json",JSON.stringify(out,null,2)+"\\n");
           '
 
       - name: Upload validation evidence
@@ -72,6 +144,37 @@ jobs:
           path: |
             sanitize.log
             bindings.log
+            cloudflare-only.log
+            authority.log
+            dynamic-runtime.log
             validator.log
+            wrangler-production.log
+            wrangler-staging.log
+            wrangler-summary.log
             ci-run-metadata.json
           if-no-files-found: warn
+
+      - name: Enforce all static CI gates
+        if: always()
+        shell: bash
+        env:
+          SANITIZE: ${{ steps.sanitize.outcome }}
+          BINDINGS: ${{ steps.bindings.outcome }}
+          CLOUDFLARE_ONLY: ${{ steps.cloudflare_only.outcome }}
+          AUTHORITY: ${{ steps.authority.outcome }}
+          DYNAMIC_RUNTIME: ${{ steps.dynamic_runtime.outcome }}
+          STATIC_VALIDATOR: ${{ steps.validator.outcome }}
+          WRANGLER: ${{ steps.wrangler.outcome }}
+        run: |
+          set -euo pipefail
+          failed=0
+          for gate in SANITIZE BINDINGS CLOUDFLARE_ONLY AUTHORITY DYNAMIC_RUNTIME STATIC_VALIDATOR WRANGLER; do
+            value="${!gate:-missing}"
+            printf '%s=%s\\n' "$gate" "$value"
+            if [ "$value" != "success" ]; then failed=1; fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "STATIC_CI=FAIL"
+            exit 1
+          fi
+          echo "STATIC_CI=PASS"
