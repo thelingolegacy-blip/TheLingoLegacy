@@ -28,16 +28,19 @@ routes:
       target: thelingolegacy
       changeAllowed: false
   sandbox:
+    worker: lingo-recovery-sandbox-2026-10-10
+    hostname: lingo-recovery-sandbox-2026-10-10.thelingolegacy.workers.dev
     hostnameType: workers.dev
     customDomain: false
     productionRoute: false
     d1Bindings: false
     kvBindings: false
     secrets: false
+    previewUrls: false
     purpose:
       - health-check
-      - frontend-origin-smoke-test
-      - release-evidence
+      - readiness-check
+      - isolated-routing-validation
 deployment:
   primaryAlternative: cloudflare-workers-builds
   previewOnly: true
@@ -46,7 +49,7 @@ deployment:
     - source-revision-pinned
     - build-success
     - healthz-response
-    - frontend-origin-check
+    - readyz-response
     - firebase-config-placeholder-check
     - flutter-toolchain-check
     - backend-authz-review
@@ -73,8 +76,10 @@ cache:
       - clear-production-database
 firebase:
   projectIdFromRepository: lingo-legacy-production
-  configFile: firebase.client.json
-  status: blocked-until-real-client-values-and-project-access-verified
+  clientConfigFile: firebase.client.json
+  hostingConfigFile: firebase.json
+  hostingPublicDirectory: "."
+  status: blocked-placeholders-and-hosting-root-must-be-fixed
   deployAllowed: false
 flutter:
   manifest: pubspec.yaml
