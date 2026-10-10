@@ -92,8 +92,8 @@ firebase:
   projectIdFromRepository: lingo-legacy-production
   clientConfigFile: firebase.client.json
   hostingConfigFile: firebase.json
-  hostingPublicDirectory: "."
-  status: blocked-placeholders-and-hosting-root-must-be-fixed
+  hostingPublicDirectory: "build/web"
+  status: hosting-root-fixed-in-draft-branch-client-placeholders-still-block-deploy
   deployAllowed: false
 flutter:
   manifest: pubspec.yaml
