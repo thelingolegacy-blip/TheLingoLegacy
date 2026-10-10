@@ -133,5 +133,22 @@
     "computeHost": "NOT_PROVISIONED",
     "githubSupportCase": "NOT_SUBMITTED",
     "apiTokens": "NONE_CREATED"
+  },
+  "currentWork": {
+    "estateBranch": "ops/estate-recovery-control-plane-2026-10-10",
+    "estatePullRequest": 259,
+    "studioInfrastructurePullRequest": 258,
+    "latestObservedRun": {
+      "id": 38077706507,
+      "name": "Lingo Legacy Static CI",
+      "jobId": 114288045738,
+      "commit": "138d0733a44c34a39b40675b6caf32fe5e4e2550",
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": [],
+      "conclusion": "failure",
+      "interpretation": "failed before step initialization; commands not executed"
+    },
+    "trackingIssue": 260
   }
 }
