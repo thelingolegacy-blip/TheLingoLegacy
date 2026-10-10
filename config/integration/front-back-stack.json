@@ -1,7 +1,7 @@
 {
   "version": "2026.09.05-production-stack-contract",
   "mode": "cloudflare-canonical-firebase-flutter-contract",
-  "liveInterfaceUpdating": true,
+  "liveInterfaceUpdating": false,
   "liveBackendWrites": false,
   "livePayments": false,
   "liveExternalServiceCalls": false,
@@ -11,21 +11,145 @@
   "mobileRuntime": "flutter",
   "appBackend": "firebase",
   "appBackendStatus": "contract_only",
-  "guardrails": ["fail_closed","no_real_money_wagering","no_real_money_payouts","no_cash_out","server_authoritative_wallet_xp_rewards_game_commerce","auth_validation_app_check_audit_required_before_live_firebase_writes","domain_verification_required_before_dns_changes","no_committed_secrets","live_evidence_required_for_certification"],
+  "guardrails": [
+    "fail_closed",
+    "no_real_money_wagering",
+    "no_real_money_payouts",
+    "no_cash_out",
+    "server_authoritative_wallet_xp_rewards_game_commerce",
+    "auth_validation_app_check_audit_required_before_live_firebase_writes",
+    "domain_verification_required_before_dns_changes",
+    "no_committed_secrets",
+    "live_evidence_required_for_certification"
+  ],
   "surfaces": [
-    {"id":"frontend_web","name":"Cloudflare Dynamic Web Frontend","role":"Public HQ, games, studio, worlds, safety, commerce, payload and integration surfaces.","status":"active_production","activation":"Cloudflare Worker controls the API boundary and ASSETS delivery for thelingolegacy.com."},
-    {"id":"flutter_app","name":"Flutter App Layer","role":"Mobile shells for Lingo ID, worlds, profile, XP, virtual wallet display, games, commerce and settings.","status":"contract_only","activation":"Connect only after Firebase Auth, App Check, security rules, consent and mobile release evidence pass."},
-    {"id":"firebase","name":"Firebase App Backend","role":"Auth, App Check, Firestore, Storage, FCM, Crashlytics, Analytics and Remote Config where approved.","status":"contract_only","activation":"No Firebase writes are certified until a real project, rules, credentials and executable deployment evidence exist."},
-    {"id":"cloudflare","name":"Cloudflare Edge and Runtime","role":"Canonical DNS, Worker API boundary, asset delivery, security headers and observability.","status":"active_production","activation":"Canonical domain and Worker binding remain authoritative; DNS changes require verification."},
-    {"id":"github","name":"GitHub Source and CI Layer","role":"Canonical source, review, validation, release evidence and deployment trigger.","status":"active_source","activation":"Hosted runner execution must produce verified evidence before promotion."},
-    {"id":"appdeploy","name":"AppDeploy Studio QA Surface","role":"Studio-grade preview, backend QA, responsive snapshots and deployment validation.","status":"connected_non_authoritative","activation":"AppDeploy does not override the canonical GitHub and Cloudflare production boundary."}
+    {
+      "id": "frontend_web",
+      "name": "Cloudflare Dynamic Web Frontend",
+      "role": "Public HQ, games, studio, worlds, safety, commerce, payload and integration surfaces.",
+      "status": "configured_release_locked",
+      "activation": "Existing Worker routes/configuration are present in provider readback, but public reachability and this recovery candidate are not independently verified; build triggers remain contained."
+    },
+    {
+      "id": "flutter_app",
+      "name": "Flutter App Layer",
+      "role": "Mobile shells for Lingo ID, worlds, profile, XP, virtual wallet display, games, commerce and settings.",
+      "status": "contract_only",
+      "activation": "Connect only after Firebase Auth, App Check, security rules, consent and mobile release evidence pass."
+    },
+    {
+      "id": "firebase",
+      "name": "Firebase App Backend",
+      "role": "Auth, App Check, Firestore, Storage, FCM, Crashlytics, Analytics and Remote Config where approved.",
+      "status": "contract_only",
+      "activation": "No Firebase writes are certified until a real project, rules, credentials and executable deployment evidence exist."
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare Edge and Runtime",
+      "role": "Canonical DNS, Worker API boundary, asset delivery, security headers and observability.",
+      "status": "configured_release_locked",
+      "activation": "Existing edge configuration is present, but the current release is locked; DNS mutation and trigger re-enablement require verified route/build evidence."
+    },
+    {
+      "id": "github",
+      "name": "GitHub Source and CI Layer",
+      "role": "Canonical source, review, validation, release evidence and deployment trigger.",
+      "status": "active_source",
+      "activation": "Hosted runner execution must produce verified evidence before promotion."
+    },
+    {
+      "id": "appdeploy",
+      "name": "AppDeploy Studio QA Surface",
+      "role": "Studio-grade preview, backend QA, responsive snapshots and deployment validation.",
+      "status": "connected_non_authoritative",
+      "activation": "AppDeploy does not override the canonical GitHub and Cloudflare production boundary."
+    }
   ],
   "pipelines": [
-    {"id":"web_source_to_production","name":"GitHub to Cloudflare Production","steps":["source","runner_gate","static_validation","runtime_contracts","wrangler_dry_run","deploy","live_probes","rollback_evidence"]},
-    {"id":"flutter_to_firebase","name":"Flutter to Firebase","steps":["screen_contract","Lingo_ID_auth","App_Check","Firestore_schema","security_rules","consent","no_cash_out_review","mobile_QA","release_evidence"]},
-    {"id":"flutter_to_cloudflare","name":"Flutter to Cloudflare API Boundary","steps":["Flutter_client","HTTPS_API","Cloudflare_Worker","validation","server_authoritative_state","Firebase_contract","response"]},
-    {"id":"studio_qa","name":"Studio QA and AppDeploy","steps":["build","responsive_QA","runtime_errors","network_errors","snapshot_review","release_candidate","rollback_target"]}
+    {
+      "id": "web_source_to_production",
+      "name": "GitHub to Cloudflare Production",
+      "steps": [
+        "source",
+        "runner_gate",
+        "static_validation",
+        "runtime_contracts",
+        "wrangler_dry_run",
+        "deploy",
+        "live_probes",
+        "rollback_evidence"
+      ]
+    },
+    {
+      "id": "flutter_to_firebase",
+      "name": "Flutter to Firebase",
+      "steps": [
+        "screen_contract",
+        "Lingo_ID_auth",
+        "App_Check",
+        "Firestore_schema",
+        "security_rules",
+        "consent",
+        "no_cash_out_review",
+        "mobile_QA",
+        "release_evidence"
+      ]
+    },
+    {
+      "id": "flutter_to_cloudflare",
+      "name": "Flutter to Cloudflare API Boundary",
+      "steps": [
+        "Flutter_client",
+        "HTTPS_API",
+        "Cloudflare_Worker",
+        "validation",
+        "server_authoritative_state",
+        "Firebase_contract",
+        "response"
+      ]
+    },
+    {
+      "id": "studio_qa",
+      "name": "Studio QA and AppDeploy",
+      "steps": [
+        "build",
+        "responsive_QA",
+        "runtime_errors",
+        "network_errors",
+        "snapshot_review",
+        "release_candidate",
+        "rollback_target"
+      ]
+    }
   ],
-  "stateAuthority": {"server_authoritative":["identity","wallet","xp","rewards","game_session","commerce","entitlements"],"client_authoritative":["ui","navigation","audio_preferences"],"sync":"event-driven-idempotent"},
-  "certification": {"contract_ready":true,"configured":false,"executing":false,"deployed":true,"live":true,"certified":false,"activated":false,"rule":"No verified evidence means no certification or activation."}
+  "stateAuthority": {
+    "server_authoritative": [
+      "identity",
+      "wallet",
+      "xp",
+      "rewards",
+      "game_session",
+      "commerce",
+      "entitlements"
+    ],
+    "client_authoritative": [
+      "ui",
+      "navigation",
+      "audio_preferences"
+    ],
+    "sync": "event-driven-idempotent"
+  },
+  "certification": {
+    "contract_ready": true,
+    "configured": false,
+    "executing": false,
+    "deployed": false,
+    "live": false,
+    "certified": false,
+    "activated": false,
+    "currentState": "EXISTING_EDGE_CONFIGURATION_PUBLIC_REACHABILITY_UNVERIFIED",
+    "evidenceState": "NOT_ESTABLISHED",
+    "rule": "No verified evidence means no certification or activation."
+  }
 }

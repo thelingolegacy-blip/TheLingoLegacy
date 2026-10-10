@@ -17,7 +17,8 @@ const forbidden = [
 
 const root = process.cwd();
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
-const historicalOnly = new Set(['docs']);
+// Quarantined legacy provider content is retained for historical audit only; it is not part of the executable release surface.
+const historicalOnly = new Set(['docs', 'vercel-hard-lock']);
 const files = [];
 
 function walk(dir) {
@@ -30,10 +31,17 @@ function walk(dir) {
 }
 walk(root);
 
+const policyToolFiles = new Set([
+  // These tools must contain retired-provider patterns to detect or rewrite them.
+  'scripts/verify-cloudflare-only.mjs',
+  'scripts/sanitize-cloudflare-only-surface.mjs',
+  'scripts/validate-static-site.mjs'
+]);
+
 const findings = [];
 for (const file of files) {
   if ([...historicalOnly].some((x) => file === x || file.startsWith(`${x}/`))) continue;
-  if (file === 'scripts/verify-cloudflare-only.mjs') continue;
+  if (policyToolFiles.has(file.replaceAll(path.sep, '/'))) continue;
   let text;
   try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
   catch { continue; }

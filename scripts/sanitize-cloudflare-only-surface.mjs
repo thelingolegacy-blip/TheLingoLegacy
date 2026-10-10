@@ -27,6 +27,8 @@ const forbidden = [
 const insightsBlock = /\s*<script>\s*window\.va\s*=\s*window\.va\s*\|\|\s*function\s*\(\)\s*\{\s*\(window\.vaq\s*=\s*window\.vaq\s*\|\|\s*\[\]\)\.push\(arguments\);\s*\};\s*<\/script>\s*<script\s+defer\s+src=["']\/_vercel\/insights\/script\.js["']><\/script>/gi;
 
 const safeProviderWord = /(?<![\/\w.-])Vercel(?![\/\w.-])/gi;
+const insightsScriptOnly = /<script\b[^>]*\bsrc=["']\/_vercel\/insights\/script\.js["'][^>]*>\s*<\/script>/gi;
+const legacyInsightsScriptOnly = /<script\b[^>]*\bsrc=["']\/_cloudflare\/insights\/script\.js["'][^>]*>\s*<\/script>/gi;
 let changed = 0;
 const residual = [];
 
@@ -35,12 +37,34 @@ for (const file of htmlFiles) {
   if (relative.startsWith('vercel-hard-lock/')) continue;
   const before = fs.readFileSync(file, 'utf8');
   let after = before.replace(insightsBlock, '\n');
-  after = after.replace(/https?:\/\/[^\s"'<>]+\.vercel\.app/gi, 'https://thelingolegacy.com');
-  after = after.replace(/@vercel\//gi, '@cloudflare/');
-  after = after.replace(/\/_vercel\//gi, '/_cloudflare/');
-  after = after.replace(/vercel\.com/gi, 'cloudflare.com');
-  after = after.replace(/\bVercel\s+(?:web\s+layer|deployment)\b/gi, 'Cloudflare edge layer');
-  after = after.replace(safeProviderWord, 'Cloudflare');
+  // Remove provider-specific insight loaders instead of rewriting them to a fictitious Cloudflare endpoint.
+  after = after.replace(insightsScriptOnly, '\n');
+  after = after.replace(legacyInsightsScriptOnly, '\n');
+  // Replace known stale readiness/status copy with evidence-aligned language before generic provider cleanup.
+  after = after.replace(/Vercel\s+still recommends applying Cloudflare Domain Connect DNS updates when convenient\./gi, 'Domain and DNS configuration require independent verification; this page does not authorize DNS changes.');
+  after = after.replace(/Vercel\s+production deployment ready/gi, 'Production deployment blocked pending verified evidence');
+  after = after.replace(/Only repo\/Vercel-backed items are green today; dashboard-only systems stay pending\./gi, 'Only independently verified repository and live-runtime evidence can be green; dashboard-only systems remain pending.');
+  after = after.replace(/production-safe Vercel surface/gi, 'production-safe public surface');
+  after = after.replace(/Vercel stays the deployment source of truth[^.]*\./gi, 'GitHub is the source authority; Cloudflare Workers are the intended runtime, with production promotion blocked pending verified evidence.');
+  after = after.replace(/Rollback through Vercel deployment history/gi, 'Restore a verified previous Cloudflare Worker version using correlated release evidence');
+  after = after.replace(/Vercel deploys/gi, 'Cloudflare Worker versions and release evidence');
+  after = after.replace(/Vercel Marketplace/gi, 'provider marketplace');
+  after = after.replace(/Vercel\s+Marketplace/gi, 'provider marketplace');
+  after = after.replace(/Vercel\s+Blob/gi, 'object storage');
+  after = after.replace(/Vercel\s+Postgres/gi, 'managed Postgres');
+  after = after.replace(/Vercel\s+Agent/gi, 'legacy provider AI assistant');
+  after = after.replace(/Vercel at the center\./gi, 'Cloudflare + GitHub at the center.');
+  after = after.replace(/Vercel-native launch gate/gi, 'fail-closed release gate');
+  after = after.replace(/Vercel-native launch verification checklist/gi, 'fail-closed release verification checklist');
+  after = after.replace(/static Vercel launch page/gi, 'static launch page');
+  after = after.replace(/Vercel static web delivery/gi, 'static web delivery');
+  after = after.replace(/Vercel static web/gi, 'static web');
+  after = after.replace(/current Vercel storage product surface is locked into the blueprint\./gi, 'External storage contracts are reserved; this page does not activate a provider integration.');
+  after = after.replace(/Vercel Functions/gi, 'server-side functions');
+  after = after.replace(/https?:\/\/[^\s"'<>]+\.vercel\.app[^\s"'<>]*/gi, '/production-lock/');
+  after = after.replace(/https?:\/\/[^\s"'<>]*vercel\.com[^\s"'<>]*/gi, '/production-lock/');
+  after = after.replace(/@vercel\//gi, '@legacy-provider/');
+  after = after.replace(safeProviderWord, 'legacy provider');
   if (after !== before) {
     fs.writeFileSync(file, after);
     changed++;

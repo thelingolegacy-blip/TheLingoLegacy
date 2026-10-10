@@ -15,7 +15,7 @@ Phase-one gameplay is a 5x3 virtual reel engine with weighted symbols, horizonta
 
 ## Backend readiness
 
-The static Vercel build is ready to evolve into a Firebase-backed app after service approval and environment setup:
+The current repository is a source scaffold intended to evolve into a Firebase-backed app only after service approval, environment setup, G02/CI recovery, and staging acceptance:
 
 - Firebase Authentication for account sessions.
 - Cloud Firestore for profiles, wallets, inventories, achievements, missions, seasons, events, and audit trails.
@@ -38,8 +38,8 @@ Persistent wallets require server-side verification. Client-side reward calculat
 
 ## Live operations model
 
-Admin tooling should support event scheduling, promotions, daily rewards, seasonal content, push notifications, feature flags, content management, economy balancing, analytics dashboards, QA reports, and release checklists. Vercel should remain the web deployment surface; mobile builds should consume the same design tokens and backend contracts.
+Admin tooling should support event scheduling, promotions, daily rewards, seasonal content, push notifications, feature flags, content management, economy balancing, analytics dashboards, QA reports, and release checklists. Cloudflare Worker delivery is the intended web runtime; mobile builds should consume the same design tokens and backend contracts only after the integration is validated.
 
 ## QA release checklist
 
-Before release, validate gameplay math, wallet changes, rewards, achievements, leaderboards, offline recovery, accessibility, reduced motion, responsive layouts, error handling, startup time, memory behavior, and security rules. Run the static validation script before each Vercel deployment.
+Before release, validate gameplay math, wallet changes, rewards, achievements, leaderboards, offline recovery, accessibility, reduced motion, responsive layouts, error handling, startup time, memory behavior, and security rules. Run all static/configuration gates, validate staging, and accept rollback/evidence before any explicit Cloudflare promotion. Production remains blocked while G02 is not established.

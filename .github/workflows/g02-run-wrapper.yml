@@ -5,8 +5,8 @@ on:
     inputs:
       ref:
         description: "Git ref to dispatch the G02 qualified evidence probe from"
-        required: true
-        default: "main"
+        required: false
+        default: ""
         type: string
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
         id: dispatch
         env:
           GH_TOKEN: ${{ github.token }}
-          TARGET_REF: ${{ inputs.ref }}
+          TARGET_REF: ${{ inputs.ref || github.ref_name }}
           TARGET_WORKFLOW: ".github/workflows/g02-qualified-evidence-probe.yml"
           WRAPPER_STARTED_AT: ${{ github.run_started_at }}
         shell: bash

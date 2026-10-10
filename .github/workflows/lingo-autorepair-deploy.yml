@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Run production deployment after repair gates
+        description: Legacy production deployment is frozen; true will fail closed before credentials
         required: true
         default: false
         type: boolean
@@ -13,7 +13,6 @@ on:
 permissions:
   contents: read
   actions: read
-  deployments: write
 
 concurrency:
   group: lingo-legacy-full-stack-production
@@ -34,16 +33,35 @@ jobs:
         id: assert
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
           RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
+          jobs_json="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}/jobs?per_page=100")"
+          runner_identity="$(printf '%s' "$jobs_json" | node -e '
+            let raw = "";
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              const payload = JSON.parse(raw);
+              const job = (payload.jobs || []).find(item => item.name === "runner-gate");
+              if (!job || job.runner_id == null || !job.runner_name) process.exit(2);
+              process.stdout.write(String(job.runner_id) + "\n" + job.runner_name);
+            });
+          ')" || { echo 'GitHub API did not return an assigned runner identity'; exit 1; }
+          RUNNER_ID="$(printf '%s\n' "$runner_identity" | sed -n '1p')"
+          RUNNER_NAME="$(printf '%s\n' "$runner_identity" | sed -n '2p')"
           test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
-          test "${{ runner.arch }}" = "X64"
+          test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
           echo "G02_RUNNER_ASSIGNMENT=PASS"
@@ -102,6 +120,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Enforce production mutation freeze
+        shell: bash
+        run: |
+          echo "::error::Production deployment is disabled while G02, staging validation, rollback evidence, and independent release acceptance remain unresolved."
+          echo "PRODUCTION_PROMOTION=BLOCKED"
+          exit 1
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

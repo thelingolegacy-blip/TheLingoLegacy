@@ -1,13 +1,13 @@
 # Lingo Legacy Economy Monitoring Master Specification
 
-This document defines the static-first economy monitoring scaffold for Lingo OS. It is designed to be reviewed safely in the current Vercel static site before any live Firestore writes, wallet mutations, or automated remediation are enabled.
+This document defines the static-first economy monitoring scaffold for Lingo OS. It is a source-only monitoring scaffold. Review it locally or in an approved staging environment before enabling live Firestore writes, wallet mutations, or automated remediation.
 
 ## Goals
 
 - Track Bones creation, Bones spending, net inflation, XP velocity, reward pressure, storefront health, and fraud risk.
 - Give the Command Center a single Economy Stress Index from 0 to 100.
 - Keep all automated economy changes gated behind explicit admin approval until backend services and security rules are implemented.
-- Provide JSON contracts that future services can write to Firestore, analytics pipelines, or a Vercel-backed API.
+- Provide JSON contracts that future services can write to Firestore, analytics pipelines, or a Cloudflare Worker API.
 
 ## Core pillars
 
@@ -113,7 +113,7 @@ Blocked until backend authorization exists:
 
 1. Static scaffold: master spec, dashboard shell, JSON contracts.
 2. Read-only ingestion: API endpoints or scheduled jobs write aggregate metrics only.
-3. Alerting: Vercel Alerts, email, or webhook notifications for threshold breaches.
+3. Alerting: Cloudflare runtime telemetry, GitHub Actions failure alerts, email, or webhook notifications for threshold breaches.
 4. Recommendations: AI-generated recommendations with admin approval state.
 5. Controlled remediation: approved actions only, with audit logs and rollback paths.
 
@@ -125,7 +125,7 @@ Blocked until backend authorization exists:
 - Personally identifiable data excluded from aggregate metrics.
 - Wallet mutations isolated behind audited service methods.
 - Recommendation confidence and rollback plan stored for every action.
-- Vercel deployment alerts configured for backend API errors.
+- Cloudflare Worker/API error alerts and GitHub Actions failure notifications are configured and verified before live Auto-Mode is enabled.
 
 ## Auto-Mode master system
 

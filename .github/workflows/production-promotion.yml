@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: lingo-legacy-promotion-${{ inputs.environment || 'manual' }}
@@ -35,13 +36,31 @@ jobs:
         id: assert
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
+          jobs_json="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}/jobs?per_page=100")"
+          runner_identity="$(printf '%s' "$jobs_json" | node -e '
+            let raw = "";
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              const payload = JSON.parse(raw);
+              const job = (payload.jobs || []).find(item => item.name === "runner-gate");
+              if (!job || job.runner_id == null || !job.runner_name) process.exit(2);
+              process.stdout.write(String(job.runner_id) + "\n" + job.runner_name);
+            });
+          ')" || { echo 'GitHub API did not return an assigned runner identity'; exit 1; }
+          RUNNER_ID="$(printf '%s\n' "$runner_identity" | sed -n '1p')"
+          RUNNER_NAME="$(printf '%s\n' "$runner_identity" | sed -n '2p')"
           test -n "$RUNNER_ID" || { echo 'RUNNER_ID missing'; exit 1; }
           test "$RUNNER_ID" != "0" || { echo 'RUNNER_ID is zero'; exit 1; }
           test "$RUNNER_NAME" = "lingo-legacy-g02" || { echo 'RUNNER_NAME mismatch'; exit 1; }
@@ -93,7 +112,14 @@ jobs:
       - name: Dynamic runtime contract gate
         run: node scripts/verify-dynamic-runtime.mjs
       - name: Wrangler configuration validation
-        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+        run: |
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc
+          node -e 'const fs=require("node:fs");const c=JSON.parse(fs.readFileSync("wrangler.staging.jsonc","utf8"));if(c.name!=="thelingolegacy-staging")throw Error("unexpected staging worker name");if(c.assets?.directory!=="./staging-public")throw Error("staging assets must use the restricted staging-public directory");if((c.routes||[]).length)throw Error("staging configuration must not claim production custom routes");if(!c.workers_dev)throw Error("staging must be isolated to workers.dev");if(c.vars?.CANONICAL_DOMAIN!=="thelingolegacy-staging.thelingolegacy.workers.dev")throw Error("staging canonical domain mismatch");console.log("STAGING_CONFIG_ISOLATION=PASS")'
+          test -f staging-public/index.html
+          if grep -R -n --exclude-dir=.git --exclude='wrangler.staging.jsonc' '__LINGO_DEPLOYMENT_DISABLED__\|__LINGO_PREVIEW_DISABLED__' staging-public; then
+            echo 'Staging public surface contains internal control markers'; exit 1
+          fi
       - name: Release identity
         id: identity
         shell: bash
@@ -115,7 +141,7 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
@@ -146,19 +172,29 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
+        run: npx --yes wrangler@4 deploy --config wrangler.staging.jsonc
       - name: Resolve canonical production URL
         id: config
         shell: bash
         run: |
           set -euo pipefail
-          domain=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).canonicalDomain)")
-          echo "base_url=https://${domain}" >> "$GITHUB_OUTPUT"
+          echo "base_url=https://thelingolegacy-staging.thelingolegacy.workers.dev" >> "$GITHUB_OUTPUT"
       - name: Live probes
         env:
           LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
         run: node scripts/live-probes.mjs
+
+  production-hold:
+    needs: gates
+    if: ${{ inputs.environment == 'production' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail closed before production mutation
+        shell: bash
+        run: |
+          echo "::error::Production promotion is blocked. G02 assignment, independently verified release evidence, and an accepted rollback target are required before production deployment."
+          exit 1
 
   certificate:
     needs: [gates, cloudflare]
