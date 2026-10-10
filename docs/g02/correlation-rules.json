@@ -9,6 +9,7 @@
     "runner_id",
     "workflow_run_id",
     "run_attempt",
+    "job_assigned",
     "job_id",
     "commit_sha",
     "started_at_utc",
@@ -27,7 +28,11 @@
     "unredacted_secret_detected_result": "REJECTED"
   },
   "predicate_policy": {
-    "allowed_values": ["TRUE", "FALSE", "UNKNOWN"],
+    "allowed_values": [
+      "TRUE",
+      "FALSE",
+      "UNKNOWN"
+    ],
     "unknown_is_pass": false,
     "all_predicates_required": true,
     "g02_pass_expression": "P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8 && P9"
@@ -41,8 +46,13 @@
     "evidence hash mismatch",
     "raw source cannot be independently retrieved",
     "host packet is only an unverified assertion",
-    "packet is still marked TEMPLATE_NOT_EVIDENCE"
+    "packet is still marked TEMPLATE_NOT_EVIDENCE",
+    "job assignment is not explicitly verified as true"
   ],
-  "output_states": ["ACCEPTED", "BLOCKED", "REJECTED"],
+  "output_states": [
+    "ACCEPTED",
+    "BLOCKED",
+    "REJECTED"
+  ],
   "promotion": "Never automatic; requires separate authorization after independent verification."
 }
