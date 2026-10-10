@@ -23,6 +23,7 @@ run_check() {
 }
 failed=0
 run_check "npm-lock" npm install --package-lock-only --ignore-scripts --no-audit || failed=1
+run_check "npm-ci" npm ci --no-audit || failed=1
 run_check "frontend-build" npm run build || failed=1
 run_check "python-syntax" python3 -m py_compile lambda/app.py || failed=1
 run_check "python-unit-tests" python3 -m unittest discover -s tests -v || failed=1
