@@ -1,6 +1,6 @@
 {
   "schema": "lingo.release-recovery-evidence.v1",
-  "captured_at_utc": "2026-10-10T21:45:00Z",
+  "captured_at_utc": "2026-10-10T21:47:00Z",
   "status": "OBSERVED_BLOCKED",
   "scope": "isolated recovery branch only; no production mutation",
   "source": {
@@ -13,7 +13,8 @@
     "draft": true,
     "merged": false,
     "latest_reviewed_pr_head_before_packet_refresh": "794c21cf325c4d073ec3cedfffe7e5054f89d172",
-    "latest_tested_commit_sha": "37f260fed155d8e412ac29ba9b284d00bc775421"
+    "latest_tested_commit_sha": "37f260fed155d8e412ac29ba9b284d00bc775421",
+    "latest_recovery_runbook_commit": "43319bb78687ca43552efe479ce320811b561053"
   },
   "configuration": {
     "promotion_workflow": "source guards observed",
@@ -201,12 +202,17 @@
     "Confirmed STAGING_DEPLOYMENT_APPROVED repository variable and Cloudflare credentials, without disclosing secret values.",
     "Successful isolated staging deployment and live probes on the expected workers.dev origin.",
     "Independent verification of source, build, runtime, rollback target, evidence correlation, and all release acceptance predicates.",
-    "Confirm rotation/revocation of the previously exposed GitLab runner-registration credential."
+    "Confirm rotation/revocation of the previously exposed GitLab runner-registration credential.",
+    "Run ops/g02/RECOVERY-RUNBOOK.md on the actual authorized Linux runner host; attach redacted host/service telemetry and the successful GitHub G02 sentinel run evidence."
   ],
   "local_static_check": {
     "status": "PASS",
     "runtime": "Node.js v22.16.0",
     "assertions": 10,
     "scope": "static staging configuration predicates only; configuration values matched the source read from GitHub; not a Cloudflare deployment and not G02 acceptance"
-  }
+  },
+  "operational_notes": [
+    "Added ops/g02/RECOVERY-RUNBOOK.md at commit 43319bb78687ca43552efe479ce320811b561053. It is an instruction artifact only; it does not prove host repair or runner acceptance.",
+    "The latest workflow observations are associated with the tested source commit 37f260fed155d8e412ac29ba9b284d00bc775421. The evidence/runbook-only commits do not match the staging validation workflow path filters; no new CI execution is inferred from those commits."
+  ]
 }
