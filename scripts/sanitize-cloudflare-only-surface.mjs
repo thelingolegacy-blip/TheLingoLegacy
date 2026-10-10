@@ -49,6 +49,17 @@ for (const file of htmlFiles) {
   after = after.replace(/Rollback through Vercel deployment history/gi, 'Restore a verified previous Cloudflare Worker version using correlated release evidence');
   after = after.replace(/Vercel deploys/gi, 'Cloudflare Worker versions and release evidence');
   after = after.replace(/Vercel Marketplace/gi, 'provider marketplace');
+  after = after.replace(/Vercel\s+Marketplace/gi, 'provider marketplace');
+  after = after.replace(/Vercel\s+Blob/gi, 'object storage');
+  after = after.replace(/Vercel\s+Postgres/gi, 'managed Postgres');
+  after = after.replace(/Vercel\s+Agent/gi, 'legacy provider AI assistant');
+  after = after.replace(/Vercel at the center\./gi, 'Cloudflare + GitHub at the center.');
+  after = after.replace(/Vercel-native launch gate/gi, 'fail-closed release gate');
+  after = after.replace(/Vercel-native launch verification checklist/gi, 'fail-closed release verification checklist');
+  after = after.replace(/static Vercel launch page/gi, 'static launch page');
+  after = after.replace(/Vercel static web delivery/gi, 'static web delivery');
+  after = after.replace(/Vercel static web/gi, 'static web');
+  after = after.replace(/current Vercel storage product surface is locked into the blueprint\./gi, 'External storage contracts are reserved; this page does not activate a provider integration.');
   after = after.replace(/Vercel Functions/gi, 'server-side functions');
   after = after.replace(/https?:\/\/[^\s"'<>]+\.vercel\.app[^\s"'<>]*/gi, '/production-lock/');
   after = after.replace(/https?:\/\/[^\s"'<>]*vercel\.com[^\s"'<>]*/gi, '/production-lock/');
