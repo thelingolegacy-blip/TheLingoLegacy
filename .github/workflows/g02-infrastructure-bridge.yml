@@ -140,7 +140,7 @@ jobs:
               commit_sha:$commit_sha,
               runner:{id:$runner_id,name:$runner_name,os:$runner_os,
               architecture:$runner_arch,environment:$runner_environment},
-              jobs_api_curl_exit_status:$api_status,
+              jobs_api_curl_exit_status:$api_exit_status,
               correlated_job_record_exit_status:$job_record_status,
               captured_at_utc:$captured_at_utc,
               acceptance:"PENDING independent verification"}' \
