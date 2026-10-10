@@ -1,0 +1,31 @@
+name: G02 Control-Plane Static Validation
+
+on:
+  pull_request:
+    paths:
+      - "ops/g02/control-plane/**"
+      - ".github/workflows/g02-runner-sentinel-control-plane.yml"
+      - ".github/workflows/g02-control-plane-static-validation.yml"
+  push:
+    branches:
+      - "infra/g02-runner-control-plane-2026-10-10"
+    paths:
+      - "ops/g02/control-plane/**"
+      - ".github/workflows/g02-runner-sentinel-control-plane.yml"
+      - ".github/workflows/g02-control-plane-static-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    name: Validate G02 control-plane contracts (not G02 acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate control-plane contracts and shell syntax
+        run: node ops/g02/control-plane/validate-node.mjs
