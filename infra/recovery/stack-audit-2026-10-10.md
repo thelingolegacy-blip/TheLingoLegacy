@@ -13,7 +13,7 @@
 | Deployed sandbox version | `7e7a83d2-b4c5-48e9-9939-c1d01e136a0a` (latest); prior version `fc2767b9-3503-46b9-a82d-2d59c4db609d` | Cloudflare build/deploy logs PASS |
 | Sandbox runtime response | Available web/connector fetch tools reject this hostname before a Worker response can be verified | UNVERIFIED |
 | Firebase client config | `firebase.client.json` contains placeholder API key, sender ID, and app ID | BLOCKED |
-| Firebase Hosting config | `firebase.json` uses `public: "."` | BLOCKED — repository root is too broad to publish safely |
+| Firebase Hosting config | Draft branch now serves only `build/web` and rewrites Flutter routes to `/index.html` | CONFIG FIX IN DRAFT — not merged or deployed; Firebase client placeholders still block deployment |
 | Flutter | Root `pubspec.yaml` exists with Firebase packages | Build not run; no connected Flutter shell/toolchain |
 | Backend | Separate `nextjs-lingolegacy` Worker has a D1 binding and Access public-bypass configuration was observed in prior read-only audit | Security review required; do not add public route |
 | CI runner | G02 runner execution evidence still absent; the GitHub Recovery Sandbox Audit run failed before steps were instantiated (`steps=null`, `logs_url=null`) | BLOCKED |
