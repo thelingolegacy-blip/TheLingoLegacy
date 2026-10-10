@@ -54,9 +54,9 @@ fail=0
     fail=1
   fi
 
-  if pgrep -af 'Runner.Listener|runsvc.sh' >/dev/null 2>&1; then
+  if pgrep -af '[R]unner.Listener|[r]unsvc.sh' >/dev/null 2>&1; then
     echo "runner_process_present=yes"
-    pgrep -af 'Runner.Listener|runsvc.sh' 2>/dev/null | sed -E 's/(--token|--password|token=|password=)[^ ]+/\1[REDACTED]/Ig' | cut -c1-300
+    pgrep -af '[R]unner.Listener|[r]unsvc.sh' 2>/dev/null | sed -E 's/(--token|--password|token=|password=)[^ ]+/\1[REDACTED]/Ig' | cut -c1-300
   else
     echo "runner_process_present=no"
     fail=1
