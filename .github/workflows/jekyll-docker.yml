@@ -86,7 +86,7 @@ jobs:
           production_rc=${PIPESTATUS[0]}
           npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc 2>&1 | tee wrangler-staging.log
           staging_rc=${PIPESTATUS[0]}
-          printf 'PRODUCTION_WRANGLER_RC=%s\\nSTAGING_WRANGLER_RC=%s\\n' "$production_rc" "$staging_rc" | tee wrangler-summary.log
+          printf 'PRODUCTION_WRANGLER_RC=%s\nSTAGING_WRANGLER_RC=%s\n' "$production_rc" "$staging_rc" | tee wrangler-summary.log
           test "$production_rc" -eq 0 && test "$staging_rc" -eq 0
 
       - name: Write correlated CI execution metadata
@@ -133,7 +133,7 @@ jobs:
               gateOutcomes:outcomes,
               generatedAt:new Date().toISOString()
             };
-            fs.writeFileSync("ci-run-metadata.json",JSON.stringify(out,null,2)+"\\n");
+            fs.writeFileSync("ci-run-metadata.json",JSON.stringify(out,null,2)+"\n");
           '
 
       - name: Upload validation evidence
@@ -170,7 +170,7 @@ jobs:
           failed=0
           for gate in SANITIZE BINDINGS CLOUDFLARE_ONLY AUTHORITY DYNAMIC_RUNTIME STATIC_VALIDATOR WRANGLER; do
             value="${!gate:-missing}"
-            printf '%s=%s\\n' "$gate" "$value"
+            printf '%s=%s\n' "$gate" "$value"
             if [ "$value" != "success" ]; then failed=1; fi
           done
           if [ "$failed" -ne 0 ]; then
