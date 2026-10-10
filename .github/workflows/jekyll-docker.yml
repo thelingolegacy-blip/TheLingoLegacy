@@ -33,7 +33,7 @@ jobs:
 
       - name: Test G02-G12 evidence validator
         shell: bash
-        run: node --test ops/g02/tests/validate-gates-02-12.test.mjs
+        run: node --test ops/g02/tests/validate-gates-02-12.test.mjs 2>&1 | tee g02-gate-tests.log
 
       - name: Sanitize retired provider surface
         shell: bash
@@ -56,4 +56,5 @@ jobs:
             sanitize.log
             bindings.log
             validator.log
+            g02-gate-tests.log
           if-no-files-found: warn
