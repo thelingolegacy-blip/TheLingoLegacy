@@ -43,6 +43,10 @@ if (!isUtc(packet.generated_at_utc)) stop("Gate packet generation timestamp must
 if (!packet.independent_verifier?.identity || !isUtc(packet.independent_verifier?.reviewed_at_utc)) {
   stop("Independent verifier identity/timestamp missing or invalid.");
 }
+const packetGeneratedAtMs = Date.parse(packet.generated_at_utc);
+if (Date.parse(packet.independent_verifier.reviewed_at_utc) < packetGeneratedAtMs) {
+  stop("Independent review timestamp precedes gate packet generation.");
+}
 const requiredEvidenceTypes = {
   "G02": [
     "host_telemetry",
@@ -126,6 +130,10 @@ for (const gate of requiredGates) {
         !isUtc(evidence.verified_at_utc) ||
         !/^[a-f0-9]{40}$/i.test(evidence.candidate_commit_sha || "")) {
       failures.push(gate + ": malformed evidence record (path/hash/source/verifier/time/candidate SHA required)");
+      continue;
+    }
+    if (Date.parse(evidence.verified_at_utc) > packetGeneratedAtMs) {
+      failures.push(gate + ": evidence verification timestamp is after packet generation");
       continue;
     }
     actualEvidenceTypes.add(evidence.evidence_type);
