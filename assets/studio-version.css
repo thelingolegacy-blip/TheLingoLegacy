@@ -1,4 +1,4 @@
-/* Studio UI v2 refresh: shared premium production layer for live Vercel surfaces. */
+/* Studio UI v2 refresh: shared premium production layer for Cloudflare-served public surfaces. */
 :root {
   --studio-v2-bg: #050508;
   --studio-v2-panel: rgba(13, 15, 24, 0.78);
