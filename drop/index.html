@@ -45,7 +45,7 @@
       <div>
         <span class="eyebrow">7-day founder micro-drop</span>
         <h1>Claim the <span>Legacy Keys</span></h1>
-        <p class="lead">A fast, limited digital drop for early supporters: identity badges, XP collectibles, and mystery-key lore that can convert attention into paid founder requests today.</p><div class="drop-visual-grid" aria-label="Drop visual readiness"><span><b>Responsive</b>Fits phone and desktop screens</span><span><b>Visual</b>Founder vault glow layer</span><span><b>Checkout</b>Stripe-ready tier cards</span></div>
+        <p class="lead">A digital drop concept for early supporters. Paid checkout remains disabled as a release claim until Stripe credentials, price IDs, and an end-to-end test are independently verified.</p><div class="drop-visual-grid" aria-label="Drop visual readiness"><span><b>Responsive</b>Fits phone and desktop screens</span><span><b>Visual</b>Founder vault glow layer</span><span><b>Checkout</b>Stripe-ready tier cards</span></div>
         <div class="actions">
           <a class="button primary" href="#claim">Reserve a Pack</a>
           <a class="button" href="#tiers">View Tiers</a>
@@ -61,14 +61,14 @@
         <img src="/assets/thats-my-lingo-mark.svg" alt="Lingo Legacy star key mark">
         <span class="eyebrow">Founder vault</span>
         <h2>XP, keys, badges, lore.</h2>
-        <p class="lead">Each pack is wired for Stripe Checkout while the email request remains available as a fulfillment backup.</p>
+        <p class="lead">Each pack has a checkout request button, but live payment configuration is not verified. The email request remains an alternate, manually fulfilled inquiry rather than proof of payment.</p>
       </aside>
     </section>
 
     <section class="section" id="tiers">
       <div class="section-head"><h2>Pick a founder tier</h2><p>Simple digital packs make the offer clear enough to share in DMs, community posts, and launch announcements.</p></div>
       <div class="tiers">
-        <article class="tier"><span class="eyebrow">Starter</span><h3>Digital XP Pack</h3><div class="price">$10</div><ul><li>Founder XP card</li><li>Starter spell prompt</li><li>Launch-list priority note</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="xp">Checkout with Stripe</button><a class="button" href="#claim" data-tier="Digital XP Pack — $10">Email request</a></div></article>
+        <article class="tier"><span class="eyebrow">Starter</span><h3>Digital XP Pack</h3><div class="price">$10</div><ul><li>Founder XP card</li><li>Starter spell prompt</li><li>Launch-list priority note</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="xp">Request checkout (unverified)</button><a class="button" href="#claim" data-tier="Digital XP Pack — $10">Email request</a></div></article>
         <article class="tier featured"><span class="eyebrow">Best push</span><h3>Mystery Key Pack</h3><div class="price">$25</div><ul><li>Collectible mystery key identity</li><li>One lore clue from the Lingo vault</li><li>Early access delivery email</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="key">Checkout with Stripe</button><a class="button" href="#claim" data-tier="Mystery Key Pack — $25">Email request</a></div></article>
         <article class="tier"><span class="eyebrow">Premium</span><h3>Avalon House Badge Set</h3><div class="price">$50</div><ul><li>Limited badge-set concept</li><li>Personalized founder title</li><li>Micro-tool starter spell add-on</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="avalon">Checkout with Stripe</button><a class="button" href="#claim" data-tier="Avalon House Badge Set — $50">Email request</a></div></article>
       </div>
@@ -77,15 +77,15 @@
     <section class="section checkout-band" id="stripe-checkout">
       <div class="checkout-grid">
         <div>
-          <span class="eyebrow">Stripe-ready monetization</span>
-          <h2 style="margin:14px 0 8px">Visuals ready. Checkout ready.</h2>
-          <p class="lead">The founder drop now has premium CSS/UX cards, secure Stripe Checkout buttons, and a Vercel Function that uses server-side price IDs from environment variables.</p>
+          <span class="eyebrow">Payment integration pending verification</span>
+          <h2 style="margin:14px 0 8px">Visuals ready. Checkout remains staged.</h2>
+          <p class="lead">The storefront and checkout request code exist, but production Stripe credentials, price IDs, and live checkout behavior are unverified. Do not treat the payment path as ready until a controlled end-to-end test passes.</p>
           <p class="stripe-status" data-stripe-status role="status" aria-live="polite"></p>
         </div>
         <div class="checkout-stack" aria-label="Checkout readiness checklist">
           <div class="checkout-pill"><span>UI/UX storefront cards</span><b>Ready</b></div>
-          <div class="checkout-pill"><span>Stripe Checkout endpoint</span><b>Ready</b></div>
-          <div class="checkout-pill"><span>Secrets kept in Vercel env vars</span><b>Ready</b></div>
+          <div class="checkout-pill"><span>Stripe Checkout route</span><b>Unverified</b></div>
+          <div class="checkout-pill"><span>Cloudflare Worker secrets / price IDs</span><b>Not verified</b></div>
           <div class="checkout-pill"><span>No cash-out reward framing</span><b>Ready</b></div>
         </div>
       </div>
@@ -124,6 +124,6 @@
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  
 </body>
 </html>
