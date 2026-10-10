@@ -40,3 +40,5 @@ jobs:
           fi
       - name: Python syntax check
         run: python3 -m py_compile lambda/app.py
+      - name: Python unit tests
+        run: python3 -m unittest discover -s tests -v
