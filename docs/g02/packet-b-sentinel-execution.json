@@ -13,6 +13,7 @@
   "runner_name": null,
   "runner_labels": [],
   "job_status": "unknown",
+  "job_assigned": null,
   "job_steps_instantiated": null,
   "sentinel_exit_code": null,
   "started_at_utc": null,
