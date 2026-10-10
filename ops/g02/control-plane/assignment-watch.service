@@ -6,10 +6,12 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=lingo-runner
-Group=lingo-runner
+DynamicUser=yes
+StateDirectory=lingo-g02
+StateDirectoryMode=0700
 UMask=0077
 Environment=LC_ALL=C
+Environment=LINGO_G02_STATE_DIR=/var/lib/lingo-g02
 ExecStart=/usr/bin/bash /opt/lingo-g02/ops/g02/control-plane/assignment-watch.sh
 TimeoutStartSec=30
 NoNewPrivileges=true
