@@ -20,6 +20,8 @@ source:
   workerEntrypoint: worker.js
   routeConfigDrift: true
   routeConfigDriftStatus: blocked-until-owner-reconciles-source-name-and-live-route
+  sandboxWorkerConfig: wrangler.recovery.jsonc
+  sandboxEntrypoint: infra/recovery/sandbox-worker.js
 routes:
   production:
     apex:
@@ -46,6 +48,7 @@ routes:
       - isolated-routing-validation
 deployment:
   primaryAlternative: cloudflare-workers-builds
+  sandboxDeployCommand: "npx wrangler deploy --config wrangler.recovery.jsonc"
   previewOnly: true
   promoteOnPush: false
   requiredChecks:
