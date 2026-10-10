@@ -31,7 +31,7 @@ The gate evaluator requires at least one separately hashed evidence file for eac
 - **G11:** `operations_owner_acceptance`, `runbook`, `alerting_oncall_coverage`, `incident_rollback_procedure`
 - **G12:** `gates_02_11_chain`, `independent_audit`, `final_authorization`
 
-These type labels are schema checks, not proof that an artifact actually contains the named evidence. Independent reviewers must inspect source authority, content, scope, candidate SHA, timestamps, and integrity before accepting a gate.
+These type labels are schema checks, not proof that an artifact actually contains the named evidence. Independent reviewers must inspect source authority, content, scope, candidate SHA, timestamps, and integrity before accepting a gate. The evaluator also enforces chronology: evidence verification time must not be later than packet generation, and independent review must not predate packet generation.
 
 ## Status semantics
 - `ACCEPTED`: every required predicate has verifiable evidence and an independent reviewer has accepted it.
