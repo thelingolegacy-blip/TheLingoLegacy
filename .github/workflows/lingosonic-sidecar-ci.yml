@@ -1,0 +1,42 @@
+name: LINGOsonic Nexus Sidecar CI
+
+on:
+  pull_request:
+    paths:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon/**"
+      - ".github/workflows/lingosonic-sidecar-ci.yml"
+  push:
+    branches:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon-2026-10-10"
+    paths:
+      - "sidecar/lingosonic-nextus-v8-nitro-canon/**"
+      - ".github/workflows/lingosonic-sidecar-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sidecar/lingosonic-nextus-v8-nitro-canon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: sidecar/lingosonic-nextus-v8-nitro-canon/package-lock.json
+      - run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci --no-audit
+      - run: npm run build
+      - name: Check for accidentally committed secret files
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find sidecar/lingosonic-nextus-v8-nitro-canon -type f \( -name ".env" -o -name "*.pem" -o -name "*.key" \) | grep -q .; then
+            echo "Potential secret file detected" >&2
+            exit 1
+          fi
