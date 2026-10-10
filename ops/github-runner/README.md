@@ -21,7 +21,7 @@ The repository owner `thelingolegacy-blip` is a personal account, not an organiz
 - Outbound HTTPS access to GitHub and Docker image/package registries.
 
 ## Read-only host preflight
-From the repository root, run:
+For this patch, check out branch `infra/g02-heartbeat-handshake-verification-2026-10-10` on the intended host, then run from the repository root:
 
 ```bash
 bash ops/github-runner/diagnose-host.sh /tmp/g02-host-preflight.txt
@@ -39,8 +39,8 @@ A successful capture means only that the report was written and hashed. `G02_ACC
 ## Bootstrap
 1. Open repository Settings → Actions → Runners: https://github.com/thelingolegacy-blip/TheLingoLegacy/settings/actions/runners
 2. Inspect the existing runner inventory first. If `lingo-legacy-g02` is already registered, repair its existing daemon or investigate the exact stale registration; do not create a duplicate.
-3. On the dedicated host, check out branch `infra/g02-runner-recovery-clean-2026-10-09`.
-4. Run from `ops/github-runner`:
+3. After the host preflight and independent review, check out the approved runner-recovery branch `infra/g02-runner-recovery-clean-2026-10-09` for bootstrap. Do not run bootstrap while DNS/HTTPS is failing or while a same-name runner registration remains unresolved.
+4. Run from `ops/github-runner` only after those checks pass:
    `bash ./bootstrap.sh`
 5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, and removes its local `.env` on exit. It deliberately does not delete a remote runner registration automatically.
 6. Confirm the runner is online with labels `self-hosted, linux, x64, lingo-g02`.
