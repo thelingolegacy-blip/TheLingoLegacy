@@ -76,5 +76,30 @@ class HandlerTests(unittest.TestCase):
         self.assertEqual(message["task"], "build-preview")
 
 
+    def test_sqs_failure_returns_503_without_leaking_exception(self):
+        app.sqs.send_message.side_effect = RuntimeError("internal-aws-detail")
+        result = self.invoke("POST", "/jobs", json.dumps({"task": "build-preview"}))
+        self.assertEqual(result["statusCode"], 503)
+        body = json.loads(result["body"])
+        self.assertEqual(body["error"], "job_enqueue_unavailable")
+        self.assertNotIn("internal-aws-detail", result["body"])
+        app.table.put_item.assert_called_once()
+        app.sqs.send_message.assert_called_once()
+
+    def test_base64_body_is_rejected(self):
+        result = app.handler(
+            {
+                "requestContext": {"http": {"method": "POST"}},
+                "rawPath": "/jobs",
+                "body": "eyJ0YXNrIjoiYnVpbGQifQ==",
+                "isBase64Encoded": True,
+            },
+            self.context,
+        )
+        self.assertEqual(result["statusCode"], 400)
+        self.assertEqual(json.loads(result["body"])["error"], "base64_body_not_supported")
+        app.table.put_item.assert_not_called()
+        app.sqs.send_message.assert_not_called()
+
 if __name__ == "__main__":
     unittest.main()
