@@ -23,7 +23,7 @@ SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → PASSED → AUTHORIZATION
 - G10 Post-activation — BLOCKED.
 - G11 Acceptance — BLOCKED.
 
-See `manifest.json`, `QUALIFICATION-RULES.md`, `observations/github-actions-runs-2026-10-10.json`, and each gate's `packet.json`.
+See `manifest.json`, `QUALIFICATION-RULES.md`, `observations/github-actions-runs-2026-10-10.json`, [FINAL-REVIEW.md](./FINAL-REVIEW.md), and each gate's `packet.json`.
 
 ## G02 intake helpers
 - `G02/INTAKE.md` — how to collect actual host inventory and GitHub sentinel evidence.
