@@ -17,6 +17,7 @@ jobs:
       - name: Establish runner identity
         shell: bash
         env:
+          RUNNER_ID: ${{ runner.id }}
           RUNNER_NAME: ${{ runner.name }}
           RUNNER_OS: ${{ runner.os }}
           RUNNER_ARCH: ${{ runner.arch }}
@@ -24,11 +25,13 @@ jobs:
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
           test -n "$RUNNER_NAME"
           test -n "$RUNNER_OS"
           test -n "$RUNNER_ARCH"
           test -n "$GITHUB_SHA_VALUE"
-          printf 'runner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\ngithub_sha=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT" "$GITHUB_SHA_VALUE"
+          printf 'runner_id=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\ngithub_sha=%s\n' "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT" "$GITHUB_SHA_VALUE"
 
       - name: Execute G02 sentinel
         shell: bash
@@ -45,3 +48,44 @@ jobs:
           set -euo pipefail
           echo "G02_FORENSIC_EXIT_STATUS=0"
 
+      - name: Build correlated evidence manifest
+        if: always()
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_NUMBER: ${{ github.run_number }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          JOB_NAME: ${{ github.job }}
+          COMMIT_SHA: ${{ github.sha }}
+          REF_NAME: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          evidence_dir="$RUNNER_TEMP/g02-evidence"
+          mkdir -p "$evidence_dir"
+          {
+            printf 'schema=lingo.g02.evidence.v1\n'
+            printf 'captured_at_utc=%s\n' "$(date -u +%FT%TZ)"
+            printf 'run_id=%s\nrun_attempt=%s\nrun_number=%s\n' "$RUN_ID" "$RUN_ATTEMPT" "$RUN_NUMBER"
+            printf 'workflow=%s\njob=%s\nref=%s\ncommit_sha=%s\n' "$WORKFLOW_NAME" "$JOB_NAME" "$REF_NAME" "$COMMIT_SHA"
+            printf 'runner_id=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\n' "$RUNNER_ID" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT"
+            printf 'sentinel_expected=RUNNER_EXECUTION_SENTINEL=PASS\n'
+            printf 'forensic_exit_expected=G02_FORENSIC_EXIT_STATUS=0\n'
+          } > "$evidence_dir/evidence.tsv"
+          sha256sum "$evidence_dir/evidence.tsv" > "$evidence_dir/evidence.tsv.sha256"
+          cat "$evidence_dir/evidence.tsv"
+          cat "$evidence_dir/evidence.tsv.sha256"
+
+      - name: Upload correlated G02 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
