@@ -74,5 +74,12 @@
   ],
   "observations": "observations/github-actions-runs-2026-10-10.json",
   "qualification_rules": "QUALIFICATION-RULES.md",
-  "note": "Repository-resident packet files are real artifacts; their existence does not imply that underlying gates passed. G00/G01 dispositions are historical only; G02 is supported by partial connector metadata; all other packets await qualified evidence."
+  "note": "Repository-resident packet files are real artifacts; their existence does not imply that underlying gates passed. G00/G01 dispositions are historical only; G02 is supported by partial connector metadata; all other packets await qualified evidence.",
+  "g02_intake": "G02/INTAKE.md",
+  "host_evidence_collector": "ops/estate/diagnostics/capture-g02-host-evidence.sh",
+  "latest_evidence_notes": [
+    "Host collector is committed but has not been executed on the actual Linux host.",
+    "Host capture alone cannot establish GitHub job assignment or G02 acceptance.",
+    "Latest connector observations show runs 38077915045 and 38077908781 failed with steps null, logs_url null, and empty artifact lists."
+  ]
 }
