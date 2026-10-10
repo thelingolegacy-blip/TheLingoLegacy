@@ -72,7 +72,7 @@ for (const gate of requiredGates) {
       continue;
     }
     const resolved = path.resolve(path.dirname(packetPath), evidence.path);
-    const uniqueKey = resolved + ":" + evidence.sha256;
+    const uniqueKey = gate + ":" + resolved + ":" + evidence.sha256;
     if (seenEvidence.has(uniqueKey)) failures.push(gate + ": duplicate evidence reference " + evidence.path);
     seenEvidence.add(uniqueKey);
     if (!fs.existsSync(resolved)) { failures.push(gate + ": evidence file missing: " + evidence.path); continue; }
