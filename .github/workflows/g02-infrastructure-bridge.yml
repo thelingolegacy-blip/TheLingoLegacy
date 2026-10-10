@@ -1,0 +1,175 @@
+name: G02 Infrastructure Bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ops/g02-infrastructure-bridge-2026-10-10
+
+permissions:
+  contents: read
+  actions: read
+
+# This bridge diagnoses the GitHub-hosted execution path and the dedicated
+# self-hosted G02 path independently. A hosted PASS never substitutes for G02.
+jobs:
+  hosted-control-plane-probe:
+    name: g02-hosted-control-plane-probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Capture hosted runner and GitHub API evidence
+        id: capture
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          API_URL: ${{ github.api_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          set -uo pipefail
+          mkdir -p bridge-evidence/hosted
+          api_status=0
+          curl --fail --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$API_URL/repos/$REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100" \
+            -o bridge-evidence/hosted/jobs-api.json || api_status=$?
+          jq -n \
+            --arg repository "$REPOSITORY" \
+            --arg run_id "$RUN_ID" \
+            --arg run_attempt "$RUN_ATTEMPT" \
+            --arg commit_sha "$COMMIT_SHA" \
+            --arg runner_id "$RUNNER_ID" \
+            --arg runner_name "$RUNNER_NAME" \
+            --arg runner_os "$RUNNER_OS" \
+            --arg runner_arch "$RUNNER_ARCH" \
+            --arg runner_environment "$RUNNER_ENVIRONMENT" \
+            --arg api_exit_status "$api_status" \
+            --arg captured_at_utc "$(date -u +%FT%TZ)" \
+            '{schema:"lingo.g02.bridge.hosted.v1", repository:$repository,
+              run_id:$run_id, run_attempt:$run_attempt, commit_sha:$commit_sha,
+              runner:{id:$runner_id,name:$runner_name,os:$runner_os,
+              architecture:$runner_arch,environment:$runner_environment},
+              jobs_api_curl_exit_status:$api_exit_status,
+              captured_at_utc:$captured_at_utc,
+              meaning:"Hosted diagnostic only; never constitutes G02 acceptance"}' \
+            > bridge-evidence/hosted/manifest.json
+          printf 'BRIDGE_HOSTED_CAPTURED=1\nRUN_ID=%s\nRUNNER_NAME=%s\nAPI_CURL_EXIT_STATUS=%s\n' \
+            "$RUN_ID" "$RUNNER_NAME" "$api_status"
+          exit "$api_status"
+
+      - name: Upload hosted bridge evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-bridge-hosted-${{ github.run_id }}
+          path: bridge-evidence/hosted/
+          if-no-files-found: warn
+          retention-days: 7
+
+  self-hosted-g02-sentinel:
+    name: g02-self-hosted-sentinel
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+    steps:
+      - name: Capture runner identity and correlated API record
+        id: capture
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          API_URL: ${{ github.api_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          set -uo pipefail
+          mkdir -p bridge-evidence/self-hosted
+          api_status=0
+          curl --fail --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$API_URL/repos/$REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100" \
+            -o bridge-evidence/self-hosted/jobs-api.json || api_status=$?
+          job_record_status=1
+          if [ "$api_status" -eq 0 ]; then
+            jq -ce --arg name "g02-self-hosted-sentinel" --argjson attempt "$RUN_ATTEMPT" \
+              '[.jobs[] | select(.name == $name and .run_attempt == $attempt)] |
+               if length == 1 then .[0] else error("expected exactly one matching job") end' \
+              bridge-evidence/self-hosted/jobs-api.json \
+              > bridge-evidence/self-hosted/job-record.json && job_record_status=0
+          fi
+          jq -n \
+            --arg repository "$REPOSITORY" \
+            --arg run_id "$RUN_ID" \
+            --arg run_attempt "$RUN_ATTEMPT" \
+            --arg job_name "$GITHUB_JOB" \
+            --arg commit_sha "$COMMIT_SHA" \
+            --arg runner_id "$RUNNER_ID" \
+            --arg runner_name "$RUNNER_NAME" \
+            --arg runner_os "$RUNNER_OS" \
+            --arg runner_arch "$RUNNER_ARCH" \
+            --arg runner_environment "$RUNNER_ENVIRONMENT" \
+            --arg api_exit_status "$api_status" \
+            --arg job_record_exit_status "$job_record_status" \
+            --arg captured_at_utc "$(date -u +%FT%TZ)" \
+            '{schema:"lingo.g02.bridge.selfhosted.v1", repository:$repository,
+              run_id:$run_id, run_attempt:$run_attempt, job_name:$job_name,
+              commit_sha:$commit_sha,
+              runner:{id:$runner_id,name:$runner_name,os:$runner_os,
+              architecture:$runner_arch,environment:$runner_environment},
+              jobs_api_curl_exit_status:$api_exit_status,
+              correlated_job_record_exit_status:$job_record_exit_status,
+              captured_at_utc:$captured_at_utc,
+              acceptance:"PENDING independent verification"}' \
+            > bridge-evidence/self-hosted/manifest.json
+          {
+            echo "hostname=$(hostname)"
+            uname -a
+            id
+            df -h /
+          } > bridge-evidence/self-hosted/host-diagnostics.txt 2>&1 || true
+          sha256sum bridge-evidence/self-hosted/* > bridge-evidence/self-hosted/SHA256SUMS 2>/dev/null || true
+          printf 'BRIDGE_SELF_HOSTED_CAPTURED=1\nRUN_ID=%s\nRUNNER_ID=%s\nRUNNER_NAME=%s\nAPI_CURL_EXIT_STATUS=%s\nJOB_RECORD_EXIT_STATUS=%s\n' \
+            "$RUN_ID" "$RUNNER_ID" "$RUNNER_NAME" "$api_status" "$job_record_status"
+
+      - name: Enforce G02 runner identity
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ID" -gt 0
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          test "$RUNNER_ENVIRONMENT" = "self-hosted"
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\nrunner_id=%s\nrunner_name=%s\n' "$RUNNER_ID" "$RUNNER_NAME"
+
+      - name: Upload self-hosted bridge evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-bridge-self-hosted-${{ github.run_id }}
+          path: bridge-evidence/self-hosted/
+          if-no-files-found: warn
+          retention-days: 14
