@@ -22,6 +22,20 @@ command -v curl >/dev/null || { echo "curl is required" >&2; exit 2; }
 command -v tar >/dev/null || { echo "tar is required" >&2; exit 2; }
 command -v systemctl >/dev/null || { echo "systemctl is required" >&2; exit 2; }
 
+# Fail closed: never remove, replace, or overwrite an existing runner registration.
+if [[ -e "$RUNNER_DIR/.runner" || -e "$RUNNER_DIR/.credentials" || -e "$RUNNER_DIR/.service" ]]; then
+  echo "ERROR: runner registration state already exists at $RUNNER_DIR; refusing to mutate it." >&2
+  exit 20
+fi
+if [[ -d "$RUNNER_DIR" ]] && find "$RUNNER_DIR" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
+  echo "ERROR: runner directory is not empty at $RUNNER_DIR; inspect and retire it explicitly before registration." >&2
+  exit 21
+fi
+if systemctl list-unit-files 'actions.runner.*.service' --no-legend 2>/dev/null | grep -F "$RUNNER_NAME" >/dev/null; then
+  echo "ERROR: a runner service matching $RUNNER_NAME already exists; refusing duplicate registration." >&2
+  exit 22
+fi
+
 id actions-runner >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash actions-runner
 install -d -o actions-runner -g actions-runner "$RUNNER_DIR"
 
@@ -57,10 +71,7 @@ curl --fail --silent --show-error --location "$download_url" -o "$tmp/runner.tar
 tar -xzf "$tmp/runner.tar.gz" -C "$RUNNER_DIR"
 chown -R actions-runner:actions-runner "$RUNNER_DIR"
 
-# Remove only a stale local registration for this runner name; no repository state is changed.
-if [[ -f "$RUNNER_DIR/.runner" ]]; then
-  runuser -u actions-runner -- "$RUNNER_DIR/config.sh" remove --token "$RUNNER_TOKEN" || true
-fi
+# Existing registration state is rejected above; no automatic removal is permitted.
 
 runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   "$RUNNER_DIR/config.sh" \
@@ -69,8 +80,7 @@ runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   --token "$RUNNER_TOKEN" \
   --name "$RUNNER_NAME" \
   --labels "$RUNNER_LABELS" \
-  --work "_work" \
-  --replace
+  --work "_work"
 
 "$RUNNER_DIR/svc.sh" install actions-runner
 
