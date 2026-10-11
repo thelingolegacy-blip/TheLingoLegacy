@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>G02 Diagnostics · LINGO Legacy</title>
+<style>
+:root{color-scheme:dark;--bg:#08090d;--panel:#11131a;--line:#343746;--gold:#f2c65d;--ink:#f4f2eb;--muted:#b3b6c3;--green:#80d6a2;--red:#ff9292;--amber:#f2c65d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#30244c 0,transparent 36rem),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1120px;margin:auto;padding:28px 18px 64px}.eyebrow{color:var(--gold);font-size:.76rem;letter-spacing:.16em;font-weight:800;text-transform:uppercase}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.03;margin:.5rem 0 1rem}h2{font-size:1.08rem;margin:0 0 12px}.lead,.muted{color:var(--muted)}.banner{border:1px solid #795f27;background:#241d10;padding:14px 16px;border-radius:12px;margin:22px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{border:1px solid var(--line);background:rgba(17,19,26,.94);border-radius:16px;padding:18px;min-width:0}.wide{grid-column:1/-1}.status{font-size:1.2rem;font-weight:850;letter-spacing:.04em}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:.76rem;color:var(--amber)}label{display:block;font-size:.9rem;font-weight:700;margin:12px 0 6px}textarea,input{width:100%;background:#08090d;color:var(--ink);border:1px solid #444958;border-radius:9px;padding:11px;font: .88rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}textarea{min-height:250px;resize:vertical}button{border:0;border-radius:10px;background:var(--gold);color:#17130a;font-weight:850;padding:12px 16px;cursor:pointer;margin-top:12px}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #8ccfff;outline-offset:2px}.result{white-space:pre-wrap;overflow-wrap:anywhere;background:#08090d;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:44px}.history{padding-left:20px}.history li{margin:8px 0;overflow-wrap:anywhere}.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{padding:10px;border:1px solid var(--line);border-radius:9px}.check strong{display:block}.foot{margin-top:22px;color:var(--muted);font-size:.85rem}@media(max-width:700px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.checks{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">The Lingo Legacy · Isolated diagnostic intake</div>
+  <h1>G02 Runner Diagnostics</h1>
+  <p class="lead">Read-only evidence intake and local validation. This page does not connect to GitHub, contact a runner, dispatch a workflow, or change a gate.</p>
+  <div class="banner" role="status"><strong>PROTECTED HOLD ACTIVE.</strong> This client cannot independently authenticate submitted host evidence. A matching checksum establishes byte integrity only—not provenance, truth, or runner assignment. Verified runner signal therefore remains UNKNOWN until an external trusted verifier attests the evidence.</div>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="signal-heading">
+      <h2 id="signal-heading">Runner Signal</h2>
+      <div class="status" id="runnerSignal" aria-live="polite">UNKNOWN</div>
+      <p class="muted" id="signalExplanation">No evidence has been evaluated. No runner status is inferred from this page loading.</p>
+      <span class="pill">Verified signal: fail-closed</span>
+    </section>
+    <section class="card" aria-labelledby="gate-heading">
+      <h2 id="gate-heading">G02 Gate Status</h2>
+      <div class="status">BLOCKED</div>
+      <p class="muted">This interface cannot authorize acceptance, merge, promotion, activation, or deployment.</p>
+    </section>
+
+    <section class="card wide" aria-labelledby="trigger-heading">
+      <h2 id="trigger-heading">Run Diagnostic</h2>
+      <p class="muted">Runs a local-only diagnostic over the evidence JSON below. It does not trigger a GitHub Actions workflow or execute on the runner host.</p>
+      <label for="evidence">Evidence JSON (paste an exported observation packet)</label>
+      <textarea id="evidence" spellcheck="false" autocomplete="off" aria-describedby="evidence-help" placeholder='{"run_id":"...","job_id":"...","commit_sha":"...","collected_at":"..."}'></textarea>
+      <p id="evidence-help" class="muted">Expected fields include run_id, job_id, commit_sha, collected_at, runner_id, runner_name, job_assigned, steps_executed, sentinel_exit_code, logs_url, and artifact_sha256. Missing fields remain UNKNOWN; values are not treated as authentic merely because they are present.</p>
+      <label for="expectedHash">Expected SHA-256 of the exact UTF-8 evidence JSON above</label>
+      <input id="expectedHash" inputmode="text" autocomplete="off" spellcheck="false" placeholder="64 hexadecimal characters">
+      <button type="button" id="runDiagnostic">Run Local Diagnostic</button>
+      <div id="diagnosticResult" class="result" role="status" aria-live="polite">Not run.</div>
+    </section>
+
+    <section class="card" aria-labelledby="correlation-heading">
+      <h2 id="correlation-heading">Evidence Correlation</h2>
+      <div id="correlation" class="result">No packet evaluated.</div>
+    </section>
+    <section class="card" aria-labelledby="integrity-heading">
+      <h2 id="integrity-heading">Integrity Verification</h2>
+      <div id="integrity" class="result">Not checked.</div>
+      <p class="muted">Hash check is local and does not prove who collected or signed the evidence.</p>
+    </section>
+
+    <section class="card wide" aria-labelledby="predicates-heading">
+      <h2 id="predicates-heading">G02 Acceptance Predicates</h2>
+      <div id="predicates" class="checks">
+        <div class="check"><strong>UNKNOWN</strong>Authentic host evidence</div>
+        <div class="check"><strong>UNKNOWN</strong>Runner assigned</div>
+        <div class="check"><strong>UNKNOWN</strong>Sentinel executed successfully</div>
+        <div class="check"><strong>UNKNOWN</strong>Logs/artifacts retrievable</div>
+        <div class="check"><strong>UNKNOWN</strong>Correlation independently verified</div>
+        <div class="check"><strong>UNKNOWN</strong>Formal acceptance</div>
+      </div>
+    </section>
+    <section class="card wide" aria-labelledby="history-heading">
+      <h2 id="history-heading">Signal History (this browser session)</h2>
+      <p class="muted">History is stored only in sessionStorage. It is not a durable evidence ledger or shared backend record.</p>
+      <ol id="history" class="history"><li>No diagnostic runs recorded.</li></ol>
+      <button type="button" id="clearHistory">Clear Local History</button>
+    </section>
+  </div>
+  <p class="foot">Non-production · No network requests initiated by this page · No secrets required · No gate or authorization changes</p>
+</main>
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const unknownPredicates = [
+    ["UNKNOWN", "Authentic host evidence"],
+    ["UNKNOWN", "Runner assigned"],
+    ["UNKNOWN", "Sentinel executed successfully"],
+    ["UNKNOWN", "Logs/artifacts retrievable"],
+    ["UNKNOWN", "Correlation independently verified"],
+    ["UNKNOWN", "Formal acceptance"]
+  ];
+  const getHistory = () => {
+    try { const v = JSON.parse(sessionStorage.getItem("g02-diagnostic-history") || "[]"); return Array.isArray(v) ? v : []; }
+    catch { return []; }
+  };
+  function renderHistory() {
+    const list = $("history");
+    const entries = getHistory();
+    list.replaceChildren();
+    if (!entries.length) { const li = document.createElement("li"); li.textContent = "No diagnostic runs recorded."; list.append(li); return; }
+    for (const entry of entries.slice().reverse()) {
+      const li = document.createElement("li");
+      li.textContent = entry.timestamp + " · " + entry.result + " · " + entry.note;
+      list.append(li);
+    }
+  }
+  function renderPredicates(items) {
+    const root = $("predicates");
+    root.replaceChildren();
+    for (const [status, label] of items) {
+      const box = document.createElement("div"); box.className = "check";
+      const strong = document.createElement("strong"); strong.textContent = status;
+      const span = document.createElement("span"); span.textContent = label;
+      box.append(strong, span); root.append(box);
+    }
+  }
+  function hex(buffer) { return Array.from(new Uint8Array(buffer), b => b.toString(16).padStart(2, "0")).join(""); }
+  function nonEmpty(v) { return typeof v === "string" && v.trim().length > 0; }
+  function correlation(e) {
+    const fields = ["run_id", "job_id", "commit_sha", "collected_at"];
+    return fields.map(k => k + ": " + (e && e[k] !== undefined && e[k] !== null && String(e[k]).trim() !== "" ? String(e[k]) : "MISSING")).join("\n");
+  }
+  async function run() {
+    const raw = $("evidence").value;
+    const expected = $("expectedHash").value.trim().toLowerCase();
+    $("runnerSignal").textContent = "UNKNOWN";
+    $("signalExplanation").textContent = "Client-side intake cannot authenticate the origin of submitted evidence.";
+    $("correlation").textContent = "Parsing evidence…";
+    $("integrity").textContent = "Computing SHA-256…";
+    let e;
+    try {
+      e = JSON.parse(raw);
+      if (!e || typeof e !== "object" || Array.isArray(e)) throw new Error("Evidence must be a JSON object.");
+    } catch (err) {
+      $("correlation").textContent = "UNAVAILABLE";
+      $("integrity").textContent = "NOT VERIFIED — invalid JSON.";
+      $("diagnosticResult").textContent = "FAIL: " + err.message;
+      const hist = getHistory(); hist.push({timestamp:new Date().toISOString(),result:"INVALID",note:"Evidence JSON could not be parsed."});
+      try { sessionStorage.setItem("g02-diagnostic-history", JSON.stringify(hist.slice(-50))); } catch {}
+      renderHistory(); renderPredicates(unknownPredicates); return;
+    }
+    $("correlation").textContent = correlation(e);
+    let digest = "";
+    try {
+      if (!crypto || !crypto.subtle) throw new Error("Web Crypto API unavailable in this browser context.");
+      digest = hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
+    } catch (err) {
+      $("integrity").textContent = "NOT VERIFIED — " + err.message;
+    }
+    const validExpected = /^[a-f0-9]{64}$/.test(expected);
+    const hashMatch = !!digest && validExpected && digest === expected;
+    $("integrity").textContent = digest
+      ? "Computed SHA-256: " + digest + "\nExpected hash format: " + (validExpected ? "VALID" : "INVALID / MISSING") + "\nHash match: " + (hashMatch ? "PASS" : "FAIL")
+      : $("integrity").textContent;
+    const required = ["run_id","job_id","commit_sha","collected_at"];
+    const missing = required.filter(k => !nonEmpty(e[k]));
+    const idsPresent = Number.isInteger(Number(e.runner_id)) && Number(e.runner_id) > 0 && nonEmpty(e.runner_name);
+    const assigned = e.job_assigned === true && idsPresent;
+    const unassigned = e.job_assigned === false || Number(e.runner_id) === 0;
+    const sentinel = e.sentinel_exit_code === 0 && e.steps_executed === true;
+    const logs = nonEmpty(e.logs_url) && nonEmpty(e.artifact_sha256) && /^[a-f0-9]{64}$/i.test(e.artifact_sha256);
+    const reported = missing.length ? "UNKNOWN" : (assigned ? "ASSIGNED" : (unassigned ? "UNASSIGNED" : "UNKNOWN"));
+    $("diagnosticResult").textContent =
+      "Local diagnostic completed.\nReported fields: " + (missing.length ? "MISSING " + missing.join(", ") : "CORRELATION FIELDS PRESENT") +
+      "\nReported runner observation: " + reported +
+      "\nSentinel fields consistent with success: " + (sentinel ? "YES (untrusted report)" : "NO / UNKNOWN") +
+      "\nLog/artifact fields present: " + (logs ? "YES (availability not fetched)" : "NO / UNKNOWN") +
+      "\nIntegrity checksum match: " + (hashMatch ? "YES" : "NO") +
+      "\nVerified G02 signal: UNKNOWN (no trusted external attestation)" +
+      "\nGate: BLOCKED";
+    $("runnerSignal").textContent = "UNKNOWN";
+    $("signalExplanation").textContent = "Submitted report says " + reported + "; verified signal stays UNKNOWN because this page cannot authenticate provenance or independently fetch GitHub/host evidence.";
+    const predicateStates = [
+      ["UNKNOWN","Authentic host evidence"],
+      [assigned && hashMatch ? "REPORTED — NOT VERIFIED" : "UNKNOWN","Runner assigned"],
+      [sentinel && hashMatch ? "REPORTED — NOT VERIFIED" : "UNKNOWN","Sentinel executed successfully"],
+      [logs && hashMatch ? "REPORTED — NOT FETCHED" : "UNKNOWN","Logs/artifacts retrievable"],
+      ["UNKNOWN","Correlation independently verified"],
+      ["BLOCKED","Formal acceptance"]
+    ];
+    renderPredicates(predicateStates);
+    const note = "reported=" + reported + "; hash_match=" + hashMatch + "; verified_signal=UNKNOWN";
+    const hist = getHistory(); hist.push({timestamp:new Date().toISOString(),result:"BLOCKED",note});
+    try { sessionStorage.setItem("g02-diagnostic-history", JSON.stringify(hist.slice(-50))); } catch {}
+    renderHistory();
+  }
+  $("runDiagnostic").addEventListener("click", run);
+  $("clearHistory").addEventListener("click", () => { try { sessionStorage.removeItem("g02-diagnostic-history"); } catch {} renderHistory(); });
+  renderHistory();
+})();
+</script>
+</body>
+</html>
