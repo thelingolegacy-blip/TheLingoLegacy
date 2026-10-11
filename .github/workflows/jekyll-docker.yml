@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -18,6 +17,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout
@@ -28,14 +30,20 @@ jobs:
         with:
           node-version: 22
 
-      - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
+      - name: Check retired provider surface without mutating the checkout
+        run: |
+          set -Eeuo pipefail
+          node scripts/sanitize-cloudflare-only-surface.mjs --check 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
-        run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+        run: |
+          set -Eeuo pipefail
+          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
       - name: Validate release-critical static site
-        run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+        run: |
+          set -Eeuo pipefail
+          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
       - name: Upload validation evidence
         if: always()
