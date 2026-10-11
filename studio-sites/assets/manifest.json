@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "policy": {
+    "noUnlicensedAssets": true,
+    "productionRequiresVerifiedRights": true,
+    "missingAssetsFailProductionBuild": true,
+    "immutableVersionedPaths": true
+  },
+  "assets": [
+    {
+      "assetId": "lingoarcade.hero-sigil",
+      "kind": "vector-logo",
+      "path": null,
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "LINGOarcade monogram sigil",
+      "status": "design-placeholder"
+    },
+    {
+      "assetId": "lingoslots.hero-sigil",
+      "kind": "vector-logo",
+      "path": null,
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "LINGOslots monogram sigil",
+      "status": "design-placeholder"
+    },
+    {
+      "assetId": "shared.ui-feedback",
+      "kind": "procedural-audio",
+      "path": "../shared/studio.js",
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-code-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "Optional short synthesized UI tones; muted by default",
+      "status": "code-generated"
+    }
+  ],
+  "note": "This manifest intentionally identifies placeholders. It does not claim that final artwork, sound masters, animation exports, hashes, or rights review are complete."
+}
