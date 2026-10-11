@@ -26,14 +26,31 @@ function walk(dir) {
     }
   }
 }
-walk(path.join(root, "studio/assets/source"));
+const sourceRoot = path.resolve(root, "studio/assets/source");
+walk(sourceRoot);
+
+if (!registry || !Array.isArray(registry.assets)) {
+  errors.push("asset registry must contain an assets array");
+}
+const registeredPaths = new Set();
+const sourceFiles = new Set(assets.filter(a => path.resolve(root, a.path).startsWith(sourceRoot + path.sep)).map(a => path.resolve(root, a.path)));
 
 for (const item of registry.assets || []) {
   if (!item || typeof item.id !== "string" || typeof item.path !== "string") { errors.push("each registry asset requires string id and path"); continue; }
   if (seen.has(item.id)) errors.push("duplicate asset id: " + item.id);
   seen.add(item.id);
   if (item.path.startsWith("/") || item.path.includes("..") || item.path.includes("://")) errors.push("asset path must be local and relative: " + item.path);
-  if (item.license?.status !== "documented" || !item.license?.reference) errors.push("asset " + item.id + " lacks documented license reference");
+  const normalized = path.resolve(root, "studio/assets", item.path);
+  if (registeredPaths.has(normalized)) errors.push("duplicate registry path: " + item.path);
+  registeredPaths.add(normalized);
+  if (item.license?.status !== "documented" || typeof item.license?.reference !== "string" || !item.license.reference.trim()) errors.push("asset " + item.id + " lacks documented license reference");
+  const provenance = item.provenance;
+  if (!provenance || typeof provenance.source !== "string" || !provenance.source.trim() ||
+      typeof provenance.owner !== "string" || !provenance.owner.trim() ||
+      typeof provenance.acquired_at !== "string" || !/^\\d{4}-\\d{2}-\\d{2}(T.*Z)?$/.test(provenance.acquired_at) ||
+      typeof provenance.reference !== "string" || !provenance.reference.trim()) {
+    errors.push("asset " + item.id + " has invalid provenance; require source, owner, ISO acquisition date, and reference");
+  }
   if (item.kind === "image" && item.informative === true && !item.alt) errors.push("informative image " + item.id + " lacks alt text");
   if (item.kind === "video" && item.spoken === true && !item.captions) errors.push("spoken video " + item.id + " lacks captions");
   const base = path.resolve(root, "studio/assets");
@@ -43,6 +60,19 @@ for (const item of registry.assets || []) {
   } else {
     const found = assets.find(a => path.resolve(root, a.path) === full);
     if (!found) assets.push({ path: path.relative(root, full).split(path.sep).join("/"), bytes: fs.statSync(full).size, sha256: sha256(full), mediaType: path.extname(full).slice(1).toLowerCase() });
+  }
+}
+
+for (const discoveredPath of sourceFiles) {
+  if (!registeredPaths.has(discoveredPath)) {
+    errors.push("unregistered source asset: " + path.relative(root, discoveredPath).split(path.sep).join("/"));
+  }
+}
+for (const registeredPath of registeredPaths) {
+  if (sourceFiles.has(registeredPath)) continue;
+  const sourcePrefix = sourceRoot + path.sep;
+  if (registeredPath.startsWith(sourcePrefix) && !sourceFiles.has(registeredPath)) {
+    errors.push("registry references missing source asset: " + path.relative(root, registeredPath).split(path.sep).join("/"));
   }
 }
 if (errors.length) {
