@@ -113,11 +113,10 @@ export default {
 
     if (!insert.success) return response({ ok: false, error: "event_persistence_failed" }, 503);
 
-    const duplicateCheck = await env.FULFILLMENT_DB.prepare(
-      "SELECT webhook_id FROM fulfillment_webhook_events WHERE webhook_id = ?",
-    ).bind(webhookId).first();
-
-    if (!duplicateCheck) return response({ ok: false, error: "event_persistence_failed" }, 503);
+    // D1 reports zero changed rows when INSERT OR IGNORE detects a duplicate.
+    if (insert.meta?.changes === 0) {
+      return response({ ok: true, duplicate: true, state: "already_received" }, 200);
+    }
 
     const mode = String(env.FULFILLMENT_MODE || "dry_run").toLowerCase();
     if (mode !== "dry_run") {
