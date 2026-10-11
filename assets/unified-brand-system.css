@@ -1,0 +1,194 @@
+/* The Lingo Legacy Unified Brand System
+   Shared shell for the entire studio ecosystem.
+   Keeps each platform sub-brand while preserving the Lingo Legacy home hub. */
+
+:root {
+  --lingo-brand-bg: #07050d;
+  --lingo-brand-panel: rgba(19, 15, 27, 0.78);
+  --lingo-brand-line: rgba(247, 202, 76, 0.28);
+  --lingo-brand-gold: #f7ca4c;
+  --lingo-brand-gold-soft: #fff2a8;
+  --lingo-brand-cyan: #56efff;
+  --lingo-brand-violet: #7c3aed;
+  --lingo-brand-panel-soft: rgba(255, 255, 255, 0.06);
+  --lingo-brand-text: #fff9e8;
+  --lingo-brand-muted: #d9ca9d;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+.lingo-global-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(7, 5, 13, 0.72);
+  border-bottom: 1px solid var(--lingo-brand-line);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.lingo-global-nav {
+  width: min(1280px, calc(100% - 24px));
+  margin: 0 auto;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lingo-brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--lingo-brand-text);
+  text-decoration: none;
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.lingo-brand-chip img {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: block;
+  box-shadow: 0 0 26px rgba(247, 202, 76, 0.32);
+}
+
+.lingo-brand-chip span {
+  font-size: clamp(0.92rem, 1vw + 0.5rem, 1.12rem);
+  color: var(--lingo-brand-text);
+}
+
+.lingo-global-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lingo-global-links a {
+  color: var(--lingo-brand-muted);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.lingo-global-links a:hover,
+.lingo-global-links a:focus-visible {
+  color: var(--lingo-brand-text);
+  border-color: rgba(86, 239, 255, 0.38);
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.lingo-utility-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+
+.lingo-utility-bar a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 202, 76, 0.25);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--lingo-brand-muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lingo-utility-bar a:hover,
+.lingo-utility-bar a:focus-visible {
+  border-color: rgba(86, 239, 255, 0.44);
+  color: var(--lingo-brand-text);
+  outline: none;
+}
+
+.lingo-global-footer {
+  margin-top: 42px;
+  border-top: 1px solid var(--lingo-brand-line);
+  background: rgba(7, 5, 13, 0.72);
+}
+
+.lingo-global-footer .wrap {
+  width: min(1280px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 22px 0 46px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+
+.lingo-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--lingo-brand-text);
+  font-weight: 1000;
+}
+
+.lingo-footer-brand img {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+}
+
+.lingo-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--lingo-brand-muted);
+  font-size: 0.8rem;
+}
+
+.lingo-footer-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lingo-footer-links a:hover,
+.lingo-footer-links a:focus-visible {
+  color: var(--lingo-brand-text);
+}
+
+@media (max-width: 720px) {
+  .lingo-global-nav {
+    min-height: 64px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px 0;
+  }
+
+  .lingo-global-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .lingo-global-links a {
+    font-size: 0.68rem;
+    padding: 7px 8px;
+  }
+}
