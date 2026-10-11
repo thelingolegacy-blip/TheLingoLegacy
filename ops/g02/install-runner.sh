@@ -11,8 +11,6 @@ RUNNER_NAME="${RUNNER_NAME:-lingo-legacy-g02}"
 RUNNER_LABELS="${RUNNER_LABELS:-self-hosted,linux,x64,lingo-g02}"
 RUNNER_DIR="${RUNNER_DIR:-/opt/actions-runner}"
 
-: "${RUNNER_TOKEN:?RUNNER_TOKEN must be supplied in the environment}"
-
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run this bootstrap as root (or through sudo)." >&2
   exit 2
@@ -35,6 +33,8 @@ if systemctl list-unit-files 'actions.runner.*.service' --no-legend 2>/dev/null 
   echo "ERROR: a runner service matching $RUNNER_NAME already exists; refusing duplicate registration." >&2
   exit 22
 fi
+
+: "${RUNNER_TOKEN:?RUNNER_TOKEN must be supplied in the environment}"
 
 id actions-runner >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash actions-runner
 install -d -o actions-runner -g actions-runner "$RUNNER_DIR"
