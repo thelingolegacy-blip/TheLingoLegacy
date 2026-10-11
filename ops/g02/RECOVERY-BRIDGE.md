@@ -12,9 +12,7 @@ Keep G02 **BLOCKED**, production **FROZEN**, and last-known-good **PROTECTED** u
 
 From an authorized operator workstation with GitHub CLI (`gh`) and `jq` installed and read access to `thelingolegacy-blip/TheLingoLegacy`:
 
-\`\`\`bash
-bash ops/g02/diagnose-actions-dispatch.sh
-\`\`\`
+    bash ops/g02/diagnose-actions-dispatch.sh
 
 The script creates a new mode-700 evidence directory, records the latest ten workflow runs, job/run/commit correlation, runner ID/name/labels, instantiated and completed step counts, artifact counts, log-retrieval outcomes, and a SHA-256 sidecar. It does not save raw job logs, dispatch or rerun workflows, alter settings, or change production. Review and independently verify the output before treating it as evidence.
 
@@ -35,9 +33,7 @@ If the bridge reports the same signature:
 
 Only on the authorized Linux x64 host, begin with read-only status:
 
-\`\`\`bash
-bash ops/g02/runner-control.sh status
-\`\`\`
+    bash ops/g02/runner-control.sh status
 
 The controller's mutating actions require both `G02_CONFIRM_HOST_MUTATION=YES` and `--confirm-host-mutation`. It no longer exposes reset, reboot, or enable actions. Review actual service identity, daemon state, runner registration, and redacted journal output before any approved host change.
 
@@ -51,8 +47,6 @@ No DNS, redirect, Worker route, Worker deployment, or authentication change is i
 
 ## Static safety test
 
-\`\`\`bash
-bash ops/g02/tests/test-recovery-guard.sh
-\`\`\`
+    bash ops/g02/tests/test-recovery-guard.sh
 
 This test checks Bash syntax and guardrail text only. It is not an actual host execution, GitHub Actions run, log/artifact acceptance, or independent G02 verification.
