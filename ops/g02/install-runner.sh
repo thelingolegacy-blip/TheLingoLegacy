@@ -1,29 +1,50 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# G02 host bootstrap for thelingolegacy-blip/TheLingoLegacy.
-# This script never changes the G02 acceptance predicate.
-# Supply a short-lived GitHub Actions runner registration token via RUNNER_TOKEN.
-# Do not commit the token or place it in this file.
+# Explicitly gated G02 host bootstrap.
+# This script will not unregister, replace, or reset an existing runner.
+# It provisions only after the operator has verified the host and remote inventory.
 
-REPO_URL="${REPO_URL:-https://github.com/thelingolegacy-blip/TheLingoLegacy}"
+REPO="thelingolegacy-blip/TheLingoLegacy"
+REPO_URL="https://github.com/$REPO"
 RUNNER_NAME="${RUNNER_NAME:-lingo-legacy-g02}"
 RUNNER_LABELS="${RUNNER_LABELS:-self-hosted,linux,x64,lingo-g02}"
 RUNNER_DIR="${RUNNER_DIR:-/opt/actions-runner}"
 
-: "${RUNNER_TOKEN:?RUNNER_TOKEN must be supplied in the environment}"
+: "${RUNNER_TOKEN:?RUNNER_TOKEN must be supplied through the environment}"
+[[ "${G02_CONFIRM_HOST_MUTATION:-}" == "YES" ]] || { echo "Set G02_CONFIRM_HOST_MUTATION=YES only after reviewing the host change." >&2; exit 3; }
+[[ "${G02_CONFIRM_RUNNER_REGISTRATION:-}" == "YES" ]] || { echo "Set G02_CONFIRM_RUNNER_REGISTRATION=YES only after approving a new registration." >&2; exit 3; }
+[[ "$RUNNER_NAME" == "lingo-legacy-g02" ]] || { echo "Refusing non-canonical runner name: $RUNNER_NAME" >&2; exit 3; }
+[[ "$RUNNER_LABELS" == "self-hosted,linux,x64,lingo-g02" ]] || { echo "Refusing non-canonical runner labels." >&2; exit 3; }
 
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run this bootstrap as root (or through sudo)." >&2
   exit 2
 fi
 
-command -v curl >/dev/null || { echo "curl is required" >&2; exit 2; }
-command -v tar >/dev/null || { echo "tar is required" >&2; exit 2; }
-command -v systemctl >/dev/null || { echo "systemctl is required" >&2; exit 2; }
+for cmd in curl tar systemctl python3 gh; do
+  command -v "$cmd" >/dev/null || { echo "$cmd is required" >&2; exit 2; }
+done
 
-id actions-runner >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash actions-runner
-install -d -o actions-runner -g actions-runner "$RUNNER_DIR"
+gh auth status >/dev/null
+existing_runner_ids="$(gh api --paginate "repos/$REPO/actions/runners?per_page=100" --jq '.runners[]? | select(.name == "lingo-legacy-g02") | .id')"
+if [[ -n "$existing_runner_ids" ]]; then
+  echo "BLOCKED: canonical runner already exists in GitHub inventory (ID(s): $existing_runner_ids)." >&2
+  echo "Repair the existing host/daemon; do not create a duplicate or use --replace." >&2
+  exit 4
+fi
+
+if [[ -e "$RUNNER_DIR/.runner" || -e "$RUNNER_DIR/config.sh" ]]; then
+  echo "BLOCKED: $RUNNER_DIR already contains a runner registration or installation." >&2
+  echo "No local registration will be removed and no files will be overwritten." >&2
+  exit 4
+fi
+
+umask 077
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 arch="$(uname -m)"
 case "$arch" in
@@ -32,35 +53,37 @@ case "$arch" in
   *) echo "Unsupported host architecture: $arch" >&2; exit 2 ;;
 esac
 
-tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
-
-release_json="$tmp/release.json"
-curl --fail --silent --show-error --location \
+curl --fail --silent --show-error --location --connect-timeout 15 --max-time 180 \
   -H 'Accept: application/vnd.github+json' \
-  https://api.github.com/repos/actions/runner/releases/latest > "$release_json"
+  https://api.github.com/repos/actions/runner/releases/latest > "$tmp/release.json"
 
-download_url="$(python3 - "$release_json" "$runner_arch" <<'PY'
+download_url="$(python3 - "$tmp/release.json" "$runner_arch" <<'PY'
 import json,sys
-d=json.load(open(sys.argv[1]))
+d=json.load(open(sys.argv[1], encoding="utf-8"))
 arch=sys.argv[2]
-for a in d.get("assets",[]):
-    n=a.get("name","")
-    if n.endswith(f"linux-{arch}.tar.gz"):
-        print(a["browser_download_url"])
-        raise SystemExit
+for asset in d.get("assets", []):
+    name=asset.get("name", "")
+    if name.endswith(f"linux-{arch}.tar.gz"):
+        print(asset["browser_download_url"])
+        raise SystemExit(0)
 raise SystemExit("No matching GitHub Actions runner asset found")
 PY
 )"
 
-curl --fail --silent --show-error --location "$download_url" -o "$tmp/runner.tar.gz"
+install -d -o actions-runner -g actions-runner "$RUNNER_DIR" 2>/dev/null || {
+  if ! id actions-runner >/dev/null 2>&1; then
+    useradd --system --create-home --shell /bin/bash actions-runner
+    install -d -o actions-runner -g actions-runner "$RUNNER_DIR"
+  else
+    echo "Unable to prepare $RUNNER_DIR for actions-runner." >&2
+    exit 1
+  fi
+}
+
+curl --fail --silent --show-error --location --connect-timeout 15 --max-time 300 \
+  "$download_url" -o "$tmp/runner.tar.gz"
 tar -xzf "$tmp/runner.tar.gz" -C "$RUNNER_DIR"
 chown -R actions-runner:actions-runner "$RUNNER_DIR"
-
-# Remove only a stale local registration for this runner name; no repository state is changed.
-if [[ -f "$RUNNER_DIR/.runner" ]]; then
-  runuser -u actions-runner -- "$RUNNER_DIR/config.sh" remove --token "$RUNNER_TOKEN" || true
-fi
 
 runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   "$RUNNER_DIR/config.sh" \
@@ -69,26 +92,20 @@ runuser -u actions-runner -- env RUNNER_ALLOW_RUNASROOT=0 \
   --token "$RUNNER_TOKEN" \
   --name "$RUNNER_NAME" \
   --labels "$RUNNER_LABELS" \
-  --work "_work" \
-  --replace
+  --work "_work"
 
+unset RUNNER_TOKEN
 "$RUNNER_DIR/svc.sh" install actions-runner
 
-# Select only the service corresponding to this runner name. Never restart an
-# unrelated actions.runner.* service when multiple runners exist on the host.
 service_unit="$(systemctl list-unit-files 'actions.runner.*.service' --no-legend |
-  awk -v name="$RUNNER_NAME" 'index($1, name) {print $1; exit}')"
-
+  awk -v needle=".$RUNNER_NAME.service" 'index($1, needle) > 0 { print $1; exit }')"
 if [[ -z "$service_unit" ]]; then
-  echo "No Actions Runner service matching RUNNER_NAME=$RUNNER_NAME was installed." >&2
+  echo "No exact service for $RUNNER_NAME was installed; inspect systemd manually." >&2
   systemctl list-unit-files 'actions.runner.*.service' --no-legend >&2 || true
   exit 1
 fi
 
-# Install a bounded self-healing policy for this runner only.
-# A hung start is terminated after 5 minutes; a stopped/crashed daemon is
-# restarted automatically. This does not alter the G02 acceptance predicate.
-dropin_dir="/etc/systemd/system/${service_unit}.d"
+dropin_dir="/etc/systemd/system/$service_unit.d"
 install -d "$dropin_dir"
 cat > "$dropin_dir/10-g02-recovery.conf" <<'EOF'
 [Service]
@@ -102,7 +119,6 @@ systemctl daemon-reload
 systemctl enable "$service_unit"
 systemctl restart "$service_unit"
 
-echo
 echo "Waiting up to 5 minutes for runner daemon activation..."
 deadline=$(($(date +%s) + 300))
 while true; do
@@ -113,20 +129,13 @@ while true; do
   fi
   if (( $(date +%s) >= deadline )); then
     echo "RUNNER_CONNECT_WINDOW=TIMEOUT" >&2
-    systemctl --no-pager --full status "$service_unit" --lines=50 || true
-    journalctl -u "$service_unit" --no-pager -n 100 || true
+    systemctl --no-pager --full status "$service_unit" --lines=40 || true
+    journalctl -u "$service_unit" --no-pager -n 80 || true
     exit 1
   fi
   sleep 5
 done
 
-systemctl --no-pager --full status "$service_unit" --lines=30
-
-echo
-echo "Host bootstrap complete."
-echo "Expected daemon state: Connected to GitHub / Listening for Jobs."
-echo "Runner name: $RUNNER_NAME"
-echo "Labels: $RUNNER_LABELS"
-echo
-echo "Do NOT treat registration/online state as G02 acceptance."
-echo "G02 passes only after empirical assignment, steps, sentinel exit 0, logs, and independent verification."
+systemctl --no-pager --full status "$service_unit" --lines=25
+echo "Bootstrap complete. This is not G02 acceptance."
+echo "Require runner_id > 0, populated runner_name, executed steps, retrievable logs/artifact, and independent run/job/commit verification."
