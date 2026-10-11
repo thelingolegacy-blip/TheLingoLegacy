@@ -60,6 +60,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
       runner_id="$(jq -r '.runner_id // 0' <<< "$job_json")"
       runner_name="$(jq -r '.runner_name // ""' <<< "$job_json")"
       labels="$(jq -r '(.labels // []) | join(",")' <<< "$job_json")"
+      labels_ok="$(jq -r '(["self-hosted","linux","x64","lingo-g02"] - (.labels // [])) | length == 0' <<< "$job_json")"
       step_count="$(jq -r '(.steps // []) | length' <<< "$job_json")"
       executed_steps="$(jq -r '[.steps[]? | select(.status == "completed" and .conclusion != null)] | length' <<< "$job_json")"
 
@@ -68,8 +69,8 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
       else
         correlation="FAIL_OR_INCOMPLETE"
       fi
-      if [[ "$runner_id" =~ ^[1-9][0-9]*$ && -n "$runner_name" ]]; then
-        assignment="ASSIGNED"
+      if [[ "$runner_id" =~ ^[1-9][0-9]*$ && "$runner_name" == "lingo-legacy-g02" && "$labels_ok" == "true" ]]; then
+        assignment="CANONICAL_ASSIGNED"
       else
         assignment="UNVERIFIED"
       fi
