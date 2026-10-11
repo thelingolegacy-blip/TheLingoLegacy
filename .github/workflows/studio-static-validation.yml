@@ -1,0 +1,32 @@
+name: Studio Static Validation
+on:
+  pull_request:
+    paths:
+      - "studio-sites/**"
+      - ".github/workflows/studio-static-validation.yml"
+  push:
+    branches:
+      - "studio/lingoarcade-lingoslots-enterprise-2026-10-11"
+    paths:
+      - "studio-sites/**"
+      - ".github/workflows/studio-static-validation.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: studio-static-validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    name: Validate studio design baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate studio configuration and local assets
+        run: node studio-sites/scripts/validate-studio.mjs

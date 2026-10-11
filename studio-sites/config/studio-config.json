@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": {
+    "name": "The Lingo Legacy",
+    "tagline": "Loyalty. Legacy. Language.",
+    "theme": "industrial-noir",
+    "accentColors": [
+      "gold",
+      "royal-purple"
+    ],
+    "canonicalNaming": "LINGO + lowercase product/service"
+  },
+  "environments": {
+    "development": {
+      "enabled": true,
+      "externalWrites": false
+    },
+    "preview": {
+      "enabled": true,
+      "externalWrites": false
+    },
+    "production": {
+      "enabled": false,
+      "activationAuthorized": false
+    }
+  },
+  "routes": {
+    "hub": "/studio-sites/",
+    "arcade": "/studio-sites/lingoarcade/",
+    "slots": "/studio-sites/lingoslots/",
+    "playerDashboard": "/studio-sites/dashboard/"
+  },
+  "services": {
+    "identity": {
+      "mode": "stub",
+      "requiredForProduction": true
+    },
+    "wallet": {
+      "mode": "local-demo-only",
+      "realValue": false,
+      "redeemable": false
+    },
+    "leaderboards": {
+      "mode": "demo-data",
+      "serverAuthoritative": false
+    },
+    "referrals": {
+      "mode": "local-demo-only",
+      "rewardsEnabled": false
+    },
+    "notifications": {
+      "mode": "local-demo-only"
+    },
+    "sweepstakes": {
+      "enabled": false,
+      "reason": "Requires approved rules, eligibility, jurisdiction, no-purchase method where applicable, privacy and legal review."
+    }
+  },
+  "gates": {
+    "runnerG02": "BLOCKED_UNTIL_AUTHENTIC_HOST_EVIDENCE",
+    "build": "REQUIRED",
+    "functionalQA": "REQUIRED",
+    "securityReview": "REQUIRED",
+    "accessibilityReview": "REQUIRED",
+    "assetRights": "REQUIRED",
+    "independentPublicReachability": "REQUIRED",
+    "mergeAuthorization": "REQUIRED",
+    "productionActivation": "DISABLED"
+  },
+  "policy": {
+    "failClosed": true,
+    "productionMutationFreeze": true,
+    "lastKnownGoodProtected": true,
+    "realMoneyWagering": false,
+    "cashout": false,
+    "productionDeploy": false
+  },
+  "observability": {
+    "eventsRequireCorrelationId": true,
+    "redactSecrets": true,
+    "clientTelemetryIsNotReleaseEvidence": true
+  }
+}

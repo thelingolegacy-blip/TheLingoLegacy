@@ -1,0 +1,43 @@
+name: Studio Preview Package
+on:
+  pull_request:
+    paths:
+      - "studio-sites/**"
+      - ".github/workflows/studio-preview-package.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: studio-preview-package-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package-preview:
+    name: Validate and package isolated preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact source revision
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate studio baseline
+        run: node studio-sites/scripts/validate-studio.mjs
+      - name: Create preview bundle
+        if: success()
+        run: |
+          mkdir -p dist
+          cp -R studio-sites dist/studio-sites
+          printf 'commit=%s\n' "$GITHUB_SHA" > dist/BUILD-METADATA.txt
+          printf 'environment=preview-only\n' >> dist/BUILD-METADATA.txt
+          printf 'production_activation=disabled\n' >> dist/BUILD-METADATA.txt
+          printf 'source_ref=%s\n' "$GITHUB_REF" >> dist/BUILD-METADATA.txt
+      - name: Upload immutable preview artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-studio-preview-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
