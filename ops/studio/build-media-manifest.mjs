@@ -47,7 +47,7 @@ for (const item of registry.assets || []) {
   const provenance = item.provenance;
   if (!provenance || typeof provenance.source !== "string" || !provenance.source.trim() ||
       typeof provenance.owner !== "string" || !provenance.owner.trim() ||
-      typeof provenance.acquired_at !== "string" || !/^\\d{4}-\\d{2}-\\d{2}(T.*Z)?$/.test(provenance.acquired_at) ||
+      typeof provenance.acquired_at !== "string" || !/^\d{4}-\d{2}-\d{2}(T.*Z)?$/.test(provenance.acquired_at) ||
       typeof provenance.reference !== "string" || !provenance.reference.trim()) {
     errors.push("asset " + item.id + " has invalid provenance; require source, owner, ISO acquisition date, and reference");
   }
