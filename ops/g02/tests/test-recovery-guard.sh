@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root="$(cd "$(dirname "\${BASH_SOURCE[0]}")/../../.." && pwd)"
+root="$(cd "$(dirname "$0")/../../.." && pwd)"
 controller="$root/ops/g02/runner-control.sh"
 installer="$root/ops/g02/install-runner.sh"
 bridge="$root/ops/g02/diagnose-actions-dispatch.sh"
