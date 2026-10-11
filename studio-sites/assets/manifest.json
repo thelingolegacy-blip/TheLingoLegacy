@@ -32,7 +32,7 @@
     {
       "assetId": "shared.ui-feedback",
       "kind": "procedural-audio",
-      "path": "../shared/studio.js",
+      "path": "shared/studio.js",
       "version": "0.1.0",
       "sha256": null,
       "license": "original-code-pending-review",
