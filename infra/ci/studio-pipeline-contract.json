@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "project": "The Lingo Legacy",
+  "branchPolicy": {
+    "base": "main",
+    "implementationBranches": "infra/* or studio/*",
+    "mergeMode": "pull-request-only",
+    "autoMerge": false
+  },
+  "sourceOfTruth": "GitHub",
+  "productionRuntime": "Cloudflare",
+  "stages": [
+    {
+      "id": "source",
+      "name": "Source and diff integrity",
+      "required": true
+    },
+    {
+      "id": "runner-dispatch",
+      "name": "Runner identity and assignment",
+      "required": true,
+      "gate": "G02"
+    },
+    {
+      "id": "static-validation",
+      "name": "Static site and infrastructure contracts",
+      "required": true
+    },
+    {
+      "id": "security",
+      "name": "Secret scan and least-privilege review",
+      "required": true
+    },
+    {
+      "id": "media-manifest",
+      "name": "Deterministic asset manifest",
+      "required": true
+    },
+    {
+      "id": "build-evidence",
+      "name": "Upload logs and build evidence",
+      "required": true
+    },
+    {
+      "id": "independent-review",
+      "name": "Independent review and acceptance",
+      "required": true
+    },
+    {
+      "id": "candidate-deploy",
+      "name": "Isolated Cloudflare candidate",
+      "required": false,
+      "requiresExplicitAuthorization": true
+    },
+    {
+      "id": "production-promotion",
+      "name": "Production promotion",
+      "required": false,
+      "requiresAllGates": true,
+      "requiresExplicitAuthorization": true
+    }
+  ],
+  "runner": {
+    "name": "lingo-legacy-g02",
+    "labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "sentinelEnabledByRepositoryVariable": "LINGO_G02_SENTINEL_ENABLED",
+    "defaultSentinelEnabled": false,
+    "requiredEvidence": [
+      "runner_id > 0",
+      "runner_name populated",
+      "steps instantiated",
+      "sentinel executed",
+      "logs retrievable",
+      "artifact retrievable",
+      "commit and run correlation verified"
+    ]
+  },
+  "security": {
+    "defaultPermissions": "read-only",
+    "persistCheckoutCredentials": false,
+    "untrustedPullRequestsOnSelfHostedRunner": false,
+    "credentialsInSource": false,
+    "productionSecretsInCI": false
+  },
+  "production": {
+    "mutationFreeze": true,
+    "lastKnownGoodProtected": true,
+    "deployOnPush": false,
+    "activationAutomatic": false,
+    "mergeAuthorizationRequired": true
+  }
+}
