@@ -1,0 +1,49 @@
+{
+  "schema": "lingo.sidecar.agent-registry.v1",
+  "status": "PROPOSED_NOT_PROVISIONED",
+  "scope": "sidecar/lingosonic-nextus-v8-nitro-canon",
+  "agents": [
+    {
+      "id": "recovery-coordinator",
+      "purpose": "Coordinate tasks, dependencies, and evidence references",
+      "permission_tier": "READ",
+      "write_scope": [],
+      "requires_human_approval_for": ["branch_changes", "deployments", "access_changes"]
+    },
+    {
+      "id": "repository-auditor",
+      "purpose": "Inspect source, dependencies, pull requests, and workflow results",
+      "permission_tier": "READ",
+      "write_scope": [],
+      "requires_human_approval_for": ["all_writes"]
+    },
+    {
+      "id": "security-reviewer",
+      "purpose": "Review IAM, authentication, dependency risk, and secret handling",
+      "permission_tier": "READ",
+      "write_scope": [],
+      "requires_human_approval_for": ["policy_changes", "secret_changes", "public_exposure"]
+    },
+    {
+      "id": "infrastructure-pilot",
+      "purpose": "Validate IaC and prepare an isolated development deployment",
+      "permission_tier": "PROPOSE",
+      "write_scope": ["sidecar/lingosonic-nextus-v8-nitro-canon/infra/"],
+      "requires_human_approval_for": ["aws_deploy", "resource_creation", "iam_changes"]
+    },
+    {
+      "id": "evidence-auditor",
+      "purpose": "Correlate source, run, runner, logs, artifact, and checksums",
+      "permission_tier": "READ",
+      "write_scope": [],
+      "requires_human_approval_for": ["acceptance_decisions"]
+    },
+    {
+      "id": "backup-steward",
+      "purpose": "Review backup configuration and document restore-test evidence",
+      "permission_tier": "PROPOSE",
+      "write_scope": ["sidecar/lingosonic-nextus-v8-nitro-canon/ops/BACKUP_AND_RESTORE.md"],
+      "requires_human_approval_for": ["restore_operations", "data_mutations"]
+    }
+  ]
+}
