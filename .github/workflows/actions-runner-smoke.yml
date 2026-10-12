@@ -54,10 +54,11 @@ jobs:
               const job = matches[0];
               if (!Number.isInteger(job.runner_id) || job.runner_id <= 0) process.exit(3);
               if (job.runner_name !== "lingo-legacy-g02") process.exit(4);
-              process.stdout.write(job.runner_id + "\\t" + job.runner_name);
+              process.stdout.write(JSON.stringify({runner_id: job.runner_id, runner_name: job.runner_name}));
             });
           ')"
-          IFS=$'\t' read -r RUNNER_ID RUNNER_NAME_API <<< "$ASSIGNMENT"
+          RUNNER_ID="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(String(JSON.parse(s).runner_id)));')"
+          RUNNER_NAME_API="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(JSON.parse(s).runner_name));')"
           [[ "$RUNNER_ID" =~ ^[1-9][0-9]*$ ]]
           test "$RUNNER_NAME_API" = "lingo-legacy-g02"
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
