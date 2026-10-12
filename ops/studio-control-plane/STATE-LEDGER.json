@@ -1,0 +1,54 @@
+{
+  "schema": "lingo-studio-state/1.0",
+  "as_of": "2026-10-05",
+  "states": {
+    "G00": "PASS",
+    "G01": "PASS",
+    "G02": "FAIL_UNVERIFIED",
+    "G03": "BLOCKED",
+    "G04": "BLOCKED",
+    "G05": "BLOCKED",
+    "G06": "BLOCKED",
+    "G07": "BLOCKED",
+    "G08": "BLOCKED",
+    "G09": "BLOCKED",
+    "G10": "BLOCKED",
+    "G11": "BLOCKED"
+  },
+  "controls": {
+    "fail_closed": true,
+    "mutation_freeze": true,
+    "lkg_protected": true,
+    "production_promotion_blocked": true
+  },
+  "independent_evidence_requirements": {
+    "G02": [
+      "matching_runner",
+      "runner_id_gt_0",
+      "runner_name",
+      "job_assigned",
+      "steps_instantiated",
+      "sentinel_executed",
+      "logs_generated",
+      "logs_retrievable",
+      "independent_verification"
+    ],
+    "firebase": [
+      "authenticated_project_access",
+      "real_web_config",
+      "real_platform_configs",
+      "source_update",
+      "validation_execution",
+      "independent_verification"
+    ],
+    "public_domain": [
+      "wire_request",
+      "actual_status",
+      "location_or_hop_chain",
+      "response_headers",
+      "responder_correlation",
+      "independent_verification"
+    ]
+  },
+  "note": "This ledger records observed governance state; it does not establish any blocked state as passed."
+}
