@@ -98,7 +98,8 @@ jobs:
 
   deploy-cloudflare:
     needs: repair
-    if: ${{ success() && inputs.deploy == true }}
+    # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: production
     steps:
