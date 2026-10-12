@@ -1,0 +1,205 @@
+name: G02 Sentinel Evidence and Telemetry
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - infra/recovery-route-framework-2026-10-10
+    paths:
+      - ".github/workflows/g02-sentinel-evidence.yml"
+      - "ops/github-runner/**"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-sentinel-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sentinel-evidence:
+    name: G02 Sentinel Evidence and Telemetry
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 8
+    env:
+      EVIDENCE_DIR: ${{ runner.temp }}/g02-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+      RUN_ID_VALUE: ${{ github.run_id }}
+      RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
+      RUN_NUMBER_VALUE: ${{ github.run_number }}
+      REPOSITORY_VALUE: ${{ github.repository }}
+      WORKFLOW_VALUE: ${{ github.workflow }}
+      WORKFLOW_REF_VALUE: ${{ github.workflow_ref }}
+      REF_VALUE: ${{ github.ref }}
+      SHA_VALUE: ${{ github.sha }}
+      EVENT_VALUE: ${{ github.event_name }}
+      JOB_KEY_VALUE: ${{ github.job }}
+      RUNNER_NAME_VALUE: ${{ runner.name }}
+      RUNNER_OS_VALUE: ${{ runner.os }}
+      RUNNER_ARCH_VALUE: ${{ runner.arch }}
+      RUNNER_ENVIRONMENT_VALUE: ${{ runner.environment }}
+    steps:
+      - name: Initialize evidence packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -d -m 700 "$EVIDENCE_DIR"
+          printf 'G02_EVIDENCE_SCHEMA=1\n' > "$EVIDENCE_DIR/sentinel.log"
+          printf 'CAPTURE_STARTED_UTC=%s\n' "$(date -u +%FT%TZ)" >> "$EVIDENCE_DIR/sentinel.log"
+          printf 'RUN_ID=%s\nRUN_ATTEMPT=%s\nRUN_NUMBER=%s\nREPOSITORY=%s\nWORKFLOW=%s\nWORKFLOW_REF=%s\nREF=%s\nSOURCE_SHA=%s\nEVENT=%s\nJOB_KEY=%s\nRUNNER_NAME=%s\nRUNNER_OS=%s\nRUNNER_ARCH=%s\nRUNNER_ENVIRONMENT=%s\n' \
+            "$RUN_ID_VALUE" "$RUN_ATTEMPT_VALUE" "$RUN_NUMBER_VALUE" "$REPOSITORY_VALUE" "$WORKFLOW_VALUE" "$WORKFLOW_REF_VALUE" "$REF_VALUE" "$SHA_VALUE" "$EVENT_VALUE" "$JOB_KEY_VALUE" "$RUNNER_NAME_VALUE" "$RUNNER_OS_VALUE" "$RUNNER_ARCH_VALUE" "$RUNNER_ENVIRONMENT_VALUE" >> "$EVIDENCE_DIR/sentinel.log"
+
+      - name: Verify runner identity and emit sentinel
+        id: sentinel
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const dir = process.env.EVIDENCE_DIR;
+          const now = () => new Date().toISOString();
+          const record = {
+            schema: "lingo.g02.sentinel-evidence.v1",
+            captured_at_utc: now(),
+            repository: process.env.REPOSITORY_VALUE,
+            workflow: process.env.WORKFLOW_VALUE,
+            workflow_ref: process.env.WORKFLOW_REF_VALUE,
+            event: process.env.EVENT_VALUE,
+            ref: process.env.REF_VALUE,
+            source_sha: process.env.SHA_VALUE,
+            run_id: Number(process.env.RUN_ID_VALUE),
+            run_attempt: Number(process.env.RUN_ATTEMPT_VALUE),
+            run_number: Number(process.env.RUN_NUMBER_VALUE),
+            job_key: process.env.JOB_KEY_VALUE,
+            runner: {
+              name: process.env.RUNNER_NAME_VALUE,
+              os: process.env.RUNNER_OS_VALUE,
+              arch: process.env.RUNNER_ARCH_VALUE,
+              environment: process.env.RUNNER_ENVIRONMENT_VALUE,
+              id: 0,
+              status: "assigned-by-github-scheduler",
+              labels: ["self-hosted", "linux", "x64", "lingo-g02"],
+              labels_evidence: "workflow runs-on selector; live runner inventory is not queried from this token"
+            },
+            correlation: { numeric_job_id: 0, job_name: null, job_status: null },
+            gates: {},
+            sentinel_executed: true
+          };
+          const log = [];
+          const check = (name, ok, detail) => {
+            record.gates[name] = { result: ok ? "PASS" : "FAIL", detail: String(detail ?? "") };
+            log.push(name + "=" + (ok ? "PASS" : "FAIL") + (detail ? " (" + detail + ")" : ""));
+          };
+          async function api(url) {
+            const r = await fetch(url, {
+              headers: {
+                "Authorization": "Bearer " + process.env.GH_TOKEN,
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28"
+              }
+            });
+            const body = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error("GitHub API " + r.status + " for " + new URL(url).pathname);
+            return body;
+          }
+          (async () => {
+            check("G02_SENTINEL_EXECUTED", true, "Node sentinel ran");
+            check("RUNNER_NAME", record.runner.name === "lingo-legacy-g02", record.runner.name);
+            check("RUNNER_OS", record.runner.os === "Linux", record.runner.os);
+            check("RUNNER_ARCH", record.runner.arch === "X64", record.runner.arch);
+            check("SOURCE_SHA", /^[0-9a-f]{40}$/i.test(record.source_sha || ""), record.source_sha);
+            check("RUN_ID", Number.isSafeInteger(record.run_id) && record.run_id > 0, record.run_id);
+            check("RUN_ATTEMPT", Number.isSafeInteger(record.run_attempt) && record.run_attempt > 0, record.run_attempt);
+            try {
+              const runnerRoot = path.resolve(process.env.RUNNER_TEMP, "../..");
+              const runnerConfig = JSON.parse(fs.readFileSync(path.join(runnerRoot, ".runner"), "utf8"));
+              record.runner.id = Number(runnerConfig.agentId) || 0;
+              record.runner.configured_name = runnerConfig.agentName || null;
+              const jobs = await api("https://api.github.com/repos/" + record.repository + "/actions/runs/" + record.run_id + "/jobs?per_page=100");
+              const job = (jobs.jobs || []).find(x =>
+                Number(x.run_attempt) === record.run_attempt &&
+                (x.name === "G02 Sentinel Evidence and Telemetry" || x.name === record.job_key)
+              );
+              if (job) {
+                record.correlation.numeric_job_id = Number(job.id) || 0;
+                record.correlation.job_name = job.name || null;
+                record.correlation.job_status = job.status || null;
+              }
+              check("RUNNER_ID", record.runner.id > 0, record.runner.id);
+              check("RUNNER_CONFIG_NAME", record.runner.configured_name === record.runner.name, record.runner.configured_name);
+              check("RUNNER_ENVIRONMENT", record.runner.environment === "self-hosted", record.runner.environment);
+              check("RUNNER_LABEL_SELECTOR", true, "GitHub assigned this job using self-hosted, linux, x64, lingo-g02");
+              check("RUNNER_STATUS", record.runner.status === "assigned-by-github-scheduler", record.runner.status);
+              check("NUMERIC_JOB_ID", record.correlation.numeric_job_id > 0, record.correlation.numeric_job_id);
+              check("JOB_RUN_ATTEMPT", !!job, job ? "matched" : "not found in run jobs API");
+            } catch (e) {
+              check("GITHUB_API_CORRELATION", false, e.message);
+            }
+            record.qualified_probe = Object.values(record.gates).every(x => x.result === "PASS");
+            record.finished_at_utc = now();
+            fs.writeFileSync(path.join(dir, "evidence.json"), JSON.stringify(record, null, 2) + "\n", { mode: 0o600 });
+            log.push("G02_QUALIFIED_PROBE=" + (record.qualified_probe ? "PASS" : "FAIL"));
+            log.push("RUNNER_EXECUTION_SENTINEL=PASS");
+            log.push("G02_FORENSIC_EXIT_STATUS=" + (record.qualified_probe ? "0" : "1"));
+            fs.appendFileSync(path.join(dir, "sentinel.log"), log.join("\n") + "\n", { mode: 0o600 });
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "qualified_probe=" + (record.qualified_probe ? "true" : "false") + "\n");
+            if (!record.qualified_probe) process.exitCode = 1;
+          })().catch(e => {
+            fs.writeFileSync(path.join(dir, "sentinel-error.txt"), "SENTINEL_INTERNAL_ERROR=" + e.message + "\n", { mode: 0o600 });
+            process.exitCode = 1;
+          });
+          NODE
+          rc=$?
+          echo "G02_SENTINEL_STEP_EXIT_CODE=$rc" >> "$EVIDENCE_DIR/sentinel.log"
+          exit "$rc"
+
+      - name: Capture bounded host telemetry
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          {
+            echo "G02_HOST_TELEMETRY_SCHEMA=1"
+            echo "CAPTURED_AT_UTC=$(date -u +%FT%TZ)"
+            echo "HOSTNAME=$(hostname 2>/dev/null)"
+            echo "USER=$(id -un 2>/dev/null)"
+            echo "=== OS / ARCH ==="
+            uname -a 2>&1
+            echo "=== DISK ==="
+            df -hT "$EVIDENCE_DIR" 2>&1
+            df -i "$EVIDENCE_DIR" 2>&1
+            echo "=== MEMORY ==="
+            free -h 2>&1
+            echo "=== RUNNER PROCESS PRESENCE ==="
+            if pgrep -af 'Runner.Listener|runsvc.sh|run.sh' >/dev/null 2>&1; then
+              echo "RUNNER_PROCESS_PRESENT=true"
+            else
+              echo "RUNNER_PROCESS_PRESENT=false"
+            fi
+            echo "=== DOCKER AVAILABILITY ==="
+            if command -v docker >/dev/null 2>&1; then docker --version 2>&1; else echo "DOCKER_CLI=MISSING"; fi
+          } > "$EVIDENCE_DIR/host-telemetry.txt" 2>&1
+          chmod 600 "$EVIDENCE_DIR/"* 2>/dev/null || true
+
+      - name: Hash evidence packet
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d "$EVIDENCE_DIR" ]; then
+            cd "$EVIDENCE_DIR"
+            find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > SHA256SUMS
+            chmod 600 SHA256SUMS
+          fi
+
+      - name: Upload correlated G02 evidence artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: g02-sentinel-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/g02-evidence-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 7
