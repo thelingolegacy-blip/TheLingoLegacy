@@ -79,15 +79,23 @@ jobs:
           const required = ['GH_TOKEN','GH_REPOSITORY','GH_RUN_ID','GH_RUN_NUMBER','GH_RUN_ATTEMPT','GH_SHA','GH_REF','GH_WORKFLOW','GH_JOB_NAME'];
           for (const key of required) if (!process.env[key]) throw new Error('Missing required evidence input: ' + key);
           const api = 'https://api.github.com/repos/' + process.env.GH_REPOSITORY + '/actions/runs/' + process.env.GH_RUN_ID + '/jobs?per_page=100';
-          const response = await fetch(api, {
-            headers: {
-              authorization: 'Bearer ' + process.env.GH_TOKEN,
-              accept: 'application/vnd.github+json',
-              'x-github-api-version': '2022-11-28'
-            }
-          });
-          if (!response.ok) throw new Error('GitHub job evidence API failed: HTTP ' + response.status);
-          const payload = await response.json();
+          let payload = { jobs: [] };
+          let apiError = null;
+          let apiHttpStatus = null;
+          try {
+            const response = await fetch(api, {
+              headers: {
+                authorization: 'Bearer ' + process.env.GH_TOKEN,
+                accept: 'application/vnd.github+json',
+                'x-github-api-version': '2022-11-28'
+              }
+            });
+            apiHttpStatus = response.status;
+            if (!response.ok) throw new Error('GitHub job evidence API failed: HTTP ' + response.status);
+            payload = await response.json();
+          } catch (error) {
+            apiError = String(error?.message || error);
+          }
           const job = (payload.jobs || []).find(item => item.name === process.env.GH_JOB_NAME);
           const runnerId = job?.runner_id ?? null;
           const runnerName = job?.runner_name ?? null;
@@ -98,6 +106,7 @@ jobs:
             number: step.number
           }));
           const predicates = {
+            api_request_ok: apiError === null,
             job_found: Boolean(job),
             job_id_positive: Number.isInteger(job?.id) && job.id > 0,
             job_run_id_matches: Number(job?.run_id) === Number(process.env.GH_RUN_ID),
@@ -124,6 +133,8 @@ jobs:
             job_name: process.env.GH_JOB_NAME,
             job_status_at_capture: job?.status ?? null,
             job_conclusion_at_capture: job?.conclusion ?? null,
+            evidence_api_http_status: apiHttpStatus,
+            evidence_api_error: apiError,
             runner_id: runnerId,
             runner_name: runnerName,
             runner_context: {
