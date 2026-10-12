@@ -7,23 +7,24 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   qualified-evidence:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Capture execution context
+      - name: Capture exact run and runner assignment
         id: capture
         shell: bash
         env:
+          GH_TOKEN: ${{ github.token }}
           EVIDENCE_DIR: g02-evidence
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           JOB_ID: ${{ github.job }}
           SOURCE_SHA: ${{ github.sha }}
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_NAME_CONTEXT: ${{ runner.name }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
           RUNNER_ENVIRONMENT: ${{ runner.environment }}
@@ -36,13 +37,66 @@ jobs:
             printf 'run_number=%s\n' "$RUN_NUMBER"
             printf 'job_name=%s\n' "$JOB_ID"
             printf 'source_sha=%s\n' "$SOURCE_SHA"
-            printf 'runner_id=%s\n' "$RUNNER_ID"
-            printf 'runner_name=%s\n' "$RUNNER_NAME"
+            printf 'runner_name_context=%s\n' "$RUNNER_NAME_CONTEXT"
             printf 'runner_os=%s\n' "$RUNNER_OS_VALUE"
             printf 'runner_arch=%s\n' "$RUNNER_ARCH_VALUE"
             printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT"
             printf 'captured_at_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           } > "$EVIDENCE_DIR/context.txt"
+
+          [[ "$RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ "$RUN_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$RUNNER_NAME_CONTEXT" = "lingo-legacy-g02"
+          test "$RUNNER_OS_VALUE" = "Linux"
+          test "$RUNNER_ARCH_VALUE" = "X64"
+
+          JOBS_JSON="$(curl --fail --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100")"
+
+          ASSIGNMENT="$(printf '%s' "$JOBS_JSON" | node -e '
+            let data = "";
+            process.stdin.setEncoding("utf8");
+            process.stdin.on("data", chunk => data += chunk);
+            process.stdin.on("end", () => {
+              const payload = JSON.parse(data);
+              const matches = (payload.jobs || []).filter(job => job.name === process.env.JOB_ID);
+              if (matches.length !== 1) process.exit(2);
+              const job = matches[0];
+              if (!Number.isInteger(job.runner_id) || job.runner_id <= 0) process.exit(3);
+              if (job.runner_name !== "lingo-legacy-g02") process.exit(4);
+              process.stdout.write(JSON.stringify({
+                job_id: job.id,
+                job_name: job.name,
+                job_status: job.status,
+                runner_id: job.runner_id,
+                runner_name: job.runner_name
+              }));
+            });
+          ')"
+
+          RUNNER_ID="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(String(JSON.parse(s).runner_id)));')"
+          RUNNER_NAME_API="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(JSON.parse(s).runner_name));')"
+          API_JOB_ID="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(String(JSON.parse(s).job_id)));')"
+          API_JOB_STATUS="$(printf '%s' "$ASSIGNMENT" | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>process.stdout.write(JSON.parse(s).job_status));')"
+
+          [[ "$RUNNER_ID" =~ ^[1-9][0-9]*$ ]]
+          test "$RUNNER_NAME_API" = "lingo-legacy-g02"
+          {
+            printf 'runner_id=%s\n' "$RUNNER_ID"
+            printf 'runner_name_api=%s\n' "$RUNNER_NAME_API"
+            printf 'api_job_id=%s\n' "$API_JOB_ID"
+            printf 'api_job_status=%s\n' "$API_JOB_STATUS"
+          } >> "$EVIDENCE_DIR/context.txt"
+          {
+            echo "runner_id=$RUNNER_ID"
+            echo "runner_name=$RUNNER_NAME_API"
+            echo "api_job_id=$API_JOB_ID"
+            echo "api_job_status=$API_JOB_STATUS"
+          } >> "$GITHUB_OUTPUT"
           cat "$EVIDENCE_DIR/context.txt"
 
       - name: Validate runner assignment
@@ -52,19 +106,17 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           SOURCE_SHA: ${{ github.sha }}
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
-          RUNNER_OS_VALUE: ${{ runner.os }}
-          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          RUNNER_ID: ${{ steps.capture.outputs.runner_id }}
+          RUNNER_NAME_API: ${{ steps.capture.outputs.runner_name }}
+          API_JOB_ID: ${{ steps.capture.outputs.api_job_id }}
         run: |
           set -euo pipefail
           [[ "$RUN_ID" =~ ^[1-9][0-9]*$ ]]
           [[ "$RUN_NUMBER" =~ ^[1-9][0-9]*$ ]]
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
           [[ "$RUNNER_ID" =~ ^[1-9][0-9]*$ ]]
-          test "$RUNNER_NAME" = "lingo-legacy-g02"
-          test "$RUNNER_OS_VALUE" = "Linux"
-          test "$RUNNER_ARCH_VALUE" = "X64"
+          [[ "$API_JOB_ID" =~ ^[1-9][0-9]*$ ]]
+          test "$RUNNER_NAME_API" = "lingo-legacy-g02"
           echo "G02_RUNNER_ASSIGNMENT=PASS"
           echo "G02_RUNNER_IDENTITY=PASS"
 
@@ -75,7 +127,6 @@ jobs:
           EVIDENCE_DIR: g02-evidence
         run: |
           set -euo pipefail
-          mkdir -p "$EVIDENCE_DIR"
           echo "G02_EXECUTION_SENTINEL=START"
           set +e
           timeout --foreground --signal=TERM --kill-after=5s 180s \
@@ -102,10 +153,9 @@ jobs:
           RUN_NUMBER: ${{ github.run_number }}
           JOB_ID: ${{ github.job }}
           SOURCE_SHA: ${{ github.sha }}
-          RUNNER_ID: ${{ runner.id }}
-          RUNNER_NAME: ${{ runner.name }}
-          RUNNER_OS_VALUE: ${{ runner.os }}
-          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          RUNNER_ID: ${{ steps.capture.outputs.runner_id }}
+          RUNNER_NAME_API: ${{ steps.capture.outputs.runner_name }}
+          API_JOB_ID: ${{ steps.capture.outputs.api_job_id }}
           CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
           VALIDATION_OUTCOME: ${{ steps.validate.outcome }}
           SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
@@ -120,9 +170,8 @@ jobs:
             printf 'job_name=%s\n' "$JOB_ID"
             printf 'source_sha=%s\n' "$SOURCE_SHA"
             printf 'runner_id=%s\n' "$RUNNER_ID"
-            printf 'runner_name=%s\n' "$RUNNER_NAME"
-            printf 'runner_os=%s\n' "$RUNNER_OS_VALUE"
-            printf 'runner_arch=%s\n' "$RUNNER_ARCH_VALUE"
+            printf 'runner_name_api=%s\n' "$RUNNER_NAME_API"
+            printf 'api_job_id=%s\n' "$API_JOB_ID"
             printf 'capture_outcome=%s\n' "$CAPTURE_OUTCOME"
             printf 'validation_outcome=%s\n' "$VALIDATION_OUTCOME"
             printf 'sentinel_outcome=%s\n' "$SENTINEL_OUTCOME"
