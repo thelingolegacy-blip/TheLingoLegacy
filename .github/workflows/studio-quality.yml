@@ -10,26 +10,49 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: studio-quality-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
+    name: Static Studio Quality (non-production)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test --if-present
-      - name: Studio asset contract
-        run: test -d assets || true
-      - name: Security baseline
-        run: pnpm audit --audit-level=high || true
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-# Non-production workflow. Production promotion remains gated by verified runner,
-# evidence and acceptance controls.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate studio surface contracts
+        run: node studio/runtime/surface-integrity.js
+
+      - name: Validate required JSON manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e 'for (const f of process.argv.slice(1)) { JSON.parse(require("node:fs").readFileSync(f, "utf8")); console.log("valid JSON:", f); }' \
+            studio/surface-contracts.json \
+            studio/routes.json \
+            studio/production-feature-manifest.json \
+            studio/runtime/studio-runtime-contract.json \
+            assets/studio/manifests/runtime-media.json \
+            assets/studio/manifests/audio.json
+
+      - name: Check shared runtime and worker JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check studio/runtime/studio-runtime.js
+          node --check studio/runtime/studio-surface.js
+          node --check studio/runtime/surface-integrity.js
+          node --check cloudflare/studio-worker.js
+
+# Source/static checks only. This workflow does not deploy, mutate DNS,
+# register runners, or authorize production promotion. Dependency auditing
+# is intentionally not claimed because this repository has no root package.json
+# or pnpm lockfile; add a package-specific audit when a package manifest exists.
