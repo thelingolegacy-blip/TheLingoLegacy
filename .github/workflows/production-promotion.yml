@@ -115,7 +115,9 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    # HARD HOLD: no deploy until independent P/E/V/A acceptance and a dedicated, non-production staging target are implemented and verified.
+    # This is intentionally unconditional; a workflow_dispatch input cannot authorize promotion.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
