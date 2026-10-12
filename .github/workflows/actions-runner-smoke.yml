@@ -156,8 +156,8 @@ jobs:
           console.log('G02_COMMIT_SHA=' + evidence.commit_sha);
           const sha256 = (path) => createHash('sha256').update(fs.readFileSync(path)).digest('hex');
           fs.writeFileSync('evidence/SHA256SUMS',
-            sha256('evidence/g02-qualified-evidence.json') + '  g02-qualified-evidence.json\\n' +
-            sha256('evidence/g02-qualified-evidence.txt') + '  g02-qualified-evidence.txt\\n');
+            sha256('evidence/g02-qualified-evidence.json') + '  g02-qualified-evidence.json\n' +
+            sha256('evidence/g02-qualified-evidence.txt') + '  g02-qualified-evidence.txt\n');
           if (gate !== 'PASS') process.exitCode = 1;
           NODE
 
