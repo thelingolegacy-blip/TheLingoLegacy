@@ -65,7 +65,7 @@ jobs:
               "commit_sha": os.environ["GITHUB_SHA"],
               "repository": os.environ["GITHUB_REPOSITORY"],
           }
-          pathlib.Path("g02-evidence/g02-sentinel-result.json").write_text(json.dumps(evidence, indent=2) + "\\n")
+          pathlib.Path("g02-evidence/g02-sentinel-result.json").write_text(json.dumps(evidence, indent=2) + "\n")
           PY
       - name: Capture runner allocation from GitHub API
         shell: bash
@@ -73,7 +73,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" > g02-evidence/jobs-snapshot.json
+          curl --fail --silent --show-error --location -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" > g02-evidence/jobs-snapshot.json
           python3 - <<'PY'
           import json, os, pathlib, sys
           payload = json.loads(pathlib.Path("g02-evidence/jobs-snapshot.json").read_text())
@@ -98,7 +98,7 @@ jobs:
               "independent_verification_recorded": False,
               "note": "Logs retrieval and independent evidence review must be established outside this workflow; false is intentional until verified."
           }
-          pathlib.Path("g02-evidence/g02-runner-allocation.json").write_text(json.dumps(record, indent=2) + "\\n")
+          pathlib.Path("g02-evidence/g02-runner-allocation.json").write_text(json.dumps(record, indent=2) + "\n")
           if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
               raise SystemExit("FAIL: GitHub API did not return a positive runner_id")
           if record["runner_name"] != "lingo-legacy-g02":
