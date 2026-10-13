@@ -94,7 +94,7 @@ if (fs.existsSync(wranglerPath)) {
 }
 if (fs.existsSync(assetIgnorePath)) {
   const ignored = new Set(fs.readFileSync(assetIgnorePath, 'utf8').split(/\r?\n/).map((line) => line.trim()));
-  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
+  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/release/evidence/**', '/.env*', '/.dev.vars*']) {
     if (!ignored.has(pattern)) errors.push(`.assetsignore: missing required publication exclusion: ${pattern}`);
   }
 }
