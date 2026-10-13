@@ -12,8 +12,10 @@ yaml-and-ansible-validation:
   before_script:
     - python -m pip install --no-cache-dir --disable-pip-version-check yamllint==1.37.1 ansible-core==2.18.6
   script:
-    - yamllint -s .gitlab-ci.yml .github/workflows/devops-foundation-validation.yml ansible/playbooks/read-only-diagnostics.yml
+    - yamllint -c .yamllint -s config.yaml .github/cache-policy.yml .circleci/config.yml .gitlab-ci.yml .github/workflows/devops-foundation-validation.yml ansible/playbooks/read-only-diagnostics.yml observability/prometheus/prometheus.yml observability/grafana/provisioning/datasources/datasource.yml observability/elk/docker-compose.yml
     - ansible-playbook --syntax-check -i localhost, ansible/playbooks/read-only-diagnostics.yml
+    - echo "PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED"
+    - echo "G02_ACCEPTANCE=NOT_EVALUATED"
   variables:
     GIT_STRATEGY: fetch
   interruptible: true
