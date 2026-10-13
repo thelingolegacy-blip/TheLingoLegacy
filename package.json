@@ -14,8 +14,9 @@
     "test:runtime-contract": "node scripts/verify-dynamic-runtime.mjs",
     "test:platform-policy": "node scripts/verify-cloudflare-only.mjs",
     "preflight": "node scripts/deployment-preflight.mjs",
+    "test:assets-build": "node scripts/test-cloudflare-asset-build.mjs",
     "test:bindings": "node scripts/verify-cloudflare-bindings.mjs",
     "test:authority": "node scripts/verify-production-authority.mjs",
-    "verify": "npm run check && npm test && npm run test:static && npm run test:runtime-contract && npm run test:platform-policy && npm run preflight && npm run test:bindings && npm run test:authority"
+    "verify": "npm run check && npm test && npm run test:static && npm run test:runtime-contract && npm run test:platform-policy && npm run preflight && npm run test:assets-build && npm run test:bindings && npm run test:authority"
   }
 }
