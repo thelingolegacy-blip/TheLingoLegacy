@@ -29,9 +29,8 @@ variable "allowed_egress_cidrs" {
   validation {
     condition = length(var.allowed_egress_cidrs) > 0 && alltrue([
       for cidr in var.allowed_egress_cidrs :
-      can(cidrhost(cidr, 0)) &&
-      can(tonumber(split("/", cidr)[1])) &&
-      tonumber(split("/", cidr)[1]) >= 8
+      can(cidrnetmask(cidr)) &&
+      try(tonumber(split("/", cidr)[1]), 0) >= 8
     ])
     error_message = "Provide valid, explicitly approved IPv4 destination CIDRs with prefixes /8 or narrower in scope (prefix length >= 8). Broad catch-all ranges are prohibited; prefer an approved outbound proxy or egress firewall."
   }
