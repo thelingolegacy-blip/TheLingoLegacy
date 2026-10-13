@@ -53,6 +53,9 @@ jobs:
       - name: Binding and production-authority contracts
         run: npm run test:bindings && npm run test:authority
 
+      - name: Build and verify Cloudflare asset publication locally
+        run: npm run test:assets-build
+
       - name: Record revision and toolchain
         if: always()
         shell: bash
