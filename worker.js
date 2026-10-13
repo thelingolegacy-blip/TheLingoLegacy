@@ -177,6 +177,8 @@ async function renderDynamicHtml(request, env, response) {
   const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
   const headers = new Headers(response.headers);
   headers.set('content-type', 'text/html; charset=utf-8');
+  // The body changed; remove metadata that described the original asset bytes.
+  for (const header of ['content-length', 'content-encoding', 'content-md5', 'etag']) headers.delete(header);
   headers.set('cache-control', 'no-store, must-revalidate');
   return new Response(rendered, { status: response.status, statusText: response.statusText, headers });
 }
