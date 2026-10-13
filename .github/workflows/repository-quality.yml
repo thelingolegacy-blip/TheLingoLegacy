@@ -73,6 +73,7 @@ jobs:
               Path("wrangler.jsonc"),
               Path("ops/recovery/evidence-template.json"),
               Path("ops/recovery/quarantine-manifest.json"),
+              Path("ops/integrations/inventory.json"),
           ]
           for path in paths:
               json.loads(path.read_text(encoding="utf-8"))
