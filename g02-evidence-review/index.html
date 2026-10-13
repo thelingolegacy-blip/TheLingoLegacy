@@ -66,7 +66,7 @@
   const workflows = [
     { name: "Fresh Assignment Probe", file: "g02-fresh-assignment-probe.yml" },
     { name: "Qualified Evidence Probe", file: "g02-qualified-evidence-probe.yml" },
-    { name: "Self-Hosted Runner Sentinel", file: "g02-run-wrapper.yml" }
+    { name: "Runner Smoke Probe", file: "actions-runner-smoke.yml" }
   ];
   const el = id => document.getElementById(id);
   const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
@@ -110,7 +110,7 @@
         const shaMatch = !!(sha && job.head_sha && sha === job.head_sha);
         const assigned = Number(job.runner_id || 0) > 0 && job.runner_name === "lingo-legacy-g02" && missing.length === 0;
         const jobLink = job.html_url || runLink;
-        return '<div class="row"><span>Job / assignment</span><b>' + esc(job.name || "Unnamed job") + '<br>' + pill(assigned ? "Assigned" : "Not assigned","' + (assigned ? "good" : "bad") + '") + '</b></div>' +
+        return '<div class="row"><span>Job / assignment</span><b>' + esc(job.name || "Unnamed job") + '<br>' + pill(assigned ? "Assigned" : "Not assigned", assigned ? "good" : "bad") + '</b></div>' +
           '<div class="facts">' + fact("Job ID",job.id,true) + fact("Runner ID",job.runner_id ?? 0,true) + fact("Runner name",job.runner_name || "Empty") + fact("Steps",steps.length + " total · " + completedSteps.length + " completed") + fact("Commit correlation",shaMatch ? "MATCH" : "Not verified") + fact("Job result",job.conclusion || job.status || "Unknown") + '</div>' +
           '<div class="labels">' + (labels.length ? labels.map(label=>'<span class="label">' + esc(label) + '</span>').join("") : '<span class="small">No labels reported</span>') + '</div>' +
           '<div class="links"><a href="' + esc(jobLink) + '" target="_blank" rel="noopener">Open job & logs ↗</a></div>';
