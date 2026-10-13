@@ -28,7 +28,7 @@ test('runtime exposes the minimum documented health and platform routes', () => 
 
 test('public asset manifest excludes source, automation, and operational tooling', () => {
   const ignore = read('.assetsignore');
-  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
+  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/release/evidence/**', '/.env*', '/.dev.vars*']) {
     assert.ok(ignore.split(/\r?\n/).some((line) => line.trim() === pattern), `.assetsignore must exclude ${pattern}`);
   }
 });
