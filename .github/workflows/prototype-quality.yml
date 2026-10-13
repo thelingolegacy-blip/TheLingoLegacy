@@ -1,0 +1,85 @@
+name: Prototype Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - studio/prototype-quality-pass-2026-10-13
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prototype-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-quality:
+    name: Static, runtime-contract, and repository tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Syntax checks
+        run: npm run check
+
+      - name: Dependency-free contract tests
+        run: npm test
+
+      - name: Static application validation
+        run: npm run test:static
+
+      - name: Dynamic runtime contract
+        run: npm run test:runtime-contract
+
+      - name: Cloudflare-only execution policy
+        run: npm run test:platform-policy
+
+      - name: Deployment preflight (read-only)
+        run: npm run preflight
+
+      - name: Binding and production-authority contracts
+        run: npm run test:bindings && npm run test:authority
+
+      - name: Build and verify Cloudflare asset publication locally
+        run: npm run test:assets-build
+
+      - name: Record revision and toolchain
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p release/evidence/prototype-quality
+          node scripts/write-quality-evidence.mjs release/evidence/prototype-quality/evidence.json
+          {
+            echo "## Prototype quality evidence"
+            echo
+            echo "- Commit: `$GITHUB_SHA`"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (attempt $GITHUB_RUN_ATTEMPT)"
+            echo "- Node: $(node --version)"
+            echo "- npm: $(npm --version)"
+            echo "- Runner: ${{ runner.os }}/${{ runner.arch }} (${{ runner.environment }})"
+            echo "- Deployment: not performed by this workflow"
+            echo "- Production authorization: not granted by test success"
+            echo "- Evidence JSON: release/evidence/prototype-quality/evidence.json"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload correlated verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prototype-quality-evidence-${{ github.sha }}
+          path: release/evidence/prototype-quality/evidence.json
+          if-no-files-found: error
+          retention-days: 14
