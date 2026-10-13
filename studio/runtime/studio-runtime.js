@@ -60,11 +60,11 @@
       control.setAttribute("aria-pressed",muted?"false":"true");
       control.textContent=muted?"Sound Off":"Sound On";
       control.onclick=()=>{
-        const next=!Array.from(audio).some(a=>!a.muted);
-        audio.forEach(a=>a.muted=next);
-        localStorage.setItem(KEY,next?"off":"on");
-        control.setAttribute("aria-pressed",next?"false":"true");
-        control.textContent=next?"Sound Off":"Sound On";
+        const nextMuted=Array.from(audio).some(a=>!a.muted);
+        audio.forEach(a=>{a.muted=nextMuted;});
+        localStorage.setItem(KEY,nextMuted?"off":"on");
+        control.setAttribute("aria-pressed",nextMuted?"false":"true");
+        control.textContent=nextMuted?"Sound Off":"Sound On";
       };
     }
   }

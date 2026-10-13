@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "design_only",
+  "production_enabled": false,
+  "rollout_order": [
+    {
+      "priority": 1,
+      "supplier_id": "tapstitch",
+      "display_name": "Tapstitch",
+      "product_scope": [
+        "custom_apparel"
+      ],
+      "status": "unverified",
+      "adapter_key": "tapstitch",
+      "integration_mode": "verify_official_shopify_integration",
+      "required_checks": [
+        "merchant_account_verified",
+        "shopify_integration_verified",
+        "sku_variant_mapping",
+        "shipping_regions",
+        "production_and_shipping_estimates",
+        "returns_reprint_policy",
+        "test_order_tracking_roundtrip"
+      ],
+      "notes": "Priority one; no account/API connection is claimed."
+    },
+    {
+      "priority": 2,
+      "supplier_id": "alibaba-supplier-pending",
+      "display_name": "Alibaba manufacturer — to be selected",
+      "product_scope": [
+        "approved_private_label_products",
+        "approved_accessories"
+      ],
+      "status": "unverified",
+      "adapter_key": "alibaba_supplier",
+      "integration_mode": "verify_official_app_api_or_agreed_order_feed",
+      "required_checks": [
+        "supplier_identity_and_capability_verified",
+        "individual_order_fulfillment_confirmed",
+        "sample_quality_reviewed",
+        "compliance_documents_verified",
+        "packaging_and_shipping_confirmed",
+        "returns_and_lead_times_confirmed",
+        "destination_coverage_verified",
+        "test_order_tracking_roundtrip"
+      ],
+      "notes": "Marketplace listing alone does not prove dropshipping capability; select a specific manufacturer before implementation."
+    },
+    {
+      "priority": 3,
+      "supplier_id": "future-supplier-template",
+      "display_name": "Future supplier template",
+      "product_scope": [
+        "explicitly_approved_skus"
+      ],
+      "status": "disabled",
+      "adapter_key": "provider_adapter_template",
+      "integration_mode": "supplier_specific_verified_contract",
+      "required_checks": [
+        "supplier_allowlisted",
+        "contract_and_auth_verified",
+        "sku_policy_approved",
+        "idempotency_tested",
+        "tracking_roundtrip_verified"
+      ],
+      "notes": "Duplicate this template for each additional supplier after acceptance."
+    }
+  ],
+  "routing_policy": {
+    "default": "deny",
+    "allow_unmapped_skus": false,
+    "allow_unverified_suppliers": false,
+    "allow_production_submission": false,
+    "require_paid_order": true,
+    "require_hmac_verified_webhook": true,
+    "require_idempotency": true,
+    "regulated_products": "blocked_pending_separate_legal_platform_and_supplier_review"
+  },
+  "governance": {
+    "production_hold": "active",
+    "g02": "blocked",
+    "deployment": "not_authorized"
+  }
+}
