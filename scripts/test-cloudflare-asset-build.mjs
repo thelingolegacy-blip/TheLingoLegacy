@@ -1,5 +1,11 @@
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const sentinelPath = 'release/evidence/prototype-quality/asset-boundary-sentinel.txt';
+fs.mkdirSync(path.dirname(sentinelPath), { recursive: true });
+fs.writeFileSync(sentinelPath, 'must not be served as a public asset\\n');
 
 const timeoutMs = 45_000;
 const deadline = Date.now() + timeoutMs;
@@ -63,6 +69,7 @@ try {
     '/tests/worker-runtime.test.mjs',
     '/.github/workflows/prototype-quality.yml',
     '/ops/g02/diagnose-runner.sh',
+    '/release/evidence/prototype-quality/asset-boundary-sentinel.txt',
   ]) {
     await check(path, 404, `public asset exclusion ${path}`);
   }
@@ -74,6 +81,7 @@ try {
     new Promise((resolve) => child.once('exit', resolve)),
     new Promise((resolve) => setTimeout(resolve, 5000)),
   ]);
+  fs.rmSync(sentinelPath, { force: true });
 }
 
 const result = {
