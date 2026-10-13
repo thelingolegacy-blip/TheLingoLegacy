@@ -50,7 +50,10 @@ if (iconRegistry) {
   for (const icon of iconEntries) {
     if (!icon.path) errors.push(`icon registry ${icon.id || 'unknown'} missing path`);
     const iconPath = String(icon.path || '').replace(/^\//, '');
-    if (iconPath && !fs.existsSync(path.join(root, iconPath))) errors.push(`icon registry path missing for ${icon.id}: ${icon.path}`);
+    const resolvedIconPath = path.resolve(root, iconPath);
+    const resolvedRoot = path.resolve(root);
+    if (iconPath && resolvedIconPath !== resolvedRoot && !resolvedIconPath.startsWith(`${resolvedRoot}${path.sep}`)) errors.push(`icon registry path escapes repository root for ${icon.id}: ${icon.path}`);
+    else if (iconPath && !fs.existsSync(resolvedIconPath)) errors.push(`icon registry path missing for ${icon.id}: ${icon.path}`);
   }
 }
 const assetRegistry = requireJsonObject('config/assets/asset-registry.json', ['schemaVersion', 'assets', 'requiredFields']);
@@ -65,6 +68,51 @@ if (fs.existsSync(envContractPath)) {
       if (!required.has(key)) errors.push(`env contract missing required key: ${key}`);
     }
   } catch (e) { errors.push(`config/production/env-contract.json: invalid JSON: ${e.message}`); }
+}
+
+const wranglerPath = path.join(root, 'wrangler.jsonc');
+const workerPath = path.join(root, 'worker.js');
+const assetIgnorePath = path.join(root, '.assetsignore');
+if (!fs.existsSync(wranglerPath)) errors.push('wrangler.jsonc: missing Cloudflare configuration');
+if (!fs.existsSync(workerPath)) errors.push('worker.js: missing Worker entrypoint');
+if (!fs.existsSync(assetIgnorePath)) errors.push('.assetsignore: required when Wrangler assets.directory is the repository root');
+if (fs.existsSync(wranglerPath)) {
+  try {
+    const wrangler = JSON.parse(fs.readFileSync(wranglerPath, 'utf8'));
+    if (wrangler.main !== 'worker.js') errors.push('wrangler.jsonc: main must be worker.js');
+    if (wrangler.name !== 'thelingolegacyv-5') errors.push('wrangler.jsonc: Worker name mismatch');
+    if (wrangler.workers_dev !== false) errors.push('wrangler.jsonc: workers_dev must remain disabled');
+    if (wrangler.assets?.directory !== '.') errors.push('wrangler.jsonc: static asset directory drift; update asset-boundary checks before changing it');
+    if (wrangler.assets?.binding !== 'ASSETS') errors.push('wrangler.jsonc: static asset binding must be ASSETS');
+    const requiredRoutes = ['thelingolegacy.com/*', 'www.thelingolegacy.com/*'];
+    for (const route of requiredRoutes) {
+      if (!wrangler.routes?.some((entry) => entry.pattern === route && entry.zone_name === 'thelingolegacy.com')) errors.push(`wrangler.jsonc: required canonical route missing or mismatched: ${route}`);
+    }
+  } catch (error) {
+    errors.push(`wrangler.jsonc: invalid JSON: ${error.message}`);
+  }
+}
+if (fs.existsSync(assetIgnorePath)) {
+  const ignored = new Set(fs.readFileSync(assetIgnorePath, 'utf8').split(/\r?\n/).map((line) => line.trim()));
+  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
+    if (!ignored.has(pattern)) errors.push(`.assetsignore: missing required publication exclusion: ${pattern}`);
+  }
+}
+if (fs.existsSync(workerPath)) {
+  const worker = fs.readFileSync(workerPath, 'utf8');
+  for (const marker of [
+    "url.pathname === '/healthz'",
+    "url.pathname === '/api/v1/platform/gates'",
+    "url.pathname === '/api/v1/platform/modules'",
+    "url.pathname === '/api/v1/platform/status'",
+    "url.pathname === '/api/v1/site/context'",
+    "url.pathname.startsWith('/api/')",
+    'env.ASSETS.fetch(request)',
+  ]) {
+    if (!worker.includes(marker)) errors.push(`worker.js: required runtime contract missing: ${marker}`);
+  }
+  if (!worker.includes("G02_RUNNER: 'FAIL / UNVERIFIED'")) errors.push('worker.js: G02 must remain fail-closed until independently verified');
+  if (!worker.includes('production_promotion: false')) errors.push('worker.js: production promotion must remain unauthorized by default');
 }
 
 if (fs.existsSync(path.join(root,'manifest.webmanifest'))) {
