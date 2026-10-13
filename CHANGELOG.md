@@ -7,7 +7,8 @@ All notable user-visible and operational changes are recorded here. Unreleased w
 ### Added
 - Engineering contribution, architecture, orchestration, observability, integration, and delivery-roadmap documentation.
 - Wiki-ready pages under docs/wiki so operational knowledge is versioned alongside source.
-- A non-deploying repository quality workflow for Worker syntax, core shell syntax, and recovery unit tests.
+- A non-deploying repository quality workflow for Worker/lab syntax, shell syntax, JSON manifests, recovery unit tests, and retained evidence artifacts.
+- An evidence-based integration inventory distinguishing configured-but-unverified systems from planned capacity infrastructure.
 - A Kubernetes capacity-lab scaffold: bounded synthetic bottleneck service, executable overflow/parameter-bound tests, local Kind cluster configuration, namespace quotas, health probes, HPA, disruption budget, and network-policy examples.
 
 ### Fixed
