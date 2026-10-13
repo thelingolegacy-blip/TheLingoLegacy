@@ -60,3 +60,4 @@ storage.rules
 *.zip
 *.lock
 *.jsonc
+/worker.js
