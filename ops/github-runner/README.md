@@ -26,6 +26,7 @@ The repository owner `thelingolegacy-blip` is a personal account, not an organiz
 4. Run from `ops/github-runner`:
    `bash ./bootstrap.sh`
 5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, and removes its local `.env` on exit. Automatic runner deletion is intentionally disabled; if an interruption leaves a registration behind, inspect its exact identity in Settings before any manual removal.
+5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, and removes its local `.env` on exit. It deliberately does not delete remote runner registrations automatically.
 6. Confirm the runner is online with labels `self-hosted, linux, x64, lingo-g02`.
 7. Let the queued **G02 Self-Hosted Runner Sentinel** execute. Do not interrupt it while it is working.
 
@@ -46,6 +47,7 @@ The artifact records execution data. It cannot self-assert independent verificat
 
 ## Recovery if interrupted
 The bootstrap deletes only its local `.env` file and does not issue runner-deletion API calls. An ephemeral runner should unregister after a completed job. If an interruption leaves a registration behind, inspect repository Settings → Actions → Runners, correlate its ID and last-seen state, and remove only the exact stale registration after independent verification. Never publish token values or logs containing credentials.
+The bootstrap deletes its local `.env` on exit and leaves remote runner cleanup to the ephemeral runner lifecycle. If execution is interrupted and a stale registration remains, inspect repository Settings → Actions → Runners and verify the exact runner ID and creation context before removing it. Never delete runners by name alone. Never publish token values or logs containing credentials.
 
 ## Authority boundary
 ```text
