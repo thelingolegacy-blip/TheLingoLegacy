@@ -90,6 +90,7 @@ jobs:
               "job_id": job.get("id"),
               "runner_id": job.get("runner_id"),
               "runner_name": job.get("runner_name"),
+              "runner_labels": job.get("labels") if isinstance(job.get("labels"), list) else [],
               "commit_sha": os.environ["GITHUB_SHA"],
               "job_status_at_capture": job.get("status"),
               "job_conclusion_at_capture": job.get("conclusion"),
