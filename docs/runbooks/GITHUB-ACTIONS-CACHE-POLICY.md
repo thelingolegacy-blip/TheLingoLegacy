@@ -128,3 +128,26 @@ Therefore:
 5. Measure actual cold/warm durations and cache hit/miss telemetry before claiming an improvement.
 
 This check is a source inspection only; no live workflow run or cache performance measurement was performed.
+
+
+## Host-side runner-image cache benchmark
+
+The repository builds `github-runner` with `docker compose build` on the dedicated host. A non-destructive measurement helper is available at `ops/github-runner/benchmark-image-cache.sh`.
+
+Run on the authorized Linux host from a checked-out copy of this branch:
+
+```bash
+bash ops/github-runner/benchmark-image-cache.sh
+```
+
+It records UTC timestamps, host/kernel, Docker/Compose versions, `docker system df -v` before and after, the normal cached build output, exit status, and elapsed seconds. Its default log directory is `ops/github-runner/cache-benchmark-evidence/` relative to the script directory. The script does not run `docker system prune`, remove images, clear the builder cache, start the runner, or register a GitHub runner. It still performs a normal image build and may consume host CPU, disk, and network resources.
+
+### How to compare
+
+1. Run once and label the record `warm-or-existing-cache`; this is not guaranteed to be a warm hit.
+2. Run again without changing the Dockerfile, compose file, build args, or build context; compare duration and BuildKit/Docker cache-hit output.
+3. Repeat at least three times and compare medians; record failures and external download times.
+4. Do not force a cold build by pruning shared host cache during G02 recovery. If a true cold baseline is required, perform it only on an isolated disposable builder/host with explicit approval.
+5. Keep logs as evidence, review them for sensitive host details before sharing, and do not commit raw host logs to the repository.
+
+This benchmark measures local Docker layer-cache behavior. It does not measure GitHub Actions `type=gha` cache performance, and it does not establish G02 acceptance or runner assignment.
