@@ -22,7 +22,7 @@ Capture the workflow run and job records, expected labels, runner ID/name/group,
 
 ### Host side
 
-Run `scripts/g02-host-readiness.sh` on the existing intended runner host. It performs read-only checks for runner service/process presence, DNS resolution, and HTTPS reachability. It does not read credentials, expose runner configuration files, restart services, modify network policy, or register a runner.
+Run `bash scripts/g02-host-readiness.sh` on the existing intended runner host. It performs read-only checks for runner service/process presence, DNS resolution, and HTTPS reachability. It does not read credentials, expose runner configuration files, restart services, modify network policy, or register a runner.
 
 The script's `host_precheck=PASS` is only a local transport/service precheck. It is **not** proof of authenticated runner polling, repository authorization, or GitHub job assignment.
 
