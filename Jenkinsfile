@@ -4,7 +4,7 @@ pipeline {
     options {
         timestamps()
         disableConcurrentBuilds()
-        timeout(time: 20, unit: 'MINUTES')
+        timeout(time: 25, unit: 'MINUTES')
         skipDefaultCheckout(true)
     }
 
@@ -32,10 +32,13 @@ pipeline {
                     set -eu
                     python3 -m pip install --user --disable-pip-version-check yamllint==1.37.1
                     export PATH="$HOME/.local/bin:$PATH"
-                    yamllint -s \
+                    yamllint -c .yamllint -s \
+                      config.yaml .github/cache-policy.yml .circleci/config.yml \
                       .github/workflows/devops-foundation-validation.yml \
-                      .gitlab-ci.yml \
-                      ansible/playbooks/read-only-diagnostics.yml
+                      .gitlab-ci.yml ansible/playbooks/read-only-diagnostics.yml \
+                      observability/prometheus/prometheus.yml \
+                      observability/grafana/provisioning/datasources/datasource.yml \
+                      observability/elk/docker-compose.yml
                 '''
             }
         }
@@ -68,6 +71,9 @@ pipeline {
                     echo "ANSIBLE_MUTATION=NOT_AUTHORIZED"
                     echo "KUBERNETES_DEPLOYMENT=NOT_AUTHORIZED"
                     echo "PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED"
+                    echo "SONARQUBE_SCAN=NOT_CONFIGURED"
+                    echo "VAULT_INTEGRATION=NOT_CONFIGURED"
+                    echo "SMART_CACHE=POLICY_ONLY"
                     echo "G02_ACCEPTANCE=NOT_EVALUATED"
                 '''
             }
@@ -76,7 +82,7 @@ pipeline {
 
     post {
         always {
-            echo 'This pipeline validates configuration only. It does not provision infrastructure or deploy workloads.'
+            echo 'Validation only: no infrastructure provisioning, secrets access, observability deployment, or application deployment is performed.'
         }
     }
 }
