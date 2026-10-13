@@ -1,0 +1,44 @@
+name: G02 Control Watch — Read Only
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Snapshot recent G02 sentinel runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p control-watch
+          gh api "repos/$REPO/actions/workflows/g02-aws-sentinel.yml/runs?per_page=10" > control-watch/g02-recent-runs.json
+          python3 - <<'PY'
+          import json, pathlib
+          d=json.loads(pathlib.Path("control-watch/g02-recent-runs.json").read_text())
+          runs=d.get("workflow_runs", [])
+          for r in runs:
+              print("run_id={id} status={status} conclusion={conclusion} sha={head_sha} created={created_at} url={html_url}".format(**r))
+          latest=runs[0] if runs else {}
+          if not latest: status="BLOCKED_NO_RUNS"
+          elif latest.get("status") != "completed": status="BLOCKED_NOT_COMPLETED"
+          elif latest.get("conclusion") != "success": status="BLOCKED_FAILED_OR_CANCELLED"
+          else: status="REQUIRES_ARTIFACT_AND_RUNNER_IDENTITY_VERIFICATION"
+          print("DISPOSITION:", status)
+          pathlib.Path("control-watch/disposition.txt").write_text(status+"\n")
+          PY
+      - name: Upload control snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-control-watch-${{ github.run_id }}
+          path: control-watch/
+          if-no-files-found: error
+          retention-days: 14
