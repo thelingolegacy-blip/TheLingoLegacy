@@ -98,7 +98,8 @@ jobs:
 
   deploy-cloudflare:
     needs: repair
-    if: ${{ success() && inputs.deploy == true }}
+    # HARD HOLD: production deployment stays disabled until independent P/E/V/A acceptance and target isolation are verified.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: production
     steps:
