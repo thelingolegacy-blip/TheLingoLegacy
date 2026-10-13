@@ -156,7 +156,7 @@ metadata:
   name: lingo-bottleneck-lab
   namespace: lingo-capacity-lab
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: lingo-bottleneck-lab
