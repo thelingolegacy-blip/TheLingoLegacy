@@ -14,5 +14,5 @@
   "artifact_downloaded": false,
   "independent_verification_recorded": false,
   "evidence_sources": [],
-  "notes": "Template only. Replace every placeholder using independently retrieved GitHub run/job/log/artifact data. Never set a pass field without source evidence."
+  "notes": "Template only. Replace placeholders using independently retrieved GitHub run/job/log/artifact data. evidence_sources must be an array of objects with {kind,url}, covering kind=run, job, logs, and artifact; every URL must be HTTPS and identify the evidence actually inspected. Never set a pass field without source evidence."
 }
