@@ -1,0 +1,88 @@
+name: Repository Quality Baseline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-quality:
+    name: Static quality and recovery unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Prepare evidence directory
+        run: mkdir -p quality-evidence
+
+      - name: Check Worker JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check worker.js 2>&1 | tee quality-evidence/worker-syntax.txt
+
+      - name: Check runner and recovery shell syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            ops/g02/diagnose-runner.sh \
+            ops/github-runner/bootstrap.sh \
+            ops/github-runner/entrypoint.sh \
+            ops/github-runner/collect-host-telemetry.sh \
+            ops/g02/diagnose-actions-dispatch.sh \
+            ops/recovery/bridge-adapter.sh
+          do
+            bash -n "$file"
+            printf 'BASH_SYNTAX=PASS file=%s\n' "$file"
+          done | tee quality-evidence/shell-syntax.txt
+
+      - name: Validate JSON configuration and evidence manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' | tee quality-evidence/json-validation.txt
+          import json
+          from pathlib import Path
+
+          paths = [
+              Path("wrangler.jsonc"),
+              Path("ops/recovery/evidence-template.json"),
+              Path("ops/recovery/quarantine-manifest.json"),
+          ]
+          for path in paths:
+              json.loads(path.read_text(encoding="utf-8"))
+              print(f"JSON_VALID=PASS file={path}")
+          PY
+
+      - name: Run recovery gate unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s ops/recovery/tests -v 2>&1 | tee quality-evidence/recovery-unit-tests.txt
+
+      - name: Upload inspectable validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-quality-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: quality-evidence/
+          if-no-files-found: warn
+          retention-days: 14
