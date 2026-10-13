@@ -67,12 +67,12 @@ redact() {
   echo
   echo "## Runner diagnostic files (names, size, timestamp only)"
   if [[ -d "$RUNNER_DIR/_diag" ]]; then
-    find "$RUNNER_DIR/_diag" -maxdepth 1 -type f \\( -name 'Runner_*.log' -o -name 'Worker_*.log' \\) -printf '%TY-%Tm-%TdT%TH:%TM:%TSZ %s bytes %f\\n' 2>/dev/null | sort | tail -20
+    find "$RUNNER_DIR/_diag" -maxdepth 1 -type f \( -name 'Runner_*.log' -o -name 'Worker_*.log' \) -printf '%TY-%Tm-%TdT%TH:%TM:%TSZ %s bytes %f\n' 2>/dev/null | sort | tail -20
     echo "## Recent Runner log tail (redacted; last 40 lines)"
-    latest_runner="$(find "$RUNNER_DIR/_diag" -maxdepth 1 -type f -name 'Runner_*.log' -printf '%T@ %p\\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-)"
+    latest_runner="$(find "$RUNNER_DIR/_diag" -maxdepth 1 -type f -name 'Runner_*.log' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-)"
     if [[ -n "$latest_runner" ]]; then tail -40 "$latest_runner" 2>&1 | redact; else echo "No Runner_*.log found"; fi
     echo "## Recent Worker log tail (redacted; last 40 lines)"
-    latest_worker="$(find "$RUNNER_DIR/_diag" -maxdepth 1 -type f -name 'Worker_*.log' -printf '%T@ %p\\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-)"
+    latest_worker="$(find "$RUNNER_DIR/_diag" -maxdepth 1 -type f -name 'Worker_*.log' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-)"
     if [[ -n "$latest_worker" ]]; then tail -40 "$latest_worker" 2>&1 | redact; else echo "No Worker_*.log found"; fi
   else
     echo "FAIL: diagnostic directory $RUNNER_DIR/_diag missing"
@@ -90,7 +90,7 @@ redact() {
   done
   if command -v curl >/dev/null 2>&1; then
     for url in https://github.com/ https://api.github.com/; do
-      curl --silent --show-error --location --output /dev/null --max-time 12 --write-out "$url http=%{http_code} tls_verify=%{ssl_verify_result}\\n" "$url" 2>&1 || true
+      curl --silent --show-error --location --output /dev/null --max-time 12 --write-out "$url http=%{http_code} tls_verify=%{ssl_verify_result}\n" "$url" 2>&1 || true
     done
   fi
   echo
