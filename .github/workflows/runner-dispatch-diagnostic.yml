@@ -29,24 +29,25 @@ jobs:
           set -euo pipefail
           mkdir -p g02-evidence
           {
-            printf 'run_id=%s\\n' "$GITHUB_RUN_ID_VALUE"
-            printf 'run_attempt=%s\\n' "$GITHUB_RUN_ATTEMPT_VALUE"
-            printf 'job=%s\\n' "$GITHUB_JOB_VALUE"
-            printf 'runner_name=%s\\n' "$RUNNER_NAME"
-            printf 'runner_os=%s\\n' "$RUNNER_OS"
-            printf 'runner_arch=%s\\n' "$RUNNER_ARCH"
-            printf 'runner_environment=%s\\n' "$RUNNER_ENVIRONMENT"
-            printf 'github_sha=%s\\n' "$GITHUB_SHA_VALUE"
-            printf 'identity_check=STARTED\\n'
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID_VALUE"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT_VALUE"
+            printf 'job=%s\n' "$GITHUB_JOB_VALUE"
+            printf 'runner_name=%s\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT"
+            printf 'github_sha=%s\n' "$GITHUB_SHA_VALUE"
+            printf 'identity_check=STARTED\n'
           } > g02-evidence/runner-evidence.txt
           test -n "$RUNNER_NAME"
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          printf 'identity_check=PASS\\n' >> g02-evidence/runner-evidence.txt
+          printf 'identity_check=PASS\n' >> g02-evidence/runner-evidence.txt
           cat g02-evidence/runner-evidence.txt
 
       - name: Execute G02 sentinel
+        id: sentinel
         shell: bash
         env:
           RUNNER_NAME: ${{ runner.name }}
@@ -58,9 +59,11 @@ jobs:
       - name: Emit forensic exit marker
         if: always()
         shell: bash
+        env:
+          SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
         run: |
           if [ -f g02-evidence/runner-evidence.txt ]; then
-            if [ "$?" -eq 0 ]; then
+            if [ "$SENTINEL_OUTCOME" = "success" ]; then
               echo "G02_FORENSIC_EXIT_STATUS=0" | tee -a g02-evidence/runner-evidence.txt
             else
               echo "G02_FORENSIC_EXIT_STATUS=1" | tee -a g02-evidence/runner-evidence.txt
