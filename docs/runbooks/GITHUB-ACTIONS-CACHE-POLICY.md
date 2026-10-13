@@ -108,3 +108,23 @@ This is a template, not a live workflow change: repository search did not identi
 For very large layers (for example, a roughly 1.9 GB image layer), caching alone may not fix a slow transfer. Inspect BuildKit cache hit/miss output, layer sizes, cache export/import duration, and available network throughput. Optimize Dockerfile ordering so frequently changing application source is copied after stable dependency installation; use multi-stage builds and exclude unnecessary files with `.dockerignore`. Avoid caching the whole Docker daemon data root or mutable runner state with `actions/cache`.
 
 Measure cold and warm runs separately. Record build duration, cache hit ratio, bytes transferred when available, and cache export/import duration. Do not claim a speedup until run telemetry confirms it.
+
+
+## Repository-specific implementation check (2026-10-13)
+
+A targeted search of the recovery branch and indexed repository files found:
+
+- `.github/workflows/jekyll-docker.yml` uses Node.js 22 to run repository-local validation scripts, but it does not install npm dependencies and no root `package.json` or lockfile was found by the inspected paths/search.
+- `.github/workflows/lingo-autorepair-deploy.yml` conditionally runs npm tests only when `package.json` exists; it does not declare a lockfile path in the inspected workflow.
+- `ops/github-runner/bootstrap.sh` invokes `docker compose build github-runner` on the dedicated host.
+- `ops/github-runner/Dockerfile` builds a runner image from Ubuntu 24.04, installs OS packages, and downloads a pinned GitHub Actions runner release. This is a host-side Docker build, not a Buildx build running inside a GitHub Actions job.
+
+Therefore:
+
+1. Do not add a made-up lockfile path or an npm/pnpm dependency cache to the static validation job; there is no verified dependency-install step to cache.
+2. The `type=gha` BuildKit cache backend example applies when Buildx is run within GitHub Actions and is configured for that job. It is not a drop-in option for the current host-side `docker compose build` in `bootstrap.sh`.
+3. The existing Docker build on the dedicated host can reuse Docker's local layer cache when the same host/daemon and compatible build inputs are retained. A rebuild that starts from a fresh daemon or removes images/layers may still be cold.
+4. Before enabling remote BuildKit caching, create or identify an actual GitHub Actions image-build job, verify its build context and permissions, and assign a unique cache scope. Do not add a new image-build job to the canonical G02 runner path merely to test cache performance.
+5. Measure actual cold/warm durations and cache hit/miss telemetry before claiming an improvement.
+
+This check is a source inspection only; no live workflow run or cache performance measurement was performed.
