@@ -70,3 +70,41 @@ Prefer GitHub Actions artifacts for run-specific evidence. Artifacts should reco
 Caching is a performance optimization and cannot satisfy the G02 gate. G02 stays blocked until all required predicates are independently verified: canonical runner `lingo-legacy-g02`, required labels `self-hosted`, `linux`, `x64`, `lingo-g02`, a real positive runner assignment, instantiated steps, successful sentinel execution, retrievable correlated logs/artifacts, and independent evidence verification.
 
 The GitLab side runner is a separate validation lane. Its `paeagles-g02` tag must not be confused with the canonical GitHub runner or used to imply that GitHub assigned a job.
+
+
+## Cache invalidation: lockfiles, not commit SHAs
+
+Do not use `github.sha` or a commit SHA as the primary dependency-cache key. That creates a new key for every commit, even when dependencies have not changed, leading to cold caches and avoidable restore/upload work.
+
+Prefer a dependency-lockfile hash. It remains stable across ordinary source-only commits and changes when the dependency graph is updated. Use the actual lockfile(s) used by the job, for example:
+
+```yaml
+key: deps-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('path/to/pnpm-lock.yaml') }}
+restore-keys: |
+  deps-${{ runner.os }}-${{ runner.arch }}-node22-
+```
+
+Replace `path/to/pnpm-lock.yaml` with the confirmed repository-relative path. Do not add a pnpm cache to a job that does not use pnpm. If a workflow uses multiple lockfiles, hash all relevant lockfiles in its key.
+
+## Docker / BuildKit layer cache
+
+For image-build jobs, prefer Docker BuildKit's GitHub Actions cache backend when the job uses Docker Buildx. A representative build step is:
+
+```yaml
+- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v3
+
+- name: Build with reusable BuildKit cache
+  uses: docker/build-push-action@v6
+  with:
+    context: .
+    push: false
+    cache-from: type=gha,scope=lingo-legacy-image
+    cache-to: type=gha,mode=max,scope=lingo-legacy-image
+```
+
+This is a template, not a live workflow change: repository search did not identify an existing `docker/build-push-action` step or a Dockerfile path to attach it to. Confirm the real image build context and workflow before adopting it. Use a distinct cache `scope` for each independently built image so concurrent jobs do not overwrite each other's cache records.
+
+For very large layers (for example, a roughly 1.9 GB image layer), caching alone may not fix a slow transfer. Inspect BuildKit cache hit/miss output, layer sizes, cache export/import duration, and available network throughput. Optimize Dockerfile ordering so frequently changing application source is copied after stable dependency installation; use multi-stage builds and exclude unnecessary files with `.dockerignore`. Avoid caching the whole Docker daemon data root or mutable runner state with `actions/cache`.
+
+Measure cold and warm runs separately. Record build duration, cache hit ratio, bytes transferred when available, and cache export/import duration. Do not claim a speedup until run telemetry confirms it.
