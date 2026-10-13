@@ -8,7 +8,10 @@ All notable user-visible and operational changes are recorded here. Unreleased w
 - Engineering contribution, architecture, orchestration, observability, integration, and delivery-roadmap documentation.
 - Wiki-ready pages under docs/wiki so operational knowledge is versioned alongside source.
 - A non-deploying repository quality workflow for Worker syntax, core shell syntax, and recovery unit tests.
-- A Kubernetes capacity-lab design for a synthetic virtual bottleneck, explicitly separate from the Cloudflare production runtime.
+- A Kubernetes capacity-lab scaffold: bounded synthetic bottleneck service, local Kind cluster configuration, namespace quotas, health probes, HPA, disruption budget, and network-policy examples.
+
+### Fixed
+- Corrected the malformed duplicate/unclosed cleanup function in the G02 runner bootstrap script on this isolated branch.
 
 ### Clarified
 - Cloudflare Workers remains the authoritative production web runtime.
