@@ -27,3 +27,15 @@ test('evidence writer cannot claim test acceptance or production authorization',
   assert.match(source, /g02AcceptanceGranted: false/);
   assert.match(source, /deploymentPerformed: false/);
 });
+
+
+test('Cloudflare asset build check verifies excluded source paths against a live local Worker', () => {
+  const source = read('scripts/test-cloudflare-asset-build.mjs');
+  assert.match(source, /wrangler@4/);
+  assert.match(source, /--local/);
+  assert.match(source, /\/worker\.js/);
+  assert.match(source, /\/wrangler\.jsonc/);
+  assert.match(source, /\/scripts\/deployment-preflight\.mjs/);
+  assert.match(source, /\/\.github\/workflows\/prototype-quality\.yml/);
+  assert.match(source, /deploymentPerformed: false/);
+});
