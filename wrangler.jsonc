@@ -18,6 +18,12 @@
     "CANONICAL_DOMAIN": "thelingolegacy.com",
     "PUBLIC_SITE_URL": "https://thelingolegacy.com"
   },
+  "previews": {
+    "vars": {
+      "CANONICAL_DOMAIN": "preview.invalid",
+      "PUBLIC_SITE_URL": "https://preview.invalid"
+    }
+  },
   "observability": {
     "enabled": true
   },
