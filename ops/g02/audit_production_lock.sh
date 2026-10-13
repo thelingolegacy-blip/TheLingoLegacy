@@ -54,11 +54,11 @@ elif ! command -v gh >/dev/null 2>&1; then
 else
   if inventory="$(gh api --paginate --slurp "repos/${REPOSITORY}/actions/runners?per_page=100" 2>/dev/null)"; then
     if printf '%s' "$inventory" | python3 -c '
-import json, os, sys
+import json, sys
 try:
+    name, required_label, forbidden_label = sys.argv[1:4]
     pages=json.load(sys.stdin)
     runners=[r for page in pages for r in page.get("runners", [])]
-    name=os.environ["RUNNER_NAME"]
     matches=[r for r in runners if r.get("name")==name]
     if len(matches)!=1:
         print("[FAIL] GitHub inventory did not return exactly one matching runner.")
@@ -71,14 +71,14 @@ try:
     if r.get("status")!="online":
         print("[FAIL] Matching GitHub runner is not online.")
         raise SystemExit(1)
-    if "'"${REQUIRED_LABEL}"'" not in labels or "'"${FORBIDDEN_LABEL}"'" in labels:
+    if required_label not in labels or forbidden_label in labels:
         print("[FAIL] GitHub runner labels do not prove isolated staging identity.")
         raise SystemExit(1)
     print("[PASS] GitHub API confirms online runner has staging label and lacks production G02 label.")
 except Exception as exc:
     print("[FAIL] GitHub runner inventory parse/verification failed: "+type(exc).__name__)
     raise SystemExit(1)
-' ; then
+' "$runner_name" "$REQUIRED_LABEL" "$FORBIDDEN_LABEL"; then
       :
     else
       errors=$((errors + 1))
