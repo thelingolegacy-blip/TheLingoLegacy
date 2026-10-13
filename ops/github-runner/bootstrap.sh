@@ -6,11 +6,6 @@ RUNNER_NAME="lingo-legacy-g02"
 ENV_FILE=".env"
 RUNNER_STARTED=0
 
-cleanup() {
-  rm -f -- "$ENV_FILE"
-  if [[ "$RUNNER_STARTED" == "1" ]]; then
-    echo "INFO: automatic runner deletion is disabled for safety." >&2
-    echo "INFO: allow the ephemeral runner to unregister itself; if it remains, inspect repository Settings -> Actions -> Runners and remove only the exact stale registration after verifying its identity." >&2
 # The runner is registered as ephemeral and should unregister after its one job.
 # Never delete remote runners by name during cleanup: a same-name registration could
 # belong to a different process/operator. If interrupted, inspect the runner inventory
