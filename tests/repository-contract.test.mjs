@@ -25,6 +25,13 @@ test('runtime exposes the minimum documented health and platform routes', () => 
   }
 });
 
+test('public asset manifest excludes source, automation, and operational tooling', () => {
+  const ignore = read('.assetsignore');
+  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
+    assert.ok(ignore.split(/\\r?\\n/).some((line) => line.trim() === pattern), `.assetsignore must exclude ${pattern}`);
+  }
+});
+
 test('runtime delegates static asset delivery through the declared binding', () => {
   const worker = read('worker.js');
   assert.ok(worker.includes('env.ASSETS.fetch(request)'));
