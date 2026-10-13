@@ -6,9 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Static validation and artifact upload require no repository or Actions write token.
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
