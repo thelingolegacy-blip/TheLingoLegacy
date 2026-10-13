@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-13",
+  "status_semantics": {
+    "ACTIVE-VERIFIED": "Recent, retrievable evidence confirms the integration works in the named environment.",
+    "CONFIGURED-UNVERIFIED": "Repository configuration or provider resources exist, but end-to-end health is not proven.",
+    "PLANNED": "Not connected or not provisioned.",
+    "RETIRED": "Intentionally removed from the active architecture."
+  },
+  "integrations": [
+    {
+      "id": "github-actions",
+      "purpose": "Source validation, runner execution, release evidence",
+      "status": "CONFIGURED-UNVERIFIED",
+      "environment": "repository",
+      "owner": "unassigned",
+      "evidence": [
+        "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38476871490"
+      ],
+      "current_limitation": "The observed job fails before step initialization; runner identity, logs, and artifacts are unavailable.",
+      "next_verification": "Obtain a real job assignment, instantiated steps, successful tests, retrievable logs, and correlated artifact."
+    },
+    {
+      "id": "cloudflare-worker",
+      "purpose": "Canonical web edge runtime and asset delivery",
+      "status": "CONFIGURED-UNVERIFIED",
+      "environment": "production",
+      "owner": "unassigned",
+      "evidence": [
+        "wrangler.jsonc",
+        "worker.js"
+      ],
+      "current_limitation": "Repository runtime source and reported live runtime version require reconciliation; public reachability remains unverified.",
+      "next_verification": "Correlate deployed version with source commit and verify canonical-domain health and critical routes from an independent public network."
+    },
+    {
+      "id": "firebase",
+      "purpose": "Identity and backend data services",
+      "status": "CONFIGURED-UNVERIFIED",
+      "environment": "project-config-present",
+      "owner": "unassigned",
+      "evidence": [
+        ".firebaserc",
+        ".env.example"
+      ],
+      "current_limitation": "Configuration files alone do not prove deployed bindings, rules, authentication, or end-to-end data access.",
+      "next_verification": "Verify project identity, bindings, security rules, and a non-destructive staging health check without exposing credentials."
+    },
+    {
+      "id": "commerce-payments",
+      "purpose": "Commerce checkout integration",
+      "status": "CONFIGURED-UNVERIFIED",
+      "environment": "not-confirmed",
+      "owner": "unassigned",
+      "evidence": [
+        "worker.js"
+      ],
+      "current_limitation": "Live versus test mode and payment end-to-end behavior are not established by repository source alone.",
+      "next_verification": "Verify provider mode and secret bindings, then run a safe test-mode transaction and webhook replay/idempotency checks."
+    },
+    {
+      "id": "cloudflare-observability",
+      "purpose": "Worker runtime telemetry",
+      "status": "CONFIGURED-UNVERIFIED",
+      "environment": "production-config",
+      "owner": "unassigned",
+      "evidence": [
+        "wrangler.jsonc"
+      ],
+      "current_limitation": "Observability is enabled in checked-in configuration, but telemetry arrival, retention, alert routing, and incident ownership are unverified.",
+      "next_verification": "Generate a controlled request, verify telemetry is searchable, and test an alert with a named responder."
+    },
+    {
+      "id": "kubernetes-capacity-lab",
+      "purpose": "Isolated synthetic bottleneck and scaling experiments",
+      "status": "PLANNED",
+      "environment": "local-disposable-only-scaffold",
+      "owner": "unassigned",
+      "evidence": [
+        "ops/kubernetes/bottleneck-lab/README.md"
+      ],
+      "current_limitation": "Scaffold exists on the recovery branch; no cluster has been created and no test has run.",
+      "next_verification": "Build the image, create a disposable local Kind cluster, validate NetworkPolicy enforcement, execute bounded tests, capture metrics, and delete the cluster."
+    }
+  ]
+}
