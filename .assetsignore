@@ -12,6 +12,7 @@
 /scripts/**
 /tests/**
 /docs/**
+/release/evidence/**
 /firebase.json
 /firebase/**
 /functions/**
