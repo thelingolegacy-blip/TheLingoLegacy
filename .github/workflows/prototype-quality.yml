@@ -31,8 +31,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: package.json
 
       - name: Syntax checks
         run: npm run check
@@ -49,17 +47,33 @@ jobs:
       - name: Cloudflare-only execution policy
         run: npm run test:platform-policy
 
+      - name: Deployment preflight (read-only)
+        run: npm run preflight
+
       - name: Record revision and toolchain
         if: always()
         shell: bash
         run: |
+          mkdir -p release/evidence/prototype-quality
+          node scripts/write-quality-evidence.mjs release/evidence/prototype-quality/evidence.json
           {
             echo "## Prototype quality evidence"
             echo
             echo "- Commit: `$GITHUB_SHA`"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (attempt $GITHUB_RUN_ATTEMPT)"
             echo "- Node: $(node --version)"
             echo "- npm: $(npm --version)"
             echo "- Runner: ${{ runner.os }}/${{ runner.arch }} (${{ runner.environment }})"
             echo "- Deployment: not performed by this workflow"
             echo "- Production authorization: not granted by test success"
+            echo "- Evidence JSON: release/evidence/prototype-quality/evidence.json"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload correlated verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prototype-quality-evidence-${{ github.sha }}
+          path: release/evidence/prototype-quality/evidence.json
+          if-no-files-found: error
+          retention-days: 14
