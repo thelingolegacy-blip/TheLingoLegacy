@@ -14,11 +14,15 @@ npm test
 npm run test:static
 npm run test:runtime-contract
 npm run test:platform-policy
+npm run preflight
+npm run test:bindings
+npm run test:authority
+npm run test:assets-build
 # or run the full local sequence:
 npm run verify
 ```
 
-The checks cover JavaScript syntax, core runtime/configuration contracts, static-site integrity, documented API routes, and the Cloudflare-only execution policy. The repository contract tests use Node's built-in test runner and do not require third-party packages.
+The checks cover JavaScript syntax, core runtime/configuration contracts, static-site integrity, health/API responses, security headers, CORS, redirect behavior, runtime fallback behavior, deployment preflight, binding/authority contracts, and the Cloudflare-only execution policy. The repository contract tests use Node's built-in test runner and do not require third-party packages. The asset-build check invokes Wrangler v4 locally, creates a temporary evidence sentinel, and verifies that source/configuration/operations/evidence paths are not served as public assets; it does not authenticate or deploy.
 
 ## GitHub Actions
 
@@ -32,6 +36,8 @@ This workflow is a separate diagnostic track from G02. Its success does not qual
 - `wrangler.jsonc` remains the Cloudflare Worker configuration.
 - Because the current asset directory is the repository root, `.assetsignore` explicitly excludes the Worker source, Wrangler config, CI workflows, operational scripts, tests, and developer-only environment files from static asset publication. Keep this exclusion list aligned with any future asset-directory or build-layout change.
 - This quality workflow does not deploy, alter DNS, change secrets, activate payment or wallet flows, or modify the production Worker.
+- `npm run preflight` is read-only and blocks known configuration drift before any separate deployment command is considered.
+- The workflow writes a run-metadata JSON artifact tied to the repository, commit SHA, run ID, attempt, and runner metadata. The artifact deliberately does not declare test acceptance; job conclusion, step records, logs, and artifact integrity must be checked independently.
 - Deployment must remain a separate, explicitly authorized release operation after the full evidence chain has been satisfied.
 
 ## Evidence and acceptance
