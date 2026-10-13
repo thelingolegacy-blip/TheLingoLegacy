@@ -1,3 +1,5 @@
+import { isAllowedProductClass } from "./product-class-policy.mjs";
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -142,11 +144,18 @@ export default {
          WHERE r.sku = ?`,
       ).bind(item.sku).first();
 
+      const productClassAllowed = Boolean(route && isAllowedProductClass(route.product_class));
       routeResults.push({
         sku: item.sku,
         quantity: item.quantity,
-        eligible: Boolean(route && route.route_status === "sandbox" && route.supplier_status === "sandbox"),
+        eligible: Boolean(
+          route &&
+          productClassAllowed &&
+          route.route_status === "sandbox" &&
+          route.supplier_status === "sandbox"
+        ),
         reason: !route ? "sku_not_mapped" :
+          !productClassAllowed ? "product_class_not_allowlisted" :
           route.route_status !== "sandbox" ? "route_not_sandbox_approved" :
           route.supplier_status !== "sandbox" ? "supplier_not_sandbox_approved" : "dry_run_only",
       });
