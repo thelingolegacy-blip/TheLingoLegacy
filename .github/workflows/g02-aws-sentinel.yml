@@ -54,9 +54,60 @@ jobs:
         run: |
           set -euo pipefail
           test -s g02-evidence/g02-host-preflight.txt
-          echo "sentinel_exit_code=0" > g02-evidence/sentinel-result.txt
-          echo "run_id=$GITHUB_RUN_ID" >> g02-evidence/sentinel-result.txt
-          echo "commit_sha=$GITHUB_SHA" >> g02-evidence/sentinel-result.txt
+          python3 - <<'PY'
+          import json, os, pathlib, datetime
+          evidence = {
+              "schema": "lingo-g02-sentinel-result-v1",
+              "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "sentinel_exit_code": 0,
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "repository": os.environ["GITHUB_REPOSITORY"],
+          }
+          pathlib.Path("g02-evidence/g02-sentinel-result.json").write_text(json.dumps(evidence, indent=2) + "\\n")
+          PY
+      - name: Capture runner allocation from GitHub API
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" > g02-evidence/jobs-snapshot.json
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          payload = json.loads(pathlib.Path("g02-evidence/jobs-snapshot.json").read_text())
+          jobs = [j for j in payload.get("jobs", []) if j.get("name") == "g02-aws-runner-sentinel"]
+          if len(jobs) != 1:
+              raise SystemExit(f"FAIL: expected exactly one sentinel job, found {len(jobs)}")
+          job = jobs[0]
+          steps = job.get("steps")
+          record = {
+              "schema": "lingo-g02-runner-allocation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "job_id": job.get("id"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "job_status_at_capture": job.get("status"),
+              "job_conclusion_at_capture": job.get("conclusion"),
+              "steps": steps if isinstance(steps, list) else [],
+              "logs_retrievable": False,
+              "independent_verification_recorded": False,
+              "note": "Logs retrieval and independent evidence review must be established outside this workflow; false is intentional until verified."
+          }
+          pathlib.Path("g02-evidence/g02-runner-allocation.json").write_text(json.dumps(record, indent=2) + "\\n")
+          if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
+              raise SystemExit("FAIL: GitHub API did not return a positive runner_id")
+          if record["runner_name"] != "lingo-legacy-g02":
+              raise SystemExit("FAIL: GitHub API runner_name did not match lingo-legacy-g02")
+          if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
+              raise SystemExit("FAIL: GitHub API did not return a positive job_id")
+          if not isinstance(record["steps"], list) or not record["steps"]:
+              raise SystemExit("FAIL: GitHub API did not return instantiated steps")
+          PY
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
