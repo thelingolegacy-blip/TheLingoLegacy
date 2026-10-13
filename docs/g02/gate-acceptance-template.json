@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "packet_type": "LINGO_G02_G12_GATE_ACCEPTANCE",
+  "status": "TEMPLATE_NOT_EVIDENCE",
+  "candidate": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "commit_sha": null,
+    "environment": "non-production"
+  },
+  "generated_at_utc": null,
+  "independent_verifier": {
+    "identity": null,
+    "reviewed_at_utc": null
+  },
+  "gates": {
+    "G02": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G03": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G04": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G05": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G06": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G07": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G08": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G09": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G10": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G11": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    },
+    "G12": {
+      "status": "BLOCKED",
+      "evidence": [],
+      "reason": "No independently verified acceptance evidence supplied."
+    }
+  },
+  "promotion": {
+    "authorized": false,
+    "authorization_reference": null,
+    "production_mutation_performed": false
+  },
+  "notes": "This is a template only. Do not mark gates ACCEPTED without actual source evidence, integrity verification, and independent review."
+}

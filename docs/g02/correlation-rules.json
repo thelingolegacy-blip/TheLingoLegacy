@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "correlation_id_required": true,
+  "matching_fields": [
+    "repository",
+    "correlation_id",
+    "expected_runner_name",
+    "observed_runner_name",
+    "runner_id",
+    "workflow_run_id",
+    "run_attempt",
+    "job_assigned",
+    "job_id",
+    "commit_sha",
+    "started_at_utc",
+    "completed_at_utc"
+  ],
+  "time_policy": {
+    "timezone": "UTC",
+    "allow_missing_timestamps": false,
+    "allow_negative_duration": false,
+    "maximum_host_to_run_clock_skew_seconds": 300
+  },
+  "integrity_policy": {
+    "sha256_required_for_each_evidence_file": true,
+    "manifest_sha256_required": true,
+    "hash_mismatch_result": "REJECTED",
+    "unredacted_secret_detected_result": "REJECTED"
+  },
+  "predicate_policy": {
+    "allowed_values": [
+      "TRUE",
+      "FALSE",
+      "UNKNOWN"
+    ],
+    "unknown_is_pass": false,
+    "all_predicates_required": true,
+    "g02_pass_expression": "P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8 && P9"
+  },
+  "rejection_conditions": [
+    "packet A and packet B correlation IDs differ",
+    "runner names or IDs conflict",
+    "repository or commit SHA conflict",
+    "run attempt or job identity missing",
+    "timestamps missing or inconsistent",
+    "evidence hash mismatch",
+    "raw source cannot be independently retrieved",
+    "host packet is only an unverified assertion",
+    "packet is still marked TEMPLATE_NOT_EVIDENCE",
+    "job assignment is not explicitly verified as true"
+  ],
+  "output_states": [
+    "ACCEPTED",
+    "BLOCKED",
+    "REJECTED"
+  ],
+  "promotion": "Never automatic; requires separate authorization after independent verification."
+}

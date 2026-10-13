@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: static-ci-${{ github.ref }}
@@ -28,13 +27,24 @@ jobs:
         with:
           node-version: 22
 
+      - name: Check G02-G12 validator syntax
+        shell: bash
+        run: node --check ops/g02/validate-gates-02-12.mjs
+
+      - name: Test G02-G12 evidence validator
+        shell: bash
+        run: node --test ops/g02/tests/validate-gates-02-12.test.mjs 2>&1 | tee g02-gate-tests.log
+
       - name: Sanitize retired provider surface
+        shell: bash
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
+        shell: bash
         run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
       - name: Validate release-critical static site
+        shell: bash
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
       - name: Upload validation evidence
@@ -46,4 +56,5 @@ jobs:
             sanitize.log
             bindings.log
             validator.log
+            g02-gate-tests.log
           if-no-files-found: warn
