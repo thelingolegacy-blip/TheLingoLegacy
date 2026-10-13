@@ -13,6 +13,7 @@
     "test:static": "node scripts/validate-static-site.mjs && node scripts/smoke-static-site.mjs",
     "test:runtime-contract": "node scripts/verify-dynamic-runtime.mjs",
     "test:platform-policy": "node scripts/verify-cloudflare-only.mjs",
-    "verify": "npm run check && npm test && npm run test:static && npm run test:runtime-contract && npm run test:platform-policy"
+    "preflight": "node scripts/deployment-preflight.mjs",
+    "verify": "npm run check && npm test && npm run test:static && npm run test:runtime-contract && npm run test:platform-policy && npm run preflight"
   }
 }
