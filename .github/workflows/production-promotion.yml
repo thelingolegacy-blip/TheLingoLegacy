@@ -115,7 +115,8 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    # HARD HOLD: the repository config still names canonical routes; no environment is safe to deploy until staging is isolated and P/E/V/A are independently accepted.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
