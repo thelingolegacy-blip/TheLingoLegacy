@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/devops-foundation-validation.yml"
       - ".github/cache-policy.yml"
+      - ".yamllint"
       - ".circleci/config.yml"
       - "config.yaml"
       - "Jenkinsfile"
