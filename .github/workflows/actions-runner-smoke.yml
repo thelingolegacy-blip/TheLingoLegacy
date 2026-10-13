@@ -7,17 +7,18 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: actions-runner-smoke-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   smoke:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Runner reached execution stage
+      - name: Runner identity assertion
         id: assert
         shell: bash
         env:
@@ -32,12 +33,14 @@ jobs:
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
+          echo "RUNNER_IDENTITY_ASSERTION=PASS"
           echo "runner_name=$RUNNER_NAME"
           echo "runner_os=$RUNNER_OS_VALUE"
           echo "runner_arch=$RUNNER_ARCH_VALUE"
           echo "github_sha=$GITHUB_SHA_VALUE"
 
       - name: Emit execution sentinel
+        id: sentinel
         shell: bash
         env:
           RUNNER_GATE: ${{ steps.assert.outputs.runner_gate }}
@@ -45,3 +48,135 @@ jobs:
           set -euo pipefail
           test "$RUNNER_GATE" = "PASS"
           echo "RUNNER_EXECUTION_SENTINEL=PASS"
+
+      - name: Capture run-correlated evidence
+        if: always()
+        id: evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_NUMBER: ${{ github.run_number }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          GH_WORKFLOW: ${{ github.workflow }}
+          GH_JOB_NAME: ${{ github.job }}
+          GH_JOB_STATUS: ${{ job.status }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT_VALUE: ${{ runner.environment }}
+          ASSERT_OUTCOME: ${{ steps.assert.outcome }}
+          SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { createHash } from 'node:crypto';
+          const required = ['GH_TOKEN','GH_REPOSITORY','GH_RUN_ID','GH_RUN_NUMBER','GH_RUN_ATTEMPT','GH_SHA','GH_REF','GH_WORKFLOW','GH_JOB_NAME'];
+          for (const key of required) if (!process.env[key]) throw new Error('Missing required evidence input: ' + key);
+          const api = 'https://api.github.com/repos/' + process.env.GH_REPOSITORY + '/actions/runs/' + process.env.GH_RUN_ID + '/jobs?per_page=100';
+          let payload = { jobs: [] };
+          let apiError = null;
+          let apiHttpStatus = null;
+          try {
+            const response = await fetch(api, {
+              headers: {
+                authorization: 'Bearer ' + process.env.GH_TOKEN,
+                accept: 'application/vnd.github+json',
+                'x-github-api-version': '2022-11-28'
+              }
+            });
+            apiHttpStatus = response.status;
+            if (!response.ok) throw new Error('GitHub job evidence API failed: HTTP ' + response.status);
+            payload = await response.json();
+          } catch (error) {
+            apiError = String(error?.message || error);
+          }
+          const job = (payload.jobs || []).find(item => item.name === process.env.GH_JOB_NAME);
+          const runnerId = job?.runner_id ?? null;
+          const runnerName = job?.runner_name ?? null;
+          const steps = (job?.steps || []).map(step => ({
+            name: step.name,
+            status: step.status,
+            conclusion: step.conclusion,
+            number: step.number
+          }));
+          const predicates = {
+            api_request_ok: apiError === null,
+            job_found: Boolean(job),
+            job_id_positive: Number.isInteger(job?.id) && job.id > 0,
+            job_run_id_matches: Number(job?.run_id) === Number(process.env.GH_RUN_ID),
+            job_head_sha_matches: job?.head_sha === process.env.GH_SHA,
+            runner_id_positive: Number.isInteger(runnerId) && runnerId > 0,
+            runner_name_expected: runnerName === 'lingo-legacy-g02',
+            context_name_expected: process.env.RUNNER_NAME === 'lingo-legacy-g02',
+            os_linux: process.env.RUNNER_OS_VALUE === 'Linux',
+            arch_x64: process.env.RUNNER_ARCH_VALUE === 'X64',
+            identity_assertion_passed: process.env.ASSERT_OUTCOME === 'success',
+            sentinel_passed: process.env.SENTINEL_OUTCOME === 'success',
+            sentinel_step_observed_success: steps.some(step => step.name === 'Emit execution sentinel' && step.conclusion === 'success')
+          };
+          const gate = Object.values(predicates).every(Boolean) ? 'PASS' : 'FAIL';
+          const evidence = {
+            schema: 'lingo.g02.qualified-evidence.v1',
+            generated_at: new Date().toISOString(),
+            repository: process.env.GH_REPOSITORY,
+            workflow: process.env.GH_WORKFLOW,
+            run_id: Number(process.env.GH_RUN_ID),
+            run_number: Number(process.env.GH_RUN_NUMBER),
+            run_attempt: Number(process.env.GH_RUN_ATTEMPT),
+            job_id: job?.id ?? null,
+            job_name: process.env.GH_JOB_NAME,
+            job_status_at_capture: job?.status ?? null,
+            job_conclusion_at_capture: job?.conclusion ?? null,
+            evidence_api_http_status: apiHttpStatus,
+            evidence_api_error: apiError,
+            runner_id: runnerId,
+            runner_name: runnerName,
+            runner_context: {
+              name: process.env.RUNNER_NAME || null,
+              os: process.env.RUNNER_OS_VALUE || null,
+              arch: process.env.RUNNER_ARCH_VALUE || null,
+              environment: process.env.RUNNER_ENVIRONMENT_VALUE || null
+            },
+            commit_sha: process.env.GH_SHA,
+            ref: process.env.GH_REF,
+            assertions: predicates,
+            steps,
+            g02_gate: gate
+          };
+          fs.writeFileSync('evidence/g02-qualified-evidence.json', JSON.stringify(evidence, null, 2) + '\n');
+          fs.writeFileSync('evidence/g02-qualified-evidence.txt',
+            'G02_GATE=' + gate + '\n' +
+            'RUN_ID=' + evidence.run_id + '\n' +
+            'JOB_ID=' + (evidence.job_id ?? 'null') + '\n' +
+            'RUNNER_ID=' + (runnerId ?? 'null') + '\n' +
+            'RUNNER_NAME=' + (runnerName ?? 'null') + '\n' +
+            'COMMIT_SHA=' + evidence.commit_sha + '\n' +
+            'ASSERTIONS=' + JSON.stringify(predicates) + '\n');
+          console.log('G02_EVIDENCE_FILE=CREATED');
+          console.log('G02_GATE=' + gate);
+          console.log('G02_RUN_ID=' + evidence.run_id);
+          console.log('G02_JOB_ID=' + (evidence.job_id ?? 'null'));
+          console.log('G02_RUNNER_ID=' + (runnerId ?? 'null'));
+          console.log('G02_RUNNER_NAME=' + (runnerName ?? 'null'));
+          console.log('G02_COMMIT_SHA=' + evidence.commit_sha);
+          const sha256 = (path) => createHash('sha256').update(fs.readFileSync(path)).digest('hex');
+          fs.writeFileSync('evidence/SHA256SUMS',
+            sha256('evidence/g02-qualified-evidence.json') + '  g02-qualified-evidence.json\n' +
+            sha256('evidence/g02-qualified-evidence.txt') + '  g02-qualified-evidence.txt\n');
+          if (gate !== 'PASS') process.exitCode = 1;
+          NODE
+
+      - name: Upload qualified evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-qualified-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
