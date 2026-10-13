@@ -1,0 +1,22 @@
+# The Worker is executable source, not a public static asset.
+/worker.js
+/wrangler.jsonc
+/package.json
+/package-lock.json
+/.gitignore
+/.assetsignore
+
+# Repository automation, diagnostics, and developer-only material.
+/.github/**
+/ops/**
+/scripts/**
+/tests/**
+/docs/**
+/firebase.json
+/firebase/**
+/functions/**
+/node_modules/**
+/.git/**
+/.wrangler/**
+/.env*
+/.dev.vars*
