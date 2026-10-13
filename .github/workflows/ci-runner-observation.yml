@@ -94,7 +94,7 @@ jobs:
               "scope": "observation only; not G02 self-hosted runner acceptance"
           }
           pathlib.Path("ci-observation/provider-job-record.json").write_text(
-              json.dumps(record, indent=2) + "\\n"
+              json.dumps(record, indent=2) + "\n"
           )
           print(json.dumps({
               "job_id": record["job_id"],
