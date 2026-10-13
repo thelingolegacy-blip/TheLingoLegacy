@@ -37,6 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check worker.js 2>&1 | tee quality-evidence/worker-syntax.txt
+          node --check ops/kubernetes/bottleneck-lab/server.mjs 2>&1 | tee quality-evidence/bottleneck-lab-syntax.txt
 
       - name: Check runner and recovery shell syntax
         shell: bash
