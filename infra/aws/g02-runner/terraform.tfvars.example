@@ -4,5 +4,10 @@ subnet_id = "subnet-REPLACE_ME"
 ami_id = "ami-REPLACE_WITH_APPROVED_UBUNTU_LTS_X86_64_AMI"
 instance_type = "t3.large"
 root_volume_size_gib = 40
-allowed_egress_cidrs = ["0.0.0.0/0"]
+
+# REQUIRED: add destination CIDRs approved for the selected egress architecture.
+# Do not set 0.0.0.0/0. If using an outbound proxy/firewall, allow only the
+# proxy or firewall destination path from this runner security group.
+# allowed_egress_cidrs = ["REPLACE_WITH_APPROVED_DESTINATION_CIDR"]
+
 environment = "recovery"
