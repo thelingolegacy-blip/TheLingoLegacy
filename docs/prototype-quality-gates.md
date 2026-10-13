@@ -30,6 +30,7 @@ This workflow is a separate diagnostic track from G02. Its success does not qual
 
 - `worker.js` remains the runtime entrypoint.
 - `wrangler.jsonc` remains the Cloudflare Worker configuration.
+- Because the current asset directory is the repository root, `.assetsignore` explicitly excludes the Worker source, Wrangler config, CI workflows, operational scripts, tests, and developer-only environment files from static asset publication. Keep this exclusion list aligned with any future asset-directory or build-layout change.
 - This quality workflow does not deploy, alter DNS, change secrets, activate payment or wallet flows, or modify the production Worker.
 - Deployment must remain a separate, explicitly authorized release operation after the full evidence chain has been satisfied.
 
