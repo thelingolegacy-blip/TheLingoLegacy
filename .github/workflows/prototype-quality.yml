@@ -50,6 +50,9 @@ jobs:
       - name: Deployment preflight (read-only)
         run: npm run preflight
 
+      - name: Binding and production-authority contracts
+        run: npm run test:bindings && npm run test:authority
+
       - name: Record revision and toolchain
         if: always()
         shell: bash
