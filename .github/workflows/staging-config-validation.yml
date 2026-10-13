@@ -1,0 +1,79 @@
+name: Isolated Staging Configuration Contract
+
+on:
+  pull_request:
+    paths:
+      - "wrangler.staging.jsonc"
+      - "staging-assets/**"
+      - ".github/workflows/production-promotion.yml"
+      - ".github/workflows/staging-config-validation.yml"
+  push:
+    branches:
+      - recovery/fail-closed-promotion-guard-2026-10-10
+    paths:
+      - "wrangler.staging.jsonc"
+      - "staging-assets/**"
+      - ".github/workflows/production-promotion.yml"
+      - ".github/workflows/staging-config-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-config-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-staging-contract:
+    name: Static isolated staging contract (not G02 acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          check-latest: false
+      - name: Validate staging configuration and promotion boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+
+          const cfg = JSON.parse(fs.readFileSync('wrangler.staging.jsonc', 'utf8'));
+          const promo = fs.readFileSync('.github/workflows/production-promotion.yml', 'utf8');
+          const url = new URL(cfg.vars.PUBLIC_SITE_URL);
+          assert.equal(cfg.name, 'thelingolegacy-staging');
+          assert.equal(cfg.main, 'worker.js');
+          assert.equal(cfg.workers_dev, true);
+          assert.deepEqual(cfg.routes, []);
+          assert.equal(cfg.vars.LINGO_ENVIRONMENT, 'staging');
+          assert.equal(cfg.vars.CANONICAL_DOMAIN, url.hostname);
+          assert.equal(url.protocol, 'https:');
+          assert.ok(url.hostname.endsWith('.workers.dev'));
+          assert.equal(url.hostname.split('.')[0], cfg.name);
+          assert.equal(cfg.assets.directory, './staging-assets');
+          assert.ok(fs.existsSync('staging-assets/index.html'));
+          assert.match(promo, /PRODUCTION_PROMOTION=BLOCKED/);
+          assert.match(promo, /vars\.STAGING_DEPLOYMENT_APPROVED == 'true'/);
+          assert.match(promo, /deploy --config wrangler\.staging\.jsonc/);
+          assert.doesNotMatch(promo, /deploy --config wrangler\.jsonc/);
+          assert.match(promo, /RUNNER_GATE=PASS/);
+          assert.match(promo, /runs-on: \[self-hosted, linux, x64, lingo-g02\]/);
+          console.log(JSON.stringify({
+            gate: 'static-isolated-staging-contract',
+            status: 'PASS',
+            source_sha: process.env.GITHUB_SHA,
+            worker: cfg.name,
+            staging_origin: url.origin,
+            custom_routes: cfg.routes.length,
+            production_promotion: 'fail-closed',
+            g02_acceptance: 'NOT_ESTABLISHED_BY_THIS_JOB'
+          }, null, 2));
+          NODE
