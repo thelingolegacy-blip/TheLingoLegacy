@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-10",
+  "mode": "FAIL_CLOSED",
+  "agents": [
+    {
+      "id": "host-discovery-agent",
+      "purpose": "Read-only host and runner inventory",
+      "permissions": [
+        "read host OS/process/service metadata",
+        "read runner diagnostics",
+        "emit redacted evidence"
+      ],
+      "writes": [
+        "evidence artifacts only"
+      ],
+      "secrets": false,
+      "networkMutation": false,
+      "enabled": false,
+      "reason": "Requires authorized host execution"
+    },
+    {
+      "id": "g02-sentinel-agent",
+      "purpose": "Run one explicit self-hosted runner acceptance probe",
+      "permissions": [
+        "read runtime context",
+        "non-destructive OS/network checks",
+        "write run-scoped evidence artifact"
+      ],
+      "writes": [
+        "run-scoped evidence artifact"
+      ],
+      "secrets": false,
+      "productionAccess": false,
+      "trigger": "workflow_dispatch on main + LINGO_G02_SENTINEL_ENABLED=true + required authorization reference",
+      "enabled": false,
+      "reason": "Requires verified runner and explicit operator enablement"
+    },
+    {
+      "id": "evidence-verifier-agent",
+      "purpose": "Correlate run, job, commit, runner identity, steps, logs and artifact hashes",
+      "permissions": [
+        "read CI evidence",
+        "verify checksums",
+        "report predicate matrix"
+      ],
+      "writes": [
+        "verification report only"
+      ],
+      "secrets": false,
+      "productionAccess": false,
+      "enabled": false,
+      "reason": "Must use real retrievable run evidence"
+    },
+    {
+      "id": "restore-planner-agent",
+      "purpose": "Prepare a non-destructive recovery plan from observed diagnostics",
+      "permissions": [
+        "read diagnostic artifacts",
+        "propose repair actions"
+      ],
+      "writes": [],
+      "secrets": false,
+      "productionAccess": false,
+      "enabled": true,
+      "reason": "Planning only; no host mutation"
+    }
+  ],
+  "workers": [
+    {
+      "id": "host-preparation-worker",
+      "execution": "authorized Linux host",
+      "scope": "Ubuntu 24.04 LTS x86_64 baseline package/user/directory preparation",
+      "destructive": false,
+      "requiresApproval": true
+    },
+    {
+      "id": "runner-registration-worker",
+      "execution": "authorized Linux host",
+      "scope": "Register canonical repository runner using short-lived token from protected environment",
+      "tokenPersistence": "forbidden",
+      "requiresApproval": true
+    },
+    {
+      "id": "diagnostic-worker",
+      "execution": "GitHub-hosted runner",
+      "scope": "Capture platform-visible context and evidence package",
+      "destructive": false,
+      "productionSecrets": false
+    },
+    {
+      "id": "evidence-worker",
+      "execution": "GitHub-hosted runner",
+      "scope": "Hash and validate artifacts; never self-certify external facts",
+      "destructive": false
+    }
+  ],
+  "triggers": [
+    {
+      "id": "diagnostics-hourly",
+      "event": "schedule",
+      "cadence": "hourly",
+      "workflow": ".github/workflows/g02-diagnostics-watch.yml",
+      "target": "github-hosted",
+      "mutation": "none"
+    },
+    {
+      "id": "diagnostics-manual",
+      "event": "workflow_dispatch",
+      "workflow": ".github/workflows/g02-diagnostics-watch.yml",
+      "target": "github-hosted",
+      "mutation": "none"
+    },
+    {
+      "id": "sentinel-manual",
+      "event": "workflow_dispatch",
+      "branch": "main",
+      "workflow": ".github/workflows/g02-runner-control-plane.yml",
+      "guard": "LINGO_G02_SENTINEL_ENABLED=true and valid authorization_reference and run_sentinel=true",
+      "target": "self-hosted canonical labels",
+      "mutation": "none"
+    },
+    {
+      "id": "runner-registration",
+      "event": "operator action",
+      "target": "authorized Linux VM",
+      "guard": "short-lived registration token and approved host",
+      "mutation": "register runner only"
+    }
+  ],
+  "rules": {
+    "productionMutation": "DENY",
+    "pullRequestExecutionOnSelfHosted": "DENY",
+    "forkCodeOnSelfHosted": "DENY",
+    "automaticMerge": "DENY",
+    "automaticDeployment": "DENY",
+    "secretExposure": "DENY",
+    "tokenInRepository": "DENY",
+    "gateOverride": "DENY",
+    "requiredRunner": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "acceptance": "All G02 evidence predicates must be independently verified; online status alone is insufficient"
+  }
+}

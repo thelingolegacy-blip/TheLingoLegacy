@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G06-DEPLOYMENT-2026-10-10",
+  "gate_id": "G06",
+  "gate_name": "DEPLOYMENT",
+  "disposition": "BLOCKED",
+  "objective": "Record explicit deployment authorization, target, deployment ID, and immutable artifact digest. This packet does not authorize deployment.",
+  "required_evidence": ["Separate explicit authorization", "Target and deployment identity", "Artifact digest and source commit", "Deployment logs and independent validation"],
+  "observed_evidence": [],
+  "missing_items": ["Upstream gate acceptance", "Explicit deployment authorization", "Deployment evidence"],
+  "acceptance_rule": "No deployment while blocked; require separately authorized action after upstream acceptance.",
+  "mutation_policy": "PRODUCTION_MUTATION_PROHIBITED",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

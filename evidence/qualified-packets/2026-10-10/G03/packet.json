@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G03-CI_EXECUTION-2026-10-10",
+  "gate_id": "G03",
+  "gate_name": "CI_EXECUTION",
+  "disposition": "BLOCKED",
+  "objective": "Capture a complete successful CI execution linked to accepted G02 runner evidence.",
+  "provenance": {"source_ref": "infra/g02-runner-agents-diagnostics-2026-10-10", "source_commit": "RECORD_EXACT_SHA", "captured_at_utc": "RECORD_ACTUAL_UTC_TIME", "collector": "RECORD_COLLECTOR"},
+  "required_evidence": ["Raw logs/results and SHA-256", "Immutable source commit and correlated run/job IDs", "Expected versus observed predicates", "Independent verifier decision and timestamp"],
+  "observed_evidence": [],
+  "missing_items": ["All gate-specific raw evidence", "Verified integrity and completeness", "Independent acceptance"],
+  "acceptance_rule": "Remain BLOCKED until upstream gates pass and all evidence is independently verified.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

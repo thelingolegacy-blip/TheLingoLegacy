@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "controlPlane": "LINGOtestosteroneOS",
+  "status": "PROPOSED_NOT_APPLIED",
+  "mode": "FAIL_CLOSED",
+  "scope": "isolated-recovery-branch",
+  "defaults": {
+    "productionMutationFrozen": true,
+    "lastKnownGoodProtected": true,
+    "deploymentMutex": "LOCKED",
+    "autoMerge": false,
+    "autoDeploy": false,
+    "autoActivation": false,
+    "privilegedAutomation": false,
+    "unknownStateMeans": "BLOCK",
+    "missingEvidenceMeans": "BLOCK"
+  },
+  "access": {
+    "model": "RBAC_LEAST_PRIVILEGE",
+    "roles": {
+      "discoveryAgent": [
+        "read:repository",
+        "read:workflow",
+        "read:issue",
+        "read:runner-inventory-if-authorized"
+      ],
+      "buildAgent": [
+        "write:isolated-implementation-branch",
+        "create:pull-request"
+      ],
+      "hostOperator": [
+        "operate:authorized-runner-host",
+        "read:host-telemetry"
+      ],
+      "evidenceVerifier": [
+        "read:run",
+        "read:job",
+        "read:runner-context",
+        "read:logs",
+        "read:artifacts",
+        "verify:checksums",
+        "recommend:gate-status"
+      ],
+      "independentOwner": [
+        "review:evidence",
+        "recommend:gate-status",
+        "record:blocker"
+      ],
+      "releaseApprover": [
+        "authorize:merge",
+        "authorize:deployment",
+        "authorize:activation"
+      ]
+    },
+    "prohibitedByDefault": [
+      "production-secrets-on-runner",
+      "untrusted-fork-code-on-self-hosted-runner",
+      "direct-push-to-protected-branches",
+      "force-push-to-protected-branches",
+      "automatic-merge",
+      "automatic-production-deploy",
+      "automatic-production-activation",
+      "secret-printing-or-artifact-export",
+      "credential-storage-in-source-or-logs"
+    ],
+    "humanApprovalRequiredFor": [
+      "merge",
+      "production-deployment",
+      "activation",
+      "DNS-or-Worker-mutation",
+      "ruleset-application",
+      "credential-scope-change"
+    ]
+  },
+  "branchRules": {
+    "status": "PROPOSED_NOT_APPLIED",
+    "protectedBranches": [
+      "main",
+      "production",
+      "release/*"
+    ],
+    "requirePullRequest": true,
+    "requiredApprovals": 1,
+    "requireCodeOwnerReview": true,
+    "dismissStaleReviews": true,
+    "requireConversationResolution": true,
+    "blockForcePush": true,
+    "blockDeletion": true,
+    "requireLinearHistory": true,
+    "autoMerge": false,
+    "bypassActors": [],
+    "requiredChecksPolicy": "Only configure after check identities are confirmed and real successful runs exist"
+  },
+  "tools": {
+    "readOnlyFirst": true,
+    "allowlistedOperations": [
+      "repository-inspection",
+      "workflow-inspection",
+      "host-diagnostics",
+      "evidence-correlation",
+      "checksum-verification",
+      "backup-inventory",
+      "restore-dry-run"
+    ],
+    "requireActionRecordFields": [
+      "action",
+      "reason",
+      "authority_reference",
+      "input_state",
+      "planned_change",
+      "result",
+      "verification",
+      "decision"
+    ],
+    "requireIdempotencyWherePractical": true,
+    "requireTimeoutsAndBoundedRetries": true,
+    "noBlindRunnerReregistration": true,
+    "noSyntheticEvidence": true,
+    "noDummyCommitsToTriggerCI": true
+  },
+  "backups": {
+    "policyStatus": "POLICY_DEFINED_BACKUP_EXECUTION_UNVERIFIED",
+    "requiredClasses": [
+      {
+        "name": "source-control",
+        "contents": [
+          "protected-branch-SHA",
+          "release-tags",
+          "workflow-and-policy-files"
+        ],
+        "frequency": "on-change-and-daily-inventory"
+      },
+      {
+        "name": "configuration",
+        "contents": [
+          "non-secret-config",
+          "ruleset-export-if-available",
+          "activation-registry",
+          "DNS-and-Worker-config-export-before-authorized-change"
+        ],
+        "frequency": "before-and-after-authorized-change"
+      },
+      {
+        "name": "evidence",
+        "contents": [
+          "run-job-commit-correlation",
+          "logs",
+          "artifacts",
+          "SHA256-manifest",
+          "verification-result"
+        ],
+        "frequency": "per-controlled-run"
+      },
+      {
+        "name": "secrets",
+        "contents": [
+          "secret-manager-managed-backup-or-recovery-procedure-only"
+        ],
+        "frequency": "per-secret-manager-policy"
+      }
+    ],
+    "storage": "encrypted, access-controlled, separate from primary failure domain where supported",
+    "neverStore": [
+      "plaintext-secrets",
+      "runner-registration-tokens",
+      "PATs",
+      "private-keys",
+      "credentials-in-repository-or-evidence-artifacts"
+    ],
+    "restoreRequirements": [
+      "record-source-and-checksum",
+      "restore-to-isolated-target-first",
+      "validate-integrity-and-function",
+      "independent-review",
+      "explicit-authorization-before-production-restore"
+    ],
+    "recoveryObjectives": {
+      "RPO": "must be explicitly approved per service; not yet set",
+      "RTO": "must be explicitly approved per service; not yet set"
+    },
+    "backupIsValidOnlyIf": "restore test passes and evidence is retained"
+  },
+  "failSafe": {
+    "unknownOrConflictingEvidence": "BLOCK",
+    "missingRunnerIdentity": "BLOCK",
+    "runnerIdZeroOrMissing": "BLOCK",
+    "runnerNameMissing": "BLOCK",
+    "stepsMissing": "BLOCK",
+    "logsMissing": "BLOCK",
+    "checksumMismatch": "BLOCK",
+    "sourceCommitMismatch": "BLOCK",
+    "authorizationMissingOrExpired": "BLOCK",
+    "rollbackTargetNotVerified": "BLOCK",
+    "repairFailsOrExceedsBound": "HALT_AND_ESCALATE",
+    "rollback": "propose-only-until-authorized; never overwrite LKG automatically",
+    "gateTransitions": "all-required-predicates-must-be-true"
+  },
+  "g02Acceptance": {
+    "predicates": [
+      "matching-real-runner",
+      "runner_id_greater_than_zero",
+      "runner_name_populated",
+      "job_assigned",
+      "steps_instantiated",
+      "sentinel_exit_code_zero",
+      "logs_retrievable",
+      "artifact_retrievable_and_checksum_valid",
+      "independent_run_job_commit_runner_correlation"
+    ],
+    "operatorAndVerifierMustBeSeparate": true
+  },
+  "currentGateState": {
+    "G00": "PASS_RECORDED",
+    "G01": "PASS_RECORDED",
+    "G02": "FAIL_BLOCKED",
+    "G03": "BLOCKED",
+    "G04": "BLOCKED",
+    "G05": "BLOCKED",
+    "G06": "BLOCKED",
+    "G07": "BLOCKED",
+    "G08": "BLOCKED",
+    "G09": "BLOCKED",
+    "G10": "BLOCKED",
+    "G11": "BLOCKED"
+  },
+  "notes": [
+    "This is a proposed control-plane contract committed on an isolated branch; it is not an applied GitHub ruleset or live access-control change.",
+    "No backup execution, restore test, host provisioning, runner registration, production mutation, or activation is performed by this file.",
+    "LINGOtestosteroneOS is a control designation, not proof that an agent is deployed or running.",
+    "Vercel is excluded from runner recovery."
+  ]
+}

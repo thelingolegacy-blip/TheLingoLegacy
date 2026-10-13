@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G05-RELEASE_CANDIDATE-2026-10-10",
+  "gate_id": "G05",
+  "gate_name": "RELEASE_CANDIDATE",
+  "disposition": "BLOCKED",
+  "objective": "Build an immutable release candidate with source SHA, provenance, checksums, and test results.",
+  "provenance": {"source_ref": "RECORD_RELEASE_REF", "source_commit": "RECORD_EXACT_SHA", "captured_at_utc": "RECORD_ACTUAL_UTC_TIME", "collector": "RECORD_COLLECTOR"},
+  "required_evidence": ["Build logs and environment versions", "Immutable artifact reference and digest", "Source-to-artifact provenance", "Test results and independent review"],
+  "observed_evidence": [],
+  "missing_items": ["Approved build execution", "Immutable candidate artifact", "Verified checksums and provenance", "Independent acceptance"],
+  "acceptance_rule": "Remain BLOCKED until upstream gates pass and release artifact provenance is independently verified.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}
