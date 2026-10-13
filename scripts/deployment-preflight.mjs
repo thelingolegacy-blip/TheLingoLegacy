@@ -65,7 +65,7 @@ if (worker) {
 
 if (assetsIgnore) {
   const lines = new Set(assetsIgnore.split(/\r?\n/).map((line) => line.trim()));
-  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
+  for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/release/evidence/**', '/.env*', '/.dev.vars*']) {
     if (!lines.has(pattern)) failures.push(`.assetsignore missing required exclusion: ${pattern}`);
   }
 } else {
