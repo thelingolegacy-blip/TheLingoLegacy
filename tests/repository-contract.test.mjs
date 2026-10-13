@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
 
 const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -28,7 +29,7 @@ test('runtime exposes the minimum documented health and platform routes', () => 
 test('public asset manifest excludes source, automation, and operational tooling', () => {
   const ignore = read('.assetsignore');
   for (const pattern of ['/worker.js', '/wrangler.jsonc', '/.github/**', '/ops/**', '/scripts/**', '/tests/**', '/.env*', '/.dev.vars*']) {
-    assert.ok(ignore.split(/\\r?\\n/).some((line) => line.trim() === pattern), `.assetsignore must exclude ${pattern}`);
+    assert.ok(ignore.split(/\r?\n/).some((line) => line.trim() === pattern), `.assetsignore must exclude ${pattern}`);
   }
 });
 
@@ -44,4 +45,19 @@ test('G02 release controls remain fail-closed and do not target production', () 
   assert.match(readme, /MUTATION FREEZE\s*=\s*ACTIVE/i);
   const workflow = read('.github/workflows/runner-dispatch-diagnostic.yml');
   assert.match(workflow, /runs-on:\s*\[self-hosted, linux, x64, lingo-g02\]/);
+});
+
+
+test('deployment preflight executes read-only and accepts current configuration', () => {
+  const result = spawnSync(process.execPath, ['scripts/deployment-preflight.mjs'], {
+    cwd: new URL('..', import.meta.url),
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.gate, 'cloudflare-deployment-preflight');
+  assert.equal(report.status, 'PASS');
+  assert.equal(report.mode, 'read-only');
+  assert.equal(report.deploymentPerformed, false);
+  assert.equal(report.productionMutationPerformed, false);
 });
