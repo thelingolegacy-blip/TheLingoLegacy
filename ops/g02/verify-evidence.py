@@ -33,7 +33,7 @@ def main():
 
     data = (root / REQUIRED[0]).read_bytes()
     sidecar = (root / REQUIRED[1]).read_text(encoding="utf-8", errors="replace").strip()
-    match = re.fullmatch(r"([0-9a-fA-F]{64})\\s+\\*?g02-host-preflight\\.txt", sidecar)
+    match = re.fullmatch(r"([0-9a-fA-F]{64})\s+\*?g02-host-preflight\.txt", sidecar)
     if not match or hashlib.sha256(data).hexdigest().lower() != match.group(1).lower():
         print("FAIL: host evidence checksum mismatch or malformed sidecar")
         return 1
