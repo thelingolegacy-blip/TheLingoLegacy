@@ -1,0 +1,31 @@
+{
+  "schema": "lingo-asklingo-voice",
+  "version": "1.0.0",
+  "transport": "webrtc",
+  "realtimeModel": "gpt-realtime-2.1",
+  "capabilities": {
+    "listen": true,
+    "speak": true,
+    "interrupt": true,
+    "bargeIn": true,
+    "transcription": true,
+    "modeSwitching": true
+  },
+  "runtime": {
+    "tokenRoute": "/api/asklingo/realtime-token",
+    "researchRoute": "/api/asklingo/respond",
+    "audioPolicy": "explicit-user-gesture",
+    "secretPolicy": "server-only"
+  },
+  "bookIntegration": {
+    "readAloud": true,
+    "chapterContext": true,
+    "askAboutChapter": true,
+    "pauseAndExplain": true,
+    "quizAfterSection": true
+  },
+  "evidence": {
+    "configuredDoesNotMeanLive": true,
+    "liveVoiceRequiresRuntimeVerification": true
+  }
+}

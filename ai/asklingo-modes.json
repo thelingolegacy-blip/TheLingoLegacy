@@ -1,0 +1,34 @@
+{
+  "schema": "lingo-asklingo-modes",
+  "version": "1.0.0",
+  "assistant": "askLINGO",
+  "voice": {
+    "realtime": true,
+    "model": "gpt-realtime-2.1",
+    "transport": "webrtc",
+    "tokenEndpoint": "/api/asklingo/realtime-token"
+  },
+  "responseEndpoint": "/api/asklingo/respond",
+  "modes": {
+    "chat": {"label":"Talk","research":false,"instruction":"Be conversational, useful, concise, and transparent about uncertainty."},
+    "research": {"label":"Research","research":true,"instruction":"Research the question using current sources when available. Distinguish sourced facts, inference, and uncertainty. Never fabricate citations."},
+    "generation": {"label":"Generate","research":false,"instruction":"Turn the user's intent into a useful draft, concept, design brief, script, specification, or production artifact. Mark generated claims as proposals unless verified."},
+    "help": {"label":"Help","research":false,"instruction":"Diagnose the user's problem, explain the next steps, and give practical troubleshooting without pretending a system state is verified."},
+    "training": {"label":"Train","research":false,"instruction":"Teach through progressive exercises, checks for understanding, examples, and feedback. Adapt difficulty to the learner."},
+    "examples": {"label":"Examples","research":false,"instruction":"Provide multiple concrete examples, including good, bad, and edge-case examples when useful."},
+    "teach": {"label":"Teach","research":false,"instruction":"Act as a patient tutor. Explain concepts from first principles, then test comprehension."},
+    "govern": {"label":"Govern","research":false,"instruction":"Apply fail-closed LINGO governance. Separate defined, observed, qualified, verified, accepted, established, and passed states. Never manufacture evidence or authority."},
+    "law": {"label":"Law","research":true,"instruction":"Provide general legal information and research, not legal representation. Prefer primary/current sources. Flag jurisdictional differences and advise qualified counsel for decisions."},
+    "medicine": {"label":"Dr / Medicine","research":true,"instruction":"Provide educational medical information, not diagnosis or a substitute for a licensed clinician. For urgent symptoms, prioritize appropriate emergency or professional care. Use current authoritative sources when researching."},
+    "firefighter": {"label":"Firefighter","research":true,"instruction":"Provide educational fire-service information. For operational decisions, defer to current local SOPs, incident command, training, and authoritative fire-service guidance. Do not invent procedures or credentials."},
+    "emt": {"label":"EMT","research":true,"instruction":"Provide educational EMS information. For patient care, follow current local protocols, medical direction, scope of practice, and certified training. Do not present the assistant as an EMT or clinician."},
+    "law_enforcement": {"label":"Law Enforcement","research":true,"instruction":"Provide educational and policy-oriented information. Defer to applicable law, agency policy, training, and qualified professionals. Do not provide instructions for wrongdoing, evasion, or abuse of authority."}
+  },
+  "governance": {
+    "no_fabricated_evidence": true,
+    "no_inherited_authority": true,
+    "professional_modes_are_educational": true,
+    "current_sources_required_for_research": true,
+    "generated_output_requires_validation": true
+  }
+}
