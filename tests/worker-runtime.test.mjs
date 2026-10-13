@@ -10,7 +10,7 @@ const env = {
       if (url.pathname === '/sample.html') {
         return new Response('<!doctype html><html><head><title>Sample</title></head><body>hello</body></html>', {
           status: 200,
-          headers: { 'content-type': 'text/html; charset=utf-8' },
+          headers: { 'content-type': 'text/html; charset=utf-8', 'content-length': '7', etag: '"stale-asset-etag"', 'content-md5': 'stale-digest' },
         });
       }
       if (url.pathname === '/sample.txt') {
@@ -81,6 +81,9 @@ test('HTML asset fallback is dynamically decorated and not cacheable', async () 
   assert.match(body, /window\.__LINGO_RUNTIME__/);
   assert.equal(response.headers.get('cache-control'), 'no-store, must-revalidate');
   assert.equal(response.headers.get('x-lingo-dynamic'), 'true');
+  assert.equal(response.headers.get('content-length'), null);
+  assert.equal(response.headers.get('etag'), null);
+  assert.equal(response.headers.get('content-md5'), null);
 });
 
 test('non-HTML asset fallback remains unmodified apart from security headers', async () => {
