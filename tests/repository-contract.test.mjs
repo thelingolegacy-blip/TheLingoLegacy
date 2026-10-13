@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+
+test('Cloudflare Worker entrypoint and asset binding remain explicit', () => {
+  const config = JSON.parse(read('wrangler.jsonc'));
+  assert.equal(config.main, 'worker.js');
+  assert.equal(config.assets?.binding, 'ASSETS');
+  assert.equal(config.workers_dev, false);
+  assert.ok(config.routes.some((route) => route.pattern === 'thelingolegacy.com/*'));
+  assert.ok(config.routes.some((route) => route.pattern === 'www.thelingolegacy.com/*'));
+});
+
+test('runtime exposes the minimum documented health and platform routes', () => {
+  const worker = read('worker.js');
+  for (const route of [
+    `url.pathname === '/healthz'`,
+    `url.pathname === '/api/v1/platform/status'`,
+    `url.pathname === '/api/v1/site/context'`,
+    `url.pathname.startsWith('/api/')`,
+  ]) {
+    assert.ok(worker.includes(route), `worker.js must retain route contract: ${route}`);
+  }
+});
+
+test('runtime delegates static asset delivery through the declared binding', () => {
+  const worker = read('worker.js');
+  assert.ok(worker.includes('env.ASSETS.fetch(request)'));
+});
+
+test('G02 release controls remain fail-closed and do not target production', () => {
+  const readme = read('README.md');
+  assert.match(readme, /G02\s*=\s*FAIL\s*\/\s*UNVERIFIED/i);
+  assert.match(readme, /FAIL-CLOSED\s*=\s*ACTIVE/i);
+  assert.match(readme, /MUTATION FREEZE\s*=\s*ACTIVE/i);
+  const workflow = read('.github/workflows/runner-dispatch-diagnostic.yml');
+  assert.match(workflow, /runs-on:\s*\[self-hosted, linux, x64, lingo-g02\]/);
+});
