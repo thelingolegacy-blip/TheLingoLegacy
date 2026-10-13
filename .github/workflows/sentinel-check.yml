@@ -1,0 +1,79 @@
+name: Canonical GitHub Sentinel (Staging)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_staging_only:
+        description: "Type STAGING to authorize this staging-only probe"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-canonical-staging-sentinel
+  cancel-in-progress: false
+
+jobs:
+  sentinel-verify:
+    if: ${{ inputs.confirm_staging_only == 'STAGING' }}
+    runs-on: [self-hosted, linux, x64, lingo-legacy-g02-staging]
+    timeout-minutes: 10
+    env:
+      FIREBASE_ENV: staging
+      # Set this on the dedicated staging runner to a separate, non-production project ID.
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_STAGING_PROJECT_ID }}
+      G02_EVIDENCE_DIR: g02-staging-evidence
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify staging runner identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${RUNNER_NAME:-}" in
+            *staging*) ;;
+            *) echo "::error::Runner name must explicitly identify staging"; exit 1 ;;
+          esac
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          test -n "${FIREBASE_PROJECT_ID:-}"
+          test "$FIREBASE_PROJECT_ID" != "lingo-legacy-production"
+          printf 'runner_name=%s\nrunner_os=%s\nrunner_arch=%s\nfirebase_environment=staging\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+
+      - name: Install isolated Python dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv-g02-staging
+          .venv-g02-staging/bin/python -m pip install --disable-pip-version-check 'firebase-admin>=6.5,<8'
+
+      - name: Execute staging host probe and Firestore evidence write
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv-g02-staging/bin/python ops/g02/recovery_agent.py
+
+      - name: Generate SHA-256 evidence checksum
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f g02-staging-evidence/staging-host-evidence.json ]; then
+            sha256sum g02-staging-evidence/staging-host-evidence.json > g02-staging-evidence/staging-host-evidence.json.sha256
+            cat g02-staging-evidence/staging-host-evidence.json.sha256
+          else
+            echo "::error::Evidence file was not generated"
+            exit 1
+          fi
+
+      - name: Upload correlated staging evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-staging-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-staging-evidence/
+          if-no-files-found: error
+          retention-days: 7
