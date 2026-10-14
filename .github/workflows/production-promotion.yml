@@ -94,6 +94,8 @@ jobs:
         run: node scripts/verify-dynamic-runtime.mjs
       - name: Wrangler configuration validation
         run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+      - name: Validate production promotion contract
+        run: node scripts/test-production-promotion-contract.mjs
       - name: Release identity
         id: identity
         shell: bash
@@ -276,7 +278,7 @@ jobs:
           test "$PROMOTION_EVIDENCE_VERIFIED" = "true" || { echo 'Promotion evidence verification attestation missing'; exit 1; }
           test "$ROLLBACK_TARGET_VERIFIED" = "true" || { echo 'Rollback verification attestation missing'; exit 1; }
           node --input-type=module <<'NODE'
-          import { readFileSync } from 'node:fs';
+          import { readFileSync, writeFileSync } from 'node:fs';
           const root = `release/evidence/${process.env.RELEASE_ID}`;
           const manifest = JSON.parse(readFileSync(`${root}/manifest.json`, 'utf8'));
           const gates = JSON.parse(readFileSync(`${root}/gates.json`, 'utf8'));
