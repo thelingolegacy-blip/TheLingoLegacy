@@ -93,6 +93,35 @@ if (oasis) {
   if (oasisRecord?.status !== "local-prototype") errors.push("Doughboy's Oasis registry status must be local-prototype");
   if (oasisRecord?.route !== "/studio-sites/games/doughboys-oasis-vertical-slice.html") errors.push("Doughboy's Oasis registry route does not target the vertical slice");
 }
+
+// Oasis Exchange store contract: static checks only, not browser/device QA or backend certification.
+const oasisStore = read("games/doughboys-oasis-store.html");
+if (oasisStore) {
+  for (const id of ["filters", "products", "balance", "loadout", "ledger", "depositBtn", "map", "waypoint", "sort"]) {
+    if (!oasisStore.includes('id="' + id + '"')) errors.push("Oasis Exchange missing required UI element: #" + id);
+  }
+  for (const category of ["clothing", "gear", "transport", "banking", "tools"]) {
+    if (!oasisStore.includes("id:'" + category + "'")) errors.push("Oasis Exchange missing store category: " + category);
+  }
+  for (const forbidden of ["navigator.geolocation", "getCurrentPosition(", "watchPosition("]) {
+    if (oasisStore.includes(forbidden)) errors.push("Oasis Exchange must not request GPS in this prototype: " + forbidden);
+  }
+  if (!oasisStore.includes("localStorage")) errors.push("Oasis Exchange must document/use local demo persistence");
+  if (!oasisStore.includes("No real payment was made")) errors.push("Oasis Exchange must clearly disclose simulated purchases");
+  if (!oasisStore.includes("real-money wagering") || !oasisStore.includes("cash-out")) errors.push("Oasis Exchange monetization safeguards are missing");
+  const scripts = [...oasisStore.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  if (!scripts.length) errors.push("Oasis Exchange is missing its inline store script");
+  for (const [index, match] of scripts.entries()) {
+    try { new Function(match[1]); }
+    catch (e) { errors.push("Oasis Exchange inline script " + (index + 1) + " has a syntax error: " + e.message); }
+  }
+  const storeRecord = registry?.games?.find(game => game.id === "doughboys-oasis-store");
+  if (storeRecord?.status !== "local-prototype") errors.push("Oasis Exchange registry status must be local-prototype");
+  if (storeRecord?.route !== "/studio-sites/games/doughboys-oasis-store.html") errors.push("Oasis Exchange registry route is incorrect");
+  if (config?.routes?.oasisStore !== "/studio-sites/games/doughboys-oasis-store.html") errors.push("Oasis Exchange route is missing from studio config");
+}
+if (!fs.existsSync(path.join(root, "games/DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md"))) errors.push("Missing Oasis platform integration blueprint");
+
 if (errors.length) { console.error("STUDIO VALIDATION FAILED\n- " + errors.join("\n- ")); process.exit(1); }
 console.log("STUDIO VALIDATION PASS: required docs, JSON, registry, fail-closed policy, local HTML references, and baseline accessibility metadata.");
 console.log("NOTE: static validation is not browser QA, security certification, legal/IP clearance, runner evidence, or production authorization.");
