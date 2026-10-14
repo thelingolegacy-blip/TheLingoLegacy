@@ -33,6 +33,11 @@ assert.match(acceptance, /POST_DEPLOYMENT_ACCEPTANCE=PASS/);
 assert.match(acceptance, /probes\.status !== 'PASS'/);
 assert.match(acceptance, /manifest\.commitSha !== process\.env\.EXPECTED_COMMIT/);
 assert.match(acceptance, /rollback\.status !== 'PASS'/);
+assert.match(acceptance, /Pre-acceptance evidence digest mismatch/);
+assert.match(acceptance, /refreshedDigest/);
+assert.match(acceptance, /post-deployment\\/live-probes\\.json/);
+assert.match(acceptance, /acceptedNames/);
+assert.match(acceptance, /lingo-accepted-release-evidence-/);
 
 // Fail closed: deployment must depend on pre-deployment authorization, and acceptance
 // must depend on successful deployment. This test does not execute any deployment.
