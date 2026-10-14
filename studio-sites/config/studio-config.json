@@ -31,7 +31,8 @@
     "playerDashboard": "/studio-sites/dashboard/",
     "doughboysOasis": "/studio-sites/games/doughboys-oasis-vertical-slice.html",
     "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
-    "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html"
+    "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html",
+    "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html"
   },
   "services": {
     "identity": {
