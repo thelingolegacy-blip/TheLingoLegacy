@@ -35,7 +35,8 @@ assert.match(acceptance, /manifest\.commitSha !== process\.env\.EXPECTED_COMMIT/
 assert.match(acceptance, /rollback\.status !== 'PASS'/);
 assert.match(acceptance, /Pre-acceptance evidence digest mismatch/);
 assert.match(acceptance, /refreshedDigest/);
-assert.match(acceptance, /post-deployment\\/live-probes\\.json/);
+assert.match(acceptance, /post-deployment/);
+assert.match(acceptance, /live-probes\.json/);
 assert.match(acceptance, /acceptedNames/);
 assert.match(acceptance, /lingo-accepted-release-evidence-/);
 
