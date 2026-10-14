@@ -22,6 +22,13 @@ paths:
       responses:
         '200': {description: Catalog; only active public items}
         '429': {description: Rate limited}
+  /me/wallet/initialize:
+    post:
+      summary: Create a one-time virtual demo wallet for an authenticated player
+      description: Grants 120 demo DOUGH once; the balance has no cash value and cannot be withdrawn.
+      responses:
+        '200': {description: Existing or newly initialized virtual wallet}
+        '401': {description: Authentication required}
   /me/inventory:
     get:
       summary: Read authenticated player's inventory
