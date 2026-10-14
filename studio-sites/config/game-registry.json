@@ -135,6 +135,15 @@
       "storyMode": false,
       "monetization": "none; local demo only",
       "route": "/studio-sites/games/doughboys-oasis-856-region.html"
+    },
+    {
+      "id": "doughboys-oasis-mode-platform-hub",
+      "title": "DOUGHBOY'S OASIS — Mode & Platform Hub",
+      "genre": "Solo story / race mode / cross-platform controls",
+      "status": "local-prototype",
+      "storyMode": true,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html"
     }
   ],
   "rules": {
