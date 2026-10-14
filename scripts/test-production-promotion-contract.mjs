@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 const workflow = readFileSync('.github/workflows/production-promotion.yml', 'utf8');
 const job = (name) => {
-  const match = workflow.match(new RegExp('^  ' + name + ':\\n([\\s\\S]*?)(?=^  [a-zA-Z0-9_-]+:|\\Z)', 'm'));
+  const match = workflow.match(new RegExp('^  ' + name + ':\\n([\\s\\S]*?)(?=^  [a-zA-Z0-9_-]+:|(?![\\s\\S]))', 'm'));
   assert.ok(match, `job ${name} must exist`);
   return match[1];
 };
