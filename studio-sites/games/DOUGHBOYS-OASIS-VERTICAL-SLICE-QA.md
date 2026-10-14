@@ -10,8 +10,8 @@
 The standalone `doughboys-oasis-vertical-slice.html` is linked from the Studio Portal and registered in `config/game-registry.json` as `local-prototype`.
 
 Implemented in the browser prototype:
-- Top-down Amity Heights map, keyboard movement, touch movement controls, click/tap-to-move pathfinding, and basic building collision.
-- Four named NPCs with dialogue; CPU rival scout movement constrained to walkable space.
+- Top-down Amity Heights map, keyboard movement, touch movement controls, click/tap-to-move grid pathfinding, and basic building collision.
+- Four named NPCs with dialogue and daypart routines; routine movement constrained to walkable space, with the CPU-rival toggle pausing rival movement only.
 - Money Mile delivery mission with three solution paths: negotiate, route planning, and contract inspection.
 - Crew name, motto, and emblem creation.
 - Player and CPU rival influence values, territory contest outcomes, and non-exclusive territory semantics.
@@ -44,19 +44,20 @@ Run each case on the exact branch preview and record browser/version, device, da
 1. **Load:** Page renders at desktop and mobile widths without uncaught exceptions.
 2. **Keyboard movement:** WASD and arrow keys move the player; movement stops at map boundaries and building collision zones.
 3. **Touch controls:** Each directional control moves the player; releasing the pointer stops movement.
-4. **Click/tap navigation:** Selecting open ground follows a walkable route; selecting blocked space does not cause an infinite movement loop.
-5. **NPC interaction:** Move near Ms. Bell and press E / Interact. Dialogue appears and the mission changes from Not started to In progress.
-6. **Mission gating:** Mission solution buttons are disabled until the player starts the mission with Ms. Bell.
-7. **Mission outcome:** Each of negotiate, route, and audit completes once; grants its documented demo reward/item; repeated clicks cannot duplicate rewards.
-8. **Crew creation:** Generate an identity, edit fields, establish the crew, and confirm values persist after reload.
-9. **Territory contest:** Contest requires a crew; player/rival influence remains between 0 and 100; essential routes remain open.
-10. **CPU toggle:** CPU rival movement pauses when disabled and resumes when enabled.
-11. **Radio:** Switch stations, mute/unmute, adjust volume, and enable/disable synthesized cues without uncaught errors.
-12. **Save/reload:** Currency, reputation, items, mission completion, crew, influence, clock, and checkpoint persist in the same browser profile.
-13. **Legacy save migration:** A stored save without the rival-influence field receives a safe default; a saved position inside a blocked building relocates to the checkpoint.
-14. **Checkpoint:** Set a checkpoint, move away, return, and verify inventory and completed progress remain intact.
-15. **Accessibility:** Keyboard focus is visible; controls are labelled; reduced-motion preference removes transitions/animation; layout remains usable at narrow widths.
-16. **Privacy:** No geolocation permission prompt, location request, analytics beacon, or external account write occurs.
+4. **Click/tap navigation:** Selecting open ground follows a walkable route around building footprints; selecting blocked space does not cause an infinite movement loop.
+6. **NPC schedules:** Let the world clock advance across morning/day/evening segments; NPC activity labels and positions follow their scheduled routines. Turning CPU off pauses the rival without freezing the neighborhood.
+6. **NPC interaction:** Move near Ms. Bell and press E / Interact. Dialogue appears and the mission changes from Not started to In progress.
+7. **Mission gating:** Mission solution buttons are disabled until the player starts the mission with Ms. Bell.
+8. **Mission outcome:** Each of negotiate, route, and audit completes once; grants its documented demo reward/item; repeated clicks cannot duplicate rewards.
+9. **Crew creation:** Generate an identity, edit fields, establish the crew, and confirm values persist after reload.
+10. **Territory contest:** Contest requires a crew; player/rival influence remains between 0 and 100; essential routes remain open.
+11. **CPU toggle:** CPU rival movement pauses when disabled and resumes when enabled.
+12. **Radio:** Switch stations, mute/unmute, adjust volume, and enable/disable synthesized cues without uncaught errors.
+13. **Save/reload:** Currency, reputation, items, mission completion, crew, influence, clock, and checkpoint persist in the same browser profile.
+14. **Legacy save migration:** A stored save without the rival-influence field receives a safe default; a saved position inside a blocked building relocates to the checkpoint.
+15. **Checkpoint:** Set a checkpoint, move away, return, and verify inventory and completed progress remain intact.
+16. **Accessibility:** Keyboard focus is visible; controls are labelled; reduced-motion preference removes transitions/animation; layout remains usable at narrow widths.
+17. **Privacy:** No geolocation permission prompt, location request, analytics beacon, or external account write occurs.
 17. **Reset:** Confirmed local reset clears only this prototype's local save and reloads a clean initial state.
 
 ## Finalization criteria
