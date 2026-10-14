@@ -150,6 +150,38 @@ if (api && (!api.includes('/purchases:') || !api.includes('/location/unlock:')))
 if (!fs.existsSync(path.join(root, "games/oasis-platform/PLATFORM-PERMISSIONS.md"))) errors.push("Missing Flutter platform permission checklist");
 
 
+// DOUGHBOY'S OASIS next-gate source contracts: static checks only, not browser/Unity runtime QA.
+const lifeLab = read("games/doughboys-oasis-life-legacy-lab.html");
+const lingoDeckCatalog = json("games/oasis-decks/lingo-deck-catalog.v1.json");
+const mysteryManifest = json("games/oasis-mystery/doughboy-past-clue-manifest.v1.json");
+for (const p of ["games/DOUGHBOYS-OASIS-ENGINEERING-EXECUTION-PLAN-2026-10-14.md","games/DOUGHBOYS-OASIS-UNITY-VERTICAL-SLICE-BOOTSTRAP.md"]) read(p);
+if (lifeLab) {
+  for (const token of ["Legacy Campaign","Sandbox","ageMilestones.push","storageKey(s)","buildBoard","data-lingocard","data-clue","Doughboy’s child is confirmed canon","revelation gate remains locked"]) {
+    if (!lifeLab.includes(token)) errors.push("Oasis Life Lab missing next-gate contract: " + token);
+  }
+  const scripts = [...lifeLab.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  if (scripts.length !== 1) errors.push("Oasis Life Lab must contain exactly one inline script");
+  for (const [index, match] of scripts.entries()) {
+    try { new Function(match[1]); }
+    catch (e) { errors.push("Oasis Life Lab inline script " + (index + 1) + " has a syntax error: " + e.message); }
+  }
+  if ((lifeLab.match(/<\\/script>/g) || []).length !== 1) errors.push("Oasis Life Lab contains malformed trailing script markup");
+}
+if (lingoDeckCatalog) {
+  const cards = (lingoDeckCatalog.collections || []).flatMap(c => c.cards || []);
+  if (lingoDeckCatalog.system !== "Oasis Decks" || lingoDeckCatalog.collectionBrand !== "LINGO Decks") errors.push("Oasis card-system naming hierarchy is incorrect");
+  if (lingoDeckCatalog.collections?.length !== 4 || cards.length !== 16) errors.push("Oasis must define four original starter collections with 16 cards");
+  const ids = cards.map(c => c.id);
+  if (new Set(ids).size !== ids.length) errors.push("LINGO Deck catalog contains duplicate card IDs");
+  if (lingoDeckCatalog.realMoneyAdvantage !== false) errors.push("LINGO Deck catalog must prohibit real-money competitive advantage");
+  for (const card of cards) if (!card.id || !card.title || !card.effect || !card.cost || !Array.isArray(card.eligibleStages)) errors.push("LINGO Deck card missing required contract fields: " + (card.id || "(unknown)"));
+}
+if (mysteryManifest) {
+  if (mysteryManifest.revealEnabled !== false || mysteryManifest.canonSecret !== "UNASSIGNED — creator approval required") errors.push("Doughboy mystery must remain unrevealed pending creator approval");
+  if (mysteryManifest.gate?.randomExplorationCanReveal !== false || mysteryManifest.gate?.requiresCreatorApproval !== true) errors.push("Doughboy mystery reveal gate must require authored evidence and creator approval");
+  if ((mysteryManifest.clues || []).length < 3) errors.push("Doughboy mystery must include at least three linked clue/account records");
+  if (mysteryManifest.privacy?.usesMicrophone !== false || mysteryManifest.privacy?.usesScreenCapture !== false || mysteryManifest.privacy?.usesDeviceLocation !== false) errors.push("Doughboy mystery must not use covert real-world monitoring");
+}
 const catalogSeed = json("games/oasis-platform/firebase-functions/catalog-seed.json");
 const seedScript = read("games/oasis-platform/firebase-functions/scripts/seed-catalog.mjs");
 if (catalogSeed) {
