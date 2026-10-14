@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info:
+  title: DOUGHBOY'S OASIS Platform API
+  version: 1.0.0
+  description: Proposed API contract. Endpoints are not live until Firebase and Cloudflare deployment gates pass.
+servers:
+  - url: https://{host}/api/oasis/v1
+    variables:
+      host:
+        default: oasis-api.example.invalid
+security:
+  - FirebaseBearer: []
+paths:
+  /catalog:
+    get:
+      security: []
+      summary: Read public, server-controlled item catalog
+      parameters:
+        - in: query
+          name: category
+          schema: {type: string, enum: [clothing, gear, transport, banking, tools]}
+      responses:
+        '200': {description: Catalog; only active public items}
+        '429': {description: Rate limited}
+  /me/inventory:
+    get:
+      summary: Read authenticated player's inventory
+      responses:
+        '200': {description: Inventory}
+        '401': {description: Authentication required}
+  /me/ledger:
+    get:
+      summary: Read authenticated player's virtual demo ledger
+      responses:
+        '200': {description: Virtual ledger; no cash value}
+        '401': {description: Authentication required}
+  /purchases:
+    post:
+      summary: Purchase an item using earned demo DOUGH
+      description: Server resolves price and grants inventory atomically. No real-money payments.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: {type: string, minLength: 12, maxLength: 100}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [itemId]
+              properties:
+                itemId: {type: string, pattern: '^[a-z0-9-]{1,64}$'}
+      responses:
+        '200': {description: Purchase completed or idempotent replay}
+        '401': {description: Authentication required}
+        '409': {description: Insufficient balance or already owned}
+        '429': {description: Rate limited}
+        '503': {description: Backend not configured}
+  /inventory/equip:
+    post:
+      summary: Equip an owned cosmetic or utility item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [itemId, slot]
+              properties:
+                itemId: {type: string}
+                slot: {type: string, maxLength: 40}
+      responses:
+        '200': {description: Equipped}
+        '401': {description: Authentication required}
+        '403': {description: Item not owned}
+  /map/landmarks:
+    get:
+      security: []
+      summary: Read fictional/static map landmarks
+      responses:
+        '200': {description: Fictional landmark list}
+  /location/unlock:
+    post:
+      summary: Future opt-in location unlock
+      description: Disabled by default. Requires explicit consent, foreground permission, minimization and policy review.
+      responses:
+        '403': {description: Location unlock is disabled until approved}
+        '503': {description: Feature not configured}
+  /healthz:
+    get:
+      security: []
+      summary: Non-sensitive API health status
+      responses:
+        '200': {description: Health status}
+components:
+  securitySchemes:
+    FirebaseBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Firebase ID token
