@@ -65,3 +65,23 @@ Run each case on the exact branch preview and record browser/version, device, da
 This browser vertical slice can be marked **runtime-accepted** only after all manual cases pass and reproducible evidence is attached to the PR. It can be marked **CI-accepted** only after a real runner is assigned, steps execute, logs/artifacts are retrievable, and the relevant validation workflows pass.
 
 The full DOUGHBOY'S OASIS product cannot be marked **finalized/production-ready** until the production client(s), backend authority, all planned content, platform builds, asset rights, security/privacy/accessibility/performance checks, and release approvals are implemented and independently verified. Do not bypass failed gates, promote this branch to production, or describe planned platform features as shipped.
+
+
+## Oasis Exchange store and platform integration addendum — 2026-10-13
+
+### Implemented in the branch
+- Added `doughboys-oasis-store.html`, a responsive web storefront with Clothing & Style, Gear & Carry, Transport, Banking & Services, and Tools & Upgrades.
+- Added 16 fictional catalog items, category filtering, price sorting, local demo DOUGH purchases, duplicate-ownership/insufficient-balance checks, equip slots, a local transaction ledger, one-time fictional starter stipend, reset controls, and a schematic fictional map with local waypoints.
+- Linked the store from the playable vertical slice and Studio Portal; registered the route and added source-level checks.
+- Added `DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md` defining the future Flutter/Firebase/Cloudflare/API/GPS/maps and Git/GitHub/GitLab architecture.
+
+### Explicit scope boundaries
+- Store and inventory persist in this browser only and are not synced with the game save or an account. The balance check reads the game's local save but intentionally does not mutate or reconcile separate store currency.
+- The banking panel is a fictional ledger; no real bank, deposit, credit, withdrawal, or transfer exists.
+- GPS is not accessed; map landmarks are fictional and static. No map provider is configured.
+- Firebase Auth/Firestore/Cloud Functions, Cloudflare Worker routes, API endpoints, payment processor, Flutter app and GitLab mirror are specifications only—not provisioned by this change.
+- Real-money purchases, wagering, cash-out, sweepstakes and production activation remain disabled.
+
+### Acceptance status
+- Source-level HTML/inline-JavaScript and static-validator checks are required and may be checked against the current branch head.
+- Browser/device runtime, Firebase emulator/security-rule tests, API contract tests, privacy/security review, payment/legal review, qualified CI runner evidence, preview deployment and release certification remain open gates.
