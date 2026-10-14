@@ -377,3 +377,12 @@ The integration blueprint `DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md` specifies th
 An isolated source scaffold now accompanies the web store: OpenAPI contract, Cloudflare Worker with public catalog/landmark/health routes and fail-closed private routes, Firebase callable purchase transaction, Firestore rules denying client writes, catalog-only seed utility, Flutter store/map UI with user-initiated foreground GPS, platform permission checklist, and a non-deploying GitLab CI template.
 
 This advances beyond a design document but is not a production backend. The Cloudflare Worker has no production route and no backend URL configured; it must not proxy directly to a Firebase callable without a tested adapter. The Firebase catalog is not seeded in a live project, Firebase emulators/security tests have not run, Flutter dependencies/device builds have not been verified, the GitLab mirror is not configured, and the existing GitHub G02 runner and Vercel preview blockers remain. Production stays disabled.
+
+
+## 29. The 856 Region Atlas
+
+The interactive web atlas is `doughboys-oasis-856-region.html`. The launch-region districts are Gouldtown, Bridgeton, Carls Corner, Seabrook, Fairton, Shiloh, Quinton, and Salem. The planned expansion destinations are Millville, Vineland, Glassboro, Atlantic City, Wildwood, Cape May, and Rio Grande.
+
+The map is intentionally schematic, not navigational or geographically surveyed. District themes, characters, businesses, routes, and events are fictionalized. Real places are used as setting inspiration, not as assertions about actual residents or businesses. The atlas lets players inspect district roles, planned activities, story-access waves, choice consequences, and set a locally saved current destination.
+
+The regional story framework supports racing, work, commerce, campus intelligence and memory-bank challenges, maze mysteries, boardwalk games, spooky coastal exploration, and high-stakes social decisions. The background story memory is intended to record meaningful in-game choices and consequences in the player's save; it must not secretly record microphone, screen, or real-world location data. The atlas itself does not use GPS or live navigation.
