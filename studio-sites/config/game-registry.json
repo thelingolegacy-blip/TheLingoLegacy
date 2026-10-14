@@ -117,6 +117,15 @@
       "storyMode": false,
       "monetization": "not enabled",
       "route": "/studio-sites/#worlds"
+    },
+    {
+      "id": "doughboys-oasis-store",
+      "title": "Oasis Exchange Store",
+      "genre": "In-world local demo marketplace",
+      "status": "local-prototype",
+      "storyMode": false,
+      "monetization": "earned demo currency only; no real payments, wagering or cash-out",
+      "route": "/studio-sites/games/doughboys-oasis-store.html"
     }
   ],
   "rules": {
