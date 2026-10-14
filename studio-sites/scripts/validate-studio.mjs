@@ -57,6 +57,39 @@ function walk(dir) {
  }
 }
 walk(root);
+
+// Doughboy's Oasis vertical-slice contract: static checks only, not browser/device QA.
+const oasis = read("games/doughboys-oasis-vertical-slice.html");
+if (oasis) {
+  const requiredIds = [
+    "world", "interact", "missionChoices", "createCrew", "territoryBtn",
+    "cpuToggle", "radioToggle", "saveBtn", "checkpointBtn", "modal",
+    "missionState", "inventoryText", "stations"
+  ];
+  for (const id of requiredIds) {
+    if (!new RegExp('\\\\bid=["\\\\\\\\']' + id + '["\\\\\\\\']').test(oasis)) {
+      errors.push("Doughboy's Oasis vertical slice missing required UI element: #" + id);
+    }
+  }
+  for (const domain of ["MONEY", "POWER", "SEX & DESIRE", "DRUGS", "ROCK & ROLL", "INTELLIGENCE"]) {
+    if (!oasis.includes(domain)) errors.push("Doughboy's Oasis missing GREED domain: " + domain);
+  }
+  for (const solution of ['data-solution="negotiate"', 'data-solution="route"', 'data-solution="audit"']) {
+    if (!oasis.includes(solution)) errors.push("Doughboy's Oasis missing mission solution: " + solution);
+  }
+  if (!oasis.includes("localStorage")) errors.push("Doughboy's Oasis must retain local save/load support");
+  if (/navigator\\.geolocation|watchPosition|getCurrentPosition/.test(oasis)) errors.push("Doughboy's Oasis prototype must not access device location");
+  if (!oasis.includes("function canOccupy")) errors.push("Doughboy's Oasis missing walkable-space collision guard");
+  const inlineScripts = [...oasis.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  if (!inlineScripts.length) errors.push("Doughboy's Oasis is missing its inline gameplay script");
+  for (const [index, match] of inlineScripts.entries()) {
+    try { new Function(match[1]); }
+    catch (e) { errors.push("Doughboy's Oasis inline script " + (index + 1) + " has a syntax error: " + e.message); }
+  }
+  const oasisRecord = registry?.games?.find(game => game.id === "doughboys-oasis");
+  if (oasisRecord?.status !== "local-prototype") errors.push("Doughboy's Oasis registry status must be local-prototype");
+  if (oasisRecord?.route !== "/studio-sites/games/doughboys-oasis-vertical-slice.html") errors.push("Doughboy's Oasis registry route does not target the vertical slice");
+}
 if (errors.length) { console.error("STUDIO VALIDATION FAILED\n- " + errors.join("\n- ")); process.exit(1); }
 console.log("STUDIO VALIDATION PASS: required docs, JSON, registry, fail-closed policy, local HTML references, and baseline accessibility metadata.");
 console.log("NOTE: static validation is not browser QA, security certification, legal/IP clearance, runner evidence, or production authorization.");
