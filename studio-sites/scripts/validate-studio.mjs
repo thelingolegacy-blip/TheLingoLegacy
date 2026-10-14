@@ -80,6 +80,9 @@ if (oasis) {
   if (!oasis.includes("localStorage")) errors.push("Doughboy's Oasis must retain local save/load support");
   if (/navigator\.geolocation|watchPosition|getCurrentPosition/.test(oasis)) errors.push("Doughboy's Oasis prototype must not access device location");
   if (!oasis.includes("function canOccupy")) errors.push("Doughboy's Oasis missing walkable-space collision guard");
+  if (!oasis.includes("function findPath")) errors.push("Doughboy's Oasis missing click-to-move pathfinding");
+  if (!oasis.includes("function updateNpcSchedules")) errors.push("Doughboy's Oasis missing daypart NPC schedules");
+  if (!oasis.includes("state.solved||state.mission==='not-started'")) errors.push("Doughboy's Oasis mission choices must be gated until mission start");
   const inlineScripts = [...oasis.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   if (!inlineScripts.length) errors.push("Doughboy's Oasis is missing its inline gameplay script");
   for (const [index, match] of inlineScripts.entries()) {
