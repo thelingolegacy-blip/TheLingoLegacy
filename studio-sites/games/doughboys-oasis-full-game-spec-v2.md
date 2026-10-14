@@ -339,7 +339,7 @@ Use a platform adapter boundary:
 
 ## 26. Vertical-slice implementation and finalization status (2026-10-13)
 
-The first integrated browser slice now exists at `games/doughboys-oasis-vertical-slice.html` and is linked from the Studio Portal. It implements a local top-down Amity Heights neighborhood, keyboard/touch movement, click-to-move pathfinding, basic building collision, named NPC dialogue, CPU rival movement, a three-solution Money Mile mission, crew identity creation, player/rival influence, radio controls, local inventory/currency/reputation, checkpoints, local save/load, and save migration.
+The first integrated browser slice now exists at `games/doughboys-oasis-vertical-slice.html` and is linked from the Studio Portal. It implements a local top-down Amity Heights neighborhood, keyboard/touch movement, click-to-move grid pathfinding, basic building collision, named NPC dialogue and daypart routines, CPU rival movement, a gated three-solution Money Mile mission, crew identity creation, player/rival influence, radio controls, local inventory/currency/reputation, checkpoints and return-to-checkpoint recovery, local save/load, and save migration.
 
 The registry identifies this artifact as `local-prototype`. The current implementation does **not** establish a full 3D game, console build, native mobile application, VR build, online multiplayer, remote identity, authoritative shared persistence, or production release.
 
