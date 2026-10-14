@@ -28,7 +28,8 @@
     "hub": "/studio-sites/",
     "arcade": "/studio-sites/lingoarcade/",
     "slots": "/studio-sites/lingoslots/",
-    "playerDashboard": "/studio-sites/dashboard/"
+    "playerDashboard": "/studio-sites/dashboard/",
+    "doughboysOasis": "/studio-sites/games/doughboys-oasis-vertical-slice.html"
   },
   "services": {
     "identity": {
