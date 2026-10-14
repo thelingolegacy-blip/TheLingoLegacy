@@ -109,7 +109,7 @@ if (oasisStore) {
   if (!oasisStore.includes("localStorage")) errors.push("Oasis Exchange must document/use local demo persistence");
   if (!oasisStore.includes("No real payment was made")) errors.push("Oasis Exchange must clearly disclose simulated purchases");
   if (!oasisStore.includes("real-money wagering") || !oasisStore.includes("cash-out")) errors.push("Oasis Exchange monetization safeguards are missing");
-  const scripts = [...oasisStore.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  const scripts = [...oasisStore.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   if (!scripts.length) errors.push("Oasis Exchange is missing its inline store script");
   for (const [index, match] of scripts.entries()) {
     try { new Function(match[1]); }
