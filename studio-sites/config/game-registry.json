@@ -126,6 +126,15 @@
       "storyMode": false,
       "monetization": "earned demo currency only; no real payments, wagering or cash-out",
       "route": "/studio-sites/games/doughboys-oasis-store.html"
+    },
+    {
+      "id": "doughboys-oasis-856-region",
+      "title": "DOUGHBOY'S OASIS — 856 Region Atlas",
+      "genre": "Interactive world atlas / district discovery",
+      "status": "local-prototype",
+      "storyMode": false,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-856-region.html"
     }
   ],
   "rules": {
