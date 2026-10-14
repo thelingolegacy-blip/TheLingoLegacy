@@ -334,6 +334,8 @@ jobs:
             evidence: 'Pre-deployment gates, commit correlation, externally verified rollback attestation, and post-deployment live probes passed.'
           };
           writeFileSync(`${root}/certificate.json`, JSON.stringify(certificate, null, 2) + '\n');
+          manifest.status = 'ACCEPTED';
+          manifest.certificationStatus = 'ACCEPTED';
           delete manifest.evidenceDigest;
           const refreshedDigest = createHash('sha256');
           const acceptedNames = [...names, 'post-deployment/live-probes.json'].sort();
