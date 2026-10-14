@@ -359,3 +359,14 @@ The registry identifies this artifact as `local-prototype`. The current implemen
 5. Complete asset-rights, security, privacy, accessibility, performance, device/store, independent public reachability, and human release approvals.
 
 **Status vocabulary:** design-specified = documented; local-prototype = interactive browser systems demonstration; runtime-accepted = manual/runtime evidence attached; CI-accepted = qualified runner and passing workflows; production-ready = all applicable release gates independently verified and authorized. No status may be inferred from a later stage without its evidence.
+
+
+## 27. Oasis Exchange storefront and platform integration (2026-10-13)
+
+The local web storefront lives at `studio-sites/games/doughboys-oasis-store.html` and is linked from the Amity Heights vertical slice and Studio Portal. It includes five departments—clothing/style, gear/carry, transport, fictional banking/services, and tools/upgrades—with earned-demo-DOUGH purchases, local ownership/equip state, a simulated ledger, and fictional map waypoints.
+
+The store's localStorage economy is a prototype convenience, not a secure wallet. It can be edited client-side, is not authoritative, and does not synchronize with the game save or across devices. The “bank” is not a real account; there are no real deposits, credit, transfers, withdrawals or cash-out. Paid cosmetics, expansions and subscriptions are future monetization candidates only; no payment processor is connected, and real-money wagering/cash-out remain disabled.
+
+The integration blueprint `DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md` specifies the proposed Flutter package boundaries, Firebase Auth/Firestore/Cloud Functions ownership model, Cloudflare Worker API contract, map-provider adapter and privacy-preserving GPS policy, and single-authority GitHub/GitLab strategy. These are design contracts, not evidence that backend services, API routes, GPS, maps provider, Flutter clients or GitLab mirroring are deployed.
+
+**Current status:** web store = local prototype; Firebase/backend = not provisioned; Cloudflare API = design only; GPS = off; paid monetization = disabled; production = blocked pending runner, build, security, privacy, runtime QA, reachability, and explicit authorization.
