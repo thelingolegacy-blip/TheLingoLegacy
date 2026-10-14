@@ -336,8 +336,9 @@ jobs:
           writeFileSync(`${root}/certificate.json`, JSON.stringify(certificate, null, 2) + '\n');
           delete manifest.evidenceDigest;
           const refreshedDigest = createHash('sha256');
-          for (const name of names) {
-            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+          const acceptedNames = [...names, 'post-deployment/live-probes.json'].sort();
+          for (const name of acceptedNames) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(name.includes('/') ? `release/evidence/${name}` : `${root}/${name}`, 'utf8'));
             refreshedDigest.update(name + '\\n' + JSON.stringify(value) + '\\n');
           }
           manifest.evidenceDigest = refreshedDigest.digest('hex');
