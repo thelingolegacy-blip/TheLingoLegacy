@@ -336,3 +336,26 @@ Use a platform adapter boundary:
 - Shared play: server-authoritative rewards, idempotent synchronization, cross-platform fairness tests, crew permission tests, moderation/report tests, and reconnect handling.
 - Location unlocks: opt-in, coarse location, privacy review, no precise public sharing, and equivalent non-location path.
 - Release: asset/music rights, content rating, privacy/security, performance, accessibility, device QA, rollback plan, and human approval.
+
+## 26. Vertical-slice implementation and finalization status (2026-10-13)
+
+The first integrated browser slice now exists at `games/doughboys-oasis-vertical-slice.html` and is linked from the Studio Portal. It implements a local top-down Amity Heights neighborhood, keyboard/touch movement, click-to-move pathfinding, basic building collision, named NPC dialogue, CPU rival movement, a three-solution Money Mile mission, crew identity creation, player/rival influence, radio controls, local inventory/currency/reputation, checkpoints, local save/load, and save migration.
+
+The registry identifies this artifact as `local-prototype`. The current implementation does **not** establish a full 3D game, console build, native mobile application, VR build, online multiplayer, remote identity, authoritative shared persistence, or production release.
+
+### Evidence and gates
+
+- Static source checks were run against the committed prototype: required interface hooks, six GREED labels, three mission solution identifiers, local persistence, no browser geolocation API, portal/registry route, collision/pathfinding functions, and embedded JavaScript syntax all passed.
+- Static checks do not substitute for browser runtime QA. The manual acceptance matrix is maintained in `games/DOUGHBOYS-OASIS-VERTICAL-SLICE-QA.md`.
+- GitHub Actions has recently failed before job-step initialization; provider job records show `runner_id: 0`, an empty runner name, and no steps. G02 is not accepted. Do not interpret a Vercel status check as proof of runtime correctness or public reachability.
+- Production remains fail-closed and activation-disabled. The branch and PR remain isolated and unmerged.
+
+### Next required gates
+
+1. Resolve real runner dispatch and collect retrievable CI logs/artifacts.
+2. Execute and record the browser acceptance matrix, including mission idempotency, pathfinding, touch controls, save migration, checkpoint recovery, and accessibility.
+3. Fix all verified failures and repeat the same checks on the exact commit under review.
+4. Implement and test the production game client and backend authority before online crews, cross-platform sync, console, mobile-native, or VR can be called shipped.
+5. Complete asset-rights, security, privacy, accessibility, performance, device/store, independent public reachability, and human release approvals.
+
+**Status vocabulary:** design-specified = documented; local-prototype = interactive browser systems demonstration; runtime-accepted = manual/runtime evidence attached; CI-accepted = qualified runner and passing workflows; production-ready = all applicable release gates independently verified and authorized. No status may be inferred from a later stage without its evidence.
