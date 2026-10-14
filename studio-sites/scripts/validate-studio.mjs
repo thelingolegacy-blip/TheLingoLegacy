@@ -8,7 +8,7 @@ const json = p => { const raw = read(p); if (raw === null) return null; try { re
 const config = json("config/studio-config.json");
 const registry = json("config/game-registry.json");
 const manifest = json("assets/manifest.json");
-for (const p of ["index.html","lingoarcade/index.html","lingoslots/index.html","dashboard/index.html","GAME-MASTER-TREE.md","GAME-BIBLE-INDEX.md","storyboards/UNIVERSE-STORYBOARD-PACK.md","ECONOMY-AND-PROMOTIONS-SPEC.md"]) read(p);
+for (const p of ["index.html","lingoarcade/index.html","lingoslots/index.html","dashboard/index.html","GAME-MASTER-TREE.md","GAME-BIBLE-INDEX.md","storyboards/UNIVERSE-STORYBOARD-PACK.md","ECONOMY-AND-PROMOTIONS-SPEC.md","games/oasis-platform/README.md","games/oasis-platform/PLATFORM-PERMISSIONS.md","games/oasis-platform/api/openapi.yaml","games/oasis-platform/cloudflare/worker.js","games/oasis-platform/cloudflare/wrangler.toml","games/oasis-platform/firebase-functions/package.json","games/oasis-platform/firebase-functions/tsconfig.json","games/oasis-platform/firebase-functions/src/index.ts","games/oasis-platform/firebase-functions/firestore.rules","games/oasis-platform/flutter/pubspec.yaml","games/oasis-platform/flutter/lib/main.dart"]) read(p);
 if (config) {
  if (config.policy?.failClosed !== true) errors.push("Fail-closed policy must remain true");
  if (config.policy?.productionDeploy !== false) errors.push("Production deploy must remain disabled in this branch");
@@ -121,6 +121,33 @@ if (oasisStore) {
   if (config?.routes?.oasisStore !== "/studio-sites/games/doughboys-oasis-store.html") errors.push("Oasis Exchange route is missing from studio config");
 }
 if (!fs.existsSync(path.join(root, "games/DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md"))) errors.push("Missing Oasis platform integration blueprint");
+
+
+// Oasis platform scaffold checks. These verify source contracts, not deployed services.
+const edge = read("games/oasis-platform/cloudflare/worker.js");
+const fn = read("games/oasis-platform/firebase-functions/src/index.ts");
+const rules = read("games/oasis-platform/firebase-functions/firestore.rules");
+const flutter = read("games/oasis-platform/flutter/lib/main.dart");
+const wrangler = read("games/oasis-platform/cloudflare/wrangler.toml");
+const api = read("games/oasis-platform/api/openapi.yaml");
+if (edge) {
+  if (!edge.includes('BACKEND_NOT_CONFIGURED') || !edge.includes('status:503')) errors.push("Oasis edge API must fail closed when the trusted backend is not configured");
+  if (!edge.includes('/api/oasis/v1/catalog') || !edge.includes('/api/oasis/v1/healthz')) errors.push("Oasis edge API is missing catalog or health routes");
+  if (!edge.includes('FEATURE_DISABLED')) errors.push("Oasis location unlock must remain disabled until privacy approval");
+}
+if (fn) {
+  if (!fn.includes('request.auth?.uid') || !fn.includes('db.runTransaction')) errors.push("Oasis purchase function must authenticate and transact atomically");
+  if (!fn.includes('INSUFFICIENT_FUNDS') || !fn.includes('idempotencyKey')) errors.push("Oasis purchase function is missing balance or idempotency controls");
+}
+if (rules && !rules.includes('allow write: if false;')) errors.push("Oasis Firestore rules must deny client-side wallet/inventory/ledger writes");
+if (flutter) {
+  if (!flutter.includes('requestPermission()') || !flutter.includes('Enable my location')) errors.push("Flutter location must be explicit and user-initiated");
+  if (!flutter.includes('OpenStreetMap contributors')) errors.push("Flutter map must display provider attribution");
+  if (!flutter.includes('Coordinates are not persisted')) errors.push("Flutter map must disclose location data handling");
+}
+if (wrangler && /routes\s*=|route\s*=/.test(wrangler)) errors.push("Oasis Worker scaffold must not declare a production route");
+if (api && (!api.includes('/purchases:') || !api.includes('/location/unlock:'))) errors.push("Oasis OpenAPI contract is missing purchase or location routes");
+if (!fs.existsSync(path.join(root, "games/oasis-platform/PLATFORM-PERMISSIONS.md"))) errors.push("Missing Flutter platform permission checklist");
 
 if (errors.length) { console.error("STUDIO VALIDATION FAILED\n- " + errors.join("\n- ")); process.exit(1); }
 console.log("STUDIO VALIDATION PASS: required docs, JSON, registry, fail-closed policy, local HTML references, and baseline accessibility metadata.");
