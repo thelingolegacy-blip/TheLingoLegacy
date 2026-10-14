@@ -30,7 +30,7 @@ Implemented in the browser prototype:
 | Location privacy | PASS — source check | Prototype does not call browser geolocation APIs; location discovery is not implemented in this slice. |
 | Runtime gameplay QA | BLOCKED / NOT YET VERIFIED | Must open in a real browser and execute the manual test matrix below. Static parsing is not runtime proof. |
 | Automated GitHub Actions | BLOCKED | Recent jobs report `runner_id: 0`, empty `runner_name`, and `steps: []`; jobs fail before step initialization. Resolve G02 runner dispatch before treating CI as valid evidence. |
-| Preview/public reachability | NOT VERIFIED | A successful Vercel status alone does not prove that this exact HTML route is deployed and publicly reachable. Verify the preview URL after a qualified build. |
+| Preview/public reachability | BLOCKED / NOT VERIFIED | The latest Vercel status check is failing with an account/deployment-blocked status, and no deployment is listed for this feature branch. Verify the preview URL only after the account/deployment block is resolved and a qualified build succeeds. |
 | Console/PC production client | NOT IMPLEMENTED | Requires an engine decision, real-time 3D client, animation/assets, save/state integration, and platform QA. |
 | Native mobile client | NOT IMPLEMENTED | Current mobile support is responsive browser layout and touch controls only. |
 | Immersive VR client | NOT IMPLEMENTED | Requires VR-capable client, comfort options, spatial interactions, and device QA. |
