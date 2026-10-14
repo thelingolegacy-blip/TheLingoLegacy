@@ -76,3 +76,12 @@
 - Runtime acceptance: keyboard/touch, mobile responsive, screen reader, localStorage unavailable/corrupt, race conditions, actual browser console, Flutter device tests, Firebase emulator, Worker staging and API contract suite.
 - Security acceptance: authorization matrix, Firestore rules tests, token validation, abuse controls, secrets scan, privacy review, payment threat model, dependency/license review.
 - Release status remains `LOCAL_PROTOTYPE`; API/backend `NOT_PROVISIONED`; GPS `OFF`; payments `DISABLED`; production `BLOCKED`.
+
+
+## Starter source now present in this branch
+- OpenAPI contract at games/oasis-platform/api/openapi.yaml.
+- Cloudflare Worker and Wrangler config: public catalog/landmark/health routes plus fail-closed private-route proxy; no production route or backend URL is configured.
+- Firebase callable purchase transaction, deny-client-write Firestore rules, catalog seed data and ADC-based catalog seed utility. The seed utility does not create wallets or balances.
+- Flutter store/map starter with foreground GPS request only after a button tap; map remains usable without location. The map provider may observe tile requests for the visible area.
+- Platform permission checklist and root .gitlab-ci.yml for non-deploying validation on a future mirror.
+These files are source scaffolding, not deployed/verified services. The Worker must not be pointed at the Firebase callable without an adapter that verifies tokens and translates the protocol.
