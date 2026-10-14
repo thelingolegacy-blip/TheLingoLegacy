@@ -30,7 +30,8 @@
     "slots": "/studio-sites/lingoslots/",
     "playerDashboard": "/studio-sites/dashboard/",
     "doughboysOasis": "/studio-sites/games/doughboys-oasis-vertical-slice.html",
-    "oasisStore": "/studio-sites/games/doughboys-oasis-store.html"
+    "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
+    "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html"
   },
   "services": {
     "identity": {
