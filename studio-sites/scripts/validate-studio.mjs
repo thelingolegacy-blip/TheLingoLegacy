@@ -136,7 +136,7 @@ if (edge) {
   if (!edge.includes('FEATURE_DISABLED')) errors.push("Oasis location unlock must remain disabled until privacy approval");
 }
 if (fn) {
-  if (!fn.includes('request.auth?.uid') || !fn.includes('db.runTransaction')) errors.push("Oasis purchase function must authenticate and transact atomically");
+  if (!fn.includes('request.auth?.uid') || !fn.includes('db.runTransaction') || !fn.includes('initializeOasisDemoWallet')) errors.push("Oasis wallet/purchase functions must authenticate and transact atomically");
   if (!fn.includes('INSUFFICIENT_FUNDS') || !fn.includes('idempotencyKey')) errors.push("Oasis purchase function is missing balance or idempotency controls");
 }
 if (rules && !rules.includes('allow write: if false;')) errors.push("Oasis Firestore rules must deny client-side wallet/inventory/ledger writes");
