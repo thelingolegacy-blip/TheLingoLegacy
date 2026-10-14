@@ -8,6 +8,34 @@ const db = getFirestore();
 type PurchaseRequest = { itemId?: unknown; idempotencyKey?: unknown };
 type PurchaseResult = { ok: true; replayed: boolean; balance?: number; itemId: string };
 
+
+export const initializeOasisDemoWallet = onCall(async request => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "Sign in to initialize a synchronized demo wallet.");
+  const walletRef = db.doc(`players/${uid}/wallets/demo`);
+  const welcomeLedgerRef = db.doc(`players/${uid}/ledger/demo-welcome-v1`);
+  let balance = 0;
+  let initialized = false;
+
+  await db.runTransaction(async tx => {
+    const [walletSnap, welcomeSnap] = await Promise.all([tx.get(walletRef), tx.get(welcomeLedgerRef)]);
+    if (walletSnap.exists) {
+      const current = walletSnap.get("balance");
+      if (!Number.isSafeInteger(current) || current < 0) throw new HttpsError("failed-precondition", "Existing demo wallet data is invalid.");
+      balance = current;
+      return;
+    }
+    // One-time virtual starter balance; no cash value and no client-side write path.
+    balance = 120;
+    initialized = true;
+    tx.create(walletRef, { balance, currency: "DOUGH", cashValue: false, version: 1, updatedAt: FieldValue.serverTimestamp() });
+    if (!welcomeSnap.exists) {
+      tx.create(welcomeLedgerRef, { delta: 120, reasonCode: "DEMO_STARTER_GRANT", currency: "DOUGH", cashValue: false, balanceAfter: balance, createdAt: FieldValue.serverTimestamp() });
+    }
+  });
+  return { ok: true, initialized, balance, currency: "DOUGH", cashValue: false };
+});
+
 export const purchaseOasisItem = onCall<PurchaseRequest>(async (request): Promise<PurchaseResult> => {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError("unauthenticated", "Sign in to use a synchronized inventory.");
