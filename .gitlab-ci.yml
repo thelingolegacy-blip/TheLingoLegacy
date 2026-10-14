@@ -1,0 +1,21 @@
+stages:
+  - validate
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - when: never
+
+studio_static_validation:
+  stage: validate
+  image: node:20-alpine
+  variables:
+    NODE_ENV: test
+  script:
+    - node --version
+    - node studio-sites/scripts/validate-studio.mjs
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+  # Intentionally no deployment stage, production credentials or release promotion.
