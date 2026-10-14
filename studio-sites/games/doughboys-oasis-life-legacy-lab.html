@@ -67,11 +67,21 @@ const $=id=>document.getElementById(id),KEY='oasis.life-lab.v2',LEGACY_KEY='oasi
 const blank=(mode='campaign',stage='kid')=>({profileId:'oasis-'+mode+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),mode,stage,cash:120,energy:75,wellbeing:75,home:80,trust:10,day:1,skill:0,buildings:[],layout:Array(36).fill(null),rotation:0,clueLedger:[],deckPlays:[],ageMilestones:[],story:[{day:1,text:'Your Oasis story begins. Learn the basics before chasing the crown.'}],babyArc:'locked'});
 const base=blank();let s={...base};
 function storageKey(state=s){return KEY+'.'+state.mode+'.'+state.profileId}
-try{const old=JSON.parse(localStorage.getItem(LEGACY_KEY)||'null');if(old&&typeof old==='object'){s={...base,...old,mode:'campaign',profileId:old.profileId||'oasis-campaign-migrated',layout:Array.isArray(old.layout)?old.layout:Array(36).fill(null),clueLedger:old.clueLedger||[],deckPlays:old.deckPlays||[],ageMilestones:old.ageMilestones||[]};localStorage.setItem(storageKey(s),JSON.stringify(s));}}catch{}
+const ACTIVE_KEY=KEY+'.activeProfile';
+try{
+ const activeKey=localStorage.getItem(ACTIVE_KEY);let loaded=activeKey?JSON.parse(localStorage.getItem(activeKey)||'null'):null;
+ if(loaded&&typeof loaded==='object'&&loaded.profileId){s={...base,...loaded,layout:Array.isArray(loaded.layout)?loaded.layout:Array(36).fill(null),clueLedger:loaded.clueLedger||[],deckPlays:loaded.deckPlays||[],ageMilestones:loaded.ageMilestones||[]};}
+ else {
+  const campaignKeys=Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.campaign.'));
+  const savedCampaign=campaignKeys.map(k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}}).find(v=>v&&v.mode==='campaign'&&v.profileId);
+  if(savedCampaign)s={...base,...savedCampaign,layout:Array.isArray(savedCampaign.layout)?savedCampaign.layout:Array(36).fill(null)};
+  else {const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||'null');if(legacy&&typeof legacy==='object'){s={...base,...legacy,mode:'campaign',profileId:legacy.profileId||'oasis-campaign-migrated',layout:Array.isArray(legacy.layout)?legacy.layout:Array(36).fill(null),clueLedger:legacy.clueLedger||[],deckPlays:legacy.deckPlays||[],ageMilestones:legacy.ageMilestones||[]};localStorage.setItem(storageKey(s),JSON.stringify(s));}}
+ }
+}catch{}
 const lessons={kid:'Kid chapter: practice, make mistakes safely, and learn the reason behind each choice.',teen:'Teen chapter: balance school, friends, first work, boundaries, transport, and a plan.',adult:'Adult chapter: balance income, rent, bills, health, home upkeep, and care for others.'};
 const sayings=['Read the room. Work the problem.','Get in, get out, don’t take too much.','Clean up where you mess up.','Fear is not respect. Trust is built.','A plan beats a promise with no action.','Secure the basics, then build the dream.','If you don’t know, ask. If you know, show.','Move calculated. Leave people better.'];
 let sayingIndex=0;
-function save(){try{localStorage.setItem(storageKey(s),JSON.stringify(s));$('profileLabel').textContent=(s.mode==='campaign'?'Campaign':'Sandbox')+' · '+s.stage+' · '+s.profileId.slice(-5);$('campaignMode').setAttribute('aria-pressed',String(s.mode==='campaign'));$('sandboxMode').setAttribute('aria-pressed',String(s.mode==='sandbox'));$('ageUp').disabled=s.mode!=='campaign'||s.stage==='adult';}catch{}}
+function save(){try{const key=storageKey(s);localStorage.setItem(key,JSON.stringify(s));localStorage.setItem(ACTIVE_KEY,key);$('profileLabel').textContent=(s.mode==='campaign'?'Campaign':'Sandbox')+' · '+s.stage+' · '+s.profileId.slice(-5);$('campaignMode').setAttribute('aria-pressed',String(s.mode==='campaign'));$('sandboxMode').setAttribute('aria-pressed',String(s.mode==='sandbox'));$('ageUp').disabled=s.mode!=='campaign'||s.stage==='adult';}catch{}}
 function add(text){s.story.push({day:s.day,text});if(s.story.length>100)s.story=s.story.slice(-100);save();renderLog()}
 function renderLog(){$('log').innerHTML='';s.story.slice().reverse().forEach(e=>{const p=document.createElement('p');p.textContent='Day '+e.day+': '+e.text;$('log').appendChild(p)})}
 function clamp(n){return Math.max(0,Math.min(100,n))}
