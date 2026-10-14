@@ -89,7 +89,7 @@ class _OasisHomeState extends State<OasisHome> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("OASIS EXCHANGE"), subtitle: const Text('Amity Heights · Web/mobile starter')),
+    appBar: AppBar(title: const Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [Text('OASIS EXCHANGE'), Text('Amity Heights · Web/mobile starter', style: TextStyle(fontSize: 11))])),
     body: SafeArea(child: LayoutBuilder(builder: (context, box) {
       final columns = box.maxWidth >= 900 ? 3 : box.maxWidth >= 560 ? 2 : 1;
       return ListView(padding: const EdgeInsets.all(16), children: [
@@ -122,7 +122,7 @@ class _OasisHomeState extends State<OasisHome> {
         ),
         const SizedBox(height: 16),
         Text('Map & optional location', style: Theme.of(context).textTheme.titleLarge),
-        const Text('The map is usable without GPS. Only tap Enable my location if you want to center the map on your current location. Coordinates are held in memory for this session only.'),
+        const Text('The map is usable without GPS. Only tap Enable my location if you want to center the map on your current location. Coordinates stay in memory and are not sent to the game backend; the map tile provider can infer the viewed area from tile requests.'),
         const SizedBox(height: 8),
         Wrap(spacing: 8, children: [
           FilledButton.icon(onPressed: locationBusy ? null : locateMe, icon: const Icon(Icons.my_location), label: Text(locationBusy ? 'Checking…' : 'Enable my location')),
@@ -144,7 +144,7 @@ class _OasisHomeState extends State<OasisHome> {
           ],
         ))),
         const SizedBox(height: 8),
-        const Text('Map tiles require network access and provider terms/attribution. GPS is foreground-only and optional. This starter does not send or persist coordinates.'),
+        const Text('Map tiles require network access and provider terms/attribution; the map provider can infer the viewed area from tile requests. GPS is foreground-only and optional. Coordinates are not persisted or sent to the game backend.'),
       ]);
     })),
   );
