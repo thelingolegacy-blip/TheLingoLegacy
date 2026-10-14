@@ -85,3 +85,10 @@ The full DOUGHBOY'S OASIS product cannot be marked **finalized/production-ready*
 ### Acceptance status
 - Source-level HTML/inline-JavaScript and static-validator checks are required and may be checked against the current branch head.
 - Browser/device runtime, Firebase emulator/security-rule tests, API contract tests, privacy/security review, payment/legal review, qualified CI runner evidence, preview deployment and release certification remain open gates.
+
+
+### Platform source scaffold addendum
+- Added isolated OpenAPI contract, Cloudflare Worker/Wrangler config, Firebase callable purchase transaction, deny-client-write Firestore rules, catalog seed data and ADC-based catalog seed utility.
+- Added Flutter store/map starter with explicit foreground location permission action, location-denial fallback, clear-location action, OpenStreetMap attribution and disclosure that map tile requests can reveal the viewed area to the map provider.
+- Added platform permission checklist and root .gitlab-ci.yml for non-deploying validation on a future mirror.
+- No Firebase project is configured; no catalog has been seeded in a live database; no Worker/API is deployed; no Flutter platform project is generated or device-tested; GitLab mirror is not configured. Source scaffolding does not pass runtime/security/release gates by itself.
