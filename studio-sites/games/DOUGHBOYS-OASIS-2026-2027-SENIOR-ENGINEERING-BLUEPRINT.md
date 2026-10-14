@@ -131,9 +131,16 @@ Every wave needs explicit acceptance criteria and evidence; do not label planned
 - Performance targets are selected per platform before visual fidelity is locked.
 - G02, CI, security, runtime QA, privacy, asset rights, certification and human approval must pass before production promotion.
 
-## Canon decisions still needed from creator
-1. Is the newborn Doughboy's child, another character's child, or an intentionally unresolved mystery for the first chapter?
-2. Does the player select a life stage at the start, or age through Kid → Teen → Adult in one persistent save? Recommended default: a story campaign can age through stages, while a separate sandbox allows stage selection.
-3. Is the signature card feature officially named **Oasis Decks**, **LINGO Decks**, or another original title? Recommended default: Oasis Decks.
-4. What is the chosen production engine for cinematic 3D (Unity, Unreal, or another), and which first shipping target should be certified? Recommended default: one high-quality web/PC vertical slice before native expansion.
-5. Which parts of Doughboy's family and origin are immutable canon, and which should remain mysteries?
+## 2026-10-13 Creator decisions — canon locked
+1. **Newborn: Doughboy's child (A).** The child is his. The other parent's identity and family circumstances are not specified here and must not be invented without creator approval.
+2. **Life progression: both (C).** Provide a life-spanning campaign that progresses Kid → Teen → Adult in a persistent save, plus separate sandbox saves where players select a stage.
+3. **Production engine: Unity (B).** Unity is the selected target engine for the cinematic cross-platform production plan. This is a direction decision, not evidence of a configured Unity project or working build.
+4. **Card branding: both (C).** **Oasis Decks** is the game system; **LINGO Decks** is the branded collection/series identity. Keep card effects original and non-pay-to-win.
+5. **Doughboy's defining mystery: a secret from his past that could change everything (C).** Keep the underlying secret unrevealed in the public-facing design and prototype. Build clue chains, conflicting accounts, memory triggers and consequences; do not invent the final secret until the creator approves it.
+
+## Canon implementation requirements
+- The newborn family arc is confirmed as Doughboy's child; do not present the baby's parentage as undecided in player-facing text. Other parent/co-parent details remain unconfirmed.
+- Separate save profiles for the life-spanning campaign and stage-select sandbox. Shared unlocks, if any, must be explicit and testable rather than silently merged.
+- Unity is the target for the full cinematic client; keep web prototypes as testable system demonstrations and design references, not as proof of a Unity build.
+- Label the overarching card system **Oasis Decks**, and its branded card collections **LINGO Decks**.
+- The past-secret mystery should unfold through authored clues and player choices. Record clue discovery and character reactions in story memory, preserve red herrings as uncertainty, and prevent an unearned reveal from being triggered solely by random exploration.
