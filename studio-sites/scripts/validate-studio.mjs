@@ -131,7 +131,7 @@ const flutter = read("games/oasis-platform/flutter/lib/main.dart");
 const wrangler = read("games/oasis-platform/cloudflare/wrangler.toml");
 const api = read("games/oasis-platform/api/openapi.yaml");
 if (edge) {
-  if (!edge.includes('BACKEND_NOT_CONFIGURED') || !edge.includes('status:503')) errors.push("Oasis edge API must fail closed when the trusted backend is not configured");
+  if (!edge.includes('BACKEND_NOT_CONFIGURED') || !edge.includes('503,headers')) errors.push("Oasis edge API must fail closed when the trusted backend is not configured");
   if (!edge.includes('/api/oasis/v1/catalog') || !edge.includes('/api/oasis/v1/healthz')) errors.push("Oasis edge API is missing catalog or health routes");
   if (!edge.includes('FEATURE_DISABLED')) errors.push("Oasis location unlock must remain disabled until privacy approval");
 }
