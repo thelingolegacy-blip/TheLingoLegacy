@@ -32,7 +32,8 @@
     "doughboysOasis": "/studio-sites/games/doughboys-oasis-vertical-slice.html",
     "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
     "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html",
-    "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html"
+    "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html",
+    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
   },
   "services": {
     "identity": {
