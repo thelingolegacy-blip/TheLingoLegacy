@@ -92,3 +92,11 @@ The full DOUGHBOY'S OASIS product cannot be marked **finalized/production-ready*
 - Added Flutter store/map starter with explicit foreground location permission action, location-denial fallback, clear-location action, OpenStreetMap attribution and disclosure that map tile requests can reveal the viewed area to the map provider.
 - Added platform permission checklist and root .gitlab-ci.yml for non-deploying validation on a future mirror.
 - No Firebase project is configured; no catalog has been seeded in a live database; no Worker/API is deployed; no Flutter platform project is generated or device-tested; GitLab mirror is not configured. Source scaffolding does not pass runtime/security/release gates by itself.
+
+
+## 856 Region Atlas QA addendum
+- Added interactive schematic atlas `doughboys-oasis-856-region.html` with eight core districts and seven future expansion destinations.
+- Added district descriptions, themes, planned activity sets, access waves and choice-consequence summaries.
+- Added district selection, locally saved current destination, responsive layout, keyboard-operable buttons, and links from the game/store pages.
+- Atlas has no GPS, live navigation, or external map dependency. Its map is not to scale and is not geographic guidance.
+- Static source review is not browser runtime acceptance; run desktop/mobile browser QA after CI/preview is restored.
