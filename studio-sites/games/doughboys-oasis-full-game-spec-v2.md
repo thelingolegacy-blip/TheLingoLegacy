@@ -266,3 +266,73 @@ Suggested domain modules: worlds, missions, character, inventory, economy, check
 
 ## 19. Explicit status
 This is the expanded design and implementation contract. It is not proof that the game is already playable, that final logos/audio/animations exist, that payment or multiplayer services are connected, or that any release has passed certification. Implementation must proceed in a protected branch with verifiable tests and human approval before production.
+
+
+## 20. Creator clarification — the six GREED domains
+The umbrella system is **GREED**. Its six core temptations are **Money, Power, Sex, Drugs, Rock & Roll, and Intelligence**. These are thematic forces and gameplay ecosystems, not a strict acronym expansion. This six-domain definition supersedes the earlier draft that treated each letter of G.R.E.E.D. as a separate world's theme. The world map may still use a visual G.R.E.E.D. motif, but the actual systems must represent all six domains.
+
+1. **MONEY — The Come-Up:** jobs, contracts, businesses, debt, ownership, scams to investigate, investments, scarcity, family obligations, and the difference between earning, exploiting, and sharing. Player routes include worker, maker, entrepreneur, investor, community builder, and independent hustler.
+2. **POWER — The Chain of Command:** leadership, crews, influence, authority, territory, loyalty, corruption, accountability, and the cost of controlling other people. Power can be earned through service, skill, alliances, competition, or coercion; consequences differ.
+3. **SEX & DESIRE — The Attraction District:** romance, consent, intimacy, jealousy, social status, relationships, boundaries, reputation, and manipulation. Handle adult themes non-graphically and age-appropriately; consent is explicit, coercion is not rewarded, and no explicit sexual gameplay is required to complete the story.
+4. **DRUGS — The Escape Economy:** temptation, dependency, illegal markets as fictional story systems, public health, recovery, peer pressure, exploitation, and community impact. Do not provide real-world drug manufacturing or trafficking instructions. Players can investigate, avoid, support recovery, organize harm-reduction-style fictional services, or confront exploitative systems.
+5. **ROCK & ROLL — The Spotlight Circuit:** music, fame, nightlife, creativity, performance, touring, fan communities, artistic ownership, contracts, celebrity, burnout, and the pressure to trade identity for attention. Includes playable venues, radio events, rhythm challenges, original fictional performers, and licensed/owned music only.
+6. **INTELLIGENCE — The Information War:** observation, education, strategy, engineering, social intelligence, street smarts, deception, research, invention, memory, privacy, misinformation, and the ability to recognize when knowledge is being hoarded or weaponized. No single intelligence style is the universal solution.
+
+Every domain includes ordinary-life missions and high-stakes story arcs. A player can earn, lose, resist, misuse, or redirect influence in each system. The objective is not to label every desire as evil; it is to explore how obsession, exploitation, and unequal control create consequences.
+
+## 21. Crews — generated identity, territory, and organization
+Players can create a crew from a name generator or fully customize it. The creation flow includes:
+- **Identity:** generated names, custom name, short tag, motto, origin story, founding date, and public/private/recruitment-open status.
+- **Visual identity:** emblem generator built from approved geometric layers (shield, circle, crown, road, flame, wave, gear, starburst, animal-inspired abstract mark), palette, trim, banner, patch, vehicle livery, HQ signage, and animated intro/outro.
+- **Name generation:** combine a theme, place-inspired fictional word, action noun, and crew suffix. Example patterns: “Copperline Syndicate,” “Night Signal Union,” “Oasis Circuit,” “Southbound Architects,” “Goldwater Collective,” and “Static Kings.” Generated names must be checked for duplicate/confusing impersonation and moderated content.
+- **Territory:** crews can establish a claim on a fictional district through activity, service, races, business contracts, exploration, or competitive objectives. Territory is a **contested influence zone**, not an exclusive lock: no crew may block essential missions, travel routes, shops, or story progression permanently.
+- **HQ and assets:** choose a headquarters type (garage, workshop, studio, storefront, community center, clubhouse, or research lab); upgrade facilities; assign role permissions; decorate; and register shared vehicles or tools.
+- **Roles:** Founder, Leader, Right Hand, Treasurer, Recruiter, Specialist, Member, Prospect, plus creator-defined roles with explicit permissions.
+- **Reputation:** separate personal, crew, business, racing, community-service, and exploration reputation. Reputation can be rebuilt by actions; no permanent moral label.
+- **Governance:** shared funds have transaction history, two-person approval for high-value spending, configurable spending caps, asset ownership records, leadership succession, dispute resolution, and recovery from compromised accounts.
+- **Events:** crew races, delivery relays, scavenger hunts, invention challenges, music battles, business competitions, territory influence events, community repair projects, and optional objective-based combat modes where the game rating permits.
+- **Safety:** report/mute/block/appeal, anti-impersonation checks, moderated names and emblems, anti-cheat, anti-harassment enforcement, privacy controls, and no unauthorized real-money trading.
+
+NPC/CPU crews can populate districts when live populations are low. They have readable goals, schedules, strengths, weaknesses, alliances, and story states; they should not cheat through impossible stats or invisible rule changes.
+
+## 22. CPU opponents and solo console play
+Single-player must feel complete even with no network connection. CPU characters can serve as:
+- Rival crews competing for influence, contracts, venues, and tournament standings.
+- Racing opponents with adjustable driving styles and difficulty.
+- Shopkeepers, employers, customers, neighbors, performers, crew recruits, mentors, and antagonists.
+- Tactical or puzzle opponents who use the same published rules as the player.
+- Simulated district organizations whose visible actions respond to player choices.
+
+CPU behavior tiers: **Relaxed**, **Standard**, **Competitive**, and **Adaptive**. Adaptive AI may adjust strategy based on demonstrated player habits but must not secretly change damage, economy, or rules. Accessibility and difficulty options remain available. Offline story progress is stored locally and synchronized safely when an authenticated service is available; conflict resolution must avoid duplicating currency or rewards.
+
+## 23. Cross-platform experience: console, mobile, and immersive goggles
+The product is one connected universe with platform-specific interfaces—not a promise that one identical build runs everywhere.
+
+- **Console / PC flagship:** full-scale open-world client, controller-first navigation, high-fidelity environments, CPU traffic and crowds, full mission systems, local solo play, online sessions, crews, tournaments, and detailed character/vehicle customization.
+- **Mobile companion and mobile exploration mode:** portable character, map, radio, crew management, inventory, messaging with safety controls, short missions, collection, asynchronous challenges, and walking/exploration activities. Players can visit approved real-world partner/event locations or use manually selected city/location packs to discover fictional items, clues, cosmetics, and lore.
+- **Immersive goggles / VR:** first-person presence in the Oasis, spatial audio, hand/controller interaction, room-scale or seated modes, crew meetups, garages, music venues, puzzle rooms, and selected story scenes. Use comfort locomotion options, teleportation, seated play, motion vignette, adjustable snap/smooth turning, captions, and safe-boundary prompts.
+- **Shared identity and progression:** account identity, eligible collectibles, crew identity, and selected quest flags can sync across platforms. Platform-specific achievements, control schemes, visual fidelity, and features may differ. Cross-play is enabled only where networking, certification, and fairness requirements are satisfied.
+- **No device assumption:** VR, GPS, camera, microphone, and motion sensors require clear permissions and graceful fallbacks. The game remains usable when these sensors are unavailable or declined.
+
+### Mobile location unlocks and real-world safety
+Location-based discovery is opt-in. Use coarse geofences or approved venue/event markers rather than storing continuous precise location. Ask permission at the moment it is needed, explain the benefit, offer a non-location alternative, and let players disable it. Never require trespassing, entering dangerous places, approaching strangers, or using a phone while driving. Do not reveal a player's live location to other players. Real-world unlocks must be achievable through an in-game alternative for players who cannot travel, lack GPS, or live outside supported areas.
+
+## 24. Platform architecture and delivery strategy
+Use a platform adapter boundary:
+- **Game client:** engine-specific world rendering, movement, animation, audio, controller input, UI, and local save.
+- **Shared game rules:** versioned data definitions for items, missions, NPC profiles, CPU behavior, crew permissions, territory scoring, radio metadata, and progression.
+- **Identity/progression service:** authenticated player profile, approved cross-platform identity mapping, idempotent quest/reward events, and privacy controls.
+- **Crew/territory service:** authoritative membership, permissions, influence scoring, asset ledger, event schedule, moderation status, and audit history.
+- **World/session service:** region-aware matchmaking, small instanced sessions, party membership, disconnect recovery, and server-authoritative competitive outcomes.
+- **Mobile location service:** consent state, coarse geofence evaluation, minimal event logs, and alternative unlocks; no continuous tracking.
+- **Media service:** original/cleared music, station metadata, voice lines, captions, animation and logo asset manifests with rights and version metadata.
+- **VR adapter:** platform capabilities, input mapping, comfort settings, safety boundary, and fallbacks.
+- **Feature flags:** CPU factions, live multiplayer, territory, mobile location, VR, radio, and purchases can be enabled independently after QA.
+
+## 25. Platform acceptance gates
+- Console/PC: controller-only full navigation; stable save/load; CPU opponents obey the same rules; suspend/resume and network loss recover safely.
+- Mobile: touch-first UI, low-bandwidth behavior, battery-aware location use, permission denial fallback, safe map use, and no mandatory walking/driving risk.
+- VR: comfort modes, seated option, stable frame pacing, boundary checks, accessible captions, and no essential mechanic that requires unsafe physical movement.
+- Shared play: server-authoritative rewards, idempotent synchronization, cross-platform fairness tests, crew permission tests, moderation/report tests, and reconnect handling.
+- Location unlocks: opt-in, coarse location, privacy review, no precise public sharing, and equivalent non-location path.
+- Release: asset/music rights, content rating, privacy/security, performance, accessibility, device QA, rollback plan, and human approval.
