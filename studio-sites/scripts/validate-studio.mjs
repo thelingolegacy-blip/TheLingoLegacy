@@ -64,7 +64,7 @@ if (oasis) {
   const requiredIds = [
     "world", "interact", "missionChoices", "createCrew", "territoryBtn",
     "cpuToggle", "radioToggle", "saveBtn", "checkpointBtn", "modal",
-    "missionState", "inventoryText", "stations"
+    "missionState", "inventoryText", "stations", "rivalInfluence", "returnCheckpoint"
   ];
   for (const id of requiredIds) {
     if (!oasis.includes('id="' + id + '"') && !oasis.includes("id='" + id + "'")) {
