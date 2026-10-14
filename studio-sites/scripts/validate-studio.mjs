@@ -159,13 +159,13 @@ if (lifeLab) {
   for (const token of ["Legacy Campaign","Sandbox","ageMilestones.push","storageKey(s)","buildBoard","data-lingocard","data-clue","Doughboy’s child is confirmed canon","revelation gate remains locked"]) {
     if (!lifeLab.includes(token)) errors.push("Oasis Life Lab missing next-gate contract: " + token);
   }
-  const scripts = [...lifeLab.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  const scripts = [...lifeLab.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   if (scripts.length !== 1) errors.push("Oasis Life Lab must contain exactly one inline script");
   for (const [index, match] of scripts.entries()) {
     try { new Function(match[1]); }
     catch (e) { errors.push("Oasis Life Lab inline script " + (index + 1) + " has a syntax error: " + e.message); }
   }
-  if ((lifeLab.match(/<\\/script>/g) || []).length !== 1) errors.push("Oasis Life Lab contains malformed trailing script markup");
+  if ((lifeLab.match(/<\/script>/g) || []).length !== 1) errors.push("Oasis Life Lab contains malformed trailing script markup");
 }
 if (lingoDeckCatalog) {
   const cards = (lingoDeckCatalog.collections || []).flatMap(c => c.cards || []);
