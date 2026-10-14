@@ -67,7 +67,7 @@ if (oasis) {
     "missionState", "inventoryText", "stations"
   ];
   for (const id of requiredIds) {
-    if (!new RegExp('\\\\bid=["\\\\\\\\']' + id + '["\\\\\\\\']').test(oasis)) {
+    if (!oasis.includes('id="' + id + '"') && !oasis.includes("id='" + id + "'")) {
       errors.push("Doughboy's Oasis vertical slice missing required UI element: #" + id);
     }
   }
@@ -78,9 +78,9 @@ if (oasis) {
     if (!oasis.includes(solution)) errors.push("Doughboy's Oasis missing mission solution: " + solution);
   }
   if (!oasis.includes("localStorage")) errors.push("Doughboy's Oasis must retain local save/load support");
-  if (/navigator\\.geolocation|watchPosition|getCurrentPosition/.test(oasis)) errors.push("Doughboy's Oasis prototype must not access device location");
+  if (/navigator\.geolocation|watchPosition|getCurrentPosition/.test(oasis)) errors.push("Doughboy's Oasis prototype must not access device location");
   if (!oasis.includes("function canOccupy")) errors.push("Doughboy's Oasis missing walkable-space collision guard");
-  const inlineScripts = [...oasis.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+  const inlineScripts = [...oasis.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   if (!inlineScripts.length) errors.push("Doughboy's Oasis is missing its inline gameplay script");
   for (const [index, match] of inlineScripts.entries()) {
     try { new Function(match[1]); }
