@@ -144,6 +144,15 @@
       "storyMode": true,
       "monetization": "none; local demo only",
       "route": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html"
+    },
+    {
+      "id": "doughboys-oasis-life-legacy-lab",
+      "title": "DOUGHBOY'S OASIS — Life, Legacy & Building Lab",
+      "genre": "Life simulation / learning / home building",
+      "status": "local-prototype",
+      "storyMode": true,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
     }
   ],
   "rules": {
