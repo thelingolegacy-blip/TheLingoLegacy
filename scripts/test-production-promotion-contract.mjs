@@ -38,6 +38,7 @@ assert.match(acceptance, /refreshedDigest/);
 assert.match(acceptance, /post-deployment/);
 assert.match(acceptance, /live-probes\.json/);
 assert.match(acceptance, /acceptedNames/);
+assert.match(acceptance, /manifest\.certificationStatus = 'ACCEPTED'/);
 assert.match(acceptance, /lingo-accepted-release-evidence-/);
 
 // Fail closed: deployment must depend on pre-deployment authorization, and acceptance
