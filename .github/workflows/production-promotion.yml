@@ -118,6 +118,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: |
           node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
           import { readFileSync, writeFileSync } from 'node:fs';
           const root = `release/evidence/${process.env.RELEASE_ID}`;
           const gatesPath = `${root}/gates.json`;
@@ -143,6 +144,17 @@ jobs:
             rollback.verification = 'Externally attested through protected repository variables; independent proof must be retained in the evidence ledger.';
           }
           writeFileSync(rollbackPath, JSON.stringify(rollback, null, 2) + '\n');
+          const manifestPath = `${root}/manifest.json`;
+          const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          manifest.evidenceDigest = digest.digest('hex');
+          writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
           NODE
       - name: Upload pre-deployment evidence
         uses: actions/upload-artifact@v4
@@ -174,9 +186,20 @@ jobs:
           test "$PROMOTION_EVIDENCE_VERIFIED" = "true" || { echo 'Promotion evidence has not been independently verified'; exit 1; }
           test "$ROLLBACK_TARGET_VERIFIED" = "true" || { echo 'Rollback target has not been independently verified'; exit 1; }
           node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
           import { readFileSync } from 'node:fs';
           const root = `release/evidence/${process.env.RELEASE_ID}`;
           const manifest = JSON.parse(readFileSync(`${root}/manifest.json`, 'utf8'));
+          const recordedDigest = manifest.evidenceDigest;
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          if (digest.digest('hex') !== recordedDigest) throw new Error('Pre-deployment evidence digest mismatch');
+          manifest.evidenceDigest = recordedDigest;
           const gates = JSON.parse(readFileSync(`${root}/gates.json`, 'utf8'));
           const rollback = JSON.parse(readFileSync(`${root}/rollback.json`, 'utf8'));
           if (manifest.commitSha !== process.env.EXPECTED_COMMIT) throw new Error('Evidence commit does not match dispatched commit');
@@ -278,9 +301,21 @@ jobs:
           test "$PROMOTION_EVIDENCE_VERIFIED" = "true" || { echo 'Promotion evidence verification attestation missing'; exit 1; }
           test "$ROLLBACK_TARGET_VERIFIED" = "true" || { echo 'Rollback verification attestation missing'; exit 1; }
           node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
           import { readFileSync, writeFileSync } from 'node:fs';
           const root = `release/evidence/${process.env.RELEASE_ID}`;
-          const manifest = JSON.parse(readFileSync(`${root}/manifest.json`, 'utf8'));
+          const manifestPath = `${root}/manifest.json`;
+          const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+          const recordedDigest = manifest.evidenceDigest;
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          if (digest.digest('hex') !== recordedDigest) throw new Error('Pre-acceptance evidence digest mismatch');
+          manifest.evidenceDigest = recordedDigest;
           const gates = JSON.parse(readFileSync(`${root}/gates.json`, 'utf8'));
           const rollback = JSON.parse(readFileSync(`${root}/rollback.json`, 'utf8'));
           const probes = JSON.parse(readFileSync('release/evidence/post-deployment/live-probes.json', 'utf8'));
@@ -299,6 +334,14 @@ jobs:
             evidence: 'Pre-deployment gates, commit correlation, externally verified rollback attestation, and post-deployment live probes passed.'
           };
           writeFileSync(`${root}/certificate.json`, JSON.stringify(certificate, null, 2) + '\n');
+          delete manifest.evidenceDigest;
+          const refreshedDigest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            refreshedDigest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          manifest.evidenceDigest = refreshedDigest.digest('hex');
+          writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
           console.log('POST_DEPLOYMENT_ACCEPTANCE=PASS');
           console.log('CERTIFICATION=ACCEPTED');
           NODE
