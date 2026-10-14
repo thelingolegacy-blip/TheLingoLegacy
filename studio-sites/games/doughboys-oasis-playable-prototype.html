@@ -48,6 +48,17 @@
 <div class="row" style="margin-top:10px"><button id="prevStation">◀ Previous</button><button id="nextStation">Next ▶</button><button id="toneBtn">Cue sound: OFF</button></div>
 <p class="small muted">Prototype audio uses short synthesized interface tones only. No commercial recordings or external audio are included.</p>
 <div class="divider"></div>
+<div class="divider"></div>
+<h3>Crews & Territories</h3>
+<p class="muted small">Create a fictional crew identity and test territory influence against CPU rivals.</p>
+<div class="radio-now"><strong id="crewName">No crew formed yet</strong><span id="crewMotto">Generate a crew to begin.</span><div class="row" style="margin-top:8px"><span class="pill" id="crewEmblem">◇</span><span class="pill" id="crewTerritory">Territory: unclaimed</span></div></div>
+<div class="row" style="margin-top:9px"><button id="generateCrew">Generate Crew</button><button id="claimTerritory">Establish Territory</button></div>
+<div class="row" style="margin-top:8px"><button id="cpuToggle" aria-pressed="true">CPU Rivals: ON</button><button id="mobileUnlock">Simulate Location Discovery</button></div>
+<p id="crewStatus" class="small muted" role="status">CPU crews can compete in this local demo. Territory is influence, not an exclusive lock.</p>
+<div class="divider"></div>
+<h3>Play Anywhere</h3>
+<p class="small muted">Console/PC flagship · Mobile exploration · Immersive goggles/VR</p>
+<div class="grid2"><div class="stat"><b>Console</b><span>Controller-first · CPU rivals</span></div><div class="stat"><b>Mobile</b><span>Walking discovery · location unlocks</span></div><div class="stat"><b>Goggles</b><span>Immersive first-person presence</span></div><div class="stat"><b>Live Mode</b><span>Crews · events · shared world</span></div></div>
 <h3>Player Lingo</h3>
 <p><strong>Read the room:</strong> assess before acting.</p>
 <p><strong>Make a lane:</strong> create a legitimate opportunity.</p>
@@ -71,27 +82,27 @@
 (function(){
 'use strict';
 const worlds=[
-{letter:'G',name:'GOLD RUSH',meaning:'Greed for Gold',skill:'Street smarts · Business',item:'Golden Ledger',checkpoint:'First Stake',title:'The First Stake',desc:'A corner store needs supplies before the afternoon rush. A contract has a hidden fee.',choices:[
+{letter:'G',name:'MONEY MILE',meaning:'GREED DOMAIN: MONEY',skill:'Street smarts · Business',item:'Golden Ledger',checkpoint:'First Stake',title:'The Come-Up',desc:'Money opens doors, but a contract hides a fee. Build your first legitimate lane without letting the deal control you.',choices:[
 ['Read the room','Ask the store owner and supplier what each side needs.','social',35,1],
 ['Study the contract','Find the fee and renegotiate the delivery terms.','book',45,1],
 ['Build a lane','Create a small delivery route using what you have.','creative',30,1]]},
-{letter:'R',name:'RESOURCE ROW',meaning:'Greed for Resources',skill:'Planning · Engineering',item:'Source Core',checkpoint:'Supply Chain',title:'Keep the Lights On',desc:'A neighborhood service hub has limited power and a delivery delay. Keep essential services running.',choices:[
+{letter:'R',name:'POWER BLOCKS',meaning:'GREED DOMAIN: POWER',skill:'Planning · Engineering',item:'Source Core',checkpoint:'Supply Chain',title:'Who Holds the Block?',desc:'A district leader controls access to a service hub. Build influence through trust, service, alliances, or competition.',choices:[
 ['Reroute supplies','Organize a fair delivery plan.','planning',40,1],
 ['Repair the node','Use the parts inventory to restore the local system.','engineering',35,1],
 ['Share the load','Coordinate shops to reduce waste and spread demand.','teamwork',30,1]]},
-{letter:'E',name:'ELITE HEIGHTS',meaning:'Greed for Exclusivity',skill:'People skills · Reputation',item:'Crown Key',checkpoint:'The Invitation',title:'The Closed Door',desc:'A resource meeting is invitation-only, but the neighborhood needs a voice at the table.',choices:[
+{letter:'E',name:'DESIRE DISTRICT',meaning:'GREED DOMAIN: SEX & DESIRE',skill:'People skills · Reputation',item:'Crown Key',checkpoint:'The Invitation',title:'Boundaries & Desire',desc:'Relationships, attraction, reputation, and consent shape this story. Respect boundaries and uncover who is manipulating the social scene.',choices:[
 ['Earn an introduction','Build trust by completing a useful community task.','social',35,1],
 ['Show your results','Present evidence that the project needs your help.','evidence',40,1],
 ['Offer a fair deal','Negotiate a seat in exchange for a concrete contribution.','negotiation',30,1]]},
-{letter:'E',name:'ECHO ARCHIVES',meaning:'Greed for Information',skill:'Book smarts · Observation',item:'Memory Cube',checkpoint:'Verified Record',title:'Two Stories, One Truth',desc:'Two records disagree. Find corroborating evidence before choosing which route to trust.',choices:[
+{letter:'E',name:'ESCAPE AVENUE',meaning:'GREED DOMAIN: DRUGS & ESCAPE',skill:'Book smarts · Observation',item:'Memory Cube',checkpoint:'Verified Record',title:'The Escape Economy',desc:'A fictional district is caught in a cycle of pressure, dependency, and exploitation. Investigate the system, support people, or build a better route out.',choices:[
 ['Compare the records','Check dates, authors, and missing details.','analysis',40,1],
 ['Interview a witness','Ask a source what they saw and what they cannot confirm.','social',30,1],
 ['Rebuild the clue','Combine fragments to reconstruct the route.','creative',35,1]]},
-{letter:'D',name:'DOMINION DISTRICT',meaning:'Greed for Dominion',skill:'Leadership · Accountability',item:'Dominion Seal',checkpoint:'Leadership Trial',title:'Who Gets to Decide?',desc:'A district system is failing. Coordinate a response without giving one person unchecked control.',choices:[
+{letter:'D',name:'ROCK & ROLL ROW',meaning:'GREED DOMAIN: ROCK & ROLL',skill:'Leadership · Accountability',item:'Dominion Seal',checkpoint:'Leadership Trial',title:'Chasing the Spotlight',desc:'A music venue offers fame, but a contract and an exhausting schedule threaten the artists’ control over their work.',choices:[
 ['Form a task group','Assign clear roles and make the plan transparent.','leadership',45,1],
 ['Audit the system','Find the failure point and publish the evidence.','analysis',40,1],
 ['Build a community fix','Create a backup plan with local partners.','engineering',35,1]]},
-{letter:'6',name:'OBSESSION MAZE',meaning:'The cost of fixation',skill:'Pattern recognition · Adaptability',item:'Obsidian Compass',checkpoint:'Pattern Gate',title:'Change the Approach',desc:'The same door keeps closing. Stop repeating the same move; inspect the pattern and try another route.',choices:[
+{letter:'6',name:'INTELLIGENCE LAB',meaning:'GREED DOMAIN: INTELLIGENCE',skill:'Pattern recognition · Adaptability',item:'Obsidian Compass',checkpoint:'Pattern Gate',title:'The Information War',desc:'A false signal is spreading through the district. Use research, observation, engineering, or social intelligence to verify the truth.',choices:[
 ['Observe the cycle','Track the lights and wait for the safe opening.','observation',30,1],
 ['Try the side path','Search the room for an alternate route.','exploration',35,1],
 ['Use the refresher','Practice the pattern before attempting the gate again.','practice',20,1]]},
@@ -112,6 +123,10 @@ const worlds=[
 ['Build safeguards','Make the system transparent and accountable.','engineering',55,1],
 ['Create new worlds','Use the knowledge to explore and build new possibilities.','creative',50,1]]}
 ];
+const crewNames=['Copperline Syndicate','Night Signal Union','Oasis Circuit','Southbound Architects','Goldwater Collective','Static Kings','Velvet Thunder Crew','Lazarus Roadkeepers','Bricklight Society','Jersey Phantom League','The Sixth Signal','Iron Orchid Collective'];
+const crewMottos=['Hold the chain.','Earn the lane.','Build what lasts.','Loyalty with accountability.','Make noise. Leave a legacy.','No shortcuts without a cost.'];
+const crewEmblems=['◈','⬡','♜','⚙','◇','✦','⌘','◉','⟁','♢'];
+const territories=['Amity Heights','Copperline Market','The Backroad Cut','Signal Park','Old Mill District','Shoreline Junction','Archive Square','The Foundry'];
 const stations=[
 ['Oasis AM — The Neighborhood Line','Local bulletins · mission clues · community voices'],
 ['Goldline 88.5 — Soul & Classics','Warm grooves · original/cleared tracks only'],
@@ -125,7 +140,7 @@ const stations=[
 ['Quiet Ride — Ambience Only','No music or DJ chatter']
 ];
 const fresh=()=>({world:0,dough:120,legacy:0,deaths:0,progress:0,checkpoint:0,radioOn:true,station:0,tone:false,highContrast:false,reducedMotion:false,unlocked:[],sandbox:false});
-let state=fresh();let audio=null;
+let state=fresh();let audio=null;let crew=null;let cpuEnabled=true;let discovered=[];
 const $=id=>document.getElementById(id);
 function save(){try{localStorage.setItem('doughboys-oasis-prototype-v2',JSON.stringify(state));$('saveState').textContent='Saved locally · demo';}catch(e){$('saveState').textContent='Session only · storage unavailable';}}
 function load(){try{const s=JSON.parse(localStorage.getItem('doughboys-oasis-prototype-v2')||'null');if(s)state={...fresh(),...s};}catch(e){}}
@@ -146,6 +161,11 @@ $('toneBtn').addEventListener('click',()=>{state.tone=!state.tone;render();if(st
 $('contrastBtn').addEventListener('click',()=>{state.highContrast=!state.highContrast;render();});
 $('motionBtn').addEventListener('click',()=>{state.reducedMotion=!state.reducedMotion;render();});
 $('clearLog').addEventListener('click',()=>{$('log').replaceChildren();log('Field notes cleared.');});
+$('generateCrew').addEventListener('click',()=>{const n=crewNames[Math.floor(Math.random()*crewNames.length)];crew={name:n,motto:crewMottos[Math.floor(Math.random()*crewMottos.length)],emblem:crewEmblems[Math.floor(Math.random()*crewEmblems.length)],territory:null,influence:0};$('crewName').textContent=crew.emblem+' '+crew.name;$('crewMotto').textContent='“'+crew.motto+'”';$('crewEmblem').textContent='Emblem '+crew.emblem;$('crewTerritory').textContent='Territory: unclaimed';$('crewStatus').textContent='Crew formed. Invite trusted members, set permissions, and build influence through missions and service.';log('Crew generated: '+crew.name+'. This identity exists only in this browser demo.');sound(620);});
+$('claimTerritory').addEventListener('click',()=>{if(!crew){$('crewStatus').textContent='Generate a crew first.';return;}const territory=territories[Math.floor(Math.random()*territories.length)];crew.territory=territory;crew.influence=Math.min(100,crew.influence+25);$('crewTerritory').textContent='Influence: '+territory+' · '+crew.influence+'%';if(cpuEnabled){const rival=crewNames.filter(n=>n!==crew.name)[Math.floor(Math.random()*(crewNames.length-1))];$('crewStatus').textContent='Territory influence contest started. CPU rival '+rival+' is competing; no essential route is locked.';log('Influence contest: '+crew.name+' vs CPU rival '+rival+' in '+territory+'.');}else{$('crewStatus').textContent='Influence established in '+territory+'. CPU rivals are disabled.';log('Your crew established influence in '+territory+'.');}sound(500);});
+$('cpuToggle').addEventListener('click',()=>{cpuEnabled=!cpuEnabled;$('cpuToggle').textContent='CPU Rivals: '+(cpuEnabled?'ON':'OFF');$('cpuToggle').setAttribute('aria-pressed',String(cpuEnabled));$('crewStatus').textContent=cpuEnabled?'CPU rivals enabled for solo play.':'CPU rivals disabled. The district remains playable.';log('CPU rivals '+(cpuEnabled?'enabled':'disabled')+'.');});
+$('mobileUnlock').addEventListener('click',()=>{const items=['Amity Heights mural clue','Copperline audio postcard','Lazarus signal fragment','Neighborhood maker badge','Archive map stamp','Jersey Static backstage pass'];const item=items[Math.floor(Math.random()*items.length)];if(!discovered.includes(item))discovered.push(item);$('crewStatus').textContent='Mobile exploration demo: discovered '+item+'. In production, real-world unlocks will be opt-in and have an in-game alternative.';log('Mobile location discovery simulated: '+item+'. No GPS was accessed.');sound(740,.18);});
+
 $('cheatBtn').addEventListener('click',()=>{$('modal').classList.add('open');$('codeInput').value='';$('codeResult').textContent='';$('codeInput').focus();});
 $('closeModal').addEventListener('click',()=>{$('modal').classList.remove('open');$('cheatBtn').focus();});
 $('submitCode').addEventListener('click',()=>{const code=$('codeInput').value.trim().toUpperCase();let msg='Unknown code. Check spelling and try again.';if(code==='OASISMODE'){state.sandbox=true;state.dough+=500;msg='Sandbox enabled. Added 500 demo Dough; no ranked score or online wallet exists.';}else if(code==='GHOSTROUTE'){msg='Sandbox hint: the current world has multiple valid solution paths. Explore and inspect the choices.';state.sandbox=true;}else if(code==='RADIOCHECK'){state.station=(state.station+1)%stations.length;msg='Radio station changed to '+stations[state.station][0]+'.';}else if(code==='FRAMEIT'){msg='Photo mode concept unlocked for this prototype. A production camera tool is not implemented.';}else if(code==='REPLAYTHAT'){msg='Replay is a design placeholder in this prototype.';}else if(code==='REFRESHME'){state.progress=0;state.deaths=0;msg='Refresher started without a death penalty.';}else if(code==='MAKERSPACE'){state.sandbox=true;msg='Private sandbox flag enabled. Production creator tools are not implemented.';}$('codeResult').textContent=msg;log('Sandbox code '+(msg.startsWith('Unknown')?'not recognized':'processed')+'. '+msg);save();render();});
