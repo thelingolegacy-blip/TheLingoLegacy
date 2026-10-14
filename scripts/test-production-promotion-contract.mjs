@@ -22,6 +22,7 @@ assert.match(authorization, /needs: gates/);
 assert.match(authorization, /PROMOTION_EVIDENCE_VERIFIED/);
 assert.match(authorization, /ROLLBACK_TARGET_VERIFIED/);
 assert.match(authorization, /PRE_DEPLOYMENT_AUTHORIZATION=PASS/);
+assert.match(authorization, /Pre-deployment evidence digest mismatch/);
 assert.match(deploy, /needs: \[gates, predeployment-authorization\]/);
 assert.match(deploy, /environment: \$\{\{ inputs\.environment \}\}/);
 assert.match(deploy, /Deploy to Cloudflare/);
