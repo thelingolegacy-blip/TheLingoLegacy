@@ -370,3 +370,10 @@ The store's localStorage economy is a prototype convenience, not a secure wallet
 The integration blueprint `DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md` specifies the proposed Flutter package boundaries, Firebase Auth/Firestore/Cloud Functions ownership model, Cloudflare Worker API contract, map-provider adapter and privacy-preserving GPS policy, and single-authority GitHub/GitLab strategy. These are design contracts, not evidence that backend services, API routes, GPS, maps provider, Flutter clients or GitLab mirroring are deployed.
 
 **Current status:** web store = local prototype; Firebase/backend = not provisioned; Cloudflare API = design only; GPS = off; paid monetization = disabled; production = blocked pending runner, build, security, privacy, runtime QA, reachability, and explicit authorization.
+
+
+## 28. Platform starter implementation status
+
+An isolated source scaffold now accompanies the web store: OpenAPI contract, Cloudflare Worker with public catalog/landmark/health routes and fail-closed private routes, Firebase callable purchase transaction, Firestore rules denying client writes, catalog-only seed utility, Flutter store/map UI with user-initiated foreground GPS, platform permission checklist, and a non-deploying GitLab CI template.
+
+This advances beyond a design document but is not a production backend. The Cloudflare Worker has no production route and no backend URL configured; it must not proxy directly to a Firebase callable without a tested adapter. The Firebase catalog is not seeded in a live project, Firebase emulators/security tests have not run, Flutter dependencies/device builds have not been verified, the GitLab mirror is not configured, and the existing GitHub G02 runner and Vercel preview blockers remain. Production stays disabled.
