@@ -8,7 +8,7 @@ const json = p => { const raw = read(p); if (raw === null) return null; try { re
 const config = json("config/studio-config.json");
 const registry = json("config/game-registry.json");
 const manifest = json("assets/manifest.json");
-for (const p of ["index.html","lingoarcade/index.html","lingoslots/index.html","dashboard/index.html","GAME-MASTER-TREE.md","GAME-BIBLE-INDEX.md","storyboards/UNIVERSE-STORYBOARD-PACK.md","ECONOMY-AND-PROMOTIONS-SPEC.md","games/oasis-platform/README.md","games/oasis-platform/PLATFORM-PERMISSIONS.md","games/oasis-platform/api/openapi.yaml","games/oasis-platform/cloudflare/worker.js","games/oasis-platform/cloudflare/wrangler.toml","games/oasis-platform/firebase-functions/package.json","games/oasis-platform/firebase-functions/tsconfig.json","games/oasis-platform/firebase-functions/src/index.ts","games/oasis-platform/firebase-functions/firestore.rules","games/oasis-platform/flutter/pubspec.yaml","games/oasis-platform/flutter/lib/main.dart"]) read(p);
+for (const p of ["index.html","lingoarcade/index.html","lingoslots/index.html","dashboard/index.html","GAME-MASTER-TREE.md","GAME-BIBLE-INDEX.md","storyboards/UNIVERSE-STORYBOARD-PACK.md","ECONOMY-AND-PROMOTIONS-SPEC.md","games/oasis-platform/README.md","games/oasis-platform/PLATFORM-PERMISSIONS.md","games/oasis-platform/api/openapi.yaml","games/oasis-platform/cloudflare/worker.js","games/oasis-platform/cloudflare/wrangler.toml","games/oasis-platform/firebase-functions/package.json","games/oasis-platform/firebase-functions/tsconfig.json","games/oasis-platform/firebase-functions/catalog-seed.json","games/oasis-platform/firebase-functions/scripts/seed-catalog.mjs","games/oasis-platform/firebase-functions/src/index.ts","games/oasis-platform/firebase-functions/firestore.rules","games/oasis-platform/flutter/pubspec.yaml","games/oasis-platform/flutter/lib/main.dart"]) read(p);
 if (config) {
  if (config.policy?.failClosed !== true) errors.push("Fail-closed policy must remain true");
  if (config.policy?.productionDeploy !== false) errors.push("Production deploy must remain disabled in this branch");
@@ -148,6 +148,20 @@ if (flutter) {
 if (wrangler && /routes\s*=|route\s*=/.test(wrangler)) errors.push("Oasis Worker scaffold must not declare a production route");
 if (api && (!api.includes('/purchases:') || !api.includes('/location/unlock:'))) errors.push("Oasis OpenAPI contract is missing purchase or location routes");
 if (!fs.existsSync(path.join(root, "games/oasis-platform/PLATFORM-PERMISSIONS.md"))) errors.push("Missing Flutter platform permission checklist");
+
+
+const catalogSeed = json("games/oasis-platform/firebase-functions/catalog-seed.json");
+const seedScript = read("games/oasis-platform/firebase-functions/scripts/seed-catalog.mjs");
+if (catalogSeed) {
+  const itemIds = catalogSeed.map(item => item.id);
+  if (new Set(itemIds).size !== itemIds.length) errors.push("Oasis Firebase catalog seed contains duplicate item IDs");
+  for (const item of catalogSeed) {
+    if (!item.id || !item.name || !["clothing","gear","transport","banking","tools"].includes(item.category)) errors.push("Oasis catalog seed item has invalid identity/category: " + JSON.stringify(item));
+    if (!Number.isSafeInteger(item.price) || item.price < 0 || item.cashValue !== false || item.active !== true) errors.push("Oasis catalog seed item violates virtual-only price/availability rules: " + (item.id || "(unknown)"));
+  }
+  if (catalogSeed.length !== 16) errors.push("Oasis catalog seed must align with the 16-item web prototype catalog");
+}
+if (seedScript && (!seedScript.includes("applicationDefault()") || !seedScript.includes("oasisCatalog") || seedScript.includes("players/"))) errors.push("Oasis catalog seed utility must use ADC and must not write player balances");
 
 if (errors.length) { console.error("STUDIO VALIDATION FAILED\n- " + errors.join("\n- ")); process.exit(1); }
 console.log("STUDIO VALIDATION PASS: required docs, JSON, registry, fail-closed policy, local HTML references, and baseline accessibility metadata.");
