@@ -45,7 +45,7 @@ Run each case on the exact branch preview and record browser/version, device, da
 2. **Keyboard movement:** WASD and arrow keys move the player; movement stops at map boundaries and building collision zones.
 3. **Touch controls:** Each directional control moves the player; releasing the pointer stops movement.
 4. **Click/tap navigation:** Selecting open ground follows a walkable route around building footprints; selecting blocked space does not cause an infinite movement loop.
-6. **NPC schedules:** Let the world clock advance across morning/day/evening segments; NPC activity labels and positions follow their scheduled routines. Turning CPU off pauses the rival without freezing the neighborhood.
+5. **NPC schedules:** Let the world clock advance across morning/day/evening segments; NPC activity labels and positions follow their scheduled routines. Turning CPU off pauses the rival without freezing the neighborhood.
 6. **NPC interaction:** Move near Ms. Bell and press E / Interact. Dialogue appears and the mission changes from Not started to In progress.
 7. **Mission gating:** Mission solution buttons are disabled until the player starts the mission with Ms. Bell.
 8. **Mission outcome:** Each of negotiate, route, and audit completes once; grants its documented demo reward/item; repeated clicks cannot duplicate rewards.
@@ -54,11 +54,11 @@ Run each case on the exact branch preview and record browser/version, device, da
 11. **CPU toggle:** CPU rival movement pauses when disabled and resumes when enabled.
 12. **Radio:** Switch stations, mute/unmute, adjust volume, and enable/disable synthesized cues without uncaught errors.
 13. **Save/reload:** Currency, reputation, items, mission completion, crew, influence, clock, and checkpoint persist in the same browser profile.
-14. **Legacy save migration:** A stored save without the rival-influence field receives a safe default; a saved position inside a blocked building relocates to the checkpoint.
+14. **Legacy save migration:** A stored save without the rival-influence field receives a safe default; invalid saved position/checkpoint coordinates recover safely.
 15. **Checkpoint:** Set a checkpoint, move away, return, and verify inventory and completed progress remain intact.
 16. **Accessibility:** Keyboard focus is visible; controls are labelled; reduced-motion preference removes transitions/animation; layout remains usable at narrow widths.
 17. **Privacy:** No geolocation permission prompt, location request, analytics beacon, or external account write occurs.
-17. **Reset:** Confirmed local reset clears only this prototype's local save and reloads a clean initial state.
+18. **Reset:** Confirmed local reset clears only this prototype's local save and reloads a clean initial state.
 
 ## Finalization criteria
 
