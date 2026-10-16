@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lingo-staging
+  labels:
+    app.kubernetes.io/part-of: lingo-legacy
+    environment: isolated-staging-proposal

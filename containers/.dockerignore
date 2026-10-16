@@ -1,0 +1,4 @@
+# Build context is containers/: allowlist only required runtime inputs.
+**
+!Dockerfile
+!server.mjs
