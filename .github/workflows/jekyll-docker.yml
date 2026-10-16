@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Verify Cloudflare asset publication scope
+        run: node scripts/verify-asset-publication-scope.mjs 2>&1 | tee asset-scope.log
+
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
@@ -45,6 +48,7 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
+            asset-scope.log
             sanitize.log
             bindings.log
             validator.log
