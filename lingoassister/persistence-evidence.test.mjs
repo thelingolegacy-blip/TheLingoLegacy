@@ -125,3 +125,81 @@ test("GitHub adapter rejects non-GitHub run URLs and records failed correlation"
   assert.equal(e.freshness, "UNKNOWN");
   assert.equal(e.accepted, false);
 });
+
+
+test("evidence bundle correlates run, job, steps, and artifact metadata without accepting evidence", async () => {
+  const sha = "c".repeat(40);
+  const calls = [];
+  const adapter = createGitHubEvidenceAdapter({
+    clock: () => new Date("2026-10-16T12:00:00.000Z"),
+    fetchImpl: async (url, options) => {
+      const parsed = new URL(String(url));
+      calls.push({ path: parsed.pathname, method: options.method });
+      let body;
+      if (parsed.pathname.endsWith("/actions/runs/11")) {
+        body = {
+          id: 11, workflow_id: 5, run_number: 12, run_attempt: 1,
+          name: "Static CI", status: "completed", conclusion: "success",
+          head_sha: sha, updated_at: "2026-10-16T11:59:00.000Z",
+          html_url: "https://github.com/acme/repo/actions/runs/11",
+          repository: { full_name: "acme/repo" }
+        };
+      } else if (parsed.pathname.endsWith("/actions/runs/11/jobs")) {
+        body = { jobs: [{
+          id: 22, run_id: 11, name: "validate", status: "completed",
+          conclusion: "success", runner_id: 44, runner_name: "hosted-1",
+          steps: [{ name: "sentinel", status: "completed", conclusion: "success", number: 1 }]
+        }] };
+      } else if (parsed.pathname.endsWith("/actions/runs/11/artifacts")) {
+        body = { artifacts: [{ id: 33, name: "sentinel-proof", size_in_bytes: 128, expired: false }] };
+      } else {
+        throw new Error("Unexpected request path: " + parsed.pathname);
+      }
+      return { ok: true, status: 200, json: async () => body };
+    }
+  });
+  const bundle = await adapter.collectWorkflowEvidenceBundle({
+    repository: "acme/repo", runId: 11, expectedCommit: sha
+  });
+  assert.equal(calls.length, 3);
+  assert.ok(calls.every(call => call.method === "GET"));
+  assert.equal(bundle.correlation.verified, true);
+  assert.equal(bundle.jobs[0].jobRunMatches, true);
+  assert.equal(bundle.jobs[0].steps[0].conclusion, "success");
+  assert.equal(bundle.artifacts[0].artifactId, 33);
+  assert.equal(bundle.jobs[0].logs.outcome, "NOT_COLLECTED");
+  assert.equal(bundle.completeness.jobLogs, "NOT_COLLECTED");
+  assert.equal(bundle.independentlyVerified, false);
+  assert.equal(bundle.accepted, false);
+});
+
+test("evidence bundle fails correlation when a returned job belongs to another run", async () => {
+  const sha = "d".repeat(40);
+  const adapter = createGitHubEvidenceAdapter({
+    fetchImpl: async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith("/actions/runs/12")) return {
+        ok: true, status: 200, json: async () => ({
+          id: 12, head_sha: sha, repository: { full_name: "acme/repo" },
+          updated_at: "2026-10-16T11:59:00.000Z"
+        })
+      };
+      if (path.endsWith("/actions/runs/12/jobs")) return {
+        ok: true, status: 200, json: async () => ({
+          jobs: [{ id: 23, run_id: 99, name: "validate", steps: [] }]
+        })
+      };
+      if (path.endsWith("/actions/runs/12/artifacts")) return {
+        ok: true, status: 200, json: async () => ({ artifacts: [] })
+      };
+      throw new Error("Unexpected request path: " + path);
+    }
+  });
+  const bundle = await adapter.collectWorkflowEvidenceBundle({
+    repository: "acme/repo", runId: 12, expectedCommit: sha
+  });
+  assert.equal(bundle.jobsCorrelated, undefined);
+  assert.equal(bundle.correlation.jobsCorrelated, false);
+  assert.equal(bundle.correlation.verified, false);
+  assert.equal(bundle.accepted, false);
+});
