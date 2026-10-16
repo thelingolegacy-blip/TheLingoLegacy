@@ -18,7 +18,10 @@ export function verifyStagingTokenPolicy({ policy, policyBytes, expectedPolicySh
   if (JSON.stringify(policy.permissions) !== JSON.stringify(['Individual Workers Editor'])) {
     throw new Error('Token permissions must be exactly Individual Workers Editor');
   }
-  if (JSON.stringify(policy.resourceScope) !== JSON.stringify({ workers: ['thelingolegacy-staging'], zones: [] })) {
+  const scope = policy.resourceScope;
+  if (!scope || Object.keys(scope).sort().join(',') !== 'workers,zones' ||
+      !Array.isArray(scope.workers) || scope.workers.length !== 1 || scope.workers[0] !== 'thelingolegacy-staging' ||
+      !Array.isArray(scope.zones) || scope.zones.length !== 0) {
     throw new Error('Token resource scope must be exactly the staging Worker with no zone scope');
   }
   if (policy.productionWorkerWrite !== false || policy.customRouteWrite !== false) {
