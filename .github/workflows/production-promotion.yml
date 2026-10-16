@@ -135,8 +135,9 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf .wrangler-build
-          mkdir -p .wrangler-build/evidence-tools
+          mkdir -p .wrangler-build
           npx --yes wrangler@4 deploy --dry-run --outdir .wrangler-build --config wrangler.staging.jsonc
+          mkdir -p .wrangler-build/evidence-tools
 
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
