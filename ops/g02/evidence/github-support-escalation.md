@@ -60,3 +60,18 @@ The repository is maintaining a protected hold:
 - No production merge, deployment, DNS change, secret mutation, or activation is authorized by this report.
 
 Do not share runner registration tokens, access tokens, secret values, private host credentials, or unredacted environment dumps in the ticket. The linked run/job IDs are sufficient to begin provider-side investigation.
+
+
+## Evidence addendum — 2026-10-16
+
+The failure signature was reproduced again after additional changes on the LINGOassister persistence/evidence branch:
+
+| Run | Workflow | Job ID | Observed head | Runner ID | Runner name | Steps | Logs |
+|---|---|---:|---|---:|---|---|---|
+| [38924739252](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38924739252) | Lingo Legacy Static CI | 117053292081 | `17f8df81c7cfd1f822f453564af7684dacd0b493` | unreported in normalized job response | empty/unavailable | `null` | unavailable |
+
+The connector returned the job as completed/failure with `steps: null` and `logs_url: null`. Direct log retrieval returned HTTP 404 `BlobNotFound`, request ID `c75fc5b1-901e-00a6-2983-5d0a56000000`, at `2026-10-16T15:32:33Z`.
+
+At the time of this addendum, the latest PR #297 head is `2a53f32b48069c15cf4787494109c1f8998d509d`. The connector returned no associated PR-triggered workflow run for that head; its combined status exposed only a successful Vercel context. That Vercel result is not evidence that GitHub Actions steps executed or that tests passed.
+
+This addendum increases confidence that the CI evidence gap persists but does not establish root cause. It is ready to be included in a GitHub Support escalation; **no GitHub Support ticket has been submitted by this workflow**, and no ticket number exists here.
