@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thelingolegacy-staging",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-27",
+  "workers_dev": true,
+  "vars": {
+    "LINGO_ENVIRONMENT": "staging",
+    "CANONICAL_DOMAIN": "staging.invalid",
+    "PUBLIC_SITE_URL": "https://staging.invalid"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
