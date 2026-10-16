@@ -21,7 +21,7 @@ try {
   for (let attempt = 0; attempt < 60; attempt += 1) {
     if (child.exitCode !== null) throw new Error(`server exited early: ${stderr}`);
     try {
-      const response = await fetch(`${base}/healthz", { signal: AbortSignal.timeout(500) });
+      const response = await fetch(`${base}/healthz`, { signal: AbortSignal.timeout(500) });
       if (response.status === 200) { ready = true; break; }
     } catch {}
     await delay(100);
