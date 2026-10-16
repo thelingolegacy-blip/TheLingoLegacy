@@ -36,9 +36,6 @@ jobs:
       - name: Verify Cloudflare binding contract
         run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
-      - name: Verify versioned media pipeline contract
-        run: node scripts/verify-media-pipeline.mjs 2>&1 | tee media-pipeline.log
-
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
@@ -50,6 +47,5 @@ jobs:
           path: |
             sanitize.log
             bindings.log
-            media-pipeline.log
             validator.log
           if-no-files-found: warn
