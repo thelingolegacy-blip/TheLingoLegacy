@@ -64,16 +64,6 @@ admin-command-center/
 economy-command-center/
 launch-war-room/
 live-readiness/
-live-test-run/
-production-lock/
-post-launch-ops/
-launch-verification/
-rollback-drill/
-tester-results-log/
-launch-risk-register/
-daily-standup/
-stakeholder-update/
-known-issues/
 firebase.json
 firebase.client.json
 firebase-worker.js
