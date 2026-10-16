@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import json
 import shutil
 import subprocess
@@ -135,6 +136,23 @@ class VerifyApprovalTests(unittest.TestCase):
         finally:
             unsafe_registry.chmod(0o700)
 
+
+
+    def test_nonce_marker_is_json_newline_terminated_and_nul_delimited(self):
+        verified, reason = self._verify()
+        self.assertTrue(verified, reason)
+        markers = list(self.nonce_registry.glob("*.consumed"))
+        self.assertEqual(len(markers), 1)
+        marker_text = markers[0].read_text(encoding="utf-8")
+        self.assertTrue(marker_text.endswith("\n"))
+        marker = json.loads(marker_text)
+        self.assertEqual(marker["key_id"], self.envelope["key_id"])
+        expected_key = base64.urlsafe_b64encode(
+            hashlib.sha256(
+                (self.envelope["key_id"] + "\0" + self.envelope["nonce"]).encode("utf-8")
+            ).digest()
+        ).decode("ascii").rstrip("=")
+        self.assertEqual(markers[0].name, expected_key + ".consumed")
 
 if __name__ == "__main__":
     unittest.main()
