@@ -42,6 +42,7 @@ class VerifyApprovalTests(unittest.TestCase):
         self.temp.cleanup()
 
     def _sign(self):
+        self.envelope.pop("signature_base64", None)
         payload = json.dumps(self.envelope, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
         payload_path = self.root / "payload.json"
         signature_path = self.root / "signature.bin"
