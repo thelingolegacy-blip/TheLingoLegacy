@@ -1,14 +1,15 @@
 import { createHash } from "node:crypto";
-import { mkdir, open, readFile } from "node:fs/promises";
+import { mkdir, open, readFile, unlink } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 const hash = value => createHash("sha256").update(value).digest("hex");
 const canonical = value => JSON.stringify(value);
 const GENESIS = "0".repeat(64);
-/** Append-only hash-chained JSONL journal. Single writer per path is required. */
+/** Append-only hash-chained JSONL journal with an exclusive single-writer lock. */
 export class IncidentStore {
   constructor(path) {
     if (typeof path !== "string" || !path.trim()) throw new TypeError("path required");
     this.path = resolve(path);
+    this.lockPath = this.path + ".lock";
   }
   async readAll() {
     let text;
@@ -32,18 +33,29 @@ export class IncidentStore {
   }
   async append(payload) {
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new TypeError("payload must be an object");
-    const records = await this.readAll();
-    let previousDigest = GENESIS;
-    if (records.length) {
-      const text = await readFile(this.path, "utf8");
-      previousDigest = JSON.parse(text.trimEnd().split("\n").at(-1)).digest;
-    }
-    const base = { sequence: records.length + 1, previousDigest, payload };
-    const envelope = { ...base, digest: hash(canonical(base)) };
     await mkdir(dirname(this.path), { recursive: true });
-    const handle = await open(this.path, "a", 0o600);
-    try { await handle.writeFile(canonical(envelope) + "\n", "utf8"); await handle.sync(); }
-    finally { await handle.close(); }
-    return { sequence: envelope.sequence, digest: envelope.digest };
+    let lock;
+    try { lock = await open(this.lockPath, "wx", 0o600); }
+    catch (error) {
+      if (error.code === "EEXIST") throw new Error("Concurrent writer blocked: journal lock already exists");
+      throw error;
+    }
+    try {
+      const records = await this.readAll();
+      let previousDigest = GENESIS;
+      if (records.length) {
+        const text = await readFile(this.path, "utf8");
+        previousDigest = JSON.parse(text.trimEnd().split("\n").at(-1)).digest;
+      }
+      const base = { sequence: records.length + 1, previousDigest, payload };
+      const envelope = { ...base, digest: hash(canonical(base)) };
+      const handle = await open(this.path, "a", 0o600);
+      try { await handle.writeFile(canonical(envelope) + "\n", "utf8"); await handle.sync(); }
+      finally { await handle.close(); }
+      return { sequence: envelope.sequence, digest: envelope.digest };
+    } finally {
+      await lock.close();
+      await unlink(this.lockPath).catch(error => { if (error.code !== "ENOENT") throw error; });
+    }
   }
 }
