@@ -120,7 +120,7 @@ def verify_approval(
             return False, "trusted nonce registry directory must not be group/world writable"
         nonce_key = base64.urlsafe_b64encode(
             hashlib.sha256(
-                (trusted_key_id + "\\0" + envelope["nonce"]).encode("utf-8")
+                (trusted_key_id + "\0" + envelope["nonce"]).encode("utf-8")
             ).digest()
         ).decode("ascii").rstrip("=")
         nonce_path = nonce_registry / (nonce_key + ".consumed")
@@ -137,7 +137,7 @@ def verify_approval(
                     "approved_sha": expected_sha,
                     "approved_action": expected_action,
                     "consumed_at_utc": current.isoformat(),
-                }, sort_keys=True) + "\\n")
+                }, sort_keys=True) + "\n")
                 stream.flush()
                 os.fsync(stream.fileno())
             dir_fd = os.open(nonce_registry, os.O_RDONLY)
