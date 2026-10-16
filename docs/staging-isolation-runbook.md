@@ -8,7 +8,8 @@ This staging lane deploys the canonical Worker source to the separately named `t
 
 - Production remains defined by `wrangler.jsonc` and its canonical routes.
 - Staging is defined only by `wrangler.staging.jsonc`.
-- The staging config intentionally declares no custom routes, no D1/KV/R2/service bindings, and no integration secrets.
+- The staging config intentionally declares no custom routes, disables version preview URLs, and declares no D1/KV/R2/service bindings or integration secrets.
+- The verified account subdomain is `thelingolegacy`; the expected staging URL is `https://thelingolegacy-staging.thelingolegacy.workers.dev`.
 - The Worker uses the incoming request origin for staging canonical links and CORS, and suppresses the production `www` to apex redirect in staging.
 - The `staging.invalid` values are sentinels that prevent accidental fallback to the production hostname; staging request-origin handling takes precedence.
 - `.assetsignore` excludes repository controls, operational scripts, environment files, runtime source, and internal configuration from public asset delivery. The verifier fails closed if required exclusions are missing.
