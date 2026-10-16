@@ -117,6 +117,13 @@ jobs:
           await probe('/api/v1/platform/manifest', 200);
           await probe('/worker.js', 404);
           await probe('/docs/staging-isolation-runbook.md', 404);
+          await probe('/wrangler.staging.jsonc', 404);
+          await probe('/firebase.json', 404);
+          await probe('/.assetsignore', 404);
+          await probe('/admin-command-center/', 404);
+          await probe('/auth0-details/', 404);
+          await probe('/integration-configurations/', 404);
+          await probe('/production-lock/', 404);
           const text = JSON.stringify(record, null, 2) + '\n';
           fs.mkdirSync('g02-staging-evidence', { recursive: true });
           fs.writeFileSync('g02-staging-evidence/staging-live-evidence.json', text);
