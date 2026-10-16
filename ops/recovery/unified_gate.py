@@ -94,8 +94,12 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     ], [str(workflow.get("url") or "")])
 
     artifact_ok = isinstance(artifacts, list) and len(artifacts) > 0
+    logs_status = logs.get("retrieval_status")
+    logs_check = True if logs_status == "available" else (
+        False if logs_status in {"unavailable", "error", "not_found"} else None
+    )
     artifact_checks: list[tuple[bool | None, str]] = [
-        (logs.get("retrieval_status") == "available", "retrievable logs required"),
+        (logs_check, "retrievable logs required"),
         (artifact_ok if isinstance(artifacts, list) else None, "retrievable artifact record required")
     ]
     if artifact_ok:
@@ -103,7 +107,9 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
             correlated = (artifact.get("run_id") == run_id and artifact.get("run_attempt") == attempt
                           and artifact.get("commit_sha") == expected_sha)
             artifact_checks.extend([
-                (artifact.get("retrieval_status") == "available", f"artifact {i} must be retrievable"),
+                (True if artifact.get("retrieval_status") == "available" else (
+                    False if artifact.get("retrieval_status") in {"unavailable", "error", "not_found"} else None
+                ), f"artifact {i} must be retrievable"),
                 (correlated, f"artifact {i} run/attempt/commit correlation mismatch"),
                 (bool(artifact.get("artifact_id")) and bool(artifact.get("source_reference")), f"artifact {i} identity/source reference required"),
                 (isinstance(artifact.get("sha256"), str) and bool(HASH_RE.fullmatch(artifact.get("sha256", ""))), f"artifact {i} SHA-256 missing or invalid")
@@ -111,31 +117,50 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     add("C3_EVIDENCE_INTEGRITY", artifact_checks,
         [str(logs.get("source_reference") or "")] + [str(a.get("source_reference") or "") for a in artifacts if isinstance(a, dict)] if isinstance(artifacts, list) else [])
 
-    distinct = bool(verification.get("producer_identity")) and bool(verification.get("verifier_identity")) and verification.get("producer_identity") != verification.get("verifier_identity")
+    producer = verification.get("producer_identity")
+    verifier = verification.get("verifier_identity")
+    distinct = (None if not producer or not verifier else producer != verifier)
     checks = verification.get("checks")
-    checks_ok = isinstance(checks, list) and len(checks) > 0 and all(isinstance(c, dict) and c.get("status") == "PASS" and c.get("source_reference") for c in checks)
+    checks_ok = (
+        None if not isinstance(checks, list) or not checks else
+        False if any(isinstance(c, dict) and c.get("status") not in (None, "PASS") for c in checks) else
+        None if any(not isinstance(c, dict) or not c.get("status") or not c.get("source_reference") for c in checks) else
+        True
+    )
+    verification_status = verification.get("status")
+    digest = verification.get("evidence_digest")
+    digest_check = None if digest is None else (
+        isinstance(digest, str) and bool(HASH_RE.fullmatch(digest))
+    )
     add("C4_INDEPENDENT_VERIFICATION", [
-        (verification.get("status") == "verified", "verification status is not verified"),
+        (True if verification_status == "verified" else False if verification_status in {"failed", "rejected"} else None, "verification status is not verified"),
         (distinct, "distinct producer and verifier identities required"),
-        (bool(verification.get("verified_at_utc")), "verification timestamp missing"),
-        (isinstance(verification.get("evidence_digest"), str) and bool(HASH_RE.fullmatch(verification.get("evidence_digest", ""))), "verification digest missing or invalid"),
-        (checks_ok if isinstance(checks, list) else None, "all verification checks must pass with source references")
+        (True if verification.get("verified_at_utc") else None, "verification timestamp missing"),
+        (digest_check, "verification digest missing or invalid"),
+        (checks_ok, "all verification checks must pass with source references")
     ], [str(c.get("source_reference") or "") for c in checks if isinstance(c, dict)] if isinstance(checks, list) else [])
 
     apex = probes.get("apex_status")
     www = probes.get("www_status")
+    redirect_status = probes.get("redirect_validation")
     add("C5_PUBLIC_REACHABILITY", [
-        (apex == 200, "independent apex HTTP 200 required" if apex is not None else None),
-        (www in (200, 301, 302, 307, 308), "accepted independent www response required" if www is not None else None),
-        (probes.get("redirect_validation") == "pass", "redirect validation must pass" if probes.get("redirect_validation") != "unknown" else None),
-        (bool(probes.get("source_reference")), "public probe source reference required")
+        (True if apex == 200 else False if apex is not None else None, "independent apex HTTP 200 required"),
+        (True if www in (200, 301, 302, 307, 308) else False if www is not None else None, "accepted independent www response required"),
+        (True if redirect_status == "pass" else False if redirect_status == "fail" else None, "redirect validation must pass"),
+        (True if probes.get("source_reference") else None, "public probe source reference required")
     ], [str(probes.get("source_reference") or "")])
 
-    auth_valid = (auth.get("status") == "authorized" and bool(auth.get("approval_reference"))
-                  and auth.get("approved_sha") == expected_sha and auth.get("approved_action") == action
-                  and bool(auth.get("approver_identity")))
+    auth_fields = ("status", "approval_reference", "approved_sha", "approved_action", "approver_identity")
+    if any(not auth.get(field) for field in auth_fields):
+        auth_check = None
+    else:
+        auth_check = (
+            auth.get("status") == "authorized"
+            and auth.get("approved_sha") == expected_sha
+            and auth.get("approved_action") == action
+        )
     add("C6_AUTHORIZATION", [
-        (auth_valid, "explicit approval must cover exact SHA and requested action")
+        (auth_check, "explicit approval must cover exact SHA and requested action")
     ], [str(auth.get("approval_reference") or "")])
 
     accepted = all(g["status"] == "PASS" for g in gates)
