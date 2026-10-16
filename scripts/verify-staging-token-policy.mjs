@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const sha256Pattern = /^[a-f0-9]{64}$/;
 
@@ -33,7 +35,7 @@ export function verifyStagingTokenPolicy({ policy, policyBytes, expectedPolicySh
   return { status: 'PASS', tokenId: observedTokenId, policySha256: actualPolicySha256, workerName: policy.workerName, productionWorkerWrite: false, customRouteWrite: false };
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const policyPath = process.env.CLOUDFLARE_STAGING_TOKEN_POLICY_PATH || 'security/cloudflare-staging-token-policy.json';
   const policyBytes = readFileSync(policyPath);
   const policy = JSON.parse(policyBytes.toString('utf8'));
