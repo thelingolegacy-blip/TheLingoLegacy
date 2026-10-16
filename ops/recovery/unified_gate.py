@@ -200,6 +200,7 @@ def main() -> int:
     parser.add_argument("--trusted-approval-public-key", help="Out-of-band pinned public key PEM")
     parser.add_argument("--trusted-approver", help="Approver identity from protected allowlist")
     parser.add_argument("--trusted-key-id", help="Key ID from protected configuration")
+    parser.add_argument("--trusted-nonce-registry", help="Pre-provisioned protected durable nonce registry directory")
     args = parser.parse_args()
     try:
         evidence = json.loads(Path(args.evidence).read_text(encoding="utf-8"))
@@ -211,7 +212,7 @@ def main() -> int:
         return 2
 
     approval_args = (args.approval_envelope, args.trusted_approval_public_key,
-                     args.trusted_approver, args.trusted_key_id)
+                     args.trusted_approver, args.trusted_key_id, args.trusted_nonce_registry)
     authorization_verified: bool | None = None
     if any(approval_args):
         if not all(approval_args):
@@ -229,6 +230,7 @@ def main() -> int:
             approval, expected_sha=args.expected_sha, expected_action=args.action,
             trusted_public_key=Path(args.trusted_approval_public_key),
             trusted_approver=args.trusted_approver, trusted_key_id=args.trusted_key_id,
+            nonce_registry=Path(args.trusted_nonce_registry),
         )
         evidence["authorization"] = {
             "status": "authorized" if authorization_verified else "not_authorized",
