@@ -1,0 +1,106 @@
+name: LINGOassist Recovery Diagnostics
+
+on:
+  push:
+    branches:
+      - "infra/lingoassist-reformed-infrastructure-2026-10-16"
+    paths:
+      - "docs/infra/**"
+      - "docs/architecture/lingo-agent-ops-contract.md"
+      - "ops/recovery/**"
+      - ".github/workflows/lingoassist-recovery-diagnostics.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/infra/**"
+      - "docs/architecture/lingo-agent-ops-contract.md"
+      - "ops/recovery/**"
+      - ".github/workflows/lingoassist-recovery-diagnostics.yml"
+  workflow_dispatch:
+    inputs:
+      diagnostic_scope:
+        description: "Read-only diagnostic scope"
+        required: true
+        type: choice
+        options:
+          - static-validation
+          - evidence-schema
+          - policy-review
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingoassist-recovery-diagnostics-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  static-diagnostics:
+    name: Read-only reform and recovery validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Record source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "repository=${GITHUB_REPOSITORY}"
+          echo "ref=${GITHUB_REF}"
+          echo "sha=${GITHUB_SHA}"
+          echo "run_id=${GITHUB_RUN_ID}"
+          echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+          echo "event=${GITHUB_EVENT_NAME}"
+          echo "MUTATIONS_PERFORMED=0"
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate recovery JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          for path in (
+              Path("ops/recovery/evidence-template.json"),
+              Path("ops/recovery/quarantine-manifest.json"),
+          ):
+              data = json.loads(path.read_text(encoding="utf-8"))
+              if not isinstance(data, dict):
+                  raise SystemExit(f"BLOCKED: {path} must contain a JSON object")
+          manifest = json.loads(Path("ops/recovery/quarantine-manifest.json").read_text(encoding="utf-8"))
+          if manifest.get("mode") != "inventory_only" or manifest.get("deletion_enabled") is not False:
+              raise SystemExit("BLOCKED: quarantine manifest must remain inventory-only with deletion disabled")
+          print("RECOVERY_JSON=PASS")
+          print("QUARANTINE_DELETION=DISABLED")
+          PY
+
+      - name: Compile gate evaluators and validate shell syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile ops/recovery/checkpoint_gate.py
+          if [ -f ops/recovery/unified_gate.py ]; then python -m py_compile ops/recovery/unified_gate.py; fi
+          bash -n ops/recovery/bridge-adapter.sh
+          bash -n ops/github-runner/collect-host-telemetry.sh
+          echo "STATIC_SYNTAX=PASS"
+
+      - name: Run fail-closed unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s ops/recovery/tests -v
+
+      - name: Record non-promotion boundary
+        if: always()
+        shell: bash
+        run: |
+          echo "PRODUCTION_DEPLOYMENT=NOT_REQUESTED"
+          echo "PRODUCTION_MUTATION=FORBIDDEN"
+          echo "LKG_MUTATION=FORBIDDEN"
+          echo "G02_ACCEPTANCE=NOT_INFERRED_FROM_THIS_WORKFLOW"
+          echo "NOTE=This workflow only validates source and tests; it does not authorize or perform promotion."
