@@ -1,8 +1,10 @@
 import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "unified_gate.py"
+sys.path.insert(0, str(SCRIPT.parent))
 SPEC = importlib.util.spec_from_file_location("unified_gate", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -38,7 +40,7 @@ def valid_evidence():
 
 class UnifiedGateTests(unittest.TestCase):
     def test_complete_record_passes(self):
-        result = MODULE.evaluate(valid_evidence(), SHA)
+        result = MODULE.evaluate(valid_evidence(), SHA, authorization_verified=True)
         self.assertEqual(result["status"], "PASS")
         self.assertTrue(result["release_authorized"])
         self.assertEqual({g["status"] for g in result["gates"]}, {"PASS"})
@@ -116,10 +118,15 @@ class UnifiedGateTests(unittest.TestCase):
         result = MODULE.evaluate(e, SHA)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C6_AUTHORIZATION")["status"], "BLOCKED")
 
+    def test_self_asserted_approval_cannot_authorize_release(self):
+        result = MODULE.evaluate(valid_evidence(), SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C6_AUTHORIZATION")["status"], "BLOCKED")
+        self.assertFalse(result["release_authorized"])
+
     def test_wrong_approval_sha_blocks_release(self):
         e = valid_evidence()
         e["authorization"]["approved_sha"] = "e" * 40
-        result = MODULE.evaluate(e, SHA)
+        result = MODULE.evaluate(e, SHA, authorization_verified=True)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C6_AUTHORIZATION")["status"], "FAIL")
         self.assertFalse(result["release_authorized"])
 
@@ -130,7 +137,7 @@ class UnifiedGateTests(unittest.TestCase):
         e["job"]["runner_labels"] = ["ubuntu-latest"]
         # Even complete evidence and an explicit release approval cannot turn
         # a hosted diagnostic run into canonical self-hosted acceptance.
-        result = MODULE.evaluate(e, SHA, action="release")
+        result = MODULE.evaluate(e, SHA, action="release", authorization_verified=True)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "FAIL")
         self.assertEqual(result["status"], "BLOCKED")
         self.assertFalse(result["release_authorized"])
@@ -141,7 +148,7 @@ class UnifiedGateTests(unittest.TestCase):
         e["job"]["runner_name"] = "GitHub Actions 123"
         e["job"]["runner_labels"] = ["ubuntu-latest"]
         e["authorization"]["approved_action"] = "diagnostic-only"
-        result = MODULE.evaluate(e, SHA, action="diagnostic-only")
+        result = MODULE.evaluate(e, SHA, action="diagnostic-only", authorization_verified=True)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "PASS")
         self.assertEqual(result["status"], "PASS")
         self.assertFalse(result["release_authorized"])
