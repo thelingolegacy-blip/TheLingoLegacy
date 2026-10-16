@@ -89,10 +89,21 @@ class VerifyApprovalTests(unittest.TestCase):
         verified, _ = self._verify()
         self.assertFalse(verified)
 
-    def test_tampered_payload_signature_is_rejected(self):
-        self.envelope["approved_action"] = "diagnostic-only"
-        verified, _ = self._verify()
+    def test_tampered_signed_payload_is_rejected_by_signature(self):
+        # Keep the policy-checked SHA/action/approver/key fields unchanged so
+        # rejection must come from cryptographic signature verification.
+        self.envelope["approval_reference"] = "approval:tampered-reference"
+        verified, reason = self._verify()
         self.assertFalse(verified)
+        self.assertEqual(reason, "approval signature verification failed")
+
+    def test_tampered_signature_bytes_are_rejected(self):
+        raw = bytearray(base64.b64decode(self.envelope["signature_base64"]))
+        raw[0] ^= 0x01
+        self.envelope["signature_base64"] = base64.b64encode(raw).decode("ascii")
+        verified, reason = self._verify()
+        self.assertFalse(verified)
+        self.assertEqual(reason, "approval signature verification failed")
 
     def test_unpinned_key_id_is_rejected(self):
         verified, _ = self._verify(trusted_key_id="different-key")
