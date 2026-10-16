@@ -13,14 +13,20 @@ Define a deterministic contract for validating IR-01 through IR-06 before any re
 The manifest schema is `1.0` and must contain:
 
 - `source.repository` and the exact 40-character `source.commitSha` being evaluated;
-- a valid `generatedAt` timestamp no more than 24 hours old;
+- a strict ISO-8601 UTC `generatedAt` timestamp (`YYYY-MM-DDTHH:mm:ss[.sss]Z`) no more than 24 hours old;
 - all six required IDs: IR-01, IR-02, IR-03, IR-04, IR-05, IR-06;
 - `status: PASS` for every item;
-- a named independent reviewer and recent `reviewerAcceptance.acceptedAt` for every item;
+- reviewer-acceptance metadata and a recent strict ISO-8601 UTC `reviewerAcceptance.acceptedAt` for every item; this JSON field is descriptive metadata, not proof of reviewer identity or authorization;
 - at least one evidence artifact per item, with a relative path and SHA-256 digest;
 - evidence artifacts whose bytes match their recorded digests.
 
 Missing, malformed, stale, future-dated, mismatched-commit, non-PASS, unreviewed, missing-artifact, hash-mismatched, or unexpected audit items cause a nonzero exit. The verifier does not convert missing information into a pass.
+
+## Timestamp and reviewer trust boundaries
+
+The verifier accepts only UTC timestamps in the form `YYYY-MM-DDTHH:mm:ssZ` or `YYYY-MM-DDTHH:mm:ss.sssZ` (fractional seconds may contain one to three digits). It rejects date-only strings, locale-dependent formats, timezone offsets, invalid calendar dates, and timestamps outside the freshness/future-skew policy.
+
+A plaintext `reviewer` value in `ir-evidence.json` must never be treated as authenticated identity or approval. Reviewer authorization must be established independently at the workflow/platform layer—for example, by required GitHub Environment reviewers and protected environment rules, with the workflow verifying the environment and run context. Where OIDC is used for evidence retrieval or signing, validate issuer, audience, repository identity, workflow identity, ref/commit SHA, and other required claims; the presence of an OIDC token alone is not approval. A signed attestation may additionally bind the evidence digest and candidate commit to an authorized workflow identity. Fail closed if any required identity, approval, provenance, or digest check is absent.
 
 ## Static verifier
 
@@ -46,8 +52,8 @@ The existing `lingo-g02` runner gate remains mandatory. This contract does not r
 ## Acceptance checklist
 
 - [ ] Static tests pass on a real runner.
-- [ ] Negative cases prove missing, stale, mismatched, non-PASS, unreviewed, missing-artifact, and digest-mismatched evidence blocks.
-- [ ] Trusted evidence transport is implemented and threat-reviewed.
+- [ ] Negative cases prove missing, stale, malformed/non-UTC, impossible-calendar, future-dated, mismatched, non-PASS, unreviewed, missing-artifact, path-escape, and digest-mismatched evidence blocks.
+- [ ] Trusted evidence transport is implemented and threat-reviewed, including authenticated workflow provenance and independently enforced reviewer authorization.
 - [ ] Both deployment workflows require the verifier after G02 and before any mutation.
 - [ ] Every staging and production mutation path is included in the workflow dependency graph.
 - [ ] Environment protection and branch governance are independently verified.
