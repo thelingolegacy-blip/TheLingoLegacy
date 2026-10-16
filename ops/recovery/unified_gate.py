@@ -43,33 +43,33 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     run_id, attempt, job_id = workflow.get("run_id"), workflow.get("run_attempt"), job.get("job_id")
     add("C0_SOURCE_IDENTITY", [
         (bool(SHA_RE.fullmatch(expected_sha)), "expected SHA must be a full lowercase 40-character SHA"),
-        (sha == expected_sha, "source SHA must match expected SHA"),
-        (workflow.get("head_sha") == expected_sha, "workflow head SHA must match expected SHA"),
-        (isinstance(run_id, int) and run_id > 0, "positive workflow run ID required"),
-        (isinstance(attempt, int) and attempt > 0, "positive run attempt required"),
-        (isinstance(job_id, int) and job_id > 0, "positive job ID required"),
-        (bool(source.get("repository")) and bool(source.get("branch")), "repository and branch required")
+        (None if sha is None else sha == expected_sha, "source SHA must match expected SHA"),
+        (None if workflow.get("head_sha") is None else workflow.get("head_sha") == expected_sha, "workflow head SHA must match expected SHA"),
+        (None if run_id is None else isinstance(run_id, int) and run_id > 0, "positive workflow run ID required"),
+        (None if attempt is None else isinstance(attempt, int) and attempt > 0, "positive run attempt required"),
+        (None if job_id is None else isinstance(job_id, int) and job_id > 0, "positive job ID required"),
+        (None if not source.get("repository") or not source.get("branch") else True, "repository and branch required")
     ], [str(workflow.get("url") or "")])
 
     contract = job.get("runner_contract")
     if contract == "canonical-self-hosted":
         dispatch_checks = [
-            (isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "positive runner ID required"),
-            (job.get("runner_name") == "lingo-legacy-g02", "canonical runner name mismatch"),
-            (isinstance(job.get("runner_labels"), list) and REQUIRED_LABELS.issubset(set(job.get("runner_labels", []))), "required canonical runner labels missing"),
-            (bool(job.get("runner_group")), "runner group evidence required")
+            (None if job.get("runner_id") is None else isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "positive runner ID required"),
+            (None if not job.get("runner_name") else job.get("runner_name") == "lingo-legacy-g02", "canonical runner name mismatch"),
+            (None if job.get("runner_labels") is None else isinstance(job.get("runner_labels"), list) and REQUIRED_LABELS.issubset(set(job.get("runner_labels", []))), "required canonical runner labels missing"),
+            (None if job.get("runner_group") is None else bool(job.get("runner_group")), "runner group evidence required")
         ]
     elif contract == "hosted-diagnostic":
         dispatch_checks = [
-            (isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "hosted diagnostic requires observed runner assignment"),
-            (bool(job.get("runner_name")), "hosted runner name missing")
+            (None if job.get("runner_id") is None else isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "hosted diagnostic requires observed runner assignment"),
+            (None if not job.get("runner_name") else True, "hosted runner name missing")
         ]
     elif contract == "isolated-staging":
         labels = set(job.get("runner_labels", [])) if isinstance(job.get("runner_labels"), list) else set()
         dispatch_checks = [
-            (isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "staging runner ID missing"),
-            (bool(job.get("runner_name")) and "staging" in job.get("runner_name", "").lower(), "distinct staging runner identity required"),
-            ("lingo-legacy-g02-staging" in labels, "staging label missing")
+            (None if job.get("runner_id") is None else isinstance(job.get("runner_id"), int) and job.get("runner_id") > 0, "staging runner ID missing"),
+            (None if not job.get("runner_name") else "staging" in job.get("runner_name", "").lower(), "distinct staging runner identity required"),
+            (None if job.get("runner_labels") is None else "lingo-legacy-g02-staging" in labels, "staging label missing")
         ]
     else:
         dispatch_checks = [(None, "runner contract unknown; hosted, canonical, and staging evidence cannot be interchanged")]
@@ -86,11 +86,14 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
         isinstance(s, dict) and s.get("status") == "completed" and s.get("conclusion") == "success"
         for s in steps
     )
+    job_status = job.get("status")
+    conclusion = job.get("conclusion")
+    sentinel_exit = job.get("sentinel_exit_code")
     add("C2_EXECUTION", [
-        (job.get("status") == "completed", "job completion not established" if job.get("status") in (None, "unknown", "queued", "in_progress") else "job is not completed"),
-        (job.get("conclusion") == "success", "job conclusion is not success" if job.get("conclusion") is not None else "job conclusion unknown"),
+        (True if job_status == "completed" else None if job_status in (None, "unknown", "queued", "in_progress") else False, "job completion not established"),
+        (True if conclusion == "success" else None if conclusion is None else False, "job conclusion is not success"),
         (executed if isinstance(steps, list) else None, "at least one successful executed step required"),
-        (job.get("sentinel_exit_code") == 0, "sentinel exit code must be observed as zero")
+        (None if sentinel_exit is None else sentinel_exit == 0, "sentinel exit code must be observed as zero")
     ], [str(workflow.get("url") or "")])
 
     artifact_ok = isinstance(artifacts, list) and len(artifacts) > 0
@@ -104,15 +107,25 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     ]
     if artifact_ok:
         for i, artifact in enumerate(artifacts):
-            correlated = (artifact.get("run_id") == run_id and artifact.get("run_attempt") == attempt
-                          and artifact.get("commit_sha") == expected_sha)
+            correlation_fields = (artifact.get("run_id"), artifact.get("run_attempt"), artifact.get("commit_sha"))
+            correlated = None if any(value is None for value in correlation_fields) else (
+                artifact.get("run_id") == run_id and artifact.get("run_attempt") == attempt
+                and artifact.get("commit_sha") == expected_sha
+            )
+            artifact_id_check = None if artifact.get("artifact_id") is None else bool(artifact.get("artifact_id"))
+            source_ref_check = None if artifact.get("source_reference") is None else bool(artifact.get("source_reference"))
+            artifact_sha = artifact.get("sha256")
+            sha_check = None if artifact_sha is None else (
+                isinstance(artifact_sha, str) and bool(HASH_RE.fullmatch(artifact_sha))
+            )
             artifact_checks.extend([
                 (True if artifact.get("retrieval_status") == "available" else (
                     False if artifact.get("retrieval_status") in {"unavailable", "error", "not_found"} else None
                 ), f"artifact {i} must be retrievable"),
                 (correlated, f"artifact {i} run/attempt/commit correlation mismatch"),
-                (bool(artifact.get("artifact_id")) and bool(artifact.get("source_reference")), f"artifact {i} identity/source reference required"),
-                (isinstance(artifact.get("sha256"), str) and bool(HASH_RE.fullmatch(artifact.get("sha256", ""))), f"artifact {i} SHA-256 missing or invalid")
+                (artifact_id_check, f"artifact {i} identity required"),
+                (source_ref_check, f"artifact {i} source reference required"),
+                (sha_check, f"artifact {i} SHA-256 missing or invalid")
             ])
     add("C3_EVIDENCE_INTEGRITY", artifact_checks,
         [str(logs.get("source_reference") or "")] + [str(a.get("source_reference") or "") for a in artifacts if isinstance(a, dict)] if isinstance(artifacts, list) else [])
@@ -123,8 +136,8 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     checks = verification.get("checks")
     checks_ok = (
         None if not isinstance(checks, list) or not checks else
-        False if any(isinstance(c, dict) and c.get("status") not in (None, "PASS") for c in checks) else
-        None if any(not isinstance(c, dict) or not c.get("status") or not c.get("source_reference") for c in checks) else
+        False if any(isinstance(c, dict) and c.get("status") == "FAIL" for c in checks) else
+        None if any(not isinstance(c, dict) or c.get("status") != "PASS" or not c.get("source_reference") for c in checks) else
         True
     )
     verification_status = verification.get("status")
