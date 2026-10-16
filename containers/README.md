@@ -49,10 +49,10 @@ docker compose -f containers/compose.yaml down --remove-orphans
 ## Build the image
 
 ```sh
-docker build -f containers/Dockerfile -t lingo-legacy-container:local .
+docker build -f containers/Dockerfile -t lingo-legacy-container:local containers/
 ```
 
-The Dockerfile intentionally copies only the standalone scaffold service and not the repository, secrets, or production Worker source.
+The build context is the `containers/` directory and `containers/.dockerignore` allowlists only `Dockerfile` and `server.mjs`. This keeps the repository, secrets, and production Worker source outside the Docker build context.
 
 ## Kubernetes validation
 
