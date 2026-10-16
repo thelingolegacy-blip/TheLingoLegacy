@@ -48,3 +48,11 @@ test("secrets are rejected instead of being persisted", () => {
 test("a hypothesis cannot be marked accepted for reuse", () => {
   assert.throws(() => createLearningRecord({ ...base, classification: "causal-hypothesis", reviewStatus: "accepted" }), /only independently verified lessons/);
 });
+
+
+test("malformed persisted expiry fails closed", () => {
+  const lesson = { ...createLearningRecord(base), expiresAt: "not-a-date" };
+  const result = canReuseLesson(lesson, { contextFingerprint: base.contextFingerprint, now: "2026-10-17T00:00:00Z" });
+  assert.equal(result.reusable, false);
+  assert.ok(result.reasons.includes("invalid_expiry"));
+});
