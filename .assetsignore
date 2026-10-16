@@ -1,4 +1,7 @@
-.*/
+# Cloudflare Workers Static Assets publication allowlist exclusions.
+# Keep intended public HTML, images, styles, scripts, robots/sitemap and web manifest.
+# Never publish repository controls, runtime source, operator material, secrets, or build metadata.
+.*/ 
 .git/
 .github/
 .wrangler/
@@ -22,6 +25,7 @@ artifacts/
 logs/
 functions/
 .env*
+*.env
 .dev.vars*
 .firebaserc
 .gitignore
@@ -38,6 +42,7 @@ pnpm-lock.yaml
 yarn.lock
 bun.lockb
 firebase.json
+firebase.client.json
 firestore.rules
 storage.rules
 *.sh
@@ -61,3 +66,8 @@ storage.rules
 *.lock
 *.jsonc
 /worker.js
+/firebase-worker.js
+/gateway-router.js
+/pubspec.yaml
+/_headers
+/_redirects
