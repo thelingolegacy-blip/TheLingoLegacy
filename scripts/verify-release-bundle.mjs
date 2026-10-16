@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { lstatSync, readFileSync, readdirSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
+import { join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 
@@ -60,7 +61,7 @@ export function verifyReleaseBundle(root, expectedManifestSha256, expectedSource
   return { status: 'PASS', sourceCommit: manifest.sourceCommit, manifestSha256: digest, fileCount: actual.length, workerEntrypoint: manifest.workerEntrypoint };
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const root = process.argv[2] || '.wrangler-build';
   const result = verifyReleaseBundle(root, process.env.EXPECTED_MANIFEST_SHA256, process.env.EXPECTED_SOURCE_COMMIT);
   console.log(JSON.stringify(result));
