@@ -30,12 +30,14 @@ const SECURITY_HEADERS = {
   'strict-transport-security': 'max-age=31536000; includeSubDomains',
 };
 
-function canonicalOrigin(env) {
+function canonicalOrigin(env, request) {
+  if (String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging') return requestOrigin(request);
   const domain = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
   return `https://${domain}`;
 }
 
-function allowedOrigins(env) {
+function allowedOrigins(request, env) {
+  if (String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging') return new Set([requestOrigin(request)]);
   const domain = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
   return new Set([`https://${domain}`, `https://www.${domain}`]);
 }
@@ -43,7 +45,7 @@ function allowedOrigins(env) {
 function corsHeaders(request, env) {
   const origin = request.headers.get('Origin');
   const headers = {};
-  if (origin && allowedOrigins(env).has(origin.toLowerCase())) {
+  if (origin && allowedOrigins(request, env).has(origin.toLowerCase())) {
     headers['access-control-allow-origin'] = origin;
     headers['access-control-allow-methods'] = 'GET,POST,OPTIONS';
     headers['access-control-allow-headers'] = 'Content-Type, Authorization';
@@ -80,7 +82,7 @@ async function createCheckout(request, env) {
   if (!tier) return json({ ok: false, error: 'Unknown checkout tier.' }, 400, request, env);
   const price = env[tier.priceEnv];
   if (!price) return json({ ok: false, error: `${tier.label} is not configured for checkout yet.` }, 503, request, env);
-  const origin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
+  const origin = canonicalOrigin(env, request) || env.PUBLIC_SITE_URL || requestOrigin(request);
   const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
   const customerEmail = safeEmail(body.email);
   if (customerEmail) params.set('customer_email', customerEmail);
@@ -127,7 +129,7 @@ function runtimeManifest(request, env) {
     runtime: 'cloudflare-worker',
     version: RUNTIME_VERSION,
     hostname: url.hostname,
-    canonical_domain: String(env.CANONICAL_DOMAIN || ''),
+    canonical_domain: String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging' ? url.hostname : String(env.CANONICAL_DOMAIN || ''),
     timestamp: new Date().toISOString(),
     dynamic: true,
     api: true,
@@ -172,7 +174,7 @@ async function renderDynamicHtml(request, env, response) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
   const html = await response.text();
-  const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
+  const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging' ? new URL(request.url).hostname : String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
   const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><link rel="stylesheet" href="/assets/studio-ui-runtime.css"><script defer src="/assets/studio-ui-runtime.js"></script><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
   const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
   const headers = new Headers(response.headers);
@@ -186,7 +188,7 @@ export default {
     const url = new URL(request.url);
     try {
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
-      if (url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
+      if (String(env.LINGO_ENVIRONMENT || '').toLowerCase() !== 'staging' && url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
         const canonical = new URL(request.url);
         canonical.hostname = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
         return withSecurityHeaders(Response.redirect(canonical.toString(), 301), request, env);
@@ -196,7 +198,7 @@ export default {
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
-      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
+      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging' ? new URL(request.url).hostname : (env.CANONICAL_DOMAIN || 'thelingolegacy.com'), generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
