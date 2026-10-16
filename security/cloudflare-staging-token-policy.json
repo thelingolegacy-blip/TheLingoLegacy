@@ -5,7 +5,7 @@
   "accountId": null,
   "workerName": "thelingolegacy-staging",
   "permissions": [
-    "Workers Scripts:Edit"
+    "Individual Workers Editor"
   ],
   "resourceScope": {
     "workers": [
@@ -18,5 +18,5 @@
   "approvedBy": null,
   "approvedAt": null,
   "evidenceRef": null,
-  "note": "Template only. Deployment must fail until an authorized administrator replaces placeholders with verified policy metadata, approves the policy, and pins this file's SHA-256 in the protected staging environment."
+  "note": "Template only. Use Cloudflare Individual Workers Editor scoped to thelingolegacy-staging. Deployment must fail until an authorized administrator replaces placeholders with verified policy metadata, approves the policy, and pins this file's SHA-256 in the protected staging environment."
 }
