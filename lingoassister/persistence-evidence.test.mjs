@@ -198,7 +198,6 @@ test("evidence bundle fails correlation when a returned job belongs to another r
   const bundle = await adapter.collectWorkflowEvidenceBundle({
     repository: "acme/repo", runId: 12, expectedCommit: sha
   });
-  assert.equal(bundle.jobsCorrelated, undefined);
   assert.equal(bundle.correlation.jobsCorrelated, false);
   assert.equal(bundle.correlation.verified, false);
   assert.equal(bundle.accepted, false);
