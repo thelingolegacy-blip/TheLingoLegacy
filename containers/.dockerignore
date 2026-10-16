@@ -1,0 +1,5 @@
+**
+!containers/
+containers/.*
+!containers/Dockerfile
+!containers/server.mjs
