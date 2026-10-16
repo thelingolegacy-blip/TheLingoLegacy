@@ -94,11 +94,11 @@ jobs:
       commit: ${{ steps.identity.outputs.commit }}
       artifact: ${{ steps.build-bundle.outputs.manifest_sha256 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Sanitize retired provider surface
@@ -113,8 +113,8 @@ jobs:
         run: node scripts/verify-dynamic-runtime.mjs
       - name: Wrangler configuration validation
         run: |
-          npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
-          npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc
+          npx --yes wrangler@4.135.0 deploy --dry-run --config wrangler.jsonc
+          npx --yes wrangler@4.135.0 deploy --dry-run --config wrangler.staging.jsonc
           node -e 'const fs=require("node:fs");const c=JSON.parse(fs.readFileSync("wrangler.staging.jsonc","utf8"));if(c.name!=="thelingolegacy-staging")throw Error("unexpected staging worker name");if(c.assets?.directory!=="./staging-public")throw Error("staging assets must use the restricted staging-public directory");if((c.routes||[]).length)throw Error("staging configuration must not claim production custom routes");if(!c.workers_dev)throw Error("staging must be isolated to workers.dev");if(c.vars?.CANONICAL_DOMAIN!=="thelingolegacy-staging.thelingolegacy.workers.dev")throw Error("staging canonical domain mismatch");console.log("STAGING_CONFIG_ISOLATION=PASS")'
           test -f staging-public/index.html
           if grep -R -n --exclude-dir=.git --exclude='wrangler.staging.jsonc' '__LINGO_DEPLOYMENT_DISABLED__\|__LINGO_PREVIEW_DISABLED__' staging-public; then
@@ -136,12 +136,12 @@ jobs:
           set -euo pipefail
           rm -rf .wrangler-build
           mkdir -p .wrangler-build
-          npx --yes wrangler@4 deploy --dry-run --outdir .wrangler-build --config wrangler.staging.jsonc
+          npx --yes wrangler@4.135.0 deploy --dry-run --outdir .wrangler-build --config wrangler.staging.jsonc
           mkdir -p .wrangler-build/evidence-tools
 
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
-          import { copyFileSync, cpSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+          import { copyFileSync, cpSync, lstatSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
           import { basename, join, relative, sep } from 'node:path';
           const root = '.wrangler-build';
           const jsFiles = readdirSync(root, { withFileTypes: true })
@@ -149,7 +149,8 @@ jobs:
             .map((e) => join(root, e.name)).sort();
           if (jsFiles.length !== 1) throw new Error('Expected exactly one top-level bundled Worker entrypoint: ' + jsFiles.join(','));
           if (!readFileSync('staging-public/index.html', 'utf8')) throw new Error('Missing or empty staging index');
-          cpSync('staging-public', join(root, 'staging-public'), { recursive: true, errorOnExist: true });
+          rmSync(join(root, 'staging-public'), { recursive: true, force: true });
+          cpSync('staging-public', join(root, 'staging-public'), { recursive: true });
           copyFileSync('scripts/live-probes.mjs', join(root, 'evidence-tools/live-probes.mjs'));
           const cfg = JSON.parse(readFileSync('wrangler.staging.jsonc', 'utf8'));
           const configSha256 = createHash('sha256').update(readFileSync('wrangler.staging.jsonc')).digest('hex');
@@ -163,7 +164,7 @@ jobs:
           const sha = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
           const files = [];
           const walk = (dir) => {
-            for (const e of readdirSync(dir, { withFileTypes: true }).sort((a,b) => a.name.localeCompare(b.name))) {
+            for (const e of readdirSync(dir, { withFileTypes: true }).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)) {
               const full = join(dir, e.name);
               if (e.isSymbolicLink()) throw new Error('Symlink forbidden: ' + full);
               if (e.isDirectory()) walk(full);
@@ -172,7 +173,7 @@ jobs:
             }
           };
           walk(root);
-          files.sort((a,b) => a.path.localeCompare(b.path));
+          files.sort((a,b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
           const manifest = { schemaVersion:'1.0', status:'SEALED_NOT_CERTIFIED', sourceCommit:process.env.SOURCE_COMMIT, sanitizerSha256, stagingConfigSha256:configSha256, workerEntrypoint:basename(jsFiles[0]), files };
           writeFileSync(join(root, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
           const manifestSha256 = sha(join(root, 'release-manifest.json'));
@@ -182,7 +183,7 @@ jobs:
           echo "manifest_sha256=$(cat .wrangler-build/release-manifest.sha256)" >> "$GITHUB_OUTPUT"
 
       - name: Upload sealed staging release bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lingo-staging-release-bundle-${{ github.run_id }}-${{ github.run_attempt }}
           path: .wrangler-build/
@@ -195,7 +196,7 @@ jobs:
           RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
         run: node scripts/generate-release-evidence.mjs
       - name: Upload gate evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lingo-release-evidence-${{ github.run_id }}
           path: release/evidence/
@@ -210,12 +211,12 @@ jobs:
       actions: read
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Download sealed release bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: lingo-staging-release-bundle-${{ github.run_id }}-${{ github.run_attempt }}
           path: .wrangler-build
@@ -269,7 +270,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          npx --yes wrangler@4 deploy --no-bundle --config .wrangler-build/wrangler.deploy.jsonc 2>&1 | tee wrangler-deploy.log
+          npx --yes wrangler@4.135.0 deploy --no-bundle --config .wrangler-build/wrangler.deploy.jsonc 2>&1 | tee wrangler-deploy.log
           VERSION_ID="$(sed -nE 's/.*Current Version ID:[[:space:]]*([[:alnum:]-]+).*/\1/p' wrangler-deploy.log | tail -n 1)"
           test -n "$VERSION_ID" || { echo 'Wrangler did not expose a version ID; staging evidence cannot be accepted'; exit 1; }
           echo "version_id=$VERSION_ID" >> "$GITHUB_OUTPUT"
@@ -333,7 +334,7 @@ jobs:
 
       - name: Upload staging deployment evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lingo-staging-deployment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -359,7 +360,7 @@ jobs:
     if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           fetch-depth: 0
       - name: Production certification boundary
