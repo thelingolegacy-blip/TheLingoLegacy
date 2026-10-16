@@ -83,16 +83,26 @@ class UnifiedGateTests(unittest.TestCase):
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C6_AUTHORIZATION")["status"], "FAIL")
         self.assertFalse(result["release_authorized"])
 
-    def test_hosted_diagnostic_cannot_substitute_for_canonical(self):
+    def test_hosted_diagnostic_cannot_authorize_release(self):
         e = valid_evidence()
         e["job"]["runner_contract"] = "hosted-diagnostic"
         e["job"]["runner_name"] = "GitHub Actions 123"
         e["job"]["runner_labels"] = ["ubuntu-latest"]
-        result = MODULE.evaluate(e, SHA)
-        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "PASS")
-        # This contract records dispatch evidence only; it does not make production authorization implicit.
-        e["authorization"]["approved_action"] = "diagnostic-only"
+        # Even complete evidence and an explicit release approval cannot turn
+        # a hosted diagnostic run into canonical self-hosted acceptance.
         result = MODULE.evaluate(e, SHA, action="release")
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "FAIL")
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertFalse(result["release_authorized"])
+
+    def test_hosted_diagnostic_remains_valid_for_diagnostic_action(self):
+        e = valid_evidence()
+        e["job"]["runner_contract"] = "hosted-diagnostic"
+        e["job"]["runner_name"] = "GitHub Actions 123"
+        e["job"]["runner_labels"] = ["ubuntu-latest"]
+        e["authorization"]["approved_action"] = "diagnostic-only"
+        result = MODULE.evaluate(e, SHA, action="diagnostic-only")
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "PASS")
         self.assertFalse(result["release_authorized"])
 
 
