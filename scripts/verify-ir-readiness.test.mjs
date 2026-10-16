@@ -96,3 +96,36 @@ test('blocks absent reviewer acceptance', async (t) => {
   assert.equal(result.ok, false);
   assert.match(result.failures.join('\n'), /requires a named reviewer acceptance/);
 });
+
+test('blocks non-ISO and locale-dependent generatedAt values', async (t) => {
+  for (const generatedAt of ['October 16, 2026', '2026-10-16', '10/16/2026 14:30:00']) {
+    const f = await fixture(t, { generatedAt });
+    const result = await verifyReadinessManifest(f.manifestPath, commitSha, { nowMs });
+    assert.equal(result.ok, false, `unexpectedly accepted generatedAt=${generatedAt}`);
+    assert.match(result.failures.join('\\n'), /strict ISO-8601 UTC timestamp/);
+  }
+});
+
+test('blocks impossible calendar timestamps', async (t) => {
+  const f = await fixture(t, { generatedAt: '2026-02-30T14:30:00Z' });
+  const result = await verifyReadinessManifest(f.manifestPath, commitSha, { nowMs });
+  assert.equal(result.ok, false);
+  assert.match(result.failures.join('\\n'), /valid calendar timestamp/);
+});
+
+test('blocks generatedAt beyond the future clock-skew tolerance', async (t) => {
+  const f = await fixture(t, { generatedAt: '2026-10-16T15:06:00Z' });
+  const result = await verifyReadinessManifest(f.manifestPath, commitSha, { nowMs });
+  assert.equal(result.ok, false);
+  assert.match(result.failures.join('\\n'), /generatedAt is in the future/);
+});
+
+test('blocks reviewer acceptance beyond the future clock-skew tolerance', async (t) => {
+  const f = await fixture(t);
+  f.manifest.items['IR-03'].reviewerAcceptance.acceptedAt = '2026-10-16T15:06:00Z';
+  await writeFile(f.manifestPath, JSON.stringify(f.manifest));
+  const result = await verifyReadinessManifest(f.manifestPath, commitSha, { nowMs });
+  assert.equal(result.ok, false);
+  assert.match(result.failures.join('\\n'), /IR-03 reviewer acceptance is dated in the future/);
+});
+
