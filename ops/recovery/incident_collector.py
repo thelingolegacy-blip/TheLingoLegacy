@@ -63,6 +63,19 @@ class GitHubReadOnlyClient:
         return json.loads(self.get(f"{self.repo(repo)}/actions/runs/{run_id}/artifacts?per_page=100"))["artifacts"]
 
 
+def evaluate_existing_checkpoint_gate(evidence, expected_sha):
+    """Call the canonical validator; collector evidence must not bypass acceptance."""
+    gate_path = os.path.join(os.path.dirname(__file__), "checkpoint_gate.py")
+    spec = __import__("importlib.util", fromlist=["spec_from_file_location"]).spec_from_file_location(
+        "lingo_checkpoint_gate", gate_path)
+    if spec is None or spec.loader is None:
+        return {"result": "BLOCKED", "passed": [], "blocked": ["canonical checkpoint validator could not be loaded"]}
+    module = __import__("importlib.util", fromlist=["module_from_spec"]).module_from_spec(spec)
+    spec.loader.exec_module(module)
+    accepted, passed, blocked = module.evaluate(evidence, expected_sha)
+    return {"result": "PASS" if accepted else "BLOCKED", "passed": passed, "blocked": blocked}
+
+
 def collect_incident(request, client, expected_repository=DEFAULT_REPOSITORY):
     """Return a structured report. Any absent or inconsistent evidence fails closed."""
     repo, run_id, attempt, sha, job_id = (request.get(k) for k in
@@ -150,13 +163,14 @@ def collect_incident(request, client, expected_repository=DEFAULT_REPOSITORY):
         "steps_count": len((job or {}).get("steps", [])) if isinstance((job or {}).get("steps", []), list) else 0,
         "logs_retrievable": logs_ok, "artifact_count": artifact_count, "independently_verified": False,
     }
+    checkpoint_gate = evaluate_existing_checkpoint_gate(evidence, sha if isinstance(sha, str) else "")
     return {
         "schema_version": 1, "collector": "LINGOassister.incident_collector",
         "collected_at_utc": datetime.now(timezone.utc).isoformat(),
         "incident": request, "status": status, "findings": findings, "evidence": evidence,
         "acceptance": {"incident_correlation": status == "EVIDENCE_VERIFIED", "g02": "BLOCKED",
             "production_promotion": "BLOCKED", "production_activation": "BLOCKED",
-            "last_known_good": "PROTECTED", "repair_authorized": False},
+            "last_known_good": "PROTECTED", "repair_authorized": False, "checkpoint_gate": checkpoint_gate},
         "limitations": ["Report is not proof of repair.", "Artifact contents are not downloaded or independently hashed.",
             "G02 acceptance additionally requires independent verification and the existing checkpoint gate."],
     }
