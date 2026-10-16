@@ -156,10 +156,38 @@ def evaluate(
         c.get("check_id") for c in checks if isinstance(c, dict)
     } if isinstance(checks, list) else set()
     missing_artifact_checks = required_artifact_checks - present_check_ids
+    artifact_check_link_results: list[bool | None] = []
+    if isinstance(artifacts, list):
+        for artifact in artifacts:
+            if not isinstance(artifact, dict) or artifact.get("artifact_id") is None:
+                continue
+            check_id = f"artifact_sha256:{artifact['artifact_id']}"
+            digest_ref = artifact.get("digest_verification_reference")
+            matching = [
+                c for c in checks if isinstance(c, dict) and c.get("check_id") == check_id
+            ] if isinstance(checks, list) else []
+            if not digest_ref or not matching:
+                artifact_check_link_results.append(None)
+            elif any(c.get("status") == "FAIL" for c in matching):
+                artifact_check_link_results.append(False)
+            elif any(c.get("status") == "PASS" and c.get("source_reference") == digest_ref for c in matching):
+                artifact_check_link_results.append(True)
+            elif any(c.get("status") == "BLOCKED" for c in matching):
+                artifact_check_link_results.append(None)
+            else:
+                artifact_check_link_results.append(False)
+    artifact_check_links_ok = (
+        None if not artifact_check_link_results else
+        False if any(value is False for value in artifact_check_link_results) else
+        None if any(value is None for value in artifact_check_link_results) else
+        True
+    )
     checks_ok = (
         None if not isinstance(checks, list) or not checks else
         False if any(isinstance(c, dict) and c.get("status") == "FAIL" for c in checks) else
         None if missing_artifact_checks else
+        None if artifact_check_links_ok is None else
+        False if artifact_check_links_ok is False else
         None if any(not isinstance(c, dict) or c.get("status") != "PASS" or not c.get("source_reference") for c in checks) else
         True
     )

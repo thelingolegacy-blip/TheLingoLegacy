@@ -28,7 +28,7 @@ def valid_evidence():
         "logs": {"retrieval_status": "available", "url": "https://example.test/logs", "source_reference": "api:logs:123"},
         "artifacts": [{"artifact_id": 7, "name": "evidence.zip", "run_id": 123, "run_attempt": 1,
                        "commit_sha": SHA, "sha256": "b" * 64, "computed_sha256": "b" * 64,
-                       "digest_verification_reference": "review:artifact-bytes:7",
+                       "digest_verification_reference": "review:artifact-sha256:7",
                        "retrieval_status": "available", "source_reference": "api:artifact:7"}],
         "verification": {"status": "verified", "producer_identity": "collector", "verifier_identity": "reviewer",
                          "verified_at_utc": "2026-10-16T12:00:00Z", "evidence_digest": "c" * 64,
@@ -102,6 +102,13 @@ class UnifiedGateTests(unittest.TestCase):
         e["artifacts"][0]["computed_sha256"] = "d" * 64
         result = MODULE.evaluate(e, SHA)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C3_EVIDENCE_INTEGRITY")["status"], "FAIL")
+        self.assertEqual(result["status"], "BLOCKED")
+
+    def test_mismatched_artifact_digest_verification_reference_fails_verification(self):
+        e = valid_evidence()
+        e["artifacts"][0]["digest_verification_reference"] = "review:other-record"
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C4_INDEPENDENT_VERIFICATION")["status"], "FAIL")
         self.assertEqual(result["status"], "BLOCKED")
 
     def test_missing_independent_artifact_digest_check_blocks_verification(self):
