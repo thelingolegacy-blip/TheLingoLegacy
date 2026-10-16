@@ -11,7 +11,7 @@ The current source of truth observed on `main` is `worker.js` plus `wrangler.jso
 - A minimal Node.js HTTP health service suitable for container smoke tests.
 - A non-root Dockerfile and local-only Docker Compose configuration.
 - Kubernetes Deployment and ClusterIP Service manifests with securityContext, probes, resource requests/limits, and no ingress by default.
-- A Node.js smoke-test script and a manifest contract checker.
+- A Node.js smoke-test script (executed locally: 7 assertions passed) and a manifest contract checker (passed locally).
 - Documentation for local container testing and future isolated Kubernetes validation.
 
 ## What is not included
@@ -64,7 +64,7 @@ Run the local manifest-contract checker:
 node containers/scripts/validate-manifests.mjs
 ```
 
-If `kubectl` and Kustomize are installed, validate locally without applying:
+The Kubernetes YAML files were parsed and their isolation/security contracts checked successfully in the available local environment. This is not Kubernetes API-server validation. Docker/Podman and `kubectl` are unavailable in that environment.\n\nIf `kubectl` and Kustomize are installed, validate locally without applying:
 
 ```sh
 kubectl config current-context
