@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createLearningRecord } from "./learning-loop.mjs";
 import {
   createIncident, classifyFinding, appendEvidence, setRootCause,
   shouldRepeatDiagnostic, recordAction, transitionIncident, recordApproval,
@@ -175,4 +176,38 @@ test("acceptance rejects a confirmed label whose cited evidence is not independe
   const result = evaluateAcceptance(value, { verifierId: "reviewer-1" });
   assert.equal(result.status, "BLOCKED");
   assert.ok(result.missing.includes("root_cause_evidence_not_independently_verified"));
+});
+
+
+test("verified contextual lessons are advisory-only in next-action recommendations", () => {
+  const lesson = createLearningRecord({
+    id: "LESSON-G02-1", incidentId: "INC-1", classification: "verified-lesson",
+    title: "Do not repeat unchanged runner probe",
+    statement: "Do not repeat the same diagnostic when the context fingerprint is unchanged.",
+    evidenceIds: ["E-VERIFIED-1"], sourceRefs: ["https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/209"],
+    contextFingerprint: "runner:hosted|workflow:static-ci|sha:abc", outcome: "unchanged-dispatch",
+    independentlyVerified: true, producerId: "lingoassister", verifierId: "lingoassisthem",
+    reviewStatus: "accepted", createdAt: "2026-10-16T12:00:00Z", expiresAt: "2026-11-16T12:00:00Z"
+  });
+  const candidate = {
+    kind: "repair", key: "inspect-dispatch", summary: "Inspect dispatch evidence",
+    contextFingerprint: "runner:hosted|workflow:static-ci|sha:abc", priority: 1
+  };
+  const result = recommendNextAction(incident(), [candidate], {
+    learningRecords: [lesson], now: "2026-10-17T00:00:00Z"
+  });
+  assert.equal(result.status, "ACTION_AVAILABLE");
+  assert.equal(result.action.key, "inspect-dispatch");
+  assert.equal(result.advisoryLessons.length, 1);
+  assert.equal(result.advisoryLessons[0].id, "LESSON-G02-1");
+  assert.equal(result.learningInfluencedRanking, false);
+  assert.equal(result.actionAuthority, false);
+  const mismatch = recommendNextAction(incident(), [candidate], {
+    learningRecords: [lesson], now: "2026-10-17T00:00:00Z"
+  });
+  assert.equal(mismatch.advisoryLessons.length, 1);
+  const otherContext = recommendNextAction(incident(), [{ ...candidate, contextFingerprint: "different-context" }], {
+    learningRecords: [lesson], now: "2026-10-17T00:00:00Z"
+  });
+  assert.equal(otherContext.advisoryLessons.length, 0);
 });
