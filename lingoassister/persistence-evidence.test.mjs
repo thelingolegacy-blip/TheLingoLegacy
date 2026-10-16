@@ -54,3 +54,21 @@ test("GitHub adapter validates inputs before network access", async () => {
   await assert.rejects(() => adapter.collectWorkflowRun({ repository: "acme/repo", runId: 0, expectedCommit: "a".repeat(40) }), /positive integer/);
   await assert.rejects(() => adapter.collectWorkflowRun({ repository: "acme/repo", runId: 1, expectedCommit: "abc" }), /full 40-character SHA/);
 });
+
+test("journal resumes sequence and hash chain after reopening", async () => withTemp(async dir => {
+  const path = join(dir, "incidents.jsonl");
+  await new IncidentStore(path).append({ id: "INC-1", revision: 1 });
+  await new IncidentStore(path).append({ id: "INC-1", revision: 2 });
+  const records = await new IncidentStore(path).readAll();
+  assert.deepEqual(records.map(record => record.revision), [1, 2]);
+  const third = await new IncidentStore(path).append({ id: "INC-1", revision: 3 });
+  assert.equal(third.sequence, 3);
+  assert.deepEqual((await new IncidentStore(path).readAll()).map(record => record.revision), [1, 2, 3]);
+}));
+test("journal refuses a second writer while the exclusive lock exists", async () => withTemp(async dir => {
+  const path = join(dir, "incidents.jsonl");
+  const store = new IncidentStore(path);
+  await writeFile(path + ".lock", "held by another writer", { flag: "wx" });
+  await assert.rejects(() => store.append({ id: "INC-1" }), /Concurrent writer blocked/);
+  assert.deepEqual(await store.readAll(), []);
+}));
