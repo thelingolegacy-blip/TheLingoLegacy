@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   createIncident, classifyFinding, appendEvidence, setRootCause,
   shouldRepeatDiagnostic, recordAction, transitionIncident, recordApproval,
-  evaluateAcceptance, evaluateG02, recommendNextAction
+  evaluateAcceptance, recordAcceptance, evaluateG02, recommendNextAction
 } from "./repair-engine.mjs";
 
 const clock = () => new Date("2026-10-15T20:00:00.000Z");
@@ -122,4 +122,36 @@ test("no eligible action returns a blocker instead of a repeated loop", () => {
   ]);
   assert.equal(result.status, "BLOCKED");
   assert.equal(result.action, null);
+});
+
+test("verification closure is blocked until acceptance is recorded", () => {
+  let value = incident();
+  value = appendEvidence(value, {
+    id: "E-1", kind: "root-cause", source: "test-fixture",
+    observedAt: "2026-10-15T19:30:00.000Z", summary: "Confirmed by fixture",
+    independentlyVerified: true, result: "PASS"
+  }, { clock });
+  value = setRootCause(value, {
+    classification: "CONFIRMED", statement: "Fixture confirms test condition", evidenceIds: ["E-1"]
+  }, { clock });
+  value = transitionIncident(value, "planned", { clock });
+  value = transitionIncident(value, "awaiting_authorization", { clock });
+  assert.throws(() => transitionIncident(value, "verified", { clock }), /accepted evidence/);
+  value = recordAcceptance(value, { verifierId: "independent-reviewer" }, { clock });
+  assert.equal(value.acceptance.status, "ACCEPTED");
+  assert.equal(transitionIncident(value, "verified", { clock }).state, "verified");
+});
+
+test("external blocker moves incident to blocked and can be reopened for new evidence", () => {
+  let value = incident();
+  value = appendEvidence(value, {
+    id: "E-1", kind: "dispatch-record", source: "github-connector",
+    observedAt: "2026-10-15T19:30:00.000Z", summary: "Job remains unassigned",
+    independentlyVerified: false, result: "UNKNOWN"
+  }, { clock });
+  value = setRootCause(value, {
+    classification: "EXTERNAL_BLOCKER", statement: "Host inventory unavailable", evidenceIds: ["E-1"]
+  }, { clock });
+  assert.equal(value.state, "blocked");
+  assert.equal(transitionIncident(value, "investigating", { reason: "New host evidence available", clock }).state, "investigating");
 });
