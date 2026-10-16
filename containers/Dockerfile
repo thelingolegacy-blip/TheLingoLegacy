@@ -1,10 +1,11 @@
 # Proposal-only scaffold: not the canonical Cloudflare Worker runtime.
+# Pin this base image to an approved digest before any release build.
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy only a tiny standalone smoke service; do not copy the repository or Worker source.
-COPY containers/server.mjs ./server.mjs
+# Copy only the standalone smoke service; do not copy repository or Worker source.
+COPY --chown=node:node containers/server.mjs ./server.mjs
 
 USER node
 EXPOSE 8080
