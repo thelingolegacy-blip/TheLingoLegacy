@@ -1,9 +1,6 @@
-# Cloudflare Workers Static Assets publication allowlist exclusions.
-# Keep intended public HTML, images, styles, scripts, robots/sitemap and web manifest.
-# Never publish repository controls, runtime source, operator material, secrets, or build metadata.
-.*/ 
-.git/
+# Cloudflare Workers Static Assets exclusions: keep public site pages and assets only.
 .github/
+.git/
 .wrangler/
 node_modules/
 ops/
