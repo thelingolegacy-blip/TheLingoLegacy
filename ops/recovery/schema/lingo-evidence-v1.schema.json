@@ -1,0 +1,520 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/lingo-evidence-v1.schema.json",
+  "title": "LINGO Evidence Envelope v1",
+  "description": "Normalized, provenance-preserving evidence record. Schema validity alone does not authenticate observations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "captured_at_utc",
+    "source",
+    "workflow",
+    "job",
+    "logs",
+    "artifacts",
+    "verification",
+    "release_probes",
+    "authorization"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "lingo.evidence.v1"
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "captured_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "branch",
+        "commit_sha"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[^/]+/[^/]+$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "run_attempt",
+        "workflow_name",
+        "event",
+        "head_sha",
+        "url"
+      ],
+      "properties": {
+        "run_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "run_attempt": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "workflow_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "event": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "head_sha": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      }
+    },
+    "job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "status",
+        "conclusion",
+        "runner_contract",
+        "runner_id",
+        "runner_name",
+        "runner_group",
+        "runner_labels",
+        "steps",
+        "sentinel_exit_code"
+      ],
+      "properties": {
+        "job_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "queued",
+            "in_progress",
+            "completed"
+          ]
+        },
+        "conclusion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runner_contract": {
+          "enum": [
+            "hosted-diagnostic",
+            "canonical-self-hosted",
+            "isolated-staging",
+            "unknown"
+          ]
+        },
+        "runner_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runner_name": {
+          "type": "string"
+        },
+        "runner_group": {
+          "type": "string"
+        },
+        "runner_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "status",
+              "conclusion"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "conclusion": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "sentinel_exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "logs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retrieval_status",
+        "url",
+        "source_reference"
+      ],
+      "properties": {
+        "retrieval_status": {
+          "enum": [
+            "unknown",
+            "available",
+            "unavailable",
+            "error"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "name",
+          "run_id",
+          "run_attempt",
+          "commit_sha",
+          "sha256",
+          "retrieval_status",
+          "source_reference"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "run_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "run_attempt": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "commit_sha": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "retrieval_status": {
+            "enum": [
+              "unknown",
+              "available",
+              "unavailable",
+              "error"
+            ]
+          },
+          "source_reference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "host_telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "captured_at_utc",
+        "daemon_status",
+        "polling_status",
+        "source_reference"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "captured_at_utc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "daemon_status": {
+          "enum": [
+            "unknown",
+            "running",
+            "stopped",
+            "error"
+          ]
+        },
+        "polling_status": {
+          "enum": [
+            "unknown",
+            "active",
+            "inactive",
+            "error"
+          ]
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "producer_identity",
+        "verifier_identity",
+        "verified_at_utc",
+        "evidence_digest",
+        "checks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unknown",
+            "verified",
+            "rejected"
+          ]
+        },
+        "producer_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verifier_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verified_at_utc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "evidence_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check_id",
+              "status",
+              "source_reference"
+            ],
+            "properties": {
+              "check_id": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "BLOCKED"
+                ]
+              },
+              "source_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "release_probes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apex_status",
+        "www_status",
+        "redirect_validation",
+        "source_reference"
+      ],
+      "properties": {
+        "apex_status": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 100,
+          "maximum": 599
+        },
+        "www_status": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 100,
+          "maximum": 599
+        },
+        "redirect_validation": {
+          "enum": [
+            "unknown",
+            "pass",
+            "fail"
+          ]
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "approval_reference",
+        "approved_sha",
+        "approved_action",
+        "approver_identity"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_authorized",
+            "authorized",
+            "revoked"
+          ]
+        },
+        "approval_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approved_sha": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approved_action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
