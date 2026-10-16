@@ -143,6 +143,7 @@ class UnifiedGateTests(unittest.TestCase):
         e["authorization"]["approved_action"] = "diagnostic-only"
         result = MODULE.evaluate(e, SHA, action="diagnostic-only")
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C1_DISPATCH")["status"], "PASS")
+        self.assertEqual(result["status"], "PASS")
         self.assertFalse(result["release_authorized"])
 
 
