@@ -69,7 +69,11 @@ export function canReuseLesson(lesson, { contextFingerprint, now = new Date().to
   if (typeof contextFingerprint !== "string" || !contextFingerprint || lesson?.contextFingerprint !== contextFingerprint) reasons.push("context_mismatch");
   const nowMs = Date.parse(now);
   if (!Number.isFinite(nowMs)) reasons.push("invalid_current_time");
-  if (lesson?.expiresAt && Date.parse(lesson.expiresAt) <= nowMs) reasons.push("lesson_expired");
+  if (lesson?.expiresAt != null) {
+    const expiryMs = Date.parse(lesson.expiresAt);
+    if (!Number.isFinite(expiryMs)) reasons.push("invalid_expiry");
+    else if (Number.isFinite(nowMs) && expiryMs <= nowMs) reasons.push("lesson_expired");
+  }
   return { reusable: reasons.length === 0, reasons, actionAuthority: false };
 }
 
