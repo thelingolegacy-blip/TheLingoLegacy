@@ -7,9 +7,34 @@ export const REQUIRED_IR_ITEMS = ['IR-01', 'IR-02', 'IR-03', 'IR-04', 'IR-05', '
 const SHA_RE = /^[a-f0-9]{40}$/i;
 const DIGEST_RE = /^[a-f0-9]{64}$/i;
 
+const UTC_TIMESTAMP_RE = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d{1,3}))?Z$/;
+
 function parseTime(value, label) {
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be a strict ISO-8601 UTC timestamp (YYYY-MM-DDTHH:mm:ss[.sss]Z)`);
+  }
+  const match = UTC_TIMESTAMP_RE.exec(value);
+  if (!match) {
+    throw new Error(`${label} must be a strict ISO-8601 UTC timestamp (YYYY-MM-DDTHH:mm:ss[.sss]Z)`);
+  }
+
+  const [, year, month, day, hour, minute, second, fraction = ''] = match;
   const parsed = Date.parse(value);
-  if (!Number.isFinite(parsed)) throw new Error(`${label} must be a valid ISO-8601 timestamp`);
+  if (!Number.isFinite(parsed)) throw new Error(`${label} must be a valid calendar timestamp`);
+
+  const date = new Date(parsed);
+  const expectedMilliseconds = Number(fraction.padEnd(3, '0') || '0');
+  if (
+    date.getUTCFullYear() !== Number(year) ||
+    date.getUTCMonth() + 1 !== Number(month) ||
+    date.getUTCDate() !== Number(day) ||
+    date.getUTCHours() !== Number(hour) ||
+    date.getUTCMinutes() !== Number(minute) ||
+    date.getUTCSeconds() !== Number(second) ||
+    date.getUTCMilliseconds() !== expectedMilliseconds
+  ) {
+    throw new Error(`${label} must be a valid calendar timestamp`);
+  }
   return parsed;
 }
 
