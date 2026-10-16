@@ -6,7 +6,7 @@ import { verifyStagingTokenPolicy } from './verify-staging-token-policy.mjs';
 function fixture() {
   const policy = {
     schemaVersion:'1.0', status:'APPROVED_BY_ADMIN', tokenId:'token-id-123', accountId:'account-id-123',
-    workerName:'thelingolegacy-staging', permissions:['Workers Scripts:Edit'],
+    workerName:'thelingolegacy-staging', permissions:['Individual Workers Editor'],
     resourceScope:{workers:['thelingolegacy-staging'],zones:[]}, productionWorkerWrite:false, customRouteWrite:false,
     approvedBy:'cloudflare-admin', approvedAt:'2026-10-16T12:00:00Z', evidenceRef:'admin-audit-001'
   };
