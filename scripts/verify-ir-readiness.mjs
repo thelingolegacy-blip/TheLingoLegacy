@@ -7,7 +7,7 @@ export const REQUIRED_IR_ITEMS = ['IR-01', 'IR-02', 'IR-03', 'IR-04', 'IR-05', '
 const SHA_RE = /^[a-f0-9]{40}$/i;
 const DIGEST_RE = /^[a-f0-9]{64}$/i;
 
-const UTC_TIMESTAMP_RE = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d{1,3}))?Z$/;
+const UTC_TIMESTAMP_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?Z$/;
 
 function parseTime(value, label) {
   if (typeof value !== 'string') {
