@@ -36,6 +36,9 @@ jobs:
       - name: Verify Cloudflare binding contract
         run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
+      - name: Verify shared design tokens and icon registry
+        run: node scripts/verify-shared-design-system.mjs 2>&1 | tee design-system.log
+
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
@@ -47,5 +50,6 @@ jobs:
           path: |
             sanitize.log
             bindings.log
+            design-system.log
             validator.log
           if-no-files-found: warn
