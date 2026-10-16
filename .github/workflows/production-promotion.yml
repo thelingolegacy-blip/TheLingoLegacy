@@ -155,6 +155,7 @@ jobs:
           cpSync('staging-public', join(root, 'staging-public'), { recursive: true });
           copyFileSync('scripts/live-probes.mjs', join(root, 'evidence-tools/live-probes.mjs'));
           copyFileSync('scripts/verify-staging-token-policy.mjs', join(root, 'evidence-tools/verify-staging-token-policy.mjs'));
+          copyFileSync('scripts/verify-release-bundle.mjs', join(root, 'evidence-tools/verify-release-bundle.mjs'));
           copyFileSync('security/cloudflare-staging-token-policy.json', join(root, 'evidence-tools/cloudflare-staging-token-policy.json'));
           const cfg = JSON.parse(readFileSync('wrangler.staging.jsonc', 'utf8'));
           const configSha256 = createHash('sha256').update(readFileSync('wrangler.staging.jsonc')).digest('hex');
@@ -230,7 +231,7 @@ jobs:
         env:
           EXPECTED_MANIFEST_SHA256: ${{ needs.gates.outputs.artifact }}
           EXPECTED_SOURCE_COMMIT: ${{ needs.gates.outputs.commit }}
-        run: node scripts/verify-release-bundle.mjs .wrangler-build
+        run: node .wrangler-build/evidence-tools/verify-release-bundle.mjs .wrangler-build
 
       - name: Verify approved staging-only Cloudflare token
         shell: bash
@@ -241,14 +242,6 @@ jobs:
           CLOUDFLARE_STAGING_TOKEN_POLICY_SHA256: ${{ vars.CLOUDFLARE_STAGING_TOKEN_POLICY_SHA256 }}
           CLOUDFLARE_STAGING_TOKEN_POLICY_PATH: .wrangler-build/evidence-tools/cloudflare-staging-token-policy.json
         run: node .wrangler-build/evidence-tools/verify-staging-token-policy.mjs
-
-        env:
-          CLOUDFLARE_STAGING_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          set -euo pipefail
-          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
-          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
 
       - name: Deploy the exact verified bundle without rebuilding
         id: deploy
