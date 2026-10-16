@@ -40,3 +40,25 @@ The latest recorded G02 job was queued with `runner_id=0`, empty `runner_name`, 
 ## Destructive-operation containment
 
 The runner bootstrap has been hardened to remove only its local temporary `.env` file automatically. It no longer issues a broad DELETE across every registration matching the runner name. Runner registration removal, host reboot, service restart, DNS/Worker retirement, and artifact deletion require exact target identity plus separate operator approval. The quarantine manifest remains inventory-only. This is intentional: preserve forensic evidence and avoid deleting an active or unrelated resource during recovery.
+
+
+## Signed authorization envelope (proposed)
+
+The unified C0–C6 evaluator now requires an externally verified approval flag for C6. The proposed verifier is `ops/recovery/verify_approval.py`; the schema is `ops/recovery/schema/lingo-approval-v1.schema.json`.
+
+The signer must keep its private key offline. Supply the verifier's public-key path, approver identity, and key ID only from protected operator configuration. Never take these values from a pull-request-controlled workflow input. The approval envelope is bound to one full commit SHA and one action, has an expiry window no longer than 24 hours, and must be signed over canonical JSON excluding the `signature_base64` field.
+
+Example invocation (paths and identities below are placeholders and must come from trusted operator configuration):
+
+```bash
+python ops/recovery/unified_gate.py \
+  --evidence /secure/evidence.json \
+  --expected-sha <full-40-character-sha> \
+  --action release \
+  --approval-envelope /secure/approval.json \
+  --trusted-approval-public-key /etc/lingo/trust/release-approval-public.pem \
+  --trusted-approver <allowlisted-approver-identity> \
+  --trusted-key-id <pinned-key-id>
+```
+
+Without the full trusted verifier configuration, authorization remains BLOCKED. This path has not yet been executed or certified in CI. It does not bypass the canonical runner contract, evidence verification, or the production lock.
