@@ -1,0 +1,32 @@
+# Cloudflare Workers Static Assets: this file is read from the configured asset directory.
+# Keep public HTML, robots/sitemap, manifest.webmanifest and assets/ available.
+# Exclude repository control-plane, internal configuration, operator tooling and source files.
+.github/
+.git/
+.wrangler/
+config/
+docs/
+ops/
+scripts/
+tests/
+node_modules/
+coverage/
+test-results/
+playwright-report/
+.env*
+*.env
+*.md
+*.mjs
+*.cjs
+*.sh
+*.py
+*.yml
+*.yaml
+*.toml
+*.jsonc
+*.lock
+*.map
+worker.js
+wrangler.jsonc
+Dockerfile
+Makefile
