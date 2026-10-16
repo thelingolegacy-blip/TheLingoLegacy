@@ -169,10 +169,10 @@ def evaluate(
     ], [str(probes.get("source_reference") or "")])
 
     auth_fields = ("status", "approval_reference", "approved_sha", "approved_action", "approver_identity")
-    if authorization_verified is None or any(not auth.get(field) for field in auth_fields):
-        auth_check = None
-    elif authorization_verified is False:
+    if authorization_verified is False:
         auth_check = False
+    elif authorization_verified is None or any(not auth.get(field) for field in auth_fields):
+        auth_check = None
     else:
         auth_check = (
             auth.get("status") == "authorized"
