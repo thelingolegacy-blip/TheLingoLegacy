@@ -19,11 +19,13 @@ if (!Array.isArray(production.routes) || !productionRoutes.every((pattern) => pr
 if (staging.name !== 'thelingolegacy-staging') fail.push('staging Worker must have its own explicit name');
 if (staging.name === production.name) fail.push('staging Worker name must differ from production');
 if (staging.workers_dev !== true) fail.push('staging must use its isolated workers.dev endpoint');
+if (staging.preview_urls !== false) fail.push('staging version preview URLs must be explicitly disabled');
 if ('routes' in staging && (!Array.isArray(staging.routes) || staging.routes.length !== 0)) fail.push('staging configuration must not declare custom routes');
 if (staging.vars?.LINGO_ENVIRONMENT !== 'staging') fail.push('LINGO_ENVIRONMENT must equal staging');
-if (staging.vars?.CANONICAL_DOMAIN !== 'staging.invalid') fail.push('staging canonical-domain sentinel must not point at production');
-if (staging.vars?.PUBLIC_SITE_URL !== 'https://staging.invalid') fail.push('staging public URL sentinel must not point at production');
-if (staging.vars?.CANONICAL_DOMAIN === 'thelingolegacy.com' || staging.vars?.PUBLIC_SITE_URL?.includes('thelingolegacy.com')) fail.push('production hostname found in staging vars');
+if (staging.vars?.CANONICAL_DOMAIN !== 'thelingolegacy-staging.thelingolegacy.workers.dev') fail.push('staging canonical domain must match the dedicated workers.dev hostname');
+if (staging.vars?.PUBLIC_SITE_URL !== 'https://thelingolegacy-staging.thelingolegacy.workers.dev') fail.push('staging public URL must match the dedicated workers.dev hostname');
+if (staging.vars?.CANONICAL_DOMAIN === 'thelingolegacy.com' || staging.vars?.CANONICAL_DOMAIN === 'www.thelingolegacy.com' || staging.vars?.PUBLIC_SITE_URL?.includes('thelingolegacy.com') && !staging.vars?.PUBLIC_SITE_URL?.includes('thelingolegacy-staging.thelingolegacy.workers.dev')) fail.push('production hostname found in staging vars');
+if (staging.vars?.CANONICAL_DOMAIN && !staging.vars.CANONICAL_DOMAIN.endsWith('.workers.dev')) fail.push('staging canonical domain must be on workers.dev');
 if (Object.keys(staging).some((key) => ['d1_databases', 'kv_namespaces', 'r2_buckets', 'services', 'durable_objects', 'queues'].includes(key))) {
   fail.push('staging must not inherit undeclared production resource bindings');
 }
