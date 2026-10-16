@@ -136,6 +136,13 @@ test("verification closure is blocked until acceptance is recorded", () => {
   }, { clock });
   value = transitionIncident(value, "planned", { clock });
   value = transitionIncident(value, "awaiting_authorization", { clock });
+  value = recordApproval(value, {
+    id: "APR-VERIFY-1", scope: "test fixture only", approver: "owner",
+    status: "approved", approvedAt: "2026-10-15T19:59:00.000Z"
+  }, { clock });
+  value = transitionIncident(value, "executing", { authorizationId: "APR-VERIFY-1", clock });
+  value = transitionIncident(value, "testing", { clock });
+  value = transitionIncident(value, "verifying", { clock });
   assert.throws(() => transitionIncident(value, "verified", { clock }), /accepted evidence/);
   value = recordAcceptance(value, { verifierId: "independent-reviewer" }, { clock });
   assert.equal(value.acceptance.status, "ACCEPTED");
