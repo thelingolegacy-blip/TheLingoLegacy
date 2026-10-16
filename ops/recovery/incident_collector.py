@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only GitHub Actions incident evidence collector; never changes gate state."""
 from __future__ import annotations
-import argparse, json, os, re, sys, urllib.error, urllib.request, urllib.parse
+import argparse, importlib.util, json, os, re, sys, urllib.error, urllib.request, urllib.parse
 from datetime import datetime, timezone
 
 DEFAULT_REPOSITORY = "thelingolegacy-blip/TheLingoLegacy"
@@ -66,11 +66,10 @@ class GitHubReadOnlyClient:
 def evaluate_existing_checkpoint_gate(evidence, expected_sha):
     """Call the canonical validator; collector evidence must not bypass acceptance."""
     gate_path = os.path.join(os.path.dirname(__file__), "checkpoint_gate.py")
-    spec = __import__("importlib.util", fromlist=["spec_from_file_location"]).spec_from_file_location(
-        "lingo_checkpoint_gate", gate_path)
+    spec = importlib.util.spec_from_file_location("lingo_checkpoint_gate", gate_path)
     if spec is None or spec.loader is None:
         return {"result": "BLOCKED", "passed": [], "blocked": ["canonical checkpoint validator could not be loaded"]}
-    module = __import__("importlib.util", fromlist=["module_from_spec"]).module_from_spec(spec)
+    module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     accepted, passed, blocked = module.evaluate(evidence, expected_sha)
     return {"result": "PASS" if accepted else "BLOCKED", "passed": passed, "blocked": blocked}
@@ -152,6 +151,7 @@ def collect_incident(request, client, expected_repository=DEFAULT_REPOSITORY):
 
     evidence = {
         "run_id": (run or {}).get("id"), "run_attempt": (run or {}).get("run_attempt"),
+        "source_sha": (run or {}).get("head_sha"),
         "repository": ((run or {}).get("repository") or {}).get("full_name"),
         "head_sha": (run or {}).get("head_sha"), "run_status": (run or {}).get("status"),
         "run_conclusion": (run or {}).get("conclusion"), "job_id": (job or {}).get("id"),
