@@ -76,6 +76,25 @@ class UnifiedGateTests(unittest.TestCase):
         result = MODULE.evaluate(e, SHA)
         self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C4_INDEPENDENT_VERIFICATION")["status"], "FAIL")
 
+    def test_unknown_log_retrieval_status_blocks_evidence(self):
+        e = valid_evidence()
+        e["logs"]["retrieval_status"] = "unknown"
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C3_EVIDENCE_INTEGRITY")["status"], "BLOCKED")
+
+    def test_unknown_public_probe_status_blocks_reachability(self):
+        e = valid_evidence()
+        e["release_probes"]["apex_status"] = None
+        e["release_probes"]["redirect_validation"] = "unknown"
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C5_PUBLIC_REACHABILITY")["status"], "BLOCKED")
+
+    def test_missing_approval_evidence_blocks_authorization(self):
+        e = valid_evidence()
+        e["authorization"].pop("approval_reference")
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C6_AUTHORIZATION")["status"], "BLOCKED")
+
     def test_wrong_approval_sha_blocks_release(self):
         e = valid_evidence()
         e["authorization"]["approved_sha"] = "e" * 40
