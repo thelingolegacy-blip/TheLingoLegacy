@@ -1,5 +1,5 @@
+# Exclude all build-context files, then allowlist only the container runtime.
 **
 !containers/
-containers/.*
 !containers/Dockerfile
 !containers/server.mjs
