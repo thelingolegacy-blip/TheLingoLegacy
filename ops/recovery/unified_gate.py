@@ -123,6 +123,13 @@ def evaluate(
             sha_check = None if artifact_sha is None else (
                 isinstance(artifact_sha, str) and bool(HASH_RE.fullmatch(artifact_sha))
             )
+            computed_sha = artifact.get("computed_sha256")
+            computed_sha_check = None if computed_sha is None else (
+                isinstance(computed_sha, str) and bool(HASH_RE.fullmatch(computed_sha))
+                and isinstance(artifact_sha, str) and computed_sha == artifact_sha
+            )
+            digest_ref = artifact.get("digest_verification_reference")
+            digest_ref_check = None if digest_ref is None else bool(digest_ref)
             artifact_checks.extend([
                 (True if artifact.get("retrieval_status") == "available" else (
                     False if artifact.get("retrieval_status") in {"unavailable", "error", "not_found"} else None
@@ -130,7 +137,9 @@ def evaluate(
                 (correlated, f"artifact {i} run/attempt/commit correlation mismatch"),
                 (artifact_id_check, f"artifact {i} identity required"),
                 (source_ref_check, f"artifact {i} source reference required"),
-                (sha_check, f"artifact {i} SHA-256 missing or invalid")
+                (sha_check, f"artifact {i} SHA-256 missing or invalid"),
+                (computed_sha_check, f"artifact {i} independently computed SHA-256 must match declared SHA-256"),
+                (digest_ref_check, f"artifact {i} digest-verification source reference required")
             ])
     add("C3_EVIDENCE_INTEGRITY", artifact_checks,
         [str(logs.get("source_reference") or "")] + [str(a.get("source_reference") or "") for a in artifacts if isinstance(a, dict)] if isinstance(artifacts, list) else [])
@@ -139,9 +148,18 @@ def evaluate(
     verifier = verification.get("verifier_identity")
     distinct = (None if not producer or not verifier else producer != verifier)
     checks = verification.get("checks")
+    required_artifact_checks = {
+        f"artifact_sha256:{a.get('artifact_id')}"
+        for a in artifacts if isinstance(a, dict) and a.get("artifact_id") is not None
+    } if isinstance(artifacts, list) else set()
+    present_check_ids = {
+        c.get("check_id") for c in checks if isinstance(c, dict)
+    } if isinstance(checks, list) else set()
+    missing_artifact_checks = required_artifact_checks - present_check_ids
     checks_ok = (
         None if not isinstance(checks, list) or not checks else
         False if any(isinstance(c, dict) and c.get("status") == "FAIL" for c in checks) else
+        None if missing_artifact_checks else
         None if any(not isinstance(c, dict) or c.get("status") != "PASS" or not c.get("source_reference") for c in checks) else
         True
     )
