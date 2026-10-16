@@ -73,6 +73,12 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
         ]
     else:
         dispatch_checks = [(None, "runner contract unknown; hosted, canonical, and staging evidence cannot be interchanged")]
+
+    # A diagnostic or staging runner can produce useful evidence, but it cannot
+    # satisfy the canonical execution requirement for a release action.
+    if action == "release" and contract in {"hosted-diagnostic", "isolated-staging"}:
+        dispatch_checks.append((False, "release requires the canonical-self-hosted runner contract"))
+
     add("C1_DISPATCH", dispatch_checks, [str(workflow.get("url") or "")])
 
     steps = job.get("steps")
