@@ -15,7 +15,7 @@ export const FINDING_CLASSES = Object.freeze([
   "CONFIRMED", "LIKELY", "UNKNOWN", "EXTERNAL_BLOCKER"
 ]);
 
-const TERMINAL_STATES = new Set(["verified", "blocked", "failed"]);
+const TERMINAL_STATES = new Set(["verified"]);
 const ALLOWED_TRANSITIONS = Object.freeze({
   investigating: new Set(["diagnosed", "blocked", "failed"]),
   diagnosed: new Set(["planned", "investigating", "blocked", "failed"]),
@@ -115,8 +115,10 @@ export function setRootCause(incident, finding, { clock = () => new Date() } = {
   return {
     ...incident,
     rootCause: classifyFinding(finding),
-    state: finding.classification === "UNKNOWN" || finding.classification === "LIKELY"
-      ? "investigating" : "diagnosed",
+    state: finding.classification === "EXTERNAL_BLOCKER"
+      ? "blocked"
+      : finding.classification === "UNKNOWN" || finding.classification === "LIKELY"
+        ? "investigating" : "diagnosed",
     updatedAt: isoNow(clock)
   };
 }
@@ -184,6 +186,9 @@ export function transitionIncident(incident, nextState, {
       throw new Error("Execution blocked: a matching recorded approval is required");
     }
   }
+  if (nextState === "verified" && incident.acceptance?.status !== "ACCEPTED") {
+    throw new Error("Verification blocked: accepted evidence and an independent verifier are required");
+  }
   return {
     ...incident,
     state: nextState,
@@ -234,6 +239,25 @@ export function evaluateAcceptance(incident, {
     missing,
     verifierId: verifierId || null,
     productionPromotionAllowed: false
+  };
+}
+
+export function recordAcceptance(incident, options = {}, { clock = () => new Date() } = {}) {
+  const evaluation = evaluateAcceptance(incident, options);
+  return {
+    ...incident,
+    acceptance: {
+      status: evaluation.status,
+      required: [...(options.requiredEvidenceKinds ?? [])],
+      passed: [...(options.requiredEvidenceKinds ?? [])].filter(kind =>
+        !evaluation.missing.includes(`independently_verified_evidence:${kind}`)
+      ),
+      independentVerifier: evaluation.verifierId,
+      missing: evaluation.missing,
+      evaluatedAt: isoNow(clock),
+      productionPromotionAllowed: false
+    },
+    updatedAt: isoNow(clock)
   };
 }
 
