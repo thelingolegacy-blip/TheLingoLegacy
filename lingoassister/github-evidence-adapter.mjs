@@ -96,6 +96,84 @@ export function createGitHubEvidenceAdapter({
         independentlyVerified: false,
         accepted: false
       });
+    },
+
+    /**
+     * Collects run, jobs/steps, and artifact metadata into one correlated bundle.
+     * Job logs are deliberately not downloaded here: the log endpoint may redirect
+     * to a short-lived external URL, which needs a separately controlled retrieval path.
+     */
+    async collectWorkflowEvidenceBundle({ repository, runId, expectedCommit }) {
+      const runEvidence = await this.collectWorkflowRun({ repository, runId, expectedCommit });
+      const encodedRepo = repository.split("/").map(encodeURIComponent).join("/");
+      const [jobsBody, artifactsBody] = await Promise.all([
+        getJson(`/repos/${encodedRepo}/actions/runs/${runEvidence.runId}/jobs`),
+        getJson(`/repos/${encodedRepo}/actions/runs/${runEvidence.runId}/artifacts`)
+      ]);
+      if (!Array.isArray(jobsBody.jobs)) throw new Error("GitHub jobs response must contain a jobs array");
+      if (!Array.isArray(artifactsBody.artifacts)) throw new Error("GitHub artifacts response must contain an artifacts array");
+      const jobs = jobsBody.jobs.map(job => {
+        if (!Number.isSafeInteger(job.id) || job.id <= 0) throw new Error("GitHub job record is missing a valid job ID");
+        const jobRunMatches = Number(job.run_id) === runEvidence.runId;
+        const steps = Array.isArray(job.steps) ? job.steps.map(step => ({
+          name: typeof step.name === "string" ? step.name : null,
+          status: typeof step.status === "string" ? step.status : "unknown",
+          conclusion: typeof step.conclusion === "string" ? step.conclusion : null,
+          number: Number.isSafeInteger(step.number) ? step.number : null,
+          startedAt: parseTimestamp(step.started_at),
+          completedAt: parseTimestamp(step.completed_at)
+        })) : [];
+        return {
+          jobId: job.id,
+          runId: Number.isSafeInteger(job.run_id) ? job.run_id : null,
+          jobRunMatches,
+          name: typeof job.name === "string" ? job.name : null,
+          status: typeof job.status === "string" ? job.status : "unknown",
+          conclusion: typeof job.conclusion === "string" ? job.conclusion : null,
+          runnerId: Number.isSafeInteger(job.runner_id) ? job.runner_id : null,
+          runnerName: typeof job.runner_name === "string" ? job.runner_name : null,
+          startedAt: parseTimestamp(job.started_at),
+          completedAt: parseTimestamp(job.completed_at),
+          steps,
+          logs: { outcome: "NOT_COLLECTED", reason: "Log download is a separate controlled retrieval gate." }
+        };
+      });
+      const artifacts = artifactsBody.artifacts.map(artifact => {
+        if (!Number.isSafeInteger(artifact.id) || artifact.id <= 0) throw new Error("GitHub artifact record is missing a valid artifact ID");
+        return {
+          artifactId: artifact.id,
+          name: typeof artifact.name === "string" ? artifact.name : null,
+          sizeInBytes: Number.isSafeInteger(artifact.size_in_bytes) ? artifact.size_in_bytes : null,
+          expired: artifact.expired === true,
+          createdAt: parseTimestamp(artifact.created_at),
+          updatedAt: parseTimestamp(artifact.updated_at),
+          expiresAt: parseTimestamp(artifact.expires_at),
+          downloadUrl: null
+        };
+      });
+      const jobsCorrelated = jobs.length > 0 && jobs.every(job => job.jobRunMatches);
+      const bundle = {
+        schemaVersion: 1,
+        collectedAt: runEvidence.collectedAt,
+        run: runEvidence,
+        jobs,
+        artifacts,
+        correlation: {
+          runCorrelated: runEvidence.correlation.verified,
+          jobsCorrelated,
+          commitCorrelated: runEvidence.correlation.commitMatches,
+          verified: runEvidence.correlation.verified && jobsCorrelated
+        },
+        completeness: {
+          runMetadata: "COLLECTED",
+          jobAndStepMetadata: "COLLECTED",
+          artifactMetadata: "COLLECTED",
+          jobLogs: "NOT_COLLECTED"
+        },
+        independentlyVerified: false,
+        accepted: false
+      };
+      return Object.freeze(bundle);
     }
   });
 }
