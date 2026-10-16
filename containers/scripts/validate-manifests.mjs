@@ -24,7 +24,7 @@ const checks = [
   [deployment.includes('runAsNonRoot: true'), 'container must run as non-root'],
   [deployment.includes('readOnlyRootFilesystem: true'), 'root filesystem must be read-only'],
   [deployment.includes('allowPrivilegeEscalation: false'), 'privilege escalation must be disabled'],
-  [deployment.includes('capabilities:\\n              drop: ["ALL"]'), 'Linux capabilities must be dropped'],
+  [deployment.includes('capabilities:\n              drop: ["ALL"]'), 'Linux capabilities must be dropped'],
   [deployment.includes('REPLACE_ME') && deployment.includes('REVIEW_REQUIRED'), 'image must remain a placeholder until reviewed'],
   [service.includes('type: ClusterIP'), 'service must remain internal-only'],
   [!fs.existsSync(path.join(base, 'ingress.yaml')), 'no public ingress manifest may be introduced by this scaffold'],
