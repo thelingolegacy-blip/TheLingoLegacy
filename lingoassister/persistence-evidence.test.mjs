@@ -104,9 +104,12 @@ test("GitHub adapter rejects malformed response objects and mismatched returned 
   await assert.rejects(() => make([]).collectWorkflowRun({
     repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
   }), /JSON object/);
-  await assert.rejects(() => make({ id: 8, head_sha: "a".repeat(40), repository: { full_name: "acme/repo" } }).collectWorkflowRun({
+  const mismatched = await make({ id: 8, head_sha: "a".repeat(40), repository: { full_name: "acme/repo" } }).collectWorkflowRun({
     repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
-  }), /missing a valid run ID|returned run ID/);
+  });
+  assert.equal(mismatched.runIdMatches, false);
+  assert.equal(mismatched.correlation.verified, false);
+  assert.equal(mismatched.accepted, false);
 });
 test("GitHub adapter rejects non-GitHub run URLs and records failed correlation", async () => {
   const adapter = createGitHubEvidenceAdapter({
