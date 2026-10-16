@@ -1,8 +1,8 @@
 services:
   lingo-container-smoke:
     build:
-      context: ..
-      dockerfile: containers/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     image: lingo-legacy-container:local
     environment:
       NODE_ENV: production
