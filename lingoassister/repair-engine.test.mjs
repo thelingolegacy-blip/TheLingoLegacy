@@ -162,3 +162,17 @@ test("external blocker moves incident to blocked and can be reopened for new evi
   assert.equal(value.state, "blocked");
   assert.equal(transitionIncident(value, "investigating", { reason: "New host evidence available", clock }).state, "investigating");
 });
+
+test("acceptance rejects a confirmed label whose cited evidence is not independently verified", () => {
+  let value = appendEvidence(incident(), {
+    id: "E-UNVERIFIED", kind: "root-cause", source: "untrusted-report",
+    observedAt: "2026-10-15T19:30:00.000Z", summary: "Claimed cause without independent check",
+    independentlyVerified: false, result: "UNKNOWN"
+  }, { clock });
+  value = setRootCause(value, {
+    classification: "CONFIRMED", statement: "Claimed cause", evidenceIds: ["E-UNVERIFIED"]
+  }, { clock });
+  const result = evaluateAcceptance(value, { verifierId: "reviewer-1" });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(result.missing.includes("root_cause_evidence_not_independently_verified"));
+});
