@@ -19,6 +19,8 @@ class VerifyApprovalTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.private_key = self.root / "private.pem"
         self.public_key = self.root / "public.pem"
+        self.nonce_registry = self.root / "consumed-nonces"
+        self.nonce_registry.mkdir(mode=0o700)
         subprocess.run([
             "openssl", "genpkey", "-algorithm", "RSA",
             "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(self.private_key)
@@ -62,6 +64,7 @@ class VerifyApprovalTests(unittest.TestCase):
             "trusted_public_key": self.public_key,
             "trusted_approver": "release-owner",
             "trusted_key_id": "release-key-test",
+            "nonce_registry": self.nonce_registry,
             "now": self.now,
         }
         args.update(overrides)
@@ -108,6 +111,29 @@ class VerifyApprovalTests(unittest.TestCase):
     def test_unpinned_key_id_is_rejected(self):
         verified, _ = self._verify(trusted_key_id="different-key")
         self.assertFalse(verified)
+
+    def test_replayed_nonce_is_rejected(self):
+        verified, reason = self._verify()
+        self.assertTrue(verified, reason)
+        verified_again, reason_again = self._verify()
+        self.assertFalse(verified_again)
+        self.assertEqual(reason_again, "approval nonce has already been consumed")
+
+    def test_missing_nonce_registry_is_rejected(self):
+        verified, reason = self._verify(nonce_registry=self.root / "missing-registry")
+        self.assertFalse(verified)
+        self.assertEqual(reason, "trusted nonce registry must be a pre-existing directory")
+
+    def test_group_writable_nonce_registry_is_rejected(self):
+        unsafe_registry = self.root / "unsafe-nonces"
+        unsafe_registry.mkdir(mode=0o700)
+        unsafe_registry.chmod(0o770)
+        try:
+            verified, reason = self._verify(nonce_registry=unsafe_registry)
+            self.assertFalse(verified)
+            self.assertEqual(reason, "trusted nonce registry directory must not be group/world writable")
+        finally:
+            unsafe_registry.chmod(0o700)
 
 
 if __name__ == "__main__":
