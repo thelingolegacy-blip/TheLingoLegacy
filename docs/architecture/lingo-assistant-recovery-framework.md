@@ -61,3 +61,10 @@ Release authorization uses the separate `lingo.approval.v1` envelope defined in 
 The public-key file path, expected approver, and key ID are trust roots: provision them through protected operator configuration, not through a PR-controlled file or workflow input. Never store the private key in this repository, CI variables accessible to untrusted jobs, evidence artifacts, or the runner workspace. Approval records are short-lived (maximum 24 hours) and single-purpose.
 
 The unified gate CLI accepts `--approval-envelope`, `--trusted-approval-public-key`, `--trusted-approver`, and `--trusted-key-id` together. If any are missing, C6 remains BLOCKED; if signature or policy validation fails, C6 fails. A signed approval is still not sufficient by itself: C0–C5 must pass independently. The signature verifier has been added to the proposed contract but has not yet been executed in CI or certified for production use.
+
+
+### Single-use approval nonce consumption
+
+The approval verifier now requires a pre-provisioned nonce registry directory and atomically creates a consumed-nonce marker only after signature and policy validation. Exclusive file creation rejects reuse of the same key-ID/nonce pair. The registry path is a protected trust input and cannot come from pull-request-controlled data.
+
+This file-backed mechanism provides atomic duplicate rejection only for verifiers sharing the same protected filesystem. It is not a distributed replay-prevention service. Before multi-host or production use, provision a durable shared registry with atomic uniqueness semantics and controlled access. If the registry is unavailable, unsafe, or cannot durably record consumption, authorization fails closed. The nonce registry and approval path have not been executed or certified in CI.
