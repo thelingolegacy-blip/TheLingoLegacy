@@ -11,7 +11,7 @@ This staging lane deploys the canonical Worker source to the separately named `t
 - The staging config intentionally declares no custom routes, disables version preview URLs, and declares no D1/KV/R2/service bindings or integration secrets.
 - The verified account subdomain is `thelingolegacy`; the expected staging URL is `https://thelingolegacy-staging.thelingolegacy.workers.dev`.
 - The Worker uses the incoming request origin for staging canonical links and CORS, and suppresses the production `www` to apex redirect in staging.
-- The `staging.invalid` values are sentinels that prevent accidental fallback to the production hostname; staging request-origin handling takes precedence.
+- `CANONICAL_DOMAIN` and `PUBLIC_SITE_URL` are pinned to the dedicated `thelingolegacy-staging.thelingolegacy.workers.dev` host. Staging request-origin handling takes precedence for runtime canonical links and CORS.
 - `.assetsignore` excludes repository controls, operational scripts, environment files, runtime source, and internal configuration from public asset delivery. The verifier fails closed if required exclusions are missing.
 
 ## Credentials
