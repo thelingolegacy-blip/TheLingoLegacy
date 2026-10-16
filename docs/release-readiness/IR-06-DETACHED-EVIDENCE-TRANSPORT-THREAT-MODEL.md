@@ -1,6 +1,6 @@
 # IR-06 — Detached Evidence Transport and Threat Model
 
-**Status:** Design proposal only; not implemented or wired into workflows.  
+**Status:** Threat model documented; an unprivileged diagnostic prototype is implemented on the Draft PR branch. Cryptographic attestation and authenticated approval remain unimplemented; nothing is wired into deployment workflows.  
 **Related change:** PR #308  
 **Current posture:** G02 BLOCKED; IR-06 NOT ACCEPTED; production promotion ON HOLD; last-known-good PROTECTED.
 
@@ -96,12 +96,13 @@ Never place tokens, credentials, private keys, or secrets in manifests, predicat
 
 1. Review and approve this threat model.
 2. Verify repository/org permissions, allowed actions, and Environment protection using an authorized administrator.
-3. Implement a standalone non-production producer/verifier on an isolated branch; do not wire deployment.
-4. Run positive/negative integration tests on a functioning runner and preserve logs, run metadata, attestation, and approval evidence.
-5. Independently review provenance verification and mitigations.
-6. Only after G02 is repaired and acceptance evidence independently verified may a separate change propose wiring the gate into every deployment-capable workflow.
-7. Keep PR #308 Draft; do not merge or deploy until separately authorized.
+3. **Partially complete:** an isolated, unprivileged diagnostic workflow and structural bundle verifier now exist on the PR branch. They do not mint attestations, verify OIDC, authenticate reviewer approval, or authorize releases.
+4. Run the new positive/negative test suite on a functioning runner and preserve logs and run metadata. Current Actions runner-dispatch failures prevent this acceptance step.
+5. Implement and threat-review a trusted-ref attestor/verifier that checks GitHub's signed attestation and independently fetches Environment approval records; keep privileged permissions out of candidate-executing jobs.
+6. Run positive/negative integration tests for signatures, issuer/audience, repository ID, workflow identity/revision, exact SHA, run ID/attempt, artifact digest, Environment approval, self-review, replay, stale evidence, and API failure.
+7. Only after G02 is repaired and acceptance evidence independently verified may a separate change propose wiring the gate into every deployment-capable workflow.
+8. Keep PR #308 Draft; do not merge or deploy until separately authorized.
 
 ## 10. Current disposition
 
-Design only: no workflow or Environment policy changed, no attestation generated, and no deployment triggered. G02 remains BLOCKED; IR-06 remains NOT ACCEPTED; production promotion remains ON HOLD; last-known-good remains PROTECTED.
+The isolated diagnostic workflow and structural verifier are implemented, but the new suite has not yet been empirically executed. No deployment workflow or Environment policy changed; no attestation generated; no deployment triggered. The prototype is not a trust anchor and its verifier always returns releaseAuthorized=false. G02 remains BLOCKED; IR-06 remains NOT ACCEPTED; production promotion remains ON HOLD; last-known-good remains PROTECTED.
