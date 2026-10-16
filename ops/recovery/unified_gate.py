@@ -177,9 +177,10 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     ], [str(auth.get("approval_reference") or "")])
 
     accepted = all(g["status"] == "PASS" for g in gates)
+    release_authorized = accepted and action == "release"
     return {"schema_version": "lingo.gate-result.v1", "expected_sha": expected_sha,
             "requested_action": action, "status": "PASS" if accepted else "BLOCKED",
-            "gates": gates, "release_authorized": accepted}
+            "gates": gates, "release_authorized": release_authorized}
 
 
 def main() -> int:
