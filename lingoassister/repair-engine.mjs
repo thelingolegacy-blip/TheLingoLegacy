@@ -221,7 +221,14 @@ export function evaluateAcceptance(incident, {
   verifierId = null
 } = {}) {
   const missing = [];
-  if (incident.rootCause.classification !== "CONFIRMED") missing.push("root_cause_confirmed");
+  if (incident.rootCause.classification !== "CONFIRMED") {
+    missing.push("root_cause_confirmed");
+  } else {
+    const rootEvidence = incident.evidence.filter(item => incident.rootCause.evidenceIds.includes(item.id));
+    if (!rootEvidence.length || rootEvidence.some(item => !item.independentlyVerified || item.result !== "PASS")) {
+      missing.push("root_cause_evidence_not_independently_verified");
+    }
+  }
   if (!verifierId) missing.push("independent_verifier");
   for (const kind of requiredEvidenceKinds) {
     const found = incident.evidence.some(item =>
