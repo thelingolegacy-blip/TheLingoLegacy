@@ -64,7 +64,9 @@ Run the local manifest-contract checker:
 node containers/scripts/validate-manifests.mjs
 ```
 
-The Kubernetes YAML files were parsed and their isolation/security contracts checked successfully in the available local environment. This is not Kubernetes API-server validation. Docker/Podman and `kubectl` are unavailable in that environment.\n\nIf `kubectl` and Kustomize are installed, validate locally without applying:
+The Kubernetes YAML files were parsed and their isolation/security contracts checked successfully in the available local environment. This is not Kubernetes API-server validation. Docker/Podman and `kubectl` are unavailable in that environment.
+
+If `kubectl` and Kustomize are installed, validate locally without applying:
 
 ```sh
 kubectl config current-context
