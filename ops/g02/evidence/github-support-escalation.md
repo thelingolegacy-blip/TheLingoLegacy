@@ -98,3 +98,22 @@ Current gates remain:
 - G02: BLOCKED / FAIL-UNVERIFIED
 - Production promotion and activation: BLOCKED
 - Last-known-good release: PROTECTED
+
+
+## Post-cleanup checkpoint — 2026-10-16
+
+**Current PR head at inspection:** `cb494d5826465731b7d74e2778385c997c6b88ec`  
+**Cleanup:** removed the redundant `.github/workflows/lingoassist-recovery-diagnostics.yml` from this isolated PR branch. The remaining changed files are the agent operating contract, infrastructure reform plan, this escalation packet, and `ops/recovery/unified_gate.py`.
+
+The cleanup commit triggered these additional PR workflow runs. The GitHub Actions Jobs API was queried after completion:
+
+| Run | Workflow | Job ID | Status / conclusion | Steps | Logs URL | Artifacts |
+|---|---|---:|---|---|---|---|
+| [38963664122](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38963664122) | Lingo Legacy Static CI | 117184692047 | completed / failure | null | null | none |
+| [38963664057](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38963664057) | LINGO Recovery Foundation Gate | 117184692293 | completed / failure | null | null | none |
+
+These are additional pre-step evidence failures. They do not establish that source tests executed or failed and do not establish a root cause. The earlier three-run table above remains historical evidence for commit `3ff82550a20b819c53b2831e8414ad333b7107f5`; it is not the latest run set.
+
+**Support status:** no official GitHub Support case or ticket number has been verified. Submit this packet through the authenticated GitHub Support portal and request provider-side investigation of runner allocation/initialization and missing log blobs. Do not represent repository issue or Actions run IDs as a Support ticket number.
+
+**Gate state:** G02 BLOCKED / FAIL-UNVERIFIED; production promotion and activation BLOCKED; LKG PROTECTED. No merge or production deployment is authorized by this update.
