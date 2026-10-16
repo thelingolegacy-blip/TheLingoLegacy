@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       commit: ${{ steps.identity.outputs.commit }}
-      artifact: ${{ steps.identity.outputs.artifact }}
+      artifact: ${{ steps.build-bundle.outputs.manifest_sha256 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -126,8 +126,68 @@ jobs:
         run: |
           set -euo pipefail
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          tar --exclude='./.git' --exclude='./release/evidence' -cf release-artifact.tar .
-          echo "artifact=$(sha256sum release-artifact.tar | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Build and seal the staging release bundle
+        id: build-bundle
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          rm -rf .wrangler-build
+          mkdir -p .wrangler-build/evidence-tools
+          npx --yes wrangler@4 deploy --dry-run --outdir .wrangler-build --config wrangler.staging.jsonc
+
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { copyFileSync, cpSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+          import { basename, join, relative, sep } from 'node:path';
+          const root = '.wrangler-build';
+          const jsFiles = readdirSync(root, { withFileTypes: true })
+            .filter((e) => e.isFile() && /\.(?:mjs|js)$/.test(e.name))
+            .map((e) => join(root, e.name)).sort();
+          if (jsFiles.length !== 1) throw new Error('Expected exactly one top-level bundled Worker entrypoint: ' + jsFiles.join(','));
+          if (!readFileSync('staging-public/index.html', 'utf8')) throw new Error('Missing or empty staging index');
+          cpSync('staging-public', join(root, 'staging-public'), { recursive: true, errorOnExist: true });
+          copyFileSync('scripts/live-probes.mjs', join(root, 'evidence-tools/live-probes.mjs'));
+          const cfg = JSON.parse(readFileSync('wrangler.staging.jsonc', 'utf8'));
+          const configSha256 = createHash('sha256').update(readFileSync('wrangler.staging.jsonc')).digest('hex');
+          const sanitizerSha256 = createHash('sha256').update(readFileSync('scripts/sanitize-cloudflare-only-surface.mjs')).digest('hex');
+          cfg.main = basename(jsFiles[0]);
+          cfg.assets = { ...(cfg.assets || {}), directory: './staging-public', binding: 'ASSETS' };
+          cfg.routes = [];
+          cfg.workers_dev = true;
+          delete cfg.route;
+          writeFileSync(join(root, 'wrangler.deploy.jsonc'), JSON.stringify(cfg, null, 2) + '\n');
+          const sha = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
+          const files = [];
+          const walk = (dir) => {
+            for (const e of readdirSync(dir, { withFileTypes: true }).sort((a,b) => a.name.localeCompare(b.name))) {
+              const full = join(dir, e.name);
+              if (e.isSymbolicLink()) throw new Error('Symlink forbidden: ' + full);
+              if (e.isDirectory()) walk(full);
+              else if (e.isFile()) files.push({ path: relative(root, full).split(sep).join('/'), bytes: lstatSync(full).size, sha256: sha(full) });
+              else throw new Error('Unsupported filesystem entry: ' + full);
+            }
+          };
+          walk(root);
+          files.sort((a,b) => a.path.localeCompare(b.path));
+          const manifest = { schemaVersion:'1.0', status:'SEALED_NOT_CERTIFIED', sourceCommit:process.env.SOURCE_COMMIT, sanitizerSha256, stagingConfigSha256:configSha256, workerEntrypoint:basename(jsFiles[0]), files };
+          writeFileSync(join(root, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+          const manifestSha256 = sha(join(root, 'release-manifest.json'));
+          writeFileSync(join(root, 'release-manifest.sha256'), manifestSha256 + '\n');
+          process.stdout.write(JSON.stringify({ sourceCommit:manifest.sourceCommit, sanitizerSha256, stagingConfigSha256:configSha256, workerEntrypoint:manifest.workerEntrypoint, fileCount:files.length, manifestSha256 }) + '\n');
+          NODE
+          echo "manifest_sha256=$(cat .wrangler-build/release-manifest.sha256)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload sealed staging release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-staging-release-bundle-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .wrangler-build/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
       - name: Generate evidence scaffold
         env:
           ENVIRONMENT: ${{ inputs.environment }}
@@ -146,44 +206,141 @@ jobs:
     environment: ${{ inputs.environment }}
     permissions:
       contents: read
+      actions: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Re-run repository production gates
+
+      - name: Download sealed release bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: lingo-staging-release-bundle-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .wrangler-build
+
+      - name: Verify manifest digest and every downloaded file
+        shell: bash
+        env:
+          EXPECTED_MANIFEST_SHA256: ${{ needs.gates.outputs.artifact }}
+          EXPECTED_SOURCE_COMMIT: ${{ needs.gates.outputs.commit }}
         run: |
-          node scripts/sanitize-cloudflare-only-surface.mjs
-          node scripts/verify-cloudflare-only.mjs
-          node scripts/verify-cloudflare-bindings.mjs
-          node scripts/verify-production-authority.mjs
-          node scripts/verify-dynamic-runtime.mjs
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { lstatSync, readFileSync, readdirSync } from 'node:fs';
+          import { join, relative, sep } from 'node:path';
+          const root='.wrangler-build';
+          const sha=(p)=>createHash('sha256').update(readFileSync(p)).digest('hex');
+          const manifestPath=join(root,'release-manifest.json');
+          const digest=sha(manifestPath);
+          if(digest!==process.env.EXPECTED_MANIFEST_SHA256) throw new Error('Manifest digest differs from build job output');
+          if(readFileSync(join(root,'release-manifest.sha256'),'utf8').trim()!==digest) throw new Error('Detached manifest digest mismatch');
+          const m=JSON.parse(readFileSync(manifestPath,'utf8'));
+          if(m.status!=='SEALED_NOT_CERTIFIED'||m.sourceCommit!==process.env.EXPECTED_SOURCE_COMMIT) throw new Error('Manifest state/source mismatch');
+          if(!/^[a-f0-9]{64}$/.test(m.sanitizerSha256)||!/^[a-f0-9]{64}$/.test(m.stagingConfigSha256)) throw new Error('Missing SHA-256 provenance');
+          const expected=new Map(m.files.map(f=>[f.path,f]));
+          if(expected.size!==m.files.length) throw new Error('Duplicate manifest paths');
+          const actual=[];
+          const walk=(dir)=>{for(const e of readdirSync(dir,{withFileTypes:true})){const full=join(dir,e.name);if(e.isSymbolicLink())throw new Error('Symlink forbidden: '+full);if(e.isDirectory())walk(full);else if(e.isFile()){const p=relative(root,full).split(sep).join('/');if(p==='release-manifest.json'||p==='release-manifest.sha256')continue;actual.push(p);const f=expected.get(p);if(!f)throw new Error('Unexpected file: '+p);if(lstatSync(full).size!==f.bytes||sha(full)!==f.sha256)throw new Error('File hash/size mismatch: '+p);}else throw new Error('Unsupported file: '+full);}};
+          walk(root);
+          if(actual.length!==expected.size||[...expected.keys()].some(p=>!actual.includes(p)))throw new Error('Bundle file set differs from manifest');
+          for(const p of ['wrangler.deploy.jsonc','evidence-tools/live-probes.mjs','staging-public/index.html'])if(!expected.has(p))throw new Error('Required file missing: '+p);
+          const c=JSON.parse(readFileSync(join(root,'wrangler.deploy.jsonc'),'utf8'));
+          if(c.name!=='thelingolegacy-staging'||c.workers_dev!==true||(c.routes||[]).length||c.main!==m.workerEntrypoint||c.assets?.directory!=='./staging-public')throw new Error('Deployment config violates staging isolation');
+          console.log(JSON.stringify({status:'PASS',sourceCommit:m.sourceCommit,manifestSha256:digest,fileCount:actual.length,workerEntrypoint:m.workerEntrypoint}));
+          NODE
+
       - name: Verify Cloudflare credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          set -euo pipefail
           test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
-      - name: Deploy to Cloudflare
+
+      - name: Deploy the exact verified bundle without rebuilding
+        id: deploy
+        shell: bash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config wrangler.staging.jsonc
-      - name: Resolve canonical production URL
-        id: config
-        shell: bash
         run: |
           set -euo pipefail
-          echo "base_url=https://thelingolegacy-staging.thelingolegacy.workers.dev" >> "$GITHUB_OUTPUT"
-      - name: Live probes
+          npx --yes wrangler@4 deploy --no-bundle --config .wrangler-build/wrangler.deploy.jsonc 2>&1 | tee wrangler-deploy.log
+          VERSION_ID="$(sed -nE 's/.*Current Version ID:[[:space:]]*([[:alnum:]-]+).*/\1/p' wrangler-deploy.log | tail -n 1)"
+          test -n "$VERSION_ID" || { echo 'Wrangler did not expose a version ID; staging evidence cannot be accepted'; exit 1; }
+          echo "version_id=$VERSION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Capture Cloudflare version record and ETag
+        id: version
+        shell: bash
         env:
-          LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          VERSION_ID: ${{ steps.deploy.outputs.version_id }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            -D .wrangler-build/version-response.headers \
+            -o .wrangler-build/version-response.json \
+            -H 'Accept: application/json' \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/thelingolegacy-staging/versions/$VERSION_ID"
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const response=JSON.parse(readFileSync('.wrangler-build/version-response.json','utf8'));
+          if(!response.success||response?.result?.id!==process.env.VERSION_ID)throw new Error('Cloudflare API did not confirm exact version ID');
+          const lines=readFileSync('.wrangler-build/version-response.headers','utf8').split(/\r?\n/);
+          const line=lines.findLast((v)=>/^etag:/i.test(v));
+          const etag=line?.split(':').slice(1).join(':').trim();
+          if(!etag)throw new Error('Cloudflare version response did not include ETag');
+          writeFileSync('.wrangler-build/version-evidence.json',JSON.stringify({versionId:process.env.VERSION_ID,etag,confirmedByCloudflareApi:true},null,2)+'\n');
+          writeFileSync(process.env.GITHUB_OUTPUT,'etag='+etag.replace(/%/g,'%25').replace(/\r/g,'%0D').replace(/\n/g,'%0A')+'\n',{flag:'a'});
+          NODE
+
+      - name: Run staging probes against the deployed version
+        id: probes
+        shell: bash
+        env:
+          LIVE_BASE_URL: https://thelingolegacy-staging.thelingolegacy.workers.dev
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
-        run: node scripts/live-probes.mjs
+        run: |
+          set -euo pipefail
+          node .wrangler-build/evidence-tools/live-probes.mjs | tee .wrangler-build/live-probes.json
+
+      - name: Write deployment provenance attestation
+        if: always()
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ needs.gates.outputs.commit }}
+          MANIFEST_SHA256: ${{ needs.gates.outputs.artifact }}
+          VERSION_ID: ${{ steps.deploy.outputs.version_id }}
+          VERSION_ETAG: ${{ steps.version.outputs.etag }}
+          PROBE_OUTCOME: ${{ steps.probes.outcome }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const m=JSON.parse(readFileSync('.wrangler-build/release-manifest.json','utf8'));
+          let probes=null;try{probes=JSON.parse(readFileSync('.wrangler-build/live-probes.json','utf8'));}catch{}
+          const a={schemaVersion:'1.0',status:process.env.PROBE_OUTCOME==='success'&&Boolean(process.env.VERSION_ID)&&Boolean(process.env.VERSION_ETAG)?'STAGING_DEPLOYED_PROBES_PASS_NOT_CERTIFIED':'BLOCKED_NOT_CERTIFIED',sourceCommit:process.env.SOURCE_COMMIT,sanitizerSha256:m.sanitizerSha256,stagingConfigSha256:m.stagingConfigSha256,bundleManifestSha256:process.env.MANIFEST_SHA256,workerEntrypoint:m.workerEntrypoint,cloudflareVersionId:process.env.VERSION_ID||null,cloudflareEtag:process.env.VERSION_ETAG||null,probeOutcome:process.env.PROBE_OUTCOME||'not_run',probes};
+          writeFileSync('.wrangler-build/release-attestation.json',JSON.stringify(a,null,2)+'\n');
+          if(a.status==='BLOCKED_NOT_CERTIFIED')process.exitCode=1;
+          NODE
+
+      - name: Upload staging deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-staging-deployment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .wrangler-build/release-attestation.json
+            .wrangler-build/live-probes.json
+            .wrangler-build/version-evidence.json
+          if-no-files-found: warn
+          retention-days: 30
 
   production-hold:
     needs: gates
