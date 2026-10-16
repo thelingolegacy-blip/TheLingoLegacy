@@ -113,6 +113,8 @@ class IncidentCollectorTests(unittest.TestCase):
         self.assertEqual(report["acceptance"]["last_known_good"], "PROTECTED")
         self.assertFalse(report["acceptance"]["repair_authorized"])
         self.assertFalse(report["evidence"]["independently_verified"])
+        self.assertEqual(report["acceptance"]["checkpoint_gate"]["result"], "BLOCKED")
+        self.assertTrue(report["acceptance"]["checkpoint_gate"]["blocked"])
 
     def test_attempt_mismatch_blocks(self):
         bad_run = run_data()
