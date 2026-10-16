@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "source": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "commitSha": "REPLACE_WITH_EXACT_40_CHARACTER_COMMIT_SHA"
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "items": {
+    "IR-01": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    },
+    "IR-02": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    },
+    "IR-03": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    },
+    "IR-04": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    },
+    "IR-05": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    },
+    "IR-06": {
+      "status": "NOT_RUN",
+      "reviewerAcceptance": null,
+      "evidence": []
+    }
+  }
+}

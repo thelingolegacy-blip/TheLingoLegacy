@@ -1,0 +1,124 @@
+name: IR-06 Detached Evidence Transport — Isolated Prototype
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ir06-detached-evidence-isolated.yml'
+      - 'scripts/verify-ir-readiness.mjs'
+      - 'scripts/verify-ir-readiness.test.mjs'
+      - 'scripts/verify-detached-evidence.mjs'
+      - 'scripts/verify-detached-evidence.test.mjs'
+      - 'release/readiness/**'
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Exact 40-character candidate commit SHA in this repository
+        required: true
+        type: string
+
+# Prototype only. This workflow must never mint attestations or authorize deployment.
+permissions:
+  contents: read
+
+concurrency:
+  group: ir06-detached-evidence-${{ github.event.pull_request.head.sha || inputs.candidate_sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  unprivileged-candidate-tests:
+    name: Unprivileged candidate test and evidence capture
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      EXPECTED_REPOSITORY: thelingolegacy-blip/TheLingoLegacy
+      EXPECTED_REPOSITORY_ID: '1279436411'
+      CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
+    steps:
+      - name: Validate invocation and repository identity
+        shell: bash
+        env:
+          ACTUAL_REPOSITORY: ${{ github.repository }}
+          ACTUAL_REPOSITORY_ID: ${{ github.repository_id }}
+        run: |
+          set -euo pipefail
+          [[ "$ACTUAL_REPOSITORY" == "$EXPECTED_REPOSITORY" ]]
+          [[ "$ACTUAL_REPOSITORY_ID" == "$EXPECTED_REPOSITORY_ID" ]]
+          [[ "$CANDIDATE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          printf 'repository=%s\nrepository_id=%s\ncandidate_sha=%s\n' "$ACTUAL_REPOSITORY" "$ACTUAL_REPOSITORY_ID" "$CANDIDATE_SHA"
+
+      - name: Checkout exact candidate commit without persisted credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ env.CANDIDATE_SHA }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Confirm checked-out commit identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          [[ "$actual" == "$CANDIDATE_SHA" ]]
+          printf 'checked_out_sha=%s\n' "$actual"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+
+      - name: Run candidate tests and capture result
+        id: tests
+        shell: bash
+        run: |
+          set -u
+          mkdir -p detached-evidence
+          node --version > detached-evidence/node-version.txt 2>&1
+          set +e
+          node --test scripts/verify-ir-readiness.test.mjs scripts/verify-detached-evidence.test.mjs > detached-evidence/test-stdout.log 2> detached-evidence/test-stderr.log
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > detached-evidence/test-exit-code.txt
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          cat > detached-evidence/run-summary.json <<EOF
+          {
+            "schemaVersion": "ir06-isolated-test-run/0.1",
+            "repository": "$EXPECTED_REPOSITORY",
+            "repositoryId": "$EXPECTED_REPOSITORY_ID",
+            "candidateSha": "$CANDIDATE_SHA",
+            "workflowPath": ".github/workflows/ir06-detached-evidence-isolated.yml",
+            "workflowRef": "$GITHUB_REF",
+            "workflowRevisionSha": "$GITHUB_SHA",
+            "runId": "$GITHUB_RUN_ID",
+            "runAttempt": "$GITHUB_RUN_ATTEMPT",
+            "nodeVersion": "$(cat detached-evidence/node-version.txt)",
+            "testCommand": "node --test scripts/verify-ir-readiness.test.mjs scripts/verify-detached-evidence.test.mjs",
+            "exitCode": $rc,
+            "capturedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "trustStatus": "UNTRUSTED_CANDIDATE_JOB_NO_ATTESTATION"
+          }
+          EOF
+          exit "$rc"
+
+      - name: Compute evidence file digests
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -d detached-evidence ]]; then
+            (cd detached-evidence && sha256sum * > SHA256SUMS)
+          fi
+
+      - name: Upload untrusted diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: ir06-untrusted-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: detached-evidence/
+          if-no-files-found: error
+          retention-days: 7
+
+# Deliberately absent: id-token: write, attestations: write, secrets, deployment
+# environments, signing, or any dependency from a production/staging workflow.

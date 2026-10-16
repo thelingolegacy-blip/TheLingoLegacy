@@ -58,7 +58,7 @@ jobs:
           echo "target_run_url=$target_run_url" >> "$GITHUB_OUTPUT"
 
       - name: Upload trigger evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         with:
           name: g02-wrapper-trigger-evidence
           path: trigger-evidence.txt
@@ -116,7 +116,7 @@ jobs:
           echo "target_job_id=$target_job_id" >> "$GITHUB_OUTPUT"
 
       - name: Upload allocation evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         with:
           name: g02-wrapper-allocation-evidence
           path: allocation-evidence.txt
@@ -166,7 +166,7 @@ jobs:
             "G02_EXECUTION_CREDIT=ELIGIBLE_FOR_GATE_VERIFICATION" | tee execution-summary.txt
 
       - name: Upload execution evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         with:
           name: g02-wrapper-execution-evidence
           path: |
