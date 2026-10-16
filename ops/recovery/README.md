@@ -46,7 +46,7 @@ The runner bootstrap has been hardened to remove only its local temporary `.env`
 
 The unified C0–C6 evaluator now requires an externally verified approval flag for C6. The proposed verifier is `ops/recovery/verify_approval.py`; the schema is `ops/recovery/schema/lingo-approval-v1.schema.json`.
 
-The signer must keep its private key offline. Supply the verifier's public-key path, approver identity, and key ID only from protected operator configuration. Never take these values from a pull-request-controlled workflow input. The approval envelope is bound to one full commit SHA and one action, has an expiry window no longer than 24 hours, and must be signed over canonical JSON excluding the `signature_base64` field.
+The signer must keep its private key offline. Supply the verifier's public-key path, approver identity, key ID, and nonce-registry path only from protected operator configuration. Never take these values from a pull-request-controlled workflow input. The approval envelope is bound to one full commit SHA and one action, has an expiry window no longer than 24 hours, and must be signed over canonical JSON excluding the `signature_base64` field. After signature verification, the verifier atomically consumes the nonce using exclusive file creation in a pre-existing protected registry directory. A repeated nonce is rejected. The registry must be durable and shared by every verifier that accepts the same approval; a host-local registry is not sufficient for a multi-host release system.
 
 Example invocation (paths and identities below are placeholders and must come from trusted operator configuration):
 
@@ -61,4 +61,4 @@ python ops/recovery/unified_gate.py \
   --trusted-key-id <pinned-key-id>
 ```
 
-Without the full trusted verifier configuration, authorization remains BLOCKED. This path has not yet been executed or certified in CI. It does not bypass the canonical runner contract, evidence verification, or the production lock.
+Without the full trusted verifier configuration, authorization remains BLOCKED. The nonce registry directory must already exist, must not be a symlink, must not be group/world writable, and must be durable/shared across all verifiers accepting the same approvals. Atomic file creation prevents duplicate consumption only among processes sharing that registry filesystem; it is not a distributed ledger. This path has not yet been executed or certified in CI. It does not bypass the canonical runner contract, evidence verification, or the production lock.
