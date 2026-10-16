@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
+import { fileURLToPath } from 'node:url';
 
 const port = Number.parseInt(process.env.TEST_PORT || '18347', 10);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) {
   throw new Error('TEST_PORT must be an integer between 1024 and 65535');
 }
-const child = spawn(process.execPath, ['containers/server.mjs'], {
+
+const serverPath = fileURLToPath(new URL('./server.mjs', import.meta.url));
+const child = spawn(process.execPath, [serverPath], {
   cwd: process.cwd(),
   env: { ...process.env, HOST: '127.0.0.1', PORT: String(port) },
   stdio: ['ignore', 'pipe', 'pipe'],
