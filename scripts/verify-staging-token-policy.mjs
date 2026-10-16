@@ -15,8 +15,8 @@ export function verifyStagingTokenPolicy({ policy, policyBytes, expectedPolicySh
   }
   if (!accountId || policy.accountId !== accountId) throw new Error('Token policy account identity mismatch');
   if (policy.workerName !== 'thelingolegacy-staging') throw new Error('Policy is not restricted to the staging Worker');
-  if (JSON.stringify(policy.permissions) !== JSON.stringify(['Workers Scripts:Edit'])) {
-    throw new Error('Token permissions must be exactly Workers Scripts:Edit');
+  if (JSON.stringify(policy.permissions) !== JSON.stringify(['Individual Workers Editor'])) {
+    throw new Error('Token permissions must be exactly Individual Workers Editor');
   }
   if (JSON.stringify(policy.resourceScope) !== JSON.stringify({ workers: ['thelingolegacy-staging'], zones: [] })) {
     throw new Error('Token resource scope must be exactly the staging Worker with no zone scope');
@@ -31,7 +31,8 @@ export function verifyStagingTokenPolicy({ policy, policyBytes, expectedPolicySh
 }
 
 if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
-  const policyBytes = readFileSync('security/cloudflare-staging-token-policy.json');
+  const policyPath = process.env.CLOUDFLARE_STAGING_TOKEN_POLICY_PATH || 'security/cloudflare-staging-token-policy.json';
+  const policyBytes = readFileSync(policyPath);
   const policy = JSON.parse(policyBytes.toString('utf8'));
   const token = process.env.CLOUDFLARE_STAGING_API_TOKEN;
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
