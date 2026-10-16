@@ -30,6 +30,18 @@ jobs:
         with:
           node-version: 22
 
+      - name: Verify Cloudflare asset publication scope
+        run: node scripts/verify-asset-publication-scope.mjs 2>&1 | tee asset-scope.log
+
+      - name: Verify shared design tokens and icon registry
+        run: node scripts/verify-shared-design-system.mjs 2>&1 | tee design-system.log
+
+      - name: Verify staged platform engine and world registries
+        run: node scripts/verify-platform-registries.mjs 2>&1 | tee platform-registry.log
+
+      - name: Verify versioned media pipeline contract
+        run: node scripts/verify-media-pipeline.mjs 2>&1 | tee media-pipeline.log
+
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
@@ -45,6 +57,10 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
+            asset-scope.log
+            design-system.log
+            platform-registry.log
+            media-pipeline.log
             sanitize.log
             bindings.log
             validator.log
