@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
 import os
 import subprocess
@@ -118,7 +119,7 @@ def verify_approval(
         if mode & 0o022:
             return False, "trusted nonce registry directory must not be group/world writable"
         nonce_key = base64.urlsafe_b64encode(
-            __import__("hashlib").sha256(
+            hashlib.sha256(
                 (trusted_key_id + "\\0" + envelope["nonce"]).encode("utf-8")
             ).digest()
         ).decode("ascii").rstrip("=")
@@ -131,7 +132,7 @@ def verify_approval(
             with os.fdopen(fd, "w", encoding="utf-8") as stream:
                 stream.write(json.dumps({
                     "key_id": trusted_key_id,
-                    "nonce_sha256": __import__("hashlib").sha256(envelope["nonce"].encode("utf-8")).hexdigest(),
+                    "nonce_sha256": hashlib.sha256(envelope["nonce"].encode("utf-8")).hexdigest(),
                     "approval_reference": envelope["approval_reference"],
                     "approved_sha": expected_sha,
                     "approved_action": expected_action,
