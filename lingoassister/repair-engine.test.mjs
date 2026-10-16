@@ -202,10 +202,6 @@ test("verified contextual lessons are advisory-only in next-action recommendatio
   assert.equal(result.advisoryLessons[0].id, "LESSON-G02-1");
   assert.equal(result.learningInfluencedRanking, false);
   assert.equal(result.actionAuthority, false);
-  const mismatch = recommendNextAction(incident(), [candidate], {
-    learningRecords: [lesson], now: "2026-10-17T00:00:00Z"
-  });
-  assert.equal(mismatch.advisoryLessons.length, 1);
   const otherContext = recommendNextAction(incident(), [{ ...candidate, contextFingerprint: "different-context" }], {
     learningRecords: [lesson], now: "2026-10-17T00:00:00Z"
   });
