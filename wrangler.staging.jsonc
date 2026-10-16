@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thelingolegacy-staging",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-27",
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "LINGO_ENVIRONMENT": "staging",
+    "CANONICAL_DOMAIN": "thelingolegacy-staging.thelingolegacy.workers.dev",
+    "PUBLIC_SITE_URL": "https://thelingolegacy-staging.thelingolegacy.workers.dev"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}

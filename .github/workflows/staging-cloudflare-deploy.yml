@@ -1,0 +1,157 @@
+name: LINGO Legacy Isolated Cloudflare Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_staging_only:
+        description: "Type STAGING to authorize deployment to the isolated staging Worker"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-legacy-cloudflare-staging
+  cancel-in-progress: false
+
+jobs:
+  staging-deploy:
+    if: ${{ inputs.confirm_staging_only == 'STAGING' }}
+    runs-on: [self-hosted, linux, x64, lingo-legacy-g02-staging]
+    environment: staging
+    timeout-minutes: 15
+    steps:
+      - name: Checkout selected source revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Verify source and staging isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check worker.js
+          node scripts/verify-staging-isolation.mjs
+
+      - name: Validate staging deployment plan without publishing
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN:-}" || { echo "::error::CLOUDFLARE_STAGING_API_TOKEN is missing from the staging environment"; exit 1; }
+          test -n "${CLOUDFLARE_ACCOUNT_ID:-}" || { echo "::error::CLOUDFLARE_ACCOUNT_ID is missing from the staging environment"; exit 1; }
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc
+
+      - name: Deploy isolated staging Worker
+        id: deploy
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4 deploy --config wrangler.staging.jsonc 2>&1 | tee staging-deploy.log
+          staging_url="$(grep -Eo 'https://[[:alnum:].-]+\.workers\.dev' staging-deploy.log | tail -n 1 || true)"
+          test -n "$staging_url" || { echo "::error::Wrangler did not report a workers.dev URL; deployment cannot be accepted without an exact target"; exit 1; }
+          case "$staging_url" in
+            https://thelingolegacy.com|https://www.thelingolegacy.com) echo "::error::Production hostname detected"; exit 1 ;;
+          esac
+          test "$staging_url" = "https://thelingolegacy-staging.thelingolegacy.workers.dev" || { echo "::error::Unexpected staging URL"; exit 1; }
+          echo "staging_url=$staging_url" >> "$GITHUB_OUTPUT"
+
+      - name: Probe deployed staging runtime and asset boundary
+        id: live-probes
+        shell: bash
+        env:
+          STAGING_URL: ${{ steps.deploy.outputs.staging_url }}
+        run: |
+          set -euo pipefail
+          test -n "${STAGING_URL:-}" || { echo "::error::Exact staging URL is missing"; exit 1; }
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          const base = process.env.STAGING_URL;
+          const u = new URL(base);
+          const failures = [];
+          const record = {
+            schema: 'lingo-staging-live-evidence-v1',
+            captured_utc: new Date().toISOString(),
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            commit_sha: process.env.GITHUB_SHA,
+            runner_name: process.env.RUNNER_NAME || '',
+            staging_url: base,
+            checks: {},
+            failures
+          };
+          if (u.protocol !== 'https:' || !u.hostname.endsWith('.workers.dev')) failures.push('Target must be an HTTPS workers.dev URL');
+          if (u.hostname === 'thelingolegacy.com' || u.hostname === 'www.thelingolegacy.com') failures.push('Production host forbidden');
+          if (u.hostname !== 'thelingolegacy-staging.thelingolegacy.workers.dev') failures.push('Unexpected staging hostname');
+          async function probe(path, expectedStatus) {
+            try {
+              const response = await fetch(new URL(path, base), { redirect: 'manual', signal: AbortSignal.timeout(12000) });
+              const body = await response.text();
+              record.checks[path] = {
+                status: response.status,
+                content_type: response.headers.get('content-type') || '',
+                runtime: response.headers.get('x-lingo-runtime') || '',
+                dynamic: response.headers.get('x-lingo-dynamic') || '',
+                location: response.headers.get('location') || '',
+                body_prefix: body.slice(0, 180)
+              };
+              if (response.status !== expectedStatus) failures.push(path + ' expected ' + expectedStatus + ' got ' + response.status);
+              return { response, body };
+            } catch (error) {
+              record.checks[path] = { error_type: error?.name || 'Error', error: String(error).slice(0, 240) };
+              failures.push(path + ' request failed');
+              return { response: null, body: '' };
+            }
+          }
+          const root = await probe('/', 200);
+          if (root.response && !root.response.headers.get('content-type')?.includes('text/html')) failures.push('Root did not return HTML');
+          const health = await probe('/healthz', 200);
+          if (health.response && !health.body.trim().startsWith('ok')) failures.push('/healthz body mismatch');
+          const runtime = await probe('/api/v1/runtime', 200);
+          if (runtime.response) {
+            try {
+              const manifest = JSON.parse(runtime.body);
+              if (manifest.runtime !== 'cloudflare-worker') failures.push('Unexpected runtime identity');
+              if (manifest.hostname !== u.hostname || manifest.canonical_domain !== u.hostname) failures.push('Staging hostname/canonical-origin mismatch');
+              if (!manifest.integrations || Object.values(manifest.integrations).some(Boolean)) failures.push('An external integration is enabled or integration state is missing');
+            } catch { failures.push('Runtime manifest is not valid JSON'); }
+          }
+          await probe('/api/v1/platform/manifest', 200);
+          await probe('/worker.js', 404);
+          await probe('/docs/staging-isolation-runbook.md', 404);
+          await probe('/wrangler.staging.jsonc', 404);
+          await probe('/firebase.json', 404);
+          await probe('/.assetsignore', 404);
+          await probe('/admin-command-center/', 404);
+          await probe('/auth0-details/', 404);
+          await probe('/integration-configurations/', 404);
+          await probe('/production-lock/', 404);
+          record.status = failures.length ? 'FAIL' : 'PASS';
+          const text = JSON.stringify(record, null, 2) + '\n';
+          fs.mkdirSync('g02-staging-evidence', { recursive: true });
+          fs.writeFileSync('g02-staging-evidence/staging-live-evidence.json', text);
+          fs.writeFileSync('g02-staging-evidence/staging-live-evidence.json.sha256', crypto.createHash('sha256').update(text).digest('hex') + '  staging-live-evidence.json\n');
+          console.log(text);
+          if (failures.length) process.exit(1);
+          NODE
+
+      - name: Upload staging deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-staging-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-staging-evidence/
+          if-no-files-found: warn
+          retention-days: 14
