@@ -4,8 +4,8 @@ FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy only the standalone smoke service; do not copy repository or Worker source.
-COPY --chown=node:node containers/server.mjs ./server.mjs
+# Docker build context is containers/; copy only the standalone health service.
+COPY --chown=node:node server.mjs ./server.mjs
 
 USER node
 EXPOSE 8080
