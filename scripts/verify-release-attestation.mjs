@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const sha256Pattern = /^[a-f0-9]{64}$/;
 
@@ -43,7 +44,7 @@ export function verifyReleaseAttestation({ attestation, probes, versionEvidence,
   };
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const root = process.env.EVIDENCE_DIR || 'release-deployment-evidence';
   const attestation = JSON.parse(readFileSync(join(root, 'release-attestation.json'), 'utf8'));
   const probes = JSON.parse(readFileSync(join(root, 'live-probes.json'), 'utf8'));
