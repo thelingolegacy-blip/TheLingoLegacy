@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only GitHub Actions incident evidence collector; never changes gate state."""
 from __future__ import annotations
-import argparse, json, os, re, sys, urllib.error, urllib.request
+import argparse, json, os, re, sys, urllib.error, urllib.request, urllib.parse
 from datetime import datetime, timezone
 
 DEFAULT_REPOSITORY = "thelingolegacy-blip/TheLingoLegacy"
@@ -10,6 +10,18 @@ API = "https://api.github.com"
 
 class EvidenceUnavailable(Exception):
     pass
+
+class SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Never forward the GitHub bearer token to a different redirect host."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if redirected is not None:
+            old_host = urllib.parse.urlsplit(req.full_url).netloc.lower()
+            new_host = urllib.parse.urlsplit(newurl).netloc.lower()
+            if old_host != new_host:
+                redirected.remove_header("Authorization")
+        return redirected
+
 
 class GitHubReadOnlyClient:
     """GET-only GitHub REST client. Use a least-privilege read-only token."""
@@ -25,7 +37,7 @@ class GitHubReadOnlyClient:
             "User-Agent": "LINGO-Legacy-ReadOnly-Incident-Collector",
         }, method="GET")
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as response:
+            with urllib.request.build_opener(SafeRedirectHandler()).open(req, timeout=self.timeout) as response:
                 return response.read()
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             raise EvidenceUnavailable("GitHub evidence request failed or was inaccessible") from exc
