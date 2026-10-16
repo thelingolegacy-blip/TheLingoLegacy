@@ -12,7 +12,7 @@ The current source of truth observed on `main` is `worker.js` plus `wrangler.jso
 - A non-root Dockerfile and local-only Docker Compose configuration.
 - Kubernetes Deployment and ClusterIP Service manifests with securityContext, probes, resource requests/limits, and no ingress by default.
 - A Node.js smoke-test script (executed locally: 7 assertions passed) and a manifest contract checker (passed locally).
-- Documentation for local container testing and future isolated Kubernetes validation.
+- Documentation for local container testing, future isolated Kubernetes validation, and the source-derived [Worker portability inventory](WORKER_PORTABILITY_INVENTORY.md).
 
 ## What is not included
 
