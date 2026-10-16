@@ -104,6 +104,7 @@ export function createGitHubEvidenceAdapter({
      * to a short-lived external URL, which needs a separately controlled retrieval path.
      */
     async collectWorkflowEvidenceBundle({ repository, runId, expectedCommit }) {
+      repository = requiredText(repository, "repository");
       const runEvidence = await this.collectWorkflowRun({ repository, runId, expectedCommit });
       const encodedRepo = repository.split("/").map(encodeURIComponent).join("/");
       const [jobsBody, artifactsBody] = await Promise.all([
