@@ -101,6 +101,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Run provenance verifier adversarial tests
+        run: node --test scripts/verify-release-bundle.test.mjs scripts/verify-release-attestation.test.mjs scripts/verify-staging-token-policy.test.mjs
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs
       - name: Cloudflare-only runtime gate
@@ -152,6 +154,8 @@ jobs:
           rmSync(join(root, 'staging-public'), { recursive: true, force: true });
           cpSync('staging-public', join(root, 'staging-public'), { recursive: true });
           copyFileSync('scripts/live-probes.mjs', join(root, 'evidence-tools/live-probes.mjs'));
+          copyFileSync('scripts/verify-staging-token-policy.mjs', join(root, 'evidence-tools/verify-staging-token-policy.mjs'));
+          copyFileSync('security/cloudflare-staging-token-policy.json', join(root, 'evidence-tools/cloudflare-staging-token-policy.json'));
           const cfg = JSON.parse(readFileSync('wrangler.staging.jsonc', 'utf8'));
           const configSha256 = createHash('sha256').update(readFileSync('wrangler.staging.jsonc')).digest('hex');
           const sanitizerSha256 = createHash('sha256').update(readFileSync('scripts/sanitize-cloudflare-only-surface.mjs')).digest('hex');
@@ -226,36 +230,20 @@ jobs:
         env:
           EXPECTED_MANIFEST_SHA256: ${{ needs.gates.outputs.artifact }}
           EXPECTED_SOURCE_COMMIT: ${{ needs.gates.outputs.commit }}
-        run: |
-          set -euo pipefail
-          node --input-type=module <<'NODE'
-          import { createHash } from 'node:crypto';
-          import { lstatSync, readFileSync, readdirSync } from 'node:fs';
-          import { join, relative, sep } from 'node:path';
-          const root='.wrangler-build';
-          const sha=(p)=>createHash('sha256').update(readFileSync(p)).digest('hex');
-          const manifestPath=join(root,'release-manifest.json');
-          const digest=sha(manifestPath);
-          if(digest!==process.env.EXPECTED_MANIFEST_SHA256) throw new Error('Manifest digest differs from build job output');
-          if(readFileSync(join(root,'release-manifest.sha256'),'utf8').trim()!==digest) throw new Error('Detached manifest digest mismatch');
-          const m=JSON.parse(readFileSync(manifestPath,'utf8'));
-          if(m.status!=='SEALED_NOT_CERTIFIED'||m.sourceCommit!==process.env.EXPECTED_SOURCE_COMMIT) throw new Error('Manifest state/source mismatch');
-          if(!/^[a-f0-9]{64}$/.test(m.sanitizerSha256)||!/^[a-f0-9]{64}$/.test(m.stagingConfigSha256)) throw new Error('Missing SHA-256 provenance');
-          const expected=new Map(m.files.map(f=>[f.path,f]));
-          if(expected.size!==m.files.length) throw new Error('Duplicate manifest paths');
-          const actual=[];
-          const walk=(dir)=>{for(const e of readdirSync(dir,{withFileTypes:true})){const full=join(dir,e.name);if(e.isSymbolicLink())throw new Error('Symlink forbidden: '+full);if(e.isDirectory())walk(full);else if(e.isFile()){const p=relative(root,full).split(sep).join('/');if(p==='release-manifest.json'||p==='release-manifest.sha256')continue;actual.push(p);const f=expected.get(p);if(!f)throw new Error('Unexpected file: '+p);if(lstatSync(full).size!==f.bytes||sha(full)!==f.sha256)throw new Error('File hash/size mismatch: '+p);}else throw new Error('Unsupported file: '+full);}};
-          walk(root);
-          if(actual.length!==expected.size||[...expected.keys()].some(p=>!actual.includes(p)))throw new Error('Bundle file set differs from manifest');
-          for(const p of ['wrangler.deploy.jsonc','evidence-tools/live-probes.mjs','staging-public/index.html'])if(!expected.has(p))throw new Error('Required file missing: '+p);
-          const c=JSON.parse(readFileSync(join(root,'wrangler.deploy.jsonc'),'utf8'));
-          if(c.name!=='thelingolegacy-staging'||c.workers_dev!==true||(c.routes||[]).length||c.main!==m.workerEntrypoint||c.assets?.directory!=='./staging-public')throw new Error('Deployment config violates staging isolation');
-          console.log(JSON.stringify({status:'PASS',sourceCommit:m.sourceCommit,manifestSha256:digest,fileCount:actual.length,workerEntrypoint:m.workerEntrypoint}));
-          NODE
+        run: node scripts/verify-release-bundle.mjs .wrangler-build
 
-      - name: Verify Cloudflare credentials
+      - name: Verify approved staging-only Cloudflare token
+        shell: bash
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_STAGING_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_STAGING_TOKEN_ID: ${{ vars.CLOUDFLARE_STAGING_TOKEN_ID }}
+          CLOUDFLARE_STAGING_TOKEN_POLICY_SHA256: ${{ vars.CLOUDFLARE_STAGING_TOKEN_POLICY_SHA256 }}
+          CLOUDFLARE_STAGING_TOKEN_POLICY_PATH: .wrangler-build/evidence-tools/cloudflare-staging-token-policy.json
+        run: node .wrangler-build/evidence-tools/verify-staging-token-policy.mjs
+
+        env:
+          CLOUDFLARE_STAGING_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
@@ -266,7 +254,7 @@ jobs:
         id: deploy
         shell: bash
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_STAGING_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
@@ -279,7 +267,7 @@ jobs:
         id: version
         shell: bash
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_STAGING_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           VERSION_ID: ${{ steps.deploy.outputs.version_id }}
         run: |
@@ -288,7 +276,7 @@ jobs:
             -D .wrangler-build/version-response.headers \
             -o .wrangler-build/version-response.json \
             -H 'Accept: application/json' \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Authorization: Bearer $CLOUDFLARE_STAGING_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/thelingolegacy-staging/versions/$VERSION_ID"
           node --input-type=module <<'NODE'
           import { readFileSync, writeFileSync } from 'node:fs';
@@ -298,7 +286,7 @@ jobs:
           const line=lines.findLast((v)=>/^etag:/i.test(v));
           const etag=line?.split(':').slice(1).join(':').trim();
           if(!etag)throw new Error('Cloudflare version response did not include ETag');
-          writeFileSync('.wrangler-build/version-evidence.json',JSON.stringify({versionId:process.env.VERSION_ID,etag,confirmedByCloudflareApi:true},null,2)+'\n');
+          writeFileSync('.wrangler-build/version-evidence.json',JSON.stringify({workerName:'thelingolegacy-staging',versionId:process.env.VERSION_ID,etag,confirmedByCloudflareApi:true},null,2)+'\n');
           writeFileSync(process.env.GITHUB_OUTPUT,'etag='+etag.replace(/%/g,'%25').replace(/\r/g,'%0D').replace(/\n/g,'%0A')+'\n',{flag:'a'});
           NODE
 
@@ -327,7 +315,7 @@ jobs:
           import { readFileSync, writeFileSync } from 'node:fs';
           const m=JSON.parse(readFileSync('.wrangler-build/release-manifest.json','utf8'));
           let probes=null;try{probes=JSON.parse(readFileSync('.wrangler-build/live-probes.json','utf8'));}catch{}
-          const a={schemaVersion:'1.0',status:process.env.PROBE_OUTCOME==='success'&&Boolean(process.env.VERSION_ID)&&Boolean(process.env.VERSION_ETAG)?'STAGING_DEPLOYED_PROBES_PASS_NOT_CERTIFIED':'BLOCKED_NOT_CERTIFIED',sourceCommit:process.env.SOURCE_COMMIT,sanitizerSha256:m.sanitizerSha256,stagingConfigSha256:m.stagingConfigSha256,bundleManifestSha256:process.env.MANIFEST_SHA256,workerEntrypoint:m.workerEntrypoint,cloudflareVersionId:process.env.VERSION_ID||null,cloudflareEtag:process.env.VERSION_ETAG||null,probeOutcome:process.env.PROBE_OUTCOME||'not_run',probes};
+          const a={schemaVersion:'1.0',workerName:'thelingolegacy-staging',status:process.env.PROBE_OUTCOME==='success'&&Boolean(process.env.VERSION_ID)&&Boolean(process.env.VERSION_ETAG)?'STAGING_DEPLOYED_PROBES_PASS_NOT_CERTIFIED':'BLOCKED_NOT_CERTIFIED',sourceCommit:process.env.SOURCE_COMMIT,sanitizerSha256:m.sanitizerSha256,stagingConfigSha256:m.stagingConfigSha256,bundleManifestSha256:process.env.MANIFEST_SHA256,workerEntrypoint:m.workerEntrypoint,cloudflareVersionId:process.env.VERSION_ID||null,cloudflareEtag:process.env.VERSION_ETAG||null,probeOutcome:process.env.PROBE_OUTCOME||'not_run',probes};
           writeFileSync('.wrangler-build/release-attestation.json',JSON.stringify(a,null,2)+'\n');
           if(a.status==='BLOCKED_NOT_CERTIFIED')process.exitCode=1;
           NODE
@@ -363,6 +351,21 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Download staging deployment evidence
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: lingo-staging-deployment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-deployment-evidence
+      - name: Independently correlate staging evidence (not certification)
+        env:
+          EXPECTED_SOURCE_COMMIT: ${{ needs.gates.outputs.commit }}
+          EXPECTED_MANIFEST_SHA256: ${{ needs.gates.outputs.artifact }}
+          EVIDENCE_DIR: release-deployment-evidence
+        run: node scripts/verify-release-attestation.mjs
       - name: Production certification boundary
         shell: bash
         run: |
