@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Validate production promotion contract
+        run: node scripts/test-production-promotion-contract.mjs
+
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 

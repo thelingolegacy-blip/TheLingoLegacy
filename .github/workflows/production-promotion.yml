@@ -9,7 +9,7 @@ on:
         default: staging
         type: choice
         options: [staging, production]
-  # Tags do not authorize production mutation. Production promotion is explicit via workflow_dispatch.
+  # Tags do not authorize production mutation. Promotion is explicit via workflow_dispatch.
 
 permissions:
   contents: read
@@ -94,6 +94,8 @@ jobs:
         run: node scripts/verify-dynamic-runtime.mjs
       - name: Wrangler configuration validation
         run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+      - name: Validate production promotion contract
+        run: node scripts/test-production-promotion-contract.mjs
       - name: Release identity
         id: identity
         shell: bash
@@ -107,16 +109,113 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
         run: node scripts/generate-release-evidence.mjs
-      - name: Upload gate evidence
+      - name: Record completed pre-deployment gates
+        env:
+          RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
+          ROLLBACK_TARGET: ${{ vars.ROLLBACK_TARGET }}
+          ROLLBACK_TARGET_VERIFIED: ${{ vars.ROLLBACK_TARGET_VERIFIED }}
+          PROMOTION_EVIDENCE_VERIFIED: ${{ vars.PROMOTION_EVIDENCE_VERIFIED }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const root = `release/evidence/${process.env.RELEASE_ID}`;
+          const gatesPath = `${root}/gates.json`;
+          const gates = JSON.parse(readFileSync(gatesPath, 'utf8'));
+          gates.status = 'PASS';
+          gates.commitSha = process.env.COMMIT_SHA;
+          gates.criticalGates = [
+            'sanitize-cloudflare-only-surface',
+            'verify-cloudflare-only',
+            'verify-cloudflare-bindings',
+            'verify-production-authority',
+            'verify-dynamic-runtime',
+            'wrangler-dry-run'
+          ];
+          writeFileSync(gatesPath, JSON.stringify(gates, null, 2) + '\n');
+          const rollbackPath = `${root}/rollback.json`;
+          const rollback = JSON.parse(readFileSync(rollbackPath, 'utf8'));
+          if (process.env.ROLLBACK_TARGET_VERIFIED === 'true' &&
+              process.env.PROMOTION_EVIDENCE_VERIFIED === 'true' &&
+              process.env.ROLLBACK_TARGET?.trim()) {
+            rollback.status = 'PASS';
+            rollback.target = process.env.ROLLBACK_TARGET.trim();
+            rollback.verification = 'Externally attested through protected repository variables; independent proof must be retained in the evidence ledger.';
+          }
+          writeFileSync(rollbackPath, JSON.stringify(rollback, null, 2) + '\n');
+          const manifestPath = `${root}/manifest.json`;
+          const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          manifest.evidenceDigest = digest.digest('hex');
+          writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+          NODE
+      - name: Upload pre-deployment evidence
         uses: actions/upload-artifact@v4
         with:
-          name: lingo-release-evidence-${{ github.run_id }}
+          name: lingo-predeploy-evidence-${{ github.run_id }}
           path: release/evidence/
+          if-no-files-found: error
+
+  predeployment-authorization:
+    needs: gates
+    if: ${{ needs.gates.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: lingo-predeploy-evidence-${{ github.run_id }}
+          path: release/evidence/
+      - name: Verify release identity, evidence, and rollback readiness
+        env:
+          RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+          PROMOTION_EVIDENCE_VERIFIED: ${{ vars.PROMOTION_EVIDENCE_VERIFIED }}
+          ROLLBACK_TARGET_VERIFIED: ${{ vars.ROLLBACK_TARGET_VERIFIED }}
+        run: |
+          set -euo pipefail
+          test "$PROMOTION_EVIDENCE_VERIFIED" = "true" || { echo 'Promotion evidence has not been independently verified'; exit 1; }
+          test "$ROLLBACK_TARGET_VERIFIED" = "true" || { echo 'Rollback target has not been independently verified'; exit 1; }
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFileSync } from 'node:fs';
+          const root = `release/evidence/${process.env.RELEASE_ID}`;
+          const manifest = JSON.parse(readFileSync(`${root}/manifest.json`, 'utf8'));
+          const recordedDigest = manifest.evidenceDigest;
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          if (digest.digest('hex') !== recordedDigest) throw new Error('Pre-deployment evidence digest mismatch');
+          manifest.evidenceDigest = recordedDigest;
+          const gates = JSON.parse(readFileSync(`${root}/gates.json`, 'utf8'));
+          const rollback = JSON.parse(readFileSync(`${root}/rollback.json`, 'utf8'));
+          if (manifest.commitSha !== process.env.EXPECTED_COMMIT) throw new Error('Evidence commit does not match dispatched commit');
+          if (manifest.certificationStatus !== 'NOT_CERTIFIED') throw new Error('Unexpected pre-deployment certification state');
+          if (gates.status !== 'PASS' || gates.commitSha !== process.env.EXPECTED_COMMIT) throw new Error('Required pre-deployment gates are not recorded as passing');
+          if (rollback.status !== 'PASS' || !rollback.target) throw new Error('Verified rollback target evidence is missing');
+          console.log('PRE_DEPLOYMENT_AUTHORIZATION=PASS');
+          console.log(`COMMIT=${manifest.commitSha}`);
+          console.log(`ROLLBACK_TARGET=${rollback.target}`);
+          NODE
 
   cloudflare:
-    needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    needs: [gates, predeployment-authorization]
+    if: ${{ needs.predeployment-authorization.result == 'success' && (inputs.environment == 'staging' || inputs.environment == 'production') }}
     runs-on: ubuntu-latest
+    # Configure required reviewers and deployment protection rules on each environment.
     environment: ${{ inputs.environment }}
     permissions:
       contents: read
@@ -124,12 +223,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: lingo-predeploy-evidence-${{ github.run_id }}
+          path: release/evidence/
       - name: Re-run repository production gates
         run: |
+          set -euo pipefail
           node scripts/sanitize-cloudflare-only-surface.mjs
           node scripts/verify-cloudflare-only.mjs
           node scripts/verify-cloudflare-bindings.mjs
@@ -140,6 +243,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          set -euo pipefail
           test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
       - name: Deploy to Cloudflare
@@ -154,27 +258,100 @@ jobs:
           set -euo pipefail
           domain=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).canonicalDomain)")
           echo "base_url=https://${domain}" >> "$GITHUB_OUTPUT"
-      - name: Live probes
+      - name: Run and preserve live probes
         env:
           LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
           LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
-        run: node scripts/live-probes.mjs
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/post-deployment
+          node scripts/live-probes.mjs | tee release/evidence/post-deployment/live-probes.json
+      - name: Upload post-deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-postdeploy-evidence-${{ github.run_id }}
+          path: release/evidence/post-deployment/
+          if-no-files-found: error
 
   certificate:
-    needs: [gates, cloudflare]
-    if: ${{ success() }}
+    needs: [gates, predeployment-authorization, cloudflare]
+    if: ${{ success() && needs.predeployment-authorization.result == 'success' && needs.cloudflare.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - name: Production certification boundary
-        shell: bash
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: lingo-predeploy-evidence-${{ github.run_id }}
+          path: release/evidence/
+      - uses: actions/download-artifact@v4
+        with:
+          name: lingo-postdeploy-evidence-${{ github.run_id }}
+          path: release/evidence/post-deployment/
+      - name: Independent post-deployment acceptance
+        env:
+          RELEASE_ID: LL-${{ github.run_id }}-${{ github.run_attempt }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+          PROMOTION_EVIDENCE_VERIFIED: ${{ vars.PROMOTION_EVIDENCE_VERIFIED }}
+          ROLLBACK_TARGET_VERIFIED: ${{ vars.ROLLBACK_TARGET_VERIFIED }}
         run: |
           set -euo pipefail
-          test -f config/production.json
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.failClosed)")" = "true"
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireLiveProbePass)")" = "true"
-          test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireRollbackTarget)")" = "true"
-          echo 'Configured repository and Cloudflare gates passed.'
-          echo 'CERTIFIED remains withheld unless live evidence and rollback target are actually present.'
+          test "$PROMOTION_EVIDENCE_VERIFIED" = "true" || { echo 'Promotion evidence verification attestation missing'; exit 1; }
+          test "$ROLLBACK_TARGET_VERIFIED" = "true" || { echo 'Rollback verification attestation missing'; exit 1; }
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const root = `release/evidence/${process.env.RELEASE_ID}`;
+          const manifestPath = `${root}/manifest.json`;
+          const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+          const recordedDigest = manifest.evidenceDigest;
+          delete manifest.evidenceDigest;
+          const names = ['build.json', 'certificate.json', 'commit.json', 'gates.json', 'live-probes.json', 'manifest.json', 'rollback.json'];
+          const digest = createHash('sha256');
+          for (const name of names) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(`${root}/${name}`, 'utf8'));
+            digest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          if (digest.digest('hex') !== recordedDigest) throw new Error('Pre-acceptance evidence digest mismatch');
+          manifest.evidenceDigest = recordedDigest;
+          const gates = JSON.parse(readFileSync(`${root}/gates.json`, 'utf8'));
+          const rollback = JSON.parse(readFileSync(`${root}/rollback.json`, 'utf8'));
+          const probes = JSON.parse(readFileSync('release/evidence/post-deployment/live-probes.json', 'utf8'));
+          if (manifest.commitSha !== process.env.EXPECTED_COMMIT) throw new Error('Release evidence commit mismatch');
+          if (gates.status !== 'PASS' || gates.commitSha !== process.env.EXPECTED_COMMIT) throw new Error('Pre-deployment gates not accepted');
+          if (rollback.status !== 'PASS' || !rollback.target) throw new Error('Rollback readiness evidence missing');
+          if (probes.status !== 'PASS' || !Array.isArray(probes.probes) || probes.probes.length === 0 || probes.probes.some(p => p.status !== 'PASS')) throw new Error('Live probe acceptance failed');
+          const certificate = {
+            releaseId: manifest.releaseId,
+            commitSha: manifest.commitSha,
+            environment: manifest.environment,
+            acceptedAt: new Date().toISOString(),
+            status: 'ACCEPTED',
+            liveProbeStatus: probes.status,
+            rollbackTarget: rollback.target,
+            evidence: 'Pre-deployment gates, commit correlation, externally verified rollback attestation, and post-deployment live probes passed.'
+          };
+          writeFileSync(`${root}/certificate.json`, JSON.stringify(certificate, null, 2) + '\n');
+          manifest.status = 'ACCEPTED';
+          manifest.certificationStatus = 'ACCEPTED';
+          delete manifest.evidenceDigest;
+          const refreshedDigest = createHash('sha256');
+          const acceptedNames = [...names, 'post-deployment/live-probes.json'].sort();
+          for (const name of acceptedNames) {
+            const value = name === 'manifest.json' ? manifest : JSON.parse(readFileSync(name.includes('/') ? `release/evidence/${name}` : `${root}/${name}`, 'utf8'));
+            refreshedDigest.update(name + '\\n' + JSON.stringify(value) + '\\n');
+          }
+          manifest.evidenceDigest = refreshedDigest.digest('hex');
+          writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+          console.log('POST_DEPLOYMENT_ACCEPTANCE=PASS');
+          console.log('CERTIFICATION=ACCEPTED');
+          NODE
+      - name: Upload accepted release evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-accepted-release-evidence-${{ github.run_id }}
+          path: release/evidence/
+          if-no-files-found: error
