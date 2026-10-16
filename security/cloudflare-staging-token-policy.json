@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "status": "NOT_APPROVED",
+  "tokenId": null,
+  "accountId": null,
+  "workerName": "thelingolegacy-staging",
+  "permissions": [
+    "Workers Scripts:Edit"
+  ],
+  "resourceScope": {
+    "workers": [
+      "thelingolegacy-staging"
+    ],
+    "zones": []
+  },
+  "productionWorkerWrite": false,
+  "customRouteWrite": false,
+  "approvedBy": null,
+  "approvedAt": null,
+  "evidenceRef": null,
+  "note": "Template only. Deployment must fail until an authorized administrator replaces placeholders with verified policy metadata, approves the policy, and pins this file's SHA-256 in the protected staging environment."
+}
