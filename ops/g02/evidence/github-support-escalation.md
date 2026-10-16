@@ -1,8 +1,8 @@
 # GitHub Support Escalation — Actions Runner Allocation/Initialization
 
-**Prepared:** 2026-10-10  
+**Prepared:** 2026-10-16  
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
-**Pull request:** [#257](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/257)  
+**Current recovery pull request:** [#309](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/309)  
 **Environment:** GitHub Actions, public repository, pull_request-triggered jobs  
 **Impact:** CI cannot provide execution evidence; release gates remain blocked.
 
@@ -60,3 +60,41 @@ The repository is maintaining a protected hold:
 - No production merge, deployment, DNS change, secret mutation, or activation is authorized by this report.
 
 Do not share runner registration tokens, access tokens, secret values, private host credentials, or unredacted environment dumps in the ticket. The linked run/job IDs are sufficient to begin provider-side investigation.
+
+
+## Current-head addendum — 2026-10-16
+
+**Recovery commit under test:** `3ff82550a20b819c53b2831e8414ad333b7107f5`  
+**Recovery branch:** `infra/lingoassist-reformed-infrastructure-2026-10-16`
+
+The following latest PR-triggered runs were independently re-read through the GitHub Actions connector on 2026-10-16:
+
+| Run | Workflow | Job ID | Terminal result | Steps | Logs |
+|---|---|---:|---|---|---|
+| [38962457522](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38962457522) | Lingo Legacy Static CI | 117180653120 | completed / failure | null | null |
+| [38962457284](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38962457284) | LINGOassist Recovery Diagnostics | 117180651616 | completed / failure | null | null |
+| [38962457450](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38962457450) | LINGO Recovery Foundation Gate | 117180652667 | completed / failure | null | null |
+
+These records remain pre-step failures: the latest Jobs API responses contain `steps: null` and `logs_url: null`. They do not provide evidence that any workflow command ran or that application tests failed. Runner identity remains unobserved in these normalized job responses; the established historical evidence of `runner_id=0` and empty `runner_name` is documented above in the incident history.
+
+## Independent source-validation path (not a G02 substitute)
+
+Cloudflare Builds successfully cloned the recovery branch and ran the source validation after the queued-job gate fix:
+- Successful build: `b916ff85-db01-4029-a1f4-aeffe01ced22`
+- Commit: `3ff82550a20b819c53b2831e8414ad333b7107f5`
+- Test result: 33 tests passed
+- Python compilation: PASS
+- Bash syntax checks: PASS
+- Worker deployment during this source-validation retest: SKIPPED
+- Production promotion: FORBIDDEN
+
+This provides an alternate isolated source-validation path, but does not resolve GitHub-hosted runner allocation, supply a GitHub Actions execution record, or satisfy G02 acceptance.
+
+## Current escalation status
+
+The official GitHub Support case is **not confirmed submitted** and no official Support ticket ID is recorded. The repository issue numbers and workflow run IDs are not Support case IDs. Submit this packet through the authenticated GitHub Support portal and ask for provider-side investigation of runner allocation/initialization and missing log blobs. Do not include secrets, runner registration tokens, or host credentials.
+
+Current gates remain:
+- G02: BLOCKED / FAIL-UNVERIFIED
+- Production promotion and activation: BLOCKED
+- Last-known-good release: PROTECTED
