@@ -28,7 +28,8 @@ if (Object.keys(staging).some((key) => ['d1_databases', 'kv_namespaces', 'r2_buc
   fail.push('staging must not inherit undeclared production resource bindings');
 }
 if (staging.assets?.binding !== 'ASSETS' || staging.assets?.directory !== '.') fail.push('staging asset binding/directory differs from the reviewed contract');
-for (const entry of ['.github/', '.git/', '.wrangler/', 'ops/', 'scripts/', 'docs/', 'config/', '.env*', '.dev.vars*', '*.pem', '*.key', '*.jsonc', '/worker.js', 'firebase.json', 'firebase.client.json']) {
+const requiredExclusions = ['.github/', '.git/', '.wrangler/', 'ops/', 'scripts/', 'docs/', 'config/', '.env*', '.dev.vars*', '*.pem', '*.key', '*.jsonc', '/worker.js', 'firebase.json', 'firebase.client.json', 'admin-command-center/', 'auth0-details/', 'auth0-implementation/', 'integration-configurations/', 'integration-ids-register/', 'integration-links-register/', 'production-lock/', 'protected-routes/', 'studio-sites/', 'studio/'];
+for (const entry of requiredExclusions) {
   if (!ignored.has(entry)) fail.push(`.assetsignore is missing required exclusion: ${entry}`);
 }
 if (!worker.includes("String(env.LINGO_ENVIRONMENT || '').toLowerCase() === 'staging'")) fail.push('Worker lacks explicit staging environment handling');
@@ -43,7 +44,7 @@ const report = {
   staging_worker: staging.name,
   workers_dev_only: staging.workers_dev === true && !('routes' in staging),
   production_route_baseline_preserved: productionRoutes.every((pattern) => production.routes?.some((route) => route.pattern === pattern)),
-  required_asset_exclusions_checked: 17,
+  required_asset_exclusions_checked: requiredExclusions.length,
   failures: fail
 };
 console.log(JSON.stringify(report, null, 2));
