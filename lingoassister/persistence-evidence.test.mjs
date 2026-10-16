@@ -72,3 +72,53 @@ test("journal refuses a second writer while the exclusive lock exists", async ()
   await assert.rejects(() => store.append({ id: "INC-1" }), /Concurrent writer blocked/);
   assert.deepEqual(await store.readAll(), []);
 }));
+
+test("GitHub adapter marks stale and missing source timestamps without accepting evidence", async () => {
+  const now = new Date("2026-10-16T12:00:00.000Z");
+  const make = updated_at => createGitHubEvidenceAdapter({
+    clock: () => now, maxAgeMs: 60_000,
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({
+      id: 7, workflow_id: 3, run_number: 9, run_attempt: 2,
+      name: "Static CI", status: "completed", conclusion: "failure",
+      head_sha: "a".repeat(40), updated_at,
+      html_url: "https://github.com/acme/repo/actions/runs/7",
+      repository: { full_name: "acme/repo" }, head_repository: { full_name: "acme/repo" }
+    }) })
+  });
+  const stale = await make("2026-10-16T11:00:00.000Z").collectWorkflowRun({
+    repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
+  });
+  assert.equal(stale.freshness, "STALE");
+  assert.equal(stale.runAttempt, 2);
+  assert.equal(stale.retrieval.outcome, "SUCCESS");
+  assert.equal(stale.accepted, false);
+  const unknown = await make(undefined).collectWorkflowRun({
+    repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
+  });
+  assert.equal(unknown.freshness, "UNKNOWN");
+});
+test("GitHub adapter rejects malformed response objects and mismatched returned run IDs", async () => {
+  const make = body => createGitHubEvidenceAdapter({
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => body })
+  });
+  await assert.rejects(() => make([]).collectWorkflowRun({
+    repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
+  }), /JSON object/);
+  await assert.rejects(() => make({ id: 8, head_sha: "a".repeat(40), repository: { full_name: "acme/repo" } }).collectWorkflowRun({
+    repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40)
+  }), /missing a valid run ID|returned run ID/);
+});
+test("GitHub adapter rejects non-GitHub run URLs and records failed correlation", async () => {
+  const adapter = createGitHubEvidenceAdapter({
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({
+      id: 7, head_sha: "a".repeat(40), html_url: "https://evil.example/run",
+      repository: { full_name: "other/repo" }, updated_at: "not-a-date"
+    }) })
+  });
+  const e = await adapter.collectWorkflowRun({ repository: "acme/repo", runId: 7, expectedCommit: "a".repeat(40) });
+  assert.equal(e.runUrl, null);
+  assert.equal(e.correlation.repositoryMatches, false);
+  assert.equal(e.correlation.verified, false);
+  assert.equal(e.freshness, "UNKNOWN");
+  assert.equal(e.accepted, false);
+});
