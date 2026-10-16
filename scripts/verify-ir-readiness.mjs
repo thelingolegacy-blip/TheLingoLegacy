@@ -35,6 +35,9 @@ export async function verifyReadinessManifest(manifestPath, expectedCommitSha, o
   }
 
   if (manifest.schemaVersion !== '1.0') failures.push('schemaVersion must equal "1.0".');
+  if (manifest.source?.repository !== 'thelingolegacy-blip/TheLingoLegacy') {
+    failures.push('Evidence repository must equal the canonical repository.');
+  }
   if (manifest.source?.commitSha !== expectedCommitSha) {
     failures.push('Evidence commit SHA does not match the exact source commit being evaluated.');
   }
