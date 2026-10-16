@@ -47,6 +47,38 @@ if (!fs.existsSync(configPath)) {
         if (set.has('assets/') || set.has('/assets/')) {
           errors.push('.assetsignore must not exclude the public assets/ directory');
         }
+
+        // Preserve every route explicitly included by the release manifest.
+        // This catches accidental exclusion of public operator/readiness pages
+        // even when the required root entrypoints remain present.
+        const manifestPath = path.join(root, 'config/release/lingo-legacy-v1.0.0-rc.json');
+        if (!fs.existsSync(manifestPath)) {
+          errors.push('release manifest missing: config/release/lingo-legacy-v1.0.0-rc.json');
+        } else {
+          try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const routes = manifest.includedSurfaces;
+            if (!Array.isArray(routes)) {
+              errors.push('release manifest includedSurfaces must be an array');
+            } else {
+              for (const route of routes) {
+                const normalizedRoute = String(route).replace(/^\\/+|\\/+$/g, '');
+                for (const entry of entries) {
+                  const normalizedEntry = entry.replace(/^\\/+|\\/+$/g, '');
+                  if (!normalizedEntry) continue;
+                  const excludesRoute = entry.endsWith('/')
+                    ? normalizedRoute === normalizedEntry || normalizedRoute.startsWith(normalizedEntry + '/')
+                    : normalizedRoute === normalizedEntry;
+                  if (excludesRoute) {
+                    errors.push(`.assetsignore entry "${entry}" conflicts with release-manifest route "${route}"`);
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            errors.push(`release manifest parse failed: ${error.message}`);
+          }
+        }
       }
     }
   } catch (error) {
