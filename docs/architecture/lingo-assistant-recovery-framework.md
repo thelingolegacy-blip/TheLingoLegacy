@@ -52,3 +52,12 @@ The overall release decision is PASS only when every required gate passes and au
 ## Verification status
 
 This is a proposed architecture contract. It has not been certified by GitHub Actions while G02 remains blocked. Local or unrelated CI results cannot be represented as G02 acceptance.
+
+
+## Signed approval verification
+
+Release authorization uses the separate `lingo.approval.v1` envelope defined in [lingo-approval-v1.schema.json](../../ops/recovery/schema/lingo-approval-v1.schema.json). The envelope is signed with an offline-held private key. `ops/recovery/verify_approval.py` verifies the signature using OpenSSL and checks the exact source SHA, requested action, allowlisted approver identity, pinned key ID, issue/expiry window, and nonce presence.
+
+The public-key file path, expected approver, and key ID are trust roots: provision them through protected operator configuration, not through a PR-controlled file or workflow input. Never store the private key in this repository, CI variables accessible to untrusted jobs, evidence artifacts, or the runner workspace. Approval records are short-lived (maximum 24 hours) and single-purpose.
+
+The unified gate CLI accepts `--approval-envelope`, `--trusted-approval-public-key`, `--trusted-approver`, and `--trusted-key-id` together. If any are missing, C6 remains BLOCKED; if signature or policy validation fails, C6 fails. A signed approval is still not sufficient by itself: C0–C5 must pass independently. The signature verifier has been added to the proposed contract but has not yet been executed in CI or certified for production use.
