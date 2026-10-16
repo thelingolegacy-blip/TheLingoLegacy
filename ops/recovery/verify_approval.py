@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -45,6 +46,7 @@ def verify_approval(
     trusted_public_key: Path,
     trusted_approver: str,
     trusted_key_id: str,
+    nonce_registry: Path,
     now: datetime | None = None,
 ) -> tuple[bool, str]:
     """Return (verified, reason); unknown or invalid evidence never verifies."""
@@ -105,7 +107,52 @@ def verify_approval(
         return False, "signature verifier could not be executed"
     if result.returncode != 0:
         return False, "approval signature verification failed"
-    return True, "signed approval verified for exact SHA, action, approver, key, and validity window"
+
+    # Consume the nonce only after signature and policy checks. O_EXCL makes
+    # consumption atomic for processes sharing this protected filesystem.
+    # The registry directory must be pre-provisioned and protected out of band.
+    try:
+        if nonce_registry.is_symlink() or not nonce_registry.is_dir():
+            return False, "trusted nonce registry must be a pre-existing directory"
+        mode = nonce_registry.stat().st_mode
+        if mode & 0o022:
+            return False, "trusted nonce registry directory must not be group/world writable"
+        nonce_key = base64.urlsafe_b64encode(
+            __import__("hashlib").sha256(
+                (trusted_key_id + "\\0" + envelope["nonce"]).encode("utf-8")
+            ).digest()
+        ).decode("ascii").rstrip("=")
+        nonce_path = nonce_registry / (nonce_key + ".consumed")
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        fd = os.open(nonce_path, flags, 0o600)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                stream.write(json.dumps({
+                    "key_id": trusted_key_id,
+                    "nonce_sha256": __import__("hashlib").sha256(envelope["nonce"].encode("utf-8")).hexdigest(),
+                    "approval_reference": envelope["approval_reference"],
+                    "approved_sha": expected_sha,
+                    "approved_action": expected_action,
+                    "consumed_at_utc": current.isoformat(),
+                }, sort_keys=True) + "\\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            dir_fd = os.open(nonce_registry, os.O_RDONLY)
+            try:
+                os.fsync(dir_fd)
+            finally:
+                os.close(dir_fd)
+        except Exception:
+            # Keep the nonce marker if it was created: uncertain durability is
+            # fail-closed and must never permit the same approval to be reused.
+            raise
+    except FileExistsError:
+        return False, "approval nonce has already been consumed"
+    except (OSError, ValueError):
+        return False, "trusted nonce could not be durably consumed"
+    return True, "signed approval verified and nonce consumed for exact SHA, action, approver, key, and validity window"
 
 
 def main() -> int:
@@ -116,6 +163,7 @@ def main() -> int:
     parser.add_argument("--trusted-public-key", required=True, help="Out-of-band pinned public key PEM path")
     parser.add_argument("--trusted-approver", required=True, help="Approver identity from protected allowlist")
     parser.add_argument("--trusted-key-id", required=True, help="Key ID from protected configuration")
+    parser.add_argument("--trusted-nonce-registry", required=True, help="Pre-provisioned protected durable nonce registry directory")
     args = parser.parse_args()
     try:
         envelope = json.loads(Path(args.approval_envelope).read_text(encoding="utf-8"))
@@ -129,6 +177,7 @@ def main() -> int:
         envelope, expected_sha=args.expected_sha, expected_action=args.action,
         trusted_public_key=Path(args.trusted_public_key),
         trusted_approver=args.trusted_approver, trusted_key_id=args.trusted_key_id,
+        nonce_registry=Path(args.trusted_nonce_registry),
     )
     print(json.dumps({
         "status": "verified" if verified else "BLOCKED",
