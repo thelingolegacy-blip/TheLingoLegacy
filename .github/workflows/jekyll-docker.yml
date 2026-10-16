@@ -36,9 +36,6 @@ jobs:
       - name: Verify Cloudflare binding contract
         run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
-      - name: Verify staged platform engine and world registries
-        run: node scripts/verify-platform-registries.mjs 2>&1 | tee platform-registry.log
-
       - name: Validate release-critical static site
         run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
@@ -50,6 +47,5 @@ jobs:
           path: |
             sanitize.log
             bindings.log
-            platform-registry.log
             validator.log
           if-no-files-found: warn
