@@ -14,12 +14,17 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from verify_approval import verify_approval
+
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 HASH_RE = re.compile(r"^[0-9a-f]{64}$")
 REQUIRED_LABELS = {"self-hosted", "linux", "x64", "lingo-g02"}
 
 
-def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> dict[str, Any]:
+def evaluate(
+    e: dict[str, Any], expected_sha: str, action: str = "release",
+    authorization_verified: bool | None = None,
+) -> dict[str, Any]:
     gates: list[dict[str, Any]] = []
 
     def add(gate: str, checks: list[tuple[bool | None, str]], refs: list[str] | None = None) -> None:
@@ -164,8 +169,10 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
     ], [str(probes.get("source_reference") or "")])
 
     auth_fields = ("status", "approval_reference", "approved_sha", "approved_action", "approver_identity")
-    if any(not auth.get(field) for field in auth_fields):
+    if authorization_verified is None or any(not auth.get(field) for field in auth_fields):
         auth_check = None
+    elif authorization_verified is False:
+        auth_check = False
     else:
         auth_check = (
             auth.get("status") == "authorized"
@@ -173,13 +180,14 @@ def evaluate(e: dict[str, Any], expected_sha: str, action: str = "release") -> d
             and auth.get("approved_action") == action
         )
     add("C6_AUTHORIZATION", [
-        (auth_check, "explicit approval must cover exact SHA and requested action")
+        (auth_check, "a cryptographically verified approval must cover the exact SHA and requested action")
     ], [str(auth.get("approval_reference") or "")])
 
     accepted = all(g["status"] == "PASS" for g in gates)
-    release_authorized = accepted and action == "release"
+    release_authorized = accepted and action == "release" and authorization_verified is True
     return {"schema_version": "lingo.gate-result.v1", "expected_sha": expected_sha,
             "requested_action": action, "status": "PASS" if accepted else "BLOCKED",
+            "authorization_verified": authorization_verified,
             "gates": gates, "release_authorized": release_authorized}
 
 
@@ -188,6 +196,10 @@ def main() -> int:
     parser.add_argument("--evidence", required=True)
     parser.add_argument("--expected-sha", required=True)
     parser.add_argument("--action", default="release")
+    parser.add_argument("--approval-envelope", help="Signed approval JSON")
+    parser.add_argument("--trusted-approval-public-key", help="Out-of-band pinned public key PEM")
+    parser.add_argument("--trusted-approver", help="Approver identity from protected allowlist")
+    parser.add_argument("--trusted-key-id", help="Key ID from protected configuration")
     args = parser.parse_args()
     try:
         evidence = json.loads(Path(args.evidence).read_text(encoding="utf-8"))
@@ -197,7 +209,35 @@ def main() -> int:
     if not isinstance(evidence, dict):
         print(json.dumps({"status": "BLOCKED", "error": "evidence must be a JSON object"}))
         return 2
-    result = evaluate(evidence, args.expected_sha, args.action)
+
+    approval_args = (args.approval_envelope, args.trusted_approval_public_key,
+                     args.trusted_approver, args.trusted_key_id)
+    authorization_verified: bool | None = None
+    if any(approval_args):
+        if not all(approval_args):
+            print(json.dumps({"status": "BLOCKED", "error": "all trusted approval verifier arguments are required together"}))
+            return 2
+        try:
+            approval = json.loads(Path(args.approval_envelope).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            print(json.dumps({"status": "BLOCKED", "error": f"approval envelope unavailable: {exc}"}))
+            return 2
+        if not isinstance(approval, dict):
+            print(json.dumps({"status": "BLOCKED", "error": "approval envelope must be a JSON object"}))
+            return 2
+        authorization_verified, _reason = verify_approval(
+            approval, expected_sha=args.expected_sha, expected_action=args.action,
+            trusted_public_key=Path(args.trusted_approval_public_key),
+            trusted_approver=args.trusted_approver, trusted_key_id=args.trusted_key_id,
+        )
+        evidence["authorization"] = {
+            "status": "authorized" if authorization_verified else "not_authorized",
+            "approval_reference": approval.get("approval_reference"),
+            "approved_sha": approval.get("approved_sha"),
+            "approved_action": approval.get("approved_action"),
+            "approver_identity": approval.get("approver_identity"),
+        }
+    result = evaluate(evidence, args.expected_sha, args.action, authorization_verified)
     print(json.dumps(result, indent=2))
     return 0 if result["status"] == "PASS" else 1
 
