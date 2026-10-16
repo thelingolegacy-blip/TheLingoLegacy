@@ -97,7 +97,7 @@ def evaluate(
     add("C2_EXECUTION", [
         (True if job_status == "completed" else None if job_status in (None, "unknown", "queued", "in_progress") else False, "job completion not established"),
         (True if conclusion == "success" else None if conclusion is None else False, "job conclusion is not success"),
-        (executed if isinstance(steps, list) else None, "at least one successful executed step required"),
+        (None if job_status in (None, "unknown", "queued", "in_progress") else executed if isinstance(steps, list) else None, "at least one successful executed step required"),
         (None if sentinel_exit is None else sentinel_exit == 0, "sentinel exit code must be observed as zero")
     ], [str(workflow.get("url") or "")])
 
