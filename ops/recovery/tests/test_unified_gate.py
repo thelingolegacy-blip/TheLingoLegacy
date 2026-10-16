@@ -43,6 +43,27 @@ class UnifiedGateTests(unittest.TestCase):
         self.assertTrue(result["release_authorized"])
         self.assertEqual({g["status"] for g in result["gates"]}, {"PASS"})
 
+    def test_missing_source_sha_blocks_source_identity(self):
+        e = valid_evidence()
+        e["source"]["commit_sha"] = None
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C0_SOURCE_IDENTITY")["status"], "BLOCKED")
+
+    def test_queued_job_blocks_execution_instead_of_failing(self):
+        e = valid_evidence()
+        e["job"]["status"] = "queued"
+        e["job"]["conclusion"] = None
+        e["job"]["steps"] = []
+        e["job"]["sentinel_exit_code"] = None
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C2_EXECUTION")["status"], "BLOCKED")
+
+    def test_blocked_independent_check_does_not_become_failure(self):
+        e = valid_evidence()
+        e["verification"]["checks"][0]["status"] = "BLOCKED"
+        result = MODULE.evaluate(e, SHA)
+        self.assertEqual(next(g for g in result["gates"] if g["gate"] == "C4_INDEPENDENT_VERIFICATION")["status"], "BLOCKED")
+
     def test_unknown_runner_contract_blocks(self):
         e = valid_evidence()
         e["job"]["runner_contract"] = "unknown"
