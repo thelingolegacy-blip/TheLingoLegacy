@@ -80,3 +80,11 @@ This work remains BLOCKED until the authenticated deploy succeeds, the deployed 
 
 Production DNS/routes, the authoritative Worker, release gates, and last-known-good are not to be changed by this procedure.
 
+### Repository helper
+
+The existing integration branch now contains `ops/g02/deploy-preview-assets.sh`. From a clean checkout of this exact branch, the default invocation authenticates Wrangler and runs a dry-run only:
+
+    bash ops/g02/deploy-preview-assets.sh
+
+It does not deploy unless the operator separately sets `LINGO_PREVIEW_DEPLOY_CONFIRM=YES` and passes `--deploy`. The script checks branch identity and clean working tree, stages only the homepage, tracked public assets, manifest, and optional LINGO Nexus registry, and hard-pins Wrangler to `lingo-recovery-preview` with no production routes. Its post-deploy HTTP checks are preliminary only; independent browser and Worker-binding verification are still required.
+
