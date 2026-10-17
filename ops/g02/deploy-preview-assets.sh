@@ -15,7 +15,7 @@ usage() {
   echo "Default: authenticated identity check + dry-run only." >&2
   echo "Deployment requires --deploy and LINGO_PREVIEW_DEPLOY_CONFIRM=YES." >&2
 }
-case "\${1:-}" in
+case "${1:-}" in
   "") MODE="dry-run" ;;
   "--deploy") MODE="deploy" ;;
   *) usage; exit 2 ;;
@@ -32,12 +32,12 @@ cd "$ROOT"
 
 BRANCH="$(git branch --show-current)"
 [[ "$BRANCH" == "$EXPECTED_BRANCH" ]] || {
-  echo "BLOCKED: expected branch $EXPECTED_BRANCH; found \${BRANCH:-detached HEAD}." >&2; exit 3;
+  echo "BLOCKED: expected branch $EXPECTED_BRANCH; found ${BRANCH:-detached HEAD}." >&2; exit 3;
 }
 
 REMOTE_URL="$(git remote get-url origin 2>/dev/null || true)"
 case "$REMOTE_URL" in
-  *"github.com:\${EXPECTED_REPO}.git"|"https://github.com/\${EXPECTED_REPO}.git"|"https://github.com/\${EXPECTED_REPO}") ;;
+  *"github.com:${EXPECTED_REPO}.git"|"https://github.com/${EXPECTED_REPO}.git"|"https://github.com/${EXPECTED_REPO}") ;;
   *)
     echo "BLOCKED: origin does not match $EXPECTED_REPO (refusing unexpected checkout)." >&2
     exit 3
@@ -71,7 +71,7 @@ echo "SOURCE_COMMIT=$SOURCE_SHA"
 echo "TARGET_WORKER=$PREVIEW_WORKER"
 echo "PRODUCTION_ROUTES=NOT_CONFIGURED"
 
-"\${WRANGLER[@]}" whoami
+"${WRANGLER[@]}" whoami
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -108,7 +108,7 @@ cat > "$TMP/wrangler.jsonc" <<'CONFIG'
 CONFIG
 
 echo "WRANGLER_DRY_RUN=START"
-"\${WRANGLER[@]}" deploy --config "$TMP/wrangler.jsonc" --dry-run
+"${WRANGLER[@]}" deploy --config "$TMP/wrangler.jsonc" --dry-run
 echo "WRANGLER_DRY_RUN=PASS"
 
 if [[ "$MODE" == "dry-run" ]]; then
@@ -117,14 +117,14 @@ if [[ "$MODE" == "dry-run" ]]; then
   exit 0
 fi
 
-[[ "\${LINGO_PREVIEW_DEPLOY_CONFIRM:-}" == "YES" ]] || {
+[[ "${LINGO_PREVIEW_DEPLOY_CONFIRM:-}" == "YES" ]] || {
   echo "BLOCKED: --deploy requires LINGO_PREVIEW_DEPLOY_CONFIRM=YES." >&2
   exit 5
 }
 
 echo "DEPLOYMENT_TARGET=$PREVIEW_WORKER"
 echo "DEPLOYMENT_CONFIRMATION=EXPLICIT"
-"\${WRANGLER[@]}" deploy --config "$TMP/wrangler.jsonc"
+"${WRANGLER[@]}" deploy --config "$TMP/wrangler.jsonc"
 
 BASE="https://$PREVIEW_HOST"
 probe() {
