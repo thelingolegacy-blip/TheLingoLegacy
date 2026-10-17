@@ -1,6 +1,6 @@
 # Lingo ⭐️ Legacy — Frontend + Backend Architecture
 
-This repository is organized as a studio-grade, multi-surface web platform with a clear path toward Flutter app delivery, Firebase-powered backend services, and Cloudflare edge routing.
+This repository is organized as a studio-grade, multi-surface web platform with a clear path toward Flutter app delivery, Firebase-powered backend services, and Cloudflare edge routing. The current web production authority is Cloudflare Workers/Pages; Vercel is retired from the production path.
 
 ## 1. Frontend Architecture
 
@@ -31,7 +31,7 @@ The current repository is a static web app foundation. It can be extended with:
 - Firebase Authentication for account and player identity
 - Firestore / Realtime Database for progress, rewards, and metadata
 - Cloud Functions for server-side orchestration
-- Vercel or Cloudflare edge functions for dynamic experiences
+- Cloudflare Workers for dynamic edge experiences; any future backend service must have a separately approved runtime and ownership
 
 ### Future Flutter layer
 A Flutter app can sit on top of the same architecture:
@@ -49,7 +49,7 @@ A Flutter app can sit on top of the same architecture:
 - Firestore
 - Cloud Functions
 - Cloud Storage for media assets
-- Firebase Hosting (optional alternative to Vercel)
+- Firebase Hosting is not part of the current canonical production route unless a separately reviewed architecture decision changes that
 - Cloud Messaging for live updates
 
 ### Suggested data domains
@@ -83,8 +83,8 @@ Use Cloudflare for:
 ### Web stack
 - GitHub for source control
 - GitHub Actions for CI/CD
-- Vercel for app deploys and previews
-- Cloudflare for edge performance and routing
+- Cloudflare Workers/Pages for the current canonical web production runtime and asset delivery
+- GitHub Actions for CI evidence and release orchestration; deployment authorization remains separate from a successful build
 
 ### Mobile / Flutter stack
 - Flutter app shell packaged for iOS / Android
@@ -102,10 +102,10 @@ Use Cloudflare for:
 
 1. Finish the unified brand shell across all product pages
 2. Add Firebase project config and security rules
-3. Add Cloudflare Worker route layer
+3. Verify the existing Cloudflare Worker route layer and reconcile repository source with the deployed runtime
 4. Create Flutter app skeleton
 5. Connect Flutter to Firestore and Firebase Auth
 6. Add media and commerce data models
-7. Finalize CI/CD and deployment reviews
+7. Finalize CI/CD evidence, artifact provenance, observability, and deployment reviews
 
 This architecture keeps the project coherent while allowing rapid product expansion without losing the Lingo Legacy identity.

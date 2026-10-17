@@ -1,0 +1,193 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lingo-capacity-lab
+  labels:
+    app.kubernetes.io/part-of: the-lingo-legacy
+    environment: nonproduction
+    purpose: synthetic-capacity-testing
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: capacity-lab-quota
+  namespace: lingo-capacity-lab
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: capacity-lab-defaults
+  namespace: lingo-capacity-lab
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      default:
+        cpu: 500m
+        memory: 256Mi
+      min:
+        cpu: 50m
+        memory: 64Mi
+      max:
+        cpu: "1"
+        memory: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingo-bottleneck-lab
+  namespace: lingo-capacity-lab
+  labels:
+    app.kubernetes.io/name: lingo-bottleneck-lab
+    app.kubernetes.io/part-of: the-lingo-legacy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lingo-bottleneck-lab
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: lingo-bottleneck-lab
+        app.kubernetes.io/part-of: the-lingo-legacy
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: bottleneck-lab
+          image: lingo-bottleneck-lab:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: LAB_MODE
+              value: "true"
+            - name: MAX_IN_FLIGHT
+              value: "8"
+            - name: MAX_QUEUE
+              value: "16"
+            - name: MAX_DELAY_MS
+              value: "1500"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: 15
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lingo-bottleneck-lab
+  namespace: lingo-capacity-lab
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: lingo-bottleneck-lab
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: lingo-bottleneck-lab
+  namespace: lingo-capacity-lab
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: lingo-bottleneck-lab
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: lingo-bottleneck-lab
+  namespace: lingo-capacity-lab
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lingo-bottleneck-lab
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress-egress
+  namespace: lingo-capacity-lab
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-lab-internal-ingress
+  namespace: lingo-capacity-lab
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: lingo-bottleneck-lab
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: lingo-capacity-lab
+      ports:
+        - protocol: TCP
+          port: 8080

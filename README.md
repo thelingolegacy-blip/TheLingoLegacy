@@ -64,3 +64,15 @@ Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `M
 `RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
 
 The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
+
+
+## Engineering Operations
+
+- [Contribution guide](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+- [Infrastructure architecture and orchestration](docs/INFRASTRUCTURE-ARCHITECTURE-AND-ORCHESTRATION.md)
+- [Build roadmap](docs/BUILD-ROADMAP.md)
+- [Observability and integration contracts](docs/OBSERVABILITY-AND-INTEGRATIONS.md)
+- [Versioned wiki home](docs/wiki/Home.md)
+- [Kubernetes virtual bottleneck lab](ops/kubernetes/bottleneck-lab/README.md)
+- [G02 host provisioning and recovery](ops/g02/host-provisioning.md)
