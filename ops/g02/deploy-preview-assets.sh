@@ -7,6 +7,7 @@ set -euo pipefail
 
 EXPECTED_REPO="thelingolegacy-blip/TheLingoLegacy"
 EXPECTED_BRANCH="studio/lingo-ecosystem-integration-2026-10-04"
+EXPECTED_COMMIT="1a7ff687f60514854e8d7aa9ba4883381a657364"
 PREVIEW_WORKER="lingo-recovery-preview"
 PREVIEW_HOST="lingo-recovery-preview.thelingolegacy.workers.dev"
 
@@ -50,6 +51,12 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 3
 fi
 
+SOURCE_SHA="$(git rev-parse HEAD)"
+[[ "$SOURCE_SHA" == "$EXPECTED_COMMIT" ]] || {
+  echo "BLOCKED: reviewed commit mismatch; expected $EXPECTED_COMMIT; found $SOURCE_SHA." >&2
+  exit 3
+}
+
 for file in worker.js index.html assets/lingo-os.css assets/lingo-os.js assets/hq-studio.css assets/studio-grade.css assets/studio-grade.js; do
   [[ -f "$file" ]] || { echo "BLOCKED: required source file missing: $file" >&2; exit 4; }
 done
@@ -64,7 +71,6 @@ else
   exit 2
 fi
 
-SOURCE_SHA="$(git rev-parse HEAD)"
 echo "SOURCE_REPOSITORY=$EXPECTED_REPO"
 echo "SOURCE_BRANCH=$BRANCH"
 echo "SOURCE_COMMIT=$SOURCE_SHA"
