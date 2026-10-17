@@ -1,0 +1,41 @@
+version: 2.1
+jobs:
+  validate-devops-config:
+    docker:
+      - image: cimg/python:3.12
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Install pinned YAML validator
+          command: python -m pip install --user --disable-pip-version-check yamllint==1.37.1 PyYAML==6.0.2
+      - run:
+          name: Validate integration configuration
+          command: |
+            set -eu
+            export PATH="$HOME/.local/bin:$PATH"
+            yamllint -s config.yaml .circleci/config.yml .gitlab-ci.yml .github/workflows/devops-foundation-validation.yml observability/prometheus/prometheus.yml observability/grafana/provisioning/datasources/datasource.yml observability/elk/docker-compose.yml
+            python - <<'PY'
+            from pathlib import Path
+            import yaml
+            files = [
+                "config.yaml",
+                ".circleci/config.yml",
+                ".gitlab-ci.yml",
+                ".github/workflows/devops-foundation-validation.yml",
+                "observability/prometheus/prometheus.yml",
+                "observability/grafana/provisioning/datasources/datasource.yml",
+                "observability/elk/docker-compose.yml",
+            ]
+            for item in files:
+                with Path(item).open(encoding="utf-8") as handle:
+                    yaml.safe_load(handle)
+                print(f"YAML_PARSE_PASS={item}")
+            PY
+workflows:
+  validate-non-main:
+    jobs:
+      - validate-devops-config:
+          filters:
+            branches:
+              ignore: main

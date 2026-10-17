@@ -1,0 +1,96 @@
+name: LINGO Legacy DevOps Foundation Validation
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/devops-foundation-validation.yml"
+      - ".github/cache-policy.yml"
+      - ".yamllint"
+      - ".circleci/config.yml"
+      - "config.yaml"
+      - "Jenkinsfile"
+      - ".gitlab-ci.yml"
+      - "sonar-project.properties"
+      - "ansible/**"
+      - "docker/**"
+      - "infrastructure/terraform/**"
+      - "kubernetes/**"
+      - "observability/**"
+      - "docs/architecture/DEVOPS-FOUNDATION.md"
+      - "docs/runbooks/**"
+      - "CONTRIBUTING.md"
+      - "CHANGELOG.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devops-foundation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-foundation:
+    name: Validate configuration (not G02 acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+
+      - name: Install pinned validation tools
+        run: python -m pip install --disable-pip-version-check yamllint==1.37.1 ansible-core==2.18.6
+
+      - name: Validate YAML and Ansible syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          yamllint -c .yamllint -s             config.yaml             .github/cache-policy.yml             .github/workflows/devops-foundation-validation.yml             .circleci/config.yml             .gitlab-ci.yml             ansible/playbooks/read-only-diagnostics.yml             observability/prometheus/prometheus.yml             observability/grafana/provisioning/datasources/datasource.yml             observability/elk/docker-compose.yml
+          ansible-playbook --syntax-check -i localhost, ansible/playbooks/read-only-diagnostics.yml
+
+      - name: Validate Terraform without a backend or cloud credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=infrastructure/terraform fmt -check -recursive
+          terraform -chdir=infrastructure/terraform init -backend=false -input=false
+          terraform -chdir=infrastructure/terraform validate
+
+      - name: Record non-authoritative validation evidence
+        if: always()
+        shell: bash
+        run: |
+          set -u
+          mkdir -p release/evidence
+          {
+            echo "evidence_type=devops-foundation-validation"
+            echo "utc_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "commit=$GITHUB_SHA"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "runner_class=github-hosted"
+            echo "g02_acceptance=NOT_EVALUATED"
+            echo "production_authorization=NOT_GRANTED"
+          } > release/evidence/devops-foundation-validation.txt
+
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devops-foundation-validation-${{ github.run_id }}
+          path: release/evidence/devops-foundation-validation.txt
+          if-no-files-found: error
+          retention-days: 14

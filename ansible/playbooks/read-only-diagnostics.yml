@@ -1,0 +1,22 @@
+---
+- name: Read-only host diagnostics
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  become: false
+
+  tasks:
+    - name: Report safe host facts
+      ansible.builtin.debug:
+        msg:
+          - "diagnostic_mode=READ_ONLY"
+          - "hostname={{ ansible_hostname | default('unknown') }}"
+          - "system={{ ansible_system | default('unknown') }}"
+          - "architecture={{ ansible_architecture | default('unknown') }}"
+
+    - name: Assert diagnostics do not target a remote host
+      ansible.builtin.assert:
+        that:
+          - ansible_connection == 'local'
+        fail_msg: "This initial playbook must remain local and read-only."
+        success_msg: "Local-only diagnostics boundary confirmed."
