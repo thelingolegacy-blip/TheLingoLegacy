@@ -7,7 +7,7 @@ set -euo pipefail
 
 EXPECTED_REPO="thelingolegacy-blip/TheLingoLegacy"
 EXPECTED_BRANCH="studio/lingo-ecosystem-integration-2026-10-04"
-EXPECTED_BASE_COMMIT="1a7ff687f60514854e8d7aa9ba4883381a657364"
+
 PREVIEW_WORKER="lingo-recovery-preview"
 PREVIEW_HOST="lingo-recovery-preview.thelingolegacy.workers.dev"
 
@@ -15,6 +15,7 @@ usage() {
   echo "Usage: bash ops/g02/deploy-preview-assets.sh [--deploy]" >&2
   echo "Default: authenticated identity check + dry-run only." >&2
   echo "Deployment requires --deploy and LINGO_PREVIEW_DEPLOY_CONFIRM=YES." >&2
+  echo "Revision pin requires LINGO_PREVIEW_EXPECTED_COMMIT=<reviewed full HEAD SHA>." >&2
 }
 case "${1:-}" in
   "") MODE="dry-run" ;;
@@ -52,9 +53,13 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 SOURCE_SHA="$(git rev-parse HEAD)"
-SOURCE_BASE_SHA="$(git rev-parse HEAD^ 2>/dev/null || true)"
-[[ "$SOURCE_BASE_SHA" == "$EXPECTED_BASE_COMMIT" ]] || {
-  echo "BLOCKED: reviewed base commit mismatch; expected parent $EXPECTED_BASE_COMMIT; found ${SOURCE_BASE_SHA:-no parent}." >&2
+EXPECTED_COMMIT="${LINGO_PREVIEW_EXPECTED_COMMIT:-}"
+[[ -n "$EXPECTED_COMMIT" ]] || {
+  echo "BLOCKED: set LINGO_PREVIEW_EXPECTED_COMMIT to the independently reviewed full HEAD SHA." >&2
+  exit 3
+}
+[[ "$SOURCE_SHA" == "$EXPECTED_COMMIT" ]] || {
+  echo "BLOCKED: reviewed commit mismatch; expected $EXPECTED_COMMIT; found $SOURCE_SHA." >&2
   exit 3
 }
 
@@ -75,7 +80,6 @@ fi
 echo "SOURCE_REPOSITORY=$EXPECTED_REPO"
 echo "SOURCE_BRANCH=$BRANCH"
 echo "SOURCE_COMMIT=$SOURCE_SHA"
-echo "SOURCE_REVIEWED_BASE_COMMIT=$SOURCE_BASE_SHA"
 echo "TARGET_WORKER=$PREVIEW_WORKER"
 echo "PRODUCTION_ROUTES=NOT_CONFIGURED"
 
