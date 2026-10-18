@@ -1,0 +1,11 @@
+{
+  "policy_id":"auto.e2e.registration",
+  "version":"1.0",
+  "status":"ACTIVE",
+  "scope":{"resource":"e2e_job","actions":["DISCOVER_SUITE","GENERATE_MANIFEST","BIND_VERSION","REGISTER_JOB"]},
+  "precedence":"platform",
+  "conditions":{"environments":["dev","staging","prod"],"repository":"thelingolegacy-blip/TheLingoLegacy"},
+  "decisions":{"DISCOVER_SUITE":"ALLOW","GENERATE_MANIFEST":"ALLOW","BIND_VERSION":"REQUIRE_APPROVAL","REGISTER_JOB":"REQUIRE_APPROVAL"},
+  "constraints":{"no_secret_material_in_manifests":true,"no_production_execution_without_verified_deployment":true,"no_safety_bypass":true,"audit_required":true},
+  "fail_closed":true
+}
