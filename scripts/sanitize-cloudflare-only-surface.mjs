@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const root = process.argv[2] || process.cwd();
+const args = process.argv.slice(2);
+const checkOnly = args.includes('--check');
+const root = args.find((arg) => arg !== '--check') || process.cwd();
 const htmlFiles = [];
 
 function walk(dir) {
@@ -28,6 +30,7 @@ const insightsBlock = /\s*<script>\s*window\.va\s*=\s*window\.va\s*\|\|\s*functi
 
 const safeProviderWord = /(?<![\/\w.-])Vercel(?![\/\w.-])/gi;
 let changed = 0;
+const wouldChange = [];
 const residual = [];
 
 for (const file of htmlFiles) {
@@ -42,16 +45,25 @@ for (const file of htmlFiles) {
   after = after.replace(/\bVercel\s+(?:web\s+layer|deployment)\b/gi, 'Cloudflare edge layer');
   after = after.replace(safeProviderWord, 'Cloudflare');
   if (after !== before) {
-    fs.writeFileSync(file, after);
-    changed++;
+    wouldChange.push(relative);
+    if (!checkOnly) {
+      fs.writeFileSync(file, after);
+      changed++;
+    }
   }
   const scanText = after.replace(/\/vercel-hard-lock\//gi, '/historical-provider-lock/');
   for (const pattern of forbidden) if (pattern.test(scanText)) residual.push(`${relative}: ${pattern}`);
 }
 
-if (residual.length) {
-  console.error(JSON.stringify({ status: 'FAIL', changed, residual }, null, 2));
-  process.exit(1);
-}
+const failed = residual.length > 0 || (checkOnly && wouldChange.length > 0);
+const result = {
+  status: failed ? 'FAIL' : 'PASS',
+  mode: checkOnly ? 'check-only' : 'write',
+  htmlFileCount: htmlFiles.length,
+  changed,
+  wouldChange,
+  retiredProviderReferences: residual.length ? residual : 0
+};
 
-console.log(JSON.stringify({ status: 'PASS', htmlFileCount: htmlFiles.length, changed, retiredProviderReferences: 0 }, null, 2));
+console.log(JSON.stringify(result, null, 2));
+if (failed) process.exit(1);
