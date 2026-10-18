@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "name": "LINGO Shield Control Mesh",
+  "purpose": "Cross-provider engineering, security, review, and agent orchestration.",
+  "providers": {
+    "github": {
+      "role": "primary-source-and-current-gate-plane",
+      "authority": "canonical"
+    },
+    "gitlab": {
+      "role": "secondary-code-and-ci-plane",
+      "authority": "non-authoritative-until-attached-and-verified",
+      "integration": "adapter-ready"
+    }
+  },
+  "agents": {
+    "claude": {
+      "role": "analysis-review-worker",
+      "permissions": ["read", "analyze", "propose"],
+      "productionAuthority": false
+    },
+    "repair-bot": {
+      "role": "bug-fix-worker",
+      "permissions": ["branch", "commit", "propose"],
+      "productionAuthority": false
+    },
+    "security-bot": {
+      "role": "security-review-worker",
+      "permissions": ["scan", "flag", "block"],
+      "productionAuthority": false
+    },
+    "integration-bot": {
+      "role": "cross-provider-intake-and-merge-preparation",
+      "permissions": ["compare", "validate", "prepare-merge"],
+      "productionAuthority": false
+    },
+    "evidence-bot": {
+      "role": "evidence-collector",
+      "permissions": ["collect", "correlate", "report"],
+      "productionAuthority": false
+    }
+  },
+  "mergePolicy": {
+    "autoProductionMerge": false,
+    "requiredEvidence": ["source", "diff", "validation", "security", "governance"],
+    "productionPromotion": "fail-closed"
+  }
+}
