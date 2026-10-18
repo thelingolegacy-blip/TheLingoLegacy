@@ -1,0 +1,37 @@
+{
+  "packet_type": "LINGO_G02_PACKET_A_HOST_RUNNER",
+  "schema_version": "1.0",
+  "status": "TEMPLATE_NOT_EVIDENCE",
+  "correlation_id": null,
+  "collected_at_utc": null,
+  "collector_identity": null,
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "expected_runner_name": "lingo-legacy-g02",
+  "host": {
+    "hostname": null,
+    "os": null,
+    "architecture": null,
+    "runner_install_dir": "/opt/actions-runner",
+    "runner_config_present": null
+  },
+  "runner": {
+    "observed_name": null,
+    "runner_id": null,
+    "labels": [],
+    "registration_state": "unknown"
+  },
+  "service": {
+    "manager": "systemd",
+    "unit_name": null,
+    "unit_found": null,
+    "enabled": null,
+    "active": null,
+    "listener_process_found": null,
+    "connectivity_test": "unknown"
+  },
+  "evidence_files": [],
+  "manifest_sha256": null,
+  "redaction_reviewed": false,
+  "independent_verification": "pending",
+  "notes": "Replace nulls only with observed values. Do not include registration tokens, private keys, secrets, or unredacted environment/log dumps. This template is not proof of host state."
+}

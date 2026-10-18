@@ -1,0 +1,23 @@
+flowchart TD
+  A[PROTECTED HOLD] --> B[Collect Packet A: host and runner identity]
+  B --> C{Packet A complete and hash verified?}
+  C -- No / Unknown --> X[BLOCKED: request missing host evidence]
+  C -- Yes --> D[Collect Packet B: GitHub sentinel execution]
+  D --> E{runner_id > 0 and exact runner name?}
+  E -- No / Unknown --> Y[BLOCKED: assignment not proven]
+  E -- Yes --> F{Job assigned and steps instantiated?}
+  F -- No / Unknown --> Y
+  F -- Yes --> G{Sentinel exit code = 0?}
+  G -- No / Unknown --> Z[REJECTED or BLOCKED: inspect raw evidence]
+  G -- Yes --> H{Logs and artifacts retrievable?}
+  H -- No / Unknown --> Z
+  H -- Yes --> I[Correlate run, attempt, job, SHA, runner, timestamps]
+  I --> J{Independent verifier accepts P1-P9?}
+  J -- No / Unknown --> X
+  J -- Yes --> K[G02 ACCEPTED]
+  K --> L{Separate promotion authorization?}
+  L -- No --> M[HOLD: production remains protected]
+  L -- Yes --> N[Next gate review; no automatic promotion]
+  X --> B
+  Y --> D
+  Z --> D

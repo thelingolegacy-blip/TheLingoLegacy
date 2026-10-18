@@ -1,0 +1,70 @@
+version: 1
+system: LINGO_G02
+mode: design_only
+default_action: deny
+production_mutations: false
+automatic_promotion: false
+
+triggers:
+  permitted:
+    - id: hourly_read_only_diagnostics
+      event: schedule
+      requires:
+        - read_only_github_telemetry
+        - no_sentinel_dispatch
+        - no_gate_acceptance
+        - no_production_mutations
+        - bounded_artifact_retention
+      effects:
+        - diagnostic_artifact_only
+        - never_authorize_promotion
+    - id: operator_manual_dispatch
+      event: workflow_dispatch
+      requires:
+        - authorized_operator
+        - approved_ref
+        - explicit_run_confirmation
+        - LINGO_G02_SENTINEL_ENABLED == "true"
+        - runner_inventory_independently_verified
+      default_enabled: false
+  denied:
+    - pull_request
+    - pull_request_target
+    - automatic_production_push
+    - scheduled_sentinel_dispatch
+    - scheduled_gate_acceptance
+    - scheduled_production_promotion
+    - workflow_run_promotion
+    - unreviewed_branch_dispatch
+
+runner:
+  expected_name: lingo-legacy-g02
+  required_labels: [self-hosted, linux, x64, lingo-g02]
+  require_runner_id_gt_zero: true
+  require_job_assignment: true
+  require_steps_instantiated: true
+  labels_are_authentication: false
+
+sentinel:
+  max_runtime_seconds: 120
+  expected_exit_code: 0
+  require_run_attempt: true
+  require_commit_sha: true
+  require_utc_timestamps: true
+  read_only: true
+
+evidence:
+  packet_a_required: true
+  packet_b_required: true
+  sha256_manifest_required: true
+  raw_logs_required: true
+  artifacts_retrievable_required: true
+  independent_correlation_required: true
+  secrets_in_evidence: forbidden
+
+gate:
+  predicates: [P1, P2, P3, P4, P5, P6, P7, P8, P9]
+  unknown_counts_as_pass: false
+  partial_acceptance_allowed: false
+  downstream_authorization_inherited: false
+  fail_closed: true

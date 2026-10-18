@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "sentinel_id": "lingo-g02-qualified-sentinel",
+  "mode": "read_only",
+  "timeout_seconds": 120,
+  "required_environment_fields": [
+    "GITHUB_REPOSITORY",
+    "GITHUB_RUN_ID",
+    "GITHUB_RUN_ATTEMPT",
+    "GITHUB_JOB",
+    "GITHUB_SHA",
+    "RUNNER_NAME",
+    "RUNNER_OS",
+    "RUNNER_ARCH"
+  ],
+  "assertions": [
+    {"id": "S1", "test": "RUNNER_OS == Linux", "failure_exit_code": 11},
+    {"id": "S2", "test": "RUNNER_ARCH == X64", "failure_exit_code": 12},
+    {"id": "S3", "test": "RUNNER_NAME == lingo-legacy-g02", "failure_exit_code": 13},
+    {"id": "S4", "test": "runner_id > 0 from authoritative job metadata", "failure_exit_code": 14},
+    {"id": "S5", "test": "workflow run attempt and commit SHA recorded", "failure_exit_code": 15},
+    {"id": "S6", "test": "output packet contains no credentials or secret values", "failure_exit_code": 16}
+  ],
+  "success_exit_code": 0,
+  "success_claim_policy": "Emit SENTINEL_PASS only after all assertions pass. A shell process starting or a workflow marked completed is not proof of a successful sentinel.",
+  "required_output": [
+    "correlation_id",
+    "repository",
+    "workflow_run_id",
+    "run_attempt",
+    "job_id",
+    "commit_sha",
+    "runner_id",
+    "runner_name",
+    "started_at_utc",
+    "completed_at_utc",
+    "exit_code"
+  ],
+  "prohibited_operations": [
+    "runner registration",
+    "service restart",
+    "repository or organization settings mutation",
+    "deployment",
+    "production activation",
+    "secret output",
+    "automatic gate promotion"
+  ]
+}
