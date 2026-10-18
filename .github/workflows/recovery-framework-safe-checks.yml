@@ -1,0 +1,52 @@
+name: Recovery Framework Safe Checks
+
+on:
+  push:
+    branches:
+      - 'dev/isolated-workspace-2026-10-10'
+    paths:
+      - 'infra/recovery/**'
+      - 'ops/legacy-recovery/**'
+      - '.github/workflows/recovery-framework-safe-checks.yml'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'infra/recovery/**'
+      - 'ops/legacy-recovery/**'
+      - '.github/workflows/recovery-framework-safe-checks.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-recovery-safe-checks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-design:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated change
+        uses: actions/checkout@v4
+      - name: Validate safe-mode framework files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s infra/recovery/terraform/main.tf
+          test -s ops/legacy-recovery/README.md
+          test -s ops/legacy-recovery/ansible/playbooks/recovery-preflight.yml
+          grep -q 'auto_merge.*false' infra/recovery/terraform/main.tf
+          grep -q 'auto_deploy.*false' infra/recovery/terraform/main.tf
+          grep -q 'dns_mutation.*false' infra/recovery/terraform/main.tf
+          grep -q 'hidden_backdoor.*false' infra/recovery/terraform/main.tf
+          grep -q 'gated_break_glass.*true' infra/recovery/terraform/main.tf
+          grep -q 'production_changes.*false' infra/recovery/terraform/main.tf
+          if grep -RniE 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}' infra/recovery ops/legacy-recovery; then
+            echo "::error::Possible credential material found in framework files"
+            exit 1
+          fi
+          echo "SAFE_MODE_STATIC_CHECK=PASS"
+          echo "PROVISIONING=NOT_PERFORMED"
+          echo "RUNNER_EXECUTION=NOT_CLAIMED"
+          echo "PRODUCTION_MUTATION=NOT_PERFORMED"
