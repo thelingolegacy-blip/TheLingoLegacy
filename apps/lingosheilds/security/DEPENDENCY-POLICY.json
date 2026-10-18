@@ -1,0 +1,12 @@
+{
+  "version":"1.0.0",
+  "rules":{
+    "lockfilesRequired":true,
+    "unpinnedActions":"BLOCK",
+    "knownCriticalVulnerability":"BLOCK",
+    "unknownLicense":"REVIEW",
+    "secretDetected":"BLOCK",
+    "unsignedReleaseArtifact":"BLOCK",
+    "dependencyDrift":"REVIEW"
+  }
+}

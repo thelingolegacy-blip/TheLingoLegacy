@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"LINGOsheilds EvidenceRecord",
+  "type":"object",
+  "required":["evidence_id","operation_id","actor","source","timestamp","result","verification"],
+  "properties":{
+    "evidence_id":{"type":"string","minLength":1},
+    "operation_id":{"type":"string","minLength":1},
+    "actor":{"type":"object","required":["type","id"],"properties":{"type":{"type":"string"},"id":{"type":"string"}}},
+    "source":{"type":"object","required":["provider","repository","sha"],"properties":{"provider":{"type":"string"},"repository":{"type":"string"},"sha":{"type":"string"}}},
+    "timestamp":{"type":"string","format":"date-time"},
+    "result":{"type":"string"},
+    "artifact_digest":{"type":"string"},
+    "verification":{"type":"object","required":["status"],"properties":{"status":{"enum":["UNVERIFIED","VERIFIED"]},"method":{"type":"string"}}},
+    "authorization":{"type":"object","properties":{"status":{"enum":["BLOCKED","ELIGIBLE","AUTHORIZED"]},"authorization_id":{"type":"string"}}}
+  },
+  "additionalProperties":false
+}

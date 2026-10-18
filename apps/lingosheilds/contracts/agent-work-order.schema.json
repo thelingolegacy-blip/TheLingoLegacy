@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"LINGOsheilds AgentWorkOrder",
+  "type":"object",
+  "required":["task_id","agent","repository","scope","permissions","expires_at"],
+  "properties":{
+    "task_id":{"type":"string"},
+    "agent":{"type":"object","required":["id","provider","model"],"properties":{"id":{"type":"string"},"provider":{"type":"string"},"model":{"type":"string"}}},
+    "repository":{"type":"string"},
+    "scope":{"type":"object","required":["ref","paths"],"properties":{"ref":{"type":"string"},"paths":{"type":"array","items":{"type":"string"}}}},
+    "permissions":{"type":"array","items":{"enum":["read","analyze","write-branch","run-tests","create-evidence","propose-merge"]}},
+    "production_access":{"const":false},
+    "expires_at":{"type":"string","format":"date-time"}
+  },
+  "additionalProperties":false
+}

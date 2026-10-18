@@ -1,0 +1,20 @@
+{
+  "version":"1.0.0",
+  "failClosed":true,
+  "gates":{
+    "source":"DEFINED",
+    "evidence":"REQUIRED",
+    "verification":"REQUIRED",
+    "acceptance":"REQUIRED",
+    "authorization":"REQUIRED",
+    "promotion":"BLOCKED_UNTIL_AUTHORIZED",
+    "postPromotion":"REQUIRED"
+  },
+  "invariants":[
+    "agent-cannot-self-authorize",
+    "provider-cannot-self-authorize",
+    "unverified-evidence-blocks-transition",
+    "contradictory-evidence-invalidates-state",
+    "production-mutation-requires-explicit-authorization"
+  ]
+}
