@@ -1,0 +1,128 @@
+name: G02 Dispatch Pool Diagnostic
+
+on:
+  push:
+    branches:
+      - recovery/g02-dispatch-pool-diagnostic-2026-10-13
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  github-hosted-control:
+    name: GitHub-hosted dispatch control
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Emit correlated hosted-runner telemetry
+        id: telemetry
+        shell: bash
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          JOB_NAME: ${{ github.job }}
+          COMMIT_SHA: ${{ github.sha }}
+          REF_NAME: ${{ github.ref }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          {
+            printf 'schema=lingo.g02.dispatch-pool.v1\\n'
+            printf 'pool=github-hosted\\n'
+            printf 'captured_at_utc=%s\\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            printf 'run_id=%s\\n' "$RUN_ID"
+            printf 'run_attempt=%s\\n' "$RUN_ATTEMPT"
+            printf 'job_name=%s\\n' "$JOB_NAME"
+            printf 'runner_name=%s\\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\\n' "$RUNNER_ENVIRONMENT"
+            printf 'commit_sha=%s\\n' "$COMMIT_SHA"
+            printf 'ref=%s\\n' "$REF_NAME"
+            printf 'event_name=%s\\n' "$EVENT_NAME"
+            printf 'dispatch_control=EXECUTED\\n'
+          } > g02-evidence/github-hosted-control.txt
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          cat g02-evidence/github-hosted-control.txt
+      - name: Upload hosted control evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-hosted-control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/github-hosted-control.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  g02-self-hosted-sentinel:
+    name: Canonical G02 self-hosted sentinel
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Emit correlated G02 telemetry
+        id: sentinel
+        shell: bash
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          JOB_NAME: ${{ github.job }}
+          COMMIT_SHA: ${{ github.sha }}
+          REF_NAME: ${{ github.ref }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          {
+            printf 'schema=lingo.g02.dispatch-pool.v1\\n'
+            printf 'pool=self-hosted-g02\\n'
+            printf 'captured_at_utc=%s\\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            printf 'run_id=%s\\n' "$RUN_ID"
+            printf 'run_attempt=%s\\n' "$RUN_ATTEMPT"
+            printf 'job_name=%s\\n' "$JOB_NAME"
+            printf 'runner_name=%s\\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\\n' "$RUNNER_ENVIRONMENT"
+            printf 'commit_sha=%s\\n' "$COMMIT_SHA"
+            printf 'ref=%s\\n' "$REF_NAME"
+            printf 'event_name=%s\\n' "$EVENT_NAME"
+          } > g02-evidence/g02-self-hosted-sentinel.txt
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          printf 'runner_identity_check=PASS\\n' >> g02-evidence/g02-self-hosted-sentinel.txt
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\\n' >> g02-evidence/g02-self-hosted-sentinel.txt
+          cat g02-evidence/g02-self-hosted-sentinel.txt
+      - name: Emit sentinel failure marker
+        if: always()
+        shell: bash
+        env:
+          SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
+        run: |
+          if [ -f g02-evidence/g02-self-hosted-sentinel.txt ]; then
+            if [ "$SENTINEL_OUTCOME" = "success" ]; then
+              echo "G02_FORENSIC_EXIT_STATUS=0" >> g02-evidence/g02-self-hosted-sentinel.txt
+            else
+              echo "G02_FORENSIC_EXIT_STATUS=1" >> g02-evidence/g02-self-hosted-sentinel.txt
+            fi
+          fi
+      - name: Upload correlated G02 sentinel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-self-hosted-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/g02-self-hosted-sentinel.txt
+          if-no-files-found: warn
+          retention-days: 14
