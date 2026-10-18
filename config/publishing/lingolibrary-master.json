@@ -1,0 +1,181 @@
+{
+  "schema": "lingolibrary-self-publishing-master",
+  "version": "1.0.0",
+  "status": "DEFINED",
+  "identity": {
+    "name": "LINGOlibrary",
+    "tagline": "WRITE • PUBLISH • LISTEN • OWN • BUILD",
+    "icon": "/assets/brand/lingolibrary/icon.svg",
+    "maskableIcon": "/assets/brand/lingolibrary/icon-maskable.svg",
+    "manifest": "/library/manifest.webmanifest",
+    "surface": "/library/"
+  },
+  "lifecycle": [
+    "create",
+    "ingest",
+    "edit",
+    "design",
+    "audio",
+    "edition",
+    "rights",
+    "author-accept",
+    "publish",
+    "distribute",
+    "sell",
+    "royalty",
+    "analyze",
+    "expand"
+  ],
+  "formats": [
+    "paperback",
+    "hardcover",
+    "ebook",
+    "audiobook",
+    "large-print",
+    "illustrated",
+    "classroom",
+    "interactive"
+  ],
+  "canonicalPipeline": [
+    "source",
+    "specification",
+    "defined-burden",
+    "live-evidence",
+    "verification",
+    "establishment",
+    "acceptance",
+    "authorization",
+    "execution",
+    "result-verification",
+    "promotion",
+    "current-state-validation"
+  ],
+  "waves": [
+    {
+      "id": "SP-W0",
+      "name": "Foundation",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W1",
+      "name": "Manuscript",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W2",
+      "name": "Editorial",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W3",
+      "name": "Design",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W4",
+      "name": "Audio",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W5",
+      "name": "Publishing",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W6",
+      "name": "Distribution",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W7",
+      "name": "Rights / Commerce",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W8",
+      "name": "Community / Discovery",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W9",
+      "name": "Media Expansion",
+      "state": "DEFINED"
+    },
+    {
+      "id": "SP-W10",
+      "name": "Live Validation",
+      "state": "BLOCKED_PENDING_RUNTIME_EVIDENCE"
+    },
+    {
+      "id": "SP-W11",
+      "name": "Controlled Activation",
+      "state": "BLOCKED_PENDING_GATES"
+    }
+  ],
+  "sprints": [
+    "SP-S01",
+    "SP-S02",
+    "SP-S03",
+    "SP-S04",
+    "SP-S05",
+    "SP-S06",
+    "SP-S07",
+    "SP-S08",
+    "SP-S09",
+    "SP-S10",
+    "SP-S11",
+    "SP-S12",
+    "SP-S13",
+    "SP-S14",
+    "SP-S15",
+    "SP-S16",
+    "SP-S17",
+    "SP-S18",
+    "SP-S19",
+    "SP-S20"
+  ],
+  "builds": [
+    "BUILD-SP-001",
+    "BUILD-SP-002",
+    "BUILD-SP-003",
+    "BUILD-SP-004",
+    "BUILD-SP-005",
+    "BUILD-SP-006",
+    "BUILD-SP-007",
+    "BUILD-SP-008",
+    "BUILD-SP-009",
+    "BUILD-SP-010",
+    "BUILD-SP-011",
+    "BUILD-SP-012",
+    "BUILD-SP-013",
+    "BUILD-SP-014",
+    "BUILD-SP-015",
+    "BUILD-SP-016",
+    "BUILD-SP-017",
+    "BUILD-SP-018"
+  ],
+  "runtimeDependencies": {
+    "cloudflare": true,
+    "github": true,
+    "firebase": true,
+    "r2": true,
+    "openaiSecretRequired": true,
+    "authoritativeManuscriptsRequired": true
+  },
+  "productionLocks": {
+    "G02": "FAIL / UNVERIFIED",
+    "G03": "BLOCKED",
+    "G04": "BLOCKED",
+    "G05": "BLOCKED",
+    "G06": "BLOCKED",
+    "G07": "BLOCKED",
+    "G08": "BLOCKED",
+    "G09": "BLOCKED",
+    "G10": "BLOCKED",
+    "G11": "BLOCKED",
+    "failClosed": true,
+    "mutationFreeze": true,
+    "lkg": "PROTECTED"
+  },
+  "rule": "Configuration and source artifacts do not establish live production state."
+}

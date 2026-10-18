@@ -120,6 +120,86 @@ async function beaconAlerts(request, env) {
   return json({ ok: true, provider: result.provider, message: 'Beacon text alerts started.' }, 200, request, env);
 }
 
+
+const ASK_LINGO_MODES = Object.freeze({
+  chat: { research: false, instruction: 'Be conversational, useful, concise, and transparent about uncertainty.' },
+  research: { research: true, instruction: 'Research using current sources when available. Distinguish sourced facts, inference, and uncertainty. Never fabricate citations.' },
+  generation: { research: false, instruction: 'Create useful drafts, concepts, specifications, scripts, or production artifacts. Mark generated claims as proposals unless verified.' },
+  help: { research: false, instruction: 'Diagnose the problem, explain next steps, and provide practical troubleshooting without pretending a system state is verified.' },
+  training: { research: false, instruction: 'Teach progressively with exercises, checks for understanding, examples, and feedback.' },
+  examples: { research: false, instruction: 'Provide concrete good, bad, and edge-case examples when useful.' },
+  teach: { research: false, instruction: 'Teach from first principles, then test comprehension.' },
+  govern: { research: false, instruction: 'Apply fail-closed LINGO governance. Separate defined, observed, qualified, verified, accepted, established, and passed states. Never manufacture evidence or authority.' },
+  law: { research: true, instruction: 'Provide general legal information, not legal representation. Prefer current primary sources and flag jurisdictional differences.' },
+  medicine: { research: true, instruction: 'Provide educational medical information, not diagnosis or clinical care. For urgent symptoms, direct the user to appropriate professional or emergency care.' },
+  firefighter: { research: true, instruction: 'Provide educational fire-service information. Operational decisions defer to current local SOPs, incident command, training, and authoritative guidance.' },
+  emt: { research: true, instruction: 'Provide educational EMS information. Patient care defers to current local protocols, medical direction, scope of practice, and certified training.' },
+  law_enforcement: { research: true, instruction: 'Provide educational and policy-oriented information. Defer to applicable law, agency policy, training, and qualified professionals.' }
+});
+
+function askLingoMode(value) {
+  const mode = String(value || 'chat').trim().toLowerCase();
+  return ASK_LINGO_MODES[mode] ? mode : 'chat';
+}
+
+async function askLingoRealtimeToken(request, env) {
+  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  if (!env.OPENAI_API_KEY) return json({ ok: false, error: 'askLINGO realtime is not configured.' }, 503, request, env);
+  const body = await parseJson(request);
+  const mode = askLingoMode(body.mode);
+  const configuredInstruction = ASK_LINGO_MODES[mode].instruction;
+  const upstream = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      session: {
+        type: 'realtime',
+        model: String(env.ASK_LINGO_REALTIME_MODEL || 'gpt-realtime-2.1'),
+        instructions: configuredInstruction
+      }
+    })
+  });
+  const result = await upstream.json();
+  if (!upstream.ok) return json({ ok: false, error: result.error?.message || 'Realtime token service failed.' }, upstream.status, request, env);
+  return json({ ok: true, client_secret: result.value || result.client_secret?.value || result.client_secret || null, mode, transport: 'webrtc' }, 200, request, env);
+}
+
+async function askLingoRespond(request, env) {
+  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  if (!env.OPENAI_API_KEY) return json({ ok: false, error: 'askLINGO response service is not configured.' }, 503, request, env);
+  const body = await parseJson(request);
+  const text = String(body.text || '').trim().slice(0, 12000);
+  if (!text) return json({ ok: false, error: 'A non-empty text prompt is required.' }, 400, request, env);
+  const mode = askLingoMode(body.mode);
+  const policy = ASK_LINGO_MODES[mode];
+  const research = policy.research;
+  const context = body.context && typeof body.context === 'object' ? JSON.stringify(body.context).slice(0, 8000) : '{}';
+  const input = [
+    { role: 'system', content: [{ type: 'input_text', text: policy.instruction }] },
+    { role: 'user', content: [{ type: 'input_text', text: `Context: ${context}\\n\\nUser request: ${text}` }] }
+  ];
+  const payload = {
+    model: String(env.ASK_LINGO_TEXT_MODEL || 'gpt-6-luna'),
+    input
+  };
+  if (research) payload.tools = [{ type: 'web_search' }];
+  const upstream = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const result = await upstream.json();
+  if (!upstream.ok) return json({ ok: false, error: result.error?.message || 'askLINGO response service failed.' }, upstream.status, request, env);
+  return json({
+    ok: true,
+    mode,
+    research,
+    response_id: result.id || null,
+    text: result.output_text || '',
+    generated_at: new Date().toISOString()
+  }, 200, request, env);
+}
+
 function runtimeManifest(request, env) {
   const url = new URL(request.url);
   return {
@@ -199,6 +279,8 @@ export default {
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
+      if (url.pathname === '/api/asklingo/realtime-token') return await askLingoRealtimeToken(request, env);
+      if (url.pathname === '/api/asklingo/respond') return await askLingoRespond(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       const assetResponse = await env.ASSETS.fetch(request);
       return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
