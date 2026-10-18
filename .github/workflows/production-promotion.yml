@@ -22,7 +22,27 @@ env:
   NODE_VERSION: '22'
 
 jobs:
+  release-mode-guard:
+    name: Fail-closed release mode guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Block production deployment pending independent acceptance
+        shell: bash
+        env:
+          REQUESTED_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          set -euo pipefail
+          if [[ "$REQUESTED_ENVIRONMENT" != "staging" ]]; then
+            echo "PRODUCTION_PROMOTION=BLOCKED"
+            echo "REASON=Independent P(T+1), E(T+1), V(T+1), and A(T+1) acceptance is not established."
+            exit 1
+          fi
+          echo "RELEASE_MODE=STAGING_ONLY"
+
   runner-gate:
+    needs: release-mode-guard
+    if: ${{ needs.release-mode-guard.result == 'success' }}
     # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
@@ -115,9 +135,9 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'staging' && vars.STAGING_DEPLOYMENT_APPROVED == 'true' }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: staging
     permissions:
       contents: read
     steps:
@@ -142,18 +162,46 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || { echo 'CLOUDFLARE_API_TOKEN is missing'; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'CLOUDFLARE_ACCOUNT_ID is missing'; exit 1; }
-      - name: Deploy to Cloudflare
+      - name: Require isolated staging target
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
-      - name: Resolve canonical production URL
-        id: config
+          STAGING_BASE_URL: ${{ vars.STAGING_BASE_URL }}
         shell: bash
         run: |
           set -euo pipefail
-          domain=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).canonicalDomain)")
-          echo "base_url=https://${domain}" >> "$GITHUB_OUTPUT"
+          test -f wrangler.staging.jsonc || { echo 'STAGING_DEPLOYMENT=BLOCKED; wrangler.staging.jsonc is missing'; exit 1; }
+          test -n "${STAGING_BASE_URL:-}" || { echo 'STAGING_DEPLOYMENT=BLOCKED; STAGING_BASE_URL is missing'; exit 1; }
+          node <<'NODE'
+          const fs = require('node:fs');
+          const cfg = JSON.parse(fs.readFileSync('wrangler.staging.jsonc', 'utf8'));
+          const u = new URL(process.env.STAGING_BASE_URL);
+          const errors = [];
+          if (cfg.name !== 'thelingolegacy-staging') errors.push('Staging Worker name must be exactly thelingolegacy-staging');
+          if (Array.isArray(cfg.routes) && cfg.routes.length) errors.push('Staging config must not declare custom routes');
+          if (cfg.workers_dev !== true) errors.push('Staging config must explicitly enable workers.dev for isolated testing');
+          if (u.protocol !== 'https:' || !u.hostname.endsWith('.workers.dev')) errors.push('STAGING_BASE_URL must be an HTTPS workers.dev hostname');
+          if (u.hostname.split('.')[0] !== cfg.name) errors.push('STAGING_BASE_URL hostname must begin with the exact staging Worker name');
+          if (['thelingolegacy.com', 'www.thelingolegacy.com'].includes(u.hostname)) errors.push('STAGING_BASE_URL must not be a production hostname');
+          if (cfg.vars?.CANONICAL_DOMAIN !== u.hostname) errors.push('CANONICAL_DOMAIN must match the staging hostname');
+          if (cfg.vars?.PUBLIC_SITE_URL !== u.origin) errors.push('PUBLIC_SITE_URL must match the staging origin');
+          if (cfg.vars?.LINGO_ENVIRONMENT !== 'staging') errors.push('LINGO_ENVIRONMENT must equal staging');
+          if (errors.length) { console.error('STAGING_DEPLOYMENT=BLOCKED'); for (const e of errors) console.error(e); process.exit(1); }
+          console.log('STAGING_TARGET=ISOLATED');
+          console.log('STAGING_WORKER=' + cfg.name);
+          console.log('STAGING_HOST=' + u.hostname);
+          NODE
+      - name: Deploy to isolated staging Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@4 deploy --config wrangler.staging.jsonc
+      - name: Resolve isolated staging URL
+        id: config
+        env:
+          STAGING_BASE_URL: ${{ vars.STAGING_BASE_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const u=new URL(process.env.STAGING_BASE_URL); if(u.protocol!=='https:' || !u.hostname.endsWith('.workers.dev') || ['thelingolegacy.com','www.thelingolegacy.com'].includes(u.hostname)) process.exit(1); console.log('base_url='+u.origin)" >> "$GITHUB_OUTPUT"
       - name: Live probes
         env:
           LIVE_BASE_URL: ${{ steps.config.outputs.base_url }}
@@ -168,7 +216,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Production certification boundary
+      - name: Non-certifying staging release boundary
         shell: bash
         run: |
           set -euo pipefail
@@ -176,5 +224,5 @@ jobs:
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.failClosed)")" = "true"
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireLiveProbePass)")" = "true"
           test "$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/production.json','utf8')).activation.requireRollbackTarget)")" = "true"
-          echo 'Configured repository and Cloudflare gates passed.'
-          echo 'CERTIFIED remains withheld unless live evidence and rollback target are actually present.'
+          echo 'Repository configuration predicates passed for this staging-only run.'
+          echo 'PRODUCTION_CERTIFICATION=WITHHELD; independent P(T+1), E(T+1), V(T+1), A(T+1) acceptance and a verified rollback target are still required.'

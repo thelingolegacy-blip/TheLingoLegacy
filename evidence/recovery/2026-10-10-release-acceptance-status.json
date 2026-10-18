@@ -1,0 +1,218 @@
+{
+  "schema": "lingo.release-recovery-evidence.v1",
+  "captured_at_utc": "2026-10-10T21:47:00Z",
+  "status": "OBSERVED_BLOCKED",
+  "scope": "isolated recovery branch only; no production mutation",
+  "source": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "branch": "recovery/fail-closed-promotion-guard-2026-10-10",
+    "commit_sha": "00bab43aa4acf4144b3bb34ffc845291edbccc68",
+    "pull_request": 264,
+    "pull_request_url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/264",
+    "target_branch": "main",
+    "draft": true,
+    "merged": false,
+    "latest_reviewed_pr_head_before_packet_refresh": "794c21cf325c4d073ec3cedfffe7e5054f89d172",
+    "latest_tested_commit_sha": "37f260fed155d8e412ac29ba9b284d00bc775421",
+    "latest_recovery_runbook_commit": "43319bb78687ca43552efe479ce320811b561053"
+  },
+  "configuration": {
+    "promotion_workflow": "source guards observed",
+    "production_promotion": "FAIL_CLOSED",
+    "cloudflare_deployment": "staging only; explicit STAGING_DEPLOYMENT_APPROVED=true required",
+    "staging_worker_name": "thelingolegacy-staging",
+    "staging_config_path": "wrangler.staging.jsonc",
+    "staging_asset_path": "staging-assets/index.html",
+    "staging_url_expected": "https://thelingolegacy-staging.thelingolegacy.workers.dev",
+    "staging_worker_live_deployment": "NOT_OBSERVED",
+    "staging_settings_approval": "NOT_VERIFIED",
+    "source_assertions": {
+      "promotion_workflow": 6,
+      "staging_config": 5,
+      "staging_asset": 3,
+      "validation_workflow": 5
+    }
+  },
+  "ci_observations": [
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088568401,
+      "run_number": 2,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320115371,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Execution evidence unavailable; cannot establish whether validation steps ran."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088568436,
+      "run_number": 1009,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320115614,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Execution evidence unavailable; cannot establish whether validation steps ran."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088602235,
+      "run_number": 3,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320212630,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Second observed run also lacks retrievable steps/logs; cannot establish validation steps executed."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088602232,
+      "run_number": 1010,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320212914,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Second observed run also lacks retrievable steps/logs; cannot establish validation steps executed."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088629589,
+      "run_number": 4,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320298483,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "Not retrievable in latest job record; steps/log URL remain null",
+      "interpretation": "Third observed run still provides no retrievable step-level execution evidence."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088629640,
+      "run_number": 1011,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320298426,
+      "steps": null,
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "Not retrievable in latest job record; steps/log URL remain null",
+      "interpretation": "Third observed run still provides no retrievable step-level execution evidence."
+    },
+    {
+      "workflow": "Isolated Staging Configuration Contract",
+      "run_id": 38088662734,
+      "run_number": 5,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320391890,
+      "steps": [],
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Latest run associated with recovery head; job has no instantiated steps or retrievable logs. Cannot prove validation ran."
+    },
+    {
+      "workflow": "Lingo Legacy Static CI",
+      "run_id": 38088662890,
+      "run_number": 1012,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 114320392335,
+      "steps": [],
+      "logs_url": null,
+      "artifacts": [],
+      "log_retrieval": "HTTP 404 BlobNotFound",
+      "interpretation": "Latest run associated with recovery head; job has no instantiated steps or retrievable logs. Cannot prove validation ran."
+    }
+  ],
+  "external_checks": [
+    {
+      "context": "Vercel – the-lingo-legacy",
+      "state": "failure",
+      "target_url": "https://vercel.com/knowledge/why-is-my-account-deployment-blocked",
+      "interpretation": "Vercel check is failing; not evidence of a successful build or deploy."
+    },
+    {
+      "context": "Vercel – the-lingo-legacy",
+      "state": "failure",
+      "target_url": "https://vercel.com/shop-c54e0277?upgradeToPro=build-rate-limit",
+      "observed_at_utc": "2026-10-10T21:42:45Z",
+      "interpretation": "Latest observed status points to a Vercel build-rate-limit/upgrade gate; no successful deployment evidence."
+    },
+    {
+      "context": "Cloudflare G02 control-agent live probe via connected execution environment",
+      "state": "BLOCKED_BY_REQUEST_POLICY",
+      "observed_at_utc": "2026-10-10T21:44:00Z",
+      "interpretation": "The connected execution environment rejected fetch requests to the workers.dev hostname with 403 'requests ... are not allowed'; this is a tool/network policy restriction, not evidence that the Worker itself returned 403 or is unhealthy."
+    }
+  ],
+  "related_blockers": [
+    {
+      "system": "GitLab",
+      "project": "zavionecook/FameMoneyFortune",
+      "pipeline_id": 2932520203,
+      "status": "failed",
+      "started_at": null,
+      "jobs": [],
+      "restriction": "CI job creation rejected because identity verification is required."
+    },
+    {
+      "system": "GitHub G02",
+      "state": "FAIL / UNVERIFIED",
+      "required_runner": "lingo-legacy-g02",
+      "required_labels": [
+        "self-hosted",
+        "linux",
+        "x64",
+        "lingo-g02"
+      ],
+      "acceptance": "REAL RUNNER → ALLOCATION → EXECUTION → LOGS → CORRELATION → INDEPENDENT VERIFICATION → P1–P9=TRUE"
+    }
+  ],
+  "release_acceptance": {
+    "P(T+1)": "NOT_ESTABLISHED",
+    "E(T+1)": "NOT_ESTABLISHED",
+    "V(T+1)": "NOT_ESTABLISHED",
+    "A(T+1)": "NOT_ESTABLISHED",
+    "merge_approval": "NOT_ESTABLISHED",
+    "promotion_authorization": "NOT_GRANTED",
+    "production_deployment": "NOT_PERFORMED",
+    "production_activation": "NOT_AUTHORIZED",
+    "mutation_freeze": "ACTIVE",
+    "last_known_good": "PROTECTED",
+    "fail_closed": "ACTIVE"
+  },
+  "next_required_evidence": [
+    "GitHub workflow job with non-null runner assignment, instantiated steps, and retrievable logs.",
+    "Successful static staging contract run and its artifact/logs.",
+    "Confirmed STAGING_DEPLOYMENT_APPROVED repository variable and Cloudflare credentials, without disclosing secret values.",
+    "Successful isolated staging deployment and live probes on the expected workers.dev origin.",
+    "Independent verification of source, build, runtime, rollback target, evidence correlation, and all release acceptance predicates.",
+    "Confirm rotation/revocation of the previously exposed GitLab runner-registration credential.",
+    "Run ops/g02/RECOVERY-RUNBOOK.md on the actual authorized Linux runner host; attach redacted host/service telemetry and the successful GitHub G02 sentinel run evidence."
+  ],
+  "local_static_check": {
+    "status": "PASS",
+    "runtime": "Node.js v22.16.0",
+    "assertions": 10,
+    "scope": "static staging configuration predicates only; configuration values matched the source read from GitHub; not a Cloudflare deployment and not G02 acceptance"
+  },
+  "operational_notes": [
+    "Added ops/g02/RECOVERY-RUNBOOK.md at commit 43319bb78687ca43552efe479ce320811b561053. It is an instruction artifact only; it does not prove host repair or runner acceptance.",
+    "The latest workflow observations are associated with the tested source commit 37f260fed155d8e412ac29ba9b284d00bc775421. The evidence/runbook-only commits do not match the staging validation workflow path filters; no new CI execution is inferred from those commits."
+  ]
+}
