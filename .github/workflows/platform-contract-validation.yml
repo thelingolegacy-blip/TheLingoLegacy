@@ -1,0 +1,45 @@
+name: Platform Contract Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "ops/architecture/**"
+      - "docs/architecture/**"
+      - "docs/integrations/google-ai-studio.md"
+      - ".github/workflows/platform-contract-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platform-contract-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: Static architecture and AI safety contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate JSON contract and fail-closed invariants
+        run: node ops/architecture/validate-contract.mjs
+      - name: Run mocked Gemini adapter safety tests
+        run: node --test ops/architecture/gemini-adapter.test.mjs
+      - name: Check architecture docs for likely literal Gemini keys
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInF "AIza" ops/architecture docs/integrations/google-ai-studio.md; then
+            echo "Potential provider key detected; failing closed."
+            exit 1
+          fi
+          if grep -RInE 'GEMINI_API_KEY[[:space:]]*=[[:space:]]*[^[:space:]]+' ops/architecture docs/integrations/google-ai-studio.md; then
+            echo "Potential literal GEMINI_API_KEY assignment detected; failing closed."
+            exit 1
+          fi
+          echo "No likely literal Gemini key detected in architecture files."
