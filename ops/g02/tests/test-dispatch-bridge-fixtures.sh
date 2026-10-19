@@ -61,7 +61,8 @@ if s == "failed-step":
     steps[0]["conclusion"] = "failure"
 runner_id = 7 if s != "runner-zero" else 0
 job_conclusion = "failure" if s == "failed-step" else "success"
-runs = {"workflow_runs":[{"id":123,"head_sha":run_sha,"head_branch":"main","status":"completed","conclusion":"success","name":workflow,"run_attempt":2}]}
+run_conclusion = "failure" if s == "failed-run" else "success"
+runs = {"workflow_runs":[{"id":123,"head_sha":run_sha,"head_branch":"main","status":"completed","conclusion":run_conclusion,"name":workflow,"run_attempt":2}]}
 jobs = {"jobs":[{"id":456,"run_id":123,"head_sha":job_sha,"name":"Verify Self-Hosted Runner Dispatch","status":"completed","conclusion":job_conclusion,"runner_id":runner_id,"runner_name":"lingo-legacy-g02","labels":["self-hosted","linux","x64","lingo-g02"],"steps":steps}]}
 artifacts = {"total_count":0,"artifacts":[]} if s == "missing-artifact" else {"total_count":1,"artifacts":[{"id":999,"name":"g02-sentinel-evidence-123","expired":False}]}
 for name, obj in (("runs.json",runs),("jobs.json",jobs),("artifacts.json",artifacts)):
@@ -88,6 +89,7 @@ bash -n "$bridge"
 run_case unrelated-workflow UNVERIFIED
 run_case missing-step UNVERIFIED
 run_case failed-step UNVERIFIED
+run_case failed-run UNVERIFIED
 run_case runner-zero UNVERIFIED
 run_case mismatched-sha UNVERIFIED
 run_case missing-artifact UNVERIFIED
