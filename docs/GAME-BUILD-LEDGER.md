@@ -147,6 +147,11 @@ promotion_authorization: NOT_AUTHORIZED
 - The `validate` job (`117959969013`) completed with failure, `steps = null`, and no retrievable logs. A separate job-step query returned an empty list; log retrieval again returned `BlobNotFound`; no artifacts were present.
 - Conclusion: retry did not recover execution evidence. G02/CI execution remains BLOCKED. This connected GitHub interface can inspect workflow results and request reruns, but it does not expose an action to start or repair the self-hosted runner daemon on its host. Host-side runner service, matching labels, network/polling, and repository/org runner-group authorization still need direct verification by an authorized operator.
 
+
+### Host-boundary clarification from existing repository controls
+
+The existing main-branch document `ops/g02/host-provisioning.md` states that the dedicated Linux host is `NOT CREATED / NOT VERIFIED` at its recorded checkpoint. This is not proof that no runner exists today, but it means the host's existence and ownership must be verified before treating a daemon repair as the next certain step. The repository already contains guarded tooling: `ops/g02/runner-control.sh` (read-only status by default), `ops/g02/diagnose-actions-dispatch.sh` (read-only GitHub-side evidence collector), and `ops/g02/install-runner.sh` (explicit confirmation gates; refuses a duplicate registration). The linked [G02 recovery runbook](./G02-SELF-HOSTED-RUNNER-RECOVERY.md) now directs operators to these existing controls first.
+
 ## Evidence sources
 
 
