@@ -149,6 +149,8 @@ promotion_authorization: NOT_AUTHORIZED
 
 ## Evidence sources
 
+
+- [G02 Self-Hosted Runner Recovery Runbook](./G02-SELF-HOSTED-RUNNER-RECOVERY.md) — read-only-first host/service diagnosis, GitHub runner-group authorization checks, safe repair sequence, and exact acceptance evidence required before marking G02 PASS.
 - [Game Master Tree](../studio-sites/GAME-MASTER-TREE.md)
 - [Game Bible Index](../studio-sites/GAME-BIBLE-INDEX.md)
 - [Game Registry](../studio-sites/config/game-registry.json)
