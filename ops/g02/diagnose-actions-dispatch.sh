@@ -118,16 +118,6 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
       fi
       printf 'ARTIFACT_CORRELATION run_id=%s job_id=%s runner_identity_and_commit_match=%s\n' "$run_id" "$job_id" "$artifact_correlated"
 
-      if [[ "$canonical_target" == "true" && "$assignment" == "CANONICAL_ASSIGNED" &&
-            "$run_status" == "completed" && "$run_conclusion" == "success" &&
-            "$job_status" == "completed" && "$job_conclusion" == "success" &&
-            "$sentinel_step_status" == "completed" && "$sentinel_step_conclusion" == "success" &&
-            "$artifact_contents_ok" == "true" && "$artifact_correlated" == "true" && "$correlation" == "PASS" ]]; then
-        sentinel_execution="PASS_CANDIDATE"
-      else
-        sentinel_execution="UNVERIFIED"
-      fi
-
       if gh api "repos/$REPO/actions/jobs/$job_id/logs" >/dev/null 2>"$tmp/log.err"; then
         log_state="RETRIEVABLE"
       elif grep -Eqi '404|BlobNotFound' "$tmp/log.err"; then
@@ -136,6 +126,17 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
         log_state="FAIL_ACCESS"
       else
         log_state="FAIL_OR_UNKNOWN"
+      fi
+
+      if [[ "$canonical_target" == "true" && "$assignment" == "CANONICAL_ASSIGNED" &&
+            "$run_status" == "completed" && "$run_conclusion" == "success" &&
+            "$job_status" == "completed" && "$job_conclusion" == "success" &&
+            "$sentinel_step_status" == "completed" && "$sentinel_step_conclusion" == "success" &&
+            "$artifact_contents_ok" == "true" && "$artifact_correlated" == "true" &&
+            "$correlation" == "PASS" && "$log_state" == "RETRIEVABLE" ]]; then
+        sentinel_execution="PASS_CANDIDATE"
+      else
+        sentinel_execution="UNVERIFIED"
       fi
 
       printf 'JOB id=%s run_id=%s attempt=%s canonical_target=%s name=%s status=%s conclusion=%s runner_id=%s runner_name=%s assignment=%s labels=%s steps=%s sentinel_step_status=%s sentinel_step_conclusion=%s sentinel_execution=%s logs=%s artifact_contents=%s artifact_file_sha256=%s commit_sha=%s correlation=%s\n' \
