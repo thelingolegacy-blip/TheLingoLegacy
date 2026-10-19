@@ -130,6 +130,15 @@ promotion_authorization: NOT_AUTHORIZED
 5. **Deployment and reachability:** hosting status must be matched to the exact commit and verified by independent live tests.
 6. **Production hold:** do not merge/promote the ledger or game changes to production while required gates remain blocked. This document is a draft audit artifact, not authorization.
 
+
+## Ledger artifact's own CI evidence (2026-10-19)
+
+- Draft PR: [#316](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/316).
+- Commit submitted for validation: `09c575ca596fd7ab878c3ccd57bbccb28703de10`.
+- GitHub Actions run `39222173722` (`Lingo Legacy Static CI`): **completed / failure**.
+- Job `validate` (job ID `117959809407`): `steps = null`, `logs_url = null`; job-step query returned an empty list, artifact query returned no artifacts, and job-log retrieval returned `BlobNotFound` for the contemporaneous G02 investigation.
+- Interpretation: this is not a source-validation pass and does not establish that the markdown file failed a content rule. The runner/execution evidence is insufficient to attribute the failure to the ledger content. PR #316 remains draft and must not be promoted.
+
 ## Evidence sources
 
 - [Game Master Tree](../studio-sites/GAME-MASTER-TREE.md)
