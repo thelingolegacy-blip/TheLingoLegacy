@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "OBS-GITHUB-ACTIONS-2026-10-10",
+  "captured_date_utc": "2026-10-10",
+  "collector": "Connected GitHub workflow/job/artifact metadata connector",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "evidence_class": "LIVE_CONNECTOR_RETRIEVED_METADATA",
+  "qualification": "PARTIAL_OBSERVATION_NOT_GATE_ACCEPTANCE",
+  "observations": [
+    {
+      "run_id": 38077915045,
+      "job_id": 114288673292,
+      "branch": "infra/g02-runner-agents-diagnostics-2026-10-10",
+      "commit_sha": "2ee83e2e786dfc4b0fcb5a366072438ad347ef87",
+      "job_name": "Record platform and repository-visible state",
+      "status": "completed",
+      "conclusion": "failure",
+      "logs_url": null,
+      "steps": null,
+      "artifacts": [],
+      "interpretation": "Connector returned no instantiated step details, no log URL, and no artifacts. Runner identity was not present in this job response."
+    },
+    {
+      "run_id": 38077908781,
+      "job_id": 114288651405,
+      "branch": "infra/g02-runner-agents-diagnostics-2026-10-10",
+      "commit_sha": "e0196500c110ff9e35af207ded699238aefc75ea",
+      "job_name": "Record platform and repository-visible state",
+      "status": "completed",
+      "conclusion": "failure",
+      "logs_url": null,
+      "steps": null,
+      "artifacts": [],
+      "interpretation": "Connector returned no instantiated step details, no log URL, and no artifacts. Runner identity was not present in this job response."
+    }
+  ],
+  "limitations": [
+    "Metadata only; raw logs and host output were not returned.",
+    "Does not verify current runner inventory, Actions policy, or host daemon state.",
+    "No raw log/artifact bytes were available for SHA-256 calculation.",
+    "Commit/branch relationship requires independent verification."
+  ],
+  "gate_effect": "G02 FAIL/BLOCKED; G03-G11 BLOCKED.",
+  "next_required_sources": [
+    "Actions > Runners inventory for lingo-legacy-g02: runner ID, name, status, group, labels, last check-in.",
+    "Repository/organization Actions policy and hosted/self-hosted restrictions.",
+    "Authorized Linux host output from bash ops/g02/diagnose-runner.sh plus G02_DIAGNOSTIC_EXIT_CODE, with secrets redacted.",
+    "Controlled matching-runner sentinel with nonzero runner ID, populated name, instantiated steps, successful sentinel, retrievable logs, uploaded artifact, checksum verification, and independent correlation."
+  ]
+}

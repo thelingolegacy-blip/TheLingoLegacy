@@ -1,0 +1,81 @@
+name: G02 Diagnostics Watch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+  push:
+    branches:
+      - "infra/g02-runner-agents-diagnostics-2026-10-10"
+    paths:
+      - ".github/workflows/g02-diagnostics-watch.yml"
+      - ".github/workflows/g02-runner-control-plane.yml"
+      - "ops/estate/agents/**"
+      - "ops/estate/diagnostics/**"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-diagnostics-watch
+  cancel-in-progress: true
+
+jobs:
+  hosted-diagnostics:
+    name: Record platform and repository-visible state
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Capture hosted runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "captured_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "commit_sha=${GITHUB_SHA}"
+            echo "ref=${GITHUB_REF}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            uname -a
+            cat /etc/os-release
+            df -h /
+            free -h
+          } | tee evidence/hosted-runtime.txt
+
+      - name: Capture runner gate interpretation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > evidence/g02-gate.json <<'JSON'
+          {
+            "gate": "G02",
+            "status": "BLOCKED_UNTIL_SELF_HOSTED_SENTINEL_EVIDENCE",
+            "requiredRunner": "lingo-legacy-g02",
+            "requiredLabels": ["self-hosted", "linux", "x64", "lingo-g02"],
+            "requiredEvidence": [
+              "assigned_runner_id_gt_zero",
+              "assigned_runner_name_populated",
+              "steps_instantiated",
+              "sentinel_exit_code_zero",
+              "logs_retrievable",
+              "artifact_retrievable",
+              "independent_verification"
+            ],
+            "productionMutation": "PROHIBITED"
+          }
+          JSON
+          sha256sum evidence/* > evidence/SHA256SUMS
+          cat evidence/SHA256SUMS
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-hosted-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 14
