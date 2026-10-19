@@ -139,6 +139,14 @@ promotion_authorization: NOT_AUTHORIZED
 - Job `validate` (job ID `117959809407`): `steps = null`, `logs_url = null`; job-step query returned an empty list, artifact query returned no artifacts, and job-log retrieval returned `BlobNotFound` for the contemporaneous G02 investigation.
 - Interpretation: this is not a source-validation pass and does not establish that the markdown file failed a content rule. The runner/execution evidence is insufficient to attribute the failure to the ledger content. PR #316 remains draft and must not be promoted.
 
+
+### Follow-up retry evidence (2026-10-19, 08:22 UTC)
+
+- Draft PR #316 remains open, unmerged, and in draft state. Current head commit: `337804f08edc15800708a6f98fc4fd1c379fb10d`. No submitted code review or inline review threads were returned at the time of this check.
+- A retry of failed jobs was accepted by GitHub for run `39222173722`, but the new attempt still failed as run `39222222337` (`Lingo Legacy Static CI`, run number 1393).
+- The `validate` job (`117959969013`) completed with failure, `steps = null`, and no retrievable logs. A separate job-step query returned an empty list; log retrieval again returned `BlobNotFound`; no artifacts were present.
+- Conclusion: retry did not recover execution evidence. G02/CI execution remains BLOCKED. This connected GitHub interface can inspect workflow results and request reruns, but it does not expose an action to start or repair the self-hosted runner daemon on its host. Host-side runner service, matching labels, network/polling, and repository/org runner-group authorization still need direct verification by an authorized operator.
+
 ## Evidence sources
 
 - [Game Master Tree](../studio-sites/GAME-MASTER-TREE.md)
