@@ -116,7 +116,7 @@ jobs:
   cloudflare:
     needs: gates
     # HARD HOLD: manual dispatch and environment selection are not acceptance evidence.
-    # Keep every Cloudflare deployment path disabled until independent acceptance, staging isolation,
+    # Keep this promotion workflow's Cloudflare deployment job disabled until independent acceptance, staging isolation,
     # exact run/commit evidence correlation, and rollback readiness are verified.
     if: ${{ false }}
     runs-on: ubuntu-latest
