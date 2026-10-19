@@ -31,6 +31,10 @@ for (let i = 0; i < 6; i += 1) {
 }
 assert.deepEqual(spoofableHeaderStatuses, [202, 202, 202, 202, 202, 429]);
 
+// A different Cloudflare edge IP receives an independent bucket.
+const independentIp = await submit({ ip: '198.51.100.11', phone: '+15551234567' });
+assert.equal(independentIp.status, 202);
+
 // Missing edge identity fails closed for the same phone even if X-Forwarded-For changes.
 const missingEdgeIdentityStatuses = [];
 for (let i = 0; i < 6; i += 1) {
