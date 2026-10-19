@@ -138,7 +138,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
         log_state="FAIL_OR_UNKNOWN"
       fi
 
-      printf 'JOB id=%s run_id=%s attempt=%s canonical_target=%s name=%s status=%s conclusion=%s runner_id=%s runner_name=%s assignment=%s labels=%s steps=%s sentinel_step_status=%s sentinel_step_conclusion=%s sentinel_execution=%s logs=%s artifact_contents=%s commit_sha=%s correlation=%s\n' \
+      printf 'JOB id=%s run_id=%s attempt=%s canonical_target=%s name=%s status=%s conclusion=%s runner_id=%s runner_name=%s assignment=%s labels=%s steps=%s sentinel_step_status=%s sentinel_step_conclusion=%s sentinel_execution=%s logs=%s artifact_contents=%s artifact_file_sha256=%s commit_sha=%s correlation=%s\n' \
         "$job_id" "$job_run_id" "$run_attempt" "$canonical_target" "$job_name" "$job_status" "$job_conclusion" \
         "$runner_id" "$runner_name" "$assignment" "$labels" "$step_count" "$sentinel_step_status" \
         "$sentinel_step_conclusion" "$sentinel_execution" "$log_state" "$artifact_contents_ok" "$artifact_sha256" "$job_sha" "$correlation"
