@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Run Worker rate-limit regression tests
+        run: node scripts/tests/worker-rate-limit.test.mjs
+
       - name: Sanitize retired provider surface
         run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
