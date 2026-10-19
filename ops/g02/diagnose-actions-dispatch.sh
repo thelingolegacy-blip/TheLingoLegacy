@@ -43,7 +43,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
     printf '\nRUN id=%s attempt=%s sha=%s branch=%s status=%s conclusion=%s name=%s\n' \
       "$run_id" "$run_attempt" "$run_sha" "$run_branch" "$run_status" "$run_conclusion" "$run_name_safe"
 
-    if ! gh api "repos/$REPO/actions/runs/$run_id/jobs?per_page=100" > "$tmp/jobs.json" 2>"$tmp/jobs.err"; then
+    if ! gh api "repos/$REPO/actions/runs/$run_id/attempts/$run_attempt/jobs?per_page=100" > "$tmp/jobs.json" 2>"$tmp/jobs.err"; then
       printf 'JOBS run_id=%s status=UNAVAILABLE\n' "$run_id"
       continue
     fi
