@@ -131,7 +131,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
         "$runner_id" "$runner_name" "$assignment" "$labels" "$step_count" "$sentinel_step_status" \
         "$sentinel_step_conclusion" "$sentinel_execution" "$log_state" "$artifact_contents_ok" "$artifact_sha256" "$job_sha" "$correlation"
     done < <(jq -c '.jobs[]?' "$tmp/jobs.json")
-  done < <(jq -r '.workflow_runs[]? | [.id, .head_sha, .head_branch, .status, (.conclusion // ""), (.name // ""), (.run_attempt // 0)] | @tsv' "$tmp/runs.json")
+  done < <(jq -r '.workflow_runs[]? | [.id, .head_sha, .head_branch, .status, (.conclusion // "unknown"), (.name // ""), (.run_attempt // 0)] | @tsv' "$tmp/runs.json")
 } > "$report"
 
 sha256sum "$report" > "$report.sha256"
