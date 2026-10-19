@@ -106,11 +106,22 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
       else
         assignment="UNVERIFIED"
       fi
+      artifact_correlated=false
+      if [[ -n "${evidence_file:-}" && -f "$evidence_file" ]] &&
+         grep -Fqx "Runner ID: $runner_id" "$evidence_file" &&
+         grep -Fqx "Runner name: $runner_name" "$evidence_file" &&
+         grep -Fqx "Runner OS: Linux" "$evidence_file" &&
+         grep -Fqx "Runner architecture: X64" "$evidence_file" &&
+         grep -Fqx "Commit: $run_sha" "$evidence_file"; then
+        artifact_correlated=true
+      fi
+      printf 'ARTIFACT_CORRELATION run_id=%s job_id=%s runner_identity_and_commit_match=%s\\n' "$run_id" "$job_id" "$artifact_correlated"
+
       if [[ "$canonical_target" == "true" && "$assignment" == "CANONICAL_ASSIGNED" &&
             "$run_status" == "completed" && "$run_conclusion" == "success" &&
             "$job_status" == "completed" && "$job_conclusion" == "success" &&
             "$sentinel_step_status" == "completed" && "$sentinel_step_conclusion" == "success" &&
-            "$artifact_contents_ok" == "true" && "$correlation" == "PASS" ]]; then
+            "$artifact_contents_ok" == "true" && "$artifact_correlated" == "true" && "$correlation" == "PASS" ]]; then
         sentinel_execution="PASS_CANDIDATE"
       else
         sentinel_execution="UNVERIFIED"
