@@ -116,7 +116,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
          grep -Fqx "Commit: $run_sha" "$evidence_file"; then
         artifact_correlated=true
       fi
-      printf 'ARTIFACT_CORRELATION run_id=%s job_id=%s runner_identity_and_commit_match=%s\\n' "$run_id" "$job_id" "$artifact_correlated"
+      printf 'ARTIFACT_CORRELATION run_id=%s job_id=%s runner_identity_and_commit_match=%s\n' "$run_id" "$job_id" "$artifact_correlated"
 
       if [[ "$canonical_target" == "true" && "$assignment" == "CANONICAL_ASSIGNED" &&
             "$run_status" == "completed" && "$run_conclusion" == "success" &&
