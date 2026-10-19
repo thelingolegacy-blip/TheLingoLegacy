@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "G02-LINUX-HOST-REBUILD",
+  "status": "NOT_COLLECTED",
+  "host": {
+    "provider": null,
+    "instanceId": null,
+    "region": null,
+    "imageId": null,
+    "hostname": null,
+    "osRelease": null,
+    "architecture": null,
+    "createdAtUtc": null,
+    "sshAccessVerified": false,
+    "egressHttpsVerified": false
+  },
+  "runner": {
+    "name": "lingo-legacy-g02",
+    "labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "serviceUnit": null,
+    "serviceActive": null,
+    "githubInventoryObservedAtUtc": null,
+    "runnerId": null,
+    "runnerName": null,
+    "lastCheckIn": null
+  },
+  "job": {
+    "workflowRunId": null,
+    "attempt": null,
+    "jobId": null,
+    "commitSha": null,
+    "assignedRunnerId": null,
+    "assignedRunnerName": null,
+    "stepsInstantiated": false,
+    "sentinelExitCode": null,
+    "logsRetrievable": false,
+    "artifactId": null,
+    "artifactChecksum": null,
+    "independentVerifier": null,
+    "verifiedAtUtc": null
+  },
+  "gates": {
+    "hostProvisioning": "PENDING",
+    "runnerRegistration": "PENDING",
+    "runnerAssignment": "BLOCKED",
+    "G02": "FAIL_UNVERIFIED",
+    "G03": "BLOCKED"
+  },
+  "security": {
+    "registrationTokenStoredInRepo": false,
+    "productionSecretsAttached": false,
+    "oldHostDestroyed": false
+  },
+  "notes": "Do not set PASS without direct evidence and independent verification."
+}
