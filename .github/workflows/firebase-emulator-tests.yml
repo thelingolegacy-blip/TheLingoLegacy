@@ -62,7 +62,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx --yes firebase-tools@13.35.1 emulators:exec             --config firebase.emulator.json             --project demo-lingo-legacy-emulator             --only auth,firestore,storage             "npm test --prefix tests/firebase-emulator"
+          mkdir -p release/evidence/firebase-emulator
+          set +e
+          npx --yes firebase-tools@13.35.1 emulators:exec --config firebase.emulator.json --project demo-lingo-legacy-emulator --only auth,firestore,storage "npm test --prefix tests/firebase-emulator" 2>&1 | tee release/evidence/firebase-emulator/emulator-test.log
+          test_status=${PIPESTATUS[0]}
+          set -e
+          echo "EMULATOR_TEST_EXIT_CODE=${test_status}" > release/evidence/firebase-emulator/test-status.txt
+          exit "$test_status"
 
       - name: Record Cloud Functions coverage boundary
         if: always()
