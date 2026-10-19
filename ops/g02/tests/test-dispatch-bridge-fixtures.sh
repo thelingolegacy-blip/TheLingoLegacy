@@ -18,7 +18,7 @@ if [[ "$1" == "api" ]]; then
   endpoint="$2"
   case "$endpoint" in
     */actions/runs?per_page=10) cat "$FIXTURE_DIR/runs.json" ;;
-    */actions/runs/123/jobs?per_page=100) cat "$FIXTURE_DIR/jobs.json" ;;
+    */actions/runs/123/attempts/2/jobs?per_page=100) cat "$FIXTURE_DIR/jobs.json" ;;
     */actions/runs/123/artifacts) cat "$FIXTURE_DIR/artifacts.json" ;;
     */actions/jobs/456/logs) printf 'fixture logs available\n' ;;
     *) echo "Unexpected mock API endpoint: $endpoint" >&2; exit 3 ;;
