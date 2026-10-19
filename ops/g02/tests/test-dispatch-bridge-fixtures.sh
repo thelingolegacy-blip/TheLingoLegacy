@@ -36,7 +36,7 @@ if [[ "$1" == "run" && "$2" == "download" ]]; then
     esac
   done
   [[ "$run_id" == "123" && -n "$outdir" ]] || exit 4
-  printf '%s\n' 'G02_RUNNER_ASSIGNMENT=PASS' 'G02_SENTINEL_EXECUTION=PASS' > "$outdir/g02-sentinel-evidence.txt"
+  printf '%s\n' 'Runner ID: 7' 'Runner name: lingo-legacy-g02' 'Runner OS: Linux' 'Runner architecture: X64' 'Commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' 'G02_RUNNER_ASSIGNMENT=PASS' 'G02_SENTINEL_EXECUTION=PASS' > "$outdir/g02-sentinel-evidence.txt"
   exit 0
 fi
 echo "Unexpected mock gh invocation" >&2
