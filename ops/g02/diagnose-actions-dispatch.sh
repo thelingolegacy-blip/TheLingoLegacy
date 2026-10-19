@@ -9,7 +9,7 @@ EXPECTED_WORKFLOW="G02 Runner Execution Sentinel"
 EXPECTED_JOB="Verify Self-Hosted Runner Dispatch"
 EXPECTED_STEP="Output runner assignment and sentinel telemetry"
 
-for cmd in gh jq sha256sum python3 unzip; do
+for cmd in gh jq sha256sum; do
   command -v "$cmd" >/dev/null || { echo "$cmd is required" >&2; exit 2; }
 done
 gh auth status >/dev/null
