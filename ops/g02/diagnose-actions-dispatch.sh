@@ -57,15 +57,18 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
     fi
 
     artifact_contents_ok=false
+    artifact_sha256=UNAVAILABLE
     if [[ "$artifact_exact" == "true" ]]; then
       artifact_dir="$tmp/artifact-$run_id"
       mkdir -m 700 "$artifact_dir"
       if gh run download "$run_id" --repo "$REPO" --name "g02-sentinel-evidence-$run_id" --dir "$artifact_dir" >/dev/null 2>"$tmp/download.err"; then
         evidence_file="$artifact_dir/g02-sentinel-evidence.txt"
-        if [[ -f "$evidence_file" ]] &&
-           grep -Fqx 'G02_RUNNER_ASSIGNMENT=PASS' "$evidence_file" &&
-           grep -Fqx 'G02_SENTINEL_EXECUTION=PASS' "$evidence_file"; then
-          artifact_contents_ok=true
+        if [[ -f "$evidence_file" ]]; then
+          artifact_sha256="$(sha256sum "$evidence_file" | awk '{print $1}')"
+          if grep -Fqx 'G02_RUNNER_ASSIGNMENT=PASS' "$evidence_file" &&
+             grep -Fqx 'G02_SENTINEL_EXECUTION=PASS' "$evidence_file"; then
+            artifact_contents_ok=true
+          fi
         fi
       fi
     fi
@@ -104,6 +107,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
         assignment="UNVERIFIED"
       fi
       if [[ "$canonical_target" == "true" && "$assignment" == "CANONICAL_ASSIGNED" &&
+            "$run_status" == "completed" && "$run_conclusion" == "success" &&
             "$job_status" == "completed" && "$job_conclusion" == "success" &&
             "$sentinel_step_status" == "completed" && "$sentinel_step_conclusion" == "success" &&
             "$artifact_contents_ok" == "true" && "$correlation" == "PASS" ]]; then
@@ -125,7 +129,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
       printf 'JOB id=%s run_id=%s attempt=%s canonical_target=%s name=%s status=%s conclusion=%s runner_id=%s runner_name=%s assignment=%s labels=%s steps=%s sentinel_step_status=%s sentinel_step_conclusion=%s sentinel_execution=%s logs=%s artifact_contents=%s commit_sha=%s correlation=%s\n' \
         "$job_id" "$job_run_id" "$run_attempt" "$canonical_target" "$job_name" "$job_status" "$job_conclusion" \
         "$runner_id" "$runner_name" "$assignment" "$labels" "$step_count" "$sentinel_step_status" \
-        "$sentinel_step_conclusion" "$sentinel_execution" "$log_state" "$artifact_contents_ok" "$job_sha" "$correlation"
+        "$sentinel_step_conclusion" "$sentinel_execution" "$log_state" "$artifact_contents_ok" "$artifact_sha256" "$job_sha" "$correlation"
     done < <(jq -c '.jobs[]?' "$tmp/jobs.json")
   done < <(jq -r '.workflow_runs[]? | [.id, .head_sha, .head_branch, .status, (.conclusion // ""), (.name // ""), (.run_attempt // 0)] | @tsv' "$tmp/runs.json")
 } > "$report"
