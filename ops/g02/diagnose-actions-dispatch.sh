@@ -58,6 +58,7 @@ printf '%s\n' "$runs_json" > "$tmp/runs.json"
 
     artifact_contents_ok=false
     artifact_sha256=UNAVAILABLE
+    evidence_file=""
     if [[ "$artifact_exact" == "true" ]]; then
       artifact_dir="$tmp/artifact-$run_id"
       mkdir -m 700 "$artifact_dir"
