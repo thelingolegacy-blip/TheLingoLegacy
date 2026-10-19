@@ -20,7 +20,7 @@ if [[ "$1" == "api" ]]; then
     */actions/runs?per_page=10) cat "$FIXTURE_DIR/runs.json" ;;
     */actions/runs/123/attempts/2/jobs?per_page=100) cat "$FIXTURE_DIR/jobs.json" ;;
     */actions/runs/123/artifacts) cat "$FIXTURE_DIR/artifacts.json" ;;
-    */actions/jobs/456/logs) printf 'fixture logs available\n' ;;
+    */actions/jobs/456/logs) if [[ -f "$FIXTURE_DIR/logs-fail" ]]; then echo '404 BlobNotFound' >&2; exit 1; fi; printf 'fixture logs available\n' ;;
     *) echo "Unexpected mock API endpoint: $endpoint" >&2; exit 3 ;;
   esac
   exit 0
@@ -67,6 +67,8 @@ jobs = {"jobs":[{"id":456,"run_id":123,"head_sha":job_sha,"name":"Verify Self-Ho
 artifacts = {"total_count":0,"artifacts":[]} if s == "missing-artifact" else {"total_count":1,"artifacts":[{"id":999,"name":"g02-sentinel-evidence-123","expired":False}]}
 for name, obj in (("runs.json",runs),("jobs.json",jobs),("artifacts.json",artifacts)):
     (p/name).write_text(json.dumps(obj))
+if s == "logs-unavailable":
+    (p/"logs-fail").write_text("simulate unavailable job logs")
 PY
 }
 
@@ -74,7 +76,7 @@ run_case() {
   local scenario="$1" expected="$2"
   make_fixture "$scenario"
   local out="$tmp/out-$scenario"
-  PATH="$tmp/bin:$PATH" FIXTURE_DIR="$tmp/fixtures" OUT_DIR="$out" bash "$bridge" >/dev/null
+  PATH="$tmp/bin:$PATH" FIXTURE_DIR="$tmp/fixtures" SCENARIO="$scenario" OUT_DIR="$out" bash "$bridge" >/dev/null
   local report="$out/dispatch-report.txt"
   grep -Fq "sentinel_execution=$expected" "$report" || {
     echo "FAIL | $scenario expected sentinel_execution=$expected" >&2
@@ -93,6 +95,7 @@ run_case failed-run UNVERIFIED
 run_case runner-zero UNVERIFIED
 run_case mismatched-sha UNVERIFIED
 run_case missing-artifact UNVERIFIED
+run_case logs-unavailable UNVERIFIED
 run_case canonical-success PASS_CANDIDATE
 
 echo "SCOPE | mocked GitHub API fixtures only; no real GitHub API calls, workflow dispatches, or host inspection"
