@@ -46,6 +46,8 @@ chmod +x "$tmp/bin/gh"
 
 make_fixture() {
   local scenario="$1"
+  # Prevent scenario-specific state leaking into the next fixture case.
+  rm -f "$tmp/fixtures/logs-fail"
   SCENARIO="$scenario" FIXTURE_DIR="$tmp/fixtures" python3 - <<'PY'
 import json, os
 from pathlib import Path
