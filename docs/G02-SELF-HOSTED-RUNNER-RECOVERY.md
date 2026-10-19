@@ -17,6 +17,21 @@ G02 is not PASS until all are evidenced for the same sentinel run:
 
 A green workflow label, queued job, runner marked Online Idle, or empty step list does not satisfy this predicate.
 
+
+## Existing repository recovery controls — use these before any new bootstrap
+
+The main branch already contains dedicated G02 tools. Prefer these over writing a second runner installer or creating a duplicate registration:
+
+- [Host provisioning boundary](../ops/g02/host-provisioning.md): explicitly records the dedicated Linux host as NOT CREATED / NOT VERIFIED at that checkpoint.
+- [Read-only runner controller](../ops/g02/runner-control.sh): run `bash ops/g02/runner-control.sh status` on the authorized host first. It reports the exact service and local registration and does not mutate the host by default.
+- [Read-only Actions evidence collector](../ops/g02/diagnose-actions-dispatch.sh): run from an authorized workstation with `gh`, `jq`, and `sha256sum`; it gathers recent run/job/runner/steps/log/artifact metadata without dispatching or changing settings.
+- [Guarded runner installer](../ops/g02/install-runner.sh): do not run unless an authorized operator has verified that no canonical runner already exists, approved host mutation and a new registration, and supplied a short-lived repository-scoped registration token through a secure environment. It refuses duplicate runner registrations and requires explicit confirmations. Never place the token in chat or source control.
+- [Existing container bootstrap](../ops/github-runner/README.md): requires a dedicated Linux x64 host, Docker, and authenticated GitHub CLI. It also refuses a same-name duplicate.
+
+### Important diagnostic distinction
+
+A job with `runner_id=0`, no runner name, empty steps, and missing logs proves that the job did not provide qualifying runner execution evidence. It does not by itself distinguish a missing/stopped daemon from authorization, Actions policy, runner inventory, or GitHub control-plane failure. The host provisioning document's explicit `NOT CREATED / NOT VERIFIED` state means **first establish whether a real approved host currently exists**; do not jump directly to reinstalling or deleting a runner.
+
 ## Phase A — Identify runner and service (Linux host)
 
 Run these on the machine intended to host the runner, from the runner installation directory where applicable. Do not paste tokens, credential files, environment dumps, or private keys into logs or chat.
