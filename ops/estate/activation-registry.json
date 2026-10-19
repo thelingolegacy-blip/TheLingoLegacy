@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "defaultMode": "SAFE_HOLD",
+  "global": {
+    "productionMutationFrozen": true,
+    "lastKnownGoodProtected": true,
+    "activationAllowed": false,
+    "autoMerge": false,
+    "autoDeploy": false,
+    "automaticCredentialRotation": false
+  },
+  "features": [
+    {
+      "id": "studioOperationsDashboard",
+      "enabledOnBranch": true,
+      "productionEnabled": false,
+      "requires": [
+        "G02_PASS",
+        "G03_PASS",
+        "INDEPENDENT_REVIEW"
+      ]
+    },
+    {
+      "id": "runnerAssignmentProbe",
+      "enabledOnBranch": true,
+      "productionEnabled": false,
+      "requires": [
+        "RUNNER_INVENTORY_REVIEW",
+        "MANUAL_DISPATCH_AUTHORIZATION"
+      ]
+    },
+    {
+      "id": "selfHostedSentinel",
+      "enabledOnBranch": false,
+      "productionEnabled": false,
+      "requires": [
+        "HOST_PROVISIONED",
+        "DAEMON_ONLINE",
+        "LABELS_VERIFIED",
+        "EXPLICIT_ADMIN_ENABLE"
+      ]
+    },
+    {
+      "id": "mediaManifest",
+      "enabledOnBranch": true,
+      "productionEnabled": false,
+      "requires": [
+        "REGISTRY_VALID",
+        "LICENSE_METADATA_VALID",
+        "MANIFEST_CHECKSUM_VERIFIED"
+      ]
+    },
+    {
+      "id": "candidateDeployment",
+      "enabledOnBranch": false,
+      "productionEnabled": false,
+      "requires": [
+        "G02_PASS",
+        "G03_PASS",
+        "CERTIFICATION_PASS",
+        "SEPARATE_DEPLOYMENT_AUTHORIZATION"
+      ]
+    },
+    {
+      "id": "productionActivation",
+      "enabledOnBranch": false,
+      "productionEnabled": false,
+      "requires": [
+        "ALL_GATES_PASS",
+        "INDEPENDENT_ACCEPTANCE",
+        "EXPLICIT_ACTIVATION_AUTHORIZATION"
+      ]
+    }
+  ],
+  "rule": "Configuration presence never constitutes authorization. All gates must be proven from observed evidence."
+}

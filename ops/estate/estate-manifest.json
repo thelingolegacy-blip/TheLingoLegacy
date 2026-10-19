@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-10",
+  "authority": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "defaultBranch": "main",
+    "productionRuntime": "Cloudflare",
+    "excludedProvider": "Vercel"
+  },
+  "governance": {
+    "failClosed": true,
+    "productionMutation": "FROZEN",
+    "lastKnownGood": "PROTECTED",
+    "automaticMerge": false,
+    "automaticDeployment": false,
+    "automaticActivation": false
+  },
+  "repositories": [
+    {
+      "id": "lingo-legacy-core",
+      "name": "TheLingoLegacy",
+      "status": "EXISTS",
+      "purpose": "Canonical source, flagship, governance and public web",
+      "authority": "SOURCE_OF_TRUTH"
+    },
+    {
+      "id": "lingo-studio-ops",
+      "name": "LingoStudioOps",
+      "status": "PROPOSED_NOT_CREATED",
+      "purpose": "Studio CI/CD, UI/UX and release evidence",
+      "authority": "IMPLEMENTATION"
+    },
+    {
+      "id": "lingo-runner-host",
+      "name": "LingoRunnerHost",
+      "status": "PROPOSED_NOT_CREATED",
+      "purpose": "Host bootstrap, daemon telemetry and G02 acceptance",
+      "authority": "INFRASTRUCTURE"
+    },
+    {
+      "id": "lingo-media-pipeline",
+      "name": "LingoMediaPipeline",
+      "status": "PROPOSED_NOT_CREATED",
+      "purpose": "Asset registry, media manifests, accessibility and licensing",
+      "authority": "MEDIA"
+    },
+    {
+      "id": "lingo-recovery-evidence",
+      "name": "LingoRecoveryEvidence",
+      "status": "PROPOSED_NOT_CREATED",
+      "purpose": "Immutable checkpoints, verification records and restore rehearsal reports",
+      "authority": "EVIDENCE"
+    }
+  ],
+  "runner": {
+    "name": "lingo-legacy-g02",
+    "labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "currentState": "FAIL_UNVERIFIED",
+    "hostProvisioned": false,
+    "daemonVerified": false,
+    "credentialsCreated": false
+  },
+  "gates": [
+    {
+      "id": "G00",
+      "name": "Source authority",
+      "status": "PASS"
+    },
+    {
+      "id": "G01",
+      "name": "Repository integrity",
+      "status": "PASS"
+    },
+    {
+      "id": "G02",
+      "name": "Runner dispatch",
+      "status": "FAIL_UNVERIFIED"
+    },
+    {
+      "id": "G03",
+      "name": "CI execution",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G04",
+      "name": "Certification",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G05",
+      "name": "Release candidate",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G06",
+      "name": "Deployment",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G07",
+      "name": "Live validation",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G08",
+      "name": "Synchronization",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G09",
+      "name": "Activation",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G10",
+      "name": "Post-activation",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "G11",
+      "name": "Acceptance",
+      "status": "BLOCKED"
+    }
+  ],
+  "externalResources": {
+    "cloudflareWorker": "lingo-g02-control-agent-2026-10-10",
+    "workerRuntimeProbe": "PENDING_AUTHORIZED_NETWORK",
+    "computeHost": "NOT_PROVISIONED",
+    "githubSupportCase": "NOT_SUBMITTED",
+    "apiTokens": "NONE_CREATED"
+  },
+  "currentWork": {
+    "estateBranch": "ops/estate-recovery-control-plane-2026-10-10",
+    "estatePullRequest": 259,
+    "studioInfrastructurePullRequest": 258,
+    "latestObservedRun": {
+      "id": 38077706507,
+      "name": "Lingo Legacy Static CI",
+      "jobId": 114288045738,
+      "commit": "138d0733a44c34a39b40675b6caf32fe5e4e2550",
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": [],
+      "conclusion": "failure",
+      "interpretation": "failed before step initialization; commands not executed"
+    },
+    "trackingIssue": 260
+  }
+}
