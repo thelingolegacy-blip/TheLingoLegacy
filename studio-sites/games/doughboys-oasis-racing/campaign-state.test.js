@@ -75,6 +75,22 @@ test('save/load round-trips validated state and tolerates unavailable storage', 
   assert.equal(loadCampaignState(unavailable).cash, 500);
 });
 
+test('irrigation cannot bypass the Waterline fragment or repair an arbitrary mechanism', () => {
+  const fresh = createCampaignState();
+  const blocked = event(fresh, 'repair:too-early', 'irrigation_repaired', { mechanismId: 'irrigation-gate' });
+  assert.equal(blocked.applied, false);
+  assert.equal(blocked.reason, 'story-prerequisites-missing');
+  const found = event(fresh, 'fragment:required', 'waterline_fragment_found', { fragmentId: 'waterline-marker' }).state;
+  const invalid = event(found, 'repair:wrong-mechanism', 'irrigation_repaired', { mechanismId: 'other-mechanism' });
+  assert.equal(invalid.applied, false);
+  assert.equal(invalid.reason, 'invalid-mechanism');
+  const repaired = event(found, 'repair:valid', 'irrigation_repaired', { mechanismId: 'irrigation-gate' });
+  assert.equal(repaired.applied, true);
+  const repeated = event(repaired.state, 'repair:valid-again', 'irrigation_repaired', { mechanismId: 'irrigation-gate' });
+  assert.equal(repeated.applied, false);
+  assert.equal(repeated.reason, 'mechanism-already-repaired');
+});
+
 test('story gates block delivery and racing until their prerequisites are met', () => {
   const fresh = createCampaignState();
   assert.equal(event(fresh, 'job:early:1', 'delivery_completed').reason, 'story-prerequisites-missing');
