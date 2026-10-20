@@ -16,18 +16,25 @@ function load(relativePath) {
   }
 }
 function validateRegistry(registry, key, label) {
-  const items = registry?.[key] || [];
+  const rawItems = registry?.[key];
+  if (!Array.isArray(rawItems)) errors.push(label + ': ' + key + ' must be an array');
+  const items = Array.isArray(rawItems) ? rawItems : [];
   const ids = new Set();
   for (const item of items) {
-    if (!item.id || ids.has(item.id)) errors.push(`${label}: missing or duplicate ID ${item.id || '(empty)'}`);
+    if (!item || typeof item !== 'object' || Array.isArray(item)) {
+      errors.push(label + ': entries must be objects');
+      continue;
+    }
+    if (!item.id || ids.has(item.id)) errors.push(label + ': missing or duplicate ID ' + (item.id || '(empty)'));
     ids.add(item.id);
-    if (item.enabled !== false || item.state !== 'staged') errors.push(`${label} ${item.id}: must remain staged and disabled`);
-    if (!item.version && key === 'engines') errors.push(`${label} ${item.id}: version missing`);
+    if (item.enabled !== false || item.state !== 'staged') errors.push(label + ' ' + item.id + ': must remain staged and disabled');
+    if (!item.version && key === 'engines') errors.push(label + ' ' + item.id + ': version missing');
   }
-  if (registry?.enabled !== false || registry?.state !== 'staged') errors.push(`${label}: top-level registry must remain staged and disabled`);
-  if (registry?.releaseGate !== 'G02') errors.push(`${label}: releaseGate must remain G02`);
+  if (registry?.enabled !== false || registry?.state !== 'staged') errors.push(label + ': top-level registry must remain staged and disabled');
+  if (registry?.releaseGate !== 'G02') errors.push(label + ': releaseGate must remain G02');
   return { items, ids };
 }
+
 const engines = load('config/platform/engine-registry.json');
 const worlds = load('config/worlds/world-registry.json');
 const e = validateRegistry(engines, 'engines', 'engine registry');
