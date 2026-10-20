@@ -34,6 +34,12 @@ jobs:
         shell: bash
         run: bash scripts/test-pipeline-failure-propagation.sh
 
+      - name: Test media manifest validator edge cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test scripts/test-verify-media-pipeline.mjs
+
       - name: Verify Cloudflare asset publication scope
         shell: bash
         run: |
