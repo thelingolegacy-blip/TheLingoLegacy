@@ -96,6 +96,7 @@
         break;
       case 'delivery_completed':
         if (!state.repairedMechanisms.includes('irrigation-gate')) return { state, applied: false, reason: 'story-prerequisites-missing' };
+        if (state.completedMissions.includes('money-mile-delivery')) return { state, applied: false, reason: 'mission-already-completed' };
         state.cash = Math.min(100000000, state.cash + 300);
         state.reputation = Math.min(100000000, state.reputation + 20);
         state.crewPower = Math.max(state.crewPower, 2);
