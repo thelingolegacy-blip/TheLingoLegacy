@@ -5,9 +5,13 @@ const { createCampaignState, applyCampaignEvent, saveCampaignState, loadCampaign
 function event(state, id, type, payload = {}) {
   return applyCampaignEvent(state, { id, type, payload });
 }
+function unlockMoneyMile(state) {
+  state = event(state, 'story:fragment:1', 'waterline_fragment_found', { fragmentId: 'waterline-marker' }).state;
+  return event(state, 'story:irrigation:1', 'irrigation_repaired', { mechanismId: 'irrigation-gate' }).state;
+}
 
 test('delivery rewards are applied once and unlock the first race at threshold', () => {
-  let state = createCampaignState();
+  let state = unlockMoneyMile(createCampaignState());
   const first = event(state, 'job:delivery:001', 'delivery_completed');
   assert.equal(first.applied, true);
   assert.equal(first.state.cash, 800);
@@ -20,7 +24,7 @@ test('delivery rewards are applied once and unlock the first race at threshold',
 });
 
 test('races unlock sequentially and championship moves the story to Nexus revelation', () => {
-  let state = event(createCampaignState(), 'job:delivery:001', 'delivery_completed').state;
+  let state = event(unlockMoneyMile(createCampaignState()), 'job:delivery:001', 'delivery_completed').state;
   for (let i = 1; i <= 3; i++) {
     const result = event(state, 'race:mini:' + i, 'race_won', { raceId: 'mini-street-race-' + i });
     assert.equal(result.applied, true);
@@ -34,7 +38,7 @@ test('races unlock sequentially and championship moves the story to Nexus revela
 });
 
 test('invalid race IDs and duplicate race victories cannot mint rewards', () => {
-  const state = createCampaignState();
+  const state = event(unlockMoneyMile(createCampaignState()), 'job:delivery:001', 'delivery_completed').state;
   const invalid = event(state, 'race:bad:1', 'race_won', { raceId: 'unlisted-race' });
   assert.equal(invalid.applied, false);
   assert.equal(invalid.reason, 'invalid-race');
