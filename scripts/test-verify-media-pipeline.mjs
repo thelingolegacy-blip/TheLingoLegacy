@@ -86,3 +86,24 @@ test('a valid asset list is accepted', (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /"runtimeAssets": 1/);
 });
+
+test('null manifest asset fails with a validation error, not a TypeError', (t) => {
+  const root = makeRoot([null]);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /runtime-media asset\[0\] must be an object/);
+  assert.doesNotMatch(result.stderr, /TypeError/);
+});
+
+test('malformed requiredAssetFields contract fails closed', (t) => {
+  const root = makeRoot([]);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const contractPath = path.join(root, 'config/assets/media-pipeline-contract.json');
+  const contract = JSON.parse(fs.readFileSync(contractPath, 'utf8'));
+  contract.requiredAssetFields = 'asset_id';
+  fs.writeFileSync(contractPath, JSON.stringify(contract));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /requiredAssetFields must be an array/);
+});
