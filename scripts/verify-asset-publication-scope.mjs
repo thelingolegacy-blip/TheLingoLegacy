@@ -10,6 +10,48 @@ const requiredExclusions = [
   '*.sh', '*.py', '*.yml', '*.yaml', '*.toml', '*.jsonc', '*.lock', '*.map',
   'worker.js', 'wrangler.jsonc', 'android/', 'ios/', 'lib/', 'infra/', 'cloudflare/',
   'diagnostics/', 'integration-os/', 'admin-command-center/', 'economy-command-center/',
+  '.firebaserc',
+  '.gitignore',
+  '.gitattributes',
+  '.npmrc',
+  '.pypirc',
+  '.dev.vars*',
+  '.DS_Store',
+  'package.json',
+  'package-lock.json',
+  'pnpm-workspace.yaml',
+  'pnpm-lock.yaml',
+  'yarn.lock',
+  'bun.lock',
+  'bun.lockb',
+  'Cargo.toml',
+  'go.mod',
+  'requirements.txt',
+  'pyproject.toml',
+  'Gemfile',
+  'Gemfile.lock',
+  'firebase-adminsdk*.json',
+  'service-account*.json',
+  '*-service-account.json',
+  'credentials*.json',
+  'secrets*.json',
+  '*.pem',
+  '*.key',
+  '*.crt',
+  '*.p12',
+  '*.pfx',
+  '*.tfstate',
+  '*.tfstate.*',
+  '*.tfvars',
+  '*.tfvars.json',
+  '*.log',
+  '*.bak',
+  '*.orig',
+  '*.swp',
+  '*.swo',
+  '*~',
+  '*.sqlite',
+  '*.db',
   'firebase.json', 'firebase.client.json', 'firebase-worker.js', 'gateway-router.js',
   'pubspec.yaml', '_headers', '_redirects',
 ];
@@ -62,9 +104,9 @@ if (!fs.existsSync(configPath)) {
               errors.push('release manifest includedSurfaces must be an array');
             } else {
               for (const route of routes) {
-                const normalizedRoute = String(route).replace(/^\\/+|\\/+$/g, '');
+                const normalizedRoute = String(route).replace(/^\/+|\/+$/g, '');
                 for (const entry of entries) {
-                  const normalizedEntry = entry.replace(/^\\/+|\\/+$/g, '');
+                  const normalizedEntry = entry.replace(/^\/+|\/+$/g, '');
                   if (!normalizedEntry) continue;
                   const excludesRoute = entry.endsWith('/')
                     ? normalizedRoute === normalizedEntry || normalizedRoute.startsWith(normalizedEntry + '/')
