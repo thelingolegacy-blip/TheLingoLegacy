@@ -90,7 +90,10 @@
         state.chapter = 'waterline';
         break;
       case 'irrigation_repaired':
-        if (typeof payload.mechanismId === 'string') state.repairedMechanisms = uniqueStrings([...state.repairedMechanisms, payload.mechanismId]);
+        if (!state.discoveredMapFragments.includes('waterline-marker')) return { state, applied: false, reason: 'story-prerequisites-missing' };
+        if (payload.mechanismId !== 'irrigation-gate') return { state, applied: false, reason: 'invalid-mechanism' };
+        if (state.repairedMechanisms.includes('irrigation-gate')) return { state, applied: false, reason: 'mechanism-already-repaired' };
+        state.repairedMechanisms = uniqueStrings([...state.repairedMechanisms, 'irrigation-gate']);
         state.chapter = 'money-mile';
         state.completedMissions = uniqueStrings([...state.completedMissions, 'waterline-irrigation']);
         break;
