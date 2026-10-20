@@ -30,73 +30,12 @@ jobs:
         with:
           node-version: 22
 
-      - name: Test validator pipeline failure propagation
-        shell: bash
-        run: bash scripts/test-pipeline-failure-propagation.sh
-
-      - name: Test media manifest validator edge cases
+      - name: Run complete static gate stack
         shell: bash
         run: |
           set -euo pipefail
-          node --test scripts/test-verify-media-pipeline.mjs
-
-      - name: Syntax-check static validators and test asset publication guard
-        shell: bash
-        run: |
-          set -euo pipefail
-          node --check scripts/verify-asset-publication-scope.mjs
-          node --check scripts/verify-shared-design-system.mjs
-          node --check scripts/verify-platform-registries.mjs
-          node --check scripts/test-verify-platform-registries.mjs
-          node --check scripts/verify-media-pipeline.mjs
-          node --check scripts/test-verify-asset-publication-scope.mjs
-          node --check scripts/test-verify-shared-design-system.mjs
-          node --check scripts/test-verify-media-pipeline.mjs
-          node --test scripts/test-verify-asset-publication-scope.mjs
-          node --test scripts/test-verify-shared-design-system.mjs
-          node --test scripts/test-verify-platform-registries.mjs
-
-      - name: Verify Cloudflare asset publication scope
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/verify-asset-publication-scope.mjs 2>&1 | tee asset-scope.log
-
-      - name: Verify shared design tokens and icon registry
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/verify-shared-design-system.mjs 2>&1 | tee design-system.log
-
-      - name: Verify staged platform engine and world registries
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/verify-platform-registries.mjs 2>&1 | tee platform-registry.log
-
-      - name: Verify versioned media pipeline contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/verify-media-pipeline.mjs 2>&1 | tee media-pipeline.log
-
-      - name: Sanitize retired provider surface
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
-
-      - name: Verify Cloudflare binding contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
-
-      - name: Validate release-critical static site
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+          node --check scripts/run-static-gates.mjs
+          node scripts/run-static-gates.mjs
 
       - name: Upload validation evidence
         if: always()
@@ -104,11 +43,6 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
-            asset-scope.log
-            design-system.log
-            platform-registry.log
-            media-pipeline.log
-            sanitize.log
-            bindings.log
-            validator.log
+            static-gate-results.json
+            static-gate-*.log
           if-no-files-found: warn
