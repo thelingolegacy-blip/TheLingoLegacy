@@ -18,10 +18,10 @@
 const $=id=>document.getElementById(id),c=$('game'),x=c.getContext('2d'),W=c.width,H=c.height;
 const keys=new Set(),S={cash:500,rep:0,crew:1,condition:100,job:false,invited:false,qual:0,champion:false,started:false,running:false,lap:0,gate:0};
 const track={cx:480,cy:300,rx:315,ry:205,ix:205,iy:105};
-const car={x:480,y:95,a:Math.PI/2,v:0,max:235,turn:2.65,color:'#f6bb46'};
+const car={x:480,y:145,a:0,v:0,max:235,turn:2.65,color:'#f6bb46'};
 const rivals=[{name:'REX',t:1.75,v:.00122,color:'#b65cff'},{name:'VEE',t:2.35,v:.00117,color:'#55e7ff'},{name:'KNOX',t:3.0,v:.00113,color:'#f16e76'}];
-let last=0,elapsed=0,raceTime=0,jobStage=0,jobActive=false,jobMark={x:480,y:95},title='FREE DRIVE',finishShown=false;
-const gateAngles=[0,Math.PI/2,Math.PI,Math.PI*1.5];
+let last=0,elapsed=0,raceTime=0,jobStage=0,jobActive=false,jobMark={x:480,y:145},title='FREE DRIVE',finishShown=false;
+const gateAngles=[-Math.PI/2,0,Math.PI/2,Math.PI];
 const races=['MINI STREET RACE 1 · SKYLINE SPRINT','MINI STREET RACE 2 · NEON CUT','MINI STREET RACE 3 · PRESSURE RUN','ULTIMATE OASIS RACE · THE TAKEOVER'];
 const point=(t,rx=track.rx,ry=track.ry)=>({x:track.cx+Math.cos(t)*rx,y:track.cy+Math.sin(t)*ry});
 function say(t){$('toast').textContent=t}
@@ -53,9 +53,9 @@ function draw(){
 }
 function startStory(){S.started=true;$('headline').textContent='Build the crew. Earn the invite.';$('message').textContent='Complete the delivery job, earn street rep, and watch for the invite. Then win three qualifying races and the championship.';$('start').disabled=true;say('Story started. Drive to the delivery marker and return.');}
 $('start').onclick=startStory;
-$('job').onclick=()=>{if(S.job||jobActive)return;if(!S.started)startStory();jobActive=true;jobStage=0;jobMark={x:480,y:95};say('DELIVERY JOB: reach the gold gate, then return to the garage.');draw()};
+$('job').onclick=()=>{if(S.job||jobActive)return;if(!S.started)startStory();jobActive=true;jobStage=0;jobMark={x:480,y:145};say('DELIVERY JOB: reach the gold gate, then return to the garage.');draw()};
 $('car').onchange=()=>{const v=$('car').value;if(v==='muscle'){car.max=235;car.turn=2.65;car.color='#f6bb46';$('carInfo').textContent='Balanced acceleration and handling.'}else if(v==='tuner'){car.max=252;car.turn=3.1;car.color='#55e7ff';$('carInfo').textContent='Fast top speed, lighter handling.'}else{car.max=205;car.turn=2.2;car.color='#b65cff';$('carInfo').textContent='Heavy vehicle with steadier, slower turns.'}say('Garage updated. Vehicle handling changed.');draw()};
-$('raceBtn').onclick=()=>{if(!S.invited||S.running)return;title=races[S.qual];S.running=true;S.lap=0;S.gate=0;raceTime=0;car.x=480;car.y=95;car.a=Math.PI/2;car.v=0;rivals.forEach((r,i)=>r.t=[1.8,2.3,3][i]);$('race').textContent='RACE: '+title;last=performance.now();say('Race started. Pass all four gates in order, twice.');ui()};
+$('raceBtn').onclick=()=>{if(!S.invited||S.running)return;title=races[S.qual];S.running=true;S.lap=0;S.gate=0;raceTime=0;car.x=480;car.y=145;car.a=0;car.v=0;rivals.forEach((r,i)=>r.t=[1.8,2.3,3][i]);$('race').textContent='RACE: '+title;last=performance.now();say('Race started. Pass all four gates in order, twice.');ui()};
 $('reset').onclick=()=>{if(confirm('Reset this local prototype save?'))location.reload()};
 function finish(){S.running=false;car.v=0;const won=S.lap>=2;if(won){if(S.qual<3){S.qual++;S.cash+=350;S.rep+=10;say('QUALIFIER WON: +$350, +10 rep. '+(S.qual===3?'Ultimate Oasis Race unlocked!':'Next qualifier unlocked.'))}else{S.champion=true;S.cash+=2500;S.rep+=80;S.crew=5;say('MONEY MILE CONQUERED! You are an Oasis Boss.')}}else{S.condition=Math.max(20,S.condition-10);say('Race incomplete. Retry and follow the checkpoint order.')}
  $('headline').textContent=won?(S.champion?'Oasis conquered!':'You made your mark.'):'Not finished yet.';$('message').textContent=won?'Race time: '+(raceTime/1000).toFixed(1)+'s. Cash and reputation awarded.':'Complete two laps and pass all four gates in order. No win reward this run.';ui();draw()}
@@ -64,7 +64,7 @@ function loop(now){if(!S.running){draw();return}const dt=Math.min(.04,(now-last)
  car.v+=up?190*dt:-42*dt;if(down)car.v-=250*dt;car.v=Math.max(-45,Math.min(car.max,car.v));if(!road(car.x,car.y)){car.v*=Math.pow(.78,dt*10);S.condition=Math.max(0,Math.floor(S.condition-.01))}
  car.a+=((right?1:0)-(left?1:0))*car.turn*(.28+Math.abs(car.v)/car.max)*dt*(car.v<0?-1:1);car.x=Math.max(10,Math.min(W-10,car.x+Math.cos(car.a)*car.v*dt));car.y=Math.max(10,Math.min(H-10,car.y+Math.sin(car.a)*car.v*dt));
  rivals.forEach(r=>r.t+=r.v*dt*1000);
- if(jobActive&&Math.hypot(car.x-jobMark.x,car.y-jobMark.y)<34){if(jobStage===0){jobStage=1;jobMark={x:790,y:300};say('Package collected. Drive to the return marker.')}else{jobActive=false;S.job=true;S.cash+=300;S.rep+=10;S.crew=2;S.condition=Math.max(50,S.condition-2);say('JOB COMPLETE: +$300, +10 rep, crew power increased.');if(S.cash>=750&&S.rep>=20){S.invited=true;say('PRIVATE RACE INVITATION RECEIVED! Qualifier 1 unlocked.')}ui()}}
+ if(jobActive&&Math.hypot(car.x-jobMark.x,car.y-jobMark.y)<34){if(jobStage===0){jobStage=1;jobMark={x:790,y:300};say('Package collected. Drive to the return marker.')}else{jobActive=false;S.job=true;S.cash+=300;S.rep+=20;S.crew=2;S.condition=Math.max(50,S.condition-2);say('JOB COMPLETE: +$300, +20 rep, crew power increased.');if(S.cash>=750&&S.rep>=20){S.invited=true;say('PRIVATE RACE INVITATION RECEIVED! Qualifier 1 unlocked.')}ui()}}
  if(S.running){let p=point(gateAngles[S.gate],(track.rx+track.ix)/2,(track.ry+track.iy)/2);if(Math.hypot(car.x-p.x,car.y-p.y)<34){S.gate++;if(S.gate>=4){S.gate=0;S.lap++;if(S.lap>=2){finish();return}}}}
  $('time').textContent='TIME: '+(raceTime/1000).toFixed(1);$('speed').textContent='SPEED: '+Math.round(Math.abs(car.v));$('mode').textContent='MODE: STORY / '+rank().toUpperCase();draw();requestAnimationFrame(loop)}
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys.add(e.key)});window.addEventListener('keyup',e=>keys.delete(e.key));
