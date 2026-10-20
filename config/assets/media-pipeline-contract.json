@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "contractId": "lingo-versioned-media-pipeline",
+  "state": "staged",
+  "enabled": false,
+  "releaseGate": "G02",
+  "pipeline": [
+    "INGEST",
+    "TOUCH",
+    "TRANSFORM",
+    "QC",
+    "BRAND",
+    "CROP",
+    "VARIANTS",
+    "OPTIMIZE",
+    "APPROVE",
+    "PUBLISH",
+    "ACTIVE",
+    "REALTIME"
+  ],
+  "authorizationBoundaries": {
+    "approveToPublish": {
+      "automatic": false,
+      "requires": ["verified source", "rights and license review", "quality-control pass", "brand approval", "publish authorization"]
+    },
+    "publishToRealtime": {
+      "automatic": false,
+      "requires": ["published immutable version", "activation authorization", "runtime-path verification", "telemetry check"]
+    }
+  },
+  "identity": {
+    "primaryKey": "asset_id",
+    "versionKey": "version_id",
+    "variantKey": "variant_id",
+    "immutableVersions": true,
+    "runtimeMayReference": ["PUBLISHED", "ACTIVE"]
+  },
+  "requiredAssetFields": [
+    "asset_id",
+    "version_id",
+    "variant_id",
+    "source",
+    "owner",
+    "sha256",
+    "media_type",
+    "rights_status",
+    "quality_status",
+    "brand_status",
+    "pipeline_status"
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "sourceRequired": true,
+    "ownerRequired": true,
+    "versionRequired": true,
+    "variantRequired": true
+  },
+  "accessibility": {
+    "meaningfulVisualsRequireAlt": true,
+    "decorativeVisualsRequireEmptyAlt": true,
+    "videoRequiresCaptionsOrTranscript": true,
+    "audioRequiresTranscriptOrDescription": true,
+    "reducedMotionRequired": true
+  },
+  "rollback": {
+    "destructive": false,
+    "preserveHistory": true,
+    "target": "previous approved and published version",
+    "sequence": ["FAILED_CURRENT", "PREVIOUS_APPROVED_PUBLISHED", "ACTIVE", "REALTIME"],
+    "requiresVerification": true
+  },
+  "activationPolicy": "Media stays staged until authorization, publication integrity, runtime path checks, and release gates pass."
+}
