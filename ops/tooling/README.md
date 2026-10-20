@@ -52,7 +52,7 @@ Workflow: [`.github/workflows/tooling-validation.yml`](../../.github/workflows/t
 - Does not require API keys, run experiments, start the KaaS server, execute an aflare workflow, or deploy anything.
 - It is a tool-installation smoke test, not a G02 runner acceptance test.
 
-Run it manually from the GitHub Actions page on this branch after reviewing the changes. A successful run proves the GitHub-hosted job could execute these checks; it does not install tools on the separate G02 host.
+GitHub requires a `workflow_dispatch` workflow to exist on the default branch before it can be dispatched from the Actions UI/API. Because this setup is intentionally not merged, the workflow is prepared for review but cannot be dispatched yet. After a separate authorized merge, select the tooling branch as the run ref. A successful run proves the GitHub-hosted job could execute these checks; it does not install tools on the separate G02 host.
 
 ## Host access boundary
 
