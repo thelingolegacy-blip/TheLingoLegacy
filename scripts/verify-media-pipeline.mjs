@@ -32,7 +32,8 @@ if (manifest) {
   if (manifest.integrityPolicy?.required !== true || manifest.integrityPolicy?.algorithm !== 'sha256') {
     errors.push('runtime-media manifest must require SHA-256 integrity');
   }
-  for (const [index, asset] of (manifest.assets || []).entries()) {
+  const assets = Array.isArray(manifest.assets) ? manifest.assets : [];
+  for (const [index, asset] of assets.entries()) {
     for (const key of contract?.requiredAssetFields || []) {
       if (asset[key] === undefined || asset[key] === null || asset[key] === '') errors.push(`runtime-media asset[${index}] missing ${key}`);
     }
@@ -51,7 +52,7 @@ console.log(JSON.stringify({
   ok: true,
   gate: 'MEDIA_PIPELINE',
   pipelineStages: expectedStages.length,
-  runtimeAssets: manifest.assets.length,
+  runtimeAssets: Array.isArray(manifest.assets) ? manifest.assets.length : 0,
   state: 'staged',
   enabled: false,
   note: 'Static manifest validation only; rights review, visual/audio QA, publication, and live URL checks remain separate gates.',
