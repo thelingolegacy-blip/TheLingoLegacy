@@ -69,3 +69,13 @@ test('save/load round-trips validated state and tolerates unavailable storage', 
   assert.equal(saveCampaignState(state, unavailable).ok, false);
   assert.equal(loadCampaignState(unavailable).cash, 500);
 });
+
+test('story gates block delivery and racing until their prerequisites are met', () => {
+  const fresh = createCampaignState();
+  assert.equal(event(fresh, 'job:early:1', 'delivery_completed').reason, 'story-prerequisites-missing');
+  assert.equal(event(fresh, 'race:early:1', 'race_won', { raceId: 'mini-street-race-1' }).reason, 'race-locked');
+  const ready = unlockMoneyMile(fresh);
+  const delivered = event(ready, 'job:delivery:1', 'delivery_completed').state;
+  const firstRace = event(delivered, 'race:mini:1', 'race_won', { raceId: 'mini-street-race-1' }).state;
+  assert.equal(event(firstRace, 'job:delivery:replay', 'delivery_completed').reason, 'mission-already-completed');
+});
