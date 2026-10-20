@@ -112,6 +112,20 @@
         if (!/^(mini-street-race-[1-3]|ultimate-oasis-race)$/.test(raceId)) return { state, applied: false, reason: 'invalid-race' };
         if (!state.unlockedRaces.includes(raceId)) return { state, applied: false, reason: 'race-locked' };
         if (state.wonRaces.includes(raceId)) return { state, applied: false, reason: 'race-already-won' };
+        // Enforce progression from canonical campaign facts, not only the mutable unlock list.
+        if (raceId === 'mini-street-race-1' && !state.completedMissions.includes('money-mile-delivery')) {
+          return { state, applied: false, reason: 'story-prerequisites-missing' };
+        }
+        if (raceId === 'mini-street-race-2' && !state.wonRaces.includes('mini-street-race-1')) {
+          return { state, applied: false, reason: 'race-prerequisites-missing' };
+        }
+        if (raceId === 'mini-street-race-3' && !state.wonRaces.includes('mini-street-race-2')) {
+          return { state, applied: false, reason: 'race-prerequisites-missing' };
+        }
+        if (raceId === 'ultimate-oasis-race' &&
+            !['mini-street-race-1','mini-street-race-2','mini-street-race-3'].every(id => state.wonRaces.includes(id))) {
+          return { state, applied: false, reason: 'race-prerequisites-missing' };
+        }
         state.wonRaces = uniqueStrings([...state.wonRaces, raceId]);
         state.cash = Math.min(100000000, state.cash + (raceId === 'ultimate-oasis-race' ? 2500 : 350));
         state.reputation = Math.min(100000000, state.reputation + (raceId === 'ultimate-oasis-race' ? 80 : 10));
