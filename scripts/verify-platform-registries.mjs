@@ -25,10 +25,10 @@ function validateRegistry(registry, key, label) {
       errors.push(label + ': entries must be objects');
       continue;
     }
-    if (!item.id || ids.has(item.id)) errors.push(label + ': missing or duplicate ID ' + (item.id || '(empty)'));
-    ids.add(item.id);
-    if (item.enabled !== false || item.state !== 'staged') errors.push(label + ' ' + item.id + ': must remain staged and disabled');
-    if (!item.version && key === 'engines') errors.push(label + ' ' + item.id + ': version missing');
+    if (typeof item.id !== 'string' || !item.id.trim() || ids.has(item.id)) errors.push(label + ': missing or duplicate ID ' + (item.id || '(empty)'));
+    if (typeof item.id === 'string' && item.id.trim()) ids.add(item.id);
+    if (item.enabled !== false || item.state !== 'staged') errors.push(label + ' ' + (item.id || '(unknown)') + ': must remain staged and disabled');
+    if (!item.version && key === 'engines') errors.push(label + ' ' + (item.id || '(unknown)') + ': version missing');
   }
   if (registry?.enabled !== false || registry?.state !== 'staged') errors.push(label + ': top-level registry must remain staged and disabled');
   if (registry?.releaseGate !== 'G02') errors.push(label + ': releaseGate must remain G02');
@@ -46,8 +46,11 @@ for (const id of ['loyalty-lane-world', 'money-mile', 'power-blocks', 'desire-di
   if (!w.ids.has(id)) errors.push(`world registry missing canonical world: ${id}`);
 }
 for (const world of w.items) {
-  if (!e.ids.has(world.engine)) errors.push(`world ${world.id}: references unknown engine ${world.engine}`);
-  if (!world.assetNamespace || !world.accessPolicy) errors.push(`world ${world.id}: assetNamespace/accessPolicy contract missing`);
+  if (!world || typeof world !== 'object' || Array.isArray(world)) continue;
+  if (typeof world.engine !== 'string' || !e.ids.has(world.engine)) errors.push(`world ${world.id || '(unknown)'}: references unknown engine ${world.engine ?? '(missing)'}`);
+  if (typeof world.assetNamespace !== 'string' || !world.assetNamespace.trim() || typeof world.accessPolicy !== 'string' || !world.accessPolicy.trim()) {
+    errors.push(`world ${world.id || '(unknown)'}: assetNamespace/accessPolicy contract missing`);
+  }
 }
 if (errors.length) {
   console.error(JSON.stringify({ ok: false, gate: 'PLATFORM_REGISTRY', errors }, null, 2));
