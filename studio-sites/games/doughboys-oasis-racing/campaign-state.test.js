@@ -53,6 +53,11 @@ test('territory influence is capped and story completion checks prerequisites', 
   const blocked = event(state, 'nexus:blocked', 'nexus_revealed');
   assert.equal(blocked.reason, 'story-prerequisites-missing');
   state = event(state, 'repair:1', 'irrigation_repaired', { mechanismId: 'irrigation-gate' }).state;
+  const beforeChampionship = event(state, 'nexus:before-championship', 'nexus_revealed');
+  assert.equal(beforeChampionship.reason, 'story-prerequisites-missing');
+  state = event(state, 'delivery:1', 'delivery_completed').state;
+  for (let i = 1; i <= 3; i++) state = event(state, 'race:mini:' + i, 'race_won', { raceId: 'mini-street-race-' + i }).state;
+  state = event(state, 'race:ultimate:1', 'race_won', { raceId: 'ultimate-oasis-race' }).state;
   const ready = event(state, 'nexus:ready', 'nexus_revealed');
   assert.equal(ready.state.chapter, 'complete');
   const influence = event(state, 'territory:1', 'territory_influence_gained', { territoryId: 'money-mile', amount: 150 });
