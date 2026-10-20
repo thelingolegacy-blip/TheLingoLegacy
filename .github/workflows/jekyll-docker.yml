@@ -30,26 +30,51 @@ jobs:
         with:
           node-version: 22
 
+      - name: Test validator pipeline failure propagation
+        shell: bash
+        run: bash scripts/test-pipeline-failure-propagation.sh
+
       - name: Verify Cloudflare asset publication scope
-        run: node scripts/verify-asset-publication-scope.mjs 2>&1 | tee asset-scope.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-asset-publication-scope.mjs 2>&1 | tee asset-scope.log
 
       - name: Verify shared design tokens and icon registry
-        run: node scripts/verify-shared-design-system.mjs 2>&1 | tee design-system.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-shared-design-system.mjs 2>&1 | tee design-system.log
 
       - name: Verify staged platform engine and world registries
-        run: node scripts/verify-platform-registries.mjs 2>&1 | tee platform-registry.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-platform-registries.mjs 2>&1 | tee platform-registry.log
 
       - name: Verify versioned media pipeline contract
-        run: node scripts/verify-media-pipeline.mjs 2>&1 | tee media-pipeline.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-media-pipeline.mjs 2>&1 | tee media-pipeline.log
 
       - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
-        run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
       - name: Validate release-critical static site
-        run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
 
       - name: Upload validation evidence
         if: always()
