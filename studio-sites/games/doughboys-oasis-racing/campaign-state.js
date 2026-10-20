@@ -95,6 +95,7 @@
         state.completedMissions = uniqueStrings([...state.completedMissions, 'waterline-irrigation']);
         break;
       case 'delivery_completed':
+        if (!state.repairedMechanisms.includes('irrigation-gate')) return { state, applied: false, reason: 'story-prerequisites-missing' };
         state.cash = Math.min(100000000, state.cash + 300);
         state.reputation = Math.min(100000000, state.reputation + 20);
         state.crewPower = Math.max(state.crewPower, 2);
@@ -105,6 +106,7 @@
       case 'race_won': {
         const raceId = typeof payload.raceId === 'string' ? payload.raceId : '';
         if (!/^(mini-street-race-[1-3]|ultimate-oasis-race)$/.test(raceId)) return { state, applied: false, reason: 'invalid-race' };
+        if (!state.unlockedRaces.includes(raceId)) return { state, applied: false, reason: 'race-locked' };
         if (state.wonRaces.includes(raceId)) return { state, applied: false, reason: 'race-already-won' };
         state.wonRaces = uniqueStrings([...state.wonRaces, raceId]);
         state.cash = Math.min(100000000, state.cash + (raceId === 'ultimate-oasis-race' ? 2500 : 350));
