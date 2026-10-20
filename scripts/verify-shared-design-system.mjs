@@ -47,8 +47,14 @@ for (const variable of [
 }
 if (!css.includes('prefers-reduced-motion: reduce')) errors.push('shared CSS must honor prefers-reduced-motion');
 
+if (registry && !Array.isArray(registry.icons)) errors.push('config/icons/icon-registry.json: icons must be an array');
+const icons = Array.isArray(registry?.icons) ? registry.icons : [];
 const ids = new Set();
-for (const icon of registry?.icons || []) {
+for (const icon of icons) {
+  if (!icon || typeof icon !== 'object' || Array.isArray(icon)) {
+    errors.push('icon registry entries must be objects');
+    continue;
+  }
   if (!icon.id || ids.has(icon.id)) errors.push(`icon registry has missing or duplicate id: ${icon.id || '(empty)'}`);
   ids.add(icon.id);
   const relative = String(icon.path || '').replace(/^\//, '');
