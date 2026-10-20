@@ -47,12 +47,14 @@ jobs:
           node --check scripts/verify-asset-publication-scope.mjs
           node --check scripts/verify-shared-design-system.mjs
           node --check scripts/verify-platform-registries.mjs
+          node --check scripts/test-verify-platform-registries.mjs
           node --check scripts/verify-media-pipeline.mjs
           node --check scripts/test-verify-asset-publication-scope.mjs
           node --check scripts/test-verify-shared-design-system.mjs
           node --check scripts/test-verify-media-pipeline.mjs
           node --test scripts/test-verify-asset-publication-scope.mjs
           node --test scripts/test-verify-shared-design-system.mjs
+          node --test scripts/test-verify-platform-registries.mjs
 
       - name: Verify Cloudflare asset publication scope
         shell: bash
