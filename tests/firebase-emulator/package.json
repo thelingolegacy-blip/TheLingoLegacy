@@ -1,0 +1,16 @@
+{
+  "name": "lingo-legacy-firebase-emulator-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Test-only Firebase Emulator Suite security and Auth checks; never deploy these fixture rules.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@firebase/rules-unit-testing": "3.0.3",
+    "firebase": "10.14.1"
+  }
+}
