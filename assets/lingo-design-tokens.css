@@ -1,0 +1,92 @@
+/* Shared LINGO Legacy design tokens. This file defines tokens only; surface CSS remains opt-in. */
+:root {
+  color-scheme: dark;
+  --lingo-color-obsidian: #050507;
+  --lingo-color-surface: #101016;
+  --lingo-color-surface-raised: #1c1c24;
+  --lingo-color-metallic-slate: #273246;
+  --lingo-color-gold: #f7c84b;
+  --lingo-color-gold-soft: #fff2a8;
+  --lingo-color-royal-purple: #6b2dff;
+  --lingo-color-royal-purple-soft: #9b7bff;
+  --lingo-color-cyan: #56efff;
+  --lingo-color-success: #6bff8b;
+  --lingo-color-warning: #ffbf5f;
+  --lingo-color-danger: #ff6b7a;
+  --lingo-color-text: #fff9e8;
+  --lingo-color-muted: #c9b98c;
+  --lingo-color-dim: #8d8064;
+  --lingo-color-border: rgba(247, 200, 75, .30);
+  --lingo-color-focus: #56efff;
+
+  --lingo-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --lingo-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --lingo-font-size-xs: .75rem;
+  --lingo-font-size-sm: .875rem;
+  --lingo-font-size-md: 1rem;
+  --lingo-font-size-lg: 1.25rem;
+  --lingo-font-size-xl: clamp(1.5rem, 2vw, 2rem);
+  --lingo-font-size-display: clamp(2.5rem, 7vw, 5.5rem);
+  --lingo-font-weight-normal: 400;
+  --lingo-font-weight-semibold: 650;
+  --lingo-font-weight-bold: 800;
+  --lingo-font-weight-black: 950;
+  --lingo-line-height-body: 1.65;
+  --lingo-line-height-heading: 1.05;
+
+  --lingo-space-1: .25rem;
+  --lingo-space-2: .5rem;
+  --lingo-space-3: .75rem;
+  --lingo-space-4: 1rem;
+  --lingo-space-5: 1.25rem;
+  --lingo-space-6: 1.5rem;
+  --lingo-space-8: 2rem;
+  --lingo-space-10: 2.5rem;
+  --lingo-space-12: 3rem;
+  --lingo-touch-target-min: 48px;
+
+  --lingo-radius-sm: 8px;
+  --lingo-radius-md: 16px;
+  --lingo-radius-lg: 24px;
+  --lingo-radius-xl: 32px;
+  --lingo-radius-pill: 999px;
+
+  --lingo-shadow-panel: 0 18px 56px rgba(0, 0, 0, .34);
+  --lingo-shadow-gold: 0 0 28px rgba(247, 200, 75, .18);
+  --lingo-shadow-purple: 0 0 34px rgba(107, 45, 255, .20);
+  --lingo-z-header: 100;
+  --lingo-z-overlay: 1000;
+  --lingo-z-toast: 1100;
+  --lingo-motion-fast: 140ms;
+  --lingo-motion-standard: 220ms;
+  --lingo-motion-slow: 360ms;
+  --lingo-ease-standard: cubic-bezier(.2, .7, .2, 1);
+
+  /* Compatibility aliases for existing surface styles. */
+  --os-noir: var(--lingo-color-obsidian);
+  --os-panel: rgba(13, 13, 18, .78);
+  --os-ink: var(--lingo-color-text);
+  --os-muted: var(--lingo-color-muted);
+  --os-gold: var(--lingo-color-gold);
+  --os-cyan: var(--lingo-color-cyan);
+  --os-violet: var(--lingo-color-royal-purple);
+  --os-green: var(--lingo-color-success);
+  --lingo-brand-bg: var(--lingo-color-obsidian);
+  --lingo-brand-gold: var(--lingo-color-gold);
+  --lingo-brand-violet: var(--lingo-color-royal-purple);
+  --lingo-brand-text: var(--lingo-color-text);
+  --lingo-brand-muted: var(--lingo-color-muted);
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--lingo-color-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lingo-motion-fast: 0ms;
+    --lingo-motion-standard: 0ms;
+    --lingo-motion-slow: 0ms;
+  }
+}
