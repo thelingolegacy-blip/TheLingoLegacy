@@ -27,6 +27,14 @@ if (contract?.authorizationBoundaries?.publishToRealtime?.automatic !== false) e
 if (contract?.identity?.immutableVersions !== true) errors.push('asset versions must be immutable');
 if (contract?.rollback?.destructive !== false || contract?.rollback?.preserveHistory !== true) errors.push('rollback must be non-destructive and preserve history');
 
+const requiredAssetFields = contract?.requiredAssetFields;
+if (!Array.isArray(requiredAssetFields) || requiredAssetFields.some((field) => typeof field !== 'string' || !field.trim())) {
+  errors.push('media contract requiredAssetFields must be an array of non-empty strings');
+}
+const fields = Array.isArray(requiredAssetFields)
+  ? requiredAssetFields.filter((field) => typeof field === 'string' && field.trim())
+  : [];
+
 if (manifest) {
   if (!Array.isArray(manifest.assets)) errors.push('runtime-media manifest assets must be an array');
   if (manifest.integrityPolicy?.required !== true || manifest.integrityPolicy?.algorithm !== 'sha256') {
@@ -34,11 +42,15 @@ if (manifest) {
   }
   const assets = Array.isArray(manifest.assets) ? manifest.assets : [];
   for (const [index, asset] of assets.entries()) {
-    for (const key of contract?.requiredAssetFields || []) {
+    if (!asset || typeof asset !== 'object' || Array.isArray(asset)) {
+      errors.push(`runtime-media asset[${index}] must be an object`);
+      continue;
+    }
+    for (const key of fields) {
       if (asset[key] === undefined || asset[key] === null || asset[key] === '') errors.push(`runtime-media asset[${index}] missing ${key}`);
     }
-    if (asset.sha256 && !/^[a-f0-9]{64}$/i.test(String(asset.sha256))) errors.push(`runtime-media asset[${index}] has invalid SHA-256`);
-    if (asset.runtimeReferenced === true && !['PUBLISHED','ACTIVE'].includes(String(asset.pipeline_status).toUpperCase())) {
+    if (typeof asset.sha256 !== 'string' || !/^[a-f0-9]{64}$/i.test(asset.sha256)) errors.push(`runtime-media asset[${index}] has invalid SHA-256`);
+    if (asset.runtimeReferenced === true && !['PUBLISHED','ACTIVE'].includes(String(asset.pipeline_status ?? '').toUpperCase())) {
       errors.push(`runtime-media asset[${index}] is runtime-referenced before publication/activation`);
     }
   }
