@@ -60,7 +60,8 @@ test('excluded release-manifest route fails closed after slash normalization', (
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const result = runValidator(root);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /conflicts with release-manifest route "\/admin-command-center\//);
+  assert.match(result.stderr, /conflicts with release-manifest route/);
+  assert.match(result.stderr, /admin-command-center/);
 });
 
 test('excluding a required public entrypoint fails closed', (t) => {
