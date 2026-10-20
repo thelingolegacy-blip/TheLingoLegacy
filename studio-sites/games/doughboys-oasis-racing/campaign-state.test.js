@@ -37,6 +37,35 @@ test('races unlock sequentially and championship moves the story to Nexus revela
   assert.equal(final.state.crewPower, 5);
 });
 
+test('mutable unlock lists cannot bypass sequential race prerequisites', () => {
+  const seeded = createCampaignState({
+    completedMissions: [],
+    unlockedRaces: ['mini-street-race-1', 'mini-street-race-2', 'mini-street-race-3', 'ultimate-oasis-race']
+  });
+  const first = event(seeded, 'exploit:race-1', 'race_won', { raceId: 'mini-street-race-1' });
+  assert.equal(first.applied, false);
+  assert.equal(first.reason, 'story-prerequisites-missing');
+
+  const delivered = event(unlockMoneyMile(createCampaignState()), 'job:delivery:001', 'delivery_completed').state;
+  const skipToTwo = event(
+    { ...delivered, unlockedRaces: ['mini-street-race-1', 'mini-street-race-2'] },
+    'exploit:race-2',
+    'race_won',
+    { raceId: 'mini-street-race-2' }
+  );
+  assert.equal(skipToTwo.applied, false);
+  assert.equal(skipToTwo.reason, 'race-prerequisites-missing');
+
+  const skipToFinal = event(
+    { ...delivered, unlockedRaces: ['ultimate-oasis-race'] },
+    'exploit:ultimate',
+    'race_won',
+    { raceId: 'ultimate-oasis-race' }
+  );
+  assert.equal(skipToFinal.applied, false);
+  assert.equal(skipToFinal.reason, 'race-prerequisites-missing');
+});
+
 test('invalid race IDs and duplicate race victories cannot mint rewards', () => {
   const state = event(unlockMoneyMile(createCampaignState()), 'job:delivery:001', 'delivery_completed').state;
   const invalid = event(state, 'race:bad:1', 'race_won', { raceId: 'unlisted-race' });
