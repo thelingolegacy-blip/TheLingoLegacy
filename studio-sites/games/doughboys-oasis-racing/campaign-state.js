@@ -133,7 +133,7 @@
         break;
       }
       case 'nexus_revealed':
-        if (state.discoveredMapFragments.length < 1 || state.repairedMechanisms.length < 1) return { state, applied: false, reason: 'story-prerequisites-missing' };
+        if (state.discoveredMapFragments.length < 1 || state.repairedMechanisms.length < 1 || !state.championshipWon) return { state, applied: false, reason: 'story-prerequisites-missing' };
         state.chapter = 'complete';
         state.completedMissions = uniqueStrings([...state.completedMissions, 'nexus-revelation']);
         break;
