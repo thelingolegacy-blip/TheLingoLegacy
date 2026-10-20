@@ -40,6 +40,18 @@ jobs:
           set -euo pipefail
           node --test scripts/test-verify-media-pipeline.mjs
 
+      - name: Syntax-check static validators and test asset publication guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/verify-asset-publication-scope.mjs
+          node --check scripts/verify-shared-design-system.mjs
+          node --check scripts/verify-platform-registries.mjs
+          node --check scripts/verify-media-pipeline.mjs
+          node --check scripts/test-verify-asset-publication-scope.mjs
+          node --check scripts/test-verify-media-pipeline.mjs
+          node --test scripts/test-verify-asset-publication-scope.mjs
+
       - name: Verify Cloudflare asset publication scope
         shell: bash
         run: |
