@@ -1,0 +1,69 @@
+schema_version: 1
+project:
+  name: LINGO Legacy
+  source_of_truth: github
+  default_branch: main
+  release_gate: G02
+  production_mutation_enabled: false
+ci:
+  github_actions:
+    role: authoritative_pr_validation_and_release_governance
+  jenkins:
+    role: orchestration_validation_only
+    deployment_enabled: false
+  gitlab:
+    role: optional_mirror_and_independent_validation
+    production_authority: false
+  circleci:
+    role: optional_independent_validation
+    production_authority: false
+infrastructure:
+  terraform:
+    provider: unset
+    apply_enabled: false
+    production_state_migration_enabled: false
+  ansible:
+    default_mode: read_only
+    remote_mutation_enabled: false
+  docker:
+    image_publish_enabled: false
+  kubernetes:
+    cluster_provisioning_enabled: false
+    deployment_enabled: false
+observability:
+  prometheus:
+    enabled_for_scaffold: true
+    production_targets_configured: false
+  grafana:
+    provisioning_scaffold: true
+  elastic_stack:
+    deployment_enabled: false
+  sonarqube:
+    scan_enabled: false
+    reason: "Enable only after server URL, project key, and secret availability are verified."
+  hashicorp_vault:
+    integration_enabled: false
+    secret_values_in_repository: false
+smart_cache:
+  enabled: false
+  mode: policy_only_until_benchmarked
+  allow_cache_for:
+    - dependency_downloads
+    - docker_build_layers
+    - deterministic_compiler_outputs
+  deny_cache_for:
+    - credentials
+    - tokens
+    - private_keys
+    - runner_registration_state
+    - mutable_job_workspaces
+    - production_state
+  require_lockfile_keying: true
+  require_trust_boundary_separation: true
+  require_before_after_benchmark: true
+governance:
+  require_correlated_evidence: true
+  require_independent_verification: true
+  g02_must_pass_before_release: true
+  production_promotion_requires_explicit_authorization: true
+  last_known_good_must_remain_protected: true
