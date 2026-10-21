@@ -1,0 +1,979 @@
+{
+  "schemaVersion": "1.1.0",
+  "status": "studio-vertical-slice-content-baseline",
+  "safety": {
+    "virtualOnly": true,
+    "noWagering": true,
+    "noCashout": true,
+    "sweepstakesEnabled": false,
+    "productionActivationAuthorized": false,
+    "localProgressOnly": true
+  },
+  "shared": {
+    "visual": "Industrial Noir: graphite, metallic gold and royal purple; restrained crimson only for hazards; original silhouettes and responsive crops.",
+    "motion": "UI 180–240ms; scene reveals skippable; reduced-motion alternative.",
+    "audio": "Muted by default; procedural original Web Audio cues; visual equivalents; no external audio dependency.",
+    "quality": [
+      "Keyboard/touch navigation",
+      "44px minimum controls",
+      "Visible focus",
+      "Reduced motion",
+      "No color-only state",
+      "No flashing/strobing",
+      "Local demo progress only",
+      "No production mutation"
+    ]
+  },
+  "games": [
+    {
+      "id": "tricias-escape",
+      "title": "Tricia’s Escape",
+      "division": "LINGOarcade",
+      "genre": "Mystery puzzle adventure",
+      "palette": [
+        "#11151f",
+        "#7c5cff"
+      ],
+      "setting": "The impossible transit terminal",
+      "logline": "Tricia follows a map that changes when lights blink; every exit tests observation, not fear.",
+      "mechanic": "Tap clues, compare evidence and connect safe route tiles; wrong answers offer hints.",
+      "background": "Layered terminal silhouettes, violet fog, gold route lines and impossible signs.",
+      "characters": [
+        {
+          "name": "Tricia Vale",
+          "role": "Investigator",
+          "motive": "Find her own route and expose the station pattern",
+          "moves": [
+            "Trace Mark",
+            "Signal Read",
+            "Route Stitch"
+          ],
+          "voice": "Focused, dry wit, notices overlooked details"
+        },
+        {
+          "name": "Milo Quill",
+          "role": "Mapmaker companion",
+          "motive": "Repair a mistake that stranded travelers",
+          "moves": [
+            "Echo Hint",
+            "Safe Route"
+          ],
+          "voice": "Gentle, practical, candid"
+        },
+        {
+          "name": "The Conductor",
+          "role": "Ambiguous rival",
+          "motive": "Keep Platform Zero hidden until Tricia can read the signs",
+          "moves": [
+            "Sign Shift",
+            "Shadow Decoy"
+          ],
+          "voice": "Measured, cryptic, never cruel"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Signs Without Shadows",
+          "objective": "Identify the sign whose shadow points the wrong way",
+          "beats": [
+            "Lights blink out of sequence",
+            "inspect three signs",
+            "choose the safe route",
+            "reveal Platform Zero"
+          ]
+        },
+        {
+          "title": "Platform Zero",
+          "objective": "Connect entrance, companion and exit",
+          "beats": [
+            "Connect route tiles",
+            "request a clue",
+            "help Milo or take the fast route",
+            "the intercom says Tricia’s name"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "The Wrong Shadow",
+          "type": "Observation",
+          "goal": "Find the inconsistent sign",
+          "reward": "North Gate map fragment"
+        },
+        {
+          "title": "Route Stitch",
+          "type": "Logic",
+          "goal": "Connect three safe route tiles",
+          "reward": "Trace Mark cosmetic"
+        },
+        {
+          "title": "No One Left Behind",
+          "type": "Choice",
+          "goal": "Escort Milo to safety",
+          "reward": "HEART story flag"
+        }
+      ],
+      "sound": [
+        "station hum",
+        "sign clue",
+        "route confirm",
+        "chapter reveal"
+      ]
+    },
+    {
+      "id": "doughboys-oasis",
+      "title": "Doughboy’s Oasis",
+      "division": "LINGOarcade",
+      "genre": "Exploration and resource planning",
+      "palette": [
+        "#101820",
+        "#d7a54a"
+      ],
+      "setting": "The Waterline desert",
+      "logline": "A sandstorm exposes an old water marker; Doughboy must decide what kind of leader the oasis needs.",
+      "mechanic": "Explore a small map, collect fragments, plan fictional resources and solve a flow puzzle.",
+      "background": "Gold dunes, teal water ribbons, weathered ruins and reduced-motion heat shimmer.",
+      "characters": [
+        {
+          "name": "Doughboy",
+          "role": "Explorer",
+          "motive": "Build a refuge that lasts beyond his own crew",
+          "moves": [
+            "Dust Dash",
+            "Marker Sense",
+            "Quick Repair"
+          ],
+          "voice": "Confident, funny under pressure, shares credit"
+        },
+        {
+          "name": "Nia Wells",
+          "role": "Engineer",
+          "motive": "Restore irrigation and protect the water map",
+          "moves": [
+            "Flow Scan",
+            "Wheel Lock"
+          ],
+          "voice": "Direct, inventive, rejects harmful shortcuts"
+        },
+        {
+          "name": "The Broker",
+          "role": "Rival trader",
+          "motive": "Control routes by keeping information scarce",
+          "moves": [
+            "Decoy Map",
+            "Bargain Bluff"
+          ],
+          "voice": "Charming, calculating, may change sides"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Waterline",
+          "objective": "Collect map fragments and locate the irrigation wheel",
+          "beats": [
+            "A sandstorm reveals a marker",
+            "collect fragments",
+            "choose whether to share supplies",
+            "reveal a Nexus emblem"
+          ]
+        },
+        {
+          "title": "A Place to Stay",
+          "objective": "Restore the oasis without exhausting reserves",
+          "beats": [
+            "Choose a repair order",
+            "solve a flow-routing puzzle",
+            "invite travelers to help",
+            "the oasis blooms"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Three Pieces of North",
+          "type": "Exploration",
+          "goal": "Recover three map fragments",
+          "reward": "Waterline map layer"
+        },
+        {
+          "title": "Turn the Wheel",
+          "type": "Repair puzzle",
+          "goal": "Route water through marked channels",
+          "reward": "Nia’s wrench charm"
+        },
+        {
+          "title": "Share the Shade",
+          "type": "Choice",
+          "goal": "Offer supplies to a traveler",
+          "reward": "COMMUNITY story flag"
+        }
+      ],
+      "sound": [
+        "sand sweep",
+        "map fragment",
+        "water wheel",
+        "oasis bloom"
+      ]
+    },
+    {
+      "id": "crazy-weasols",
+      "title": "Crazy Weasols",
+      "division": "LINGOarcade",
+      "genre": "Comedy reflex and sorting arcade",
+      "palette": [
+        "#17121f",
+        "#c18cff"
+      ],
+      "setting": "Whistlewick, a town where signs swap overnight",
+      "logline": "A harmless prank scrambles the town labels; the Weasols must fix a delivery before festival time.",
+      "mechanic": "Tap matching objects and stations; forgiving timing, assist mode and undo.",
+      "background": "Playful violet streets, silly signage, squash-and-stretch silhouettes and confetti.",
+      "characters": [
+        {
+          "name": "Wiz Weasol",
+          "role": "Inventor",
+          "motive": "Make the biggest prank without hurting anyone",
+          "moves": [
+            "Spring Hop",
+            "Gadget Toss",
+            "Quick Sort"
+          ],
+          "voice": "Fast-talking, optimistic, apologizes when needed"
+        },
+        {
+          "name": "Pip Weasol",
+          "role": "Puzzle specialist",
+          "motive": "Prove careful planning can be hilarious",
+          "moves": [
+            "Label Scan",
+            "Combo Sort"
+          ],
+          "voice": "Deadpan, clever, loves chaos"
+        },
+        {
+          "name": "Mayor Button",
+          "role": "Comic foil",
+          "motive": "Prepare the festival and keep town laughing",
+          "moves": [
+            "Town Bell",
+            "Hint Parade"
+          ],
+          "voice": "Dramatic, warm, distractible"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "The Great Mix-Up",
+          "objective": "Return swapped labels to the right stations",
+          "beats": [
+            "Signs swap",
+            "sort objects",
+            "inspect evidence",
+            "design a harmless apology prank"
+          ]
+        },
+        {
+          "title": "Festival Fix",
+          "objective": "Run a three-station relay",
+          "beats": [
+            "Choose runner, sorter or caller",
+            "chain deliveries",
+            "use assist mode",
+            "discover a WORLD 13 label"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Label Scramble",
+          "type": "Sorting",
+          "goal": "Sort six objects into matching stations",
+          "reward": "Wiz’s spring badge"
+        },
+        {
+          "title": "Relay Relay",
+          "type": "Reflex",
+          "goal": "Complete three clean deliveries",
+          "reward": "Pip’s combo trail"
+        },
+        {
+          "title": "Prank With Heart",
+          "type": "Choice",
+          "goal": "Repair the sign and apologize",
+          "reward": "FRIENDSHIP story flag"
+        }
+      ],
+      "sound": [
+        "spring boing",
+        "label pop",
+        "combo chime",
+        "festival fanfare"
+      ]
+    },
+    {
+      "id": "silly-in-philly",
+      "title": "Silly in Philly: The Streets Run on Loyalty",
+      "division": "LINGOarcade",
+      "genre": "Neighborhood story and rhythm adventure",
+      "palette": [
+        "#11131a",
+        "#8b65d9"
+      ],
+      "setting": "A fictional Philadelphia-inspired neighborhood",
+      "logline": "When the block party sound system goes silent, a crew rebuilds the event and learns loyalty is a practice.",
+      "mechanic": "Explore fictional block nodes, gather clues and tap a beat sequence; no GPS.",
+      "background": "Fictional rowhome silhouettes, mural geometry, warm windows and purple dusk.",
+      "characters": [
+        {
+          "name": "Jett Lingo",
+          "role": "Crew organizer",
+          "motive": "Keep the block connected without taking all the credit",
+          "moves": [
+            "Beat Read",
+            "Crew Call",
+            "Shortcut Sense"
+          ],
+          "voice": "Charismatic, observant, jokes to lower tension"
+        },
+        {
+          "name": "Mika Keys",
+          "role": "Sound tech",
+          "motive": "Restore music and make room for new performers",
+          "moves": [
+            "Cable Trace",
+            "Tempo Lock"
+          ],
+          "voice": "Precise, playful, music-minded"
+        },
+        {
+          "name": "Unc Reggie",
+          "role": "Mentor",
+          "motive": "Help the next generation build something they own",
+          "moves": [
+            "Story Recall",
+            "Calm the Crowd"
+          ],
+          "voice": "Warm, funny, firm about respect"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Block Party Protocol",
+          "objective": "Find cable, battery and playlist clues",
+          "beats": [
+            "Speakers fail",
+            "visit fictional storefronts",
+            "repair the system in a rhythm challenge",
+            "choose open mic or dance-off"
+          ]
+        },
+        {
+          "title": "Keep the Block",
+          "objective": "Bring three neighbors into the event",
+          "beats": [
+            "Complete a rhythm sequence",
+            "resolve a misunderstanding",
+            "spotlight each performer",
+            "receive a Shore flyer"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Find the Signal",
+          "type": "Clue hunt",
+          "goal": "Collect three sound-system clues",
+          "reward": "Block Party patch"
+        },
+        {
+          "title": "Beat Check",
+          "type": "Rhythm",
+          "goal": "Match four beats in sequence",
+          "reward": "Gold soundwave trail"
+        },
+        {
+          "title": "Pass the Mic",
+          "type": "Community choice",
+          "goal": "Give a new performer the opening slot",
+          "reward": "LOYALTY story flag"
+        }
+      ],
+      "sound": [
+        "city night ambience",
+        "cable click",
+        "rhythm perfect",
+        "crowd warmth"
+      ]
+    },
+    {
+      "id": "jersey-shore-undead",
+      "title": "Jersey Shore: The Undead",
+      "division": "LINGOarcade",
+      "genre": "Stylized survival puzzle",
+      "palette": [
+        "#0b1420",
+        "#6dc7c4"
+      ],
+      "setting": "A fogbound fictional boardwalk",
+      "logline": "A strange signal moves through the fog; survivors restore power, avoid threats and decide who gets rescued first.",
+      "mechanic": "Plan routes around visible alert zones; adjustable horror intensity and visual audio cues.",
+      "background": "Fog layers, cool moonlight, readable threat silhouettes; no graphic gore.",
+      "characters": [
+        {
+          "name": "Rae Mercer",
+          "role": "Lifeguard lead",
+          "motive": "Get everyone to safety and learn why the warning repeats",
+          "moves": [
+            "Quiet Step",
+            "Flash Sweep",
+            "Signal Ping"
+          ],
+          "voice": "Calm, decisive, protective"
+        },
+        {
+          "name": "Dex Harbor",
+          "role": "Radio operator",
+          "motive": "Restore the signal and find his missing sister",
+          "moves": [
+            "Frequency Tune",
+            "Echo Locate"
+          ],
+          "voice": "Nervous humor, inventive, persistent"
+        },
+        {
+          "name": "The Ferryman",
+          "role": "Masked antagonist",
+          "motive": "Keep the boardwalk sealed until the signal is contained",
+          "moves": [
+            "Fog Screen",
+            "False Signal"
+          ],
+          "voice": "Low, patient, motives revealed gradually"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Signal in the Fog",
+          "objective": "Cross the boardwalk and find the emergency radio",
+          "beats": [
+            "Fog covers the boardwalk",
+            "choose a utility",
+            "cross the arcade stealthily",
+            "a survivor asks for help"
+          ]
+        },
+        {
+          "title": "Power at Low Tide",
+          "objective": "Restore generator and lead survivors inland",
+          "beats": [
+            "Find two fuses",
+            "choose rescue or generator first",
+            "solve a safe circuit puzzle",
+            "hear a city signal"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Quiet Crossing",
+          "type": "Stealth puzzle",
+          "goal": "Reach radio without entering the alert zone",
+          "reward": "Signal map"
+        },
+        {
+          "title": "Fuse Finder",
+          "type": "Exploration",
+          "goal": "Recover two generator fuses",
+          "reward": "Rae’s lifeguard patch"
+        },
+        {
+          "title": "First Light",
+          "type": "Rescue choice",
+          "goal": "Lead a survivor to the safe route",
+          "reward": "TRUST story flag"
+        }
+      ],
+      "sound": [
+        "fog wind",
+        "radio static",
+        "safe step",
+        "generator start"
+      ]
+    },
+    {
+      "id": "thats-my-lingo",
+      "title": "That’s My Lingo",
+      "division": "LINGOslots",
+      "genre": "Five-reel virtual slot arcade",
+      "palette": [
+        "#0c0a14",
+        "#f7c95f"
+      ],
+      "setting": "The House of Symbols virtual arcade",
+      "logline": "A new player learns symbols, paylines and randomness while collecting story emblems.",
+      "mechanic": "Local-only five-reel demo with valueless coins; no deposits, wagering, cash-out or prizes.",
+      "background": "Machined graphite, gold symbols, violet glow and crisp reel panels.",
+      "characters": [
+        {
+          "name": "Vee Vector",
+          "role": "Host and rules guide",
+          "motive": "Make the machine transparent and understandable",
+          "moves": [
+            "Payline Trace",
+            "Symbol Explain",
+            "Demo Reset"
+          ],
+          "voice": "Bright, clear, never pressures players"
+        },
+        {
+          "name": "Goldie Glyph",
+          "role": "Mascot",
+          "motive": "Collect three emblems to unlock a portal",
+          "moves": [
+            "Emblem Spark",
+            "Bonus Reveal"
+          ],
+          "voice": "Confident, mischievous, supportive"
+        },
+        {
+          "name": "The Oddskeeper",
+          "role": "Tutorial rival",
+          "motive": "Challenge myths about streaks and randomness",
+          "moves": [
+            "Pattern Myth",
+            "Odds Lesson"
+          ],
+          "voice": "Playful skeptic, explains without shaming"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "House of Symbols",
+          "objective": "Learn the five-reel grid and identify a payline",
+          "beats": [
+            "Introduce symbols",
+            "free demo spin",
+            "explain result",
+            "collect a cosmetic emblem"
+          ]
+        },
+        {
+          "title": "Three Emblems",
+          "objective": "Find three emblems in the arcade",
+          "beats": [
+            "Complete symbol tutorial",
+            "view result breakdown",
+            "unlock a frame",
+            "open arcade portal"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Read the Reels",
+          "type": "Tutorial",
+          "goal": "Identify the marked payline",
+          "reward": "First Spin badge"
+        },
+        {
+          "title": "Symbol Hunt",
+          "type": "Collection",
+          "goal": "Find three themed emblems",
+          "reward": "Glyph frame"
+        },
+        {
+          "title": "Randomness 101",
+          "type": "Knowledge",
+          "goal": "Answer two odds tutorial questions",
+          "reward": "Oddskeeper title"
+        }
+      ],
+      "sound": [
+        "reel start",
+        "reel stop",
+        "match soft",
+        "demo reset"
+      ]
+    },
+    {
+      "id": "spades-is-my-lingo",
+      "title": "Spades Is My Lingo",
+      "division": "LINGOslots",
+      "genre": "Trick-taking card strategy",
+      "palette": [
+        "#0b0d13",
+        "#d6b36b"
+      ],
+      "setting": "The Legacy Table friendly practice room",
+      "logline": "Four players learn partnership, suit-following and scoring; the real challenge is reading the table and respecting your partner.",
+      "mechanic": "Guided card rules and practice scoring; no wagering or real-money stakes.",
+      "background": "Smoked felt, etched card glyphs, brass lighting and readable suits.",
+      "characters": [
+        {
+          "name": "Ace Monroe",
+          "role": "Lead player",
+          "motive": "Win through communication, not showboating",
+          "moves": [
+            "Lead Suit",
+            "Count Cards",
+            "Partner Check"
+          ],
+          "voice": "Cool, competitive, sportsmanlike"
+        },
+        {
+          "name": "Queen Sable",
+          "role": "Strategic partner",
+          "motive": "Teach patience and thoughtful bids",
+          "moves": [
+            "Bid Sense",
+            "Risk Review"
+          ],
+          "voice": "Sharp, dry humor, generous teacher"
+        },
+        {
+          "name": "Uncle Tempo",
+          "role": "Table mentor",
+          "motive": "Keep play fair and friendly for newcomers",
+          "moves": [
+            "Rule Replay",
+            "Score Recap"
+          ],
+          "voice": "Easygoing, clear, encouraging"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Four at the Table",
+          "objective": "Complete a practice hand and follow suit",
+          "beats": [
+            "Meet the players",
+            "choose a practice bid",
+            "play a guided trick",
+            "review scoring"
+          ]
+        },
+        {
+          "title": "Read Your Partner",
+          "objective": "Complete a hand with a team plan",
+          "beats": [
+            "Read legal plays",
+            "ask for hints",
+            "resolve a misunderstanding",
+            "unlock table theme"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Follow Suit",
+          "type": "Tutorial",
+          "goal": "Play a legal card in the led suit",
+          "reward": "Legacy Table felt"
+        },
+        {
+          "title": "Bid with a Plan",
+          "type": "Strategy",
+          "goal": "Choose a bid and review result",
+          "reward": "Ace card-back"
+        },
+        {
+          "title": "Good Game",
+          "type": "Sportsmanship",
+          "goal": "Complete a hand and review recap",
+          "reward": "PARTNER badge"
+        }
+      ],
+      "sound": [
+        "card shuffle",
+        "card place",
+        "trick taken",
+        "hand recap"
+      ]
+    },
+    {
+      "id": "uhno-lingo-university",
+      "title": "UhNo Lingo University",
+      "division": "LINGOslots",
+      "genre": "Party card and word challenge",
+      "palette": [
+        "#11121c",
+        "#a981ff"
+      ],
+      "setting": "Lingo University and its hidden archive",
+      "logline": "A surprise campus quiz sends a crew through word, logic and memory challenges to uncover the Nexus archive.",
+      "mechanic": "Adaptive trivia, word ladders and memory sequences with explanatory retries.",
+      "background": "Graphite campus, violet lecture halls, gold glyphs and floating index cards.",
+      "characters": [
+        {
+          "name": "Professor Lex",
+          "role": "Word mentor",
+          "motive": "Help students reason instead of memorizing",
+          "moves": [
+            "Word Ladder",
+            "Hint Lens",
+            "Explain Answer"
+          ],
+          "voice": "Energetic, precise, kind"
+        },
+        {
+          "name": "Nix Nova",
+          "role": "Campus challenger",
+          "motive": "Prove curiosity beats perfection",
+          "moves": [
+            "Quickfire",
+            "Memory Flip"
+          ],
+          "voice": "Playful, quick, celebrates retries"
+        },
+        {
+          "name": "Dean Doubletake",
+          "role": "Mystery keeper",
+          "motive": "Protect the archive until teamwork is shown",
+          "moves": [
+            "Logic Gate",
+            "Archive Key"
+          ],
+          "voice": "Formal, theatrical, amused"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Final Bell",
+          "objective": "Complete three adaptive challenge lanes",
+          "beats": [
+            "Surprise quiz",
+            "choose a lane",
+            "get explanations",
+            "open the archive"
+          ]
+        },
+        {
+          "title": "The Archive",
+          "objective": "Combine three clues to open the Nexus record",
+          "beats": [
+            "Solve a word ladder",
+            "rebuild a memory sequence",
+            "answer cooperatively",
+            "discover Nexus link"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Quickfire Five",
+          "type": "Trivia",
+          "goal": "Answer five questions with explanations",
+          "reward": "Scholar frame"
+        },
+        {
+          "title": "Word Ladder",
+          "type": "Vocabulary",
+          "goal": "Transform start word into target",
+          "reward": "Lexicon badge"
+        },
+        {
+          "title": "Archive Key",
+          "type": "Logic",
+          "goal": "Combine three clues",
+          "reward": "CURIOUS story flag"
+        }
+      ],
+      "sound": [
+        "campus bell",
+        "answer correct",
+        "hint soft",
+        "archive open"
+      ]
+    },
+    {
+      "id": "lingo-eruptions",
+      "title": "Lingo Eruptions",
+      "division": "LINGOslots",
+      "genre": "Word-chain puzzle",
+      "palette": [
+        "#180d12",
+        "#f27b4a"
+      ],
+      "setting": "A glyph reactor chamber",
+      "logline": "A reactor begins to overload; deliberate word-glyph chains stabilize it better than reckless speed.",
+      "mechanic": "Match and chain symbols with pause, undo and no flashing; score challenge optional.",
+      "background": "Molten amber fissures, graphite machinery and restrained particles.",
+      "characters": [
+        {
+          "name": "Pyra",
+          "role": "Reactor pilot",
+          "motive": "Stabilize the core without burning out the team",
+          "moves": [
+            "Glyph Link",
+            "Chain Brake",
+            "Pressure Read"
+          ],
+          "voice": "Bold, controlled, values accuracy"
+        },
+        {
+          "name": "Morrow",
+          "role": "Systems analyst",
+          "motive": "Show a safe short chain can beat a reckless one",
+          "moves": [
+            "Pattern Scan",
+            "Safe Chain"
+          ],
+          "voice": "Quiet, exact, wry"
+        },
+        {
+          "name": "The Cinder",
+          "role": "Challenge avatar",
+          "motive": "Push the player to understand chain rules",
+          "moves": [
+            "Heat Pulse",
+            "Rule Twist"
+          ],
+          "voice": "Intense but fair"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "Pressure Point",
+          "objective": "Match glyphs into a safe chain",
+          "beats": [
+            "Teach matching",
+            "untimed practice",
+            "choose safe or score challenge",
+            "explain accuracy"
+          ]
+        },
+        {
+          "title": "Cool the Core",
+          "objective": "Build a valid chain with a planned pause",
+          "beats": [
+            "Read pressure",
+            "link glyphs",
+            "pause or undo",
+            "reveal a new glyph"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "First Link",
+          "type": "Puzzle",
+          "goal": "Connect three matching glyphs",
+          "reward": "Pyra trail"
+        },
+        {
+          "title": "Pressure Read",
+          "type": "Pattern",
+          "goal": "Choose the safe chain",
+          "reward": "Morrow badge"
+        },
+        {
+          "title": "Cool the Core",
+          "type": "Mastery",
+          "goal": "Complete a chain with no invalid moves",
+          "reward": "STABILITY title"
+        }
+      ],
+      "sound": [
+        "reactor low",
+        "glyph link",
+        "chain complete",
+        "core stable"
+      ]
+    },
+    {
+      "id": "cashman-lingo-mania",
+      "title": "Cashman Lingo Mania",
+      "division": "LINGOslots",
+      "genre": "Fictional ledger puzzle and score attack",
+      "palette": [
+        "#0c0c12",
+        "#e9c46a"
+      ],
+      "setting": "The Golden Ledger fictional puzzle vault",
+      "logline": "A vault opens only when its fictional ledger reconciles; the crew chooses transparent evidence over shortcuts.",
+      "mechanic": "Fictional arithmetic and discrepancy spotting; score-only rewards, no money or financial advice.",
+      "background": "Graphite vault, gold ledger lines and purple audit glyphs; no real currency imagery.",
+      "characters": [
+        {
+          "name": "Cashman",
+          "role": "Ledger detective",
+          "motive": "Show numbers tell a story, not a promise of wealth",
+          "moves": [
+            "Reconcile",
+            "Mismatch Scan",
+            "Audit Trail"
+          ],
+          "voice": "Charming, quick, honest about rules"
+        },
+        {
+          "name": "Tally",
+          "role": "Analyst partner",
+          "motive": "Find the missing entry and document corrections",
+          "moves": [
+            "Cross-check",
+            "Explain Delta"
+          ],
+          "voice": "Methodical, supportive, funny"
+        },
+        {
+          "name": "The Shortcut",
+          "role": "Tempting rival",
+          "motive": "Offer easy answers that fail audit",
+          "moves": [
+            "False Total",
+            "Missing Entry"
+          ],
+          "voice": "Smooth, impatient, learns evidence"
+        }
+      ],
+      "chapters": [
+        {
+          "title": "The Golden Ledger",
+          "objective": "Find mismatched fictional entries",
+          "beats": [
+            "Reveal puzzle ledger",
+            "reconcile symbols",
+            "spot missing entry",
+            "choose transparent correction"
+          ]
+        },
+        {
+          "title": "Proof of Record",
+          "objective": "Submit an explained reconciliation",
+          "beats": [
+            "Cross-check rows",
+            "review arithmetic",
+            "confirm correction",
+            "unlock story key"
+          ]
+        }
+      ],
+      "missions": [
+        {
+          "title": "Balance the Page",
+          "type": "Logic",
+          "goal": "Match three symbol entries",
+          "reward": "Ledger lens"
+        },
+        {
+          "title": "Spot the Mismatch",
+          "type": "Observation",
+          "goal": "Find the incorrect row",
+          "reward": "Tally avatar frame"
+        },
+        {
+          "title": "Show Your Work",
+          "type": "Reasoning",
+          "goal": "Select the correction with evidence",
+          "reward": "INTEGRITY title"
+        }
+      ],
+      "sound": [
+        "vault room",
+        "ledger tick",
+        "mismatch found",
+        "record sealed"
+      ]
+    }
+  ]
+}
