@@ -98,7 +98,9 @@ jobs:
 
   deploy-cloudflare:
     needs: repair
-    if: ${{ success() && inputs.deploy == true }}
+    # HARD HOLD: a manual deploy=true input is not release authorization.
+    # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: production
     steps:

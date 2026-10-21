@@ -1,0 +1,95 @@
+name: LINGO Developer Tooling Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-developer-tooling-validation
+  cancel-in-progress: false
+
+jobs:
+  validate-tools:
+    name: Validate CLI installations (no production access)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install and smoke-test Steadybit CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global --prefix "$RUNNER_TEMP/steadybit-prefix" steadybit
+          export PATH="$RUNNER_TEMP/steadybit-prefix/bin:$PATH"
+          command -v steadybit
+          steadybit --help
+          echo "STEADYBIT_CLI_SMOKE=PASS" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install and smoke-test Xonsh in an isolated virtual environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/xonsh-venv"
+          "$RUNNER_TEMP/xonsh-venv/bin/python" -m pip install --disable-pip-version-check "xonsh==0.24.2"
+          "$RUNNER_TEMP/xonsh-venv/bin/xonsh" --version
+          "$RUNNER_TEMP/xonsh-venv/bin/xonsh" --no-rc -c 'print("XONSH_SMOKE=PASS")'
+          echo "XONSH_SMOKE=PASS (isolated venv; login shell unchanged)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install and smoke-test Bybit KaaS CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          installer="$RUNNER_TEMP/kaas-install.sh"
+          curl --fail --silent --show-error --location \
+            https://raw.githubusercontent.com/bybit-exchange/kaas/main/install.sh \
+            --output "$installer"
+          sh "$installer"
+          export PATH="$HOME/.kaas:$HOME/.local/bin:$PATH"
+          if ! command -v kaas >/dev/null 2>&1; then
+            echo "KaaS installer completed but kaas was not found on PATH" >&2
+            exit 1
+          fi
+          kaas --help
+          echo "KAAS_CLI_SMOKE=PASS (server not started; no LLM key required)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install and smoke-test aflare CLI via pinned aflare-action
+        uses: alib8b8/aflare/action@97438a7002235aa3e9bf280ff8004bd281262cf5 # v0.12.0
+        with:
+          version: v0.12.0
+          safe-mode: true
+
+      - name: Verify aflare command
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v aflare
+          aflare --help
+          echo "AFLARE_ACTION_AND_CLI_SMOKE=PASS (no workflow executed)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Record scope
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Safety scope"
+            echo "- Manual dispatch only"
+            echo "- Read-only repository permission"
+            echo "- No secrets or production credentials requested"
+            echo "- KaaS server not started"
+            echo "- aflare workflow execution not requested"
+            echo "- This job validates tool installation only; it does not certify G02 runner readiness"
+          } >> "$GITHUB_STEP_SUMMARY"

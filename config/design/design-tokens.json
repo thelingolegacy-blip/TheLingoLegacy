@@ -1,26 +1,88 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "colors": {
+    "obsidian": "#050507",
     "deepOnyx": "#07050c",
+    "surface": "#101016",
+    "surfaceRaised": "#1c1c24",
     "metallicSlate": "#273246",
-    "architectGold": "#f7ca4c",
-    "neonLime": "#72ff9a",
-    "cyan": "#58efff"
+    "gold": "#f7c84b",
+    "goldSoft": "#fff2a8",
+    "royalPurple": "#6b2dff",
+    "royalPurpleSoft": "#9b7bff",
+    "cyan": "#56efff",
+    "neonLime": "#6bff8b",
+    "text": "#fff9e8",
+    "muted": "#c9b98c",
+    "dim": "#8d8064",
+    "success": "#6bff8b",
+    "warning": "#ffbf5f",
+    "danger": "#ff6b7a",
+    "focus": "#56efff"
   },
   "typography": {
     "headline": "Inter, system-ui, sans-serif",
     "body": "Inter, system-ui, sans-serif",
-    "minimumBodySizePx": 16
+    "monospace": "SFMono-Regular, Consolas, Liberation Mono, monospace",
+    "minimumBodySizePx": 16,
+    "scalePx": {
+      "xs": 12,
+      "sm": 14,
+      "md": 16,
+      "lg": 20,
+      "xl": 32,
+      "display": 88
+    },
+    "weights": {
+      "normal": 400,
+      "semibold": 650,
+      "bold": 800,
+      "black": 950
+    },
+    "lineHeight": {
+      "body": 1.65,
+      "heading": 1.05
+    }
   },
   "spacing": {
-    "basePx": 20,
+    "basePx": 16,
+    "stepsPx": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      32,
+      40,
+      48
+    ],
     "minimumTouchTargetPx": 48,
-    "radiusPx": 16
+    "radiusPx": 16,
+    "radiiPx": {
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "pill": 999
+    }
   },
   "breakpoints": {
     "mobilePx": 320,
     "tabletPx": 768,
     "desktopPx": 1200,
     "widePx": 1440
+  },
+  "elevation": {
+    "panel": "0 18px 56px rgba(0,0,0,.34)",
+    "goldGlow": "0 0 28px rgba(247,200,75,.18)",
+    "purpleGlow": "0 0 34px rgba(107,45,255,.20)"
+  },
+  "motion": {
+    "fastMs": 140,
+    "standardMs": 220,
+    "slowMs": 360,
+    "easing": "cubic-bezier(.2,.7,.2,1)",
+    "reducedMotion": "honor-prefers-reduced-motion"
   }
 }

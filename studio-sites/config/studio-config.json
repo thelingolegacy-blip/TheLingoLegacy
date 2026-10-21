@@ -28,7 +28,12 @@
     "hub": "/studio-sites/",
     "arcade": "/studio-sites/lingoarcade/",
     "slots": "/studio-sites/lingoslots/",
-    "playerDashboard": "/studio-sites/dashboard/"
+    "playerDashboard": "/studio-sites/dashboard/",
+    "doughboysOasis": "/studio-sites/games/doughboys-oasis-vertical-slice.html",
+    "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
+    "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html",
+    "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html",
+    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
   },
   "services": {
     "identity": {
@@ -54,6 +59,22 @@
     "sweepstakes": {
       "enabled": false,
       "reason": "Requires approved rules, eligibility, jurisdiction, no-purchase method where applicable, privacy and legal review."
+    },
+    "store": {
+      "mode": "local-demo-only",
+      "authoritativeBackend": false,
+      "realPayments": false,
+      "realMoneyWagering": false,
+      "cashout": false
+    },
+    "maps": {
+      "mode": "fictional-static-demo",
+      "gpsEnabled": false,
+      "providerConfigured": false
+    },
+    "api": {
+      "mode": "design-only-not-provisioned",
+      "edgeWorkerConfigured": false
     }
   },
   "gates": {
@@ -79,5 +100,12 @@
     "eventsRequireCorrelationId": true,
     "redactSecrets": true,
     "clientTelemetryIsNotReleaseEvidence": true
+  },
+  "integrations": {
+    "git": {
+      "canonicalHost": "GitHub",
+      "gitLabMirror": "not-configured",
+      "productionAuthority": "single-protected-release-pipeline"
+    }
   }
 }
