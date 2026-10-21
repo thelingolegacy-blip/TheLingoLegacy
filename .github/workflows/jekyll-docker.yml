@@ -59,6 +59,36 @@ jobs:
         with:
           node-version: 22
 
+      # Each validation step runs even if a previous validation failed, so one failure
+      # does not suppress the rest of the evidence. Checkout/setup failures still stop tests.
+      - name: Run Worker rate-limit regression tests
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/tests/worker-rate-limit.test.mjs 2>&1 | tee worker-rate-limit-tests.log
+
+      - name: Sanitize retired provider surface
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
+
+      - name: Verify Cloudflare binding contract
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+
+      - name: Validate release-critical static site
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+
       - name: Test static gate orchestrator
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
         shell: bash
@@ -72,7 +102,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check scripts/run-static-gates.mjs
-          node scripts/run-static-gates.mjs
+          node scripts/run-static-gates.mjs 2>&1 | tee static-gate-stack.log
 
       - name: Upload validation evidence
         if: always()
@@ -81,6 +111,13 @@ jobs:
           name: lingo-legacy-static-ci-evidence
           path: |
             runner-diagnostics.log
+            worker-rate-limit-tests.log
+            sanitize.log
+            bindings.log
+            validator.log
+            static-gate-orchestrator-tests.log
+            static-gate-stack.log
             static-gate-results.json
             static-gate-*.log
           if-no-files-found: warn
+          retention-days: 14
