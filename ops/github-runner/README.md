@@ -1,6 +1,6 @@
 # Lingo Legacy G02 Self-Hosted Runner
 
-Purpose: provide a repository-scoped, ephemeral self-hosted runner for the G02 execution gate.
+Purpose: provide the canonical repository-scoped G02 self-hosted runner. Current bootstrap is ephemeral; the frozen target architecture is a persistent, dedicated Linux x64 runner with approved local package-manager/Docker caches and a disposable, path-guarded workspace per job. Persistent mode is NOT implemented or accepted yet. Do not infer that the runner is active from this documentation.
 
 ## Verified repository scope
 The repository owner `thelingolegacy-blip` is a personal account, not an organization. GitHub's custom runner groups are an organization/enterprise feature; this package therefore registers a repository-level runner and does not pass `--runnergroup`. The repository itself is the access boundary. See the official [runner groups documentation](https://docs.github.com/en/actions/concepts/runners/runner-groups).
@@ -54,3 +54,8 @@ The bootstrap deletes its local `.env` on exit and leaves remote runner cleanup 
 SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → AUTHORIZATION → PROMOTION
 ```
 No acceptance means no G02 PASS and no downstream production promotion.
+
+
+## Architecture decision
+
+See [CI Locality, Cache Integrity, and Workload Economics ADR-001](../../docs/architecture/CI-LOCALITY-AND-INTEGRITY-ADR-001.md). The target preserves cache stores on local drives but never treats a previous job's workspace as trusted state. Persistent-runner migration requires a security review, guarded cleanup, exclusive workspace ownership, trusted-event policy, measured cache benefit, and full G02 acceptance. Until those conditions pass, the operational gate remains blocked.

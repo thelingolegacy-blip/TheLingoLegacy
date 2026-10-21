@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "system": "Oasis Decks",
+  "collectionBrand": "LINGO Decks",
+  "realMoneyAdvantage": false,
+  "collections": [
+    {
+      "id": "boss",
+      "name": "Boss — Lead by Example",
+      "cards": [
+        {
+          "id": "BOSS-01",
+          "title": "Take the First Shift",
+          "triggerTag": "Work",
+          "effect": "trust+2",
+          "cost": "energy-8",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Take the First Shift card; effect and cost are shown in text."
+        },
+        {
+          "id": "BOSS-02",
+          "title": "Own the Miss",
+          "triggerTag": "Repair",
+          "effect": "trust+2",
+          "cost": "cash-5",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Own the Miss card; effect and cost are shown in text."
+        },
+        {
+          "id": "BOSS-03",
+          "title": "Share the Credit",
+          "triggerTag": "Family",
+          "effect": "trust+2",
+          "cost": "none",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Share the Credit card; effect and cost are shown in text."
+        },
+        {
+          "id": "BOSS-04",
+          "title": "Delegate Fairly",
+          "triggerTag": "Work",
+          "effect": "skill+1",
+          "cost": "energy-4",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Delegate Fairly card; effect and cost are shown in text."
+        }
+      ]
+    },
+    {
+      "id": "observer",
+      "name": "Observer — Read the Room",
+      "cards": [
+        {
+          "id": "OBS-01",
+          "title": "Check the Fine Print",
+          "triggerTag": "Contract",
+          "effect": "skill+2",
+          "cost": "energy-4",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Check the Fine Print card; effect and cost are shown in text."
+        },
+        {
+          "id": "OBS-02",
+          "title": "Verify the Source",
+          "triggerTag": "Mystery",
+          "effect": "skill+1",
+          "cost": "time-1",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Verify the Source card; effect and cost are shown in text."
+        },
+        {
+          "id": "OBS-03",
+          "title": "Ask One More Question",
+          "triggerTag": "Dialogue",
+          "effect": "trust+1",
+          "cost": "time-1",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Ask One More Question card; effect and cost are shown in text."
+        },
+        {
+          "id": "OBS-04",
+          "title": "Separate Fact from Rumor",
+          "triggerTag": "Mystery",
+          "effect": "clueDiscipline+1",
+          "cost": "none",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Separate Fact from Rumor card; effect and cost are shown in text."
+        }
+      ]
+    },
+    {
+      "id": "survival",
+      "name": "Survival — Secure the Basics",
+      "cards": [
+        {
+          "id": "SUR-01",
+          "title": "Needs Before Wants",
+          "triggerTag": "Budget",
+          "effect": "wellbeing+2",
+          "cost": "none",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Needs Before Wants card; effect and cost are shown in text."
+        },
+        {
+          "id": "SUR-02",
+          "title": "Set Aside a Buffer",
+          "triggerTag": "Budget",
+          "effect": "savingsPlan+1",
+          "cost": "cash-5",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Set Aside a Buffer card; effect and cost are shown in text."
+        },
+        {
+          "id": "SUR-03",
+          "title": "Repair Before It Spreads",
+          "triggerTag": "Build",
+          "effect": "home+3",
+          "cost": "cash-8",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Repair Before It Spreads card; effect and cost are shown in text."
+        },
+        {
+          "id": "SUR-04",
+          "title": "Ask for Support Early",
+          "triggerTag": "Family",
+          "effect": "supportRoute+1",
+          "cost": "trust-1",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Ask for Support Early card; effect and cost are shown in text."
+        }
+      ]
+    },
+    {
+      "id": "wildcard",
+      "name": "Wildcard — Flip the Script",
+      "cards": [
+        {
+          "id": "WIL-01",
+          "title": "Change the Angle",
+          "triggerTag": "ProblemSolving",
+          "effect": "skill+1",
+          "cost": "time-1",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Change the Angle card; effect and cost are shown in text."
+        },
+        {
+          "id": "WIL-02",
+          "title": "Use Humor Kindly",
+          "triggerTag": "Dialogue",
+          "effect": "wellbeing+2",
+          "cost": "none",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Use Humor Kindly card; effect and cost are shown in text."
+        },
+        {
+          "id": "WIL-03",
+          "title": "Plan B on Paper",
+          "triggerTag": "Planning",
+          "effect": "resilience+1",
+          "cost": "time-1",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Plan B on Paper card; effect and cost are shown in text."
+        },
+        {
+          "id": "WIL-04",
+          "title": "Turn a Setback into a Lesson",
+          "triggerTag": "Reflection",
+          "effect": "skill+1",
+          "cost": "none",
+          "eligibleStages": [
+            "kid",
+            "teen",
+            "adult"
+          ],
+          "riskDisclosure": "Preview the cost and consequence before confirming.",
+          "cooldownDays": 1,
+          "storyConsequence": "Record the choice and its consequence in the local story log.",
+          "accessibilityDescription": "Turn a Setback into a Lesson card; effect and cost are shown in text."
+        }
+      ]
+    }
+  ],
+  "cardFields": [
+    "id",
+    "title",
+    "triggerTag",
+    "effect",
+    "cost",
+    "eligibleStages",
+    "riskDisclosure",
+    "cooldownDays",
+    "storyConsequence",
+    "accessibilityDescription"
+  ],
+  "notes": [
+    "Effects are design data pending implementation and automated tests.",
+    "No card can grant real-money value, cash-out, or paid competitive advantage.",
+    "The card titles, effects, and collection names are original to this project."
+  ]
+}

@@ -45,7 +45,7 @@ for (const id of ['lingo-core-runtime', 'lingoslots-engine', 'lingoarcade-engine
 for (const id of ['loyalty-lane-world', 'money-mile', 'power-blocks', 'desire-district', 'escape-avenue', 'rock-and-roll-row', 'intelligence-lab']) {
   if (!w.ids.has(id)) errors.push(`world registry missing canonical world: ${id}`);
 }
-for (const world of w.items) {
+for (fconst world of w.items) {
   if (!e.ids.has(world.engine)) errors.push(`world ${world.id}: references unknown engine ${world.engine}`);
   if (!world.assetNamespace || !world.accessPolicy) errors.push(`world ${world.id}: assetNamespace/accessPolicy contract missing`);
 }

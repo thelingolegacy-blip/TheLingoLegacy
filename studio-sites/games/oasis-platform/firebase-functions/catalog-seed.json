@@ -1,0 +1,162 @@
+[
+  {
+    "id": "tee-legacy",
+    "name": "Legacy Block Tee",
+    "category": "clothing",
+    "price": 35,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "hoodie-copper",
+    "name": "Copperline Hoodie",
+    "category": "clothing",
+    "price": 80,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "sneakers",
+    "name": "Corner-Cut Sneakers",
+    "category": "clothing",
+    "price": 65,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "cap",
+    "name": "Money Mile Snapback",
+    "category": "clothing",
+    "price": 30,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "backpack",
+    "name": "Everyday Utility Pack",
+    "category": "gear",
+    "price": 55,
+    "kind": "gear",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "headphones",
+    "name": "Studio Headphones",
+    "category": "gear",
+    "price": 70,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "watch",
+    "name": "Block-Time Watch",
+    "category": "gear",
+    "price": 90,
+    "kind": "cosmetic",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "bike",
+    "name": "Neighborhood Bike",
+    "category": "transport",
+    "price": 140,
+    "kind": "transport",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "board",
+    "name": "Street Cruiser Board",
+    "category": "transport",
+    "price": 95,
+    "kind": "transport",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "scooter",
+    "name": "Electric Scooter Concept",
+    "category": "transport",
+    "price": 220,
+    "kind": "transport",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "savings",
+    "name": "Savings Habit Badge",
+    "category": "banking",
+    "price": 20,
+    "kind": "service",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "budgetbook",
+    "name": "Pocket Budget Book",
+    "category": "banking",
+    "price": 25,
+    "kind": "service",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "repairkit",
+    "name": "Street Repair Kit",
+    "category": "tools",
+    "price": 75,
+    "kind": "tool",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "flashlight",
+    "name": "Oasis Flashlight",
+    "category": "tools",
+    "price": 45,
+    "kind": "tool",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "mapcase",
+    "name": "Waterproof Map Case",
+    "category": "tools",
+    "price": 40,
+    "kind": "tool",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  },
+  {
+    "id": "workbench",
+    "name": "Home Workshop Upgrade",
+    "category": "tools",
+    "price": 180,
+    "kind": "upgrade",
+    "active": true,
+    "currency": "DOUGH",
+    "cashValue": false
+  }
+]
