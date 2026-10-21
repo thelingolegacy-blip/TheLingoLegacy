@@ -174,13 +174,15 @@
     const lesson=lessons[button.dataset.answer];
     feedback.textContent=lesson.text;
     bar.style.width=lesson.value+'%';
-    progress.setAttribute('aria-valuenow',String(lesson.value));\n    progress.setAttribute('aria-valuetext',lesson.value===100?'Quest completed':'Quest not completed');
+    progress.setAttribute('aria-valuenow',String(lesson.value));
+    progress.setAttribute('aria-valuetext',lesson.value===100?'Quest completed':'Quest not completed');
   });
   document.getElementById('kc-quest-reset').addEventListener('click',()=>{
     choices.innerHTML=original;
     feedback.textContent='Choose a path to reveal the lesson. No account or download required.';
     bar.style.width='0%';
-    progress.setAttribute('aria-valuenow','0');\n    progress.setAttribute('aria-valuetext','Quest not completed');
+    progress.setAttribute('aria-valuenow','0');
+    progress.setAttribute('aria-valuetext','Quest not completed');
   });
 })();
 </script>
