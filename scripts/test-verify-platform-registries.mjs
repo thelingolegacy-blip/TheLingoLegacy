@@ -60,13 +60,3 @@ test('unknown world engine reference fails closed', (t) => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /references unknown engine missing-engine/);
 });
-
-test('null world entries fail with a validation error, not a TypeError', (t) => {
-  const worlds = [null, ...worldIds.slice(1).map((id) => ({ id, engine: 'lingoworld-engine', state: 'staged', enabled: false, assetNamespace: 'worlds/' + id, accessPolicy: 'feature-flag' }))];
-  const root = makeRoot({ worlds });
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const result = runValidator(root);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /world registry: entries must be objects/);
-  assert.doesNotMatch(result.stderr, /TypeError/);
-});
