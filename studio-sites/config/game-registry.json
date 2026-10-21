@@ -25,7 +25,8 @@
       "genre": "5-reel virtual slot game",
       "status": "design-spec",
       "storyMode": false,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "spades-is-my-lingo",
@@ -33,7 +34,8 @@
       "genre": "Trick-taking card game",
       "status": "design-spec",
       "storyMode": false,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "uhno-lingo-university",
@@ -41,7 +43,8 @@
       "genre": "Party card game / campus comedy",
       "status": "design-spec",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "kottons-code",
@@ -49,7 +52,8 @@
       "genre": "Family adventure / learning",
       "status": "design-spec",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "tricias-escape",
@@ -57,15 +61,17 @@
       "genre": "Puzzle mystery",
       "status": "design-spec",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "doughboys-oasis",
       "title": "Doughboy’s Oasis",
-      "genre": "Exploration adventure",
-      "status": "design-spec",
+      "genre": "Open-world neighborhood adventure / life simulation",
+      "status": "local-prototype",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "none; local demo only; no purchases or cash-out",
+      "route": "/studio-sites/games/doughboys-oasis-vertical-slice.html"
     },
     {
       "id": "crazy-weasols",
@@ -73,7 +79,8 @@
       "genre": "Arcade chaos / physics",
       "status": "design-spec",
       "storyMode": false,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "silly-in-philly",
@@ -81,7 +88,8 @@
       "genre": "Open-world story / life simulation",
       "status": "design-spec",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "jersey-shore-undead",
@@ -89,7 +97,8 @@
       "genre": "Co-op survival horror",
       "status": "design-spec",
       "storyMode": true,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "lingo-eruptions",
@@ -97,7 +106,8 @@
       "genre": "Word / chain-reaction puzzle",
       "status": "design-spec",
       "storyMode": false,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
     },
     {
       "id": "cashman-lingo-mania",
@@ -105,7 +115,44 @@
       "genre": "Arcade score attack",
       "status": "design-spec",
       "storyMode": false,
-      "monetization": "not enabled"
+      "monetization": "not enabled",
+      "route": "/studio-sites/#worlds"
+    },
+    {
+      "id": "doughboys-oasis-store",
+      "title": "Oasis Exchange Store",
+      "genre": "In-world local demo marketplace",
+      "status": "local-prototype",
+      "storyMode": false,
+      "monetization": "earned demo currency only; no real payments, wagering or cash-out",
+      "route": "/studio-sites/games/doughboys-oasis-store.html"
+    },
+    {
+      "id": "doughboys-oasis-856-region",
+      "title": "DOUGHBOY'S OASIS — 856 Region Atlas",
+      "genre": "Interactive world atlas / district discovery",
+      "status": "local-prototype",
+      "storyMode": false,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-856-region.html"
+    },
+    {
+      "id": "doughboys-oasis-mode-platform-hub",
+      "title": "DOUGHBOY'S OASIS — Mode & Platform Hub",
+      "genre": "Solo story / race mode / cross-platform controls",
+      "status": "local-prototype",
+      "storyMode": true,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html"
+    },
+    {
+      "id": "doughboys-oasis-life-legacy-lab",
+      "title": "DOUGHBOY'S OASIS — Life, Legacy & Building Lab",
+      "genre": "Life simulation / learning / home building",
+      "status": "local-prototype",
+      "storyMode": true,
+      "monetization": "none; local demo only",
+      "route": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
     }
   ],
   "rules": {
