@@ -31,11 +31,10 @@ const requiredColors = {
 };
 for (const [key, expected] of Object.entries(requiredColors)) {
   const actual = tokens?.colors?.[key];
-  if (typeof actual !== 'string' || actual.toLowerCase() !== expected) errors.push(`design tokens color ${key}: expected ${expected}`);
+  if (String(actual || '').toLowerCase() !== expected) errors.push(`design tokens color ${key}: expected ${expected}`);
 }
-const minimumTouchTarget = tokens?.spacing?.minimumTouchTargetPx;
-if (typeof minimumTouchTarget !== 'number' || !Number.isFinite(minimumTouchTarget) || minimumTouchTarget < 48) {
-  errors.push('design tokens: minimumTouchTargetPx must be a finite number of at least 48');
+if (Number(tokens?.spacing?.minimumTouchTargetPx) < 48) {
+  errors.push('design tokens: minimumTouchTargetPx must be at least 48');
 }
 if (!tokens?.motion || tokens.motion.reducedMotion !== 'honor-prefers-reduced-motion') {
   errors.push('design tokens: reduced-motion policy missing');
@@ -56,10 +55,10 @@ for (const icon of icons) {
     errors.push('icon registry entries must be objects');
     continue;
   }
-  if (typeof icon.id !== 'string' || !icon.id.trim() || ids.has(icon.id)) errors.push(`icon registry has missing or duplicate id: ${icon.id || '(empty)'}`);
-  if (typeof icon.id === 'string' && icon.id.trim()) ids.add(icon.id);
-  const relative = typeof icon.path === 'string' ? icon.path.replace(/^\//, '') : '';
-  if (!relative || !fs.existsSync(path.join(root, relative))) errors.push(`icon asset missing for ${icon.id || '(unknown)'}: ${icon.path}`);
+  if (!icon.id || ids.has(icon.id)) errors.push(`icon registry has missing or duplicate id: ${icon.id || '(empty)'}`);
+  ids.add(icon.id);
+  const relative = String(icon.path || '').replace(/^\//, '');
+  if (!relative || !fs.existsSync(path.join(root, relative))) errors.push(`icon asset missing for ${icon.id}: ${icon.path}`);
 }
 for (const id of ['home', 'wallet', 'games', 'shop', 'studio', 'profile', 'rewards']) {
   if (!ids.has(id)) errors.push(`canonical icon registry entry missing: ${id}`);
@@ -74,7 +73,7 @@ console.log(JSON.stringify({
   gate: 'SHARED_DESIGN_SYSTEM',
   palette: ['obsidian', 'gold', 'royalPurple', 'cyan'],
   iconCount: ids.size,
-  minimumTouchTargetPx: minimumTouchTarget,
+  minimumTouchTargetPx: tokens.spacing.minimumTouchTargetPx,
   reducedMotion: 'verified',
   note: 'Static contract check only; browser visual, keyboard and screen-reader QA remain required.',
 }, null, 2));

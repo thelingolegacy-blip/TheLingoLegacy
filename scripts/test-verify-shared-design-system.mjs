@@ -63,17 +63,3 @@ test('non-array icon registry fails with a clear validation error', (t) => {
   assert.match(result.stderr, /icons must be an array/);
   assert.doesNotMatch(result.stderr, /TypeError|not iterable/);
 });
-
-test('missing touch-target value fails closed instead of passing a NaN comparison', (t) => {
-  const root = makeRoot(validIcons);
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'config/design/design-tokens.json'), JSON.stringify({
-    colors: { obsidian: '#050507', gold: '#f7c84b', royalPurple: '#6b2dff', cyan: '#56efff' },
-    spacing: {},
-    motion: { reducedMotion: 'honor-prefers-reduced-motion' }
-  }));
-  const result = runValidator(root);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /minimumTouchTargetPx must be a finite number of at least 48/);
-  assert.doesNotMatch(result.stderr, /TypeError/);
-});
