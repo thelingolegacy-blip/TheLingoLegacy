@@ -1,12 +1,14 @@
 name: Lingo Legacy Static CI
+run-name: Static CI · ${{ github.event_name }} · ${{ github.ref_name }} · ${{ github.sha }}
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  workflow_dispatch:
 
-# Static validation and artifact upload require no repository or Actions write token.
+# Static validation and evidence upload require no repository or Actions write token.
 permissions:
   contents: read
 
@@ -16,28 +18,91 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    # Pin the image to avoid ubuntu-latest image migrations changing the test environment.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
+      - name: Capture runner and run identity
+        id: runner-diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            printf 'captured_at_utc=%s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            printf 'workflow=%s\n' "${GITHUB_WORKFLOW:-unknown}"
+            printf 'event=%s\n' "${GITHUB_EVENT_NAME:-unknown}"
+            printf 'ref=%s\n' "${GITHUB_REF:-unknown}"
+            printf 'sha=%s\n' "${GITHUB_SHA:-unknown}"
+            printf 'run_id=%s\n' "${GITHUB_RUN_ID:-unknown}"
+            printf 'run_attempt=%s\n' "${GITHUB_RUN_ATTEMPT:-unknown}"
+            printf 'runner_name=%s\n' "${RUNNER_NAME:-unknown}"
+            printf 'runner_os=%s\n' "${RUNNER_OS:-unknown}"
+            printf 'runner_arch=%s\n' "${RUNNER_ARCH:-unknown}"
+            printf 'image_os=%s\n' "${ImageOS:-unknown}"
+            printf 'image_version=%s\n' "${ImageVersion:-unknown}"
+            printf '\n--- uname ---\n'
+            uname -a || true
+            printf '\n--- os-release ---\n'
+            cat /etc/os-release || true
+          } | tee runner-diagnostics.log
+
       - name: Checkout
+        id: checkout
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup Node.js
+        id: setup-node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # Each validation step runs even if a previous validation failed, so one failure
+      # does not suppress the rest of the evidence. Checkout/setup failures still stop tests.
+      - name: Run Worker rate-limit regression tests
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/tests/worker-rate-limit.test.mjs 2>&1 | tee worker-rate-limit-tests.log
+
       - name: Sanitize retired provider surface
-        run: node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/sanitize-cloudflare-only-surface.mjs 2>&1 | tee sanitize.log
 
       - name: Verify Cloudflare binding contract
-        run: node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify-cloudflare-bindings.mjs 2>&1 | tee bindings.log
 
       - name: Validate release-critical static site
-        run: node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/validate-static-site.mjs 2>&1 | tee validator.log
+
+      - name: Test static gate orchestrator
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test scripts/test-run-static-gates.mjs 2>&1 | tee static-gate-orchestrator-tests.log
+
+      - name: Run complete static gate stack
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/run-static-gates.mjs
+          node scripts/run-static-gates.mjs 2>&1 | tee static-gate-stack.log
 
       - name: Upload validation evidence
         if: always()
@@ -45,7 +110,14 @@ jobs:
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
+            runner-diagnostics.log
+            worker-rate-limit-tests.log
             sanitize.log
             bindings.log
             validator.log
+            static-gate-orchestrator-tests.log
+            static-gate-stack.log
+            static-gate-results.json
+            static-gate-*.log
           if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/lingo-approval-v1.schema.json",
+  "title": "LINGO Signed Approval Envelope v1",
+  "description": "A short-lived, cryptographically signed approval for one exact commit and action. The signing private key must remain outside the repository and CI runner.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approval_reference",
+    "approver_identity",
+    "approved_sha",
+    "approved_action",
+    "issued_at_utc",
+    "expires_at_utc",
+    "nonce",
+    "key_id",
+    "signature_base64"
+  ],
+  "properties": {
+    "schema_version": { "const": "lingo.approval.v1" },
+    "approval_reference": { "type": "string", "minLength": 1 },
+    "approver_identity": { "type": "string", "minLength": 1 },
+    "approved_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "approved_action": { "type": "string", "minLength": 1 },
+    "issued_at_utc": { "type": "string", "format": "date-time" },
+    "expires_at_utc": { "type": "string", "format": "date-time" },
+    "nonce": { "type": "string", "minLength": 1 },
+    "key_id": { "type": "string", "minLength": 1 },
+    "signature_base64": { "type": "string", "contentEncoding": "base64", "minLength": 1 }
+  }
+}

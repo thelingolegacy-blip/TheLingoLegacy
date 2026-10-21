@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "registryId": "lingo-platform-engine-registry",
+  "state": "staged",
+  "enabled": false,
+  "releaseGate": "G02",
+  "engines": [
+    {
+      "id": "lingo-core-runtime",
+      "name": "LINGO Core Runtime",
+      "version": "1.0.0",
+      "state": "staged",
+      "enabled": false,
+      "responsibilities": ["module discovery", "runtime contracts", "feature flags", "health and gate reporting"],
+      "requires": ["verified module registry", "versioned API contracts", "release gate evidence"],
+      "persistence": "No direct client writes; mutations require authorized backend services"
+    },
+    {
+      "id": "lingoslots-engine",
+      "name": "LINGOslots Engine",
+      "version": "1.0.0",
+      "state": "staged",
+      "enabled": false,
+      "responsibilities": ["slot game sessions", "payline and reel rules", "demo economy integration", "game telemetry"],
+      "requires": ["server-authoritative game rules", "idempotent transaction contract", "responsible-play controls"],
+      "persistence": "Server-authoritative; no client-authoritative wallet or reward settlement"
+    },
+    {
+      "id": "lingoarcade-engine",
+      "name": "LINGOarcade Engine",
+      "version": "1.0.0",
+      "state": "staged",
+      "enabled": false,
+      "responsibilities": ["arcade session lifecycle", "score validation", "leaderboards", "progression events"],
+      "requires": ["server-side score validation", "anti-abuse controls", "versioned leaderboard contract"],
+      "persistence": "Validated server writes only"
+    },
+    {
+      "id": "lingoworld-engine",
+      "name": "LINGO World Engine",
+      "version": "1.0.0",
+      "state": "staged",
+      "enabled": false,
+      "responsibilities": ["world registry", "world navigation", "world access state", "world-specific presentation"],
+      "requires": ["canonical world IDs", "access policy", "asset manifest versioning"],
+      "persistence": "World state must use approved identity and persistence services"
+    },
+    {
+      "id": "lingo-experience-engine",
+      "name": "LINGO Experience Engine",
+      "version": "1.0.0",
+      "state": "staged",
+      "enabled": false,
+      "responsibilities": ["XP events", "progression rules", "mission completion", "reward eligibility"],
+      "requires": ["idempotent XP events", "anti-replay checks", "auditable reward policy"],
+      "persistence": "No direct balance mutation; rewards settle through authorized backend"
+    }
+  ],
+  "activationPolicy": "All engines remain disabled until G02 and downstream certification gates pass."
+}

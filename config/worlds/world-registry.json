@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "registryId": "lingo-world-registry",
+  "state": "staged",
+  "enabled": false,
+  "releaseGate": "G02",
+  "worlds": [
+    {
+      "id": "loyalty-lane-world",
+      "name": "Loyalty Lane World",
+      "owner": "The Lingo Legacy",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/loyalty-lane",
+      "accessPolicy": "feature-flag-and-entitlement"
+    },
+    {
+      "id": "money-mile",
+      "name": "Money Mile",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/money-mile",
+      "accessPolicy": "story-progression-and-feature-flag"
+    },
+    {
+      "id": "power-blocks",
+      "name": "Power Blocks",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/power-blocks",
+      "accessPolicy": "story-progression-and-feature-flag"
+    },
+    {
+      "id": "desire-district",
+      "name": "Desire District",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/desire-district",
+      "accessPolicy": "story-progression-and-feature-flag"
+    },
+    {
+      "id": "escape-avenue",
+      "name": "Escape Avenue",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/escape-avenue",
+      "accessPolicy": "story-progression-and-feature-flag"
+    },
+    {
+      "id": "rock-and-roll-row",
+      "name": "Rock & Roll Row",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/rock-and-roll-row",
+      "accessPolicy": "story-progression-and-feature-flag"
+    },
+    {
+      "id": "intelligence-lab",
+      "name": "Intelligence Lab",
+      "owner": "OASIS: Crews & Legacies",
+      "engine": "lingoworld-engine",
+      "state": "staged",
+      "enabled": false,
+      "assetNamespace": "worlds/intelligence-lab",
+      "accessPolicy": "story-progression-and-feature-flag"
+    }
+  ],
+  "activationPolicy": "Registry metadata does not imply world assets are published or worlds are live."
+}
