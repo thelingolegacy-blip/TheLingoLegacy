@@ -1,0 +1,29 @@
+name: Crimson Smoke UI — static validation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: crimson-smoke-ui-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate design assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s index.html
+          test -s assets/crimson-smoke.css
+          test -s assets/crimson-smoke.js
+          test -s assets/lingo-legacy-crimson-mark.svg
+          grep -q 'crimson-smoke.css' index.html
+          grep -q 'crimson-smoke.js' index.html
+          grep -q 'prefers-reduced-motion' assets/crimson-smoke.css
+          grep -q 'aria-pressed' assets/crimson-smoke.js
+          grep -q '<title' assets/lingo-legacy-crimson-mark.svg
+          echo "Static design contract checks passed."
