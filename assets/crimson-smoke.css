@@ -40,11 +40,11 @@ h1 span{background:linear-gradient(180deg,#fff 0,#f0f0f2 42%,#a7a8ae 100%);-webk
 .xpbar span{background:linear-gradient(90deg,#720c1e,#e21b3c,#f4f4f5);box-shadow:0 0 20px rgba(220,20,60,.3)}
 .footer{border-top-color:rgba(220,20,60,.3)}
 .disclaimer{border-color:rgba(220,20,60,.35);color:#f3dfe3}
-.ll-audio-toggle{position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(220,20,60,.65);border-radius:999px;padding:12px 15px;background:rgba(13,13,16,.88);color:#fff;font:800 12px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 12px 35px rgba(0,0,0,.35);backdrop-filter:blur(12px);cursor:pointer}
+.ll-audio-toggle{position:fixed;left:18px;right:auto;bottom:18px;z-index:90;display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(220,20,60,.65);border-radius:999px;padding:12px 15px;background:rgba(13,13,16,.88);color:#fff;font:800 12px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 12px 35px rgba(0,0,0,.35);backdrop-filter:blur(12px);cursor:pointer}
 .ll-audio-toggle svg{width:16px;height:16px;flex:none}
 .ll-audio-toggle:focus-visible{outline:2px solid #ff526b;outline-offset:3px}
 .ll-audio-toggle[aria-pressed=true]{background:#b5122d}
-.ll-audio-note{position:fixed;right:18px;bottom:68px;z-index:90;max-width:260px;padding:10px 12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151518;color:#eee;font-size:12px;display:none}
+.ll-audio-note{position:fixed;left:18px;right:auto;bottom:68px;z-index:90;max-width:260px;padding:10px 12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151518;color:#eee;font-size:12px;display:none}
 .ll-audio-note[data-visible=true]{display:block}
-@media(max-width:620px){.ll-audio-toggle{right:12px;bottom:12px;padding:11px 12px}.ll-audio-toggle span{display:none}}
+@media(max-width:620px){.ll-audio-toggle{left:12px;right:auto;bottom:12px;padding:11px 12px}.ll-audio-toggle span{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
