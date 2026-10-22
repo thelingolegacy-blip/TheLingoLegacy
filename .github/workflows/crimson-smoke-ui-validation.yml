@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate design assets
+      - name: Validate design assets and homepage integration
         shell: bash
         run: |
           set -euo pipefail
@@ -21,9 +21,32 @@ jobs:
           test -s assets/crimson-smoke.css
           test -s assets/crimson-smoke.js
           test -s assets/lingo-legacy-crimson-mark.svg
-          grep -q 'crimson-smoke.css' index.html
-          grep -q 'crimson-smoke.js' index.html
-          grep -q 'prefers-reduced-motion' assets/crimson-smoke.css
-          grep -q 'aria-pressed' assets/crimson-smoke.js
-          grep -q '<title' assets/lingo-legacy-crimson-mark.svg
-          echo "Static design contract checks passed."
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          css = Path("assets/crimson-smoke.css").read_text(encoding="utf-8")
+          js = Path("assets/crimson-smoke.js").read_text(encoding="utf-8")
+          svg = Path("assets/lingo-legacy-crimson-mark.svg").read_text(encoding="utf-8")
+
+          head_match = re.search(r"<head\\b[^>]*>(.*?)</head>", html, re.I | re.S)
+          assert head_match, "Homepage must contain a head element"
+          head = head_match.group(1)
+          css_link = head.rfind('href="/assets/crimson-smoke.css"')
+          last_inline_style = head.lower().rfind("</style>")
+          assert css_link >= 0, "Crimson stylesheet must be linked"
+          assert css_link > last_inline_style, "Crimson stylesheet must follow inline head styles"
+
+          body_match = re.search(r"<body\\b[^>]*>", html, re.I)
+          assert body_match, "Homepage must contain a body element"
+          assert len(re.findall(r"\\bclass\\s*=", body_match.group(0), re.I)) == 1, "Body must have exactly one class attribute"
+
+          assert 'src="/assets/crimson-smoke.js"' in html, "Sound control script must be linked"
+          assert "/assets/lingo-legacy-crimson-mark.svg" in html, "Crimson mark must be referenced"
+          assert "prefers-reduced-motion" in css, "Reduced-motion support is required"
+          assert "aria-pressed" in js, "Sound toggle must expose pressed state"
+          assert re.search(r"<title[\\s>]", svg, re.I), "SVG must contain a title"
+          assert "autoplay" not in js.lower(), "Sound script must not autoplay audio"
+          print("Crimson Smoke UI source checks passed.")
+          PY
