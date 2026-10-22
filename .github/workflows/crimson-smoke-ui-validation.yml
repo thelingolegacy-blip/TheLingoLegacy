@@ -45,6 +45,8 @@ jobs:
           assert 'src="/assets/crimson-smoke.js"' in html, "Sound control script must be linked"
           assert "/assets/lingo-legacy-crimson-mark.svg" in html, "Crimson mark must be referenced"
           assert "prefers-reduced-motion" in css, "Reduced-motion support is required"
+          assert ".ll-audio-toggle{position:fixed;left:18px;right:auto;bottom:18px;" in css, "Audio control must not overlap bottom-right askLINGO launcher"
+          assert "@media(max-width:620px){.ll-audio-toggle{left:12px;right:auto;bottom:12px;" in css, "Mobile audio control must remain separated from askLINGO launcher"
           assert "aria-pressed" in js, "Sound toggle must expose pressed state"
           assert re.search(r"<title[\s>]", svg, re.I), "SVG must contain a title"
           assert "btn.addEventListener('click'" in js and "osc.start()" in js, "Sound playback must be initiated by explicit user interaction"
