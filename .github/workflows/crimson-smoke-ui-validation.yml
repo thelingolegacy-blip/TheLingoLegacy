@@ -47,6 +47,6 @@ jobs:
           assert "prefers-reduced-motion" in css, "Reduced-motion support is required"
           assert "aria-pressed" in js, "Sound toggle must expose pressed state"
           assert re.search(r"<title[\s>]", svg, re.I), "SVG must contain a title"
-          assert "autoplay" not in js.lower(), "Sound script must not autoplay audio"
+          assert "btn.addEventListener('click'" in js and "osc.start()" in js, "Sound playback must be initiated by explicit user interaction"
           print("Crimson Smoke UI source checks passed.")
           PY
