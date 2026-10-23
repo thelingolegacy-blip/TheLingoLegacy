@@ -199,6 +199,39 @@ function platformStatus(request, env) {
   };
 }
 
+function legacyHealth(request, env) {
+  if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  return json({
+    ok: true,
+    status: 'serving',
+    runtime: RUNTIME_VERSION,
+    generated_at: new Date().toISOString(),
+    release: { status: 'PROTECTED_HOLD', promotion_authorized: false, activation_authorized: false },
+    dependencies: { verified: false },
+    note: 'Process health only; origin, Firestore, commerce, and release readiness are not certified by this endpoint.',
+  }, 200, request, env);
+}
+
+function unavailableMetrics(request, env) {
+  if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  return json({
+    ok: false,
+    available: false,
+    error: 'Metrics backend is not configured.',
+    release_status: 'PROTECTED_HOLD',
+  }, 503, request, env);
+}
+
+function unavailableRewardClaim(request, env) {
+  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  return json({
+    ok: false,
+    available: false,
+    error: 'Rewards claims are unavailable until the durable ledger and authorization checks are configured.',
+    release_status: 'PROTECTED_HOLD',
+  }, 503, request, env);
+}
+
 async function renderDynamicHtml(request, env, response) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
@@ -223,12 +256,15 @@ export default {
         return withSecurityHeaders(Response.redirect(canonical.toString(), 301), request, env);
       }
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
+      if (url.pathname === '/api/health') return legacyHealth(request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
-      if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
+      if (url.pathname === '/api/checkout' || url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
+      if (url.pathname === '/api/metrics') return unavailableMetrics(request, env);
+      if (url.pathname === '/api/rewards/claim') return unavailableRewardClaim(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       const assetResponse = await env.ASSETS.fetch(request);
