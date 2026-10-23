@@ -22,18 +22,13 @@ const DOMAIN_ROUTING = {
 // JWT Token validation for sub-domain requests
 function validateAuthToken(request) {
   const authHeader = request.headers.get('Authorization') || '';
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
 
   if (!token) return { valid: false, error: 'No authorization token' };
 
-  // Basic validation structure (replace with real JWT validation)
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return { valid: false, error: 'Invalid token format' };
-    return { valid: true, token };
-  } catch (error) {
-    return { valid: false, error: error.message };
-  }
+  // Fail closed until a cryptographic identity-provider verifier is configured.
+  // JWT shape alone is not proof of signature, issuer, audience, or expiry.
+  return { valid: false, error: 'Token verification is not configured' };
 }
 
 // Route requests to appropriate sub-domain handler
@@ -103,14 +98,11 @@ async function handleAuthService(request, env, url, corsHeaders) {
   }
 
   if (path === '/verify' && request.method === 'POST') {
-    const token = request.headers.get('Authorization')?.replace('Bearer ', '');
-    return json({ ok: true, verified: Boolean(token) }, 200, request, env);
+    return json({ ok: false, verified: false, error: 'Identity verification is not configured.' }, 503, request, env);
   }
 
   if (path === '/login' && request.method === 'POST') {
-    const body = await parseJson(request);
-    // Implement actual login logic with Firebase Auth
-    return json({ ok: true, message: 'Login endpoint active', token: 'placeholder' }, 200, request, env);
+    return json({ ok: false, error: 'Authentication provider is not configured.' }, 503, request, env);
   }
 
   return json({ ok: false, error: 'Auth endpoint not found' }, 404, request, env);
