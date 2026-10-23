@@ -263,8 +263,11 @@ body.vegas-studio-mode .reel {
 }
 
 body.vegas-studio-mode .marquee {
-  background:
-    linear-gradient(90deg, rgba(247, 202, 76, 0.18), rgba(84, 232, 255, 0.08), rgba(255, 53, 95, 0.12), rgba(247, 202, 76, 0.18));
+  color: #fff;
+  background: rgba(0, 0, 0, .94);
+  border: 1px solid rgba(247, 202, 76, .5);
+  border-radius: 12px;
+  padding: 8px 12px;
   box-shadow: inset 0 0 26px rgba(247, 202, 76, 0.08);
 }
 
