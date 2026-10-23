@@ -34,6 +34,7 @@ const fixtureWorker = [
   "url.pathname.startsWith('/api/')",
   'renderDynamicHtml',
   'env.ASSETS.fetch(request)',
+  "'x-frame-options': 'DENY'",
 ].join('\n');
 
 function makeWorkspace({ failOne = false } = {}) {
