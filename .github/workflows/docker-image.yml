@@ -1,0 +1,45 @@
+name: G02 Runner Image Build (no publish)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-runner-image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-runner-image:
+    name: Build and inspect the dedicated G02 runner image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build runner image only (no registry push)
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="lingo-g02-runner:ci-${GITHUB_SHA}"
+          docker build --pull --file ops/github-runner/Dockerfile --tag "$image" ops/github-runner
+
+      - name: Verify image runs as non-root with the expected entrypoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="lingo-g02-runner:ci-${GITHUB_SHA}"
+          user="$(docker image inspect --format '{{.Config.User}}' "$image")"
+          entrypoint="$(docker image inspect --format '{{json .Config.Entrypoint}}' "$image")"
+          test "$user" = "runner"
+          test "$entrypoint" = '["/entrypoint.sh"]'
+          echo "RUNNER_IMAGE_BUILD=PASS"
+          echo "RUNNER_IMAGE_USER=$user"
+          echo "RUNNER_IMAGE_ENTRYPOINT=$entrypoint"

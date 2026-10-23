@@ -27,9 +27,5 @@
     const board=document.getElementById('battleLines');const buttons=[...document.querySelectorAll('.choice')];function render(key){board.innerHTML=rounds[key].map(([n,l])=>`<div class="verse pop-hard"><strong>${n}</strong>${l}</div>`).join('');buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.round===key)));}buttons.forEach(b=>b.addEventListener('click',()=>render(b.dataset.round)));render('quick');
   </script>
 
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

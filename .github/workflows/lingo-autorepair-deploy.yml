@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in scripts/sanitize-cloudflare-only-surface.mjs scripts/verify-cloudflare-only.mjs scripts/verify-cloudflare-bindings.mjs scripts/verify-production-authority.mjs scripts/verify-dynamic-runtime.mjs; do
+          for f in scripts/sanitize-cloudflare-only-surface.mjs scripts/verify-cloudflare-only.mjs scripts/verify-cloudflare-bindings.mjs scripts/verify-production-authority.mjs scripts/verify-dynamic-runtime.mjs scripts/verify-release-config-consistency.mjs; do
             if [ -f "$f" ]; then node "$f"; fi
           done
       - name: Validate Wrangler configuration
@@ -98,7 +98,9 @@ jobs:
 
   deploy-cloudflare:
     needs: repair
-    if: ${{ success() && inputs.deploy == true }}
+    # HARD HOLD: a manual deploy=true input is not release authorization.
+    # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: production
     steps:

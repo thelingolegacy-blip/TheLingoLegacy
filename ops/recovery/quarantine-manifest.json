@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "mode": "inventory_only",
+  "deletion_enabled": false,
+  "required_before_retirement": [
+    "exact_resource_identifier",
+    "owner_confirmation",
+    "dependency_and_reference_scan",
+    "last_seen_timestamp",
+    "backup_or_export_sha256",
+    "rollback_procedure",
+    "independent_reviewer",
+    "explicit_retirement_approval"
+  ],
+  "candidates": [
+    {
+      "id": "runner-service-registration",
+      "resource_type": "self-hosted-runner-host-service",
+      "candidate_location": "authorized runner host; service and _diag logs",
+      "current_disposition": "investigate_only",
+      "evidence_required": [
+        "actual host identity",
+        "service state and last poll timestamp",
+        "sanitized service logs",
+        "repository/org runner group and label access"
+      ],
+      "prohibited_until_evidence": ["unregister", "delete", "reinstall", "rotate credentials"]
+    },
+    {
+      "id": "stale-workflow-or-duplicate-trigger",
+      "resource_type": "github-actions-workflow",
+      "candidate_location": ".github/workflows/",
+      "current_disposition": "inventory_only",
+      "evidence_required": [
+        "workflow run history",
+        "branch/path trigger map",
+        "references from branch protection and documentation",
+        "replacement workflow accepted and verified"
+      ],
+      "prohibited_until_evidence": ["delete workflow", "disable workflow", "rewrite main"]
+    },
+    {
+      "id": "duplicate-cloudflare-route-or-dns-record",
+      "resource_type": "cloudflare-zone-resource",
+      "candidate_location": "Cloudflare zone and Worker route inventory",
+      "current_disposition": "inventory_only",
+      "evidence_required": [
+        "exact record/route ID",
+        "independent request trace",
+        "traffic/dependency assessment",
+        "export and rollback plan"
+      ],
+      "prohibited_until_evidence": ["delete DNS", "delete route", "deploy Worker", "purge production state"]
+    },
+    {
+      "id": "stale-build-or-ci-artifact",
+      "resource_type": "github-actions-artifact",
+      "candidate_location": "workflow run artifacts",
+      "current_disposition": "inventory_only",
+      "evidence_required": [
+        "run ID and source SHA",
+        "retention/forensic review",
+        "artifact hash or export",
+        "confirmation artifact is not required for acceptance"
+      ],
+      "prohibited_until_evidence": ["delete artifact", "erase logs", "rewrite evidence"]
+    }
+  ]
+}

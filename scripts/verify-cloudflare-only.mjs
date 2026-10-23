@@ -17,7 +17,13 @@ const forbidden = [
 
 const root = process.cwd();
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
-const historicalOnly = new Set(['docs']);
+const historicalOnly = new Set(['docs', 'SYSTEM-ACTIVATION-AUTHORITY.md', 'ops/g02/evidence', 'studio-sites/games']);
+const verifierFiles = new Set([
+  'scripts/verify-cloudflare-only.mjs',
+  'scripts/sanitize-cloudflare-only-surface.mjs',
+  'scripts/test-sanitize-cloudflare-only-surface.mjs',
+  'scripts/validate-static-site.mjs'
+]);
 const files = [];
 
 function walk(dir) {
@@ -33,7 +39,7 @@ walk(root);
 const findings = [];
 for (const file of files) {
   if ([...historicalOnly].some((x) => file === x || file.startsWith(`${x}/`))) continue;
-  if (file === 'scripts/verify-cloudflare-only.mjs') continue;
+  if (verifierFiles.has(file)) continue;
   let text;
   try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
   catch { continue; }

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "storyArc": "Doughboy's Past — Evidence Unresolved",
+  "canonSecret": "UNASSIGNED — creator approval required",
+  "revealEnabled": false,
+  "distinctions": [
+    "observed_evidence",
+    "character_testimony",
+    "rumor",
+    "player_inference"
+  ],
+  "clues": [
+    {
+      "id": "DBP-CLUE-01",
+      "title": "The Old Ledger",
+      "kind": "observed_evidence",
+      "prerequisites": [],
+      "text": "A dated entry uses a name Doughboy says he does not recognize.",
+      "reliability": "physical evidence, meaning unverified",
+      "unlocks": [
+        "DBP-ACCOUNT-A",
+        "DBP-ACCOUNT-B"
+      ],
+      "revealContribution": 1
+    },
+    {
+      "id": "DBP-ACCOUNT-A",
+      "title": "The Retired Clerk",
+      "kind": "character_testimony",
+      "prerequisites": [
+        "DBP-CLUE-01"
+      ],
+      "text": "The clerk claims the ledger was copied after the original went missing.",
+      "reliability": "unverified testimony",
+      "contradictions": [
+        "DBP-ACCOUNT-B"
+      ],
+      "revealContribution": 1
+    },
+    {
+      "id": "DBP-ACCOUNT-B",
+      "title": "The Neighbor's Memory",
+      "kind": "conflicting_testimony",
+      "prerequisites": [
+        "DBP-CLUE-01"
+      ],
+      "text": "A neighbor remembers the date differently from the retired clerk.",
+      "reliability": "unverified testimony",
+      "contradictions": [
+        "DBP-ACCOUNT-A"
+      ],
+      "revealContribution": 1
+    }
+  ],
+  "gate": {
+    "status": "locked",
+    "requiredEvidenceCount": null,
+    "creatorApprovedRevealAsset": null,
+    "requiresCreatorApproval": true,
+    "randomExplorationCanReveal": false
+  },
+  "privacy": {
+    "onlyInGameEvents": true,
+    "usesMicrophone": false,
+    "usesScreenCapture": false,
+    "usesDeviceLocation": false,
+    "usesContacts": false
+  },
+  "acceptance": [
+    "Clue prerequisites are enforced.",
+    "Testimony never auto-promotes to verified fact.",
+    "Conflicting accounts remain visible as conflicting.",
+    "No final secret or reveal asset is included in this manifest."
+  ]
+}

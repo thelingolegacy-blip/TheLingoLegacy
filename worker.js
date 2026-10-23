@@ -8,6 +8,9 @@ const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
+// Bound per-isolate memory use. This is defense in depth, not a substitute for
+// a shared Cloudflare rate-limit rule across Worker isolates.
+const RATE_BUCKET_MAX = 10000;
 const rateBuckets = new Map();
 const RUNTIME_VERSION = '5.0.0-studio-platform';
 const RELEASE_GATES = Object.freeze({
@@ -24,10 +27,13 @@ const PLATFORM_MODULES = Object.freeze([
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
-  'x-frame-options': 'SAMEORIGIN',
+  'x-frame-options': 'DENY',
   'referrer-policy': 'strict-origin-when-cross-origin',
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'strict-transport-security': 'max-age=63072000; includeSubDomains; preload',
+  'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
+  'cross-origin-opener-policy': 'same-origin',
+  'x-dns-prefetch-control': 'off',
 };
 
 function canonicalOrigin(env) {
@@ -92,8 +98,33 @@ async function createCheckout(request, env) {
 
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
 function normalizeSource(value = '') { return String(value || 'beacon-alert-form').replace(/[^a-z0-9 _.-]/gi, '').slice(0, 80) || 'beacon-alert-form'; }
-function clientKey(request, phone) { const forwarded = request.headers.get('x-forwarded-for') || ''; const ip = forwarded.split(',')[0].trim() || 'unknown'; return `${ip}:${phone}`; }
-function isRateLimited(key) { const now = Date.now(); const bucket = rateBuckets.get(key); if (!bucket || now - bucket.startedAt > RATE_WINDOW_MS) { rateBuckets.set(key, { startedAt: now, count: 1 }); return false; } bucket.count += 1; return bucket.count > RATE_LIMIT; }
+function clientKey(request, phone) {
+  // Cloudflare supplies this edge-derived address. Do not trust X-Forwarded-For:
+  // clients can spoof it to rotate rate-limit keys.
+  const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
+  return `${ip}:${phone}`;
+}
+function isRateLimited(key) {
+  const now = Date.now();
+  const bucket = rateBuckets.get(key);
+  if (bucket && now - bucket.startedAt <= RATE_WINDOW_MS) {
+    bucket.count += 1;
+    return bucket.count > RATE_LIMIT;
+  }
+
+  // Expired keys are pruned only when needed. Never let attacker-controlled
+  // unique keys grow this in-memory map without bound.
+  if (rateBuckets.size >= RATE_BUCKET_MAX) {
+    for (const [existingKey, existingBucket] of rateBuckets) {
+      if (now - existingBucket.startedAt > RATE_WINDOW_MS) rateBuckets.delete(existingKey);
+      if (rateBuckets.size < RATE_BUCKET_MAX) break;
+    }
+  }
+  // Fail closed if the bounded local bucket is saturated.
+  if (rateBuckets.size >= RATE_BUCKET_MAX) return true;
+  rateBuckets.set(key, { startedAt: now, count: 1 });
+  return false;
+}
 function alertMessage(zone, source) { const zoneLabel = zone.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '); return `Lingo Legacy Beacon Alerts active for ${zoneLabel}. Source: ${source || 'web'}. Reply STOP to opt out.`; }
 
 async function sendBeacon(payload, env) {
@@ -173,7 +204,7 @@ async function renderDynamicHtml(request, env, response) {
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
   const html = await response.text();
   const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
-  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><link rel="stylesheet" href="/assets/studio-ui-runtime.css"><script defer src="/assets/studio-ui-runtime.js"></script><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
+  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><link rel="stylesheet" href="/assets/lingo-design-tokens.css"><link rel="stylesheet" href="/assets/studio-ui-runtime.css"><script defer src="/assets/studio-ui-runtime.js"></script><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
   const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
   const headers = new Headers(response.headers);
   headers.set('content-type', 'text/html; charset=utf-8');
