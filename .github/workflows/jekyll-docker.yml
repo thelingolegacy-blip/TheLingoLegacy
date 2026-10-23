@@ -59,14 +59,8 @@ jobs:
         with:
           node-version: 22
 
-      # Each validation step runs even if a previous validation failed, so one failure
-      # does not suppress the rest of the evidence. Checkout/setup failures still stop tests.
       - name: Run Worker rate-limit regression tests
-        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/tests/worker-rate-limit.test.mjs 2>&1 | tee worker-rate-limit-tests.log
+        run: node scripts/tests/worker-rate-limit.test.mjs
 
       - name: Sanitize retired provider surface
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
