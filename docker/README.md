@@ -11,4 +11,4 @@ Before adding an application Dockerfile, identify and verify:
 - non-root execution, health checks, signal handling, and writable-path requirements;
 - image scanning, provenance, registry, immutable digest, and rollback policy.
 
-The initial CI foundation validates configuration only. It does not build, publish, or deploy an application image.
+The Docker CI workflow builds and inspects only `ops/github-runner/Dockerfile` for the dedicated G02 runner. It does not publish an image, build an application image, or deploy an application.
