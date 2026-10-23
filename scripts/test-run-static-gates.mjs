@@ -22,7 +22,9 @@ const scriptNames = [
   'verify-dynamic-runtime.mjs',
   'test-verify-dynamic-runtime.mjs',
   'verify-legacy-gateway-security.mjs',
-  'test-verify-legacy-gateway-security.mjs'
+  'test-verify-legacy-gateway-security.mjs',
+  'verify-release-config-consistency.mjs',
+  'test-verify-release-config-consistency.mjs'
 ];
 
 const fixtureWorker = [
@@ -53,9 +55,21 @@ function makeWorkspace({ failOne = false } = {}) {
   fs.writeFileSync(path.join(scripts, 'test-pipeline-failure-propagation.sh'), '#!/usr/bin/env bash\nexit 0\n', { mode: 0o700 });
   fs.writeFileSync(path.join(root, 'worker.js'), fixtureWorker + '\n');
   fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({
+    name: 'thelingolegacyv-5',
     main: 'worker.js',
+    compatibility_date: '2026-09-01',
+    routes: [
+      { pattern: 'thelingolegacy.com/*', zone_name: 'thelingolegacy.com' },
+      { pattern: 'www.thelingolegacy.com/*', zone_name: 'thelingolegacy.com' }
+    ],
     assets: { binding: 'ASSETS' },
   }, null, 2));
+  fs.writeFileSync(path.join(root, '_headers'), 'X-Frame-Options: DENY\\nReferrer-Policy: strict-origin-when-cross-origin\\nPermissions-Policy: camera=(), microphone=(), geolocation=(), payment=()\\nStrict-Transport-Security: max-age=63072000; includeSubDomains; preload\\n');
+  fs.writeFileSync(path.join(root, 'README.md'), 'Worker thelingolegacyv-5 compatibility date 2026-09-01\\n');
+  fs.writeFileSync(path.join(root, 'SYSTEM-ACTIVATION-AUTHORITY.md'), 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION\\n');
+  fs.mkdirSync(path.join(root, '.github/workflows'), { recursive: true });
+  fs.writeFileSync(path.join(root, '.github/workflows/production-promotion.yml'), 'runs-on: [self-hosted, linux, x64, lingo-g02]\\nif: ${{ false }}\\n');
+  fs.writeFileSync(path.join(root, '.github/workflows/g02-sentinel.yml'), 'runs-on: [self-hosted, linux, x64, lingo-g02]\\n');
   return root;
 }
 
@@ -74,7 +88,7 @@ test('all static checks run and evidence is emitted when every fixture check pas
   const result = runStack(root);
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 32, passed: 32, failed: 0 });
+  assert.deepEqual(report.summary, { total: 36, passed: 36, failed: 0 });
   assert.equal(report.commitSha, 'fixture-sha');
   assert.equal(report.workflowRunId, 'fixture-run');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
@@ -85,6 +99,8 @@ test('all static checks run and evidence is emitted when every fixture check pas
   assert.ok(fs.existsSync(path.join(root, 'static-gate-test-dynamic-runtime-contract.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-verify-legacy-gateway-security.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-test-legacy-gateway-security.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-verify-release-config-consistency.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-test-release-config-consistency.log')));
 });
 
 test('a failed validator does not suppress later checks and makes the stack fail closed', (t) => {
@@ -93,7 +109,7 @@ test('a failed validator does not suppress later checks and makes the stack fail
   const result = runStack(root);
   assert.equal(result.status, 1);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 32, passed: 31, failed: 1 });
+  assert.deepEqual(report.summary, { total: 36, passed: 35, failed: 1 });
   assert.equal(report.checks.find((check) => check.id === 'verify-platform-registries').conclusion, 'FAIL');
   assert.equal(report.checks.find((check) => check.id === 'validate-static-site').conclusion, 'PASS');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
