@@ -42,7 +42,14 @@ const rootFiles = {
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
-  'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'
+  'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
+  '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
+  'docker/README.md': 'application image intentionally not defined; does not publish an image',
+  '.circleci/config.yml': 'workflows:\\n  validate-non-main:\\n    jobs: []\\n          filters:\\n            branches:\\n              ignore: main',
+  '.gitlab-ci.yml': 'PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED G02_ACCEPTANCE=NOT_EVALUATED',
+  'Jenkinsfile': 'PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED KUBERNETES_DEPLOYMENT=NOT_AUTHORIZED',
+  'ops/github-runner/Dockerfile': 'COPY entrypoint.sh /entrypoint.sh',
+  'ops/github-runner/entrypoint.sh': '#!/usr/bin/env bash'
 };
 
 function run({ mutate = null } = {}) {
