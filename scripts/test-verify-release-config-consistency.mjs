@@ -32,6 +32,7 @@ const rootFiles = {
   ].join('\n'),
   'README.md': 'Worker thelingolegacyv-5 compatibility date 2026-09-01',
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
+  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'
 };
