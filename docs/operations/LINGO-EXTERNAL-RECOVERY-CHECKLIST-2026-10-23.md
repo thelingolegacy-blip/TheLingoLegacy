@@ -93,3 +93,15 @@ This evidence supersedes the earlier blanket wording that the staging build itse
 - The successful Worker is connected to the separate GitHub repository `thelingolegacy-blip/TheLingoLegacy-Web`, not the repair branch in `TheLingoLegacy`. Its build configuration has automatic builds disabled and the config-level previews disabled, even though the Worker currently has a deployed version and workers.dev access enabled.
 - The older target name `thelingolegacy` still has no Cloudflare Builds configuration. The production Worker `thelingolegacyv-5` remains on sentinel branch/path filters and previews disabled. Do not change these controls to reconcile the names.
 - Revised disposition: **a separate staging Worker build/smoke has historical PASS evidence; staging integration with PR #349 and full release acceptance remain BLOCKED / NOT VERIFIED.** Confirm the intended repository/commit, repeat current smoke tests, complete accessibility/security checks, and preserve production isolation before considering staging acceptance.
+
+
+## Latest exact-commit CI recheck — 2026-10-23 16:58 UTC
+
+The documentation-only evidence update advanced the repair branch to `4c811866452cd7ab62da44f527861791a07668b4`. GitHub automatically attempted four workflows against that exact SHA; all ended `startup_failure` before jobs started:
+
+- API contract tests: [39991228987](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/39991228987)
+- Static CI: [39991232088](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/39991232088)
+- Crimson smoke static validation: [39991233781](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/39991233781)
+- G02 runner image build (no publish): [39991230661](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/39991230661)
+
+A duplicate API contract run `39991220570` on the same SHA also failed at startup. These results still do not establish any tests executed. The PR remains draft/open/unmerged; production remains protected hold. Next required action remains authorized GitHub administrator inspection of Actions policy and job dispatch/queue evidence.
