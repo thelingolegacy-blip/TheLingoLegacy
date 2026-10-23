@@ -1,0 +1,49 @@
+schema_version: 1
+status: policy_only
+enabled: false
+activation_requirements:
+  - identify_actual_dependency_manifests_and_lockfiles
+  - benchmark_cold_and_warm_runs
+  - record_cache_hit_rate_and_elapsed_time
+  - verify_cache_scope_and_trust_boundary
+  - confirm_no_secret_or_mutable_workspace_data
+cache_classes:
+  package_downloads:
+    allowed: true
+    key_inputs:
+      - operating_system
+      - architecture
+      - lockfile_hash
+      - toolchain_version
+  docker_build_layers:
+    allowed: true
+    key_inputs:
+      - dockerfile_hash
+      - build_context_hash
+      - lockfile_hash
+      - base_image_digest
+    require_buildkit: true
+  compiler_outputs:
+    allowed: conditional
+    require_deterministic_build: true
+  runner_workspace:
+    allowed: false
+  credentials_and_tokens:
+    allowed: false
+  terraform_state:
+    allowed: false
+  runner_registration_state:
+    allowed: false
+trust_rules:
+  do_not_restore_untrusted_pull_request_cache_into_privileged_jobs: true
+  isolate_cache_by_repository_and_trust_level: true
+  use_content_addressed_inputs_where_possible: true
+  never_cache_secrets: true
+  never_treat_cache_hit_as_runner_health_evidence: true
+measurement:
+  require_cold_run: true
+  require_warm_run: true
+  record_elapsed_time: true
+  record_cache_hit_rate: true
+  record_storage_cost_or_size: true
+  enable_only_when_measured_benefit_is_positive: true

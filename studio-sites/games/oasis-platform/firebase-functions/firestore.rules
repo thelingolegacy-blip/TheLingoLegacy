@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owns(uid) { return signedIn() && request.auth.uid == uid; }
+
+    match /oasisCatalog/{itemId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /players/{uid} {
+      allow read: if owns(uid);
+      allow create, update, delete: if false;
+      match /wallets/{walletId} {
+        allow read: if owns(uid);
+        allow write: if false;
+      }
+      match /inventory/{itemId} {
+        allow read: if owns(uid);
+        allow write: if false;
+      }
+      match /ledger/{transactionId} {
+        allow read: if owns(uid);
+        allow write: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

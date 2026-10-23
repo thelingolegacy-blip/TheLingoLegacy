@@ -2,7 +2,7 @@
 
 > **Authoritative Source of Truth:** `thelingolegacy-blip/TheLingoLegacy` (`main` branch)  
 > **Sovereign Runtime:** Cloudflare Edge Workers & Pages  
-> **Status:** Studio Platform Complete / Production Promotion Fail-Closed  
+> **Status:** Production promotion fail-closed; studio completion remains subject to acceptance evidence  
 
 ---
 
@@ -29,7 +29,9 @@ Production authority:
 
 `GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → canonical domain`
 
-The Worker entrypoint is `worker.js`; Cloudflare configuration is `wrangler.jsonc`.
+The canonical Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
+
+The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its entrypoint is `cloudflare/studio-worker.js`, configuration is `cloudflare/wrangler.toml`, and compatibility date is `2026-10-04`. Its GitHub workflow is dry-run-only and pins Wrangler major version 4. It is not the apex/www production Worker.
 
 ---
 

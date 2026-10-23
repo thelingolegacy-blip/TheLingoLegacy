@@ -1,0 +1,130 @@
+name: CI Runner Observation (Read Only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      evidence_ticket:
+        description: Incident or evidence reference
+        required: true
+        default: "#242"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ci-runner-observation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    name: hosted-runner-observation
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      actions: read
+    env:
+      EVIDENCE_TICKET: ${{ inputs.evidence_ticket }}
+    steps:
+      - name: Capture execution identity
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p ci-observation
+          {
+            echo "schema=lingo-ci-observation-v1"
+            echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "workflow=$GITHUB_WORKFLOW"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "job=$GITHUB_JOB"
+            echo "commit_sha=$GITHUB_SHA"
+            echo "ref=$GITHUB_REF"
+            echo "runner_name=$RUNNER_NAME"
+            echo "runner_os=$RUNNER_OS"
+            echo "runner_arch=$RUNNER_ARCH"
+            echo "ticket=$EVIDENCE_TICKET"
+          } | tee ci-observation/execution-identity.txt
+
+      - name: Capture provider-observed job assignment
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" \
+            -o ci-observation/provider-jobs.json
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          p = pathlib.Path("ci-observation/provider-jobs.json")
+          data = json.loads(p.read_text())
+          run_id = int(os.environ["GITHUB_RUN_ID"])
+          matches = [
+              job for job in data.get("jobs", [])
+              if int(job.get("run_id", -1)) == run_id
+              and job.get("name") == "hosted-runner-observation"
+          ]
+          if len(matches) != 1:
+              raise SystemExit(f"Expected one matching job, found {len(matches)}")
+          job = matches[0]
+          record = {
+              "schema": "lingo-ci-provider-job-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "run_id": run_id,
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "job_id": job.get("id"),
+              "job_name": job.get("name"),
+              "status": job.get("status"),
+              "conclusion": job.get("conclusion"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "runner_group_id": job.get("runner_group_id"),
+              "labels": job.get("labels", []),
+              "steps": job.get("steps", []),
+              "html_url": job.get("html_url"),
+              "logs_url_present": bool(job.get("logs_url")),
+              "scope": "observation only; not G02 self-hosted runner acceptance"
+          }
+          pathlib.Path("ci-observation/provider-job-record.json").write_text(
+              json.dumps(record, indent=2) + "\n"
+          )
+          print(json.dumps({
+              "job_id": record["job_id"],
+              "status": record["status"],
+              "conclusion": record["conclusion"],
+              "runner_id": record["runner_id"],
+              "runner_name": record["runner_name"],
+              "step_count": len(record["steps"]) if isinstance(record["steps"], list) else 0,
+              "logs_url_present": record["logs_url_present"]
+          }, indent=2))
+          if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
+              raise SystemExit("Provider did not return a positive job ID")
+          if not isinstance(record["steps"], list) or not record["steps"]:
+              raise SystemExit("Provider did not return instantiated steps")
+          PY
+
+      - name: Generate evidence checksums
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if compgen -G "ci-observation/*" > /dev/null; then
+            (cd ci-observation && sha256sum *.txt *.json 2>/dev/null > SHA256SUMS || true)
+          fi
+
+      - name: Upload observation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-runner-observation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-observation/
+          if-no-files-found: warn
+          retention-days: 14

@@ -12,7 +12,7 @@ const gates = read(gatesPath);
 const live = read(livePath);
 const rollback = read(rollbackPath);
 const critical = new Set([
-  'source','build','tests','security','secrets','vercel-eradication','routes','interactions','apis','identity',
+  'source','build','tests','security','secrets','cloudflare-only-runtime','cloudflare-only-static-surface','routes','interactions','apis','identity',
   'games','commerce','assets','audio','motion','accessibility','performance','cloudflare','live-probes','rollback'
 ]);
 const results = gates.results || {};

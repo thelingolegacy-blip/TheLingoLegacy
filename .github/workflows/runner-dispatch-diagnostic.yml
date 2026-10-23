@@ -14,7 +14,7 @@ jobs:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Establish runner identity
+      - name: Initialize correlated evidence
         shell: bash
         env:
           RUNNER_NAME: ${{ runner.name }}
@@ -22,26 +22,64 @@ jobs:
           RUNNER_ARCH: ${{ runner.arch }}
           RUNNER_ENVIRONMENT: ${{ runner.environment }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
+          GITHUB_JOB_VALUE: ${{ github.job }}
         run: |
           set -euo pipefail
+          mkdir -p g02-evidence
+          {
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID_VALUE"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT_VALUE"
+            printf 'job=%s\n' "$GITHUB_JOB_VALUE"
+            printf 'runner_name=%s\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT"
+            printf 'github_sha=%s\n' "$GITHUB_SHA_VALUE"
+            printf 'platform_check=STARTED\n'
+          } > g02-evidence/runner-evidence.txt
           test -n "$RUNNER_NAME"
-          test -n "$RUNNER_OS"
-          test -n "$RUNNER_ARCH"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          printf 'runner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\ngithub_sha=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT" "$GITHUB_SHA_VALUE"
+          printf 'platform_check=PASS\n' >> g02-evidence/runner-evidence.txt
+          cat g02-evidence/runner-evidence.txt
 
       - name: Execute G02 sentinel
+        id: sentinel
         shell: bash
         env:
           RUNNER_NAME: ${{ runner.name }}
         run: |
           set -euo pipefail
-          test -n "$RUNNER_NAME"
-          echo "RUNNER_EXECUTION_SENTINEL=PASS"
+          if [[ "$RUNNER_NAME" != "lingo-legacy-g02" ]]; then
+            echo "runner_identity_check=FAIL" | tee -a g02-evidence/runner-evidence.txt
+            echo "RUNNER_EXECUTION_SENTINEL=FAIL" | tee -a g02-evidence/runner-evidence.txt
+            exit 1
+          fi
+          echo "runner_identity_check=PASS" | tee -a g02-evidence/runner-evidence.txt
+          echo "RUNNER_EXECUTION_SENTINEL=PASS" | tee -a g02-evidence/runner-evidence.txt
 
       - name: Emit forensic exit marker
+        if: always()
         shell: bash
+        env:
+          SENTINEL_OUTCOME: ${{ steps.sentinel.outcome }}
         run: |
-          set -euo pipefail
-          echo "G02_FORENSIC_EXIT_STATUS=0"
+          if [ -f g02-evidence/runner-evidence.txt ]; then
+            if [ "$SENTINEL_OUTCOME" = "success" ]; then
+              echo "G02_FORENSIC_EXIT_STATUS=0" | tee -a g02-evidence/runner-evidence.txt
+            else
+              echo "G02_FORENSIC_EXIT_STATUS=1" | tee -a g02-evidence/runner-evidence.txt
+            fi
+          fi
 
+      - name: Upload correlated G02 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-runner-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/runner-evidence.txt
+          if-no-files-found: warn
+          retention-days: 14
