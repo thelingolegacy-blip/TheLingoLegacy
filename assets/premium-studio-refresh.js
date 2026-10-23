@@ -165,7 +165,7 @@
         <div class="premium-money-grid">
           <article class="premium-money-card"><span class="tag">Stripe</span><h3>Founder packs and subscriptions</h3><p>Route paid offers through the existing checkout lane after products, pricing, fulfillment, taxes, and subscription terms are approved.</p><a class="button primary" href="/drop/#stripe-checkout">Open Stripe Lane</a></article>
           <article class="premium-money-card"><span class="tag">Square</span><h3>Square-ready checkout lane</h3><p>Reserve a second payment lane for Square invoices, subscriptions, point-of-sale offers, or backup checkout once account details are supplied.</p><button class="button" type="button" data-premium-square>Stage Square Lane</button></article>
-          <article class="premium-money-card"><span class="tag">Guardrails</span><h3>Monetize without overrun</h3><p>Start with organic and manual posts, then enable paid boosts only after Vercel spend caps, ad budgets, refund policy, and support flow are ready.</p><a class="button" href="/trust-compliance/">Open Guardrails</a></article>
+          <article class="premium-money-card"><span class="tag">Guardrails</span><h3>Monetize without overrun</h3><p>Start with organic and manual posts, then enable paid boosts only after hosting and provider spend caps, ad budgets, refund policy, and support flow are ready.</p><a class="button" href="/trust-compliance/">Open Guardrails</a></article>
         </div>
       </div>`;
     if (footer) {
