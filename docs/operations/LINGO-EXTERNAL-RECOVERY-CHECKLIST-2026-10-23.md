@@ -81,3 +81,15 @@ This checklist records actions that require an authorized GitHub/Cloudflare admi
 - The repository Actions permissions and runner inventory endpoints are not readable through the connected GitHub integration, so Actions policy, actual runner IDs/labels/group access, and any organization/enterprise override remain unverified.
 - GitHub's public status page currently reports all systems operational and lists the October 23 Actions status-check delay as resolved by 08:05 UTC. The observed LINGO workflow failures occurred later (around 16:39–16:52 UTC); the public incident does not establish the cause of these failures.
 - Next diagnostic must therefore use an authorized repository/organization administrator to inspect the settings and stuck queue directly; do not assume this is a general GitHub outage or a self-hosted-runner-only issue.
+
+
+## Cloudflare staging evidence refresh — 2026-10-23 17:00 UTC
+
+This evidence supersedes the earlier blanket wording that the staging build itself is blocked.
+
+- Read-only Cloudflare API inspection confirmed the separate Worker `thelingolegacy-web-recovery-preview` exists in account subdomain `thelingolegacy`, with current deployment version `d320fb75-aa3b-47b2-8b0b-4896000201a6` and deployment ID `71cb43b0-cb56-4220-8e9b-c83f0f4daea2` (deployed 2026-10-23 00:46:22 UTC).
+- Its Cloudflare build record `f3c09e5f-9421-42b0-acbd-38d9665f50ad` finished with `build_outcome=success` at 00:46:29 UTC. The retained build logs explicitly say the preview smoke test passed all five routes.
+- Logged smoke checks include the preview homepage, `/api/health`, `/worlds/thats-my-lingo`, `/stores/loyalty-lane`, and `/lingoreads/kottonscode`; all were HTTP 200 in that run. This is historical build evidence, not a fresh probe at the current time, and does not establish accessibility/security acceptance or backend integration readiness.
+- The successful Worker is connected to the separate GitHub repository `thelingolegacy-blip/TheLingoLegacy-Web`, not the repair branch in `TheLingoLegacy`. Its build configuration has automatic builds disabled and the config-level previews disabled, even though the Worker currently has a deployed version and workers.dev access enabled.
+- The older target name `thelingolegacy` still has no Cloudflare Builds configuration. The production Worker `thelingolegacyv-5` remains on sentinel branch/path filters and previews disabled. Do not change these controls to reconcile the names.
+- Revised disposition: **a separate staging Worker build/smoke has historical PASS evidence; staging integration with PR #349 and full release acceptance remain BLOCKED / NOT VERIFIED.** Confirm the intended repository/commit, repeat current smoke tests, complete accessibility/security checks, and preserve production isolation before considering staging acceptance.
