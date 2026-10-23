@@ -9,6 +9,10 @@ import { fileURLToPath } from 'node:url';
 const verifier = fileURLToPath(new URL('./verify-dynamic-runtime.mjs', import.meta.url));
 const requiredRoutes = [
   "url.pathname === '/healthz'",
+  "url.pathname === '/api/health'",
+  "url.pathname === '/api/metrics'",
+  "url.pathname === '/api/checkout'",
+  "url.pathname === '/api/rewards/claim'",
   "url.pathname === '/api/v1/runtime'",
   "url.pathname === '/api/v1/platform/manifest'",
   "url.pathname === '/api/v1/platform/status'",
@@ -52,4 +56,12 @@ test('dynamic runtime contract fails closed when a required route is missing', (
   const report = JSON.parse(result.stdout);
   assert.equal(report.status, 'FAIL');
   assert.ok(report.failures.some((failure) => failure.includes('/api/v1/platform/gates')));
+});
+
+test('dynamic runtime contract fails closed when a required legacy API route is missing', () => {
+  const result = runVerifier({ omitRoute: "url.pathname === '/api/rewards/claim'" });
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.status, 'FAIL');
+  assert.ok(report.failures.some((failure) => failure.includes('/api/rewards/claim')));
 });
