@@ -28,6 +28,7 @@ const scriptNames = [
 ];
 
 const fixtureWorker = [
+  "'x-content-type-options': 'nosniff'",
   "url.pathname === '/healthz'",
   "url.pathname === '/api/v1/runtime'",
   "url.pathname === '/api/v1/platform/manifest'",
@@ -70,7 +71,7 @@ function makeWorkspace({ failOne = false } = {}) {
     ],
     assets: { binding: 'ASSETS' },
   }, null, 2));
-  fs.writeFileSync(path.join(root, '_headers'), "X-Frame-Options: DENY\\\\nReferrer-Policy: strict-origin-when-cross-origin\\\\nPermissions-Policy: camera=(), microphone=(), geolocation=(), payment=()\\\\nStrict-Transport-Security: max-age=63072000; includeSubDomains; preload\\\\nContent-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests\\\\nCross-Origin-Opener-Policy: same-origin\\\\nX-DNS-Prefetch-Control: off\\\\n");
+  fs.writeFileSync(path.join(root, '_headers'), "X-Content-Type-Options: nosniff\\\\nX-Frame-Options: DENY\\\\nReferrer-Policy: strict-origin-when-cross-origin\\\\nPermissions-Policy: camera=(), microphone=(), geolocation=(), payment=()\\\\nStrict-Transport-Security: max-age=63072000; includeSubDomains; preload\\\\nContent-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests\\\\nCross-Origin-Opener-Policy: same-origin\\\\nX-DNS-Prefetch-Control: off\\\\n");
   fs.writeFileSync(path.join(root, 'README.md'), 'Worker thelingolegacyv-5 compatibility date 2026-09-01\\n');
   fs.writeFileSync(path.join(root, 'SYSTEM-ACTIVATION-AUTHORITY.md'), 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION\\n');
   fs.mkdirSync(path.join(root, '.github/workflows'), { recursive: true });
