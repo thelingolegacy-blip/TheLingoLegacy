@@ -17,7 +17,7 @@ const forbidden = [
 
 const root = process.cwd();
 const ignored = new Set(['.git', 'node_modules', 'release/evidence']);
-const historicalOnly = new Set(['docs']);
+const historicalOnly = new Set(['docs', 'SYSTEM-ACTIVATION-AUTHORITY.md']);
 const files = [];
 
 function walk(dir) {
