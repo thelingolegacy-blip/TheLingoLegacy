@@ -33,6 +33,10 @@ const studioConfig = read('cloudflare/wrangler.toml');
 const studioWorkflow = read('.github/workflows/studio-surface-integrity.yml');
 const surfaceGate = read('scripts/sanitize-cloudflare-only-surface.mjs');
 const staticGateRunner = read('scripts/run-static-gates.mjs');
+const promotionPolicy = JSON.parse(read('config/release/promotion-policy.json'));
+const certificateGenerator = read('scripts/generate-release-certificate.mjs');
+const launchFoundation = JSON.parse(read('config/production/launch-foundation.json'));
+const casinoMaster = JSON.parse(read('config/casino/master.json'));
 
 check('canonical-worker-name', config.name === 'thelingolegacyv-5', `expected thelingolegacyv-5; found ${config.name || 'missing'}`);
 check('worker-entrypoint', config.main === 'worker.js', `expected worker.js; found ${config.main || 'missing'}`);
@@ -65,6 +69,10 @@ check('studio-wrangler-pinned-dry-run', studioWorkflow.includes('npx --yes wrang
 check('readme-studio-identity', readme.includes('lingo-legacy-studio-build') && readme.includes('2026-10-04') && readme.includes('not the apex/www production Worker'), 'README must distinguish the Studio build Worker from the apex/www production Worker');
 check('surface-gate-read-only', surfaceGate.includes("mode: 'read-only'") && !/\\bwriteFileSync\\b|\\bwriteFile\\s*\\(/.test(surfaceGate), 'Cloudflare-only surface validation must never rewrite release source files');
 check('surface-gate-regression-wired', staticGateRunner.includes('scripts/test-sanitize-cloudflare-only-surface.mjs') && staticGateRunner.includes("id: 'verify-cloudflare-only-surface'"), 'Static gates must test the read-only surface verifier and label it as verification, not sanitization');
+check('promotion-policy-gate-alignment', promotionPolicy.noLegacyHostingExecutionPath === true && promotionPolicy.promotionSequence.includes('cloudflare-only-runtime') && promotionPolicy.promotionSequence.includes('cloudflare-only-static-surface') && !promotionPolicy.promotionSequence.includes('vercel-eradication'), 'Promotion policy must require the current Cloudflare runtime and static-surface gate IDs');
+check('certificate-gate-alignment', certificateGenerator.includes("'cloudflare-only-runtime'") && certificateGenerator.includes("'cloudflare-only-static-surface'") && !certificateGenerator.includes('vercel-eradication'), 'Release certificate must consume the same Cloudflare gate IDs as the promotion policy');
+check('launch-observability-provider-alignment', launchFoundation.observability?.performanceMonitoring?.includes('Cloudflare deployment metadata') && !launchFoundation.observability.performanceMonitoring.includes('Vercel'), 'Launch observability instructions must use the current Cloudflare evidence source');
+check('casino-provider-plan-alignment', casinoMaster.principles?.deployment?.includes('Cloudflare Worker') && casinoMaster.principles?.storagePlan?.relational?.includes('planned only') && casinoMaster.principles?.storagePlan?.cache?.includes('planned only') && !JSON.stringify(casinoMaster).includes('Vercel Marketplace'), 'Game manifest must distinguish Cloudflare static delivery from unverified planned backend services');
 check('canonical-g02-labels-promotion', promotion.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'production-promotion must retain the canonical G02 runner labels');
 check('canonical-g02-labels-sentinel', sentinel.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'G02 sentinel must retain the canonical runner labels');
 check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cloudflare promotion job must remain disabled until separate authorization and acceptance');
