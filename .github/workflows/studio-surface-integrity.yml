@@ -51,7 +51,7 @@ jobs:
             assets/studio/manifests/audio.json
 
       - name: Cloudflare Worker dry-run build
-        run: npx --yes wrangler@latest deploy --dry-run --config cloudflare/wrangler.toml
+        run: npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml
 
       - name: Emit source/build-only result
         run: |

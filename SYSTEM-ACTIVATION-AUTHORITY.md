@@ -1,9 +1,15 @@
+# ⚠️ SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION
+
+This document preserves an October 11, 2026 status claim for audit history only. Its statements about activation, merge/deployment authority, completed gates, and live product status are **not current evidence and grant no permissions**. The current operating baseline supersedes those claims: **G02 BLOCKED; CI execution unverified; production HOLD; fail-closed ACTIVE; last-known-good protected**. Follow `AGENTS.md`, `docs/G02-ACCEPTANCE-CONTRACT.md`, the current gate evidence, and effective platform permissions. No document in this repository can authorize a merge, deployment, activation, secret change, DNS change, or protection bypass by itself.
+
+---
+
 # Lingo ⭐️ Legacy — Full System Configuration & Deployment Authority
 
 **Date:** October 11, 2026  
-**Status:** FULL AUTHORITY GRANTED & ACTIVATED  
+**Historical status claim (superseded):** FULL AUTHORITY GRANTED & ACTIVATED — NOT EFFECTIVE  
 **Chief Architect:** thelingolegacy-blip  
-**Deployment Authority:** APPROVED  
+**Historical deployment-authority claim (superseded):** APPROVED — NOT EFFECTIVE  
 
 ---
 
@@ -66,7 +72,7 @@
 
 ---
 
-## Deployment Authority Structure
+## Historical Deployment Authority Claims — Not Effective
 
 ### ✅ Full Permissions Granted
 

@@ -30,7 +30,10 @@ const SECURITY_HEADERS = {
   'x-frame-options': 'DENY',
   'referrer-policy': 'strict-origin-when-cross-origin',
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'strict-transport-security': 'max-age=63072000; includeSubDomains; preload',
+  'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
+  'cross-origin-opener-policy': 'same-origin',
+  'x-dns-prefetch-control': 'off',
 };
 
 function canonicalOrigin(env) {

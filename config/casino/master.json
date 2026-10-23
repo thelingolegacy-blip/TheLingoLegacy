@@ -4,11 +4,11 @@
     "coreLogic": "deterministic",
     "aiRole": "flavor-only",
     "outcomes": "no-ai-payouts",
-    "deployment": "static-first Vercel delivery with static JSON contracts and no live API functions",
+    "deployment": "static-first Cloudflare Worker delivery with static JSON contracts; live API functions are not enabled by this manifest",
     "storagePlan": {
-      "relational": "Neon through Vercel Marketplace for production Postgres tables",
-      "cache": "Upstash Redis through Vercel Marketplace for AI cache, rate counters, and transient state",
-      "assets": "Vercel Blob for generated media, cosmetics, and uploadable assets"
+      "relational": "Neon PostgreSQL is planned only; provisioning, credentials, and runtime connection are unverified",
+      "cache": "Upstash Redis is planned only; provisioning, credentials, and runtime connection are unverified",
+      "assets": "Cloudflare R2 is the candidate for generated media; bucket binding and upload flow require verification before activation"
     }
   },
   "machines": [

@@ -27,7 +27,7 @@ h1 span{background:linear-gradient(180deg,#fff 0,#f0f0f2 42%,#a7a8ae 100%);-webk
 .stage{border-color:rgba(220,20,60,.55);background:radial-gradient(circle at 52% 22%,rgba(220,20,60,.22),transparent 14rem),linear-gradient(180deg,#202025,#070708 70%)}
 .stage:before{background:conic-gradient(from 30deg,transparent,rgba(220,20,60,.28),transparent,rgba(255,255,255,.10),transparent,rgba(146,148,156,.13),transparent)}
 .console-top,.console-bottom{border-color:rgba(220,20,60,.35)}
-.console-top strong,.poster h2,.tile b,.marquee,.tag,.index-list span:first-child{color:#ff526b}
+.console-top strong,.poster h2,.tile b,.tag,.index-list span:first-child{color:#ff526b}\n.marquee{color:#fff;background:rgba(0,0,0,.94);border:1px solid rgba(255,82,107,.5);border-radius:12px;padding:8px 12px}
 .screen{border-color:rgba(255,255,255,.20)}
 .poster{background:radial-gradient(circle at 30% 20%,rgba(220,20,60,.24),transparent 12rem),linear-gradient(160deg,rgba(146,148,156,.18),rgba(5,5,7,.82));border-color:rgba(220,20,60,.35)}
 .card{border-color:rgba(220,20,60,.30)}
