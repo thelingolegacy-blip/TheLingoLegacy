@@ -22,13 +22,19 @@ const rootFiles = {
     "'x-frame-options': 'DENY'",
     "'referrer-policy': 'strict-origin-when-cross-origin'",
     "'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()'",
-    "'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'"
+    "'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'",
+    ` 'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests"`,
+    "'cross-origin-opener-policy': 'same-origin'",
+    "'x-dns-prefetch-control': 'off'"
   ].join('\n'),
   '_headers': [
     'X-Frame-Options: DENY',
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()',
-    'Strict-Transport-Security: max-age=63072000; includeSubDomains; preload'
+    'Strict-Transport-Security: max-age=63072000; includeSubDomains; preload',
+    "Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
+    'Cross-Origin-Opener-Policy: same-origin',
+    'X-DNS-Prefetch-Control: off'
   ].join('\n'),
   'README.md': 'Worker thelingolegacyv-5 compatibility date 2026-09-01',
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
