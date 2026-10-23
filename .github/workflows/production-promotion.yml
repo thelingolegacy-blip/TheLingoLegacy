@@ -92,6 +92,8 @@ jobs:
         run: node scripts/verify-production-authority.mjs
       - name: Dynamic runtime contract gate
         run: node scripts/verify-dynamic-runtime.mjs
+      - name: Cross-system release configuration consistency gate
+        run: node scripts/verify-release-config-consistency.mjs
       - name: Wrangler configuration validation
         run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
       - name: Release identity
