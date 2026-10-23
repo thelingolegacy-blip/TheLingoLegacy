@@ -117,6 +117,8 @@ jobs:
 
   cloudflare:
     needs: gates
+    # HARD HOLD: no deploy until independent P/E/V/A acceptance and a dedicated, non-production staging target are implemented and verified.
+    # This is intentionally unconditional; a workflow_dispatch input cannot authorize promotion.
     # HARD HOLD: manual dispatch and environment selection are not acceptance evidence.
     # Keep this promotion workflow's Cloudflare deployment job disabled until independent acceptance, staging isolation,
     # exact run/commit evidence correlation, and rollback readiness are verified.
