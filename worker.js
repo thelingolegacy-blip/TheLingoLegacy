@@ -30,7 +30,7 @@ const SECURITY_HEADERS = {
   'x-frame-options': 'DENY',
   'referrer-policy': 'strict-origin-when-cross-origin',
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'strict-transport-security': 'max-age=63072000; includeSubDomains; preload',
 };
 
 function canonicalOrigin(env) {
