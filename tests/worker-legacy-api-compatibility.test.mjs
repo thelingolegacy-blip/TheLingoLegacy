@@ -43,12 +43,16 @@ test('legacy metrics endpoint fails closed until a metrics backend is configured
   assert.equal(body.release_status, 'PROTECTED_HOLD');
 });
 
-test('legacy checkout path reaches the existing checkout handler rather than API 404', async () => {
-  const response = await worker.fetch(request('/api/checkout', 'POST'), env());
-  const body = await response.json();
+test('both legacy checkout paths preserve POST-only behavior and fail closed without Stripe configuration', async () => {
+  for (const path of ['/api/checkout', '/api/create-checkout-session']) {
+    const wrongMethod = await worker.fetch(request(path), env());
+    assert.equal(wrongMethod.status, 405, `${path} must reject GET`);
 
-  assert.equal(response.status, 503);
-  assert.match(body.error, /checkout is not configured/i);
+    const response = await worker.fetch(request(path, 'POST'), env());
+    const body = await response.json();
+    assert.equal(response.status, 503, `${path} must remain unavailable without Stripe configuration`);
+    assert.match(body.error, /checkout is not configured/i, path);
+  }
 });
 
 test('rewards claim fails closed until durable ledger and authorization checks exist', async () => {
@@ -113,12 +117,31 @@ test('untrusted origins do not receive an allow-origin header', async () => {
   assert.equal(response.headers.get('access-control-allow-origin'), null);
 });
 
-test('all legacy API responses retain baseline security headers', async () => {
-  for (const path of ['/api/health', '/api/metrics', '/api/rewards/claim']) {
-    const method = path === '/api/rewards/claim' ? 'POST' : 'GET';
+test('legacy API success and fail-closed responses retain the required security headers', async () => {
+  const cases = [
+    ['/api/health', 'GET', 200],
+    ['/api/health', 'POST', 405],
+    ['/api/metrics', 'GET', 503],
+    ['/api/metrics', 'POST', 405],
+    ['/api/rewards/claim', 'POST', 503],
+    ['/api/rewards/claim', 'GET', 405],
+  ];
+  const requiredHeaders = {
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'referrer-policy': 'strict-origin-when-cross-origin',
+    'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+    'strict-transport-security': 'max-age=63072000; includeSubDomains; preload',
+    'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
+    'cache-control': 'no-store',
+    'x-lingo-runtime': '2026.2.0',
+  };
+
+  for (const [path, method, expectedStatus] of cases) {
     const response = await worker.fetch(request(path, method), env());
-    assert.equal(response.headers.get('x-content-type-options'), 'nosniff', path);
-    assert.equal(response.headers.get('x-frame-options'), 'DENY', path);
-    assert.equal(response.headers.get('cache-control'), 'no-store', path);
+    assert.equal(response.status, expectedStatus, `${method} ${path}`);
+    for (const [name, value] of Object.entries(requiredHeaders)) {
+      assert.equal(response.headers.get(name), value, `${method} ${path}: ${name}`);
+    }
   }
 });
