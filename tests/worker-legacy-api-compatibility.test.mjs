@@ -77,3 +77,48 @@ test('unknown API paths still return 404', async () => {
   const response = await worker.fetch(request('/api/not-a-real-route'), env());
   assert.equal(response.status, 404);
 });
+
+
+test('legacy metrics endpoint rejects mutation methods', async () => {
+  const response = await worker.fetch(request('/api/metrics', 'POST'), env());
+  assert.equal(response.status, 405);
+});
+
+test('legacy checkout alias rejects non-POST requests', async () => {
+  const response = await worker.fetch(request('/api/checkout'), env());
+  assert.equal(response.status, 405);
+});
+
+test('allowed-origin preflight includes the expected CORS contract', async () => {
+  const response = await worker.fetch(new Request('https://thelingolegacy.com/api/health', {
+    method: 'OPTIONS',
+    headers: {
+      Origin: 'https://www.thelingolegacy.com',
+      'Access-Control-Request-Method': 'GET',
+    },
+  }), env());
+
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('access-control-allow-origin'), 'https://www.thelingolegacy.com');
+  assert.match(response.headers.get('access-control-allow-methods') || '', /GET/);
+  assert.equal(response.headers.get('vary'), 'Origin');
+});
+
+test('untrusted origins do not receive an allow-origin header', async () => {
+  const response = await worker.fetch(new Request('https://thelingolegacy.com/api/health', {
+    headers: { Origin: 'https://untrusted.example' },
+  }), env());
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('access-control-allow-origin'), null);
+});
+
+test('all legacy API responses retain baseline security headers', async () => {
+  for (const path of ['/api/health', '/api/metrics', '/api/rewards/claim']) {
+    const method = path === '/api/rewards/claim' ? 'POST' : 'GET';
+    const response = await worker.fetch(request(path, method), env());
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff', path);
+    assert.equal(response.headers.get('x-frame-options'), 'DENY', path);
+    assert.equal(response.headers.get('cache-control'), 'no-store', path);
+  }
+});
