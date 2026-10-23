@@ -21,6 +21,7 @@ const worker = read('worker.js');
 const headers = read('_headers');
 const readme = read('README.md');
 const promotion = read('.github/workflows/production-promotion.yml');
+const autoRepair = read('.github/workflows/lingo-autorepair-deploy.yml');
 const sentinel = read('.github/workflows/g02-sentinel.yml');
 const authority = read('SYSTEM-ACTIVATION-AUTHORITY.md');
 
@@ -49,6 +50,8 @@ check('readme-runtime-identity', readme.includes('thelingolegacyv-5') && readme.
 check('canonical-g02-labels-promotion', promotion.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'production-promotion must retain the canonical G02 runner labels');
 check('canonical-g02-labels-sentinel', sentinel.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'G02 sentinel must retain the canonical runner labels');
 check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cloudflare promotion job must remain disabled until separate authorization and acceptance');
+check('auto-repair-deploy-hold', autoRepair.includes('if: ${{ false }}'), 'Cloudflare auto-repair deployment job must remain disabled until separate authorization and acceptance');
+check('canonical-g02-labels-auto-repair', autoRepair.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'auto-repair workflow must retain the canonical G02 runner labels');
 check('authority-document-superseded', authority.includes('SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'), 'legacy activation document must explicitly defer to current gates');
 
 const result = {
