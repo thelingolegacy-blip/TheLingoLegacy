@@ -38,7 +38,9 @@ const rootFiles = {
     'Cross-Origin-Opener-Policy: same-origin',
     'X-DNS-Prefetch-Control: off'
   ].join('\n'),
-  'README.md': 'Worker thelingolegacyv-5 compatibility date 2026-09-01',
+  'README.md': 'Worker thelingolegacyv-5 compatibility date 2026-09-01; Studio Worker lingo-legacy-studio-build compatibility date 2026-10-04; not the apex/www production Worker',
+  'cloudflare/wrangler.toml': 'name = "lingo-legacy-studio-build"\\nmain = "cloudflare/studio-worker.js"\\ncompatibility_date = "2026-10-04"',
+  '.github/workflows/studio-surface-integrity.yml': 'npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml',
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
