@@ -14,6 +14,7 @@ const requiredWorkerContracts = [
   "url.pathname.startsWith('/api/')",
   'renderDynamicHtml',
   'env.ASSETS.fetch(request)',
+  "'x-frame-options': 'DENY'",
 ];
 
 const failures = [];
