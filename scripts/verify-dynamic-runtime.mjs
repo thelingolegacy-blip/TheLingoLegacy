@@ -1,8 +1,39 @@
 import fs from 'node:fs';
-const worker=fs.readFileSync('worker.js','utf8');
-const wrangler=fs.readFileSync('wrangler.jsonc','utf8');
-for(const token of ["url.pathname === '/healthz'","url.pathname === '/api/v1/platform/status'","url.pathname === '/api/v1/site/context'","url.pathname.startsWith('/api/')","renderDynamicHtml","env.ASSETS.fetch(request)"]){if(!worker.includes(token))throw new Error(`Dynamic runtime contract missing: ${token}`)}
-if(!wrangler.includes('"main": "worker.js"'))throw new Error('Cloudflare Worker entrypoint is not worker.js');
-if(!wrangler.includes('"binding": "ASSETS"'))throw new Error('Cloudflare asset binding is missing');
-if(wrangler.toLowerCase().includes('vercel'))throw new Error('Retired Vercel reference remains in Wrangler configuration');
-console.log(JSON.stringify({gate:'dynamic-runtime-contract',status:'PASS',worker:'worker.js',api_boundary:'enabled',edge_html_runtime:'enabled',asset_delivery:'worker-controlled',retired_provider:'vercel'},null,2));
+
+const worker = fs.readFileSync('worker.js', 'utf8');
+const wrangler = fs.readFileSync('wrangler.jsonc', 'utf8');
+
+const requiredWorkerContracts = [
+  "url.pathname === '/healthz'",
+  "url.pathname === '/api/v1/runtime'",
+  "url.pathname === '/api/v1/platform/manifest'",
+  "url.pathname === '/api/v1/platform/status'",
+  "url.pathname === '/api/v1/platform/gates'",
+  "url.pathname === '/api/v1/platform/modules'",
+  "url.pathname === '/api/v1/site/context'",
+  "url.pathname.startsWith('/api/')",
+  'renderDynamicHtml',
+  'env.ASSETS.fetch(request)',
+  "'x-frame-options': 'DENY'",
+];
+
+const failures = [];
+for (const token of requiredWorkerContracts) {
+  if (!worker.includes(token)) failures.push(`Worker runtime contract missing: ${token}`);
+}
+if (!wrangler.includes('"main": "worker.js"')) failures.push('Cloudflare Worker entrypoint is not worker.js');
+if (!wrangler.includes('"binding": "ASSETS"')) failures.push('Cloudflare asset binding is missing');
+if (wrangler.toLowerCase().includes('vercel')) failures.push('Retired Vercel reference remains in Wrangler configuration');
+
+const result = {
+  gate: 'dynamic-runtime-contract',
+  status: failures.length ? 'FAIL' : 'PASS',
+  worker: 'worker.js',
+  requiredRoutes: requiredWorkerContracts.slice(0, 8),
+  edgeHtmlRuntime: 'renderDynamicHtml',
+  assetDelivery: 'worker-controlled',
+  retiredProvider: 'vercel',
+  failures,
+};
+console.log(JSON.stringify(result, null, 2));
+if (failures.length) process.exit(1);

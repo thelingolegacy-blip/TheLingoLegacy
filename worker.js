@@ -27,7 +27,7 @@ const PLATFORM_MODULES = Object.freeze([
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
-  'x-frame-options': 'SAMEORIGIN',
+  'x-frame-options': 'DENY',
   'referrer-policy': 'strict-origin-when-cross-origin',
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
   'strict-transport-security': 'max-age=31536000; includeSubDomains',

@@ -18,8 +18,26 @@ const scriptNames = [
   'test-verify-media-pipeline.mjs',
   'sanitize-cloudflare-only-surface.mjs',
   'verify-cloudflare-bindings.mjs',
-  'validate-static-site.mjs'
+  'validate-static-site.mjs',
+  'verify-dynamic-runtime.mjs',
+  'test-verify-dynamic-runtime.mjs',
+  'verify-legacy-gateway-security.mjs',
+  'test-verify-legacy-gateway-security.mjs'
 ];
+
+const fixtureWorker = [
+  "url.pathname === '/healthz'",
+  "url.pathname === '/api/v1/runtime'",
+  "url.pathname === '/api/v1/platform/manifest'",
+  "url.pathname === '/api/v1/platform/status'",
+  "url.pathname === '/api/v1/platform/gates'",
+  "url.pathname === '/api/v1/platform/modules'",
+  "url.pathname === '/api/v1/site/context'",
+  "url.pathname.startsWith('/api/')",
+  'renderDynamicHtml',
+  'env.ASSETS.fetch(request)',
+  "'x-frame-options': 'DENY'",
+].join('\n');
 
 function makeWorkspace({ failOne = false } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-static-gates-'));
@@ -33,6 +51,11 @@ function makeWorkspace({ failOne = false } = {}) {
     fs.writeFileSync(path.join(scripts, name), content);
   }
   fs.writeFileSync(path.join(scripts, 'test-pipeline-failure-propagation.sh'), '#!/usr/bin/env bash\nexit 0\n', { mode: 0o700 });
+  fs.writeFileSync(path.join(root, 'worker.js'), fixtureWorker + '\n');
+  fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({
+    main: 'worker.js',
+    assets: { binding: 'ASSETS' },
+  }, null, 2));
   return root;
 }
 
@@ -51,13 +74,17 @@ test('all static checks run and evidence is emitted when every fixture check pas
   const result = runStack(root);
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 24, passed: 24, failed: 0 });
+  assert.deepEqual(report.summary, { total: 32, passed: 32, failed: 0 });
   assert.equal(report.commitSha, 'fixture-sha');
   assert.equal(report.workflowRunId, 'fixture-run');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-sanitize-cloudflare-only-surface.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-verify-cloudflare-bindings.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-validate-static-site.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-verify-dynamic-runtime.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-test-dynamic-runtime-contract.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-verify-legacy-gateway-security.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-test-legacy-gateway-security.log')));
 });
 
 test('a failed validator does not suppress later checks and makes the stack fail closed', (t) => {
@@ -66,7 +93,7 @@ test('a failed validator does not suppress later checks and makes the stack fail
   const result = runStack(root);
   assert.equal(result.status, 1);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 24, passed: 23, failed: 1 });
+  assert.deepEqual(report.summary, { total: 32, passed: 31, failed: 1 });
   assert.equal(report.checks.find((check) => check.id === 'verify-platform-registries').conclusion, 'FAIL');
   assert.equal(report.checks.find((check) => check.id === 'validate-static-site').conclusion, 'PASS');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
