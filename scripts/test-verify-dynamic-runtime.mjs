@@ -18,6 +18,7 @@ const requiredRoutes = [
   "url.pathname.startsWith('/api/')",
   'renderDynamicHtml',
   'env.ASSETS.fetch(request)',
+  "'x-frame-options': 'DENY'",
 ];
 
 function runVerifier({ omitRoute = null } = {}) {
