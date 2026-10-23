@@ -49,7 +49,10 @@ function makeWorkspace({ failOne = false } = {}) {
   }
   fs.writeFileSync(path.join(scripts, 'test-pipeline-failure-propagation.sh'), '#!/usr/bin/env bash\nexit 0\n', { mode: 0o700 });
   fs.writeFileSync(path.join(root, 'worker.js'), fixtureWorker + '\n');
-  fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({ main: 'worker.js', assets: { binding: 'ASSETS' } }));
+  fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({
+    main: 'worker.js',
+    assets: { binding: 'ASSETS' },
+  }, null, 2));
   return root;
 }
 
