@@ -72,3 +72,12 @@ This checklist records actions that require an authorized GitHub/Cloudflare admi
 - DR/PITR restore proof: NOT VERIFIED
 - 20 release gates/live smoke tests: NOT RUN
 - Production promotion/activation: NOT AUTHORIZED
+
+
+## Additional CI scope check — 2026-10-23 16:53 UTC
+
+- The failure is not limited to PR #349. Main-branch runs for G02 image build (`39988535451`), G02 sentinel (`39988536939`), and Static CI (`39988533839`) also concluded `startup_failure` with zero jobs.
+- Three main-branch G02/evidence probes (`39988532302`, `39988532309`, `39988532336`) are still queued and each has a queued job. This is not runner acceptance evidence.
+- The repository Actions permissions and runner inventory endpoints are not readable through the connected GitHub integration, so Actions policy, actual runner IDs/labels/group access, and any organization/enterprise override remain unverified.
+- GitHub's public status page currently reports all systems operational and lists the October 23 Actions status-check delay as resolved by 08:05 UTC. The observed LINGO workflow failures occurred later (around 16:39–16:52 UTC); the public incident does not establish the cause of these failures.
+- Next diagnostic must therefore use an authorized repository/organization administrator to inspect the settings and stuck queue directly; do not assume this is a general GitHub outage or a self-hosted-runner-only issue.
