@@ -29,6 +29,8 @@ const dockerReadme = read('docker/README.md');
 const circleci = read('.circleci/config.yml');
 const gitlab = read('.gitlab-ci.yml');
 const jenkins = read('Jenkinsfile');
+const studioConfig = read('cloudflare/wrangler.toml');
+const studioWorkflow = read('.github/workflows/studio-surface-integrity.yml');
 
 check('canonical-worker-name', config.name === 'thelingolegacyv-5', `expected thelingolegacyv-5; found ${config.name || 'missing'}`);
 check('worker-entrypoint', config.main === 'worker.js', `expected worker.js; found ${config.main || 'missing'}`);
@@ -56,6 +58,9 @@ for (const item of headerContracts) {
 }
 
 check('readme-runtime-identity', readme.includes('thelingolegacyv-5') && readme.includes('2026-09-01'), 'README must document the same Worker name and compatibility date as Wrangler');
+check('studio-worker-identity', studioConfig.includes('name = "lingo-legacy-studio-build"') && studioConfig.includes('main = "cloudflare/studio-worker.js"') && studioConfig.includes('compatibility_date = "2026-10-04"'), 'Studio build Worker name, entrypoint, and compatibility date must match its dedicated config');
+check('studio-wrangler-pinned-dry-run', studioWorkflow.includes('npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml') && !studioWorkflow.includes('wrangler@latest'), 'Studio Worker validation must use Wrangler v4 and remain dry-run-only');
+check('readme-studio-identity', readme.includes('lingo-legacy-studio-build') && readme.includes('2026-10-04') && readme.includes('not the apex/www production Worker'), 'README must distinguish the Studio build Worker from the apex/www production Worker');
 check('canonical-g02-labels-promotion', promotion.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'production-promotion must retain the canonical G02 runner labels');
 check('canonical-g02-labels-sentinel', sentinel.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'G02 sentinel must retain the canonical runner labels');
 check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cloudflare promotion job must remain disabled until separate authorization and acceptance');
