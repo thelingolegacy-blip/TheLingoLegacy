@@ -31,6 +31,8 @@ Production authority:
 
 The canonical Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
 
+The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its entrypoint is `cloudflare/studio-worker.js`, configuration is `cloudflare/wrangler.toml`, and compatibility date is `2026-10-04`. Its GitHub workflow is dry-run-only and pins Wrangler major version 4. It is not the apex/www production Worker.
+
 ---
 
 ## 🔎 Verification Contract
