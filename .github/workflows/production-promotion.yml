@@ -115,7 +115,10 @@ jobs:
 
   cloudflare:
     needs: gates
-    if: ${{ inputs.environment == 'staging' || inputs.environment == 'production' }}
+    # HARD HOLD: manual dispatch and environment selection are not acceptance evidence.
+    # Keep this promotion workflow's Cloudflare deployment job disabled until independent acceptance, staging isolation,
+    # exact run/commit evidence correlation, and rollback readiness are verified.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
