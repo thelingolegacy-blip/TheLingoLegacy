@@ -27,7 +27,7 @@ function runVerifier({ omitRoute = null } = {}) {
   fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({
     main: 'worker.js',
     assets: { binding: 'ASSETS' },
-  }));
+  }, null, 2));
   const result = spawnSync(process.execPath, [verifier], {
     cwd: root,
     encoding: 'utf8',
