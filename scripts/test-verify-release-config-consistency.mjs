@@ -19,6 +19,7 @@ const rootFiles = {
     assets: { directory: '.', binding: 'ASSETS' }
   }, null, 2),
   'worker.js': [
+    "'x-content-type-options': 'nosniff'",
     "'x-frame-options': 'DENY'",
     "'referrer-policy': 'strict-origin-when-cross-origin'",
     "'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()'",
@@ -28,6 +29,7 @@ const rootFiles = {
     "'x-dns-prefetch-control': 'off'"
   ].join('\n'),
   '_headers': [
+    'X-Content-Type-Options: nosniff',
     'X-Frame-Options: DENY',
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()',
