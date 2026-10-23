@@ -24,6 +24,11 @@ const promotion = read('.github/workflows/production-promotion.yml');
 const autoRepair = read('.github/workflows/lingo-autorepair-deploy.yml');
 const sentinel = read('.github/workflows/g02-sentinel.yml');
 const authority = read('SYSTEM-ACTIVATION-AUTHORITY.md');
+const dockerWorkflow = read('.github/workflows/docker-image.yml');
+const dockerReadme = read('docker/README.md');
+const circleci = read('.circleci/config.yml');
+const gitlab = read('.gitlab-ci.yml');
+const jenkins = read('Jenkinsfile');
 
 check('canonical-worker-name', config.name === 'thelingolegacyv-5', `expected thelingolegacyv-5; found ${config.name || 'missing'}`);
 check('worker-entrypoint', config.main === 'worker.js', `expected worker.js; found ${config.main || 'missing'}`);
@@ -57,6 +62,12 @@ check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cl
 check('auto-repair-deploy-hold', autoRepair.includes('if: ${{ false }}'), 'Cloudflare auto-repair deployment job must remain disabled until separate authorization and acceptance');
 check('canonical-g02-labels-auto-repair', autoRepair.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'auto-repair workflow must retain the canonical G02 runner labels');
 check('authority-document-superseded', authority.includes('SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'), 'legacy activation document must explicitly defer to current gates');
+check('docker-ci-targets-runner-image', dockerWorkflow.includes('--file ops/github-runner/Dockerfile') && dockerWorkflow.includes('ops/github-runner') && !dockerWorkflow.includes('--file Dockerfile'), 'Docker CI must build the defined runner image, not a nonexistent root application Dockerfile');
+check('runner-image-build-inputs', fs.existsSync('ops/github-runner/Dockerfile') && fs.existsSync('ops/github-runner/entrypoint.sh'), 'runner image Dockerfile and entrypoint must both exist');
+check('docker-application-boundary', dockerReadme.includes('application image intentionally not defined') && dockerReadme.includes('does not publish an image'), 'Docker documentation must distinguish runner-image validation from application-image publication');
+check('circleci-is-validation-only', !/\\b(?:wrangler|firebase)\\s+deploy\\b|docker\\s+push|kubectl\\s+apply/i.test(circleci) && /ignore:\\s*main/.test(circleci), 'CircleCI must remain non-production validation and ignore main');
+check('gitlab-production-deploy-denied', gitlab.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && gitlab.includes('G02_ACCEPTANCE=NOT_EVALUATED'), 'GitLab must explicitly disclaim production authorization and G02 acceptance');
+check('jenkins-production-deploy-denied', jenkins.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && jenkins.includes('KUBERNETES_DEPLOYMENT=NOT_AUTHORIZED'), 'Jenkins must explicitly disclaim production and Kubernetes deployment authority');
 
 const result = {
   gate: 'release-configuration-consistency',
