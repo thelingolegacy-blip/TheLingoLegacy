@@ -36,6 +36,7 @@ check('www-route', routePatterns.has('www.thelingolegacy.com/*'), 'www route mus
 check('route-zone', (config.routes || []).filter((route) => routePatterns.has(route.pattern)).every((route) => route.zone_name === 'thelingolegacy.com'), 'both canonical routes must target thelingolegacy.com zone');
 
 const headerContracts = [
+  { id: 'content-type-policy', token: "'x-content-type-options': 'nosniff'", directive: 'X-Content-Type-Options: nosniff' },
   { id: 'frame-policy', token: "'x-frame-options': 'DENY'", directive: 'X-Frame-Options: DENY' },
   { id: 'referrer-policy', token: "'referrer-policy': 'strict-origin-when-cross-origin'", directive: 'Referrer-Policy: strict-origin-when-cross-origin' },
   { id: 'permissions-policy', token: "'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()'", directive: 'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()' },
