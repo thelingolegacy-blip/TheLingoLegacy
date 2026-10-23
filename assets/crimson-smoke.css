@@ -1,0 +1,50 @@
+/* LINGO Legacy — Crimson / White / Smoke Gray visual system
+   Isolated redesign layer. Production remains untouched until reviewed and promoted. */
+:root{
+  --ink:#f7f7f8;--muted:#c4c5ca;--dim:#92949c;--noir:#09090b;--panel:#151518;--steel:#25252b;
+  --gold:#f7f7f8;--amber:#b91c35;--cyan:#d8d9de;--violet:#aeb0b8;--magenta:#dc143c;
+  --green:#e7e7eb;--line:rgba(220,20,60,.44);--glass:rgba(255,255,255,.075);
+  --crimson:#b5122d;--crimson-bright:#e21b3c;--smoke:#92949c;--shadow:0 28px 100px rgba(0,0,0,.58);--radius:26px;
+}
+body{
+ background:radial-gradient(circle at 12% 8%,rgba(181,18,45,.30),transparent 30rem),
+ radial-gradient(circle at 86% 16%,rgba(146,148,156,.15),transparent 25rem),
+ linear-gradient(180deg,#161619 0,#09090b 52%,#050506 100%);
+}
+body:before{
+ background:linear-gradient(120deg,transparent 0 36%,rgba(220,20,60,.12) 36.5% 37.2%,transparent 38%),
+ repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 86px);
+}
+.top{background:linear-gradient(180deg,rgba(8,8,10,.96),rgba(8,8,10,.70));border-bottom-color:rgba(220,20,60,.3)}
+.brand img{filter:drop-shadow(0 0 22px rgba(220,20,60,.45))}
+.eyebrow{border-color:rgba(220,20,60,.5);color:#ff526b}
+.eyebrow:before{background:#e21b3c;box-shadow:0 0 20px #e21b3c}
+h1{ text-shadow:0 0 60px rgba(220,20,60,.22) }
+h1 span{background:linear-gradient(180deg,#fff 0,#f0f0f2 42%,#a7a8ae 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.button{border-color:rgba(220,20,60,.45)}
+.button:hover,.button:focus-visible{border-color:rgba(255,82,107,.85);box-shadow:0 18px 58px rgba(220,20,60,.16),0 14px 44px rgba(0,0,0,.35)}
+.primary{color:#fff;background:linear-gradient(135deg,#e21b3c,#b5122d 55%,#720c1e);box-shadow:0 18px 70px rgba(220,20,60,.25)}
+.stage{border-color:rgba(220,20,60,.55);background:radial-gradient(circle at 52% 22%,rgba(220,20,60,.22),transparent 14rem),linear-gradient(180deg,#202025,#070708 70%)}
+.stage:before{background:conic-gradient(from 30deg,transparent,rgba(220,20,60,.28),transparent,rgba(255,255,255,.10),transparent,rgba(146,148,156,.13),transparent)}
+.console-top,.console-bottom{border-color:rgba(220,20,60,.35)}
+.console-top strong,.poster h2,.tile b,.marquee,.tag,.index-list span:first-child{color:#ff526b}
+.screen{border-color:rgba(255,255,255,.20)}
+.poster{background:radial-gradient(circle at 30% 20%,rgba(220,20,60,.24),transparent 12rem),linear-gradient(160deg,rgba(146,148,156,.18),rgba(5,5,7,.82));border-color:rgba(220,20,60,.35)}
+.card{border-color:rgba(220,20,60,.30)}
+.card:before{background:radial-gradient(circle at 78% 12%,rgba(220,20,60,.13),transparent 12rem)}
+.tag{border-color:rgba(220,20,60,.4)}
+.index-board{border-color:rgba(220,20,60,.34)}
+.index-list a:hover,.index-list a:focus-visible{border-color:rgba(255,82,107,.65)}
+.index-list span:first-child{background:rgba(220,20,60,.16)}
+.xpbar{border-color:rgba(220,20,60,.3)}
+.xpbar span{background:linear-gradient(90deg,#720c1e,#e21b3c,#f4f4f5);box-shadow:0 0 20px rgba(220,20,60,.3)}
+.footer{border-top-color:rgba(220,20,60,.3)}
+.disclaimer{border-color:rgba(220,20,60,.35);color:#f3dfe3}
+.ll-audio-toggle{position:fixed;left:18px;right:auto;bottom:18px;z-index:90;display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(220,20,60,.65);border-radius:999px;padding:12px 15px;background:rgba(13,13,16,.88);color:#fff;font:800 12px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 12px 35px rgba(0,0,0,.35);backdrop-filter:blur(12px);cursor:pointer}
+.ll-audio-toggle svg{width:16px;height:16px;flex:none}
+.ll-audio-toggle:focus-visible{outline:2px solid #ff526b;outline-offset:3px}
+.ll-audio-toggle[aria-pressed=true]{background:#b5122d}
+.ll-audio-note{position:fixed;left:18px;right:auto;bottom:68px;z-index:90;max-width:260px;padding:10px 12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151518;color:#eee;font-size:12px;display:none}
+.ll-audio-note[data-visible=true]{display:block}
+@media(max-width:620px){.ll-audio-toggle{left:12px;right:auto;bottom:12px;padding:11px 12px}.ll-audio-toggle span{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
