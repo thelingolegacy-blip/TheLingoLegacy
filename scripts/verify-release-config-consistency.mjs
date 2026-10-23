@@ -40,6 +40,9 @@ const headerContracts = [
   { id: 'referrer-policy', token: "'referrer-policy': 'strict-origin-when-cross-origin'", directive: 'Referrer-Policy: strict-origin-when-cross-origin' },
   { id: 'permissions-policy', token: "'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()'", directive: 'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()' },
   { id: 'hsts-policy', token: "'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'", directive: 'Strict-Transport-Security: max-age=63072000; includeSubDomains; preload' },
+  { id: 'content-security-policy', token: ` 'content-security-policy': "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests"`, directive: "Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests" },
+  { id: 'cross-origin-opener-policy', token: "'cross-origin-opener-policy': 'same-origin'", directive: 'Cross-Origin-Opener-Policy: same-origin' },
+  { id: 'dns-prefetch-policy', token: "'x-dns-prefetch-control': 'off'", directive: 'X-DNS-Prefetch-Control: off' },
 ];
 for (const item of headerContracts) {
   check(`worker-${item.id}`, worker.includes(item.token), `Worker must set ${item.directive}`);
