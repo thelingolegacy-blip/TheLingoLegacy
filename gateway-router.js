@@ -36,9 +36,24 @@ async function routeSubDomain(request, env) {
   const url = new URL(request.url);
   const subdomain = DOMAIN_ROUTING[url.hostname] || 'main';
 
-  // CORS headers for sub-domain requests
+  // Reflect only HTTPS first-party origins. A wildcard hostname is not valid
+  // in Access-Control-Allow-Origin and must never be returned to arbitrary origins.
+  const origin = request.headers.get('Origin');
+  let allowedOrigin = '';
+  if (origin) {
+    try {
+      const parsedOrigin = new URL(origin);
+      const hostname = parsedOrigin.hostname.toLowerCase();
+      const firstParty = hostname === 'thelingolegacy.com'
+        || hostname === 'www.thelingolegacy.com'
+        || hostname.endsWith('.thelingolegacy.com');
+      if (parsedOrigin.protocol === 'https:' && firstParty) allowedOrigin = origin;
+    } catch {
+      // Invalid Origin values are ignored; the browser will enforce same-origin.
+    }
+  }
   const corsHeaders = {
-    'Access-Control-Allow-Origin': `https://*.thelingolegacy.com`,
+    ...(allowedOrigin ? { 'Access-Control-Allow-Origin': allowedOrigin, 'Vary': 'Origin' } : {}),
     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     'Access-Control-Max-Age': '86400',
