@@ -43,7 +43,9 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 
 ## Acceptance gate
 
-Run `.github/workflows/g02-sentinel.yml` only after host/service readiness is independently established. G02 passes only when every predicate is proven:
+The canonical, provider-neutral sentinel for this recovery is `.github/workflows/g02-self-hosted-sentinel.yml`. The other historical G02 sentinel workflows remain untouched by this repair and must not be treated as substitutes for this contract without review.
+
+Run `.github/workflows/g02-self-hosted-sentinel.yml` only after host/service readiness is independently established. G02 passes only when every predicate is proven:
 
 - A real matching runner is assigned.
 - `runner_id > 0`.
