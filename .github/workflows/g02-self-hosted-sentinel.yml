@@ -1,0 +1,67 @@
+name: G02 Self-Hosted Runner Sentinel
+
+on:
+  workflow_dispatch:
+    inputs:
+      incident_ref:
+        description: "Required incident or verification ticket reference"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-self-hosted-sentinel
+  cancel-in-progress: false
+
+jobs:
+  sentinel:
+    name: Verify isolated G02 runner assignment
+    # Manual-only: never run untrusted pull-request code on a self-hosted runner.
+    # Configure these labels on a dedicated, least-privileged runner.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Validate incident reference
+        shell: bash
+        env:
+          INCIDENT_REF: ${{ inputs.incident_ref }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$INCIDENT_REF" =~ ^[A-Za-z0-9._/#:-]{3,120}$ ]]; then
+            echo "incident_ref must be 3-120 safe reference characters" >&2
+            exit 2
+          fi
+          echo "Incident reference accepted (value intentionally not echoed)."
+
+      - name: Execute G02 sentinel and record runtime context
+        shell: bash
+        env:
+          INCIDENT_REF: ${{ inputs.incident_ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          JOB_NAME: ${{ github.job }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          printf 'G02_SENTINEL_EXECUTED\n'
+          printf 'run_id=%s\nrun_attempt=%s\njob=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrepository=%s\ncommit_sha=%s\nincident_ref_present=true\n' \
+            "$RUN_ID" "$RUN_ATTEMPT" "$JOB_NAME" "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$REPOSITORY" "$COMMIT_SHA" \
+            > g02-evidence/runtime-evidence.txt
+          sha256sum g02-evidence/runtime-evidence.txt > g02-evidence/SHA256SUMS
+          cat g02-evidence/runtime-evidence.txt
+          cat g02-evidence/SHA256SUMS
+
+      - name: Upload sentinel evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-sentinel-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
