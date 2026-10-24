@@ -8,7 +8,16 @@ umask 077
 REPO="${REPO:-thelingolegacy-blip/TheLingoLegacy}"
 ORG="${ORG:-}"
 ENTERPRISE_SLUG="${ENTERPRISE_SLUG:-}"
-OUT_DIR="${OUT_DIR:-./g02-admin-evidence-$(date -u +%Y%m%dT%H%M%SZ)}"
+# Require an explicitly approved absolute output path.
+# Never reuse or overwrite an existing evidence directory.
+if [[ -z "${OUT_DIR:-}" ]]; then
+  echo "BLOCKED: Set OUT_DIR to an approved absolute path; no collection performed." >&2
+  exit 2
+fi
+if [[ "$OUT_DIR" != /* ]]; then
+  echo "BLOCKED: OUT_DIR must be an absolute path; no collection performed." >&2
+  exit 2
+fi
 # Keep the newest observed pre-job failures first, followed by prior corroborating runs.
 RUN_IDS="${RUN_IDS:-40127783265 40127528789 40127528124 40127527347 40127462871 40127461935 40127461258 40127295954 40127295226 40127294489 40126492313 40126491618 40126490974 40126326096 40126325434 40126324756 40125931937 40125931229 40125930706 40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
 CHECK_SUITE_IDS="${CHECK_SUITE_IDS:-108765123220 108765120960 108765119082 108764689096 108764687203 108764685257 108762602894 108762600856 108762599033}"
@@ -25,8 +34,10 @@ if [[ -n "$ENTERPRISE_SLUG" && ! "$ENTERPRISE_SLUG" =~ ^[A-Za-z0-9_.-]+$ ]]; the
   echo "BLOCKED: ENTERPRISE_SLUG must be an enterprise slug; no API calls were made." >&2
   exit 2
 fi
-mkdir -p "$OUT_DIR" || exit 2
-chmod 700 "$OUT_DIR" 2>/dev/null || true
+if ! mkdir -m 700 -- "$OUT_DIR"; then
+  echo "BLOCKED: Cannot create a new output directory; it may already exist. No collection performed." >&2
+  exit 2
+fi
 STATUS="$OUT_DIR/collection-status.txt"
 : > "$STATUS"
 chmod 600 "$STATUS"
