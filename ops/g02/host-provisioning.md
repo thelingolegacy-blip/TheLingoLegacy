@@ -41,6 +41,10 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 5. If no matching runner exists, register it using the current official GitHub runner instructions and a short-lived repository-scoped registration token obtained by an authorized repository administrator. Do not store the token in this repository or this Worker. Do not place a token in chat.
 6. Install and start the runner service on the host. Confirm it is Online and actively polling; a UI badge alone is not sufficient.
 
+## Workflow inventory and authority
+
+The canonical workflow for current G02 acceptance is `.github/workflows/g02-self-hosted-sentinel.yml`. The repository also retains two legacy diagnostic workflows, `.github/workflows/g02-sentinel.yml` and `.github/workflows/runner-self-hosted-g02.yml`; they are intentionally not deleted or disabled by this repair. Their successful completion alone does not satisfy the current acceptance contract. The AWS-named workflow was replaced by the provider-neutral canonical workflow on the repair branch; do not infer that any workflow name proves host provisioning or runner readiness.
+
 ## Acceptance gate
 
 The canonical, provider-neutral sentinel for this recovery is `.github/workflows/g02-self-hosted-sentinel.yml`. The other historical G02 sentinel workflows remain untouched by this repair and must not be treated as substitutes for this contract without review.
