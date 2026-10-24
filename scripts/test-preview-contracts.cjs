@@ -46,4 +46,4 @@ assert.deepEqual(vercel.redirects, [
   { source: "/arcade", destination: "/lingoarcade/", permanent: true }
 ]);
 
-console.log("Preview contract checks passed: 13 assertions.");
+console.log("Preview contract checks passed: 21 assertions.");
