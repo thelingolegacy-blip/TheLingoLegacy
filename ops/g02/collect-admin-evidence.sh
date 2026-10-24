@@ -59,8 +59,7 @@ record_endpoint "Runner inventory" "repos/$REPO/actions/runners?per_page=100" "r
 record_endpoint "Workflow inventory" "repos/$REPO/actions/workflows?per_page=100" "workflow-inventory.json" \
   '{total_count: .total_count, workflows: [.workflows[]? | {id, name, path, state, html_url}]}'
 
-record_endpoint "Workflow token permissions" "repos/$REPO/actions/permissions/workflow" "workflow-token-permissions.json" \\
-  '{default_workflow_permissions, can_approve_pull_request_reviews}'
+record_endpoint "Workflow token permissions" "repos/$REPO/actions/permissions/workflow" "workflow-token-permissions.json" '{default_workflow_permissions, can_approve_pull_request_reviews}'
 
 for run_id in $RUN_IDS; do
   [[ "$run_id" =~ ^[0-9]+$ ]] || {
@@ -80,13 +79,11 @@ done
 # Check-suite/check-run diagnostics may expose the platform-side failure reason when job records are absent.
 for suite_id in $CHECK_SUITE_IDS; do
   [[ "$suite_id" =~ ^[0-9]+$ ]] || {
-    printf 'SKIP invalid check-suite ID: %s\\n' "$suite_id" >> "$STATUS"
+    printf 'SKIP invalid check-suite ID: %s\n' "$suite_id" >> "$STATUS"
     continue
   }
-  record_endpoint "Check suite $suite_id" "repos/$REPO/check-suites/$suite_id" "check-suite-$suite_id.json" \\\
-    '{id, head_sha, head_branch, status, conclusion, before, after, created_at, updated_at, app: {id: .app.id, slug: .app.slug, name: .app.name, owner: .app.owner.login}, pull_requests: [.pull_requests[]? | {number, head: .head.sha, base: .base.ref}]}'
-  record_endpoint "Check runs for suite $suite_id" "repos/$REPO/check-suites/$suite_id/check-runs?per_page=100" "check-suite-$suite_id-runs.json" \\\
-    '{total_count: .total_count, check_runs: [.check_runs[]? | {id, name, status, conclusion, started_at, completed_at, details_url, external_id, output: {title: .output.title, summary: .output.summary, text: .output.text}, app: {id: .app.id, slug: .app.slug, name: .app.name}}]}'
+  record_endpoint "Check suite $suite_id" "repos/$REPO/check-suites/$suite_id" "check-suite-$suite_id.json" '{id, head_sha, head_branch, status, conclusion, before, after, created_at, updated_at, app: {id: .app.id, slug: .app.slug, name: .app.name, owner: .app.owner.login}, pull_requests: [.pull_requests[]? | {number, head: .head.sha, base: .base.ref}]}'
+  record_endpoint "Check runs for suite $suite_id" "repos/$REPO/check-suites/$suite_id/check-runs?per_page=100" "check-suite-$suite_id-runs.json" '{total_count: .total_count, check_runs: [.check_runs[]? | {id, name, status, conclusion, started_at, completed_at, details_url, external_id, output: {title: .output.title, summary: .output.summary, text: .output.text}, app: {id: .app.id, slug: .app.slug, name: .app.name}}]}'
 done
 
 {
