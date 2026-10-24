@@ -34,31 +34,31 @@ jobs:
           set -euo pipefail
           mkdir -p g02-evidence
           {
-            printf 'schema=lingo-g02-dispatch-evidence-v1\\n'
-            printf 'captured_utc=%s\\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            printf 'repository=%s\\n' "$GITHUB_REPOSITORY"
-            printf 'run_id=%s\\n' "$GITHUB_RUN_ID"
-            printf 'run_attempt=%s\\n' "$GITHUB_RUN_ATTEMPT"
-            printf 'job_id=%s\\n' "$GITHUB_JOB"
-            printf 'commit_sha=%s\\n' "$GITHUB_SHA"
-            printf 'incident_reference=%s\\n' "$INCIDENT_REFERENCE"
-            printf 'runner_name=%s\\n' "$RUNNER_NAME_VALUE"
-            printf 'runner_os=%s\\n' "$RUNNER_OS_VALUE"
-            printf 'runner_arch=%s\\n' "$RUNNER_ARCH_VALUE"
-            printf 'runner_environment=%s\\n' "$RUNNER_ENVIRONMENT_VALUE"
+            printf 'schema=lingo-g02-dispatch-evidence-v1\n'
+            printf 'captured_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
+            printf 'job_id=%s\n' "$GITHUB_JOB"
+            printf 'commit_sha=%s\n' "$GITHUB_SHA"
+            printf 'incident_reference=%s\n' "$INCIDENT_REFERENCE"
+            printf 'runner_name=%s\n' "$RUNNER_NAME_VALUE"
+            printf 'runner_os=%s\n' "$RUNNER_OS_VALUE"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH_VALUE"
+            printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT_VALUE"
           } > g02-evidence/runner-evidence.txt
           test "${#GITHUB_SHA}" -eq 40
           test "$RUNNER_NAME_VALUE" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
-          printf 'host_identity_check=PASS\\n' >> g02-evidence/runner-evidence.txt
+          printf 'host_identity_check=PASS\n' >> g02-evidence/runner-evidence.txt
 
       - name: Execute G02 sentinel
         id: sentinel
         shell: bash
         run: |
           set -euo pipefail
-          printf 'RUNNER_EXECUTION_SENTINEL=PASS\\n' | tee -a g02-evidence/runner-evidence.txt
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\n' | tee -a g02-evidence/runner-evidence.txt
 
       - name: Capture and verify GitHub job allocation
         if: always()
@@ -98,7 +98,7 @@ jobs:
               "logs_url_present": bool(job.get("check_run_url")),
               "independent_verification_recorded": False
           }
-          pathlib.Path("g02-evidence/runner-allocation.json").write_text(json.dumps(record, indent=2) + "\\n")
+          pathlib.Path("g02-evidence/runner-allocation.json").write_text(json.dumps(record, indent=2) + "\n")
           if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
               raise SystemExit("FAIL: GitHub API did not return a positive job ID")
           if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
