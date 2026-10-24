@@ -20,3 +20,13 @@ test("G02 sentinel records runtime evidence and checksum without checkout or sec
   assert.match(workflow, /actions\/upload-artifact@v4/);
   assert.doesNotMatch(workflow, /actions\/checkout|secrets\./);
 });
+
+test("G02 records verified numeric runner and job identity from Actions API", () => {
+  assert.match(workflow, /actions: read/);
+  assert.match(workflow, /actions\/runs\/\$RUN_ID\/jobs\?per_page=100/);
+  assert.match(workflow, /Number\.isSafeInteger\(job\.runner_id\) && job\.runner_id > 0/);
+  assert.match(workflow, /Number\.isSafeInteger\(job\.id\) && job\.id > 0/);
+  assert.match(workflow, /runner_id: job\.runner_id/);
+  assert.match(workflow, /job_id: String\(job\.id\)/);
+  assert.match(workflow, /G02 acceptance blocked/);
+});
