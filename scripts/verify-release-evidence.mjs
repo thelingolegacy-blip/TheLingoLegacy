@@ -10,7 +10,7 @@ export function validateEvidence(evidence) {
   if (evidence.schemaVersion !== 1) errors.push('schemaVersion must equal 1');
   if (!nonEmpty(evidence.repository)) errors.push('repository is required');
   if (typeof evidence.commitSha !== 'string' || !/^[a-f0-9]{40}$/i.test(evidence.commitSha)) errors.push('commitSha must be a full 40-character Git SHA');
-  if (typeof evidence.capturedAtUtc !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$/.test(evidence.capturedAtUtc) || Number.isNaN(Date.parse(evidence.capturedAtUtc))) errors.push('capturedAtUtc must be a valid UTC ISO-8601 timestamp');
+  if (typeof evidence.capturedAtUtc !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(evidence.capturedAtUtc) || Number.isNaN(Date.parse(evidence.capturedAtUtc))) errors.push('capturedAtUtc must be a valid UTC ISO-8601 timestamp');
 
   if (!isRecord(evidence.pullRequest)) {
     errors.push('pullRequest is required');
@@ -22,7 +22,7 @@ export function validateEvidence(evidence) {
   if (!isRecord(evidence.workflow)) {
     errors.push('workflow is required');
   } else {
-    if (!(positiveInteger(evidence.workflow.runId) || (typeof evidence.workflow.runId === 'string' && /^[1-9]\\d*$/.test(evidence.workflow.runId)))) errors.push('workflow.runId must be a positive integer');
+    if (!(positiveInteger(evidence.workflow.runId) || (typeof evidence.workflow.runId === 'string' && /^[1-9]\d*$/.test(evidence.workflow.runId)))) errors.push('workflow.runId must be a positive integer');
     if (!positiveInteger(evidence.workflow.attempt)) errors.push('workflow.attempt must be a positive integer');
     if (!nonEmpty(evidence.workflow.jobId)) errors.push('workflow.jobId is required');
     if (!positiveInteger(evidence.workflow.runnerId)) errors.push('workflow.runnerId must be a positive integer');
