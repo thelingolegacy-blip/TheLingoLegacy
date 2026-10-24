@@ -66,7 +66,7 @@ Run from a trusted workstation with an authorized GitHub CLI session. These comm
 gh auth status
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127295226 --jq '{id,name,path,workflow_id,check_suite_id,event,head_sha,conclusion,status,created_at}'
 gh api repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108764687203
-gh api 'repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108762602894/check-runs?filter=all&per_page=100' --jq '{total_count,check_runs:[.check_runs[]|{id,name,conclusion,status,output,details_url,app:.app.name}]}'
+gh api 'repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108764687203/check-runs?filter=all&per_page=100' --jq '{total_count,check_runs:[.check_runs[]|{id,name,conclusion,status,output,details_url,app:.app.name}]}'
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions/workflow
 gh api 'repos/thelingolegacy-blip/TheLingoLegacy/actions/runner-groups?per_page=100'
