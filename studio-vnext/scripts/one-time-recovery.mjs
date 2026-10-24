@@ -41,7 +41,7 @@ async function request(url, headers = {}) {
   return { status: response.status, ok: response.ok, headers: Object.fromEntries(response.headers.entries()), body };
 }
 function meta(html, name) {
-  const re = new RegExp("<meta\\s+[^>]*(?:name|http-equiv)=[\\"']" + name + "[\\"'][^>]*>", "i");
+  const re = new RegExp(`<meta\\s+[^>]*(?:name|http-equiv)=["']${name}["'][^>]*>`, "i");
   return html.match(re)?.[0] || "";
 }
 async function checkPreviewRoute(path) {
