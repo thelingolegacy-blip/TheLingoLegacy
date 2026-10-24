@@ -25,6 +25,22 @@ const PLATFORM_MODULES = Object.freeze([
   'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
+const READ_ONLY_API_PATHS = new Set([
+  '/api/v1', '/api/v1/runtime', '/api/v1/platform/manifest', '/api/v1/platform/status',
+  '/api/v1/platform/gates', '/api/v1/platform/modules', '/api/v1/site/context'
+]);
+const API_ENDPOINTS = Object.freeze([
+  { path: '/api/v1', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'API discovery' },
+  { path: '/api/v1/runtime', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Runtime manifest' },
+  { path: '/api/v1/platform/manifest', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Platform manifest' },
+  { path: '/api/v1/platform/status', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Platform status and release state' },
+  { path: '/api/v1/platform/gates', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Fail-closed release gates' },
+  { path: '/api/v1/platform/modules', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Platform module inventory' },
+  { path: '/api/v1/site/context', methods: ['GET', 'HEAD', 'OPTIONS'], purpose: 'Public site context' },
+  { path: '/api/create-checkout-session', methods: ['POST', 'OPTIONS'], purpose: 'Create configured checkout session' },
+  { path: '/api/beacon-text-alerts', methods: ['POST', 'OPTIONS'], purpose: 'Validate and stage opted-in beacon alerts' }
+]);
+
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
   'x-frame-options': 'DENY',
@@ -69,7 +85,16 @@ function withSecurityHeaders(response, request, env) {
 }
 
 function json(body, status = 200, request, env) {
-  return withSecurityHeaders(new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
+  const payload = request?.method === 'HEAD' ? null : JSON.stringify(body);
+  return withSecurityHeaders(new Response(payload, { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
+}
+
+function methodNotAllowed(request, env, allow = 'GET, HEAD, OPTIONS') {
+  const allowedMethods = allow.split(',').map((method) => method.trim());
+  return withSecurityHeaders(new Response(JSON.stringify({ ok: false, error: 'Method not allowed', allowed_methods: allowedMethods }), {
+    status: 405,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', allow }
+  }), request, env);
 }
 
 function requestOrigin(request) { return new URL(request.url).origin; }
@@ -77,7 +102,7 @@ async function parseJson(request) { try { return await request.json(); } catch {
 function safeEmail(value = '') { const email = String(value).trim().slice(0, 160); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : ''; }
 
 async function createCheckout(request, env) {
-  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  if (request.method !== 'POST') return methodNotAllowed(request, env, 'POST, OPTIONS');
   const secret = env.STRIPE_SECRET_KEY;
   if (!secret) return json({ ok: false, error: 'Stripe checkout is not configured yet.' }, 503, request, env);
   const body = await parseJson(request);
@@ -139,7 +164,7 @@ async function sendBeacon(payload, env) {
 }
 
 async function beaconAlerts(request, env) {
-  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  if (request.method !== 'POST') return methodNotAllowed(request, env, 'POST, OPTIONS');
   const body = await parseJson(request); const phone = normalizePhone(body.phone); const zone = String(body.zone || '').trim(); const source = normalizeSource(body.source); const consent = body.consent === true || body.consent === 'true' || body.consent === 'on';
   if (!PHONE_RE.test(phone)) return json({ ok: false, error: 'Enter a phone number in E.164 format.' }, 400, request, env);
   if (!BEACON_ZONES.has(zone)) return json({ ok: false, error: 'Unknown beacon alert zone.' }, 400, request, env);
@@ -155,6 +180,7 @@ function runtimeManifest(request, env) {
   const url = new URL(request.url);
   return {
     ok: true,
+    api_version: 'v1',
     runtime: 'cloudflare-worker',
     version: RUNTIME_VERSION,
     hostname: url.hostname,
@@ -165,6 +191,7 @@ function runtimeManifest(request, env) {
     edge_rendering: true,
     assets: 'worker-controlled',
     observability: true,
+    integration_semantics: 'binding_presence_only_not_health_check',
     integrations: {
       stripe: Boolean(env.STRIPE_SECRET_KEY),
       beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
@@ -222,12 +249,14 @@ export default {
         canonical.hostname = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
         return withSecurityHeaders(Response.redirect(canonical.toString(), 301), request, env);
       }
-      if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
+      if (url.pathname === '/healthz') return withSecurityHeaders(new Response(request.method === 'HEAD' ? null : 'ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
+      if (READ_ONLY_API_PATHS.has(url.pathname) && request.method !== 'GET' && request.method !== 'HEAD') return methodNotAllowed(request, env);
+      if (url.pathname === '/api/v1') return json({ ok: true, api_version: 'v1', runtime: RUNTIME_VERSION, endpoints: API_ENDPOINTS, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
-      if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
-      if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
-      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
+      if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, api_version: 'v1', runtime: RUNTIME_VERSION, status: 'PROTECTED_HOLD', gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', authorization: { production_promotion: false, activation: false, real_money_gameplay: false, cash_out: false }, generated_at: new Date().toISOString() }, 200, request, env);
+      if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, api_version: 'v1', modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
+      if (url.pathname === '/api/v1/site/context') return json({ ok: true, api_version: 'v1', runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
