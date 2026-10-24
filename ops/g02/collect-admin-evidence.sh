@@ -102,7 +102,7 @@ for suite_id in $CHECK_SUITE_IDS; do
     continue
   }
   record_endpoint "Check suite $suite_id" "repos/$REPO/check-suites/$suite_id" "check-suite-$suite_id.json" '{id, head_sha, head_branch, status, conclusion, before, after, created_at, updated_at, app: {id: .app.id, slug: .app.slug, name: .app.name, owner: .app.owner.login}, pull_requests: [.pull_requests[]? | {number, head: .head.sha, base: .base.ref}]}'
-  record_endpoint "Check runs for suite $suite_id" "repos/$REPO/check-suites/$suite_id/check-runs?per_page=100" "check-suite-$suite_id-runs.json" '{total_count: .total_count, check_runs: [.check_runs[]? | {id, name, status, conclusion, started_at, completed_at, details_url, external_id, output: {title: .output.title, summary: .output.summary, text: .output.text}, app: {id: .app.id, slug: .app.slug, name: .app.name}}]}'
+  record_endpoint "Check runs for suite $suite_id" "repos/$REPO/check-suites/$suite_id/check-runs?filter=all&per_page=100" "check-suite-$suite_id-runs.json" '{total_count: .total_count, check_runs: [.check_runs[]? | {id, name, status, conclusion, started_at, completed_at, details_url, external_id, output: {title: .output.title, summary: .output.summary, text: .output.text}, app: {id: .app.id, slug: .app.slug, name: .app.name}}]}'
 done
 
 {
