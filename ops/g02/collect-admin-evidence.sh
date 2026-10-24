@@ -8,7 +8,7 @@ umask 077
 REPO="${REPO:-thelingolegacy-blip/TheLingoLegacy}"
 OUT_DIR="${OUT_DIR:-./g02-admin-evidence-$(date -u +%Y%m%dT%H%M%SZ)}"
 # Keep the newest observed pre-job failures first, followed by prior corroborating runs.
-RUN_IDS="${RUN_IDS:-40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
+RUN_IDS="${RUN_IDS:-40125931937 40125931229 40125930706 40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
 
 if [[ ! "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
   echo "BLOCKED: REPO must be owner/name; no API calls were made." >&2
@@ -68,6 +68,9 @@ for run_id in $RUN_IDS; do
     '{id, name, workflow_id, run_number, run_attempt, event, status, conclusion, created_at, updated_at, run_started_at, head_branch, head_sha, path, html_url}'
   record_endpoint "Jobs for run $run_id" "repos/$REPO/actions/runs/$run_id/jobs?per_page=100" "run-$run_id-jobs.json" \
     '{total_count: .total_count, jobs: [.jobs[]? | {id, name, status, conclusion, runner_id, runner_name, labels, head_sha, started_at, completed_at, steps: [.steps[]? | {name, status, conclusion, number, started_at, completed_at}]}]}'
+  # Capture artifact inventory as well; no downloads or workflow reruns are performed.
+  record_endpoint "Artifacts for run $run_id" "repos/$REPO/actions/runs/$run_id/artifacts?per_page=100" "run-$run_id-artifacts.json" \
+    '{total_count: .total_count, artifacts: [.artifacts[]? | {id, name, size_in_bytes, expired, created_at, updated_at, expires_at, workflow_run: {id: .workflow_run.id, head_branch: .workflow_run.head_branch, head_sha: .workflow_run.head_sha}}]}'
 done
 
 {
