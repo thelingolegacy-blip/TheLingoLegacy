@@ -26,11 +26,14 @@ fi
 section "RUNNER PROCESSES (NO ARGUMENTS)"
 # Deliberately omit process command-line arguments to reduce accidental
 # disclosure of tokens or other secrets passed to unrelated processes.
-ps -eo pid,ppid,stat,etime,comm   | grep -E '(^|[[:space:]])(Runner\.Listener|Runner\.Worker|runsvc\.sh)([[:space:]]|$)'   || true
+ps -eo pid,ppid,stat,etime,comm \
+  | grep -E '(^|[[:space:]])(Runner\.Listener|Runner\.Worker|runsvc\.sh)([[:space:]]|$)' \
+  || true
 
 section "RUNNER SERVICES"
 if command -v systemctl >/dev/null 2>&1; then
-  systemctl list-units --type=service --all --no-pager --no-legend     | grep -i runner || true
+  systemctl list-units --type=service --all --no-pager --no-legend \
+    | grep -i runner || true
 else
   printf 'systemctl: unavailable (host may not use systemd)\n'
 fi
