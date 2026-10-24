@@ -1,3 +1,5 @@
+# LEGACY DIAGNOSTIC ONLY: the canonical G02 acceptance workflow is g02-self-hosted-sentinel.yml.
+# Keep this workflow for historical recovery evidence; do not use its artifact alone for current G02 acceptance.
 name: G02 Self-Hosted Runner Sentinel
 
 on:
