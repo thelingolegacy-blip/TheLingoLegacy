@@ -93,6 +93,14 @@ for run_id in $RUN_IDS; do
   # Capture artifact inventory as well; no downloads or workflow reruns are performed.
   record_endpoint "Artifacts for run $run_id" "repos/$REPO/actions/runs/$run_id/artifacts?per_page=100" "run-$run_id-artifacts.json" \
     '{total_count: .total_count, artifacts: [.artifacts[]? | {id, name, size_in_bytes, expired, created_at, updated_at, expires_at, workflow_run: {id: .workflow_run.id, head_branch: .workflow_run.head_branch, head_sha: .workflow_run.head_sha}}]}'
+  # Probe the run-log endpoint but discard the response body: downloaded logs may contain
+  # sensitive workflow output, and this collector records availability only, not log contents.
+  if gh api --hostname github.com "repos/$REPO/actions/runs/$run_id/logs" >/dev/null 2>&1; then
+    printf 'PASS Run logs endpoint retrievable for run %s; response body discarded\\n' "$run_id" >> "$STATUS"
+  else
+    rc=$?
+    printf 'BLOCKED Run logs endpoint for run %s: request failed (exit %s); response body not stored\\n' "$run_id" "$rc" >> "$STATUS"
+  fi
   # Timing helps distinguish a pre-job startup abort from a job that actually consumed runner time.
   record_endpoint "Timing for run $run_id" "repos/$REPO/actions/runs/$run_id/timing" "run-$run_id-timing.json" \
     '{run_duration_ms, billable}'
