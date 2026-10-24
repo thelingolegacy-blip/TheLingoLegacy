@@ -81,3 +81,10 @@ test('rejects a wrong default Firebase project', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\.firebaserc must select lingo-legacy-production/);
 });
+
+test('rejects duplicate platform declarations', () => {
+  const source = validOptions() + '\n\n' + validOptions().split('\n\n')[0];
+  const result = run(fixture(source));
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate FirebaseOptions declaration for web/);
+});
