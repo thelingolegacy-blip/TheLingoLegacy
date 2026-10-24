@@ -1,0 +1,121 @@
+# This workflow requires a pre-registered, online self-hosted runner with labels: self-hosted, linux, x64, lingo-g02.
+# It does not provision AWS or any other runner. Expected RUNNER_NAME: lingo-legacy-g02.
+name: G02 Self-Hosted Runner Sentinel — Fail Closed
+on:
+  workflow_dispatch:
+    inputs:
+      evidence_ticket:
+        description: Incident reference
+        required: true
+        default: "#255"
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: lingo-g02-self-hosted-sentinel
+  cancel-in-progress: false
+jobs:
+  sentinel:
+    name: g02-self-hosted-runner-sentinel
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+    env:
+      EVIDENCE_TICKET: ${{ inputs.evidence_ticket }}
+    steps:
+      - name: Checkout exact triggering commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Assert runner identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "thelingolegacy-blip/TheLingoLegacy"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          mkdir -p g02-evidence
+          {
+            echo "schema=lingo-g02-sentinel-v1"
+            echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "commit_sha=$GITHUB_SHA"
+            echo "runner_name=$RUNNER_NAME"
+            echo "runner_os=$RUNNER_OS"
+            echo "runner_arch=$RUNNER_ARCH"
+            echo "ticket=$EVIDENCE_TICKET"
+          } > g02-evidence/workflow-identity.txt
+      - name: Read-only host preflight
+        shell: bash
+        run: bash ops/g02/host-preflight.sh ./g02-evidence
+      - name: Sentinel execution proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s g02-evidence/g02-host-preflight.txt
+          python3 - <<'PY'
+          import json, os, pathlib, datetime
+          evidence = {
+              "schema": "lingo-g02-sentinel-result-v1",
+              "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "sentinel_exit_code": 0,
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "repository": os.environ["GITHUB_REPOSITORY"],
+          }
+          pathlib.Path("g02-evidence/g02-sentinel-result.json").write_text(json.dumps(evidence, indent=2) + "\n")
+          PY
+      - name: Capture runner allocation from GitHub API
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" > g02-evidence/jobs-snapshot.json
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          payload = json.loads(pathlib.Path("g02-evidence/jobs-snapshot.json").read_text())
+          jobs = [j for j in payload.get("jobs", []) if j.get("name") == "g02-self-hosted-runner-sentinel"]
+          if len(jobs) != 1:
+              raise SystemExit(f"FAIL: expected exactly one sentinel job, found {len(jobs)}")
+          job = jobs[0]
+          steps = job.get("steps")
+          record = {
+              "schema": "lingo-g02-runner-allocation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "job_id": job.get("id"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "runner_labels": job.get("labels") if isinstance(job.get("labels"), list) else [],
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "job_status_at_capture": job.get("status"),
+              "job_conclusion_at_capture": job.get("conclusion"),
+              "steps": steps if isinstance(steps, list) else [],
+              "logs_retrievable": False,
+              "independent_verification_recorded": False,
+              "note": "Logs retrieval and independent evidence review must be established outside this workflow; false is intentional until verified."
+          }
+          pathlib.Path("g02-evidence/g02-runner-allocation.json").write_text(json.dumps(record, indent=2) + "\n")
+          if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
+              raise SystemExit("FAIL: GitHub API did not return a positive runner_id")
+          if record["runner_name"] != "lingo-legacy-g02":
+              raise SystemExit("FAIL: GitHub API runner_name did not match lingo-legacy-g02")
+          if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
+              raise SystemExit("FAIL: GitHub API did not return a positive job_id")
+          if not isinstance(record["steps"], list) or not record["steps"]:
+              raise SystemExit("FAIL: GitHub API did not return instantiated steps")
+          PY
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-self-hosted-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
