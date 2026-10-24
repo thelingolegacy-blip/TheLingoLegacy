@@ -15,11 +15,17 @@ Please investigate whether these runs were rejected or failed during GitHub Acti
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
+| Crimson Smoke UI — static validation | 40124367746 | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | 40124366718 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 40124365525 | `startup_failure` | 0 | 0 |
+
+Earlier corroborating runs:
+
+| Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
 | Crimson Smoke UI — static validation | 40124210534 | `startup_failure` | 0 | 0 |
 | Lingo Legacy Static CI | 40124209733 | `startup_failure` | 0 | 0 |
 | G02 Runner Image Build (no publish) | 40124209037 | `startup_failure` | 0 | 0 |
-
-Earlier corroborating runs:
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
