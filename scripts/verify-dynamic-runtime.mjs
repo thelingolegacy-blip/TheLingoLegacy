@@ -5,6 +5,10 @@ const wrangler = fs.readFileSync('wrangler.jsonc', 'utf8');
 
 const requiredWorkerContracts = [
   "url.pathname === '/healthz'",
+  "url.pathname === '/api/health'",
+  "url.pathname === '/api/metrics'",
+  "url.pathname === '/api/checkout'",
+  "url.pathname === '/api/rewards/claim'",
   "url.pathname === '/api/v1/runtime'",
   "url.pathname === '/api/v1/platform/manifest'",
   "url.pathname === '/api/v1/platform/status'",
@@ -29,7 +33,7 @@ const result = {
   gate: 'dynamic-runtime-contract',
   status: failures.length ? 'FAIL' : 'PASS',
   worker: 'worker.js',
-  requiredRoutes: requiredWorkerContracts.slice(0, 8),
+  requiredRoutes: requiredWorkerContracts.slice(0, 12),
   edgeHtmlRuntime: 'renderDynamicHtml',
   assetDelivery: 'worker-controlled',
   retiredProvider: 'vercel',
