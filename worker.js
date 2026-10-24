@@ -91,7 +91,8 @@ function json(body, status = 200, request, env) {
 
 function methodNotAllowed(request, env, allow = 'GET, HEAD, OPTIONS') {
   const allowedMethods = allow.split(',').map((method) => method.trim());
-  return withSecurityHeaders(new Response(JSON.stringify({ ok: false, error: 'Method not allowed', allowed_methods: allowedMethods }), {
+  const payload = request?.method === 'HEAD' ? null : JSON.stringify({ ok: false, error: 'Method not allowed', allowed_methods: allowedMethods });
+  return withSecurityHeaders(new Response(payload, {
     status: 405,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', allow }
   }), request, env);
