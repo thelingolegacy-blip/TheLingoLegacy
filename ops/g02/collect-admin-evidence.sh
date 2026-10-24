@@ -96,10 +96,10 @@ for run_id in $RUN_IDS; do
   # Probe the run-log endpoint but discard the response body: downloaded logs may contain
   # sensitive workflow output, and this collector records availability only, not log contents.
   if gh api --hostname github.com "repos/$REPO/actions/runs/$run_id/logs" >/dev/null 2>&1; then
-    printf 'PASS Run logs endpoint retrievable for run %s; response body discarded\\n' "$run_id" >> "$STATUS"
+    printf 'PASS Run logs endpoint retrievable for run %s; response body discarded\n' "$run_id" >> "$STATUS"
   else
     rc=$?
-    printf 'BLOCKED Run logs endpoint for run %s: request failed (exit %s); response body not stored\\n' "$run_id" "$rc" >> "$STATUS"
+    printf 'BLOCKED Run logs endpoint for run %s: request failed (exit %s); response body not stored\n' "$run_id" "$rc" >> "$STATUS"
   fi
   # Timing helps distinguish a pre-job startup abort from a job that actually consumed runner time.
   record_endpoint "Timing for run $run_id" "repos/$REPO/actions/runs/$run_id/timing" "run-$run_id-timing.json" \
