@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 const sourceRunner = fileURLToPath(new URL('./run-static-gates.mjs', import.meta.url));
 const scriptNames = [
+  'verify-flutter-firebase.mjs',
+  'test-verify-flutter-firebase.mjs',
   'verify-asset-publication-scope.mjs',
   'verify-shared-design-system.mjs',
   'verify-platform-registries.mjs',
@@ -96,10 +98,13 @@ test('all static checks run and evidence is emitted when every fixture check pas
   const result = runStack(root);
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 38, passed: 38, failed: 0 });
+  assert.deepEqual(report.summary, { total: 41, passed: 41, failed: 0 });
   assert.equal(report.commitSha, 'fixture-sha');
   assert.equal(report.workflowRunId, 'fixture-run');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-verify-flutter-firebase.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-test-verify-flutter-firebase.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-test-firebase-config-contract.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-sanitize-cloudflare-only-surface.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-verify-cloudflare-bindings.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-validate-static-site.log')));
@@ -118,7 +123,7 @@ test('a failed validator does not suppress later checks and makes the stack fail
   const result = runStack(root);
   assert.equal(result.status, 1);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 38, passed: 37, failed: 1 });
+  assert.deepEqual(report.summary, { total: 41, passed: 40, failed: 1 });
   assert.equal(report.checks.find((check) => check.id === 'verify-platform-registries').conclusion, 'FAIL');
   assert.equal(report.checks.find((check) => check.id === 'validate-static-site').conclusion, 'PASS');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
