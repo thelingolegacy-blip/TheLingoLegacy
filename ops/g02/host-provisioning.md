@@ -41,6 +41,27 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 5. If no matching runner exists, register it using the current official GitHub runner instructions and a short-lived repository-scoped registration token obtained by an authorized repository administrator. Do not store the token in this repository or this Worker. Do not place a token in chat.
 6. Install and start the runner service on the host. Confirm it is Online and actively polling; a UI badge alone is not sufficient.
 
+## Administrator evidence collection (read-only)
+
+The connector in this recovery session cannot reliably inspect the repository Actions permissions or runner inventory endpoints. An authorized repository/account owner should run the following from a trusted workstation with GitHub CLI authenticated to the correct account. This collector makes read-only API calls and does not dispatch/retry jobs, change settings, or register/delete runners.
+
+```bash
+gh auth status
+bash ops/g02/collect-admin-evidence.sh
+```
+
+The script writes a timestamped, permission-restricted evidence directory containing a status report, filtered Actions policy, runner inventory, workflow inventory, and job/step snapshots for recent failing runs. A `BLOCKED` entry means the endpoint was not accessible; it is not evidence that the setting or runner does not exist. Review outputs and redact account-identifying details before sharing. Never share tokens, credential files, or full environment dumps.
+
+### Decision sequence — do not skip gates
+
+1. **Policy gate:** inspect repository Settings → Actions → General and any account-level restrictions. Confirm Actions are enabled and the applicable policy permits the workflows and required actions. Record screenshots or API output with timestamps and secrets redacted.
+2. **Dispatch classification:** inspect recent run records and job snapshots. If runs still have zero jobs/steps and no logs, stop retrying. The failure is pre-job and does not establish an application-test failure. Escalate to GitHub Support with run IDs, timestamps, `startup_failure`, zero job/step counts, and log retrieval errors.
+3. **Runner gate:** inspect Settings → Actions → Runners. Record exact runner ID, name, OS/architecture, status, busy/disabled/ephemeral flags, labels, and last-seen details where available. Do not create a duplicate when a matching registration exists.
+4. **Host gate:** only on the approved dedicated Linux x64 host, run `bash ops/g02/diagnose-runner.sh`. Inspect the redacted report locally. If an existing service is stopped or failing, review the service/journal evidence and repair that exact service under administrator control. Do not restart blindly, remove a registration by name alone, or paste credentials into chat.
+5. **Eligibility gate:** confirm the runner has the exact labels `self-hosted, linux, x64, lingo-g02`, is repository-scoped, and is actively polling. If the host is absent or unknown, provision it only through the approved infrastructure owner and official GitHub runner instructions; this repository connector cannot create a VM.
+6. **Execution gate:** after policy and host readiness are evidenced, an authorized operator dispatches only the canonical sentinel. Accept G02 only with a positive runner ID, matching runner name, initialized/completed steps, actual sentinel PASS, retrievable logs and artifact, and matching run/job/commit identifiers independently reviewed.
+7. **Release gate:** keep production frozen until every required gate is independently accepted. Do not merge the draft PR or enable promotion merely to test dispatch.
+
 ## Workflow inventory and authority
 
 The canonical workflow for current G02 acceptance is `.github/workflows/g02-self-hosted-sentinel.yml`. The repository also retains two legacy diagnostic workflows, `.github/workflows/g02-sentinel.yml` and `.github/workflows/runner-self-hosted-g02.yml`; they are intentionally not deleted or disabled by this repair. Their successful completion alone does not satisfy the current acceptance contract. The AWS-named workflow was replaced by the provider-neutral canonical workflow on the repair branch; do not infer that any workflow name proves host provisioning or runner readiness.
