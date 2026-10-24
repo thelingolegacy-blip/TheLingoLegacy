@@ -6,6 +6,8 @@ set -uo pipefail
 umask 077
 
 REPO="${REPO:-thelingolegacy-blip/TheLingoLegacy}"
+ORG="${ORG:-}"
+ENTERPRISE_SLUG="${ENTERPRISE_SLUG:-}"
 OUT_DIR="${OUT_DIR:-./g02-admin-evidence-$(date -u +%Y%m%dT%H%M%SZ)}"
 # Keep the newest observed pre-job failures first, followed by prior corroborating runs.
 RUN_IDS="${RUN_IDS:-40126492313 40126491618 40126490974 40126326096 40126325434 40126324756 40125931937 40125931229 40125930706 40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
@@ -13,6 +15,14 @@ CHECK_SUITE_IDS="${CHECK_SUITE_IDS:-108762602894 108762600856 108762599033}"
 
 if [[ ! "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
   echo "BLOCKED: REPO must be owner/name; no API calls were made." >&2
+  exit 2
+fi
+if [[ -n "$ORG" && ! "$ORG" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+  echo "BLOCKED: ORG must be an organization slug; no API calls were made." >&2
+  exit 2
+fi
+if [[ -n "$ENTERPRISE_SLUG" && ! "$ENTERPRISE_SLUG" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+  echo "BLOCKED: ENTERPRISE_SLUG must be an enterprise slug; no API calls were made." >&2
   exit 2
 fi
 mkdir -p "$OUT_DIR" || exit 2
@@ -60,6 +70,15 @@ record_endpoint "Workflow inventory" "repos/$REPO/actions/workflows?per_page=100
   '{total_count: .total_count, workflows: [.workflows[]? | {id, name, path, state, html_url}]}'
 
 record_endpoint "Workflow token permissions" "repos/$REPO/actions/permissions/workflow" "workflow-token-permissions.json" '{default_workflow_permissions, can_approve_pull_request_reviews}'
+record_endpoint "Repository runner groups" "repos/$REPO/actions/runner-groups?per_page=100" "repository-runner-groups.json" '{total_count: .total_count, runner_groups: [.runner_groups[]? | {id, name, visibility, allows_public_repositories, restricted_to_workflows, selected_workflows_url, runners_url}]}'
+if [[ -n "$ORG" ]]; then
+  record_endpoint "Organization Actions permissions" "orgs/$ORG/actions/permissions" "organization-actions-permissions.json" '{enabled_repositories, allowed_actions, selected_actions_url, github_owned_allowed, verified_allowed, patterns_allowed, allowed_actions_configured, default_workflow_permissions, can_approve_pull_request_reviews}'
+  record_endpoint "Organization runner groups" "orgs/$ORG/actions/runner-groups?per_page=100" "organization-runner-groups.json" '{total_count: .total_count, runner_groups: [.runner_groups[]? | {id, name, visibility, allows_public_repositories, restricted_to_workflows, selected_repositories_url, runners_url}]}'
+fi
+if [[ -n "$ENTERPRISE_SLUG" ]]; then
+  record_endpoint "Enterprise Actions permissions" "enterprises/$ENTERPRISE_SLUG/actions/permissions" "enterprise-actions-permissions.json" '{enabled_organizations, allowed_actions, github_owned_allowed, verified_allowed, patterns_allowed, allowed_actions_configured}'
+  record_endpoint "Enterprise runner groups" "enterprises/$ENTERPRISE_SLUG/actions/runner-groups?per_page=100" "enterprise-runner-groups.json" '{total_count: .total_count, runner_groups: [.runner_groups[]? | {id, name, visibility, allows_public_repositories, restricted_to_workflows, selected_organizations_url, runners_url}]}'
+fi
 
 for run_id in $RUN_IDS; do
   [[ "$run_id" =~ ^[0-9]+$ ]] || {
@@ -68,8 +87,8 @@ for run_id in $RUN_IDS; do
   }
   # Run metadata establishes the server-side conclusion/timestamps alongside job snapshots.
   record_endpoint "Metadata for run $run_id" "repos/$REPO/actions/runs/$run_id" "run-$run_id-metadata.json" \
-    '{id, name, workflow_id, run_number, run_attempt, event, status, conclusion, created_at, updated_at, run_started_at, head_branch, head_sha, path, html_url}'
-  record_endpoint "Jobs for run $run_id" "repos/$REPO/actions/runs/$run_id/jobs?per_page=100" "run-$run_id-jobs.json" \
+    '{id, name, workflow_id, check_suite_id, run_number, run_attempt, event, status, conclusion, created_at, updated_at, run_started_at, head_branch, head_sha, path, html_url}'
+  record_endpoint "Jobs for run $run_id" "repos/$REPO/actions/runs/$run_id/jobs?filter=all&per_page=100" "run-$run_id-jobs.json" \
     '{total_count: .total_count, jobs: [.jobs[]? | {id, name, status, conclusion, runner_id, runner_name, labels, head_sha, started_at, completed_at, steps: [.steps[]? | {name, status, conclusion, number, started_at, completed_at}]}]}'
   # Capture artifact inventory as well; no downloads or workflow reruns are performed.
   record_endpoint "Artifacts for run $run_id" "repos/$REPO/actions/runs/$run_id/artifacts?per_page=100" "run-$run_id-artifacts.json" \
@@ -90,6 +109,8 @@ done
   echo "G02_ADMIN_EVIDENCE_COLLECTION"
   echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "repository=$REPO"
+  echo "organization_scope=${ORG:-not-requested}"
+  echo "enterprise_scope=${ENTERPRISE_SLUG:-not-requested}"
   echo "collector_mode=read-only"
   echo "settings_mutated=false"
   echo "runner_registered_or_deleted=false"
