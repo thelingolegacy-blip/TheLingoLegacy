@@ -15,9 +15,9 @@ Please investigate whether these runs were rejected or failed during GitHub Acti
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
-| Crimson Smoke UI — static validation | 40127462871 | `startup_failure` | 0 | 0 |
-| Lingo Legacy Static CI | 40127461935 | `startup_failure` | 0 | 0 |
-| G02 Runner Image Build (no publish) | 40127461258 | `startup_failure` | 0 | 0 |
+| Crimson Smoke UI — static validation | 40127528789 | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | 40127528124 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 40127527347 | `startup_failure` | 0 | 0 |
 
 Previous observed runs (also `startup_failure`, 0 jobs, 0 artifacts):
 
@@ -46,6 +46,18 @@ Earlier corroborating runs:
 
 Run observations must be refreshed before filing. Attach fresh run pages/API responses and timestamps. Do not attach tokens, runner registration credentials, private keys, or unredacted environment dumps.
 
+## Exact PR-head CI refresh — 2026-10-24
+
+Read-only inspection of the three automatic workflow runs associated with the PR-head documentation commit `25a83163643d7a2bba7c2b38b0148a9234884ccc` found the same pre-job failure pattern. The jobs and artifacts endpoints were checked directly for each run and returned empty lists:
+
+| Workflow | Run ID | Workflow ID | Conclusion | Jobs | Artifacts |
+|---|---:|---:|---|---:|---:|
+| Crimson Smoke UI — static validation | 40127528789 | 393318662 | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | 40127528124 | 307685658 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 40127527347 | 391713646 | `startup_failure` | 0 | 0 |
+
+The available commit-runs wrapper does not return the associated check-suite IDs or full run metadata for these runs. The upgraded collector now captures `check_suite_id` from each run metadata response and dynamically adds discovered suite IDs to its check-suite/check-run capture, so the authorized administrator can collect the missing platform diagnostics without manually guessing IDs. These observations do not establish a root cause. Do not interpret the unrelated Vercel preview success status as a passing GitHub Actions job or G02 acceptance.
+
 ## Newest corroborating run and check-suite identifiers — 2026-10-24
 
 The three newest read-only inspections (retrieved 2026-10-24 around 19:55 UTC) found that the run records reference registered workflow IDs and existing workflow paths, while the jobs endpoint returned an empty list and the artifact endpoint returned no artifacts. All three runs reference commit `8e68550f3945c46c23c297bb3d9dd87e704c5e19`:
@@ -64,9 +76,8 @@ Run from a trusted workstation with an authorized GitHub CLI session. These comm
 
 ```bash
 gh auth status
-gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127461258 --jq '{id,name,path,workflow_id,check_suite_id,event,head_sha,conclusion,status,created_at}'
-gh api repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108765119082
-gh api 'repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108765119082/check-runs?filter=all&per_page=100' --jq '{total_count,check_runs:[.check_runs[]|{id,name,conclusion,status,output,details_url,app:.app.name}]}'
+gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127527347 --jq '{id,name,path,workflow_id,check_suite_id,event,head_sha,conclusion,status,created_at}'
+bash ops/g02/collect-admin-evidence.sh
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions/workflow
 gh api 'repos/thelingolegacy-blip/TheLingoLegacy/actions/runner-groups?per_page=100'
@@ -77,7 +88,7 @@ gh api enterprises/ENTERPRISE_SLUG/actions/permissions
 gh api 'enterprises/ENTERPRISE_SLUG/actions/runner-groups?per_page=100'
 ```
 
-Repeat the check-suite and check-runs calls for suite IDs `108765123220` and `108765120960`. The updated collector also records `check_suite_id` in run metadata, captures all available job attempts, and inventories repository runner groups. Set `ORG` and/or `ENTERPRISE_SLUG` only to the correct organization/enterprise slug for which the authenticated administrator is authorized; leave them unset otherwise. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. Repository-level endpoints do not establish inherited organization/enterprise policy. If any endpoint is denied, record the exact HTTP status and authenticated account's access level rather than changing permissions speculatively.
+The updated collector records `check_suite_id` for each run, dynamically captures check-suite/check-run output for every discovered suite, captures all available job attempts, and inventories repository runner groups. Set `ORG` and/or `ENTERPRISE_SLUG` only to the correct organization/enterprise slug for which the authenticated administrator is authorized; leave them unset otherwise. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. Repository-level endpoints do not establish inherited organization/enterprise policy. If any endpoint is denied, record the exact HTTP status and authenticated account's access level rather than changing permissions speculatively.
 
 ## Questions for GitHub Support
 
