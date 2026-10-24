@@ -52,7 +52,7 @@ async function checkPreviewRoute(path) {
       const location = r.headers.location || "";
       let redirectHost = "";
       try { redirectHost = location ? new URL(location, url).host : ""; } catch {}
-      record("Preview " + path, "BLOCKED", "HTTP " + r.status + "; redirect prevents unauthenticated content validation", { url, httpStatus: r.status, redirectHost, authenticationRequired: /vercel\\.com\\/sso-api/i.test(location) });
+      record("Preview " + path, "BLOCKED", "HTTP " + r.status + "; redirect prevents unauthenticated content validation", { url, httpStatus: r.status, redirectHost, authenticationRequired: location.includes("vercel.com/sso-api") });
       return;
     }
     const html = r.body;
