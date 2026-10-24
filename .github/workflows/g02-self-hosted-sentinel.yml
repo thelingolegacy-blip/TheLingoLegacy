@@ -81,6 +81,7 @@ jobs:
             commit_sha: process.env.COMMIT_SHA
           }, null, 2) + '\n');
           NODE
+          rm -f g02-evidence/run-jobs.json
           printf 'G02_SENTINEL_EXECUTED\n'
           {
             cat g02-evidence/runner-assignment.json
