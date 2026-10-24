@@ -121,6 +121,10 @@ test('legacy API success and fail-closed responses retain the required security 
   const cases = [
     ['/api/health', 'GET', 200],
     ['/api/health', 'POST', 405],
+    ['/api/checkout', 'GET', 405],
+    ['/api/checkout', 'POST', 503],
+    ['/api/create-checkout-session', 'GET', 405],
+    ['/api/create-checkout-session', 'POST', 503],
     ['/api/metrics', 'GET', 503],
     ['/api/metrics', 'POST', 405],
     ['/api/rewards/claim', 'POST', 503],
