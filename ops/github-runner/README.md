@@ -27,7 +27,7 @@ The repository owner `thelingolegacy-blip` is a personal account, not an organiz
    `bash ./bootstrap.sh`
 5. The script checks for a same-name runner, requests a short-lived token, builds the container, starts the ephemeral runner, and removes its local `.env` on exit. It does not delete remote registrations automatically; after an interruption, inspect the exact runner ID and creation context in Settings before any manual removal.
 6. Confirm the runner is online with labels `self-hosted, linux, x64, lingo-g02`.
-7. Let the queued **G02 Self-Hosted Runner Sentinel** execute. Do not interrupt it while it is working.
+7. After the approved host and daemon are independently verified, dispatch `.github/workflows/g02-self-hosted-sentinel.yml` and confirm the job is assigned to the canonical runner. Do not treat a queued run as acceptance.
 
 The container build pins Ubuntu 24.04 and installs `libssl3t64`, the OpenSSL runtime package available in Ubuntu 24.04. The runner is configured at repository scope, so no custom runner-group argument is used.
 
@@ -39,7 +39,7 @@ Accept only when all evidence is actual, complete, retrievable, correlated, inde
 - exact GitHub run ID, job ID, and commit SHA;
 - instantiated and completed steps;
 - sentinel PASS;
-- retrievable logs and the `g02-execution-evidence-<run_id>` artifact;
+- retrievable logs and the `g02-self-hosted-evidence-<run_id>-<run_attempt>` artifact produced by the canonical sentinel;
 - independent verification and formal acceptance outside the artifact.
 
 The artifact records execution data. It cannot self-assert independent verification or formal acceptance.
