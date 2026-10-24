@@ -95,6 +95,8 @@ Run from a trusted workstation with an authorized GitHub CLI session. These comm
 
 ```bash
 gh auth status
+command -v jq
+bash -n ops/g02/collect-admin-evidence.sh
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127527347 --jq '{id,name,path,workflow_id,check_suite_id,event,head_sha,conclusion,status,created_at}'
 bash ops/g02/collect-admin-evidence.sh
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions
