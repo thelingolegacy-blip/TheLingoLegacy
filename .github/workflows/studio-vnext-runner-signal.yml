@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: studio-vnext-runner-signal-${{ github.ref }}
@@ -32,11 +33,61 @@ jobs:
           INCIDENT_REF: ${{ inputs.incident_ref }}
         run: |
           set -euo pipefail
-          test -n "$INCIDENT_REF"
-          printf 'Dispatch reference accepted (value redacted from logs).\n'
+          if [[ ! "$INCIDENT_REF" =~ ^[A-Za-z0-9._/#:-]{3,120}$ ]]; then
+            echo "incident_ref must be 3-120 safe reference characters" >&2
+            exit 2
+          fi
+          printf 'Dispatch reference accepted (value intentionally redacted).\\n'
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve actual job and runner IDs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          curl --fail --silent --show-error \\
+            -H "Accept: application/vnd.github+json" \\
+            -H "Authorization: Bearer $GH_TOKEN" \\
+            -H "X-GitHub-Api-Version: 2022-11-28" \\
+            "https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100" \\
+            -o evidence/run-jobs.json
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const payload = JSON.parse(fs.readFileSync('evidence/run-jobs.json', 'utf8'));
+          const matches = (payload.jobs ?? []).filter(job =>
+            job.name === 'Runner assignment and sentinel evidence' &&
+            job.runner_name === process.env.RUNNER_NAME &&
+            Number.isSafeInteger(job.id) && job.id > 0 &&
+            Number.isSafeInteger(job.runner_id) && job.runner_id > 0
+          );
+          if (matches.length !== 1) {
+            console.error('Could not uniquely verify this job and its numeric runner ID from the GitHub Actions API.');
+            process.exit(2);
+          }
+          const job = matches[0];
+          fs.writeFileSync('evidence/runner-assignment.json', JSON.stringify({
+            workflow_run_id: String(process.env.RUN_ID),
+            job_id: String(job.id),
+            runner_id: job.runner_id,
+            runner_name: job.runner_name,
+            job_name: job.name,
+            job_status_at_capture: job.status
+          }, null, 2) + '\\n');
+          NODE
 
       - name: Emit runner and commit signals
-        id: signal
         shell: bash
         env:
           REPOSITORY: ${{ github.repository }}
@@ -48,12 +99,10 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          mkdir -p evidence
-          printf 'sentinel executed at %s\n' "$(date -u +%FT%TZ)"
-          node --version
-          node -e 'JSON.parse(require("node:fs").readFileSync("studio-vnext/RUNNER_SIGNAL_SCHEMA.json","utf8")); console.log("signal schema JSON parsed")'
-          node - <<'NODE'
-          const fs = require('node:fs');
+          printf 'sentinel executed at %s\\n' "$(date -u +%FT%TZ)"
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const assignment = JSON.parse(fs.readFileSync('evidence/runner-assignment.json', 'utf8'));
           const signal = {
             schema_version: '1.0',
             event_type: 'sentinel.executed',
@@ -61,23 +110,28 @@ jobs:
             timestamp_utc: new Date().toISOString(),
             repository: process.env.REPOSITORY,
             commit_sha: process.env.COMMIT_SHA,
-            workflow_run_id: process.env.RUN_ID,
-            job_id: null,
-            runner_id: null,
+            workflow_run_id: String(process.env.RUN_ID),
+            job_id: assignment.job_id,
+            runner_id: assignment.runner_id,
             runner_name: process.env.RUNNER_NAME,
             correlation_id: `studio-vnext-${process.env.RUN_ID}-${process.env.RUN_ATTEMPT}`,
             result: 'ok',
             reason_code: process.env.EVENT_NAME
           };
-          fs.writeFileSync('evidence/runner-signal.json', JSON.stringify(signal, null, 2) + '\n');
+          if (!Number.isSafeInteger(signal.runner_id) || signal.runner_id <= 0 || !signal.job_id) {
+            console.error('Runner identity contract failed closed.');
+            process.exit(2);
+          }
+          fs.writeFileSync('evidence/runner-signal.json', JSON.stringify(signal, null, 2) + '\\n');
           NODE
-          sha256sum evidence/runner-signal.json | tee evidence/SHA256SUMS.txt
+          sha256sum evidence/runner-assignment.json evidence/runner-signal.json | tee evidence/SHA256SUMS.txt
           {
             echo "### Runner sentinel"
             echo "- Repository: `$REPOSITORY`"
             echo "- Commit: `$COMMIT_SHA`"
             echo "- Run: `$RUN_ID` (attempt `$RUN_ATTEMPT`)"
             echo "- Runner: `$RUNNER_NAME` / `$RUNNER_OS`"
+            echo "- Numeric runner and job IDs: verified through GitHub Actions API"
             echo "- Sentinel: executed"
             echo "- Evidence checksum: recorded in artifact"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -87,6 +141,7 @@ jobs:
         with:
           name: studio-vnext-runner-signal-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            evidence/runner-assignment.json
             evidence/runner-signal.json
             evidence/SHA256SUMS.txt
           if-no-files-found: error
