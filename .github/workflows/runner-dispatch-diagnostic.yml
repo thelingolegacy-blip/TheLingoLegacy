@@ -39,7 +39,7 @@ jobs:
             printf 'repository=%s\n' "$GITHUB_REPOSITORY"
             printf 'run_id=%s\n' "$GITHUB_RUN_ID"
             printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
-            printf 'job_id=%s\n' "$GITHUB_JOB"
+            printf 'job_key=%s\n' "$GITHUB_JOB"
             printf 'commit_sha=%s\n' "$GITHUB_SHA"
             printf 'incident_reference=%s\n' "$INCIDENT_REFERENCE"
             printf 'runner_name=%s\n' "$RUNNER_NAME_VALUE"
@@ -95,7 +95,7 @@ jobs:
               "job_status": job.get("status"),
               "job_conclusion": job.get("conclusion"),
               "steps": steps if isinstance(steps, list) else [],
-              "logs_url_present": bool(job.get("check_run_url")),
+              "job_url_present": bool(job.get("html_url")),\n              "logs_retrievable": False,
               "independent_verification_recorded": False
           }
           pathlib.Path("g02-evidence/runner-allocation.json").write_text(json.dumps(record, indent=2) + "\n")
