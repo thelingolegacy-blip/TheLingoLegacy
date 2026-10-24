@@ -15,6 +15,7 @@ Please investigate whether these runs were rejected or failed during GitHub Acti
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
+| Crimson Smoke UI — static validation | 40127783265 | `startup_failure` | 0 | 0 |
 | Crimson Smoke UI — static validation | 40127528789 | `startup_failure` | 0 | 0 |
 | Lingo Legacy Static CI | 40127528124 | `startup_failure` | 0 | 0 |
 | G02 Runner Image Build (no publish) | 40127527347 | `startup_failure` | 0 | 0 |
@@ -58,6 +59,24 @@ Read-only inspection of the three automatic workflow runs associated with the PR
 
 The available commit-runs wrapper does not return the associated check-suite IDs or full run metadata for these runs. The upgraded collector now captures `check_suite_id` from each run metadata response and dynamically adds discovered suite IDs to its check-suite/check-run capture, so the authorized administrator can collect the missing platform diagnostics without manually guessing IDs. These observations do not establish a root cause. Do not interpret the unrelated Vercel preview success status as a passing GitHub Actions job or G02 acceptance.
 
+## Expanded diagnostics and parallel triage — 2026-10-24
+
+A subsequent read-only query found run [40127783265](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127783265) on documentation commit `43a6a21031e818f52a53f50115aee7a3c08e93b6`: Crimson Smoke UI — static validation, `startup_failure`, zero jobs and zero artifacts. It is now included in the collector's default run list.
+
+The collector has been expanded to capture the run timing endpoint for each requested run and check runs indexed by each distinct head commit SHA, in addition to run metadata, jobs, artifact inventory, runner/workflow inventory, repository and optional organization/enterprise permissions, check-suite metadata, and check-run output. These independent views are intended to improve observability at the startup boundary; they do not create jobs or change GitHub's dispatch state.
+
+### Parallel triage lanes
+
+1. **Run / check evidence:** correlate run metadata, timing, check-suite output, commit-level check runs, jobs and artifact inventories for each new failure.
+2. **Policy / capacity:** authorized repository/org/enterprise administrators verify Actions enabled state, policy inheritance, billing/capacity signals and runner-group access. A denied API endpoint is unavailable evidence, not an empty inventory.
+3. **Workflow resolution:** inspect the exact workflow files and event/ref on the failing runs; compare against the registered workflow IDs and known-good history without renaming/deleting workflows or making speculative permission changes.
+4. **Runner path:** verify actual runner registration, status, group access, labels and daemon health only where a self-hosted runner is in scope. Because GitHub-hosted workflows also fail, do not assume the self-hosted daemon is the sole cause.
+5. **Release governance:** keep the gate matrix fail-closed and track accessibility, Firebase placeholders, administrator governance and hosting access separately from G02.
+
+### Positive G02 operating rule
+
+Keep the objective positive and the evidence standard strict: G02 advances only when a real job is assigned to a runner, has initialized steps, executes the canonical sentinel successfully, and produces retrievable logs plus an evidence artifact linked to the exact run/job/commit. Until then, report `BLOCKED — diagnosis progressing`, not PASS. Do not add artificial jobs or empty artifacts merely to increase counts; they would obscure the pre-job failure rather than solve it.
+
 ## Newest corroborating run and check-suite identifiers — 2026-10-24
 
 The three newest read-only inspections (retrieved 2026-10-24 around 19:55 UTC) found that the run records reference registered workflow IDs and existing workflow paths, while the jobs endpoint returned an empty list and the artifact endpoint returned no artifacts. All three runs reference commit `8e68550f3945c46c23c297bb3d9dd87e704c5e19`:
@@ -88,7 +107,7 @@ gh api enterprises/ENTERPRISE_SLUG/actions/permissions
 gh api 'enterprises/ENTERPRISE_SLUG/actions/runner-groups?per_page=100'
 ```
 
-The updated collector records `check_suite_id` for each run, dynamically captures check-suite/check-run output for every discovered suite, captures all available job attempts, and inventories repository runner groups. Set `ORG` and/or `ENTERPRISE_SLUG` only to the correct organization/enterprise slug for which the authenticated administrator is authorized; leave them unset otherwise. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. Repository-level endpoints do not establish inherited organization/enterprise policy. If any endpoint is denied, record the exact HTTP status and authenticated account's access level rather than changing permissions speculatively.
+The updated collector records `check_suite_id` for each run, dynamically captures check-suite/check-run output for every discovered suite, captures timing for each run, captures commit-indexed check runs for each discovered head SHA, captures all available job attempts, and inventories repository runner groups. Set `ORG` and/or `ENTERPRISE_SLUG` only to the correct organization/enterprise slug for which the authenticated administrator is authorized; leave them unset otherwise. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. Repository-level endpoints do not establish inherited organization/enterprise policy. If any endpoint is denied, record the exact HTTP status and authenticated account's access level rather than changing permissions speculatively.
 
 ## Questions for GitHub Support
 
