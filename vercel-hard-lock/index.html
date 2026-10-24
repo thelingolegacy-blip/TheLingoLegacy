@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#09090d">
+<meta name="description" content="Read-only environment hard-lock status for The Lingo Legacy.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests">
+<title>LINGO LEGACY — Environment Hard-Lock</title>
+<style>
+:root{color-scheme:dark;--bg:#09090d;--panel:#14141c;--line:#33303f;--gold:#d7b46a;--purple:#8b6cff;--text:#f5f2ea;--muted:#b0adbc;--warn:#f1c879;--green:#79d7b0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% 0,#2b2143 0,transparent 42%),var(--bg);color:var(--text);line-height:1.6}.wrap{width:min(980px,calc(100% - 32px));margin:auto;padding:clamp(24px,5vw,56px) 0}.brand{font-size:.78rem;font-weight:800;letter-spacing:.17em;color:var(--gold)}h1{font-size:clamp(2.2rem,7vw,4.7rem);letter-spacing:-.06em;line-height:.98;margin:22px 0 16px}p{color:var(--muted)}.status{display:inline-flex;align-items:center;gap:9px;border:1px solid #59472a;border-radius:999px;padding:7px 12px;color:var(--warn);font-size:.75rem;font-weight:800;letter-spacing:.08em}.dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}.panel{margin-top:24px;padding:clamp(18px,3vw,28px);border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#191922,#101016)}.row{display:flex;justify-content:space-between;align-items:start;gap:18px;padding:14px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.row strong{display:block}.row small{color:var(--muted)}.state{white-space:nowrap;border:1px solid #59472a;color:var(--warn);border-radius:999px;padding:4px 8px;font-size:.68rem;font-weight:800}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 15px;border-radius:10px;border:1px solid var(--line);color:var(--text);text-decoration:none;font-weight:700;font-size:.85rem}a.primary{background:var(--gold);color:#17120a;border-color:var(--gold)}a:focus-visible{outline:3px solid var(--purple);outline-offset:3px}@media(max-width:540px){.row{flex-direction:column;gap:8px}.state{white-space:normal}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="brand">THE LINGO LEGACY / CONTROL PLANE</div>
+<h1>Production stays protected.</h1>
+<p>This page is a read-only status surface. It does not change routing, credentials, authentication providers, data stores, or deployment authorization.</p>
+<div class="status"><span class="dot"></span>PROTECTED HOLD · RELEASE NOT AUTHORIZED</div>
+<section class="panel" aria-labelledby="status-title">
+<h2 id="status-title">Environment and evidence status</h2>
+<div class="row"><div><strong>Development override</strong><small>Local checks and isolated prototypes may proceed.</small></div><span class="state">DEV ONLY</span></div>
+<div class="row"><div><strong>GitHub Actions runner dispatch (G02)</strong><small>Observed startup failures have zero initialized jobs and artifacts.</small></div><span class="state">UNVERIFIED / BLOCKED</span></div>
+<div class="row"><div><strong>Build and browser acceptance</strong><small>Preview HTTP response is verifiable; browser execution and real-device behavior still require separate evidence.</small></div><span class="state">PARTIAL</span></div>
+<div class="row"><div><strong>Credentials and sensitive integrations</strong><small>Do not activate production auth, writes, payments, webhooks, or privileged agents until reviewed.</small></div><span class="state">PROTECTED</span></div>
+<div class="row"><div><strong>Custom domain and production routing</strong><small>No domain cutover or production routing change is performed by this page.</small></div><span class="state">UNCHANGED</span></div>
+</section>
+<section class="panel">
+<h2>Release evidence policy</h2>
+<p>Record each check as PASS, FAIL, UNVERIFIED, or NOT RUN. Missing evidence is never a pass. Production readiness requires restored mandatory CI checks, security and accessibility acceptance, independent review, and explicit release authorization.</p>
+<div class="actions"><a class="primary" href="/">Return to The Lingo Legacy</a><a href="/studio-vnext/">Open Studio VNext preview</a><a href="/diagnostics/g02/">G02 diagnostics</a></div>
+</section>
+</main>
+</body>
+</html>
