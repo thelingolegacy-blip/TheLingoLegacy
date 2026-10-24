@@ -10,7 +10,7 @@ ORG="${ORG:-}"
 ENTERPRISE_SLUG="${ENTERPRISE_SLUG:-}"
 OUT_DIR="${OUT_DIR:-./g02-admin-evidence-$(date -u +%Y%m%dT%H%M%SZ)}"
 # Keep the newest observed pre-job failures first, followed by prior corroborating runs.
-RUN_IDS="${RUN_IDS:-40127462871 40127461935 40127461258 40127295954 40127295226 40127294489 40126492313 40126491618 40126490974 40126326096 40126325434 40126324756 40125931937 40125931229 40125930706 40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
+RUN_IDS="${RUN_IDS:-40127528789 40127528124 40127527347 40127462871 40127461935 40127461258 40127295954 40127295226 40127294489 40126492313 40126491618 40126490974 40126326096 40126325434 40126324756 40125931937 40125931229 40125930706 40124749265 40124748559 40124747821 40124367746 40124366718 40124365525 40124210534 40124209733 40124209037 40123956734 40123955882 40123955061 40123862743 40123862003 40123861256 40123738025 40123737298 40123736631}"
 CHECK_SUITE_IDS="${CHECK_SUITE_IDS:-108765123220 108765120960 108765119082 108764689096 108764687203 108764685257 108762602894 108762600856 108762599033}"
 
 if [[ ! "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
@@ -94,6 +94,17 @@ for run_id in $RUN_IDS; do
   record_endpoint "Artifacts for run $run_id" "repos/$REPO/actions/runs/$run_id/artifacts?per_page=100" "run-$run_id-artifacts.json" \
     '{total_count: .total_count, artifacts: [.artifacts[]? | {id, name, size_in_bytes, expired, created_at, updated_at, expires_at, workflow_run: {id: .workflow_run.id, head_branch: .workflow_run.head_branch, head_sha: .workflow_run.head_sha}}]}'
 done
+
+# Dynamically include check-suite IDs discovered from the run metadata just collected.
+# This keeps newly observed runs diagnosable even when a wrapper does not expose suite IDs.
+DYNAMIC_CHECK_SUITE_IDS=""
+for metadata_file in "$OUT_DIR"/run-*-metadata.json; do
+  [[ -f "$metadata_file" ]] || continue
+  discovered_suite_id="$(jq -r '.check_suite_id // empty' "$metadata_file" 2>/dev/null || true)"
+  [[ "$discovered_suite_id" =~ ^[0-9]+$ ]] || continue
+  DYNAMIC_CHECK_SUITE_IDS+="$discovered_suite_id "
+done
+CHECK_SUITE_IDS="$(printf '%s\n%s\n' "$CHECK_SUITE_IDS" "$DYNAMIC_CHECK_SUITE_IDS" | tr ' ' '\n' | awk 'NF && !seen[$0]++' | tr '\n' ' ')"
 
 # Check-suite/check-run diagnostics may expose the platform-side failure reason when job records are absent.
 for suite_id in $CHECK_SUITE_IDS; do
