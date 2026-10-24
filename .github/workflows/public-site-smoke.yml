@@ -36,6 +36,7 @@ jobs:
           set -euo pipefail
           mkdir -p public-smoke-evidence
           node scripts/smoke-static-site.mjs | tee public-smoke-evidence/static-site.json
+          node scripts/test-preview-contracts.cjs | tee public-smoke-evidence/preview-contract-tests.txt
 
       - name: Probe public website, runtime, and game routes
         shell: bash
