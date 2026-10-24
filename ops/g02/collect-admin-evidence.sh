@@ -128,9 +128,9 @@ for metadata_file in "$OUT_DIR"/run-*-metadata.json; do
   [[ "$discovered_sha" =~ ^[0-9a-fA-F]{40}$ ]] || continue
   DYNAMIC_HEAD_SHAS+="$discovered_sha "
 done
-HEAD_SHAS="$(printf '%s\\n' "$DYNAMIC_HEAD_SHAS" | tr ' ' '\\n' | awk 'NF && !seen[$0]++' | tr '\\n' ' ')"
+HEAD_SHAS="$(printf '%s\n' "$DYNAMIC_HEAD_SHAS" | tr ' ' '\n' | awk 'NF && !seen[$0]++' | tr '\n' ' ')"
 for head_sha in $HEAD_SHAS; do
-  record_endpoint "Commit check runs for $head_sha" "repos/$REPO/commits/$head_sha/check-runs?filter=all&per_page=100" "commit-$head_sha-check-runs.json" \\
+  record_endpoint "Commit check runs for $head_sha" "repos/$REPO/commits/$head_sha/check-runs?filter=all&per_page=100" "commit-$head_sha-check-runs.json" \
     '{total_count: .total_count, check_runs: [.check_runs[]? | {id, name, status, conclusion, started_at, completed_at, details_url, output: {title: .output.title, summary: .output.summary, text: .output.text}, app: {id: .app.id, slug: .app.slug, name: .app.name}}]}'
 done
 
