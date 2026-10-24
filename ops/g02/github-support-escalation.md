@@ -15,9 +15,9 @@ Please investigate whether these runs were rejected or failed during GitHub Acti
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
-| Crimson Smoke UI — static validation | 40126326096 | `startup_failure` | 0 | 0 |
-| Lingo Legacy Static CI | 40126325434 | `startup_failure` | 0 | 0 |
-| G02 Runner Image Build (no publish) | 40126324756 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 40126492313 | `startup_failure` | 0 | 0 |
+| Crimson Smoke UI — static validation | 40126491618 | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | 40126490974 | `startup_failure` | 0 | 0 |
 
 Previous observed runs (also `startup_failure`, 0 jobs, 0 artifacts):
 
@@ -45,6 +45,33 @@ Earlier corroborating runs:
 | Crimson Smoke UI — static validation | 40123861256 | `startup_failure` | 0 | 0 |
 
 Run observations must be refreshed before filing. Attach fresh run pages/API responses and timestamps. Do not attach tokens, runner registration credentials, private keys, or unredacted environment dumps.
+
+## Newest corroborating run and check-suite identifiers — 2026-10-24
+
+The three newest read-only inspections found that the run records reference registered workflow IDs and existing workflow paths, while the jobs endpoint returned an empty list and the artifact endpoint returned no artifacts:
+
+| Workflow | Run ID | Workflow ID | Check suite ID | Result |
+|---|---:|---:|---:|---|
+| G02 Runner Image Build (no publish) | 40126492313 | 391713646 | 108762602894 | `startup_failure`, 0 jobs, 0 artifacts |
+| Crimson Smoke UI — static validation | 40126491618 | 393318662 | 108762600856 | `startup_failure`, 0 jobs, 0 artifacts |
+| Lingo Legacy Static CI | 40126490974 | 307685658 | 108762599033 | `startup_failure`, 0 jobs, 0 artifacts |
+
+The workflow sources exist on both `main` and the recovery branch. These facts do not prove a YAML defect, runner-label mismatch, or self-hosted daemon failure; at least one affected workflow is configured for GitHub-hosted execution. Check-suite/check-run output and administrator policy evidence are still required to distinguish admission/policy issues from a GitHub-side dispatch or logging fault.
+
+### Authenticated administrator diagnostic commands
+
+Run from a trusted workstation with an authorized GitHub CLI session. These commands are read-only and must not be run with a token pasted into chat:
+
+```bash
+gh auth status
+gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/runs/40126492313 --jq '{id,name,path,workflow_id,check_suite_id,event,head_sha,conclusion,status,created_at}'
+gh api repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108762602894
+gh api 'repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108762602894/check-runs?filter=all&per_page=100' --jq '{total_count,check_runs:[.check_runs[]|{id,name,conclusion,status,output,details_url,app:.app.name}]}'
+gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions
+gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions/workflow
+```
+
+Repeat the check-suite and check-runs calls for suite IDs `108762600856` and `108762599033`. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. The repository-level endpoints do not by themselves establish inherited organization/enterprise policy, so an administrator must also inspect the repository Settings → Actions policy and any organization/enterprise overrides. If the repository endpoint is denied, record the exact HTTP status and the authenticated account's access level rather than changing permissions speculatively.
 
 ## Questions for GitHub Support
 
