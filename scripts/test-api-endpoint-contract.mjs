@@ -88,6 +88,24 @@ test('POST-only commerce endpoints reject GET with accurate Allow headers', asyn
   }
 });
 
+test('HEAD requests to POST-only endpoints return 405 without a body', async () => {
+  for (const path of ['/api/create-checkout-session', '/api/beacon-text-alerts']) {
+    const response = await call(path, 'HEAD');
+    assert.equal(response.status, 405, path);
+    assert.match(response.headers.get('allow') || '', /POST/);
+    assert.match(response.headers.get('allow') || '', /OPTIONS/);
+    assert.equal(await response.text(), '', path);
+  }
+});
+
+test('unknown API paths return a no-store JSON 404 without exposing internal details', async () => {
+  const response = await call('/api/v1/not-registered');
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+  assert.deepEqual(await response.json(), { ok: false, error: 'API route not found.' });
+});
+
 test('canonical-origin CORS preflight remains available', async () => {
   const response = await call('/api/v1/platform/gates', 'OPTIONS', {
     Origin: 'https://www.thelingolegacy.com',
