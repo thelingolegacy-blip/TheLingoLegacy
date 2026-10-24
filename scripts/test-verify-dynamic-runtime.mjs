@@ -8,6 +8,11 @@ import { fileURLToPath } from 'node:url';
 
 const verifier = fileURLToPath(new URL('./verify-dynamic-runtime.mjs', import.meta.url));
 const requiredRoutes = [
+  "url.pathname === '/api/v1'",
+  'const READ_ONLY_API_PATHS = new Set([',
+  'const API_ENDPOINTS = Object.freeze([',
+  'function methodNotAllowed(request, env',
+  "integration_semantics: 'binding_presence_only_not_health_check'",
   "url.pathname === '/healthz'",
   "url.pathname === '/api/v1/runtime'",
   "url.pathname === '/api/v1/platform/manifest'",
