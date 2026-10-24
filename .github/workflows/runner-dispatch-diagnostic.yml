@@ -95,7 +95,8 @@ jobs:
               "job_status": job.get("status"),
               "job_conclusion": job.get("conclusion"),
               "steps": steps if isinstance(steps, list) else [],
-              "job_url_present": bool(job.get("html_url")),\n              "logs_retrievable": False,
+              "job_url_present": bool(job.get("html_url")),
+              "logs_retrievable": False,
               "independent_verification_recorded": False
           }
           pathlib.Path("g02-evidence/runner-allocation.json").write_text(json.dumps(record, indent=2) + "\n")
