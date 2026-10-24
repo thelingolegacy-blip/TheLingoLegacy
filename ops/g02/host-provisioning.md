@@ -41,6 +41,10 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 5. If no matching runner exists, register it using the current official GitHub runner instructions and a short-lived repository-scoped registration token obtained by an authorized repository administrator. Do not store the token in this repository or this Worker. Do not place a token in chat.
 6. Install and start the runner service on the host. Confirm it is Online and actively polling; a UI badge alone is not sufficient.
 
+## Support escalation packet
+
+If the evidence collector confirms repeated pre-job failures after Actions policy and runner eligibility are reviewed, prepare `ops/g02/github-support-escalation.md`. Refresh all run details and timestamps before filing; the checked-in run IDs are a starting point, not a claim that those runs are still the latest. Attach redacted job/step snapshots and the administrator's policy/runner findings. Do not attach tokens, credentials, private keys, or unredacted environment dumps.
+
 ## Administrator evidence collection (read-only)
 
 The connector in this recovery session cannot reliably inspect the repository Actions permissions or runner inventory endpoints. An authorized repository/account owner should run the following from a trusted workstation with GitHub CLI authenticated to the correct account. This collector makes read-only API calls and does not dispatch/retry jobs, change settings, or register/delete runners.
