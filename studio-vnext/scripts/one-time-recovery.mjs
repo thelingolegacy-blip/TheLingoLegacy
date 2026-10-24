@@ -35,8 +35,8 @@ function run(name, command, args, cwd) {
   record(name, ok ? "PASS" : "FAIL", ok ? "exit=" + result.status : "exit=" + (result.status ?? "null") + "; " + (result.error?.message || "command failed"));
   return { ok, status: result.status, output };
 }
-async function request(url, headers = {}) {
-  const response = await fetch(url, { headers: { "user-agent": "LINGO-Legacy-One-Time-Recovery/1.0", accept: "application/vnd.github+json", ...headers }, signal: AbortSignal.timeout(15000), redirect: "follow" });
+async function request(url, headers = {}, redirect = "follow") {
+  const response = await fetch(url, { headers: { "user-agent": "LINGO-Legacy-One-Time-Recovery/1.0", accept: "application/vnd.github+json", ...headers }, signal: AbortSignal.timeout(15000), redirect });
   const body = await response.text();
   return { status: response.status, ok: response.ok, headers: Object.fromEntries(response.headers.entries()), body };
 }
@@ -47,7 +47,14 @@ function meta(html, name) {
 async function checkPreviewRoute(path) {
   const url = PREVIEW + path;
   try {
-    const r = await request(url);
+    const r = await request(url, {}, "manual");
+    if (r.status >= 300 && r.status < 400) {
+      const location = r.headers.location || "";
+      let redirectHost = "";
+      try { redirectHost = location ? new URL(location, url).host : ""; } catch {}
+      record("Preview " + path, "BLOCKED", "HTTP " + r.status + "; redirect prevents unauthenticated content validation", { url, httpStatus: r.status, redirectHost, authenticationRequired: /vercel\\.com\\/sso-api/i.test(location) });
+      return;
+    }
     const html = r.body;
     const csp = meta(html, "Content-Security-Policy");
     const robots = meta(html, "robots");
