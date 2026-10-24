@@ -1,0 +1,93 @@
+name: Studio VNext Runner Signal
+
+on:
+  workflow_dispatch:
+    inputs:
+      incident_ref:
+        description: "Required incident or verification ticket reference"
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - "studio-vnext/**"
+      - ".github/workflows/studio-vnext-runner-signal.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-vnext-runner-signal-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  runner-sentinel:
+    name: Runner assignment and sentinel evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate dispatch reference
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          INCIDENT_REF: ${{ inputs.incident_ref }}
+        run: |
+          set -euo pipefail
+          test -n "$INCIDENT_REF"
+          printf 'Dispatch reference accepted (value redacted from logs).\n'
+
+      - name: Emit runner and commit signals
+        id: signal
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          printf 'sentinel executed at %s\n' "$(date -u +%FT%TZ)"
+          node --version
+          node -e 'JSON.parse(require("node:fs").readFileSync("studio-vnext/RUNNER_SIGNAL_SCHEMA.json","utf8")); console.log("signal schema JSON parsed")'
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const signal = {
+            schema_version: '1.0',
+            event_type: 'sentinel.executed',
+            event_id: `run-${process.env.RUN_ID}-attempt-${process.env.RUN_ATTEMPT}`,
+            timestamp_utc: new Date().toISOString(),
+            repository: process.env.REPOSITORY,
+            commit_sha: process.env.COMMIT_SHA,
+            workflow_run_id: process.env.RUN_ID,
+            job_id: null,
+            runner_id: null,
+            runner_name: process.env.RUNNER_NAME,
+            correlation_id: `studio-vnext-${process.env.RUN_ID}-${process.env.RUN_ATTEMPT}`,
+            result: 'ok',
+            reason_code: process.env.EVENT_NAME
+          };
+          fs.writeFileSync('evidence/runner-signal.json', JSON.stringify(signal, null, 2) + '\n');
+          NODE
+          sha256sum evidence/runner-signal.json | tee evidence/SHA256SUMS.txt
+          {
+            echo "### Runner sentinel"
+            echo "- Repository: `$REPOSITORY`"
+            echo "- Commit: `$COMMIT_SHA`"
+            echo "- Run: `$RUN_ID` (attempt `$RUN_ATTEMPT`)"
+            echo "- Runner: `$RUNNER_NAME` / `$RUNNER_OS`"
+            echo "- Sentinel: executed"
+            echo "- Evidence checksum: recorded in artifact"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload non-secret evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-vnext-runner-signal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            evidence/runner-signal.json
+            evidence/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
