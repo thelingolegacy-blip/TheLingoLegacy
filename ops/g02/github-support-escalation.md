@@ -69,9 +69,15 @@ gh api repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108762602894
 gh api 'repos/thelingolegacy-blip/TheLingoLegacy/check-suites/108762602894/check-runs?filter=all&per_page=100' --jq '{total_count,check_runs:[.check_runs[]|{id,name,conclusion,status,output,details_url,app:.app.name}]}'
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions
 gh api repos/thelingolegacy-blip/TheLingoLegacy/actions/permissions/workflow
+gh api 'repos/thelingolegacy-blip/TheLingoLegacy/actions/runner-groups?per_page=100'
+# Optional: set ORG and/or ENTERPRISE_SLUG when authorized to inspect inherited policy.
+gh api orgs/ORG_SLUG/actions/permissions
+gh api 'orgs/ORG_SLUG/actions/runner-groups?per_page=100'
+gh api enterprises/ENTERPRISE_SLUG/actions/permissions
+gh api 'enterprises/ENTERPRISE_SLUG/actions/runner-groups?per_page=100'
 ```
 
-Repeat the check-suite and check-runs calls for suite IDs `108762600856` and `108762599033`. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. The repository-level endpoints do not by themselves establish inherited organization/enterprise policy, so an administrator must also inspect the repository Settings → Actions policy and any organization/enterprise overrides. If the repository endpoint is denied, record the exact HTTP status and the authenticated account's access level rather than changing permissions speculatively.
+Repeat the check-suite and check-runs calls for suite IDs `108762600856` and `108762599033`. The updated collector also records `check_suite_id` in run metadata, captures all available job attempts, and inventories repository runner groups. Set `ORG` and/or `ENTERPRISE_SLUG` only to the correct organization/enterprise slug for which the authenticated administrator is authorized; leave them unset otherwise. Preserve complete response metadata and UTC timestamps; redact sensitive account details before sharing. Repository-level endpoints do not establish inherited organization/enterprise policy. If any endpoint is denied, record the exact HTTP status and authenticated account's access level rather than changing permissions speculatively.
 
 ## Questions for GitHub Support
 
