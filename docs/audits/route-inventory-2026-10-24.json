@@ -1,0 +1,846 @@
+{
+  "schema": "lingo-route-inventory-audit",
+  "version": "1.0.0",
+  "auditDate": "2026-10-24",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "auditedRef": "studio/enterprise-environment-vnext-2026-10-24",
+  "auditedCommit": "3a4662381e3c05df53f3d8828574225be92c629a",
+  "source": "index.html internal href attributes",
+  "scope": "Static source inventory only; not a canonical runtime route manifest and does not change routing.",
+  "methodology": {
+    "extractedUniqueInternalDestinations": 101,
+    "assetAndDocumentLinksExcluded": true,
+    "sourceEntrypointRule": "<path>/index.html, <path>.html, or exact path; root uses index.html",
+    "runtimeHttpChecksPerformed": false
+  },
+  "summary": {
+    "destinations": 101,
+    "sourceEntrypointsPresent": 101,
+    "sourceEntrypointsMissing": 0,
+    "listedInExistingRouteRegistry": 5,
+    "absentFromExistingRouteRegistry": 96,
+    "liveRuntimeVerified": 0,
+    "classificationsPending": 101
+  },
+  "destinations": [
+    {
+      "path": "/",
+      "sourceEntrypoint": "index.html",
+      "sourcePresent": true,
+      "registryStatus": "registered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/thats-my-lingo/",
+      "sourceEntrypoint": "thats-my-lingo/index.html",
+      "sourcePresent": true,
+      "registryStatus": "registered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/lingoarcade/",
+      "sourceEntrypoint": "lingoarcade/index.html",
+      "sourcePresent": true,
+      "registryStatus": "registered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/casino/",
+      "sourceEntrypoint": "casino/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/visual-showcase/",
+      "sourceEntrypoint": "visual-showcase/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/visual-expansion/",
+      "sourceEntrypoint": "visual-expansion/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/sweepstakes-visual-system/",
+      "sourceEntrypoint": "sweepstakes-visual-system/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/multiplayer-rap-arena/",
+      "sourceEntrypoint": "multiplayer-rap-arena/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/auto-racing-universe/",
+      "sourceEntrypoint": "auto-racing-universe/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/live-casino-studio/",
+      "sourceEntrypoint": "live-casino-studio/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/loading/",
+      "sourceEntrypoint": "loading/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/studio-assets/",
+      "sourceEntrypoint": "studio-assets/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/master-interface/",
+      "sourceEntrypoint": "master-interface/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/app/",
+      "sourceEntrypoint": "app/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/social-play/",
+      "sourceEntrypoint": "social-play/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/studio-production/",
+      "sourceEntrypoint": "studio-production/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/studio-world-os/",
+      "sourceEntrypoint": "studio-world-os/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/outer-crown-expansion/",
+      "sourceEntrypoint": "outer-crown-expansion/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/full-entity-simulcast/",
+      "sourceEntrypoint": "full-entity-simulcast/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/trust-compliance/",
+      "sourceEntrypoint": "trust-compliance/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/economy-command-center/",
+      "sourceEntrypoint": "economy-command-center/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/studio-ui-cleanup/",
+      "sourceEntrypoint": "studio-ui-cleanup/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/living-universe/",
+      "sourceEntrypoint": "living-universe/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/studio-os/",
+      "sourceEntrypoint": "studio-os/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/production-lock/",
+      "sourceEntrypoint": "production-lock/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-verification/",
+      "sourceEntrypoint": "launch-verification/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/live-readiness/",
+      "sourceEntrypoint": "live-readiness/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-war-room/",
+      "sourceEntrypoint": "launch-war-room/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/post-launch-ops/",
+      "sourceEntrypoint": "post-launch-ops/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/monetization/",
+      "sourceEntrypoint": "monetization/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/drop/",
+      "sourceEntrypoint": "drop/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/landing/",
+      "sourceEntrypoint": "landing/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/universe/",
+      "sourceEntrypoint": "universe/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/kottons-code/",
+      "sourceEntrypoint": "kottons-code/index.html",
+      "sourcePresent": true,
+      "registryStatus": "registered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/loyalty-lane-apparel/",
+      "sourceEntrypoint": "loyalty-lane-apparel/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/lingo-ai/",
+      "sourceEntrypoint": "lingo-ai/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/vercel-hard-lock/",
+      "sourceEntrypoint": "vercel-hard-lock/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/assets/",
+      "sourceEntrypoint": "assets/index.html",
+      "sourcePresent": true,
+      "registryStatus": "registered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/tapstich/",
+      "sourceEntrypoint": "tapstich/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/admin-command-center/",
+      "sourceEntrypoint": "admin-command-center/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/privacy/",
+      "sourceEntrypoint": "privacy/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/terms/",
+      "sourceEntrypoint": "terms/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/contact/",
+      "sourceEntrypoint": "contact/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/release-notes/",
+      "sourceEntrypoint": "release-notes/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/live-test-run/",
+      "sourceEntrypoint": "live-test-run/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/tester-feedback/",
+      "sourceEntrypoint": "tester-feedback/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/tester-invite/",
+      "sourceEntrypoint": "tester-invite/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/social-launch-rollout/",
+      "sourceEntrypoint": "social-launch-rollout/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-media-kit/",
+      "sourceEntrypoint": "launch-media-kit/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/email-announcement/",
+      "sourceEntrypoint": "email-announcement/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/day-one-monitoring/",
+      "sourceEntrypoint": "day-one-monitoring/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-countdown/",
+      "sourceEntrypoint": "launch-countdown/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/live-beta-faq/",
+      "sourceEntrypoint": "live-beta-faq/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/post-launch-recap/",
+      "sourceEntrypoint": "post-launch-recap/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/beta-support/",
+      "sourceEntrypoint": "beta-support/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/rollback-drill/",
+      "sourceEntrypoint": "rollback-drill/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/content-calendar/",
+      "sourceEntrypoint": "content-calendar/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-readiness-scorecard/",
+      "sourceEntrypoint": "launch-readiness-scorecard/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/tester-results-log/",
+      "sourceEntrypoint": "tester-results-log/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/known-issues/",
+      "sourceEntrypoint": "known-issues/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-decision-log/",
+      "sourceEntrypoint": "launch-decision-log/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/daily-standup/",
+      "sourceEntrypoint": "daily-standup/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/stakeholder-update/",
+      "sourceEntrypoint": "stakeholder-update/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-risk-register/",
+      "sourceEntrypoint": "launch-risk-register/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/asset-request-queue/",
+      "sourceEntrypoint": "asset-request-queue/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/next-sprint-plan/",
+      "sourceEntrypoint": "next-sprint-plan/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/community-guidelines/",
+      "sourceEntrypoint": "community-guidelines/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/public-roadmap/",
+      "sourceEntrypoint": "public-roadmap/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/feedback-summary/",
+      "sourceEntrypoint": "feedback-summary/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/creator-outreach/",
+      "sourceEntrypoint": "creator-outreach/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-metrics-glossary/",
+      "sourceEntrypoint": "launch-metrics-glossary/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/content-approvals/",
+      "sourceEntrypoint": "content-approvals/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/partner-brief/",
+      "sourceEntrypoint": "partner-brief/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/press-kit-checklist/",
+      "sourceEntrypoint": "press-kit-checklist/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/launch-retrospective/",
+      "sourceEntrypoint": "launch-retrospective/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/auth0-implementation/",
+      "sourceEntrypoint": "auth0-implementation/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/lingo-id/",
+      "sourceEntrypoint": "lingo-id/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/account/",
+      "sourceEntrypoint": "account/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/session-test/",
+      "sourceEntrypoint": "session-test/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/protected-routes/",
+      "sourceEntrypoint": "protected-routes/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integrations-readiness/",
+      "sourceEntrypoint": "integrations-readiness/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/auth0-details/",
+      "sourceEntrypoint": "auth0-details/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/shopify-readiness/",
+      "sourceEntrypoint": "shopify-readiness/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/exa-readiness/",
+      "sourceEntrypoint": "exa-readiness/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-action-plan/",
+      "sourceEntrypoint": "integration-action-plan/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-qa-matrix/",
+      "sourceEntrypoint": "integration-qa-matrix/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integrations-console-checklist/",
+      "sourceEntrypoint": "integrations-console-checklist/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/provider-handoff/",
+      "sourceEntrypoint": "provider-handoff/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-resource-assignment/",
+      "sourceEntrypoint": "integration-resource-assignment/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/installed-integrations/",
+      "sourceEntrypoint": "installed-integrations/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-management/",
+      "sourceEntrypoint": "integration-management/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/marketplace-expansion/",
+      "sourceEntrypoint": "marketplace-expansion/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-decision-queue/",
+      "sourceEntrypoint": "integration-decision-queue/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-dashboard-snapshot/",
+      "sourceEntrypoint": "integration-dashboard-snapshot/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integrations-dashboard-status/",
+      "sourceEntrypoint": "integrations-dashboard-status/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-links-register/",
+      "sourceEntrypoint": "integration-links-register/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-ids-register/",
+      "sourceEntrypoint": "integration-ids-register/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/integration-configurations/",
+      "sourceEntrypoint": "integration-configurations/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/dashboard-integration-links/",
+      "sourceEntrypoint": "dashboard-integration-links/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/exact-dashboard-links/",
+      "sourceEntrypoint": "exact-dashboard-links/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    },
+    {
+      "path": "/motherduck-readiness/",
+      "sourceEntrypoint": "motherduck-readiness/index.html",
+      "sourcePresent": true,
+      "registryStatus": "unregistered",
+      "runtimeStatus": "not-tested",
+      "classification": "needs-review"
+    }
+  ],
+  "acceptance": {
+    "productionMutation": false,
+    "productionHoldRequired": true,
+    "nextSteps": [
+      "Review every destination and classify as public, protected, alias, legacy, or retired.",
+      "Reconcile approved public destinations with the canonical route registry.",
+      "Add deterministic CI checks for source entrypoints, route registration, and aliases.",
+      "Verify HTTP status and redirect destinations against an approved preview.",
+      "Perform keyboard-only and mobile navigation acceptance."
+    ]
+  }
+}
