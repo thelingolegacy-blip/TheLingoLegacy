@@ -6,7 +6,8 @@
   "description": "Isolated LINGO Legacy Studio VNext prototype and contract checks",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check tests/studio-contract.test.mjs && npm test"
+    "check": "npm run dev:verify && node --check tests/studio-contract.test.mjs && npm test",
+    "dev:verify": "node scripts/dev-verify.mjs"
   },
   "engines": {
     "node": ">=20"
