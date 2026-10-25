@@ -11,6 +11,17 @@ Multiple workflows on the same commit have concluded `startup_failure` before an
 
 Please investigate whether these runs were rejected or failed during GitHub Actions workflow/job dispatch, runner assignment, or log/artifact initialization. We need the platform-side failure reason and any relevant repository/account policy restriction, not another workflow retry.
 
+## Latest parallel recheck (2026-10-24)
+
+Read-only checks were repeated across the following runs. Each returned `startup_failure`, with zero jobs and zero artifacts in the connected run-jobs and run-artifacts endpoint responses. This is evidence of pre-job failure, not proof of an application test failure. Exact UTC timestamps should be copied from the run metadata before submitting the ticket.
+
+- Crimson Smoke UI — static validation: https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40133631033
+- Lingo Legacy Static CI: https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40133631843
+- G02 Runner Image Build (no publish): https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40133630232
+- Earlier corroborating run: https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40127783265
+
+No workflow retry, merge, runner-setting mutation, or production change was performed during this recheck.
+
 ## Latest run evidence
 
 | Workflow | Run ID | Observed conclusion | Jobs | Artifacts |
