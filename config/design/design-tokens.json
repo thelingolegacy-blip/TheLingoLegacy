@@ -84,5 +84,84 @@
     "slowMs": 360,
     "easing": "cubic-bezier(.2,.7,.2,1)",
     "reducedMotion": "honor-prefers-reduced-motion"
+  },
+  "themes": {
+    "lingovoxNext": {
+      "name": "LINGOvox-next Industrial Noir",
+      "status": "proposed",
+      "description": "Scoped LINGOvox-next theme; additive and does not replace the existing Lingo Legacy global palette.",
+      "colors": {
+        "obsidian": "#09090C",
+        "graphite": "#17171D",
+        "gold": "#C7A45A",
+        "royalPurple": "#7040B8",
+        "platinum": "#F0EFF4",
+        "mutedText": "#B5B3BE",
+        "border": "#34343D",
+        "success": "#4E8B78",
+        "warning": "#D69E36",
+        "danger": "#C94B58",
+        "focus": "#E4C77E"
+      },
+      "semantic": {
+        "surface.primary": "#09090C",
+        "surface.secondary": "#17171D",
+        "text.primary": "#F0EFF4",
+        "text.secondary": "#B5B3BE",
+        "accent.gold": "#C7A45A",
+        "action.creative": "#7040B8",
+        "status.success": "#4E8B78",
+        "status.warning": "#D69E36",
+        "status.danger": "#C94B58",
+        "focus.visible": "#E4C77E"
+      },
+      "typography": {
+        "headline": "Inter, ui-sans-serif, system-ui, sans-serif",
+        "body": "Inter, ui-sans-serif, system-ui, sans-serif",
+        "monospace": "SFMono-Regular, Consolas, Liberation Mono, monospace",
+        "minimumBodySizePx": 16,
+        "weights": {
+          "normal": 400,
+          "medium": 600,
+          "bold": 750,
+          "black": 900
+        }
+      },
+      "spacing": {
+        "basePx": 4,
+        "stepsPx": [
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          32,
+          40,
+          48,
+          64
+        ],
+        "minimumTouchTargetPx": 44,
+        "radiiPx": {
+          "sm": 6,
+          "md": 10,
+          "lg": 16,
+          "xl": 24,
+          "pill": 999
+        }
+      },
+      "motion": {
+        "fastMs": 120,
+        "standardMs": 200,
+        "slowMs": 320,
+        "easing": "cubic-bezier(.2,.7,.2,1)",
+        "reducedMotion": "honor-prefers-reduced-motion"
+      },
+      "governance": {
+        "sourceOfTruth": "config/design/design-tokens.json",
+        "changePolicy": "Proposed changes require review and a repository change; the browser playground cannot publish source changes.",
+        "releaseStatus": "not-certified"
+      }
+    }
   }
 }
