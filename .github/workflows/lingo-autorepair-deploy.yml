@@ -60,6 +60,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Cache npm downloads for Wrangler and Node tooling
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-npm-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ env.NODE_VERSION }}-npm-
       - name: Run canonical deterministic auto-repair artifact
         run: node scripts/lingo-autorepair.mjs
       - name: Run repository production gates
@@ -97,7 +104,7 @@ jobs:
           path: release/evidence/lingo-autorepair-report.json
 
   deploy-cloudflare:
-    needs: 
+    needs: repair
     # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
     # HARD HOLD: a manual deploy=true input is not release authorization.
     # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.

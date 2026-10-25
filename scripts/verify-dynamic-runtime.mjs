@@ -4,6 +4,11 @@ const worker = fs.readFileSync('worker.js', 'utf8');
 const wrangler = fs.readFileSync('wrangler.jsonc', 'utf8');
 
 const requiredWorkerContracts = [
+  "url.pathname === '/api/v1'",
+  'const READ_ONLY_API_PATHS = new Set([',
+  'const API_ENDPOINTS = Object.freeze([',
+  'function methodNotAllowed(request, env',
+  "integration_semantics: 'binding_presence_only_not_health_check'",
   "url.pathname === '/healthz'",
   "url.pathname === '/api/v1/runtime'",
   "url.pathname === '/api/v1/platform/manifest'",
