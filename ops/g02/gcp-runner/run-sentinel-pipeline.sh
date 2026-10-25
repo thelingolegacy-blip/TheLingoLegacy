@@ -37,27 +37,6 @@ gcloud config set project "$PROJECT_ID" >/dev/null
 gcloud projects describe "$PROJECT_ID" --format=json > "$EVIDENCE_DIR/00_project.json"
 gh auth status > "$EVIDENCE_DIR/00_github_auth.txt" 2>&1 || die "GitHub CLI authentication is unavailable."
 
-# Provisioning is blocked unless the workflow on the DEFAULT branch accepts the
-# required inputs and routes only to the dedicated lingo-g02 runner. GitHub
-# dispatch uses the default-branch workflow definition even when --ref selects
-# a feature branch. A branch-only workflow edit is not enough for safe dispatch.
-if [[ "${APPLY_INFRA:-0}" == "1" ]]; then
-  note "Checking default-branch sentinel compatibility before any cloud mutation"
-  if ! gh api "repos/$REPO/contents/.github/workflows/$WORKFLOW?ref=main" > "$EVIDENCE_DIR/00_default_branch_workflow.json"; then
-    die "Cannot read the sentinel workflow from main; refusing cloud provisioning."
-  fi
-  if ! jq -e '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" >/dev/null; then
-    die "Default-branch workflow content unavailable; refusing cloud provisioning."
-  fi
-  MAIN_WORKFLOW="$(jq -r '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" | base64 -d)"
-  if ! grep -q 'incident_reference:' <<<"$MAIN_WORKFLOW" ||
-     ! grep -q 'confirm_runner:' <<<"$MAIN_WORKFLOW" ||
-     ! grep -q 'lingo-g02' <<<"$MAIN_WORKFLOW" ||
-     ! grep -q 'lingo-legacy-g02' <<<"$MAIN_WORKFLOW"; then
-    printf '%s\n' "$MAIN_WORKFLOW" > "$EVIDENCE_DIR/00_default_branch_workflow_incompatible.yml"
-    die "The sentinel workflow on main does not yet match the required incident inputs and dedicated runner identity. Review and merge the workflow change through normal governance before provisioning; no cloud resources were changed."
-  fi
-fi
 
 note "Terraform formatting, initialization, and validation"
 terraform -chdir="$TF_DIR" fmt -check -recursive | tee "$EVIDENCE_DIR/01_terraform_fmt.txt"
@@ -96,6 +75,27 @@ note "Checking IAP SSH and bootstrap status"
 gcloud compute ssh "$VM_NAME" --project="$PROJECT_ID" --zone="$VM_ZONE" --tunnel-through-iap \
   --quiet --command='hostname -f; test -r /var/log/lingo-g02/bootstrap-status.txt && sudo cat /var/log/lingo-g02/bootstrap-status.txt' \
   2>&1 | tee "$EVIDENCE_DIR/04_iap_ssh_bootstrap.log"
+
+# Provisioning the isolated VM and enrolling/dispatching a runner are separate phases.
+# The host may be created while the default-branch workflow contract is under review.
+# Automatic enrollment and dispatch stay blocked until main has the required inputs.
+if [[ "${AUTO_ENROLL:-0}" == "1" ]]; then
+  note "Checking default-branch sentinel compatibility before runner enrollment"
+  if ! gh api "repos/$REPO/contents/.github/workflows/$WORKFLOW?ref=main" > "$EVIDENCE_DIR/00_default_branch_workflow.json"; then
+    die "Cannot read the sentinel workflow from main; refusing enrollment and dispatch. The VM may already be provisioned."
+  fi
+  if ! jq -e '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" >/dev/null; then
+    die "Default-branch workflow content unavailable; refusing enrollment and dispatch. The VM may already be provisioned."
+  fi
+  MAIN_WORKFLOW="$(jq -r '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" | base64 -d)"
+  if ! grep -q 'incident_reference:' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'confirm_runner:' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'lingo-g02' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'lingo-legacy-g02' <<<"$MAIN_WORKFLOW"; then
+    printf '%s\n' "$MAIN_WORKFLOW" > "$EVIDENCE_DIR/00_default_branch_workflow_incompatible.yml"
+    die "The sentinel workflow on main does not yet match the required incident inputs and dedicated runner identity. Refusing enrollment and dispatch; no runner token has been used."
+  fi
+fi
 
 note "Runner enrollment must be performed with the repository's reviewed registration script"
 printf '%s\n' \
