@@ -58,8 +58,10 @@ tar -tzf "$TMP/$TARBALL" >/dev/null
 sudo install -d -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0750 "$RUNNER_DIR"
 sudo -u "$RUNNER_USER" tar -xzf "$TMP/$TARBALL" -C "$RUNNER_DIR"
 
+# The runner configuration script expects its working directory to be the runner root.
+cd "$RUNNER_DIR"
 # Token is passed only to the config process; never print it or persist it in a file.
-sudo -u "$RUNNER_USER" "$RUNNER_DIR/config.sh" \
+sudo -u "$RUNNER_USER" ./config.sh \
   --url "$REPO_URL" \
   --token "$RUNNER_TOKEN" \
   --name "$RUNNER_NAME" \
