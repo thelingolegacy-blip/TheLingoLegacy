@@ -11,16 +11,16 @@
     description: "Scoped LINGOvox-next theme.",
     colors: {
       obsidian: "#09090C", graphite: "#17171D", gold: "#C7A45A",
-      royalPurple: "#7040B8", platinum: "#F0EFF4", mutedText: "#B5B3BE",
+      royalPurple: "#8055CC", platinum: "#F0EFF4", mutedText: "#B5B3BE",
       border: "#34343D", success: "#4E8B78", warning: "#D69E36",
-      danger: "#C94B58", focus: "#E4C77E"
+      danger: "#D45A68", focus: "#E4C77E"
     },
     semantic: {
       "surface.primary": "#09090C", "surface.secondary": "#17171D",
       "text.primary": "#F0EFF4", "text.secondary": "#B5B3BE",
-      "accent.gold": "#C7A45A", "action.creative": "#7040B8",
+      "accent.gold": "#C7A45A", "action.creative": "#8055CC",
       "status.success": "#4E8B78", "status.warning": "#D69E36",
-      "status.danger": "#C94B58", "focus.visible": "#E4C77E"
+      "status.danger": "#D45A68", "focus.visible": "#E4C77E"
     },
     typography: { headline: "Inter, ui-sans-serif, system-ui, sans-serif", body: "Inter, ui-sans-serif, system-ui, sans-serif", minimumBodySizePx: 16 },
     spacing: { basePx: 4, stepsPx: [4,8,12,16,20,24,32,40,48,64], minimumTouchTargetPx: 44 },
