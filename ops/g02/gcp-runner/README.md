@@ -18,7 +18,7 @@ Review the subnet CIDR, zone, and SSH source CIDR before applying. Defaults may 
 
 1. An existing Google Cloud project with billing enabled.
 2. Permission to enable the Compute Engine API and create network, firewall, and VM resources.
-3. Terraform 1.5+ and authenticated Google Cloud credentials, preferably through Application Default Credentials. The deploying identity must have the permissions required to create the service account, VPC, subnet, firewall, router/NAT, and Compute Engine VM.
+3. Terraform 1.5+ and authenticated Google Cloud credentials, preferably through Application Default Credentials. The deploying identity must have the permissions required to create the service account, VPC, subnet, firewall, reserved external IP, and Compute Engine VM.
 4. A GitHub repository administrator able to create a short-lived repository runner registration token.
 
 ## Provision
@@ -56,10 +56,19 @@ Use a minimal, non-deploying canary targeted to:
 runs-on: [self-hosted, linux, x64, lingo-g02]
 ```
 
-The canary must execute `uname -a`, `id`, and a unique sentinel command; the completed job must have retrievable logs. Capture the workflow run URL, runner name/labels, job ID, and log evidence. Do not mark G02 passed unless the runner is online, assigned to the job, the sentinel executes, and logs are retrievable.
+The repository workflow `.github/workflows/runner-dispatch-diagnostic.yml` is deliberately `workflow_dispatch` only. It requires an incident reference and explicit confirmation before routing to `[self-hosted, linux, x64, lingo-g02]`; it does not auto-run on pushes. The canary records run ID, attempt, runner identity, OS/architecture, incident reference, sentinel result, and forensic exit marker, then uploads a 14-day evidence artifact. It must complete with retrievable job logs and artifact. Capture the workflow run URL, runner name/labels, job ID, logs, and artifact evidence. Do not mark G02 passed unless the runner is online, assigned to the job, the sentinel executes, and logs are retrievable.
 
 Do not route untrusted pull-request code or production deployment jobs to this runner until security boundaries and permissions are reviewed. A self-hosted runner does not diagnose or repair separate failures on GitHub-hosted `ubuntu-latest` jobs.
 
 ## Cleanup
 
 After reviewing the planned destruction, run `terraform destroy -var="project_id=YOUR_PROJECT_ID"`. Confirm the VM is no longer needed first. GitHub runner deregistration is a separate step and should be completed before destroying the VM.
+
+
+## Secrets and SSH key handling
+
+There is no checked-in `secrets.yml` for this runner, and credentials must not be stored in a YAML file. Do not create or commit a file containing runner registration tokens, SSH private keys, cloud credentials, or GitHub secrets. GitHub runner registration tokens are short-lived and should be entered interactively only when enrolling the runner. The SSH private key stays on the administrator's device; only its public key is added to the Google OS Login profile. Use GitHub repository/environment secrets only for a specific workflow requirement, with least privilege and rotation. The current G02 sentinel does not require repository secrets.
+
+## External IP and firewall verification
+
+Terraform reserves a regional external IPv4 address and attaches it to the VM for outbound HTTPS access to GitHub. The default inbound SSH rule permits only Google IAP TCP forwarding from `35.235.240.0/20`. Direct inbound SSH is disabled unless `admin_ssh_cidr` is set to a trusted public IPv4 CIDR (normally `YOUR_PUBLIC_IP/32`); never expose TCP/22 to `0.0.0.0/0`. The external address may incur charges while allocated. After provisioning, verify the assigned address with `terraform output external_ip` and verify runner connectivity separately from SSH connectivity.
