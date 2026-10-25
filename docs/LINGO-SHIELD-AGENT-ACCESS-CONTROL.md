@@ -155,6 +155,7 @@ No platform access policies, service tokens, GitHub permissions, Vercel roles, W
 - `thelingolegacyv4` and `astro-blog-starter-template` showed account-member allow policies and no `everyone` bypass in the returned policy list.
 - The account-level service-token list returned zero records. This does not prove the absence of other API tokens, OAuth grants, Worker secrets, user sessions, or credentials outside this inventory.
 - Do not remove the `All Workers` bypass or change individual policies until the relevant Worker/preview identities, intended audiences, policy precedence, and a rollback procedure are confirmed.
+- Follow-up mapping attempt: the Worker destination UUIDs returned by the named Access apps did not resolve through the account's Worker script-search endpoint. The Access app labels therefore cannot yet be treated as authoritative mappings to the three currently listed scripts; resolve this via dashboard destination details or provider support before policy changes.
 
 ### Current custom Worker routes
 
