@@ -56,3 +56,13 @@ variable "subnet_cidr" {
   type        = string
   default     = "10.72.0.0/24"
 }
+
+variable "admin_ssh_cidr" {
+  description = "Optional trusted public IPv4 CIDR allowed direct SSH. Leave empty to require IAP-only SSH."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.admin_ssh_cidr == "" || can(cidrnetmask(var.admin_ssh_cidr))
+    error_message = "admin_ssh_cidr must be empty or a valid IPv4 CIDR such as your.public.ip/32."
+  }
+}
