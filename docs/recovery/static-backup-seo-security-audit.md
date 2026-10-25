@@ -14,6 +14,7 @@ The first deployment used the repository root and uploaded 511 files. This was b
 - Preserved the existing crawler policy in `robots.txt` rather than silently changing the owner's AI-crawler preferences.
 - Added `X-Robots-Tag: noindex, nofollow, noarchive` to the static backup headers to avoid indexing a duplicate staging copy.
 - Existing page canonical and Open Graph metadata still point to `https://thelingolegacy.com/`, not the Pages hostname.
+- Audited all 37 selected routes for title, meta description, and canonical URL. Added Organization/WebSite JSON-LD to the homepage and added missing canonical tags to five public-information pages. Repointed two public-homepage documentation links to the public release-notes page because internal Markdown files are intentionally excluded.
 - No production DNS, canonical Worker, or custom domain was changed.
 
 ## Security boundary
