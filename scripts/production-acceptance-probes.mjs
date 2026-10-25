@@ -21,6 +21,19 @@ try {
   process.exit(2);
 }
 
+// Fail closed against accidental live-production probing. Candidate validation
+// must use a separately isolated hostname, not the production zone.
+const hostname = baseUrl.hostname.toLowerCase().replace(/\\.$/, '');
+if (
+  hostname === 'thelingolegacy.com' ||
+  hostname.endsWith('.thelingolegacy.com') ||
+  baseUrl.username ||
+  baseUrl.password
+) {
+  console.error('BASE_URL must use an isolated candidate hostname and must not contain URL credentials.');
+  process.exit(2);
+}
+
 const timeoutMs = Number(process.env.PROBE_TIMEOUT_MS || 10000);
 const routes = [
   { path: '/', status: 200, type: /^text\/html\b/i, body: (text) => /<meta name="lingo-runtime"/i.test(text) && /<meta name="lingo-dynamic" content="true"/i.test(text) && /\/assets\/studio-ui-runtime\.js/i.test(text), cacheControl: /no-store/i },
