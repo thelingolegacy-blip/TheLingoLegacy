@@ -7,6 +7,8 @@
 /.npmrc /404.html 404
 /.github/* /404.html 404
 /config/* /404.html 404
+/docs/canon-asset-registry.md /release-notes/ 302
+/docs/release-candidate-v1.md /release-notes/ 302
 /docs/* /404.html 404
 /ops/* /404.html 404
 /scripts/* /404.html 404
