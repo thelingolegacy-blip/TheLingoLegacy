@@ -23,7 +23,7 @@ try {
 
 // Fail closed against accidental live-production probing. Candidate validation
 // must use a separately isolated hostname, not the production zone.
-const hostname = baseUrl.hostname.toLowerCase().replace(/\\.$/, '');
+const hostname = baseUrl.hostname.toLowerCase().replace(/\.$/, '');
 if (
   hostname === 'thelingolegacy.com' ||
   hostname.endsWith('.thelingolegacy.com') ||
