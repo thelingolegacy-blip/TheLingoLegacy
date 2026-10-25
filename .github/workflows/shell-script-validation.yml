@@ -1,0 +1,95 @@
+name: Shell Script Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      incident_reference:
+        description: "Incident or evidence reference for this validation run"
+        required: true
+        type: string
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/**"
+      - "ops/**/*.sh"
+      - "**/*.sh"
+      - "**/*.bash"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shell-script-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-shell:
+    name: Validate tracked shell scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install ShellCheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+
+      - name: Validate syntax and static analysis
+        id: validate
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p validation-evidence
+          report="validation-evidence/shell-validation.txt"
+          : > "$report"
+          printf 'schema=lingo-shell-validation-v1\n' | tee -a "$report"
+          printf 'captured_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$report"
+          printf 'repository=%s\n' "$GITHUB_REPOSITORY" | tee -a "$report"
+          printf 'commit=%s\n' "$GITHUB_SHA" | tee -a "$report"
+          printf 'run_id=%s\n' "$GITHUB_RUN_ID" | tee -a "$report"
+
+          mapfile -d '' -t files < <(git ls-files -z -- '*.sh' '*.bash')
+          printf 'script_count=%s\n' "${#files[@]}" | tee -a "$report"
+          if (( ${#files[@]} == 0 )); then
+            echo "No tracked .sh or .bash files found." | tee -a "$report"
+            exit 1
+          fi
+
+          syntax_failures=0
+          for file in "${files[@]}"; do
+            if bash -n "$file" 2>>"$report"; then
+              printf 'bash_syntax=PASS file=%s\n' "$file" | tee -a "$report"
+            else
+              printf 'bash_syntax=FAIL file=%s\n' "$file" | tee -a "$report"
+              syntax_failures=$((syntax_failures + 1))
+            fi
+          done
+
+          set +e
+          shellcheck -x "${files[@]}" >>"$report" 2>&1
+          shellcheck_status=$?
+          set -e
+          printf 'syntax_failures=%s\n' "$syntax_failures" | tee -a "$report"
+          printf 'shellcheck_exit_code=%s\n' "$shellcheck_status" | tee -a "$report"
+
+          if (( syntax_failures > 0 || shellcheck_status != 0 )); then
+            echo "validation=FAIL" | tee -a "$report"
+            exit 1
+          fi
+          echo "validation=PASS" | tee -a "$report"
+
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shell-validation-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: validation-evidence/shell-validation.txt
+          if-no-files-found: warn
+          retention-days: 14
