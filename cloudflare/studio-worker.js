@@ -34,7 +34,7 @@ export default {
       }
       return withStudioSecurityHeaders(await env.ASSETS.fetch(request));
     }
-    return handle(request);
+    return withStudioSecurityHeaders(await handle(request));
   }
 };
 
