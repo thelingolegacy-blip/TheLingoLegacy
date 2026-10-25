@@ -53,14 +53,20 @@ curl --fail --location --silent --show-error \
   "https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/${TARBALL}" \
   --output "$TMP/$TARBALL"
 
-# Validate archive integrity before extracting.
+# Validate the downloaded archive as the invoking administrator first.
 tar -tzf "$TMP/$TARBALL" >/dev/null
 sudo install -d -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0750 "$RUNNER_DIR"
-sudo -u "$RUNNER_USER" tar -xzf "$TMP/$TARBALL" -C "$RUNNER_DIR"
 
-# The runner directory is mode 0750 and owned by the runner account, so perform
-# runner setup from inside that directory as the intended account.
-# The short-lived token is never printed or written to a file.
+# The temporary directory and archive are private to this administrator (umask 077).
+# Copy the archive into the runner-owned directory before extracting as RUNNER_USER;
+# otherwise the runner account cannot traverse TMP or read the downloaded tarball.
+sudo install -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0600 \
+  "$TMP/$TARBALL" "$RUNNER_DIR/$TARBALL"
+sudo -u "$RUNNER_USER" tar -xzf "$RUNNER_DIR/$TARBALL" -C "$RUNNER_DIR"
+sudo rm -f "$RUNNER_DIR/$TARBALL"
+
+# Perform runner setup from inside the runner-owned directory.
+# The short-lived token is not written to a file or printed to stdout.
 sudo -u "$RUNNER_USER" bash -c 'cd "$1" && shift && exec ./config.sh "$@"' _ "$RUNNER_DIR" \
   --url "$REPO_URL" \
   --token "$RUNNER_TOKEN" \
