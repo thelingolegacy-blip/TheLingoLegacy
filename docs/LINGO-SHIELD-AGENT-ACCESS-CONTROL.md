@@ -93,3 +93,52 @@ A control is **PASS** only when an authoritative source or test verifies it. Oth
 ## 7. Current audit note
 
 This policy is a proposed repository control baseline. It does not claim that all platform permissions have been inventoried or changed. The initial read-only audit identified conflicting historical agent-authority wording in `docs/AGENT-LEADERSHIP-GOVERNANCE.md`, which is being explicitly marked superseded. Cloudflare Access, GitHub Actions/runner permissions, and Vercel access-group scope still require complete, authorized verification. Production remains protected and no release promotion is authorized.
+
+
+## 8. Read-only platform inventory snapshot — 2026-10-25
+
+**Evidence source:** Cloudflare account API read operations; Vercel team API read operations; GitHub repository/workflow source reads. This is a point-in-time snapshot, not a complete identity audit or an authorization grant.
+
+### Cloudflare Access
+
+The account API returned 11 Access applications. Nine application records contain a policy named “Make this Worker public” with decision `bypass` and include type `everyone`:
+
+- `All Workers` (destination type `all_workers`)
+- `thats-my-lingo - Cloudflare Workers`
+- `sparkling-rain-29a3 - Cloudflare Workers` (preview Worker)
+- `thelingolegacyv5 - Cloudflare Workers`
+- `thelingolegacy - Cloudflare Workers`
+- `legacyweb1 - Cloudflare Workers`
+- `nextjs-lingolegacy - Cloudflare Workers`
+- `thelingolegacy-v2 - Cloudflare Workers` (preview Worker)
+- `thelingolegacy-v3 - Cloudflare Workers`
+
+The other two returned applications, `thelingolegacyv4 - Cloudflare Workers` and `astro-blog-starter-template - Cloudflare Workers`, showed account-member allow policies and no `everyone` bypass in the returned policy list.
+
+**Risk disposition: ADMIN REVIEW REQUIRED — NOT AUTOMATICALLY A VULNERABILITY.** These records prove that broad bypass policies are configured, not that every destination is sensitive or that an unintended caller can reach an administrative endpoint. Public website/game workers may be intentionally public. Before any edit, an administrator must map each application and destination ID to its current Worker, enumerate sensitive/admin/diagnostic routes, and confirm which destinations are intended to be public. The `All Workers` application warrants highest priority because its destination selector is account-wide. Do not delete or rewrite these policies as part of this documentation PR.
+
+### Cloudflare AI Gateway and service tokens
+
+- One AI Gateway record was returned with `authentication: true` and `collect_logs: true`.
+- Its returned `rate_limiting_limit` and `rate_limiting_interval` values were null; no configured gateway rate limit was visible in this response.
+- The account service-token inventory returned zero records.
+
+**Limitations:** The gateway inventory does not enumerate all caller credentials or prove that upstream provider keys are correctly scoped. A zero service-token count means no Access service tokens were returned by this endpoint; it does not prove there are no API tokens, OAuth grants, user sessions, Worker secrets, or credentials in other providers.
+
+### Vercel and GitHub
+
+- Vercel team-member API returned one confirmed `OWNER` member and no listed access groups on that member record. A separate access-group listing returned `403 Forbidden`; the full group inventory therefore remains **BLOCKED / UNKNOWN**.
+- Repository workflow source review found `.github/workflows/g02-run-wrapper.yml` declares workflow-level `actions: write` and `contents: read`. The write scope appears related to dispatching and inspecting the G02 workflow; its necessity and exact effective token permissions still require administrator review.
+- `.github/workflows/lingo-autorepair-deploy.yml` declares workflow-level `deployments: write` alongside read permissions, while the Cloudflare deployment job is statically disabled with `if: ${{ false }}`. This is a candidate for future least-privilege review; do not remove permissions without confirming required GitHub environment/deployment behavior and running qualifying checks.
+- The current source for `infra/recovery/lingo-g02-control-agent.js` is explicitly read-only and contains no credentials, but Cloudflare returned `404 Worker does not exist` for the Worker name in its README. The source code alone does not prove that the diagnostic service is deployed.
+
+### Required administrator decisions
+
+1. Identify which Cloudflare Access applications protect private preview, admin, and diagnostic routes versus deliberately public application routes.
+2. Review the account-wide `All Workers` bypass policy first and replace broad policy only after destination mapping and a tested change/rollback plan exist.
+3. Confirm the AI Gateway's intended caller population, authentication mechanism, abuse/rate-limit requirements, and logging/data-retention requirements.
+4. Resolve the Vercel access-group `403` through an authorized administrative path; do not infer that no groups exist.
+5. Review GitHub workflow write scopes, branch/ruleset enforcement, runner group access, environment protection, and bot/service identities using authoritative settings endpoints.
+6. Independently test both allowed and denied requests in non-production before marking any access-control gate PASS.
+
+No platform access policies, service tokens, GitHub permissions, Vercel roles, Worker routes, secrets, or production settings were changed by this inventory.
