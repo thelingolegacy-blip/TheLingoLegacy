@@ -14,6 +14,14 @@ provider "google" {
   zone    = var.zone
 }
 
+# Dedicated VM identity. This module deliberately grants it no project roles.
+# Add only narrowly scoped roles later if a documented runner task requires them.
+resource "google_service_account" "runner" {
+  account_id   = "${var.name_prefix}-vm"
+  display_name = "LINGO G02 GitHub Actions runner VM"
+  description  = "Least-privilege identity for the isolated G02 self-hosted runner."
+}
+
 resource "google_compute_network" "runner" {
   name                    = "${var.name_prefix}-network"
   auto_create_subnetworks = false
@@ -68,6 +76,15 @@ resource "google_compute_instance" "runner" {
   machine_type = var.machine_type
   zone         = var.zone
   tags         = ["${var.name_prefix}-vm"]
+  can_ip_forward = false
+  deletion_protection = false
+  allow_stopping_for_update = true
+
+  scheduling {
+    automatic_restart   = true
+    on_host_maintenance = "MIGRATE"
+    provisioning_model  = "STANDARD"
+  }
 
   boot_disk {
     initialize_params {
@@ -91,7 +108,8 @@ resource "google_compute_instance" "runner" {
   metadata_startup_script = file("${path.module}/startup.sh")
 
   service_account {
-    # No project IAM roles are granted to this VM identity by this module.
+    email  = google_service_account.runner.email
+    # The dedicated identity has no project IAM roles granted by this module.
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
@@ -107,5 +125,4 @@ resource "google_compute_instance" "runner" {
     environment = "recovery"
   }
 
-  allow_stopping_for_update = true
 }
