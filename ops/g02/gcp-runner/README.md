@@ -103,3 +103,8 @@ APPLY_INFRA=1 AUTO_ENROLL=1 bash ops/g02/gcp-runner/run-sentinel-pipeline.sh
 ```
 
 Use a short-lived runner registration token only at the interactive enrollment prompt. Never export it as an environment variable or place it in shell arguments, source control, metadata, or logs. The pipeline is intentionally fail-closed; a failed check stops later steps. A successful sentinel is evidence of execution only, not independent release authorization. Production remains protected until every required release gate is reviewed and accepted.
+
+
+### Important pre-provisioning gate: default-branch workflow
+
+GitHub manual dispatch uses the workflow definition present on the repository's default branch, even when a dispatch selects another ref. The current `main` version of `.github/workflows/runner-dispatch-diagnostic.yml` does not yet declare the required `incident_reference` and `confirm_runner` inputs. The orchestration script therefore refuses to provision cloud infrastructure when `APPLY_INFRA=1` until the reviewed workflow change is accepted through the repository's normal review and merge controls. Do not bypass this check or manually dispatch an incompatible workflow.
