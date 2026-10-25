@@ -13,12 +13,22 @@ output "internal_ip" {
   description = "Runner VM internal IPv4 address."
 }
 
-output "external_ip" {
-  value       = google_compute_instance.runner.network_interface[0].access_config[0].nat_ip
-  description = "Runner VM external IPv4 address for outbound connectivity. No public ingress is opened."
-}
-
 output "iap_ssh_command" {
   value       = "gcloud compute ssh ${google_compute_instance.runner.name} --zone=${google_compute_instance.runner.zone} --project=${var.project_id} --tunnel-through-iap"
   description = "Suggested SSH command using IAP."
+}
+
+output "network_name" {
+  value       = google_compute_network.runner.name
+  description = "Dedicated VPC network for the G02 runner."
+}
+
+output "subnetwork_name" {
+  value       = google_compute_subnetwork.runner.name
+  description = "Dedicated subnet for the G02 runner."
+}
+
+output "cloud_nat_name" {
+  value       = google_compute_router_nat.runner.name
+  description = "Cloud NAT used for outbound connectivity without a public VM IP."
 }
