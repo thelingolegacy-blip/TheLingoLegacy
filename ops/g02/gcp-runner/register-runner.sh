@@ -58,10 +58,10 @@ tar -tzf "$TMP/$TARBALL" >/dev/null
 sudo install -d -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0750 "$RUNNER_DIR"
 sudo -u "$RUNNER_USER" tar -xzf "$TMP/$TARBALL" -C "$RUNNER_DIR"
 
-# The runner configuration script expects its working directory to be the runner root.
-cd "$RUNNER_DIR"
-# Token is passed only to the config process; never print it or persist it in a file.
-sudo -u "$RUNNER_USER" ./config.sh \
+# The runner directory is mode 0750 and owned by the runner account, so perform
+# runner setup from inside that directory as the intended account.
+# The short-lived token is never printed or written to a file.
+sudo -u "$RUNNER_USER" bash -c 'cd "$1" && shift && exec ./config.sh "$@"' _ "$RUNNER_DIR" \
   --url "$REPO_URL" \
   --token "$RUNNER_TOKEN" \
   --name "$RUNNER_NAME" \
@@ -70,8 +70,7 @@ sudo -u "$RUNNER_USER" ./config.sh \
   --unattended
 
 unset RUNNER_TOKEN
-sudo "$RUNNER_DIR/bin/installdependencies.sh"
-sudo "$RUNNER_DIR/svc.sh" install "$RUNNER_USER"
-sudo "$RUNNER_DIR/svc.sh" start
-sudo "$RUNNER_DIR/svc.sh" status
+sudo bash -c 'cd "$1" && ./bin/installdependencies.sh' _ "$RUNNER_DIR"
+sudo bash -c 'cd "$1" && ./svc.sh install "$2"' _ "$RUNNER_DIR" "$RUNNER_USER"
+sudo bash -c 'cd "$1" && ./svc.sh start && ./svc.sh status' _ "$RUNNER_DIR"
 echo "Registration command completed. Independently verify runner status in GitHub before routing jobs."
