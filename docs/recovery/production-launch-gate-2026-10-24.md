@@ -74,3 +74,15 @@ For each check, record:
 ## Current release decision
 
 **Blocked.** The backup is an isolated static fallback, not a replacement for the dynamic production runtime. No DNS, production Worker, custom domain, billing, secret, or release-gate mutation is authorized by this checklist.
+
+## CI startup evidence update — 2026-10-25
+
+A follow-up check of the connected GitHub Actions API returned zero job records and zero artifacts for each of these runs:
+
+| Run ID | Workflow | Jobs | Artifacts |
+|---:|---|---:|---:|
+| [40151883992](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40151883992) | G02 Runner Image Build (no publish) | 0 | 0 |
+| [40151884541](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40151884541) | Lingo Legacy Static CI | 0 | 0 |
+| [40151885025](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40151885025) | Crimson Smoke UI | 0 | 0 |
+
+This is API-observed evidence that job-level logs/artifacts are unavailable for these sampled runs through the connected endpoints. It does not establish the backend cause of startup failure. The records and timestamps are also documented in [Issue #368](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/368#issuecomment-6392988093). GitHub Support escalation remains prepared but not submitted. No rerun, workflow dispatch, production deployment, or infrastructure/settings change was performed for this update.
