@@ -142,3 +142,48 @@ The other two returned applications, `thelingolegacyv4 - Cloudflare Workers` and
 6. Independently test both allowed and denied requests in non-production before marking any access-control gate PASS.
 
 No platform access policies, service tokens, GitHub permissions, Vercel roles, Worker routes, secrets, or production settings were changed by this inventory.
+
+## 8. Read-only access inventory — 2026-10-25
+
+**Evidence status:** Cloudflare API and repository source were inspected read-only. This is a snapshot, not an independent penetration test. Public/private intent for several subdomains remains unconfirmed.
+
+### Cloudflare Access and service tokens
+
+- 11 account-level Access applications were returned.
+- The `All Workers` application targets `all_workers` and includes a `bypass` policy for `everyone` at precedence 3, after account-member allow rules at precedences 1–2. This appears to make non-matching identities eligible for the public bypass; effective behavior must be tested before changing it.
+- Individual Worker / preview applications with an `everyone` bypass were returned for `thats-my-lingo`, `sparkling-rain-29a3` (preview), `thelingolegacyv5`, `thelingolegacy`, `legacyweb1`, `nextjs-lingolegacy`, `thelingolegacy-v2` (preview), and `thelingolegacy-v3`.
+- `thelingolegacyv4` and `astro-blog-starter-template` showed account-member allow policies and no `everyone` bypass in the returned policy list.
+- The account-level service-token list returned zero records. This does not prove the absence of other API tokens, OAuth grants, Worker secrets, user sessions, or credentials outside this inventory.
+- Do not remove the `All Workers` bypass or change individual policies until the relevant Worker/preview identities, intended audiences, policy precedence, and a rollback procedure are confirmed.
+
+### Current custom Worker routes
+
+The zone route inventory returned 19 patterns. Eighteen route to `thelingolegacyv-5`; `launch.thelingolegacy.com/*` routes to `lingo-static-backup-proxy`.
+
+- **Intended public candidate:** `thelingolegacy.com/*`, `www.thelingolegacy.com/*`.
+- **Public launch/prototype candidate:** `launch.thelingolegacy.com/*`; its Worker source marks responses `noindex, nofollow` and proxies to a Pages backup.
+- **Audience not yet verified:** `lingo.thelingolegacy.com/*`, `cyber.thelingolegacy.com/*`, `drip.thelingolegacy.com/*`, `web.thelingolegacy.com/*`, `v4.thelingolegacy.com/*`, `blog.thelingolegacy.com/*`, `therealzavione.thelingolegacy.com/*`, `v3.thelingolegacy.com/*`, `solar.thelingolegacy.com/*`, `hub.thelingolegacy.com/*`, `sparkling-rain.thelingolegacy.com/*`, `thats-my-lingo.thelingolegacy.com/*`, `ai.thelingolegacy.com/*`, `site.thelingolegacy.com/*`, `theriseofzavione.thelingolegacy.com/*`, and `luxe.thelingolegacy.com/*`.
+- The canonical Worker source exposes public health/runtime/platform status endpoints, `POST /api/create-checkout-session`, and `POST /api/beacon-text-alerts`. The latter validates consent and rate-limits per Worker isolate, but its webhook/Twilio delivery path is not a Shopify webhook receiver. No Shopify webhook receiver was identified in this Worker source; other services still need inventory.
+- Treat the runtime/status endpoints as public read-only diagnostics only after confirming that their metadata is acceptable for anonymous disclosure. Do not route admin actions or agent commands through these public endpoints.
+
+### Control-agent deployment and Wrangler identity
+
+- The Cloudflare script inventory returned `lingo-static-backup-proxy`, `thelingolegacy-web-recovery-preview`, and `thelingolegacyv-5`.
+- `GET /workers/scripts/lingo-g02-control-agent-2026-10-10/settings` returned 404 `10007 This Worker does not exist on your account`. The script is not in the returned current script inventory.
+- Repository `wrangler.jsonc` declares `name = "thelingolegacyv-5"`, `main = "worker.js"`, with apex/www routes. `cloudflare/wrangler.toml` declares the separate `lingo-legacy-studio-build` validation Worker. Neither inspected config declares `lingo-g02-control-agent-2026-10-10`.
+- Conclusion: the named control agent is **not verified as deployed**. Do not create, rename, or deploy a replacement as part of this inventory pass.
+
+### Workflow permission hardening prepared in this PR
+
+- `.github/workflows/g02-run-wrapper.yml`: workflow default is now `actions: read`; only the dispatch job receives `actions: write`; allocation/execution jobs use `actions: read`. This preserves the dispatch operation while narrowing the write token to the job that needs it.
+- `.github/workflows/lingo-autorepair-deploy.yml`: workflow-level `deployments: write` was removed and scoped to the existing disabled `deploy-cloudflare` job. The production deployment job remains hard-disabled.
+- These are source changes on the draft PR branch. Automated workflow parsing, CI, and runtime acceptance have **not yet passed** for these changes. Do not treat source edits as effective platform enforcement until CI and independent review succeed.
+
+### Remaining verification
+
+1. Map each Access Worker/preview destination ID to its actual script or preview URL and documented audience.
+2. Confirm whether the 16 audience-unknown custom subdomains are intended to be public, internal, or retired.
+3. Inventory webhook receivers across every active Worker/service and document each provider's signature verification and replay/idempotency controls.
+4. Run workflow syntax/static checks and inspect resulting CI job/step/log evidence.
+5. Resolve Vercel access-group inventory through an authorized team-level read path; the prior 403 remains an evidence gap.
+
