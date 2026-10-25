@@ -17,6 +17,10 @@ variable "zone" {
   description = "Compute Engine zone in the selected region."
   type        = string
   default     = "us-east1-b"
+  validation {
+    condition     = startswith(var.zone, "${var.region}-")
+    error_message = "zone must belong to the selected region (for example, region us-east1 and zone us-east1-b)."
+  }
 }
 
 variable "instance_name" {
