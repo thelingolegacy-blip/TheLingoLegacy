@@ -9,16 +9,16 @@ This module provisions an isolated Ubuntu 24.04 LTS Compute Engine VM and a dedi
 - Disk: 40 GB balanced persistent disk
 - Network: dedicated VPC/subnet; private VM address only; Cloud NAT for outbound connectivity; no public ingress rule
 - SSH administration: Google Cloud IAP TCP forwarding only
-- VM identity: no project IAM roles granted by this module
+- VM identity: dedicated service account with no project IAM roles granted by this module; legacy metadata endpoints disabled
 - Runner labels after enrollment: built-in `self-hosted`, `linux`, `x64`, plus `lingo-g02`
 
-Review the subnet CIDR and zone before applying. Defaults may conflict with existing network ranges or organization policy. Cloud NAT incurs additional charges. The VM has no public IP; outbound GitHub HTTPS uses Cloud NAT.
+Review the subnet CIDR and zone before applying. Defaults may conflict with existing network ranges or organization policy. Cloud NAT incurs additional charges. The VM has no public IP; outbound traffic uses Cloud NAT. The module creates a dedicated service account but intentionally grants it no project IAM roles. The VM cannot use Google Cloud APIs that require IAM permissions unless an administrator later grants a narrowly scoped role for a documented need.
 
 ## Prerequisites
 
 1. An existing Google Cloud project with billing enabled.
 2. Permission to enable the Compute Engine API and create network, firewall, and VM resources.
-3. Terraform 1.5+ and authenticated Google Cloud credentials, preferably through Application Default Credentials.
+3. Terraform 1.5+ and authenticated Google Cloud credentials, preferably through Application Default Credentials. The deploying identity must have the permissions required to create the service account, VPC, subnet, firewall, router/NAT, and Compute Engine VM.
 4. A GitHub repository administrator able to create a short-lived repository runner registration token.
 
 ## Provision
