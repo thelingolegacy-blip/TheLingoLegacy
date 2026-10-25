@@ -1,0 +1,13 @@
+/* LINGO Studio Surface Adapter UI */
+.studio-surface-nav{
+  position:sticky;top:0;z-index:90;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  padding:10px 16px;
+  background:rgba(8,8,12,.78);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(16px);
+}
+.studio-surface-nav a{font-size:.78rem;text-decoration:none}
+[data-studio-state="ERROR"] .studio-surface-nav{border-bottom-color:rgba(255,80,80,.35)}
+[data-studio-state="DEGRADED"] .studio-surface-nav{border-bottom-color:rgba(255,180,80,.35)}
+@media (prefers-reduced-motion:reduce){.studio-surface-nav{backdrop-filter:none}}

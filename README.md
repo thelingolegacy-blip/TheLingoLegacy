@@ -6,6 +6,23 @@
 
 ---
 
+## Static Backup Snapshot — 2026-10-24
+
+This branch, `recovery/static-backup-2026-10-24`, is an isolated static-hosting snapshot based on the repository's authoritative `main` branch. It preserves the checked-in public website entry point (`index.html`), static assets, headers, redirects, and web manifest without changing `main`, production DNS, the apex/www Worker, or production traffic.
+
+**Scope:** public-facing static presentation and linked files only. Dynamic API routes, authentication, Firebase-backed state, wallet/loyalty transactions, checkout, and other server-side functionality are not certified by a static Pages deployment and must remain disabled or clearly unavailable until separately validated.
+
+**Recovery contract:**
+1. Keep this snapshot isolated from production.
+2. Deploy only to a separate `pages.dev` backup hostname; do not attach `thelingolegacy.com` or `www.thelingolegacy.com`.
+3. Verify homepage, static assets, navigation, 404 behavior, mobile layout, response headers, and absence of secret material before calling the backup accepted.
+4. Preserve the original production Worker and last-known-good version for rollback.
+5. No merge, DNS change, production route change, or production promotion is authorized by this snapshot.
+
+The branch is a recovery artifact, not a declaration that production is restored or release gates have passed.
+
+---
+
 ## 🏛️ Ecosystem Architecture
 The Lingo Legacy Empire is consolidated under a single, authoritative, studio-grade infrastructure:
 - **`thelingolegacy.com` & `www`**: Master Hub & Game Floor (*That's My Lingo*)
@@ -13,7 +30,7 @@ The Lingo Legacy Empire is consolidated under a single, authoritative, studio-gr
 - **`arena.thelingolegacy.com`**: LINGOarena Virtual Arcade & Casino Floor
 - **`reads.thelingolegacy.com`**: LINGOreads Virtual Theater & Literary Hallway
 - **`media.thelingolegacy.com`**: LINGOmedia Sonic Branding & Mixtape Nexus
-- **`ai.thelingolegacy.com`**: AskLINGO ⭐️ AI Omni-Oracle Neural Core
+- **`ai.thelingolegacy.com`**: AskLINGO AI Omni-Oracle Neural Core
 
 ---
 
@@ -39,10 +56,8 @@ The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its 
 A successful build alone never marks production LIVE. Repository state, CI evidence, Worker deployment, domain routing, backend bindings, observability, safety controls, and live probes must agree.
 
 Required runtime probes include:
-
 - `/api/v1/platform/gates`
 - `/api/v1/platform/modules`
-
 - `/healthz`
 - `/api/v1/runtime`
 - `/api/v1/platform/manifest`
