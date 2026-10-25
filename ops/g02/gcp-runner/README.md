@@ -7,12 +7,12 @@ This module provisions an isolated Ubuntu 24.04 LTS Compute Engine VM and a dedi
 - VM: `lingo-legacy-g02`, `e2-standard-2` (2 vCPU / 8 GB RAM)
 - OS: Ubuntu 24.04 LTS x86-64
 - Disk: 40 GB balanced persistent disk
-- Network: dedicated VPC/subnet; external IPv4 for outbound connectivity; no public ingress rule
+- Network: dedicated VPC/subnet; private VM address only; Cloud NAT for outbound connectivity; no public ingress rule
 - SSH administration: Google Cloud IAP TCP forwarding only
 - VM identity: no project IAM roles granted by this module
 - Runner labels after enrollment: built-in `self-hosted`, `linux`, `x64`, plus `lingo-g02`
 
-Review the subnet CIDR and zone before applying. Defaults may conflict with existing network ranges or organization policy.
+Review the subnet CIDR and zone before applying. Defaults may conflict with existing network ranges or organization policy. Cloud NAT incurs additional charges. The VM has no public IP; outbound GitHub HTTPS uses Cloud NAT.
 
 ## Prerequisites
 
