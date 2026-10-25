@@ -72,3 +72,34 @@ There is no checked-in `secrets.yml` for this runner, and credentials must not b
 ## External IP and firewall verification
 
 Terraform reserves a regional external IPv4 address and attaches it to the VM for outbound HTTPS access to GitHub. The default inbound SSH rule permits only Google IAP TCP forwarding from `35.235.240.0/20`. Direct inbound SSH is disabled unless `admin_ssh_cidr` is set to a trusted public IPv4 CIDR (normally `YOUR_PUBLIC_IP/32`); never expose TCP/22 to `0.0.0.0/0`. The external address may incur charges while allocated. After provisioning, verify the assigned address with `terraform output external_ip` and verify runner connectivity separately from SSH connectivity.
+
+
+## Orchestrated recovery pipeline
+
+`run-sentinel-pipeline.sh` coordinates validation, a reviewed Terraform plan, optional provisioning, IAP bootstrap verification, runner enrollment, online-status polling, manual sentinel dispatch, and evidence collection. It does not merge code or clear the production hold.
+
+Run from a trusted control machine after installing and authenticating Terraform, Google Cloud CLI, GitHub CLI, `jq`, and `curl`:
+
+```bash
+export GCP_PROJECT_ID="YOUR_REAL_PROJECT_ID"
+export GCP_REGION="us-east1"
+export GCP_ZONE="us-east1-b"
+export GH_REPO="thelingolegacy-blip/TheLingoLegacy"
+export G02_GIT_REF="infra/gcp-self-hosted-runner-g02-2026-10-24"
+export INCIDENT_REFERENCE="YOUR_APPROVED_RECOVERY_TICKET"
+bash ops/g02/gcp-runner/run-sentinel-pipeline.sh
+```
+
+The first pass validates and plans only. Inspect the saved plan review before explicitly enabling provisioning:
+
+```bash
+APPLY_INFRA=1 bash ops/g02/gcp-runner/run-sentinel-pipeline.sh
+```
+
+The apply path requires typing `APPLY G02`. After provisioning, the script stops before enrollment by default. Review the instructions and confirm interactive IAP access before opting in:
+
+```bash
+APPLY_INFRA=1 AUTO_ENROLL=1 bash ops/g02/gcp-runner/run-sentinel-pipeline.sh
+```
+
+Use a short-lived runner registration token only at the interactive enrollment prompt. Never export it as an environment variable or place it in shell arguments, source control, metadata, or logs. The pipeline is intentionally fail-closed; a failed check stops later steps. A successful sentinel is evidence of execution only, not independent release authorization. Production remains protected until every required release gate is reviewed and accepted.
