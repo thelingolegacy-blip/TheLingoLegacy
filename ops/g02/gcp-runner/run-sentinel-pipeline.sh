@@ -5,7 +5,7 @@ umask 077
 # LINGO Legacy G02 orchestration. This script never merges code or clears production hold.
 # Infrastructure creation is gated by APPLY_INFRA=1 and an interactive confirmation.
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null)" || REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 TF_DIR="$SCRIPT_DIR"
 REPO="${GH_REPO:-thelingolegacy-blip/TheLingoLegacy}"
 GIT_REF="${G02_GIT_REF:-infra/gcp-self-hosted-runner-g02-2026-10-24}"
