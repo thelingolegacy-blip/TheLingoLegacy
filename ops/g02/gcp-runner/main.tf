@@ -35,26 +35,11 @@ resource "google_compute_subnetwork" "runner" {
   private_ip_google_access = true
 }
 
-resource "google_compute_router" "runner" {
-  name    = "${var.name_prefix}-router"
-  region  = var.region
-  network = google_compute_network.runner.id
-}
-
-resource "google_compute_router_nat" "runner" {
-  name                               = "${var.name_prefix}-nat"
-  router                             = google_compute_router.runner.name
-  region                             = var.region
-  nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
-  subnetwork {
-    name                    = google_compute_subnetwork.runner.id
-    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-  }
+resource "google_compute_address" "runner" {
+  name         = "${var.name_prefix}-external-ip"
+  region       = var.region
+  address_type = "EXTERNAL"
+  network_tier = "PREMIUM"
 }
 
 resource "google_compute_firewall" "iap_ssh" {
@@ -68,7 +53,22 @@ resource "google_compute_firewall" "iap_ssh" {
     protocol = "tcp"
     ports    = ["22"]
   }
-  description = "SSH administration only through Google Cloud IAP TCP forwarding."
+  description = "SSH administration through Google Cloud IAP TCP forwarding."
+}
+
+resource "google_compute_firewall" "admin_ssh" {
+  count         = var.admin_ssh_cidr == "" ? 0 : 1
+  name          = "${var.name_prefix}-allow-admin-ssh"
+  network       = google_compute_network.runner.name
+  direction     = "INGRESS"
+  priority      = 900
+  source_ranges = [var.admin_ssh_cidr]
+  target_tags   = ["${var.name_prefix}-vm"]
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  description = "Optional direct SSH restricted to the operator-supplied trusted CIDR."
 }
 
 resource "google_compute_instance" "runner" {
@@ -96,7 +96,10 @@ resource "google_compute_instance" "runner" {
 
   network_interface {
     subnetwork = google_compute_subnetwork.runner.id
-    # No public IP on the VM. Outbound HTTPS uses Cloud NAT.
+    access_config {
+      nat_ip       = google_compute_address.runner.address
+      network_tier = "PREMIUM"
+    }
   }
 
   metadata = {
