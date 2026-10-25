@@ -1,8 +1,11 @@
-# The Lingo ⭐️ Legacy — Agent Leadership & Governance Framework
+# The Lingo Legacy — Agent Leadership & Governance Framework
 
+> **SUPERSEDED HISTORICAL PROPOSAL — NOT AN ACTIVE AUTHORIZATION**  
+> Preserved for audit history only. This document does not grant platform access, administrator permissions, merge authority, deployment authority, or production-release authority to any AI agent. Role descriptions below are historical proposals, not effective access grants. The former “ACTIVE — All Copilot Agents Authorized” status and any ADMIN/WRITE role statements are not operative. Follow `AGENTS.md`, `docs/RELEASE-AND-CREATIVE-EVIDENCE-POLICY.md`, the LINGO Shield access-control policy, and the effective permissions enforced by each platform. If this historical document conflicts with current policy or platform controls, it has no authority.  
+>
 **Effective Date:** October 11, 2026  
 **Authority:** thelingolegacy-blip (Senior Engineer, Creative Authority Granted)  
-**Status:** ACTIVE — All Copilot Agents Authorized
+**Status:** SUPERSEDED HISTORICAL PROPOSAL — NOT ACTIVE
 
 ---
 
