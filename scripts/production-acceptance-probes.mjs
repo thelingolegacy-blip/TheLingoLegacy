@@ -23,7 +23,7 @@ try {
 
 const timeoutMs = Number(process.env.PROBE_TIMEOUT_MS || 10000);
 const routes = [
-  { path: '/', status: 200, type: /^text\/html\b/i },
+  { path: '/', status: 200, type: /^text\/html\b/i, body: (text) => /<meta name="lingo-runtime"/i.test(text) && /<meta name="lingo-dynamic" content="true"/i.test(text) && /\/assets\/studio-ui-runtime\.js/i.test(text), cacheControl: /no-store/i },
   { path: '/healthz', status: 200, type: /^text\/plain\b/i, body: (text) => text.trim() === 'ok' },
   { path: '/sitemap.xml', status: 200, type: /^(application\/xml|text\/xml)\b/i },
   { path: '/robots.txt', status: 200, type: /^text\/plain\b/i },
@@ -74,6 +74,7 @@ for (const route of routes) {
       contentType: !route.type || route.type.test(contentType),
       body: !route.body || route.body(text),
       json: !route.json || route.json(parsed),
+      cacheControl: !route.cacheControl || route.cacheControl.test(response.headers.get('cache-control') || ''),
     };
     const headerMissing = requiredHeaders.filter((name) => !response.headers.get(name));
     const needsSecurityHeaders = route.path === '/' || route.path.startsWith('/api/');
