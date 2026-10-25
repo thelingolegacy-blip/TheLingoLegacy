@@ -91,7 +91,7 @@ fi
 gcloud compute scp "$SCRIPT_DIR/register-runner.sh" "$VM_NAME:/tmp/lingo-register-runner.sh" \
   --project="$PROJECT_ID" --zone="$VM_ZONE" --tunnel-through-iap --quiet
 gcloud compute ssh "$VM_NAME" --project="$PROJECT_ID" --zone="$VM_ZONE" --tunnel-through-iap \
-  --command='chmod 700 /tmp/lingo-register-runner.sh && /tmp/lingo-register-runner.sh' \
+  --command='chmod 700 /tmp/lingo-register-runner.sh && /tmp/lingo-register-runner.sh' -- -t \
   2>&1 | tee "$EVIDENCE_DIR/05_runner_enrollment.log"
 
 note "Waiting for GitHub to report the dedicated runner online"
