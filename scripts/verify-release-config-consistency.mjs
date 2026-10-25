@@ -30,6 +30,7 @@ const circleci = read('.circleci/config.yml');
 const gitlab = read('.gitlab-ci.yml');
 const jenkins = read('Jenkinsfile');
 const studioConfig = read('cloudflare/wrangler.toml');
+const studioPreviewConfig = read('cloudflare/wrangler.preview.toml');
 const studioWorkflow = read('.github/workflows/studio-surface-integrity.yml');
 const surfaceGate = read('scripts/sanitize-cloudflare-only-surface.mjs');
 const staticGateRunner = read('scripts/run-static-gates.mjs');
@@ -65,6 +66,7 @@ for (const item of headerContracts) {
 
 check('readme-runtime-identity', readme.includes('thelingolegacyv-5') && readme.includes('2026-09-01'), 'README must document the same Worker name and compatibility date as Wrangler');
 check('studio-worker-identity', studioConfig.includes('name = "lingo-legacy-studio-build"') && studioConfig.includes('main = "cloudflare/studio-worker.js"') && studioConfig.includes('compatibility_date = "2026-10-04"'), 'Studio build Worker name, entrypoint, and compatibility date must match its dedicated config');
+check('studio-preview-identity', studioPreviewConfig.includes('name = "thelingolegacy-web-recovery-preview"') && studioPreviewConfig.includes('main = "cloudflare/studio-worker.js"') && studioPreviewConfig.includes('compatibility_date = "2026-10-04"') && !studioPreviewConfig.includes('routes =') && !studioPreviewConfig.includes('custom_domain ='), 'Recovery preview must use a distinct Worker identity without production route or custom-domain declarations');
 check('studio-wrangler-pinned-dry-run', studioWorkflow.includes('npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml') && !studioWorkflow.includes('wrangler@latest'), 'Studio Worker validation must use Wrangler v4 and remain dry-run-only');
 check('readme-studio-identity', readme.includes('lingo-legacy-studio-build') && readme.includes('2026-10-04') && readme.includes('not the apex/www production Worker'), 'README must distinguish the Studio build Worker from the apex/www production Worker');
 check('surface-gate-read-only', surfaceGate.includes("mode: 'read-only'") && !/\\bwriteFileSync\\b|\\bwriteFile\\s*\\(/.test(surfaceGate), 'Cloudflare-only surface validation must never rewrite release source files');
