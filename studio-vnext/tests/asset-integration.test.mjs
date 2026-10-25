@@ -35,7 +35,7 @@ test("world cards map all four product SVGs and lazy-load them with alt text", (
   for (const [file] of assets.slice(1)) assert.ok(html.includes("assets/" + file), "missing HTML reference: " + file);
   assert.match(html, /loading="lazy"/);
   assert.match(html, /const alt=/);
-  assert.match(html, /alt="\'+alt\'+"/);
+  assert.ok(html.includes("alt=\"\'+alt+\'\""), "world-card alt text must be interpolated into the generated image markup");
   assert.match(html, /width="720" height="480"/);
 });
 
