@@ -40,6 +40,7 @@ const rootFiles = {
   ].join('\n'),
   'README.md': 'Worker thelingolegacyv-5 compatibility date 2026-09-01; Studio Worker lingo-legacy-studio-build compatibility date 2026-10-04; not the apex/www production Worker',
   'cloudflare/wrangler.toml': 'name = "lingo-legacy-studio-build"\\nmain = "cloudflare/studio-worker.js"\\ncompatibility_date = "2026-10-04"',
+  'cloudflare/wrangler.preview.toml': 'name = "thelingolegacy-web-recovery-preview"\\nmain = "cloudflare/studio-worker.js"\\ncompatibility_date = "2026-10-04"',
   '.github/workflows/studio-surface-integrity.yml': 'npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml',
   'scripts/sanitize-cloudflare-only-surface.mjs': `const report = { mode: 'read-only' }; console.log(JSON.stringify(report));`,
   'scripts/run-static-gates.mjs': `scripts/test-sanitize-cloudflare-only-surface.mjs\\nid: 'verify-cloudflare-only-surface'` ,
