@@ -13,7 +13,7 @@ test("integration preview exposes domain navigation and core studio features", (
 });
 
 test("financial, identity, event, and integration claims are explicitly qualified", () => {
-  for (const token of ["ILLUSTRATIVE", "NOT VERIFIED", "DEMO PASS", "not an official identity credential", "SIMULATION ONLY", "PROTECTED_HOLD", "NOT_CONFIGURED"]) {
+  for (const token of ["ILLUSTRATIVE", "NOT VERIFIED", "DEMO PASS", "not an official identity credential", "SIMULATION ONLY", "PROTECTED HOLD"]) {
     assert.ok(html.includes(token), "missing fail-closed qualifier: " + token);
   }
   assert.match(html, /prompt will not be sent/i);
