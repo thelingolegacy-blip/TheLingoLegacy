@@ -1,0 +1,29 @@
+name: Learning Runner Shell Command
+
+on:
+  push:
+    branches:
+      - learning/runner-shell-command-2026-10-24
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-demo:
+    name: Run safe shell commands
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Execute basic runner shell commands
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Hello from the GitHub Actions runner shell."
+          echo "Current directory:"
+          pwd
+          echo "Runner operating system:"
+          uname -a
+          echo "Current user:"
+          id
+          echo "Shell command test: PASS"
