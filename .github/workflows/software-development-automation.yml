@@ -71,28 +71,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if compgen -G ".github/workflows/*.yml" >/dev/null || compgen -G ".github/workflows/*.yaml" >/dev/null; then
-            npx --yes --package yaml@2 node --input-type=module -e '
-              import fs from "node:fs";
-              import path from "node:path";
-              import YAML from "yaml";
-              const dir=".github/workflows";
-              const files=fs.readdirSync(dir).filter(f=>/\.ya?ml$/.test(f));
-              let failed=false;
-              for (const file of files) {
-                try {
-                  YAML.parse(fs.readFileSync(path.join(dir,file),"utf8"));
-                  console.log("YAML PASS:",file);
-                } catch (e) {
-                  failed=true;
-                  console.error("YAML FAIL:",file,e.message);
-                }
-              }
-              if(failed) process.exit(1);
-            '
-          else
-            echo "No workflow YAML files found; skipped."
-          fi
+          ruby -e 'require "yaml"; Dir.glob(".github/workflows/*.{yml,yaml}").sort.each { |file| YAML.parse_file(file); puts "YAML PASS: #{file}" }'
 
   node-quality:
     name: Node.js tests, lint, build, and dependency audit
