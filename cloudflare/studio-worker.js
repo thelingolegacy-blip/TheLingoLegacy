@@ -16,6 +16,15 @@ export default {
     if (url.pathname.startsWith("/api/v1/avalon/")) {
       return avalonApi.fetch(request);
     }
+    if (url.pathname === "/api/health") {
+      return withStudioSecurityHeaders(await handle(request));
+    }
+    if (url.pathname.startsWith("/api/")) {
+      return new Response(JSON.stringify({ ok: false, code: "NOT_FOUND" }), {
+        status: 404,
+        headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" }
+      });
+    }
     if (["/", "/index.html", "/avalon-lingo.html"].includes(url.pathname)) {
       if (!env.ASSETS) {
         return new Response(JSON.stringify({ ok: false, code: "ASSET_BINDING_NOT_CONFIGURED" }), {
