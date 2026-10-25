@@ -13,7 +13,6 @@ on:
 permissions:
   contents: read
   actions: read
-  deployments: write
 
 concurrency:
   group: lingo-legacy-full-stack-production
@@ -98,6 +97,9 @@ jobs:
 
   deploy-cloudflare:
     needs: 
+    permissions:
+      contents: read
+      deployments: write
     # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
     # HARD HOLD: a manual deploy=true input is not release authorization.
     # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
