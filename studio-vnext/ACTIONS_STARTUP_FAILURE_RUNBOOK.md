@@ -69,3 +69,37 @@ The release chain remains:
 `SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → PASSED → AUTHORIZATION → PROMOTION`
 
 Production remains **PROTECTED HOLD** until all required gates pass and separate promotion authorization is recorded.
+
+
+## Studio staging API routing acceptance (2026-10-25)
+
+The recovery Worker source is `cloudflare/studio-worker.js`. The isolated preview deployment configuration is `cloudflare/wrangler.preview.toml`, whose Worker name is `thelingolegacy-web-recovery-preview`. The separate `cloudflare/wrangler.toml` name `lingo-legacy-studio-build` is not interchangeable with the preview Worker. Keep these names distinct unless an administrator verifies the intended resource binding; do not rename or deploy to the production Worker as a shortcut.
+
+This repository uses a **separate config file**, not a Wrangler `[env.preview]` block. Therefore, use `--config cloudflare/wrangler.preview.toml`; `wrangler dev --env preview` and `wrangler deploy --env preview` are not the correct commands for this configuration as currently written.
+
+### Local contract test
+
+From the repository root, use Node.js 22 or later:
+
+```sh
+node --test studio-vnext/tests/studio-worker-api.test.mjs
+npm --prefix studio-vnext test
+npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.preview.toml
+```
+
+The tests invoke the Worker handler directly and verify JSON content types, security headers, staging-only flags, fail-closed release authorization, and the Avalon dependency's honest `503 not_configured` response. This is local/source-level evidence only; it does not prove the public staging host is running this commit.
+
+### Public staging acceptance
+
+After an authorized staging-only deployment from the reviewed branch, verify each response with an actual HTTP client and retain status, headers, and body:
+
+```sh
+for path in /api/health /api/v1/runtime /api/v1/platform/gates /api/v1/avalon/health; do
+  printf '\\n=== %s ===\\n' "$path"
+  curl --silent --show-error --include "https://launch.thelingolegacy.com$path"
+done
+```
+
+Expected statuses are 200 for health, runtime, and platform gates; 503 for Avalon health until a real downstream health adapter exists. Every response must have a JSON content type. A browser tool reporting its own request succeeded is not enough: inspect the HTTP status and response body. Any HTML fallback, wrong Worker version, or unexpected route mapping fails acceptance.
+
+**Change-control boundary:** do not deploy or attach routes until the staging Worker name, account, hostname route, and rollback version are confirmed by an administrator. Do not change apex/www routes or the production Worker. Do not promote G02 or any release gate based on local tests alone.

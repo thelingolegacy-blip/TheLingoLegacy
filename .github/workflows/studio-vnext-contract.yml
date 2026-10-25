@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - "studio-vnext/**"
+      - "cloudflare/**"
       - ".github/workflows/studio-vnext-contract.yml"
   push:
     branches:
       - "studio/enterprise-environment-vnext-2026-10-24"
     paths:
       - "studio-vnext/**"
+      - "cloudflare/**"
       - ".github/workflows/studio-vnext-contract.yml"
   workflow_dispatch:
 

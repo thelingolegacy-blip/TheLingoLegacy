@@ -13,11 +13,55 @@ function withStudioSecurityHeaders(response) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname.startsWith("/api/v1/avalon/")) {
-      return avalonApi.fetch(request);
-    }
+    // Explicit staging API contracts run before generic API 404 handling.
+    // Never report a downstream service healthy without a real health adapter.
+    const json = (payload, status = 200) => withStudioSecurityHeaders(new Response(JSON.stringify(payload), {
+      status,
+      headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
+    }));
     if (url.pathname === "/api/health") {
-      return withStudioSecurityHeaders(await handle(request));
+      return json({ status: "healthy", timestamp: new Date().toISOString(), service: "studio-preview", environment: "staging" });
+    }
+    if (url.pathname === "/api/v1/runtime") {
+      return json({
+        environment: "staging",
+        version: env.BUILD_SHA || env.COMMIT_SHA || "unresolved",
+        features: {
+          studio_ui: true,
+          preview_api: true,
+          production_mutations: false,
+          firebase: false,
+          payments: false,
+          customer_data: false,
+          avalon_dependency: false
+        }
+      });
+    }
+    if (url.pathname === "/api/v1/platform/gates") {
+      return json({
+        environment: "staging",
+        gates: {
+          preview_ui: true,
+          api_contracts: true,
+          production_mutations: false,
+          firebase: false,
+          payments: false,
+          avalon_dependency: false,
+          release_authorization: false
+        },
+        note: "Staging stubs only; these flags are not production release evidence."
+      });
+    }
+    if (url.pathname === "/api/v1/avalon/health") {
+      return json({
+        avalon: "not_configured",
+        status: "degraded",
+        checked_at: new Date().toISOString(),
+        detail: "No live downstream Avalon health adapter is configured in this staging Worker."
+      }, 503);
+    }
+    if (url.pathname.startsWith("/api/v1/avalon/")) {
+      return withStudioSecurityHeaders(await avalonApi.fetch(request));
     }
     if (url.pathname.startsWith("/api/")) {
       return new Response(JSON.stringify({ ok: false, code: "NOT_FOUND" }), {

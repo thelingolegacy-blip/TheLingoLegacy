@@ -21,7 +21,7 @@ test("isolated Worker routes Avalon API and curated assets with a fail-closed bi
   assert.match(worker, /env\.ASSETS\.fetch\(request\)/);
   assert.match(worker, /ASSET_BINDING_NOT_CONFIGURED/);
   assert.match(worker, /frame-ancestors 'none'/);
-  assert.match(wrangler, /directory = "cloudflare\/studio-assets"/);
+  assert.match(wrangler, /directory = "studio-assets"/);
   assert.match(wrangler, /binding = "ASSETS"/);
   assert.match(wrangler, /run_worker_first = \["\/api\/\*"\]/);
 });

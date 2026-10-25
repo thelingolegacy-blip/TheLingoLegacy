@@ -1,0 +1,45 @@
+name: Clean-Room Rebuild Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clean-room-rebuild-validation
+  cancel-in-progress: false
+
+jobs:
+  validate-source:
+    name: Source and contract validation (hosted runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Record source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'commit=%s\n' "$GITHUB_SHA"
+          printf 'node='
+          node --version
+          printf 'npm='
+          npm --version
+
+      - name: Run Studio VNext checks and tests
+        working-directory: studio-vnext
+        run: npm run check
+
+      - name: Validate Worker configuration with Wrangler v4 (no deploy)
+        run: npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml
+
+      - name: Validate isolated preview configuration with Wrangler v4 (no deploy)
+        run: npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.preview.toml
