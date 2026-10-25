@@ -13,7 +13,7 @@ test("prototype declares all expected studio sections", () => {
   }
 });
 
-test("blueprint catalogs contain expected minimum inventory", () => {
+test("Avalon integration is linked from Studio Nexus navigation", () => {\n  assert.match(html, /data-page="ecosystem"/);\n  assert.match(html, /id="page-ecosystem"/);\n  assert.match(html, /href="avalon-lingo.html"/);\n});\n\ntest("blueprint catalogs contain expected minimum inventory", () => {
   assert.match(script, /const agents=\[/);
   assert.match(script, /const workflows=\[/);
   assert.match(script, /const integrations=\[/);
