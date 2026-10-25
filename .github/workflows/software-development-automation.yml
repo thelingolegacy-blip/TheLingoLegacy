@@ -1,0 +1,211 @@
+name: Software Development Automation
+
+on:
+  push:
+    branches:
+      - recovery/cleanroom-actions-build-2026-10-24
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**/*.js"
+      - "**/*.mjs"
+      - "**/*.cjs"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.json"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.html"
+      - "**/*.css"
+      - "**/*.md"
+      - ".github/**"
+      - "wrangler.jsonc"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: software-development-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-hygiene:
+    name: Repository hygiene and workflow validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Check whitespace errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --check "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}"
+          else
+            git diff --check HEAD^ HEAD || {
+              echo "Whitespace check could not compare a parent commit; checking working tree instead."
+              git diff --check
+            }
+          fi
+
+      - name: Check for conflict markers in tracked source
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -n -I -E '^(<<<<<<< |=======|>>>>>>> )' -- ':!*.lock' ':!*.svg'; then
+            echo "Potential merge-conflict markers found."
+            exit 1
+          else
+            status=$?
+            if [ "$status" -gt 1 ]; then exit "$status"; fi
+          fi
+
+      - name: Validate workflow YAML syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          if compgen -G ".github/workflows/*.yml" >/dev/null || compgen -G ".github/workflows/*.yaml" >/dev/null; then
+            npx --yes --package yaml@2 node --input-type=module -e '
+              import fs from "node:fs";
+              import path from "node:path";
+              import YAML from "yaml";
+              const dir=".github/workflows";
+              const files=fs.readdirSync(dir).filter(f=>/\.ya?ml$/.test(f));
+              let failed=false;
+              for (const file of files) {
+                try {
+                  YAML.parse(fs.readFileSync(path.join(dir,file),"utf8"));
+                  console.log("YAML PASS:",file);
+                } catch (e) {
+                  failed=true;
+                  console.error("YAML FAIL:",file,e.message);
+                }
+              }
+              if(failed) process.exit(1);
+            '
+          else
+            echo "No workflow YAML files found; skipped."
+          fi
+
+  node-quality:
+    name: Node.js tests, lint, build, and dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-22-npm-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-22-npm-
+
+      - name: Install reproducible dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f package.json ]; then
+            echo "No root package.json; root Node package checks are not applicable."
+            exit 0
+          fi
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            npm ci --ignore-scripts --no-audit --no-fund
+          else
+            echo "::warning::No npm lockfile found; using npm install without lifecycle scripts."
+            npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+          fi
+
+      - name: Run declared quality scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f package.json ]; then exit 0; fi
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const p=JSON.parse(fs.readFileSync('package.json','utf8'));
+          const scripts=p.scripts ?? {};
+          const {spawnSync}=await import('node:child_process');
+          for (const name of ['lint','test','build','typecheck']) {
+            if (!scripts[name]) {
+              console.log(`SKIP: no "${name}" script is declared.`);
+              continue;
+            }
+            console.log(`RUN: npm run ${name}`);
+            const result=spawnSync('npm',['run',name],{stdio:'inherit',shell:process.platform==='win32'});
+            if (result.status !== 0) process.exit(result.status ?? 1);
+          }
+          NODE
+
+      - name: Audit locked npm dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            npm audit --audit-level=high
+          else
+            echo "::notice::Dependency audit skipped because no npm lockfile is present."
+          fi
+
+      - name: Run repository contract tests when present
+        shell: bash
+        run: |
+          set -euo pipefail
+          tests=()
+          for f in scripts/test-api-endpoint-contract.mjs scripts/test-verify-dynamic-runtime.mjs; do
+            if [ -f "$f" ]; then tests+=("$f"); fi
+          done
+          if [ "${#tests[@]}" -gt 0 ]; then
+            node --test "${tests[@]}"
+          else
+            echo "No known repository contract test files found; package scripts remain authoritative."
+          fi
+
+  code-security:
+    name: Static analysis and dependency review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: read
+      actions: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL for JavaScript and TypeScript
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Analyze JavaScript and TypeScript
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
+
+      - name: Review pull request dependency changes
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: always
