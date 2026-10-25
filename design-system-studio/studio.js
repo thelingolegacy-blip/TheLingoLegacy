@@ -369,23 +369,31 @@
     }
   }
   function stopTone() {
-    try {
-      if (state.oscillator) state.oscillator.stop();
-    } catch (_) {}
+    // Invalidate pending resume/completion callbacks before stopping the oscillator.
+    state.audioRequestId = (state.audioRequestId || 0) + 1;
+    const oscillator = state.oscillator;
     state.oscillator = null;
     state.gain = null;
+    try {
+      if (oscillator) oscillator.stop();
+    } catch (_) {}
     byId("audio-feedback").textContent = "Preview stopped. No sound file was created or played.";
   }
   async function playTone() {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) {
+      stopTone();
       byId("audio-feedback").textContent = "Web Audio is not supported in this browser.";
       return;
     }
     stopTone();
+    const requestId = state.audioRequestId;
+    byId("audio-feedback").textContent = "Preparing synthesized preview tone…";
     try {
       state.audioContext = state.audioContext || new AudioContextClass();
       await state.audioContext.resume();
+      // A stop or a newer play request may have happened while resume() was pending.
+      if (requestId !== state.audioRequestId) return;
       const oscillator = state.audioContext.createOscillator();
       const gain = state.audioContext.createGain();
       oscillator.type = "sine";
@@ -399,15 +407,22 @@
       gain.connect(state.audioContext.destination);
       state.oscillator = oscillator;
       state.gain = gain;
-      oscillator.start();
-      oscillator.stop(state.audioContext.currentTime + 0.34);
       oscillator.addEventListener("ended", () => {
-        if (state.oscillator === oscillator) state.oscillator = null;
+        // Ignore callbacks from stopped or superseded playback requests.
+        if (requestId !== state.audioRequestId || state.oscillator !== oscillator) return;
+        state.oscillator = null;
+        state.gain = null;
         byId("audio-feedback").textContent = "Synthesized demo tone played. This is not a production sound asset.";
       }, { once: true });
+      oscillator.start();
+      oscillator.stop(state.audioContext.currentTime + 0.34);
       byId("audio-feedback").textContent = "Playing synthesized preview tone…";
     } catch (_) {
-      byId("audio-feedback").textContent = "Audio preview could not start. Check browser audio permission.";
+      if (requestId === state.audioRequestId) {
+        state.oscillator = null;
+        state.gain = null;
+        byId("audio-feedback").textContent = "Audio preview could not start. Check browser audio permission.";
+      }
     }
   }
   function showView(name) {
