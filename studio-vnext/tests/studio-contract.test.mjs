@@ -7,13 +7,13 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/gi)].map(m => m[1]).join("\n");
 
 test("prototype declares all expected studio sections", () => {
-  for (const page of ["overview", "worlds", "agents", "workflows", "integrations", "platform", "governance", "roadmap", "docs"]) {
+  for (const page of ["overview", "ecosystem", "worlds", "agents", "workflows", "integrations", "platform", "governance", "roadmap", "docs"]) {
     assert.match(html, new RegExp('id="page-' + page + '"'), "missing page " + page);
     assert.match(html, new RegExp('data-page="' + page + '"'), "missing navigation item " + page);
   }
 });
 
-test("blueprint catalogs contain expected minimum inventory", () => {
+test("Avalon integration is linked from Studio Nexus navigation", () => {\n  assert.match(html, /data-page="ecosystem"/);\n  assert.match(html, /id="page-ecosystem"/);\n  assert.match(html, /href="avalon-lingo.html"/);\n});\n\ntest("blueprint catalogs contain expected minimum inventory", () => {
   assert.match(script, /const agents=\[/);
   assert.match(script, /const workflows=\[/);
   assert.match(script, /const integrations=\[/);
