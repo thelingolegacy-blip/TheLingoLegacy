@@ -1,0 +1,8 @@
+name = "thelingolegacy-web-recovery-preview"
+main = "cloudflare/studio-worker.js"
+compatibility_date = "2026-10-04"
+
+[assets]
+directory = "cloudflare/studio-assets"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
