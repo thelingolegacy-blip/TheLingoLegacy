@@ -94,13 +94,13 @@
         "obsidian": "#09090C",
         "graphite": "#17171D",
         "gold": "#C7A45A",
-        "royalPurple": "#7040B8",
+        "royalPurple": "#8055CC",
         "platinum": "#F0EFF4",
         "mutedText": "#B5B3BE",
         "border": "#34343D",
         "success": "#4E8B78",
         "warning": "#D69E36",
-        "danger": "#C94B58",
+        "danger": "#D45A68",
         "focus": "#E4C77E"
       },
       "semantic": {
@@ -109,10 +109,10 @@
         "text.primary": "#F0EFF4",
         "text.secondary": "#B5B3BE",
         "accent.gold": "#C7A45A",
-        "action.creative": "#7040B8",
+        "action.creative": "#8055CC",
         "status.success": "#4E8B78",
         "status.warning": "#D69E36",
-        "status.danger": "#C94B58",
+        "status.danger": "#D45A68",
         "focus.visible": "#E4C77E"
       },
       "typography": {
