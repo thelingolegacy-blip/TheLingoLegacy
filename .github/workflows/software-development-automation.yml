@@ -147,7 +147,7 @@ jobs:
         run: |
           set -euo pipefail
           tests=()
-          for f in scripts/test-api-endpoint-contract.mjs scripts/test-verify-dynamic-runtime.mjs; do
+          for f in scripts/test-api-endpoint-contract.mjs scripts/test-verify-dynamic-runtime.mjs scripts/test-worker-http-contract.mjs; do
             if [ -f "$f" ]; then tests+=("$f"); fi
           done
           if [ "${#tests[@]}" -gt 0 ]; then
