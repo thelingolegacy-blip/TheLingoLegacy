@@ -10,7 +10,7 @@ on:
         type: string
 
 permissions:
-  actions: write
+  actions: read
   contents: read
 
 concurrency:
@@ -20,6 +20,9 @@ concurrency:
 jobs:
   trigger:
     name: "1 · Trigger"
+    permissions:
+      actions: write
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -67,6 +70,9 @@ jobs:
   allocations:
     name: "2 · Allocations"
     needs: trigger
+    permissions:
+      actions: read
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -125,6 +131,9 @@ jobs:
   execution:
     name: "3 · Execution"
     needs: [trigger, allocations]
+    permissions:
+      actions: read
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
