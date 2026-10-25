@@ -36,13 +36,31 @@ The first deployment used the repository root and uploaded 511 files. This was b
 - This backup is static only. It does not certify Firebase authentication, dynamic API routes, wallet/loyalty transactions, checkout, or server-side state.
 - The repository's production Worker still has a separate root-assets security review requirement; this report does not certify or change that Worker.
 
+## Independent live verification — 2026-10-25
+
+### Isolated Cloudflare Pages backup
+
+- Latest deployment: `c8f84820-2257-428b-b77d-61d598c5ece8`, URL `https://c8f84820.thelingolegacy-static-backup.pages.dev`, source commit `b4bdbd918070154050c042713ed809c08264be22`. Cloudflare API confirms all five deployment stages completed successfully.
+- Browser-side real `fetch()` checks confirmed the sitemap returns HTTP 200 with `application/xml`, contains 37 unique routes, and every route returns HTTP 200 HTML with an H1 and canonical URL matching its path. All 37 pages have the intended `X-Robots-Tag: noindex, nofollow, noarchive`.
+- 24 unique linked local CSS/JS/SVG assets returned HTTP 200 with expected content types. The missing `/_cloudflare/insights/script.js` reference on `/living-universe/` was removed; the latest deployed route crawl found no remaining references to that missing analytics resource.
+- All nine tested aliases resolve to their intended targets: `/lingoarcade/`, `/lane/`, `/media/`, `/store/`, `/ai/`, `/loading/`, `/studio-assets/`, `/studio-world-os/`, and `/studio-production/`.
+- The deliberately nonexistent route and sampled sensitive paths returned HTTP 404. The backup returned CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and `X-Robots-Tag` on tested responses.
+- Mobile DOM audit at approximately 390 px width: one H1, main landmark present, no missing image alt attributes, no unnamed buttons, no positive tabindex values, 17 focus-visible/focus-related CSS rules and 14 reduced-motion media rules. No forced-colors media rules or skip-navigation link were found. This was a DOM/CSS inspection, not a real keyboard-only interaction test; forced-colors and contrast acceptance remain incomplete.
+
+### Production domain — independently observed
+
+- Browser-side live GET probes against `https://thelingolegacy.com` found `/healthz` returning HTTP 200 HTML instead of the expected plain-text health response; `/assets/studio-ui-icons.svg`, `/sitemap.xml`, `/robots.txt`, and a deliberately nonexistent path all returned HTTP 200 with the same homepage HTML. `/api/v1/runtime` and `/api/v1/platform/gates` returned HTTP 404 JSON.
+- Sampled sensitive paths (`/.github/workflows/runner-dispatch-diagnostic.yml`, `/.env.example`, `/wrangler.jsonc`, `/.git/config`, `/scripts/`, `/config/`, and `/ops/estate/estate-manifest.json`) returned homepage HTML rather than the requested file content. This is reassuring for these probes but does not close the broader root-assets review.
+- The production homepage response did not include a CSP header and returned `X-Frame-Options: SAMEORIGIN`; production DOM inspection found no focus/focus-visible CSS rules, no reduced-motion or forced-colors rules, and no skip-navigation link. These are live acceptance defects or gaps, not a production release pass.
+- Production source configuration still has `assets.directory: "."` and the active Worker calls `env.ASSETS.fetch(request)`. Do not change production routing/assets until a release-specific allowlisted asset root and complete route-parity/security probes pass.
+
 ## Verification still required
 
-- Independent live HTTP checks of the Pages URL, actual status codes, response headers, and 404 behavior.
-- Confirm the latest alias-map deployment's redirect parser reports zero invalid redirect lines and all public alias targets resolve.
-- Confirm sensitive-path redirects return 404 and headers are present in real responses.
-- Verify all linked CSS/JS/SVG resources and route navigation in desktop and mobile browsers.
-- Keyboard-only, reduced-motion, forced-colors, and contrast acceptance.
+- Repair production path dispatch so health, static assets, sitemap, robots.txt, unknown routes, and required API contracts return correct status/content types; add CSP and complete security-header acceptance.
+- Resolve G02 runner dispatch with authorized Actions-policy and runner inventory evidence, an actual runner assignment, executed sentinel, retrievable logs, and checksum-verified artifact.
+- Supply genuine Firebase configuration through the authorized project owner and verify Auth, database/storage rules, and runtime access; placeholders remain in main.
+- Complete real keyboard-only testing, forced-colors emulation, contrast acceptance, and mobile interaction checks on the backup and production candidate.
+- Finish the production Worker asset-root review with a release-specific public asset manifest and independent sensitive-path/route-parity probes.
 - Separate acceptance decision before attaching any canonical domain or merging to main.
 
 ## Release governance
