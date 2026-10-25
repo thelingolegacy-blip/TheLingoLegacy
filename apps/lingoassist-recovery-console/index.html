@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Evidence-first LINGOassist G02 recovery console prototype.">
+  <title>LINGOassist | Recovery Console</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="LINGOassist Recovery Console home"><span class="brand-mark">L</span><span>LINGO<span class="muted">assist</span><small>RECOVERY CONSOLE</small></span></a>
+    <div class="top-meta"><span class="pill pill-warn">PROTOTYPE · READ ONLY</span><span id="capture-time" class="mono">No live connection</span></div>
+  </header>
+  <main class="layout">
+    <section class="hero">
+      <div><p class="eyebrow">THE LINGO LEGACY / INFRASTRUCTURE OPERATIONS</p><h1>Evidence before activation.</h1><p class="subhead">Inspect runner signals, validate evidence packets, and keep release decisions fail-closed.</p></div>
+      <div class="hero-state"><span class="status-dot danger"></span><div><strong id="global-status">G02 BLOCKED</strong><small id="global-detail">Demo fixture · historical state, not live telemetry</small></div></div>
+    </section>
+    <section class="stats" aria-label="Current evidence summary">
+      <article class="stat"><span>Runner assignment</span><strong id="runner-assignment">NOT VERIFIED</strong><small>Runner ID must be greater than zero</small></article>
+      <article class="stat"><span>Executed steps</span><strong id="step-count">0</strong><small>Queued is not execution</small></article>
+      <article class="stat"><span>Artifacts</span><strong id="artifact-count">0</strong><small>Must be retrievable and inspected</small></article>
+      <article class="stat"><span>Production authority</span><strong class="warn-text">LOCKED</strong><small>Never inferred from build success</small></article>
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">01 / RELEASE GATES</p><h2>Gate matrix</h2></div><span class="pill pill-neutral">FAIL-CLOSED</span></div>
+      <p class="muted-copy">Statuses below are a clearly labeled historical demo fixture. Import a fresh evidence packet to review its contents. This prototype does not connect to GitHub.</p>
+      <div id="gate-grid" class="gate-grid" aria-live="polite"></div>
+    </section>
+    <section class="two-col">
+      <section class="panel">
+        <div class="panel-heading"><div><p class="eyebrow">02 / EVIDENCE INTAKE</p><h2>Validate a packet</h2></div><span class="icon-chip">SHA-256</span></div>
+        <p class="muted-copy">JSON is processed locally in this browser. A checksum proves byte consistency with a manifest, not source authenticity or CI execution.</p>
+        <label class="file-drop" for="evidence-file"><span class="upload-symbol">↑</span><strong>Choose an evidence JSON file</strong><span>Nothing is uploaded to a server by this prototype.</span></label>
+        <input id="evidence-file" type="file" accept=".json,application/json">
+        <label class="field-label" for="manifest-file">Optional SHA-256 manifest</label>
+        <input id="manifest-file" type="file" accept=".sha256,.txt,text/plain">
+        <button id="validate-btn" class="button button-primary" type="button">Validate selected evidence</button>
+        <div id="validation-result" class="result-box" role="status" aria-live="polite"><strong>Awaiting evidence</strong><span>Select a JSON packet to begin validation.</span></div>
+        <pre id="evidence-summary" class="code-box" hidden></pre>
+      </section>
+      <section class="panel">
+        <div class="panel-heading"><div><p class="eyebrow">03 / RUNNER SIGNALS</p><h2>G02 acceptance</h2></div><span class="pill pill-warn">9 PREDICATES</span></div>
+        <p class="muted-copy">Every predicate needs inspectable evidence. Missing or stale values stay UNKNOWN or BLOCKED.</p>
+        <div id="predicate-list" class="predicate-list"></div>
+        <div class="callout"><strong>Do not weaken the gate.</strong><span>Runner registration, host logs, job assignment, executed steps, retrievable logs, and independently verified artifacts are separate requirements.</span></div>
+      </section>
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">04 / INCIDENT RECORD</p><h2>Local review timeline</h2></div><button id="export-btn" class="button button-secondary" type="button">Export review JSON</button></div>
+      <p class="muted-copy">This timeline exists only for this browser session. It is not durable storage or an authoritative incident log.</p>
+      <ol id="timeline" class="timeline"></ol>
+    </section>
+    <footer><span>LINGOassist · Industrial Noir Operations</span><span>NO GITHUB WRITE ACCESS · NO DEPLOYMENT · NO SECRET INPUTS</span></footer>
+  </main>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>
