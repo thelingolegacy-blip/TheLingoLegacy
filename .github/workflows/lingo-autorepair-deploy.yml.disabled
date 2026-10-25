@@ -1,0 +1,162 @@
+# Canonical production execution workflow: GitHub Actions -> Cloudflare -> live verification
+name: Lingo Legacy Full-Stack Auto Repair + Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Run production deployment after repair gates
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  actions: read
+  deployments: write
+
+concurrency:
+  group: lingo-legacy-full-stack-production
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  runner-gate:
+    # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+    outputs:
+      runner_gate: ${{ steps.assert.outputs.runner_gate }}
+    steps:
+      - name: Prove executable GitHub runner
+        id: assert
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
+          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_OS_VALUE" = "Linux"
+          test "${{ runner.arch }}" = "X64"
+          test -n "$GITHUB_SHA_VALUE"
+          echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
+          echo "G02_RUNNER_ASSIGNMENT=PASS"
+          echo "RUNNER_GATE=PASS runner_id=$RUNNER_ID runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE github_sha=$GITHUB_SHA_VALUE"
+
+  repair:
+    needs: runner-gate
+    if: needs.runner-gate.outputs.runner_gate == 'PASS'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run canonical deterministic auto-repair artifact
+        run: node scripts/lingo-autorepair.mjs
+      - name: Run repository production gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in scripts/sanitize-cloudflare-only-surface.mjs scripts/verify-cloudflare-only.mjs scripts/verify-cloudflare-bindings.mjs scripts/verify-production-authority.mjs scripts/verify-dynamic-runtime.mjs scripts/verify-release-config-consistency.mjs; do
+            if [ -f "$f" ]; then node "$f"; fi
+          done
+      - name: Validate Wrangler configuration
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+      - name: Run Node tests when defined
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f package.json ]; then
+            if node -e "const p=require('./package.json'); process.exit(p.scripts?.test ? 0 : 1)"; then npm test --if-present; else echo 'No npm test script declared.'; fi
+          fi
+      - name: Run Flutter checks when present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f pubspec.yaml ]; then
+            flutter --version
+            flutter pub get
+            flutter analyze
+            flutter test
+          else
+            echo 'FLUTTER_SURFACE=NOT_PRESENT — no Flutter source fabricated.'
+          fi
+      - name: Upload repair evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-full-stack-auto-repair-${{ github.run_id }}
+          path: release/evidence/lingo-autorepair-report.json
+
+  deploy-cloudflare:
+    needs: 
+    # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
+    # HARD HOLD: a manual deploy=true input is not release authorization.
+    # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Verify Cloudflare credentials without exposing them
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+      - name: Deploy Worker and assets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@4 deploy --config wrangler.jsonc
+      - name: Probe canonical production runtime
+        env:
+          LIVE_BASE_URL: https://thelingolegacy.com
+          LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/api/v1/platform/manifest
+        run: |
+          if [ -f scripts/live-probes.mjs ]; then node scripts/live-probes.mjs; else echo 'live-probes.mjs missing'; exit 1; fi
+
+  firebase-contract:
+    needs: repair
+    if: ${{ success() && inputs.deploy == true }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify Firebase remains contract-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f firebase.json
+          echo 'FIREBASE_DEPLOYMENT=BLOCKED'
+          echo 'Firebase is contract-only in the canonical production stack.'
+          echo 'No Firebase Hosting/backend mutation is authorized by this workflow.'
+          echo 'Use a separately certified Firebase release path only after real project, Auth, App Check, rules, consent, and executable evidence are established.'
+
+  certification:
+    needs: [deploy-cloudflare, firebase-contract]
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production certification boundary
+        run: |
+          set -euo pipefail
+          echo 'Cloudflare deployment completed with executable evidence; Firebase remains explicitly contract-only.'
+          echo 'Certification may proceed only when live evidence and rollback evidence are present.'
