@@ -1,0 +1,52 @@
+name: Minimal GitHub Runner Canary
+
+on:
+  push:
+    branches:
+      - recovery/minimal-runner-canary-2026-10-24
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/minimal-runner-canary.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minimal-runner-canary-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    name: Prove GitHub-hosted job admission
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Emit runner and event evidence
+        shell: bash
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          RUNNER_ID_VALUE: ${{ runner.id }}
+          RUNNER_NAME_VALUE: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+        run: |
+          set -euo pipefail
+          test -n "$RUN_ID"
+          test -n "$COMMIT_SHA"
+          {
+            echo "CANARY=PASS"
+            echo "RUN_ID=$RUN_ID"
+            echo "RUN_ATTEMPT=$RUN_ATTEMPT"
+            echo "EVENT_NAME=$EVENT_NAME"
+            echo "COMMIT_SHA=$COMMIT_SHA"
+            echo "RUNNER_ID=$RUNNER_ID_VALUE"
+            echo "RUNNER_NAME=$RUNNER_NAME_VALUE"
+            echo "RUNNER_OS=$RUNNER_OS_VALUE"
+            echo "RUNNER_ARCH=$RUNNER_ARCH_VALUE"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
