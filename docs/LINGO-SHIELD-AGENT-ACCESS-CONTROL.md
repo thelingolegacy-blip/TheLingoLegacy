@@ -167,6 +167,28 @@ The zone route inventory returned 19 patterns. Eighteen route to `thelingolegacy
 - The canonical Worker source exposes public health/runtime/platform status endpoints, `POST /api/create-checkout-session`, and `POST /api/beacon-text-alerts`. The latter validates consent and rate-limits per Worker isolate, but its webhook/Twilio delivery path is not a Shopify webhook receiver. No Shopify webhook receiver was identified in this Worker source; other services still need inventory.
 - Treat the runtime/status endpoints as public read-only diagnostics only after confirming that their metadata is acceptable for anonymous disclosure. Do not route admin actions or agent commands through these public endpoints.
 
+### Access application and DNS correlation — follow-up read-only pass
+
+The direct Access application and per-application policy endpoints returned records successfully. The app detail confirms the stored destination type and destination `worker_id`; however, these destination UUIDs still do not resolve to script names through Worker script search. Do not equate a Cloudflare Access destination UUID with a Worker script name.
+
+DNS read-back adds these classifications:
+
+- `thelingolegacy.com` and `www.thelingolegacy.com`: proxied canonical apex/alias; known production public-site candidate.
+- `launch.thelingolegacy.com`: proxied CNAME to `thelingolegacy-static-backup.pages.dev`; dedicated `lingo-static-backup-proxy` route.
+- `casino.thelingolegacy.com`: proxied CNAME to `proxy-v2.appdeploy.ai`; separate AppDeploy endpoint.
+- `app.thelingolegacy.com`: unproxied CNAME to `my-flutter-app.pages.dev`.
+- `admin.thelingolegacy.com`: unproxied CNAME to `admin-thelingolegacy.firebaseapp.com`; treat as sensitive and verify Firebase/admin authentication independently.
+- `studio-preview.thelingolegacy.com`: unproxied Vercel DNS target; branch-scoped preview, not production apex.
+- The 16 proxied subdomains listed in the previous section have AAAA records to Cloudflare's Worker route address. DNS proves they are proxied through Cloudflare, not which app-specific Access policy applies or whether the app should be public.
+
+This improves hostname/origin correlation but does not close the app-destination mapping gap. No DNS records or Access settings were changed.
+
+### G02 run evidence — follow-up read-only pass
+
+For runs `40201725905`, `40201726473`, `40201725288`, `40201052004`, `40201051251`, and `40201050573`, the GitHub Actions jobs endpoint returned an empty jobs array and the artifacts endpoint returned an empty artifacts array. There are no runner-side service logs available through these GitHub run records, so claims about disk, memory, expired registration tokens, or environment dependencies would be speculation. The evidence remains consistent with failure before job/step initialization, but does not establish the root cause.
+
+A local or isolated validation runner can validate YAML syntax and permission assumptions; it cannot establish that GitHub hosted/self-hosted runner dispatch works. A real G02 pass still requires a job assignment, runner identity, step execution, and retrievable logs.
+
 ### Control-agent deployment and Wrangler identity
 
 - The Cloudflare script inventory returned `lingo-static-backup-proxy`, `thelingolegacy-web-recovery-preview`, and `thelingolegacyv-5`.
