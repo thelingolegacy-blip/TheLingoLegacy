@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const html = readFileSync(new URL("../avalon-lingo.html", import.meta.url), "utf8");
-const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/gi)].map(match => match[1]).join("\\n");
+const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/gi)].map(match => match[1]).join("\n");
 
 test("integration preview exposes domain navigation and core studio features", () => {
   for (const token of ['data-domain="avalon"', 'data-domain="kiki"', 'data-domain="lingo"', 'id="ecosystem-worlds"', 'id="planning"', 'id="digital-id-card"', 'id="ai-form"', 'id="dns-check"', 'id="ballroom"', 'id="category-simulator"']) {
