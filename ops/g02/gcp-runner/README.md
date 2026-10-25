@@ -7,12 +7,12 @@ This module provisions an isolated Ubuntu 24.04 LTS Compute Engine VM and a dedi
 - VM: `lingo-legacy-g02`, `e2-standard-2` (2 vCPU / 8 GB RAM)
 - OS: Ubuntu 24.04 LTS x86-64
 - Disk: 40 GB balanced persistent disk
-- Network: dedicated VPC/subnet; private VM address only; Cloud NAT for outbound connectivity; no public ingress rule
-- SSH administration: Google Cloud IAP TCP forwarding only
+- Network: dedicated VPC/subnet with a reserved external IPv4 address for outbound GitHub HTTPS connectivity
+- SSH administration: IAP TCP forwarding by default; optional direct SSH only when `admin_ssh_cidr` is set to a trusted public IPv4 CIDR
 - VM identity: dedicated service account with no project IAM roles granted by this module; legacy metadata endpoints disabled
 - Runner labels after enrollment: built-in `self-hosted`, `linux`, `x64`, plus `lingo-g02`
 
-Review the subnet CIDR and zone before applying. Defaults may conflict with existing network ranges or organization policy. Cloud NAT incurs additional charges. The VM has no public IP; outbound traffic uses Cloud NAT. The module creates a dedicated service account but intentionally grants it no project IAM roles. The VM cannot use Google Cloud APIs that require IAM permissions unless an administrator later grants a narrowly scoped role for a documented need.
+Review the subnet CIDR, zone, and SSH source CIDR before applying. Defaults may conflict with existing network ranges or organization policy. The VM has a reserved external IPv4 address. The firewall allows only IAP SSH by default; direct SSH is disabled unless `admin_ssh_cidr` is set to a trusted address such as `YOUR_PUBLIC_IP/32`. Never use `0.0.0.0/0` for SSH. The reserved external IP incurs charges while allocated. The module creates a dedicated service account but intentionally grants it no project IAM roles. The VM cannot use Google Cloud APIs that require IAM permissions unless an administrator later grants a narrowly scoped role for a documented need.
 
 ## Prerequisites
 
@@ -32,7 +32,7 @@ gcloud services enable compute.googleapis.com
 terraform init
 terraform fmt -check
 terraform validate
-terraform plan -out=tfplan -var="project_id=YOUR_PROJECT_ID"
+terraform plan -out=tfplan -var="project_id=YOUR_PROJECT_ID" -var="admin_ssh_cidr="
 terraform apply tfplan
 ```
 
@@ -40,7 +40,7 @@ Do not commit `tfplan`, Terraform state, service account keys, registration toke
 
 ## Enroll the runner
 
-1. Use the output `iap_ssh_command` to connect with IAP.
+1. Generate an SSH key pair locally if needed: `ssh-keygen -t ed25519 -f ~/.ssh/lingo-g02`. With OS Login enabled, add the public key to your Google OS Login profile using `gcloud compute os-login ssh-keys add --key-file ~/.ssh/lingo-g02.pub`. Never upload the private key to GitHub, Terraform, VM metadata, or chat. Use `iap_ssh_command` to connect with IAP. Direct SSH to the external IP requires an explicitly configured `admin_ssh_cidr` and corresponding client key.
 2. Verify bootstrap completed: `sudo cat /var/log/lingo-g02/bootstrap-status.txt`.
 3. In GitHub, open **Settings → Actions → Runners → New self-hosted runner** for this repository and generate a short-lived registration token. Follow GitHub's current instructions if the download API or runner configuration flow changes.
 4. Copy this directory's `register-runner.sh` to the VM using a trusted route, then run it as a sudo-capable administrator. Enter the token only at its prompt; do not place it in shell history, metadata, files, or logs.
