@@ -1,6 +1,33 @@
-addEventListener("fetch", event => {
-  event.respondWith(handle(event.request));
-});
+import avalonApi from "../studio-vnext/api/worker.mjs";
+
+function withStudioSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("x-frame-options", "DENY");
+  headers.set("cache-control", "no-store");
+  headers.set("content-security-policy", "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname.startsWith("/api/v1/avalon/")) {
+      return avalonApi.fetch(request);
+    }
+    if (["/", "/index.html", "/avalon-lingo.html"].includes(url.pathname)) {
+      if (!env.ASSETS) {
+        return new Response(JSON.stringify({ ok: false, code: "ASSET_BINDING_NOT_CONFIGURED" }), {
+          status: 503,
+          headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" }
+        });
+      }
+      return withStudioSecurityHeaders(await env.ASSETS.fetch(request));
+    }
+    return handle(request);
+  }
+};
 
 const studioCss = `
 :root{--cr:#b11226;--wh:#f5f5f5;--no:#070707;--sm:rgba(255,255,255,.08)}
