@@ -7,6 +7,14 @@ on:
         description: "Incident or evidence reference for this validation run"
         required: true
         type: string
+  push:
+    branches:
+      - recovery/g02-shell-validation-workflow-pr-2026-10-24
+    paths:
+      - ".github/workflows/shell-script-validation.yml"
+      - "ops/**/*.sh"
+      - "**/*.sh"
+      - "**/*.bash"
   pull_request:
     branches:
       - main
