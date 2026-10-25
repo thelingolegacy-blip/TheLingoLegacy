@@ -1,10 +1,17 @@
-# Static backup recovery audit — 2026-10-24
+# Static backup recovery audit — 2026-10-25
 
 ## Scope and result
 
 A dedicated Cloudflare Pages project, `thelingolegacy-static-backup`, is configured with repository source `recovery/static-backup-2026-10-24`, automatic deployments disabled, and custom domains unattached.
 
-The first deployment used the repository root and uploaded 511 files. This was broader than the public-site scope and could expose internal engineering/source files via the Pages hostname. The project configuration was then changed to use `static-site` as its root directory. A curated static-site tree was added with 37 public route HTML files, required public CSS/JS/SVG assets, a 404 page, security headers, redirects, manifest, robots file, and curated sitemap. The isolated deployment using that root reports successful clone/build/deploy.
+The first deployment used the repository root and uploaded 511 files. This was broader than the public-site scope and could expose internal engineering/source files via the Pages hostname. The project configuration was then changed to use `static-site` as its root directory. A curated static-site tree was added with 37 public route HTML files, required public CSS/JS/SVG assets, a 404 page, security headers, redirects, manifest, robots file, and curated sitemap. The initial isolated deployment using that root reported successful clone/build/deploy. A follow-up alias-map deployment for commit `c3e6d58deb51f1d907b6a01d0b8dcbe322fc57a7` was started through the Pages deployment API; its final status must be verified separately.
+
+## Route-integrity findings and remediation
+
+- Browser-rendered link extraction found that the homepage's navigation contains public aliases not included in the 37-page curated tree (for example `/lingoarcade/`, `/lane/`, `/media/`, `/store/`, and `/ai/`).
+- Added temporary 302 aliases in `static-site/_redirects` for the primary public navigation and studio aliases so they resolve to existing curated routes rather than the generic 404 page. The alias map remains in the recovery branch and must be checked against the newly deployed commit.
+- The homepage also contains links to internal/operational destinations (for example admin, launch operations, integration readiness, and test routes). Those destinations remain excluded from the public tree by design; their presence as hidden/flagged HTML links is a crawl-noise issue and must not be interpreted as proof those operational pages should be published. Keep them out of the sitemap and verify they resolve to the intended 404/deny behavior.
+- A 100-URL browser-rendering crawl was started for route discovery and canceled after early results showed extensive hidden operational links; no full-site crawl acceptance is claimed.
 
 ## SEO findings and remediation
 
@@ -29,7 +36,7 @@ The first deployment used the repository root and uploaded 511 files. This was b
 ## Verification still required
 
 - Independent browser/HTTP checks of the Pages URL and key paths.
-- Confirm the deployed redirect parser reports zero invalid redirect lines.
+- Confirm the latest alias-map deployment's redirect parser reports zero invalid redirect lines and all public alias targets resolve.
 - Confirm sensitive-path redirects return 404 and headers are present in real responses.
 - Verify all linked CSS/JS/SVG resources and route navigation in desktop and mobile browsers.
 - Keyboard-only, reduced-motion, forced-colors, and contrast acceptance.
