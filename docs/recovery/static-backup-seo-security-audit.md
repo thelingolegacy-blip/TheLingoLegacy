@@ -20,7 +20,7 @@ The first deployment used the repository root and uploaded 511 files. This was b
 ## Security boundary
 
 - Pages project build root: `static-site`, not repository root.
-- Defense-in-depth redirects deny known repository-control, configuration, source, docs, and operator paths.
+- The Pages project serves only the curated `static-site/` root; repository control-plane, config, docs, and operator source files are outside that deployment root. The root-level redirect rules use supported 302 statuses as defense in depth; the curated static site's redirect file contains only valid public-link redirects.
 - Security headers include nosniff, referrer policy, permissions policy, frame denial, HSTS, CSP, COOP, and X-Robots-Tag.
 - Firebase client configuration in the source repository contains placeholder values; it is not a working credential set.
 - This backup is static only. It does not certify Firebase authentication, dynamic API routes, wallet/loyalty transactions, checkout, or server-side state.
@@ -29,6 +29,7 @@ The first deployment used the repository root and uploaded 511 files. This was b
 ## Verification still required
 
 - Independent browser/HTTP checks of the Pages URL and key paths.
+- Confirm the deployed redirect parser reports zero invalid redirect lines.
 - Confirm sensitive-path redirects return 404 and headers are present in real responses.
 - Verify all linked CSS/JS/SVG resources and route navigation in desktop and mobile browsers.
 - Keyboard-only, reduced-motion, forced-colors, and contrast acceptance.
