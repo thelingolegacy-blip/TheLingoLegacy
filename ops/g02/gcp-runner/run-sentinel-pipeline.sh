@@ -37,6 +37,28 @@ gcloud config set project "$PROJECT_ID" >/dev/null
 gcloud projects describe "$PROJECT_ID" --format=json > "$EVIDENCE_DIR/00_project.json"
 gh auth status > "$EVIDENCE_DIR/00_github_auth.txt" 2>&1 || die "GitHub CLI authentication is unavailable."
 
+# Provisioning is blocked unless the workflow on the DEFAULT branch accepts the
+# required inputs and routes only to the dedicated lingo-g02 runner. GitHub
+# dispatch uses the default-branch workflow definition even when --ref selects
+# a feature branch. A branch-only workflow edit is not enough for safe dispatch.
+if [[ "${APPLY_INFRA:-0}" == "1" ]]; then
+  note "Checking default-branch sentinel compatibility before any cloud mutation"
+  if ! gh api "repos/$REPO/contents/.github/workflows/$WORKFLOW?ref=main" > "$EVIDENCE_DIR/00_default_branch_workflow.json"; then
+    die "Cannot read the sentinel workflow from main; refusing cloud provisioning."
+  fi
+  if ! jq -e '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" >/dev/null; then
+    die "Default-branch workflow content unavailable; refusing cloud provisioning."
+  fi
+  MAIN_WORKFLOW="$(jq -r '.content' "$EVIDENCE_DIR/00_default_branch_workflow.json" | base64 -d)"
+  if ! grep -q 'incident_reference:' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'confirm_runner:' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'lingo-g02' <<<"$MAIN_WORKFLOW" ||
+     ! grep -q 'lingo-legacy-g02' <<<"$MAIN_WORKFLOW"; then
+    printf '%s\n' "$MAIN_WORKFLOW" > "$EVIDENCE_DIR/00_default_branch_workflow_incompatible.yml"
+    die "The sentinel workflow on main does not yet match the required incident inputs and dedicated runner identity. Review and merge the workflow change through normal governance before provisioning; no cloud resources were changed."
+  fi
+fi
+
 note "Terraform formatting, initialization, and validation"
 terraform -chdir="$TF_DIR" fmt -check -recursive | tee "$EVIDENCE_DIR/01_terraform_fmt.txt"
 terraform -chdir="$TF_DIR" init -input=false -no-color | tee "$EVIDENCE_DIR/01_terraform_init.log"
@@ -116,15 +138,17 @@ RUN_ID="$(gh run list --repo "$REPO" --workflow "$WORKFLOW" --branch "$GIT_REF" 
   --jq 'map(select(.headBranch == "'"$GIT_REF"'" and .event == "workflow_dispatch")) | sort_by(.createdAt) | last | .databaseId // empty')"
 [[ -n "$RUN_ID" ]] || die "Could not identify the dispatched workflow run. Production hold remains."
 printf 'workflow_run_id=%s\n' "$RUN_ID" > "$EVIDENCE_DIR/07_workflow_run.txt"
-gh run watch "$RUN_ID" --repo "$REPO" --exit-status 2>&1 | tee "$EVIDENCE_DIR/07_sentinel_watch.log"
+# Preserve logs and artifacts even when the sentinel fails.
+watch_status=0
+gh run watch "$RUN_ID" --repo "$REPO" --exit-status 2>&1 | tee "$EVIDENCE_DIR/07_sentinel_watch.log" || watch_status=$?
 gh run view "$RUN_ID" --repo "$REPO" --json databaseId,url,headBranch,status,conclusion,jobs,event,createdAt,updatedAt \
   > "$EVIDENCE_DIR/07_sentinel_run.json"
 gh run view "$RUN_ID" --repo "$REPO" --log > "$EVIDENCE_DIR/07_sentinel_job_logs.txt"
 gh run download "$RUN_ID" --repo "$REPO" --dir "$EVIDENCE_DIR/08_artifacts" 2>&1 | tee "$EVIDENCE_DIR/08_artifact_download.log"
 
 CONCLUSION="$(jq -r '.conclusion // "unknown"' "$EVIDENCE_DIR/07_sentinel_run.json")"
-if [[ "$CONCLUSION" != "success" ]]; then
-  die "Sentinel conclusion is '$CONCLUSION'. G02 remains blocked; production hold is unchanged."
+if [[ "$CONCLUSION" != "success" || "$watch_status" != "0" ]]; then
+  die "Sentinel conclusion is '$CONCLUSION' (watch exit $watch_status). G02 remains blocked; production hold is unchanged."
 fi
 grep -q 'RUNNER_EXECUTION_SENTINEL=PASS' "$EVIDENCE_DIR/07_sentinel_job_logs.txt" || \
   die "Sentinel PASS marker was not found in job logs. G02 remains blocked."
