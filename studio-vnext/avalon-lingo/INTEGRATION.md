@@ -42,3 +42,10 @@ The isolated `api/worker.mjs` has no external service bindings. Its purpose is t
 - [ ] Independent review and explicit release authorization recorded before any promotion.
 
 Unknown, unavailable, or unverified states remain blocked. Do not promote from this branch.
+
+
+## Isolated preview Worker wiring
+
+The separate `lingo-legacy-studio-build` Worker is configured to serve only the curated `cloudflare/studio-assets/` directory and route `/api/v1/avalon/*` to `studio-vnext/api/worker.mjs`. It applies security headers to the HTML surface. The curated directory contains only the two intended HTML entrypoints; it does not expose tests, scripts, package metadata, or internal runbooks. These files are mirrored from `studio-vnext/`; the deployment contract test checks that they remain byte-for-byte synchronized.
+
+This wiring is source-only until a separate preview deployment is explicitly authorized and independently verified. It does not target the production Worker.
