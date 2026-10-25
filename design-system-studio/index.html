@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#09090c">
+  <meta name="description" content="LINGOvox-next Design Foundry: a governed design-system workspace for tokens, components, icons, assets, sound, motion, accessibility, and developer handoff.">
+  <title>LINGOvox-next Design Foundry</title>
+  <link rel="stylesheet" href="/assets/lingo-design-tokens.css">
+  <link rel="stylesheet" href="./studio.css">
+  <script defer src="./studio.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to workspace</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Design Foundry navigation">
+      <a class="brand" href="#overview" aria-label="LINGOvox-next Design Foundry home">
+        <span class="brand-mark" aria-hidden="true">LV</span>
+        <span><strong>LINGOvox</strong><small>DESIGN FOUNDRY</small></span>
+      </a>
+      <div class="sidebar-label">WORKSPACES</div>
+      <nav class="workspace-nav" role="tablist" aria-label="Design workspaces" aria-orientation="vertical">
+        <button class="nav-item is-active" role="tab" aria-selected="true" aria-controls="view-overview" id="tab-overview" data-view="overview"><span>◈</span> Overview</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-tokens" id="tab-tokens" data-view="tokens"><span>◉</span> Brand & tokens</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-components" id="tab-components" data-view="components"><span>▦</span> Component foundry</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-icons" id="tab-icons" data-view="icons"><span>◇</span> Icon forge</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-assets" id="tab-assets" data-view="assets"><span>▧</span> Asset registry</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-sound" id="tab-sound" data-view="sound"><span>♫</span> Sound library</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-motion" id="tab-motion" data-view="motion"><span>↝</span> Motion lab</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-responsive" id="tab-responsive" data-view="responsive"><span>▣</span> Responsive lab</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-accessibility" id="tab-accessibility" data-view="accessibility"><span>◎</span> Accessibility gate</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-governance" id="tab-governance" data-view="governance"><span>⌘</span> Change control</button>
+        <button class="nav-item" role="tab" aria-selected="false" aria-controls="view-handoff" id="tab-handoff" data-view="handoff"><span>⇧</span> Developer handoff</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="status-dot"></div>
+        <div><strong id="source-state">Connecting to source</strong><small>Read-only registry connection</small></div>
+      </div>
+    </aside>
+
+    <main id="main" class="main-content">
+      <header class="topbar">
+        <div><div class="eyebrow">LINGO LEGACY · CREATIVE SYSTEMS</div><div class="topbar-title">Design operations <span class="pill pill-draft">DRAFT WORKSPACE</span></div></div>
+        <div class="topbar-actions"><a class="quiet-link" href="/">← HQ</a><button class="button button-secondary button-small" id="export-top">Export proposal</button></div>
+      </header>
+
+      <div class="page-wrap">
+        <section class="hero-block">
+          <div class="hero-copy"><div class="eyebrow gold-text">CREATE · STANDARDIZE · VALIDATE · DEPLOY</div><h1>Design with <span>intent.</span></h1><p>One controlled visual language for the LINGOvox-next ecosystem. Preview changes, inspect canonical registries, and export reviewable proposals without mutating production or repository state.</p></div>
+          <div class="hero-seal" aria-hidden="true"><div class="seal-ring"><span>LV</span><small>INDUSTRIAL<br>NOIR</small></div></div>
+        </section>
+
+        <div class="notice-bar" role="note"><span class="notice-icon">i</span><div><strong>Governed preview mode</strong><p>Canonical JSON registries are read-only here. Edits remain local to this browser until exported and reviewed through a repository change. No direct publish or production activation is available.</p></div><span class="pill" id="connection-pill">CHECKING SOURCES</span></div>
+        <div class="live-status" id="live-status" role="status" aria-live="polite">Loading canonical design tokens and registries…</div>
+
+        <section class="view-panel is-visible" id="view-overview" role="tabpanel" aria-labelledby="tab-overview" data-panel="overview">
+          <div class="section-heading"><div><div class="eyebrow">CONTROL ROOM / 01</div><h2>System overview</h2><p>Current design foundations and the next quality gates.</p></div><span class="pill pill-neutral">SOURCE OF TRUTH: GIT</span></div>
+          <div class="metric-grid">
+            <article class="metric-card"><span class="metric-label">Token schema</span><strong id="metric-version">—</strong><small>Canonical JSON version</small></article>
+            <article class="metric-card"><span class="metric-label">Icon records</span><strong id="metric-icons">—</strong><small>Registry entries loaded</small></article>
+            <article class="metric-card"><span class="metric-label">Asset records</span><strong id="metric-assets">—</strong><small>Metadata entries loaded</small></article>
+            <article class="metric-card"><span class="metric-label">Release status</span><strong class="metric-hold">HOLD</strong><small>Design preview only</small></article>
+          </div>
+          <div class="content-grid">
+            <article class="panel-card panel-span-2"><div class="panel-title"><div><span class="eyebrow">BRAND FOUNDATION</span><h3>Industrial Noir</h3></div><span class="pill">LINGOvox-next</span></div><div class="swatch-row" id="overview-swatches"></div><p class="muted-text">Obsidian surfaces, restrained metallic gold, royal-purple creative states, platinum text, and explicit status colors.</p><div class="button-row"><button class="button button-primary" data-go="tokens">Tune design tokens</button><button class="button button-secondary" data-go="components">Open component preview</button></div></article>
+            <article class="panel-card"><div class="eyebrow">RELEASE GATES</div><h3>Acceptance sequence</h3><ol class="gate-list"><li><span>01</span>Source inventory</li><li><span>02</span>Visual validation</li><li><span>03</span>Accessibility checks</li><li><span>04</span>Review and PR</li><li><span>05</span>Independent release approval</li></ol></article>
+            <article class="panel-card"><div class="eyebrow">MODULE COVERAGE</div><h3>Shared design contract</h3><div class="module-chip-grid"><span>Studio</span><span>Assist</span><span>Vault</span><span>Charts</span><span>Cast</span><span>Market</span><span>Memberships</span><span>Academy</span><span>A&amp;R</span><span>Management</span></div></article>
+            <article class="panel-card"><div class="eyebrow">NEXT ACTION</div><h3>Consolidate, don't duplicate.</h3><p class="muted-text">Reuse the canonical token, icon, and asset registries. Add scoped LINGOvox-next values without replacing the existing Lingo Legacy theme.</p><button class="button button-secondary" data-go="governance">Review governance</button></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-tokens" role="tabpanel" aria-labelledby="tab-tokens" data-panel="tokens" hidden>
+          <div class="section-heading"><div><div class="eyebrow">BRAND SYSTEM / 02</div><h2>Brand & tokens</h2><p>Adjust scoped theme values and preview them. These are local draft edits, not source writes.</p></div><span class="pill pill-draft" id="draft-indicator">NO LOCAL CHANGES</span></div>
+          <div class="content-grid">
+            <article class="panel-card panel-span-2"><div class="panel-title"><div><span class="eyebrow">COLOR TOKENS</span><h3>Industrial Noir palette</h3></div><button class="text-button" id="reset-tokens">Reset to canonical</button></div><div class="token-grid" id="token-controls"></div><div class="button-row"><button class="button button-primary" id="export-theme">Export theme JSON</button><button class="button button-secondary" id="copy-theme">Copy token JSON</button></div></article>
+            <article class="panel-card preview-card" id="theme-preview"><div class="eyebrow">LIVE PREVIEW</div><div class="preview-app-card"><div class="preview-app-top"><span class="preview-mark">LV</span><span class="pill">STUDIO READY</span></div><h3>Build your sound.</h3><p>One system. Every creative surface.</p><div class="preview-wave" aria-label="Decorative waveform preview"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="button-row"><button class="button button-primary">Create project</button><button class="button button-secondary">Explore</button></div></div><p class="muted-text">Preview only. Component behavior is demonstrated separately.</p></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-components" role="tabpanel" aria-labelledby="tab-components" data-panel="components" hidden>
+          <div class="section-heading"><div><div class="eyebrow">COMPONENT FOUNDRY / 03</div><h2>Component library</h2><p>Reusable UI patterns with defined states and accessible defaults.</p></div><span class="pill">PREVIEW</span></div>
+          <div class="content-grid">
+            <article class="panel-card"><div class="eyebrow">ACTIONS</div><h3>Buttons & states</h3><div class="component-stack"><button class="button button-primary" id="sample-primary">Primary action</button><button class="button button-secondary" id="sample-secondary">Secondary action</button><button class="button button-danger" id="sample-danger">Destructive action</button><button class="button button-secondary" disabled>Disabled action</button></div><p class="muted-text" id="component-feedback" role="status">Press a sample action to inspect feedback.</p></article>
+            <article class="panel-card"><div class="eyebrow">INPUTS</div><h3>Form controls</h3><label class="field-label" for="sample-name">Project name</label><input class="text-input" id="sample-name" placeholder="e.g. Midnight Session"><label class="field-label" for="sample-mode">Workspace</label><select class="text-input" id="sample-mode"><option>Studio</option><option>Assist</option><option>Vault</option><option>Academy</option></select><label class="check-line"><input type="checkbox" id="sample-check"> Enable optional audio feedback</label></article>
+            <article class="panel-card panel-span-2"><div class="eyebrow">SURFACE & STATUS</div><h3>Cards, chips, and system notices</h3><div class="status-row"><span class="pill pill-neutral">Draft</span><span class="pill pill-success">Verified in preview</span><span class="pill pill-warning">Needs review</span><span class="pill pill-danger">Blocked</span></div><div class="notice-bar compact-notice"><span class="notice-icon">!</span><div><strong>Approval required</strong><p>This component cannot publish a design revision by itself.</p></div></div></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-icons" role="tabpanel" aria-labelledby="tab-icons" data-panel="icons" hidden>
+          <div class="section-heading"><div><div class="eyebrow">ICON & ILLUSTRATION FORGE / 04</div><h2>Icon registry</h2><p>Registry records and their declared asset paths. A record is not proof that an asset loads successfully.</p></div><span class="pill" id="icon-status">WAITING FOR REGISTRY</span></div>
+          <div class="filter-row"><input class="text-input filter-input" id="icon-filter" placeholder="Filter icons by name or path" aria-label="Filter icons"></div>
+          <div class="registry-grid" id="icon-grid"><div class="empty-state">Loading icon registry…</div></div>
+        </section>
+
+        <section class="view-panel" id="view-assets" role="tabpanel" aria-labelledby="tab-assets" data-panel="assets" hidden>
+          <div class="section-heading"><div><div class="eyebrow">ASSET OPERATIONS / 05</div><h2>Asset registry</h2><p>Metadata, ownership labels, licensing status, and production verification state.</p></div><span class="pill" id="asset-status">WAITING FOR REGISTRY</span></div>
+          <div class="filter-row"><input class="text-input filter-input" id="asset-filter" placeholder="Filter assets by ID, category, owner, or status" aria-label="Filter assets"></div>
+          <div class="table-wrap"><table><thead><tr><th>Asset</th><th>Category</th><th>Owner</th><th>License</th><th>Production status</th></tr></thead><tbody id="asset-table"><tr><td colspan="5">Loading asset registry…</td></tr></tbody></table></div>
+        </section>
+
+        <section class="view-panel" id="view-sound" role="tabpanel" aria-labelledby="tab-sound" data-panel="sound" hidden>
+          <div class="section-heading"><div><div class="eyebrow">SOUND LIBRARY / 06</div><h2>Sound & feedback</h2><p>Separate interface sound effects from creator-owned music and licensed production media.</p></div><span class="pill">GENERATED DEMO TONE</span></div>
+          <div class="content-grid">
+            <article class="panel-card"><div class="eyebrow">USER-TRIGGERED PREVIEW</div><h3>Confirmation cue</h3><p class="muted-text">A short synthesized tone demonstrates playback controls. It is not a licensed production sound file.</p><label class="field-label" for="tone-volume">Preview volume</label><input id="tone-volume" type="range" min="0" max="100" value="35"><div class="button-row"><button class="button button-primary" id="play-tone">Play test tone</button><button class="button button-secondary" id="stop-tone">Stop</button></div><p class="muted-text" id="audio-feedback" role="status">Audio starts only after you press Play.</p></article>
+            <article class="panel-card"><div class="eyebrow">PRODUCTION ASSET CHECKLIST</div><h3>Before adding a sound</h3><ul class="check-list"><li>Source and license recorded</li><li>Duration and format validated</li><li>Volume normalized and peaks checked</li><li>Mute and reduced-motion/accessibility behavior considered</li><li>Playback opt-in and preference persistence tested</li></ul></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-motion" role="tabpanel" aria-labelledby="tab-motion" data-panel="motion" hidden>
+          <div class="section-heading"><div><div class="eyebrow">MOTION & INTERACTION LAB / 07</div><h2>Motion lab</h2><p>Motion must communicate state, not distract from the work.</p></div><span class="pill" id="motion-preference">CHECKING PREFERENCE</span></div>
+          <div class="content-grid">
+            <article class="panel-card panel-span-2"><div class="eyebrow">TRANSITION PREVIEW</div><h3>Audio-reactive surface</h3><div class="motion-stage" id="motion-stage"><div class="motion-orb"></div><div class="motion-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>LINGOvox · SIGNAL TEST</span></div><div class="button-row"><button class="button button-primary" id="run-motion">Run motion preview</button><button class="button button-secondary" id="clear-motion">Reset</button></div><p class="muted-text" id="motion-feedback" role="status">Preview idle.</p></article>
+            <article class="panel-card"><div class="eyebrow">MOTION CONTRACT</div><h3>Required states</h3><ul class="check-list"><li>Idle and active</li><li>Loading and completion</li><li>Failure and disabled</li><li>Keyboard focus</li><li>Reduced-motion alternative</li></ul></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-responsive" role="tabpanel" aria-labelledby="tab-responsive" data-panel="responsive" hidden>
+          <div class="section-heading"><div><div class="eyebrow">RESPONSIVE PREVIEW LAB / 08</div><h2>Viewport lab</h2><p>Preview the same component system at representative screen widths.</p></div><span class="pill">LAYOUT SIMULATION</span></div>
+          <div class="viewport-controls" role="group" aria-label="Choose preview viewport"><button class="button button-secondary is-selected" data-viewport="desktop">Desktop · 1440</button><button class="button button-secondary" data-viewport="tablet">Tablet · 768</button><button class="button button-secondary" data-viewport="mobile">Mobile · 390</button></div>
+          <div class="viewport-outer"><div class="viewport-frame" id="viewport-frame" data-viewport="desktop"><div class="viewport-header"><span class="preview-mark">LV</span><span>STUDIO</span><span class="viewport-menu">☰</span></div><div class="viewport-hero"><span class="eyebrow">CREATE WITHOUT LIMITS</span><h3>Your sound.<br><em>Your legacy.</em></h3><p>Build, refine, and manage every release from one creative workspace.</p><button class="button button-primary">Open studio</button></div><div class="viewport-cards"><div><span>01</span><strong>Studio</strong><small>Make music</small></div><div><span>02</span><strong>Vault</strong><small>Protect rights</small></div><div><span>03</span><strong>Academy</strong><small>Build skills</small></div></div></div></div>
+        </section>
+
+        <section class="view-panel" id="view-accessibility" role="tabpanel" aria-labelledby="tab-accessibility" data-panel="accessibility" hidden>
+          <div class="section-heading"><div><div class="eyebrow">ACCESSIBILITY & QUALITY / 09</div><h2>Accessibility gate</h2><p>Run a quick contrast calculation on a foreground/background pair. This is a helper, not a complete WCAG audit.</p></div><span class="pill pill-warning">MANUAL REVIEW REQUIRED</span></div>
+          <div class="content-grid">
+            <article class="panel-card"><div class="eyebrow">CONTRAST CALCULATOR</div><h3>Text contrast</h3><div class="color-pair"><label class="field-label" for="contrast-fg">Foreground<input type="color" id="contrast-fg" value="#F0EFF4"></label><label class="field-label" for="contrast-bg">Background<input type="color" id="contrast-bg" value="#09090C"></label></div><div class="contrast-preview" id="contrast-preview">Aa — LINGOvox-next</div><div class="contrast-result"><strong id="contrast-ratio">—</strong><span id="contrast-rating">Calculating…</span></div><p class="muted-text">WCAG AA normal text target: 4.5:1. Large text target: 3:1. Color alone must not communicate status.</p></article>
+            <article class="panel-card"><div class="eyebrow">REQUIRED MANUAL CHECKS</div><h3>Not covered by color math</h3><ul class="check-list"><li>Keyboard-only navigation and focus order</li><li>Screen-reader names and live announcements</li><li>Touch target size and spacing</li><li>Reduced motion and animation control</li><li>Forced-colors/high-contrast mode</li><li>Real-browser tests on supported devices</li></ul></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-governance" role="tabpanel" aria-labelledby="tab-governance" data-panel="governance" hidden>
+          <div class="section-heading"><div><div class="eyebrow">VERSIONS & CHANGE CONTROL / 10</div><h2>Governance</h2><p>Keep the canonical repository as the source of truth. Browser drafts cannot approve or publish themselves.</p></div><span class="pill pill-warning">NO DIRECT PUBLISH</span></div>
+          <div class="content-grid">
+            <article class="panel-card panel-span-2"><div class="eyebrow">CANONICAL SOURCE</div><h3>Current source records</h3><div class="source-list"><div><span>Design tokens</span><code>/config/design/design-tokens.json</code><strong id="gov-token-state">Checking…</strong></div><div><span>Icon registry</span><code>/config/icons/icon-registry.json</code><strong id="gov-icon-state">Checking…</strong></div><div><span>Asset registry</span><code>/config/assets/asset-registry.json</code><strong id="gov-asset-state">Checking…</strong></div></div><p class="muted-text">A proposed token change must be exported, committed on a review branch, tested, and independently reviewed before it becomes canonical.</p></article>
+            <article class="panel-card"><div class="eyebrow">LOCAL DRAFT</div><h3 id="governance-draft-state">No local edits</h3><p class="muted-text">The browser can retain a draft on this device. It does not create a Git commit, pull request, or release authorization.</p><div class="button-row"><button class="button button-primary" id="export-proposal">Export review proposal</button><button class="button button-secondary" id="clear-local-draft">Clear local draft</button></div></article>
+            <article class="panel-card"><div class="eyebrow">CHANGE RULE</div><h3>Fail closed</h3><ol class="gate-list"><li><span>01</span>Propose</li><li><span>02</span>Review diff</li><li><span>03</span>Run checks</li><li><span>04</span>Independent acceptance</li><li><span>05</span>Authorized promotion</li></ol></article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="view-handoff" role="tabpanel" aria-labelledby="tab-handoff" data-panel="handoff" hidden>
+          <div class="section-heading"><div><div class="eyebrow">DEVELOPER HANDOFF / 11</div><h2>Handoff package</h2><p>Export a reviewable theme proposal for source control. This workspace does not write files to GitHub.</p></div><span class="pill">JSON EXPORT</span></div>
+          <article class="panel-card"><div class="panel-title"><div><span class="eyebrow">PROPOSED ARTIFACT</span><h3>LINGOvox-next theme proposal</h3></div><button class="button button-primary" id="download-handoff">Download JSON</button></div><pre class="code-preview" id="handoff-preview" tabindex="0" aria-label="Theme JSON preview">Loading canonical tokens…</pre><div class="button-row"><button class="button button-secondary" id="copy-handoff">Copy JSON</button><button class="button button-secondary" id="download-css">Download CSS variables</button></div></article>
+        </section>
+
+        <footer class="footer"><span>LINGOvox-next · DESIGN FOUNDRY</span><span>SCOPED THEME · VERSIONED SOURCE · FAIL-CLOSED RELEASE</span></footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
