@@ -1,4 +1,20 @@
+# Curated static backup route map. Temporary aliases stay on 302 until production acceptance.
 # Only the curated static-site tree is deployed; repository source is outside the public root.
 /docs/canon-asset-registry.md /release-notes/ 302
 /docs/release-candidate-v1.md /release-notes/ 302
-/apparel/ /loyalty-lane-apparel/ 301
+/apparel/ /loyalty-lane-apparel/ 302
+/lingoarcade/ /thats-my-lingo/ 302
+/lane/ /loyalty-lane-apparel/ 302
+/media/ /visual-showcase/ 302
+/store/ /loyalty-lane-apparel/ 302
+/ai/ /lingo-ai/ 302
+/loading/ /app/ 302
+/studio-assets/ /visual-showcase/ 302
+/master-interface/ / 302
+/studio-production/ /live-casino-studio/ 302
+/studio-world-os/ /living-universe/ 302
+/studio-os/ /living-universe/ 302
+/economy-command-center/ /public-roadmap/ 302
+/monetization/ /public-roadmap/ 302
+/drop/ /contact/ 302
+/assets/ /visual-showcase/ 302
