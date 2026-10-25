@@ -27,6 +27,28 @@ resource "google_compute_subnetwork" "runner" {
   private_ip_google_access = true
 }
 
+resource "google_compute_router" "runner" {
+  name    = "${var.name_prefix}-router"
+  region  = var.region
+  network = google_compute_network.runner.id
+}
+
+resource "google_compute_router_nat" "runner" {
+  name                               = "${var.name_prefix}-nat"
+  router                             = google_compute_router.runner.name
+  region                             = var.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+  subnetwork {
+    name                    = google_compute_subnetwork.runner.id
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+}
+
 resource "google_compute_firewall" "iap_ssh" {
   name      = "${var.name_prefix}-allow-iap-ssh"
   network   = google_compute_network.runner.name
@@ -57,9 +79,7 @@ resource "google_compute_instance" "runner" {
 
   network_interface {
     subnetwork = google_compute_subnetwork.runner.id
-    # External IPv4 is used for outbound GitHub HTTPS. No ingress firewall is
-    # opened to the public internet; SSH is restricted to IAP above.
-    access_config {}
+    # No public IP on the VM. Outbound HTTPS uses Cloud NAT.
   }
 
   metadata = {
