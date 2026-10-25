@@ -75,9 +75,9 @@ resource "google_compute_instance" "runner" {
   name         = var.instance_name
   machine_type = var.machine_type
   zone         = var.zone
-  tags         = ["${var.name_prefix}-vm"]
-  can_ip_forward = false
-  deletion_protection = false
+  tags                      = ["${var.name_prefix}-vm"]
+  can_ip_forward            = false
+  deletion_protection       = false
   allow_stopping_for_update = true
 
   scheduling {
@@ -100,9 +100,10 @@ resource "google_compute_instance" "runner" {
   }
 
   metadata = {
-    enable-oslogin          = "TRUE"
-    block-project-ssh-keys  = "TRUE"
-    serial-port-enable      = "FALSE"
+    enable-oslogin           = "TRUE"
+    block-project-ssh-keys   = "TRUE"
+    disable-legacy-endpoints = "TRUE"
+    serial-port-enable       = "FALSE"
   }
 
   metadata_startup_script = file("${path.module}/startup.sh")
@@ -120,9 +121,8 @@ resource "google_compute_instance" "runner" {
   }
 
   labels = {
-    managed_by = "terraform"
-    purpose    = "github-actions-runner"
+    managed_by  = "terraform"
+    purpose     = "github-actions-runner"
     environment = "recovery"
   }
-
 }
