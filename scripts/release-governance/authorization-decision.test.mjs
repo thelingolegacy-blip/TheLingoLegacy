@@ -71,6 +71,15 @@ test("design policy and unreconciled registry never authorize production", async
   assert.ok(result.reasons.includes("authorization-policy-not-active-for-production") === false);
 });
 
+test("complete evidence cannot activate the checked-in design-only policy", async () => {
+  const context = await fixture();
+  context.policy.status = "DESIGN_NOT_ACTIVE_AUTHORIZATION";
+  context.policy.productionPromotionEnabledByThisPolicy = false;
+  const result = evaluateAuthorization(context);
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.includes("authorization-policy-not-active-for-production"));
+});
+
 test("missing gate evidence fails closed", async () => {
   const context = await fixture();
   delete context.release.gates.G04;
@@ -115,7 +124,8 @@ test("approval for a different artifact can never authorize the release", async 
     environment: context.release.environment
   };
   const result = evaluateAuthorization(context);
-  assert.notEqual(result.decision, "AUTHORIZED");
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.includes("approval-invalid-or-not-bound-to-exact-release-scope"));
 });
 
 test("exact-scope explicit approval is required even after technical gates pass", async () => {
