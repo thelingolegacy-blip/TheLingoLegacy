@@ -1,0 +1,80 @@
+apiVersion: lingo.ai-sre/v1alpha1
+kind: OperationsCatalog
+metadata:
+  name: lingo-infrastructure-catalog
+  status: proposed
+  deployed: false
+inventory_policy:
+  state: inventory_required
+  unknown_values: mark_unknown_not_guess
+  every_record_should_include: [provider, resource, environment, owner, region, purpose, status, source, last_verified_utc, cost_basis]
+  costs:
+    values: [actual_billed, metered_estimate, public_list_price, unknown]
+    must_label_cost_type: true
+    must_include_currency_and_period: true
+    must_include_usage_assumptions: true
+services_and_platforms:
+  - name: GitHub
+    domains: [repositories, branches, pull_requests, actions_runners, workflow_policy, artifacts, branch_protection]
+    cost_status: verify_authorized_billing_source
+  - name: Cloudflare
+    domains: [DNS, Workers, Pages, R2, KV, D1, Access, TLS, routing, security]
+    cost_status: verify_authorized_billing_source
+  - name: Vercel
+    domains: [projects, deployments, domains, team_access, build_logs]
+    cost_status: verify_authorized_billing_source
+  - name: Firebase
+    domains: [Authentication, Firestore, Cloud_Functions, project_configuration, security_rules]
+    cost_status: verify_authorized_billing_source
+  - name: Shopify
+    domains: [storefront, products, webhooks, subscriptions, commerce_integrations]
+    cost_status: verify_authorized_billing_source
+  - name: Application_and_Game_Engines
+    domains: [Flutter, Next.js, TypeScript, GDevelop, Unity, LINGO_Core_Runtime, LINGOslots, LINGOarcade, LINGO_World, LINGO_Experience]
+    cost_status: separate_software_license_and_compute_costs
+  - name: Observability_and_Data
+    domains: [Sentry, BigQuery, logs, metrics, alerts, retention]
+    cost_status: verify_authorized_billing_source
+  - name: AI_and_Agent_Runtime
+    domains: [model_provider, agent_runtime, tool_calls, vector_storage, evaluation, safety_policy]
+    cost_status: inventory_model_usage_and_limits
+  - name: Domain_and_Email
+    domains: [registrar, DNS, mail_provider, sender_authentication, notification_delivery]
+    cost_status: verify_authorized_billing_source
+required_runbooks:
+  - service_health_and_dependency_check
+  - bill_and_usage_reconciliation
+  - configuration_drift_review
+  - backup_verification
+  - restore_dry_run
+  - approved_restore_execution
+  - access_review_and_revocation
+  - AI_settings_and_model_inventory
+  - agent_tool_allowlist_review
+  - release_gate_and_evidence_validation
+restore_rules:
+  - capture_current_state_before_change
+  - verify_backup_timestamp_integrity_and_scope
+  - restore_to_isolated_target_first_when_supported
+  - compare_restored_state_against_expected_manifest
+  - require_owner_approval_before_overwrite_or_production_restore
+  - preserve_last_known_good
+  - record_precheck_execution_and_postcheck_evidence
+ai_settings_inventory:
+  - model_and_version
+  - provider_and_region
+  - tool_allowlist
+  - connector_scopes
+  - retention_and_privacy_controls
+  - token_or_rate_limits
+  - budget_and_usage_alerts
+  - evaluation_and_regression_tests
+  - fallback_and_timeout_policy
+  - prompt_and_policy_version
+  - audit_and_evidence_retention
+  - human_approval_boundaries
+current_known_gates:
+  G02: BLOCKED
+  production: HOLD
+  fail_closed: ACTIVE
+  last_known_good: PROTECTED
