@@ -35,7 +35,8 @@ section() { printf '\n## %s\n' "$1"; }
   fi
 
   UNIT="$EXPECTED_UNIT"
-  if ! systemctl show "$UNIT" --property=LoadState --value >/dev/null 2>&1; then
+  INITIAL_LOAD_STATE="$(systemctl show "$UNIT" --property=LoadState --value 2>/dev/null || printf unknown)"
+  if [[ -z "$INITIAL_LOAD_STATE" || "$INITIAL_LOAD_STATE" == "not-found" || "$INITIAL_LOAD_STATE" == "unknown" ]]; then
     DISCOVERED="$(printf '%s\n' "$UNITS" | awk '$1 ~ /^actions\.runner.*\.service$/ {print $1; exit}')"
     if [[ -n "$DISCOVERED" ]]; then UNIT="$DISCOVERED"; fi
   fi
