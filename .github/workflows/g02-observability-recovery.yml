@@ -1,0 +1,101 @@
+name: G02 Observability Recovery Probe
+
+on:
+  push:
+    branches:
+      - ops/g02-observability-recovery-2026-10-26
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-observability-recovery-probe
+  cancel-in-progress: false
+
+jobs:
+  control-plane:
+    name: Hosted control-plane and evidence probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Record run-correlated control-plane evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const evidence = {
+            schema: 'lingo.g02.observability.v1',
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            workflow: process.env.GITHUB_WORKFLOW,
+            event: process.env.GITHUB_EVENT_NAME,
+            ref: process.env.GITHUB_REF,
+            sha: process.env.GITHUB_SHA,
+            runner_id: process.env.RUNNER_ID || null,
+            runner_name: process.env.RUNNER_NAME || null,
+            runner_os: process.env.RUNNER_OS || null,
+            runner_arch: process.env.RUNNER_ARCH || null,
+            recorded_at: new Date().toISOString(),
+            role: 'hosted-control-plane-only',
+            g02_acceptance: false
+          };
+          fs.writeFileSync('release/evidence/g02-control-plane.json', JSON.stringify(evidence, null, 2) + '\n');
+          console.log(JSON.stringify(evidence, null, 2));
+          NODE
+      - name: Upload exact-run control-plane artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-control-plane-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release/evidence/g02-control-plane.json
+          if-no-files-found: error
+          retention-days: 7
+
+  self-hosted-sentinel:
+    name: Exact-label self-hosted runner sentinel
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Assert real runner assignment and emit sentinel
+        shell: bash
+        env:
+          EXPECTED_RUNNER_NAME: lingo-legacy-g02
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_ID:-}"
+          test "${RUNNER_ID}" != "0"
+          test "${RUNNER_NAME:-}" = "${EXPECTED_RUNNER_NAME}"
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          mkdir -p release/evidence
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const evidence = {
+            schema: 'lingo.g02.runner-sentinel.v1',
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            workflow: process.env.GITHUB_WORKFLOW,
+            event: process.env.GITHUB_EVENT_NAME,
+            ref: process.env.GITHUB_REF,
+            sha: process.env.GITHUB_SHA,
+            runner_id: process.env.RUNNER_ID,
+            runner_name: process.env.RUNNER_NAME,
+            runner_os: process.env.RUNNER_OS,
+            runner_arch: process.env.RUNNER_ARCH,
+            recorded_at: new Date().toISOString(),
+            sentinel: 'PASS'
+          };
+          fs.writeFileSync('release/evidence/g02-runner-sentinel.json', JSON.stringify(evidence, null, 2) + '\n');
+          console.log('G02_RUNNER_SENTINEL=PASS');
+          console.log(JSON.stringify(evidence, null, 2));
+          NODE
+      - name: Upload exact-run runner evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-runner-sentinel-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release/evidence/g02-runner-sentinel.json
+          if-no-files-found: error
+          retention-days: 7
