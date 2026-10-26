@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "PROPOSED",
+  "mode": "READ_ONLY_RECOVERY",
+  "productionInvariants": {
+    "G02": "BLOCKED",
+    "PRODUCTION": "HOLD",
+    "FAIL_CLOSED": "ACTIVE",
+    "LKG": "PROTECTED"
+  },
+  "integrations": {
+    "github": {
+      "discovered": true,
+      "purpose": ["repository inventory", "PR metadata", "workflow/run/job/artifact metadata"],
+      "readEnabledInDesign": true,
+      "writeEnabled": false,
+      "allowedOperations": ["GET repository", "GET tree", "GET contents", "GET pull request", "GET checks", "GET workflow run metadata"],
+      "deniedOperations": ["merge", "push to default branch", "dispatch workflow", "change branch protection", "change permissions", "deployment", "secret writes"]
+    },
+    "jira": {
+      "site": "https://thelingolegacy.atlassian.net",
+      "cloudResourceDiscovered": true,
+      "visibleProjectsObserved": ["SCRUM", "TC"],
+      "projectSelection": "REQUIRED_BEFORE_CREATING_ISSUES",
+      "readOperations": ["list projects", "search issues with JQL", "read issue", "read issue types", "read transition metadata"],
+      "writeCapabilityObserved": true,
+      "writeCapabilityEnabledByPolicy": false,
+      "futureWriteAllowlist": ["create issue after project and issue type approval", "comment after explicit task approval"],
+      "deniedOperations": ["transition issue without approval", "bulk edits", "delete", "permission changes", "automation/rule changes", "write secrets"],
+      "notes": "Connector exposed read:jira-work and write:jira-work scopes. This policy intentionally does not equate OAuth scope with mesh authorization. No Jira issue has been created by this configuration."
+    },
+    "docker": {
+      "runtimeProvisioned": false,
+      "daemonSocketMountAllowed": false,
+      "privilegedContainersAllowed": false,
+      "defaultBuildMode": "NOT_CONFIGURED",
+      "allowedFutureMode": "rootless isolated build or approved remote builder",
+      "imagePublish": false,
+      "registryWrite": false,
+      "hostMounts": false
+    },
+    "kubernetes": {
+      "clusterConnected": false,
+      "productionContextAllowed": false,
+      "serviceAccountMode": "future namespace-scoped read-only",
+      "clusterAdmin": false,
+      "mutationsEnabled": false,
+      "allowedFutureOperations": ["read namespace metadata", "read pod/deployment/job status", "read non-secret events"],
+      "deniedOperations": ["apply", "delete", "scale", "rollout restart", "modify RBAC", "read Secret values", "change admission policy", "change cluster/network policy"]
+    }
+  },
+  "endpointPolicy": {
+    "providerBaseUrls": "Resolve from authenticated connector/account configuration; no embedded tokens.",
+    "defaultNetworkEgress": "DENY",
+    "tlsRequired": true,
+    "privateEndpointsRequireAllowlist": true,
+    "requestTimeoutSeconds": 15,
+    "maxReadRetries": 2,
+    "retryOnlyIdempotentReads": true,
+    "writeRetries": 0,
+    "requireIdempotencyKeyForWrites": true,
+    "requireAuditRecordForEveryTask": true,
+    "redactAuthorizationHeaders": true,
+    "secretsInLogs": false,
+    "unknownOn403OrProviderFailure": true
+  },
+  "proposedServiceEndpoints": [
+    {"method":"GET","path":"/healthz","purpose":"liveness","enabled":false},
+    {"method":"GET","path":"/readyz","purpose":"readiness","enabled":false},
+    {"method":"GET","path":"/version","purpose":"build provenance","enabled":false},
+    {"method":"GET","path":"/metrics","purpose":"redacted metrics","enabled":false},
+    {"method":"GET","path":"/v1/tasks/{taskId}","purpose":"authorized task status","enabled":false},
+    {"method":"POST","path":"/v1/tasks","purpose":"task intake","enabled":false},
+    {"method":"POST","path":"/v1/tasks/{taskId}:cancel","purpose":"cancel task","enabled":false},
+    {"method":"GET","path":"/v1/policies/effective","purpose":"redacted effective policy","enabled":false},
+    {"method":"GET","path":"/v1/evidence/{evidenceId}","purpose":"authorized evidence metadata","enabled":false}
+  ],
+  "activation": {
+    "agentRuntime": false,
+    "scheduler": false,
+    "webhooks": false,
+    "jiraIssueCreation": false,
+    "jiraTransitions": false,
+    "dockerDaemonAccess": false,
+    "containerPublishing": false,
+    "kubernetesConnection": false,
+    "productionReadAccess": false,
+    "productionMutation": false
+  }
+}
