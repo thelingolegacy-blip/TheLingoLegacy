@@ -21,7 +21,7 @@
     "evidenceRules",
     "approvalRequirements",
     "currentKnownState",
-    "prohibitedActions"
+    "prohibitedActionsUnderThisDesign"
   ],
   "properties": {
     "schemaVersion": {
@@ -135,7 +135,7 @@
       "properties": {
         "runnerIdGreaterThan": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 0
         },
         "runnerNameRequired": {
           "const": true
@@ -193,14 +193,14 @@
     "currentKnownState": {
       "type": "object",
       "required": [
-        "G02",
+        "g02",
         "production",
         "failClosed",
         "lastKnownGood",
-        "authorization"
+        "productionAuthorization"
       ],
       "properties": {
-        "G02": {
+        "g02": {
           "const": "BLOCKED"
         },
         "production": {
@@ -212,13 +212,13 @@
         "lastKnownGood": {
           "const": "PROTECTED"
         },
-        "authorization": {
+        "productionAuthorization": {
           "const": "NOT_GRANTED"
         }
       },
       "additionalProperties": true
     },
-    "prohibitedActions": {
+    "prohibitedActionsUnderThisDesign": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
