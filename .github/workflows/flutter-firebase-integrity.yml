@@ -11,6 +11,8 @@ on:
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'firebase/**'
+      - 'test/**'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
