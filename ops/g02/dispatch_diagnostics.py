@@ -182,8 +182,10 @@ def main() -> int:
 
     run = evaluated["run"]
     env_sha = os.environ.get("GITHUB_SHA", "").strip()
-    target_sha = args.expected_sha or (env_sha if target_run == current_run else "") or str(run.get("head_sha") or "")
+    target_sha = args.expected_sha or (env_sha if target_run == current_run else "")
     observed_sha = str(run.get("head_sha") or "")
+    # For historical runs, require an operator-supplied expected SHA; never
+    # compare a run SHA to itself and label that an independent match.
     sha_matches = bool(target_sha and observed_sha and target_sha == observed_sha)
     predicates = dict(evaluated["predicates"])
     predicates["expected_commit_sha_matches_run"] = sha_matches
@@ -286,7 +288,7 @@ def main() -> int:
     else:
         required = (
             "run_record_readable", "jobs_list_readable", "artifacts_list_readable",
-            "target_job_present", "runner_id_and_name_present", "sentinel_step_present",
+            "runner_inventory_readable", "target_job_present", "runner_id_and_name_present", "sentinel_step_present",
             "sentinel_step_completed_successfully", "job_logs_retrievable",
             "target_artifact_metadata_present", "expected_commit_sha_matches_run",
         )
