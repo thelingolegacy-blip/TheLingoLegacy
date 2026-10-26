@@ -181,7 +181,8 @@ def main() -> int:
     evaluated = evaluate(run_result, jobs_result, artifacts_result, runners_result, repo)
 
     run = evaluated["run"]
-    target_sha = args.expected_sha or os.environ.get("GITHUB_SHA", "").strip() or str(run.get("head_sha") or "")
+    env_sha = os.environ.get("GITHUB_SHA", "").strip()
+    target_sha = args.expected_sha or (env_sha if target_run == current_run else "") or str(run.get("head_sha") or "")
     observed_sha = str(run.get("head_sha") or "")
     sha_matches = bool(target_sha and observed_sha and target_sha == observed_sha)
     predicates = dict(evaluated["predicates"])
