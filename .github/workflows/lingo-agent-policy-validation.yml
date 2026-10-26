@@ -1,0 +1,25 @@
+name: LINGO Agent Policy Validation
+
+on:
+  pull_request:
+    paths:
+      - "ops/ai-sre/agent-team.yaml"
+      - "ops/ai-sre/authorization-matrix.yaml"
+      - "ops/ai-sre/operations-catalog.yaml"
+      - "ops/ai-sre/validate-agent-policy.rb"
+      - ".github/workflows/lingo-agent-policy-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-policy:
+    name: Validate agent manifests and safety invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Validate YAML and policy invariants
+        run: ruby ops/ai-sre/validate-agent-policy.rb
