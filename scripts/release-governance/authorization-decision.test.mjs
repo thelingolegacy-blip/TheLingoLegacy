@@ -81,6 +81,22 @@ test("complete evidence cannot activate the checked-in design-only policy", asyn
   assert.ok(result.reasons.includes("authorization-policy-not-active-for-production"));
 });
 
+test("release OS target outside the registered surface scope fails closed", async () => {
+  const context = await fixture();
+  context.release.osTargets = ["ios"];
+  const result = evaluateAuthorization(context);
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.some((reason) => reason.startsWith("surface-os-target-not-registered:")));
+});
+
+test("release environment must match the accepted surface", async () => {
+  const context = await fixture();
+  context.release.environment = "staging";
+  const result = evaluateAuthorization(context);
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.includes("surface-environment-mismatch:" + context.release.surfaceIds[0]));
+});
+
 test("missing gate evidence fails closed", async () => {
   const context = await fixture();
   delete context.release.gates.G04;
