@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "LINGO Legacy Agent Mesh",
+  "status": "PROPOSED",
+  "mode": "READ_ONLY_RECOVERY",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "defaultBranch": "main",
+  "productionInvariants": {
+    "G02": "BLOCKED",
+    "PRODUCTION": "HOLD",
+    "FAIL_CLOSED": "ACTIVE",
+    "LKG": "PROTECTED"
+  },
+  "authority": {
+    "canReadRepository": true,
+    "canReadPermittedMetadata": true,
+    "canPreparePlans": true,
+    "canPrepareIsolatedPatches": false,
+    "canWriteExternalSystems": false,
+    "canDispatchWorkflows": false,
+    "canChangeRunnerState": false,
+    "canChangePermissionsOrSecrets": false,
+    "canMerge": false,
+    "canDeployOrRollback": false,
+    "canMutateGateState": false,
+    "canAuthorizeOwnAcceptance": false
+  },
+  "statusVocabulary": [
+    "PROPOSED",
+    "INVENTORIED",
+    "READY_FOR_REVIEW",
+    "NOT_RUN",
+    "UNKNOWN",
+    "BLOCKED",
+    "VERIFIED",
+    "ACCEPTED"
+  ],
+  "evidenceContract": {
+    "requiredFields": [
+      "source",
+      "source_sha_or_resource_id",
+      "observed_at_utc",
+      "claim",
+      "evidence_uri",
+      "verification_method",
+      "limitations",
+      "review_status"
+    ],
+    "missingEvidence": "UNKNOWN_OR_NOT_RUN",
+    "noSyntheticEvidence": true,
+    "noCrossRunCorrelation": true,
+    "acceptanceRequiresIndependentReviewer": true
+  },
+  "agents": [
+    {"id":"mesh-coordinator","plane":"governance","scope":["task decomposition","dependency map","status aggregation"],"writes":[],"prohibited":["gate mutation","self-approval","release authorization"]},
+    {"id":"source-provenance","plane":"matrix","scope":["repository","branches","commits","pull requests","source inventory"],"writes":[],"prohibited":["merge","history rewrite","push to main"]},
+    {"id":"gate-matrix","plane":"matrix","scope":["G00-G11","critical release gates","dependency tracking"],"writes":[],"prohibited":["marking PASS without evidence","promotion"]},
+    {"id":"g02-dispatch-diagnostics","plane":"matrix","scope":["workflow metadata","job/runner assignment evidence","steps","logs availability","artifact correlation"],"writes":[],"prohibited":["dispatch","runner mutation","loosening labels","claiming root cause without proof"]},
+    {"id":"github-ci","plane":"surface","scope":["workflow definitions","permissions","triggers","job graph","CI status metadata"],"writes":[],"prohibited":["workflow dispatch","permission changes","unreviewed workflow edits"]},
+    {"id":"security-supply-chain","plane":"assurance","scope":["least privilege","dependency/action pinning review","secret-safe source inspection","security headers"],"writes":[],"prohibited":["reading or emitting secret values","security-control bypass"]},
+    {"id":"evidence-integrity","plane":"assurance","scope":["source/run/attempt/SHA correlation","artifact metadata","integrity checks","evidence gaps"],"writes":[],"prohibited":["synthesizing evidence","cross-run substitution","self-acceptance"]},
+    {"id":"web-runtime","plane":"surface","scope":["web routes","Worker entrypoint","headers","redirects","runtime contracts"],"writes":[],"prohibited":["production route changes","deployment"]},
+    {"id":"api-contracts","plane":"surface","scope":["health/runtime/platform APIs","schema and contract tests"],"writes":[],"prohibited":["production API mutation","fabricating successful responses"]},
+    {"id":"cloudflare-edge","plane":"surface","scope":["Worker source/config","route and DNS evidence review","deployment provenance"],"writes":[],"prohibited":["DNS/route/binding mutation","production deployment"]},
+    {"id":"identity-firebase","plane":"surface","scope":["Firebase config shape","identity contracts","placeholder/config validation"],"writes":[],"prohibited":["production Firebase writes","credential exposure"]},
+    {"id":"commerce-wallet","plane":"surface","scope":["Shopify/checkout/payment contracts","wallet and entitlement boundaries"],"writes":[],"prohibited":["live charges","inventory/customer-data mutation","real-value activation"]},
+    {"id":"game-platforms","plane":"surface","scope":["LINGO Core Runtime","LINGOslots","LINGOarcade","LINGO World","LINGO Experience","game test surfaces"],"writes":[],"prohibited":["live-value activation","wallet or prize mutation"]},
+    {"id":"mobile-apps","plane":"surface","scope":["Flutter","Android","iOS","mobile manifests and test prerequisites"],"writes":[],"prohibited":["signing-secret exposure","store release"]},
+    {"id":"creative-media","plane":"surface","scope":["assets","audio","motion","visual consistency","media artifact inventory"],"writes":[],"prohibited":["publishing assets","claiming exports exist without bytes"]},
+    {"id":"accessibility-performance","plane":"assurance","scope":["keyboard/focus","contrast","reduced motion","performance test evidence"],"writes":[],"prohibited":["claiming acceptance from sampled checks alone"]},
+    {"id":"linux-execution","plane":"os","scope":["Linux runtime and runner prerequisites","container/build compatibility"],"writes":[],"prohibited":["host service restart","runner registration changes"]},
+    {"id":"windows-execution","plane":"os","scope":["Windows-specific compatibility where supported"],"writes":[],"prohibited":["claiming support without executed tests"]},
+    {"id":"macos-execution","plane":"os","scope":["macOS and Apple toolchain compatibility where supported"],"writes":[],"prohibited":["signing or release operations"]},
+    {"id":"container-runtime","plane":"os","scope":["Docker/build context/image metadata","reproducibility prerequisites"],"writes":[],"prohibited":["publishing images","production container changes"]},
+    {"id":"edge-runtime","plane":"os","scope":["Cloudflare Workers runtime compatibility and configuration"],"writes":[],"prohibited":["production runtime mutation"]},
+    {"id":"independent-acceptance","plane":"assurance","scope":["review evidence from separate agents","verify acceptance predicates","record unresolved gaps"],"writes":[],"prohibited":["reviewing own implementation as independent","authorizing production release"]}
+  ],
+  "coverage": {
+    "releaseGates": ["G00","G01","G02","G03","G04","G05","G06","G07","G08","G09","G10","G11"],
+    "criticalReleaseGates": ["source","build","tests","security","secrets","vercel-eradication","routes","interactions","apis","identity","games","commerce","assets","audio","motion","accessibility","performance","cloudflare","live-probes","rollback"],
+    "osTargets": ["linux","windows","macos","android","ios","containers","cloudflare-workers","github-hosted-ci","self-hosted-runner"],
+    "surfaceDomains": ["core-web-runtime","platform-apis","identity","games","commerce-economy","creative-media","ai-assistant-integrations","security-trust","accessibility-performance","operations-observability"]
+  },
+  "execution": {
+    "runtimeProvisioned": false,
+    "scheduleEnabled": false,
+    "externalAlertsEnabled": false,
+    "workflowDispatchEnabledByThisRegistry": false,
+    "credentialsProvisioned": false,
+    "productionMutationPermitted": false
+  }
+}
