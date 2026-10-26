@@ -3,7 +3,7 @@
   const ROUTES = [
     ["/","Home","Discover"],["/app/","That’s My Lingo","Play"],["/games/","Games","Play"],
     ["/account/","Account","Account"],["/community/","Community","Connect"],["/library/","Library","Discover"],
-    ["/lane/","Loyalty Lane","Discover"],["/loyalty-lane-apparel/","Apparel","Shop"],
+    ["/lane/","Loyalty Lane","Discover"],["/loyalty-lane-apparel/","Apparel","Shop"],["/media/","Media","Discover"],
     ["/ai/","askLINGO","Tools"],["/studio/","Studio","Create"],["/contact/","Contact","Connect"]
   ];
   const css = [
