@@ -45,15 +45,17 @@ jobs:
     permissions:
       actions: read
       contents: read
-    outputs:
-      report_status: ${{ steps.diagnostics.outputs.report_status }}
     steps:
       - name: Checkout reviewed ref
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Parse workflow YAML
+        run: ruby -e 'require "yaml"; YAML.load_file(".github/workflows/g02-dispatch-control-plane.yml")'
       - name: Validate dispatch policy and workflow invariants
         run: python3 ops/g02/validate_dispatch_policy.py
+      - name: Run G02 diagnostic regression tests
+        run: python3 -m unittest ops/g02/test_dispatch_diagnostics.py
       - name: Capture dispatch, jobs, runner inventory, and artifacts
         id: diagnostics
         env:
@@ -66,7 +68,15 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           TARGET_RUN_ID: ${{ inputs.target_run_id || '' }}
           INCIDENT_REF: ${{ inputs.incident_ref || '' }}
-        run: python3 ops/g02/dispatch_diagnostics.py --output g02-evidence
+          TARGET_PROBE_ENABLED: ${{ inputs.enable_target_runner_probe || false }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" != "workflow_dispatch" || "${TARGET_PROBE_ENABLED}" != "true" ]]; then
+            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence --control-plane-only
+          else
+            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence
+          fi
       - name: Publish control-plane evidence artifact
         if: always()
         uses: actions/upload-artifact@v4
