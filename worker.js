@@ -37,7 +37,7 @@ const SITE_ROUTES = Object.freeze([
   { path: '/ai/', label: 'askLINGO', status: 'implemented', group: 'Tools' },
   { path: '/studio/', label: 'Studio', status: 'implemented', group: 'Create' },
   { path: '/contact/', label: 'Contact', status: 'implemented', group: 'Connect' },
-  { path: '/media/', label: 'Media', status: 'planned', group: 'Discover' }
+  { path: '/media/', label: 'Media', status: 'implemented', group: 'Discover' }
 ]);
 
 const SECURITY_HEADERS = {
