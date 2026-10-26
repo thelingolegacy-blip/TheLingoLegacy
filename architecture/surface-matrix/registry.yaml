@@ -1,0 +1,151 @@
+# Seed inventory only. These are proposed entries, not proof of deployed surfaces.
+version: 1
+updated: "2026-10-26"
+surfaces:
+  - surface_id: public-website
+    name: Public website
+    owner: experience-team
+    lifecycle: proposed
+    criticality: tier-1
+    exposure: public
+    identity_policy: anonymous-public
+    authorization_policy: published-content-only
+    tenant_isolation: not-applicable
+    data_classification: public
+    api_contract: null
+    deployment_profile: public-edge
+    slo_profile: public-web-standard
+    runbook: architecture/runbooks/public-website.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [cdn, public-content]
+    data_assets: [published-content]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: customer-workspace
+    name: Customer workspace
+    owner: product-team
+    lifecycle: proposed
+    criticality: tier-1
+    exposure: customer-authenticated
+    identity_policy: customer-oidc
+    authorization_policy: workspace-resource-member
+    tenant_isolation: pooled-rls
+    data_classification: confidential
+    api_contract: openapi/workspace-api.yaml
+    deployment_profile: application-ha
+    slo_profile: interactive-standard
+    runbook: architecture/runbooks/customer-workspace.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [identity, transactional-database, object-storage]
+    data_assets: [organizations, workspaces, files]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: enterprise-admin
+    name: Enterprise administration
+    owner: platform-team
+    lifecycle: proposed
+    criticality: tier-1
+    exposure: customer-authenticated
+    identity_policy: enterprise-oidc-step-up
+    authorization_policy: organization-admin
+    tenant_isolation: pooled-rls
+    data_classification: restricted
+    api_contract: openapi/admin-api.yaml
+    deployment_profile: privileged-application
+    slo_profile: admin-standard
+    runbook: architecture/runbooks/enterprise-admin.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [identity, audit-service, transactional-database]
+    data_assets: [organization-settings, memberships, entitlements]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: partner-api
+    name: Partner API
+    owner: integration-team
+    lifecycle: proposed
+    criticality: tier-2
+    exposure: partner-authenticated
+    identity_policy: partner-machine-identity
+    authorization_policy: scoped-client-resource
+    tenant_isolation: pooled-rls
+    data_classification: confidential
+    api_contract: openapi/partner-api.yaml
+    deployment_profile: api-standard
+    slo_profile: partner-api-standard
+    runbook: architecture/runbooks/partner-api.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [identity, rate-limits, transactional-database]
+    data_assets: [explicitly-granted-resources]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: architecture-studio
+    name: Architecture studio
+    owner: platform-engineering
+    lifecycle: proposed
+    criticality: tier-2
+    exposure: internal
+    identity_policy: employee-sso-phishing-resistant-mfa
+    authorization_policy: platform-operator-and-approval
+    tenant_isolation: not-applicable
+    data_classification: restricted
+    api_contract: openapi/control-plane-api.yaml
+    deployment_profile: isolated-control-plane
+    slo_profile: studio-standard
+    runbook: architecture/runbooks/architecture-studio.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [identity, policy-engine, audit-log, deployment-controller]
+    data_assets: [surface-registry, architecture-metadata, deployment-evidence]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: support-console
+    name: Support console
+    owner: support-security
+    lifecycle: proposed
+    criticality: tier-1
+    exposure: internal
+    identity_policy: employee-sso-step-up
+    authorization_policy: time-bound-justified-support-access
+    tenant_isolation: dedicated-scope-per-case
+    data_classification: restricted
+    api_contract: openapi/support-api.yaml
+    deployment_profile: privileged-application
+    slo_profile: support-standard
+    runbook: architecture/runbooks/support-console.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [identity, case-management, audit-log]
+    data_assets: [support-cases, scoped-access-grants]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
+  - surface_id: worker-execution
+    name: Background worker execution
+    owner: domain-team
+    lifecycle: proposed
+    criticality: tier-1
+    exposure: workload-only
+    identity_policy: short-lived-workload-identity
+    authorization_policy: job-scoped-tenant-context
+    tenant_isolation: pooled-rls
+    data_classification: confidential
+    api_contract: asyncapi/domain-events.yaml
+    deployment_profile: private-worker-pool
+    slo_profile: queued-work-standard
+    runbook: architecture/runbooks/workers.md
+    repository: thelingolegacy-blip/TheLingoLegacy
+    dependencies: [queue, transactional-database, object-storage]
+    data_assets: [job-state, domain-events]
+    regions: []
+    status: proposed
+    evidence: []
+    last_reviewed: null
