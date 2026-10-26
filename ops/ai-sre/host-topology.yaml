@@ -1,0 +1,46 @@
+apiVersion: lingo.ai-sre/v1alpha1
+kind: HostTopology
+metadata:
+  name: ai-sre-lingo-system
+  status: proposal
+  deployed: false
+hosts:
+  - name: lingo-sre-control-plane
+    purpose: orchestrate incidents and helper tasks
+    trust_zone: control
+    runtime: not_provisioned
+    inbound: [authenticated_operator_requests]
+    outbound_allowlist: [approved_connector_endpoints, evidence_store]
+    holds_production_credentials: false
+  - name: lingo-g02-runner-host
+    purpose: execute approved CI jobs and host-level read-only diagnostics
+    trust_zone: restricted-runner
+    runtime: existing_host_not_verified
+    inbound: [github_runner_control_channel]
+    outbound_allowlist: [github_runner_endpoints, approved_monitor_endpoint]
+    helper_access: [LINGOadapter_read_only]
+    may_self_restart: false
+  - name: lingo-app-runtime
+    purpose: serve application workloads
+    trust_zone: production
+    runtime: existing_runtime_not_verified
+    helper_access: []
+    direct_helper_mutation: prohibited
+    changes_require: approved_release_pipeline
+  - name: lingo-evidence-vault
+    purpose: retain sanitized reports, receipts, and integrity metadata
+    trust_zone: evidence
+    runtime: not_provisioned
+    write_access: [approved_evidence_writer]
+    read_access: [LINGOassister, LINGOadapticator, authorized_operators]
+    immutable_retention: recommended
+monitoring:
+  independent_of_runner: true
+  external_heartbeat_required: true
+  alert_route: not_configured
+  schedule: not_configured
+notes:
+  - This file is a target architecture only; no hosts or services were provisioned.
+  - Never store credentials, tokens, private keys, raw environment dumps, or unsanitized logs in evidence.
+  - An absent heartbeat is an alert condition, not proof of a specific root cause.
+  - Production remains on HOLD until existing release gates pass independently.
