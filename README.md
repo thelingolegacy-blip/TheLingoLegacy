@@ -66,3 +66,16 @@ Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `M
 `RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
 
 The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
+
+
+## Full-stack route and mobile integration
+
+- Route registry: [`config/site-routes.json`](config/site-routes.json)
+- Shared responsive navigation: [`assets/lingo-route-matrix.js`](assets/lingo-route-matrix.js)
+- Public route API: `GET /api/v1/site/routes`
+- API contract: [`openapi/site-platform.yaml`](openapi/site-platform.yaml)
+- Flutter app: [`lib/main.dart`](lib/main.dart)
+- Firebase Realtime Database rules starter: [`firebase/database.rules.json`](firebase/database.rules.json)
+- Full-stack implementation notes: [`docs/FULL-STACK-IMPLEMENTATION.md`](docs/FULL-STACK-IMPLEMENTATION.md)
+
+The route registry and navigation are implementation changes in review, not proof of a production deployment. Firebase client options remain environment-specific; configure them from the authorized Firebase project before enabling production identity or data synchronization.
