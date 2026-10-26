@@ -71,6 +71,8 @@ class UniverseHome extends StatefulWidget {
 
 class _UniverseHomeState extends State<UniverseHome> {
   int selected = 0;
+  int selectedTab = 0;
+  static const bottomDestinationIndices = [0, 1, 2, 6, 7];
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.sizeOf(context).width >= 760;
@@ -162,8 +164,8 @@ class _UniverseHomeState extends State<UniverseHome> {
         ]),
       ))),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: selected < 5 ? selected : 0,
-        onDestinationSelected: (index) { setState(() => selected = index); _openDestination(destinations[index]); },
+        selectedIndex: selectedTab,
+        onDestinationSelected: (index) { setState(() => selectedTab = index); _openDestination(destinations[bottomDestinationIndices[index]]); },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.public), label: 'Worlds'),
           NavigationDestination(icon: Icon(Icons.sports_esports_outlined), label: 'Play'),
