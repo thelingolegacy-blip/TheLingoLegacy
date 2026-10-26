@@ -1,0 +1,108 @@
+apiVersion: lingo.ai-sre/v1alpha1
+kind: AgentTeam
+metadata:
+  name: lingo-agents
+  status: proposed
+  deployed: false
+governance:
+  default_access: read_only
+  least_privilege: true
+  fail_closed: true
+  require_evidence_for_claims: true
+  mutation_requires_explicit_approval: true
+  independent_post_change_validation: true
+  no_shared_personal_credentials: true
+  max_direct_reports_per_agent: 5
+  max_delegation_depth_without_owner_approval: 1
+  recursive_spawning: prohibited
+  external_communications_by_default: draft_only
+  purchases_payments_and_billing_changes: approval_required
+  production_changes: separate_release_authorization_required
+  secrets_in_prompts_logs_or_commits: prohibited
+agents:
+  - name: sippyLINGO
+    portfolio: Surface
+    mission: Own user-facing surfaces, accessibility, design systems, route UX, and preview acceptance.
+    allowed:
+      - inspect_public_and_authorized_preview_routes
+      - propose_ui_changes
+      - create_design_specs_and_test_plans
+      - run_approved_non_production_visual_checks
+    approval_required:
+      - merge_or_publish_ui_changes
+      - change_domains_or_dns
+      - production_deploy
+  - name: earlLINGO
+    portfolio: Emails
+    mission: Own email workflow design, deliverability diagnostics, templates, notification routing, and inbox triage when explicitly connected.
+    allowed:
+      - inspect_authorized_email_metadata
+      - draft_messages_and_templates
+      - diagnose_delivery_and_configuration
+    approval_required:
+      - send_external_messages
+      - delete_or_archive_messages_in_bulk
+      - change_mail_routing_or_dns
+      - purchase_email_services
+    prohibited:
+      - expose_credentials_or_private_message_content_outside_authorized_scope
+  - name: osbswaldLINGO
+    portfolio: OS
+    mission: Own host inventory, operating-system health, runner diagnostics, configuration drift, backup and restore planning.
+    allowed:
+      - read_host_health_and_service_state
+      - collect_sanitized_logs
+      - generate_dry_run_repair_plans
+      - verify_backup_metadata
+    approval_required:
+      - restart_services
+      - install_or_remove_packages
+      - alter_firewall_or_identity_policy
+      - register_or_relabel_runners
+      - restore_over_existing_data
+  - name: michelleLINGO
+    portfolio: Matrix
+    mission: Own dependency maps, service matrices, authorization boundaries, gate state, and cross-system coordination.
+    allowed:
+      - maintain_proposed_service_and_gate_matrices
+      - correlate_verified_evidence
+      - flag_conflicts_and_missing_dependencies
+    approval_required:
+      - change_access_policy
+      - change_release_gate_policy
+      - authorize_production_promotion
+  - name: bryantLINGO
+    portfolio: Brain
+    mission: Own architecture, incident reasoning, engine integration, technical planning, and cost-model analysis.
+    allowed:
+      - produce_architecture_options
+      - analyze_approved_metrics_and_logs
+      - estimate_costs_with_source_and_date
+      - propose_implementation_and_test_plans
+    approval_required:
+      - approve_own_proposal
+      - change_production_architecture
+      - enable_paid_services_or_increase_spend
+  - name: hopeLINGO
+    portfolio: Heart
+    mission: Own operator experience, human-centered incident communication, accessibility of handoffs, and safe escalation.
+    allowed:
+      - prepare_plain_language_status_reports
+      - draft_incident_comms
+      - flag_user_safety_and_privacy_risks
+    approval_required:
+      - send_external_incident_comms
+      - disclose sensitive incident details
+      - override security or release gates
+delegation:
+  direct_team_limit: 5
+  permitted_pattern: parent_agent_requests_bounded_task_from_registered_agent
+  each_task_must_define:
+    - objective
+    - allowed_data_sources
+    - read_write_scope
+    - deadline_or_stop_condition
+    - expected_evidence
+  new_agent_registration_requires: owner_approval
+  team_membership_changes_require: owner_approval
+  delegate_cannot_expand_its_own_permissions: true
