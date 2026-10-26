@@ -16,6 +16,10 @@ on:
         description: 'Incident or change reference for the audit record'
         required: false
         type: string
+      expected_sha:
+        description: 'Expected commit SHA for completed-run validation'
+        required: false
+        type: string
       validate_completed_target_run:
         description: 'Validate a previously completed target run; provide target_run_id and expected SHA'
         required: true
