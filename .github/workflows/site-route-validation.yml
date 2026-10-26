@@ -18,6 +18,7 @@ on:
       - 'media/**'
       - 'studio/**'
       - 'worker.js'
+      - 'openapi/site-platform.yaml'
       - 'scripts/validate-site-routes.mjs'
       - '.github/workflows/site-route-validation.yml'
   push:
@@ -50,4 +51,4 @@ jobs:
         run: node scripts/validate-site-routes.mjs
       - name: Check backend route contract markers
         run: |
-          node --input-type=module -e "import fs from 'node:fs'; const s=fs.readFileSync('worker.js','utf8'); for(const p of ['/healthz','/api/v1/platform/status','/api/v1/site/context']) { if(!s.includes(p)) throw new Error('Missing backend route marker: '+p); } console.log('Backend route markers found.');"
+          node --input-type=module -e "import fs from 'node:fs'; const s=fs.readFileSync('worker.js','utf8'); for(const p of ['/healthz','/api/v1/platform/status','/api/v1/site/context','/api/v1/site/routes']) { if(!s.includes(p)) throw new Error('Missing backend route marker: '+p); } if(!fs.existsSync('openapi/site-platform.yaml')) throw new Error('Missing OpenAPI contract'); console.log('Backend route markers and OpenAPI contract found.');"
