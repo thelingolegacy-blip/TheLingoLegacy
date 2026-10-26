@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'firebase_options.dart';
 
@@ -245,6 +246,7 @@ class _DestinationDetailPageState extends State<DestinationDetailPage> {
                 Text('Website route: ${d.route}', style: const TextStyle(color: cyan)),
               ]),
             ),
+            if (d.title == 'Account') AccountPanel(firebaseConfigured: widget.firebaseConfigured),
             const SizedBox(height: 16),
             Card(child: Padding(
               padding: const EdgeInsets.all(16),
@@ -272,5 +274,106 @@ class _DestinationDetailPageState extends State<DestinationDetailPage> {
         ),
       ),
     );
+  }
+}
+
+class AccountPanel extends StatefulWidget {
+  const AccountPanel({super.key, required this.firebaseConfigured});
+  final bool firebaseConfigured;
+
+  @override
+  State<AccountPanel> createState() => _AccountPanelState();
+}
+
+class _AccountPanelState extends State<AccountPanel> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool busy = false;
+  String message = '';
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _authenticate({required bool createAccount}) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    if (email.isEmpty || !email.contains('@') || password.length < 8) {
+      setState(() => message = 'Enter a valid email and a password with at least 8 characters.');
+      return;
+    }
+    setState(() { busy = true; message = ''; });
+    try {
+      if (createAccount) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      } else {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      }
+      if (mounted) setState(() => message = createAccount ? 'Account created and signed in.' : 'Signed in successfully.');
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() => message = switch (error.code) {
+        'email-already-in-use' => 'That email already has an account. Try signing in.',
+        'invalid-credential' || 'wrong-password' || 'user-not-found' => 'Email or password was not accepted.',
+        'weak-password' => 'Choose a stronger password.',
+        'network-request-failed' => 'Network error. Check your connection and retry.',
+        _ => 'Authentication could not be completed (${error.code}).',
+      });
+    } catch (_) {
+      if (mounted) setState(() => message = 'Authentication could not be completed. Try again.');
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.firebaseConfigured) {
+      return const Card(child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('ACCOUNT ACCESS', style: TextStyle(color: gold, fontWeight: FontWeight.w900, letterSpacing: 1)),
+          SizedBox(height: 8),
+          Text('Sign-in is paused until valid Firebase app options are configured. This prevents the preview from presenting a fake or broken account flow.', style: TextStyle(color: muted, height: 1.5)),
+        ]),
+      ));
+    }
+    return Card(child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('ACCOUNT ACCESS', style: TextStyle(color: gold, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        const SizedBox(height: 10),
+        StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            final user = snapshot.data;
+            if (user != null) {
+              return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Signed in as ${user.email ?? user.uid}', style: const TextStyle(color: muted)),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: busy ? null : () async { await FirebaseAuth.instance.signOut(); if (mounted) setState(() => message = 'Signed out.'); },
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Sign out'),
+                ),
+              ]);
+            }
+            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              TextField(controller: emailController, keyboardType: TextInputType.emailAddress, autofillHints: const [AutofillHints.email], decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
+              const SizedBox(height: 10),
+              TextField(controller: passwordController, obscureText: true, autofillHints: const [AutofillHints.password], decoration: const InputDecoration(labelText: 'Password (8+ characters)', border: OutlineInputBorder())),
+              const SizedBox(height: 12),
+              FilledButton(onPressed: busy ? null : () => _authenticate(createAccount: false), child: Text(busy ? 'Please wait…' : 'Sign in')),
+              const SizedBox(height: 8),
+              OutlinedButton(onPressed: busy ? null : () => _authenticate(createAccount: true), child: const Text('Create account')),
+            ]);
+          },
+        ),
+        if (message.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 12), child: Text(message, style: const TextStyle(color: cyan))),
+      ]),
+    ));
   }
 }
