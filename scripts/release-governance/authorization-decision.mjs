@@ -1,4 +1,4 @@
-export function evaluateAuthorization({ policy, registry, release }) {
+export function evaluateAuthorization({ policy, registry, release, now = new Date() }) {
   const reasons = [];
   if (!policy || policy.failClosed !== true) reasons.push("policy-not-fail-closed");
   if (!registry || registry.status !== "ACCEPTED") reasons.push("surface-registry-not-accepted");
@@ -20,6 +20,13 @@ export function evaluateAuthorization({ policy, registry, release }) {
     }
   }
 
+  const freshness = policy?.evidenceFreshness;
+  if (!freshness || !(Number.isFinite(freshness.maxAgeHours) && freshness.maxAgeHours > 0) ||
+    !(Number.isFinite(freshness.maxFutureSkewMinutes) && freshness.maxFutureSkewMinutes >= 0) ||
+    freshness.requireTimestamp !== true) {
+    reasons.push("evidence-freshness-policy-invalid");
+  }
+
   const requiredGates = Object.keys(policy?.requiredGates ?? {});
   if (requiredGates.length !== 12 || !Array.from({ length: 12 }, (_, i) => `G${String(i).padStart(2, "0")}`).every((gate) => requiredGates.includes(gate))) {
     reasons.push("required-gate-set-invalid");
@@ -31,12 +38,19 @@ export function evaluateAuthorization({ policy, registry, release }) {
       continue;
     }
     const evidence = record.evidence;
+    const verifiedAtMs = Date.parse(evidence?.verifiedAt ?? "");
+    const nowMs = Date.parse(now);
+    const maxAgeMs = freshness?.maxAgeHours * 60 * 60 * 1000;
+    const futureSkewMs = freshness?.maxFutureSkewMinutes * 60 * 1000;
     if (!evidence || evidence.commitSha !== release.commitSha ||
       evidence.artifactDigest !== release.artifactDigest ||
       evidence.environment !== release.environment ||
       !evidence.uri || !evidence.verifiedBy || evidence.verifiedBy === release?.approval?.approverId ||
-      !evidence.verifiedAt || !Number.isFinite(Date.parse(evidence.verifiedAt))) {
+      !Number.isFinite(verifiedAtMs) || !Number.isFinite(nowMs)) {
       reasons.push(`gate-evidence-invalid-or-unbound:${gate}`);
+    } else if (!Number.isFinite(maxAgeMs) || !Number.isFinite(futureSkewMs) ||
+      nowMs - verifiedAtMs > maxAgeMs || verifiedAtMs - nowMs > futureSkewMs) {
+      reasons.push(`gate-evidence-stale-or-future-dated:${gate}`);
     }
   }
 
