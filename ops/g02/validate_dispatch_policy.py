@@ -52,6 +52,9 @@ def main() -> int:
     require("python3 -m unittest ops/g02/test_dispatch_diagnostics.py" in workflow, "diagnostic regression tests are not wired into CI")
     require("--control-plane-only" in workflow, "control-plane-only diagnostic path missing")
     require("TARGET_PROBE_ENABLED" in workflow, "target probe must be explicitly gated")
+    require("validate_completed_target_run" in workflow, "completed-run validation must be explicit")
+    require("expected_sha" in workflow, "expected SHA input must be available for historical-run validation")
+    require("do not race it" in workflow, "parallel target-job race guard is missing")
 
     if errors:
         print("G02 DISPATCH POLICY VALIDATION: FAIL")
