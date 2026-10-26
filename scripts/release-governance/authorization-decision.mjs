@@ -56,15 +56,17 @@ export function evaluateAuthorization({ policy, registry, release }) {
   }
 
   const approval = release?.approval;
-  if (!approval || approval.explicit !== true || !approval.approverId ||
-    !approval.reason || !approval.approvedAt ||
-    !Number.isFinite(Date.parse(approval.approvedAt)) ||
+  if (!approval) {
+    return { decision: "ELIGIBLE_FOR_APPROVAL", reasons: ["explicit-independent-scope-bound-approval-required"] };
+  }
+  if (approval.explicit !== true || !approval.approverId || !approval.reason ||
+    !approval.approvedAt || !Number.isFinite(Date.parse(approval.approvedAt)) ||
     approval.approverId === release?.independentVerifierId ||
     approval.commitSha !== release.commitSha ||
     approval.artifactDigest !== release.artifactDigest ||
     approval.releaseCandidate !== release.releaseCandidate ||
     approval.environment !== release.environment) {
-    return { decision: "ELIGIBLE_FOR_APPROVAL", reasons: ["explicit-independent-scope-bound-approval-required"] };
+    return { decision: "BLOCKED", reasons: ["approval-invalid-or-not-bound-to-exact-release-scope"] };
   }
 
   return { decision: "AUTHORIZED", reasons: [] };
