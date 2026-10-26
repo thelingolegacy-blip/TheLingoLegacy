@@ -1,0 +1,119 @@
+{
+  "schema": "lingo.g02.dispatch-policy/v1",
+  "control_center": {
+    "name": "LINGO G02 Dispatch Control Plane",
+    "status": "DRAFT",
+    "release_authorization": false,
+    "fail_closed": true
+  },
+  "triggers": {
+    "workflow_dispatch": true,
+    "pull_request_paths_scoped": true,
+    "recovery_branch_push_paths_scoped": true,
+    "scheduled_polling_enabled": false,
+    "external_alerts_configured": false
+  },
+  "assignment": {
+    "target_job_name": "Target runner assignment sentinel",
+    "required_labels": ["self-hosted", "linux", "x64", "lingo-g02"],
+    "manual_probe_input": "enable_target_runner_probe",
+    "manual_probe_default": false,
+    "run_on_pull_request": false,
+    "checkout_on_target_runner": false,
+    "execute_repository_scripts_on_target_runner": false
+  },
+  "access": {
+    "control_plane_permissions": {
+      "actions": "read",
+      "contents": "read"
+    },
+    "target_job_permissions": {
+      "contents": "read"
+    },
+    "secrets_in_artifacts": false,
+    "environment_dump_allowed": false,
+    "raw_logs_stored": false,
+    "signed_urls_stored": false,
+    "runner_inventory_permission_failure_means_zero": false
+  },
+  "artifacts": {
+    "control_plane_name_template": "g02-control-plane-{run_id}-{run_attempt}",
+    "target_sentinel_name_template": "g02-target-sentinel-{run_id}-{run_attempt}",
+    "retention_days": 14,
+    "correlate_exact_run": true,
+    "correlate_exact_attempt": true,
+    "correlate_commit_sha": true,
+    "expired_artifacts_accepted": false
+  },
+  "correlation_fields": [
+    "repository",
+    "run_id",
+    "run_attempt",
+    "workflow_event",
+    "commit_sha",
+    "job_id",
+    "runner_id",
+    "runner_name",
+    "step_summaries",
+    "log_retrieval_status",
+    "artifact_id",
+    "artifact_name"
+  ],
+  "telemetry": {
+    "signals": [
+      "startup_failure",
+      "empty_jobs",
+      "queued_without_runner",
+      "runner_inventory_inaccessible",
+      "steps_empty",
+      "logs_unavailable",
+      "artifact_missing_or_expired",
+      "artifact_attempt_mismatch",
+      "runner_offline_or_busy",
+      "label_mismatch"
+    ],
+    "unknown_is_not_zero": true,
+    "raw_log_body_retention": false,
+    "host_environment_retention": false
+  },
+  "approvals": {
+    "runner_installation_or_reregistration": "explicit_owner_approval",
+    "runner_label_or_group_change": "explicit_owner_approval",
+    "service_restart": "explicit_owner_approval",
+    "repository_or_organization_permission_change": "administrator_approval",
+    "secrets_or_credentials_change": "explicit_owner_approval",
+    "production_deploy_dns_or_gate_change": "separate_release_authorization",
+    "schedule_or_external_alert_activation": "explicit_owner_approval"
+  },
+  "prohibited_actions": [
+    "register_runner",
+    "reregister_runner",
+    "change_runner_labels",
+    "restart_runner_service",
+    "change_repository_permissions",
+    "change_organization_actions_policy",
+    "write_secrets",
+    "change_dns",
+    "deploy_production",
+    "unlock_release_gate",
+    "restore_or_overwrite_production_data"
+  ],
+  "acceptance": {
+    "runner_id_must_be_positive": true,
+    "runner_name_required": true,
+    "job_assignment_required": true,
+    "steps_must_be_instantiated": true,
+    "sentinel_must_succeed": true,
+    "logs_must_be_retrievable": true,
+    "same_run_attempt_artifact_required": true,
+    "independent_review_required": true,
+    "heartbeat_or_host_probe_alone_is_sufficient": false,
+    "diagnostics_can_authorize_release": false
+  },
+  "release_gates": {
+    "G02": "BLOCKED",
+    "production": "HOLD",
+    "fail_closed": "ACTIVE",
+    "last_known_good": "PROTECTED"
+  }
+}
