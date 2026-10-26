@@ -54,7 +54,7 @@
       "path": "/media/",
       "label": "Media",
       "group": "Discover",
-      "status": "planned"
+      "status": "implemented"
     },
     {
       "path": "/ai/",
