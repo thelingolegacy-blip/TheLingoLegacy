@@ -1,0 +1,49 @@
+apiVersion: lingo.ai-sre/v1alpha1
+kind: AuthorizationMatrix
+metadata:
+  name: lingo-agent-access
+  status: proposed
+  deployed: false
+roles:
+  owner:
+    powers: [approve_scoped_mutations, approve_spend, approve_access_changes, authorize_release]
+    safeguards: [require_change_record, require_post_change_evidence]
+  agent:
+    powers: [read_only_diagnostics, analysis, drafts, dry_run, evidence_validation]
+    safeguards: [least_privilege, audit_log, no_self_approval]
+  independent_validator:
+    powers: [verify_artifacts, reject_invalid_evidence, veto_gate_pass]
+    safeguards: [must_not_be_the_only_executor_or_approver]
+approval_rules:
+  - action: read_only_diagnostics
+    approval: preapproved_allowlist
+  - action: draft_config_or_code
+    approval: no_runtime_mutation; review_before_merge
+  - action: change_nonproduction_configuration
+    approval: explicit_owner_approval_and_rollback_plan
+  - action: restart_service_or_restore_data
+    approval: explicit_owner_approval_plus_verified_precondition_and_backup
+  - action: change_identity_permissions_or_secrets
+    approval: explicit_owner_approval_plus_security_review
+  - action: production_deploy_dns_or_release_promotion
+    approval: separate_release_authorization_and_all_gates_passed
+  - action: purchase_subscription_pay_invoice_or_raise_spend_limit
+    approval: explicit_owner_approval_of_vendor_amount_currency_cadence_and_budget
+  - action: send_email_or_external_notice
+    approval: explicit_send_approval_with_recipient_and_content_review
+  - action: create_or_invite_human_account
+    approval: explicit_owner_approval
+  - action: spawn_helper_agent
+    approval: owner_approval_if_new_identity_or_permission_expansion; otherwise registered-agent delegation policy
+evidence:
+  required_fields: [timestamp_utc, actor, action, target, scope, approval_reference, result, source_reference, sha256]
+  sensitive_data: [tokens, passwords, private_keys, session_cookies, raw_environment_dumps]
+  sensitive_data_handling: never_log_or_commit; redact_before_evidence_capture
+  sha256_semantics: proves_artifact_integrity_not_truth_of_claim
+  stale_or_missing_evidence: fail_closed
+billing:
+  inventory_only_by_default: true
+  cost_estimate_requires: [provider, service, usage_assumptions, currency, pricing_source, retrieved_at_utc]
+  actual_account_charge_data_requires_authorized_billing_connector: true
+  never_invent_prices_or_assume_plan_limits: true
+  no_paid_resource_creation_without_approval: true
