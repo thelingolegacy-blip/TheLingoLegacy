@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:http/http.dart' as http;
 import 'firebase_options.dart';
+
+bool firebaseReady = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    final options = DefaultFirebaseOptions.currentPlatform;
+    final configured = options.apiKey.isNotEmpty &&
+        !options.apiKey.startsWith('YOUR_') &&
+        options.appId.isNotEmpty &&
+        !options.appId.startsWith('YOUR_');
+    if (configured) {
+      await Firebase.initializeApp(options: options);
+      firebaseReady = true;
+    }
+  } catch (_) {
+    // Keep the navigation shell usable when Firebase is not configured.
+    firebaseReady = false;
+  }
   runApp(const LingoLegacyApp());
 }
 
@@ -160,11 +176,99 @@ class _UniverseHomeState extends State<UniverseHome> {
   }
 
   void _openDestination(Destination d) {
-    final known = {'Worlds': '/worlds/', 'Games & Play': '/games/', 'Stories & Books': '/library/', 'Loyalty Lane': '/lane/', 'Music & Media': '/media/', 'askLINGO': '/ai/', 'Creator Studio': '/studio/', 'Community': '/community/'};
-    _notice('${d.title}: website route ${known[d.title] ?? d.route}. Native service integration remains pending.');
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => DestinationDetailPage(destination: d, firebaseConfigured: firebaseReady),
+    ));
   }
 
   void _notice(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), behavior: SnackBarBehavior.floating));
+  }
+}
+
+class DestinationDetailPage extends StatefulWidget {
+  const DestinationDetailPage({super.key, required this.destination, required this.firebaseConfigured});
+  final Destination destination;
+  final bool firebaseConfigured;
+
+  @override
+  State<DestinationDetailPage> createState() => _DestinationDetailPageState();
+}
+
+class _DestinationDetailPageState extends State<DestinationDetailPage> {
+  bool checking = false;
+  String connectionMessage = 'Platform connection has not been checked yet.';
+
+  Future<void> _checkPlatform() async {
+    setState(() { checking = true; connectionMessage = 'Checking The Lingo Legacy API…'; });
+    try {
+      final response = await http.get(Uri.parse('https://thelingolegacy.com/api/v1/site/context')).timeout(const Duration(seconds: 8));
+      if (!mounted) return;
+      if (response.statusCode == 200) {
+        setState(() => connectionMessage = 'Platform API reachable (HTTP 200).');
+      } else {
+        setState(() => connectionMessage = 'Platform API returned HTTP ${response.statusCode}.');
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => connectionMessage = 'Platform API could not be reached. Check connectivity and try again.');
+    } finally {
+      if (mounted) setState(() => checking = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.destination;
+    return Scaffold(
+      appBar: AppBar(title: Text(d.title)),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFF30384B)),
+                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF242044), Color(0xFF101725), ink]),
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(d.icon, style: const TextStyle(fontSize: 40)),
+                const SizedBox(height: 14),
+                Text(d.title, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 10),
+                Text(d.description, style: const TextStyle(color: muted, height: 1.5)),
+                const SizedBox(height: 18),
+                Text('Website route: /${d.route}/', style: const TextStyle(color: cyan)),
+              ]),
+            ),
+            const SizedBox(height: 16),
+            Card(child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('PLATFORM CONNECTION', style: TextStyle(color: gold, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                const SizedBox(height: 8),
+                Text(connectionMessage, style: const TextStyle(color: muted, height: 1.4)),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: checking ? null : _checkPlatform,
+                  icon: checking ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.cloud_done_outlined),
+                  label: Text(checking ? 'Checking…' : 'Check platform API'),
+                ),
+              ]),
+            )),
+            const SizedBox(height: 12),
+            Card(child: ListTile(
+              leading: Icon(widget.firebaseConfigured ? Icons.verified_user : Icons.info_outline, color: widget.firebaseConfigured ? cyan : gold),
+              title: const Text('Firebase configuration'),
+              subtitle: Text(widget.firebaseConfigured
+                  ? 'Firebase initialized for this build.'
+                  : 'Not configured in this build. Navigation and API checks remain available; sign-in and synced user data are not active.'),
+            )),
+          ],
+        ),
+      ),
+    );
   }
 }
