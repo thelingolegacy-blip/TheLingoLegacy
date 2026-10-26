@@ -52,6 +52,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Validate dispatch policy and workflow invariants
+        run: python3 ops/g02/validate_dispatch_policy.py
       - name: Capture dispatch, jobs, runner inventory, and artifacts
         id: diagnostics
         env:
