@@ -1,0 +1,51 @@
+apiVersion: lingo.ai-sre/v1alpha1
+kind: HelperRegistry
+metadata:
+  name: ai-sre-lingo-system
+  status: proposal
+  deployed: false
+defaults:
+  mode: read-only
+  allow_shell: false
+  allow_network_mutation: false
+  allow_production_mutation: false
+  require_human_approval_for_mutation: true
+  fail_closed_on_missing_evidence: true
+  require_independent_postcheck: true
+helpers:
+  - name: LINGassist
+    type: coordinator
+    default_mode: read-only
+    may_delegate_to: [LINGOassisthem, LINGOassister, LINGOadapter, LINGOadapt, LINGOadapticator]
+    may_approve_mutation: false
+    outputs: [incident_plan, task_graph, status_summary]
+  - name: LINGOassisthem
+    type: operator-assistant
+    default_mode: read-only
+    may_execute_mutations: false
+    outputs: [operator_brief, evidence_request, handoff]
+  - name: LINGOassister
+    type: diagnostics-rca
+    default_mode: read-only
+    may_execute_mutations: false
+    outputs: [signal_report, rca_hypotheses, evidence_bundle]
+  - name: LINGOadapter
+    type: integration-adapter
+    default_mode: read-only
+    allowed_connectors: [github, cloudflare, firebase, vercel, host-monitor, evidence-store]
+    credentials: short_lived_least_privilege
+    may_expand_scopes: false
+    outputs: [normalized_observation, source_reference, audit_event]
+  - name: LINGOadapt
+    type: remediation
+    default_mode: dry_run
+    requires: [human_approval, bounded_action_plan, precondition_check, rollback_plan]
+    prohibited_by_default: [production_deploy, dns_mutation, credential_rotation, runner_relabel, runner_registration, service_restart]
+    outputs: [proposed_diff, execution_receipt, rollback_receipt]
+  - name: LINGOadapticator
+    type: policy-evidence-validator
+    default_mode: read-only
+    may_execute_mutations: false
+    may_veto_release: true
+    validates: [source_provenance, evidence_freshness, sha256_integrity, acceptance_predicates, gate_dependencies]
+    outputs: [validation_report, gate_decision]
