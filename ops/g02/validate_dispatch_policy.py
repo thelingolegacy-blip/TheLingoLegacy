@@ -43,7 +43,7 @@ def main() -> int:
     require(policy.get("acceptance", {}).get("independent_review_required") is True, "independent review required")
     require(policy.get("acceptance", {}).get("diagnostics_can_authorize_release") is False, "diagnostics must never authorize release")
     require(policy.get("release_gates") == {"G02": "BLOCKED", "production": "HOLD", "fail_closed": "ACTIVE", "last_known_good": "PROTECTED"}, "protected gate state changed")
-    for marker in ("workflow_dispatch:", "pull_request:", "push:", "actions: read", "contents: read", "enable_target_runner_probe", "default: false", "self-hosted, linux, x64, lingo-g02", "g02-control-plane-", "g02-target-sentinel-", "BLOCKED"):
+    for marker in ("workflow_dispatch:", "pull_request:", "push:", "actions: read", "contents: read", "enable_target_runner_probe", "default: false", "runs-on: [self-hosted, linux, x64, lingo-g02]", "g02-control-plane-", "g02-target-sentinel-", "BLOCKED"):
         require(marker in workflow, f"workflow missing expected marker: {marker}")
     require("actions: write" not in workflow, "workflow must not request actions: write")
     require("contents: write" not in workflow, "workflow must not request contents: write")
