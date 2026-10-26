@@ -21,7 +21,8 @@
     "evidenceRules",
     "approvalRequirements",
     "currentKnownState",
-    "prohibitedActionsUnderThisDesign"
+    "prohibitedActionsUnderThisDesign",
+    "evidenceFreshness"
   ],
   "properties": {
     "schemaVersion": {
@@ -188,7 +189,39 @@
     },
     "approvalRequirements": {
       "type": "object",
-      "minProperties": 1
+      "required": [
+        "independentVerificationRequired",
+        "explicitHumanApprovalRequired",
+        "approverIdentityRequired",
+        "reasonAndTimestampRequired",
+        "leastPrivilegeRequired",
+        "rollbackOrLkgReferenceRequired",
+        "securityAndAccessibilityEvidenceRequiredWhereApplicable"
+      ],
+      "properties": {
+        "independentVerificationRequired": {
+          "const": true
+        },
+        "explicitHumanApprovalRequired": {
+          "const": true
+        },
+        "approverIdentityRequired": {
+          "const": true
+        },
+        "reasonAndTimestampRequired": {
+          "const": true
+        },
+        "leastPrivilegeRequired": {
+          "const": true
+        },
+        "rollbackOrLkgReferenceRequired": {
+          "const": true
+        },
+        "securityAndAccessibilityEvidenceRequiredWhereApplicable": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
     },
     "currentKnownState": {
       "type": "object",
@@ -226,6 +259,30 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "evidenceFreshness": {
+      "type": "object",
+      "required": [
+        "maxAgeHours",
+        "maxFutureSkewMinutes",
+        "requireTimestamp"
+      ],
+      "properties": {
+        "maxAgeHours": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 168
+        },
+        "maxFutureSkewMinutes": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "requireTimestamp": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
