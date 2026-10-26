@@ -298,6 +298,23 @@ class _AccountPanelState extends State<AccountPanel> {
     super.dispose();
   }
 
+  Future<void> _resetPassword() async {
+    final email = emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      setState(() => message = 'Enter your email first, then request a reset link.');
+      return;
+    }
+    setState(() { busy = true; message = ''; });
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) setState(() => message = 'If the account is eligible, a password reset email has been sent.');
+    } on FirebaseAuthException catch (_) {
+      if (mounted) setState(() => message = 'Password reset could not be completed. Check the address and try again.');
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   Future<void> _authenticate({required bool createAccount}) async {
     final email = emailController.text.trim();
     final password = passwordController.text;
@@ -308,7 +325,7 @@ class _AccountPanelState extends State<AccountPanel> {
     setState(() { busy = true; message = ''; });
     try {
       if (createAccount) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);\n        await FirebaseAuth.instance.currentUser?.sendEmailVerification();
       } else {
         await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       }
@@ -316,7 +333,7 @@ class _AccountPanelState extends State<AccountPanel> {
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
       setState(() => message = switch (error.code) {
-        'email-already-in-use' => 'That email already has an account. Try signing in.',
+        'email-already-in-use' => 'Could not create an account with those details. Try signing in or resetting the password.',
         'invalid-credential' || 'wrong-password' || 'user-not-found' => 'Email or password was not accepted.',
         'weak-password' => 'Choose a stronger password.',
         'network-request-failed' => 'Network error. Check your connection and retry.',
@@ -368,7 +385,7 @@ class _AccountPanelState extends State<AccountPanel> {
               const SizedBox(height: 12),
               FilledButton(onPressed: busy ? null : () => _authenticate(createAccount: false), child: Text(busy ? 'Please wait…' : 'Sign in')),
               const SizedBox(height: 8),
-              OutlinedButton(onPressed: busy ? null : () => _authenticate(createAccount: true), child: const Text('Create account')),
+              OutlinedButton(onPressed: busy ? null : () => _authenticate(createAccount: true), child: const Text('Create account')),\n              TextButton(onPressed: busy ? null : _resetPassword, child: const Text('Reset password')),
             ]);
           },
         ),
