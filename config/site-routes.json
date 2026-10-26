@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-26",
+  "routes": [
+    {
+      "path": "/",
+      "label": "Home",
+      "group": "Discover",
+      "status": "implemented"
+    },
+    {
+      "path": "/app/",
+      "label": "That’s My Lingo",
+      "group": "Play",
+      "status": "implemented"
+    },
+    {
+      "path": "/games/",
+      "label": "Games",
+      "group": "Play",
+      "status": "implemented"
+    },
+    {
+      "path": "/account/",
+      "label": "Account",
+      "group": "Account",
+      "status": "implemented"
+    },
+    {
+      "path": "/community/",
+      "label": "Community",
+      "group": "Connect",
+      "status": "implemented"
+    },
+    {
+      "path": "/library/",
+      "label": "Library",
+      "group": "Discover",
+      "status": "implemented"
+    },
+    {
+      "path": "/lane/",
+      "label": "Loyalty Lane",
+      "group": "Discover",
+      "status": "implemented"
+    },
+    {
+      "path": "/loyalty-lane-apparel/",
+      "label": "Apparel Store",
+      "group": "Shop",
+      "status": "implemented"
+    },
+    {
+      "path": "/media/",
+      "label": "Media",
+      "group": "Discover",
+      "status": "planned"
+    },
+    {
+      "path": "/ai/",
+      "label": "askLINGO",
+      "group": "Tools",
+      "status": "implemented"
+    },
+    {
+      "path": "/studio/",
+      "label": "Studio",
+      "group": "Create",
+      "status": "implemented"
+    },
+    {
+      "path": "/contact/",
+      "label": "Contact",
+      "group": "Connect",
+      "status": "implemented"
+    }
+  ]
+}
