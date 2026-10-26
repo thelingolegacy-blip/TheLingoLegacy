@@ -53,14 +53,14 @@ class Destination {
 }
 
 const destinations = <Destination>[
-  Destination('Worlds', 'Explore connected Lingo destinations.', '🌐', 'worlds'),
-  Destination('Games & Play', 'That’s My Lingo and LINGOarcade.', '🎮', 'games'),
-  Destination('Stories & Books', 'Kotton’s Code and original stories.', '📚', 'library'),
-  Destination('Loyalty Lane', 'Apparel and collection discovery.', '✦', 'apparel'),
-  Destination('Music & Media', 'The Rise of Zavione and creator media.', '♫', 'media'),
-  Destination('askLINGO', 'AI discovery; availability depends on runtime.', '✧', 'ai'),
-  Destination('Creator Studio', 'Creative tools and project discovery.', '🎨', 'studio'),
-  Destination('Community', 'Spotlights, projects, and future events.', '◎', 'community'),
+  Destination('Worlds', 'Explore connected Lingo destinations.', '🌐', '/'),
+  Destination('Games & Play', 'That’s My Lingo and LINGOarcade.', '🎮', '/games/'),
+  Destination('Stories & Books', 'Kotton’s Code and original stories.', '📚', '/library/'),
+  Destination('Loyalty Lane', 'Apparel and collection discovery.', '✦', '/loyalty-lane-apparel/'),
+  Destination('Music & Media', 'The Rise of Zavione and creator media.', '♫', '/media/'),
+  Destination('askLINGO', 'AI discovery; availability depends on runtime.', '✧', '/ai/'),
+  Destination('Creator Studio', 'Creative tools and project discovery.', '🎨', '/studio/'),
+  Destination('Community', 'Spotlights, projects, and future events.', '◎', '/community/'),
 ];
 
 class UniverseHome extends StatefulWidget {
@@ -240,7 +240,7 @@ class _DestinationDetailPageState extends State<DestinationDetailPage> {
                 const SizedBox(height: 10),
                 Text(d.description, style: const TextStyle(color: muted, height: 1.5)),
                 const SizedBox(height: 18),
-                Text('Website route: /${d.route}/', style: const TextStyle(color: cyan)),
+                Text('Website route: ${d.route}', style: const TextStyle(color: cyan)),
               ]),
             ),
             const SizedBox(height: 16),
