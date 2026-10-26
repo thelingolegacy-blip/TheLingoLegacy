@@ -108,5 +108,10 @@
     "treating-unknown-as-pass",
     "reusing-authorization-for-different-artifact",
     "changing-production-or-dns-as-a-side-effect-of-validation"
-  ]
+  ],
+  "evidenceFreshness": {
+    "maxAgeHours": 24,
+    "maxFutureSkewMinutes": 5,
+    "requireTimestamp": true
+  }
 }
