@@ -1,0 +1,94 @@
+openapi: 3.1.0
+info:
+  title: The Lingo Legacy Public Platform API
+  version: 1.0.0
+  description: Public runtime and navigation discovery endpoints. Feature availability is not a guarantee of downstream integration.
+servers:
+  - url: https://thelingolegacy.com
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      summary: Runtime health probe
+      responses:
+        '200':
+          description: Runtime is responding
+          content:
+            text/plain:
+              schema: { type: string }
+  /api/v1/runtime:
+    get:
+      operationId: getRuntimeManifest
+      summary: Read the public runtime manifest
+      responses:
+        '200':
+          description: Runtime manifest
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /api/v1/platform/status:
+    get:
+      operationId: getPlatformStatus
+      summary: Read platform release status
+      responses:
+        '200':
+          description: Status snapshot
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /api/v1/platform/gates:
+    get:
+      operationId: getReleaseGates
+      summary: Read fail-closed release gates
+      responses:
+        '200':
+          description: Release gate snapshot
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /api/v1/platform/modules:
+    get:
+      operationId: getPlatformModules
+      summary: List platform modules
+      responses:
+        '200':
+          description: Module inventory
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /api/v1/site/context:
+    get:
+      operationId: getSiteContext
+      summary: Read public site context
+      responses:
+        '200':
+          description: Site context
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /api/v1/site/routes:
+    get:
+      operationId: getSiteRoutes
+      summary: List navigable site routes and their lifecycle status
+      responses:
+        '200':
+          description: Route inventory
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, version, routes]
+                properties:
+                  ok: { type: boolean }
+                  version: { type: integer }
+                  generated_at: { type: string, format: date-time }
+                  routes:
+                    type: array
+                    items:
+                      type: object
+                      required: [path, label, status, group]
+                      properties:
+                        path: { type: string }
+                        label: { type: string }
+                        status: { type: string, enum: [implemented, planned, blocked] }
+                        group: { type: string }
