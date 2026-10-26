@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only G02 Actions diagnostics using the authenticated GitHub CLI."""
 from __future__ import annotations
-import json, os, subprocess, sys, time
+import argparse, json, os, subprocess, sys, time
 from pathlib import Path
 
 def gh_api(path: str):
@@ -24,6 +24,9 @@ def logs_probe(repo: str, job_id: int):
         return {"retrievable": False, "error": type(exc).__name__}
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output', default='g02-evidence')
+    args = parser.parse_args()
     repo = os.environ.get("GITHUB_REPOSITORY", "")
     current_run = os.environ.get("GITHUB_RUN_ID", "")
     target_run = os.environ.get("TARGET_RUN_ID", "").strip() or current_run
@@ -47,9 +50,11 @@ def main():
     steps = any(bool(j.get("steps")) for j in target_jobs)
     sentinel_ok = any(j.get("status") == "completed" and j.get("conclusion") == "success" for j in target_jobs)
     log_checks = [{"job_id": j["id"], "runner_id": j.get("runner_id"), "runner_name": j.get("runner_name"), **logs_probe(repo, int(j["id"]))} for j in assigned if j.get("id")]
+    expected_attempt = run.get('run_attempt') or 1
+    expected_artifact_name = f'g02-target-sentinel-{target_run}-{expected_attempt}'
     artifact_records = [
         {"id": a.get("id"), "name": a.get("name"), "expired": a.get("expired"), "size_in_bytes": a.get("size_in_bytes"), "created_at": a.get("created_at")}
-        for a in artifacts if str(a.get("name", "")).startswith(f"g02-target-sentinel-{target_run}-") and not a.get("expired", False)
+        for a in artifacts if a.get("name") == expected_artifact_name and not a.get("expired", False)
     ]
     predicates = {
         "run_record_readable": run_r["ok"],
@@ -86,7 +91,7 @@ def main():
         "incident_ref": os.environ.get("INCIDENT_REF", ""),
         "interpretation": "This report is diagnostic evidence only. It cannot authorize release or substitute for independent acceptance.",
     }
-    out = Path("g02-evidence")
+    out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
     (out / "dispatch-diagnostics.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     summary = [
