@@ -58,7 +58,8 @@ async function fixture() {
     commitSha,
     artifactDigest
   };
-  return { policy, registry, release };
+  const now = "2026-10-26T12:45:00.000Z";
+  return { policy, registry, release, now };
 }
 
 test("design policy and unreconciled registry never authorize production", async () => {
@@ -94,6 +95,22 @@ test("evidence bound to a different artifact fails closed", async () => {
   const result = evaluateAuthorization(context);
   assert.equal(result.decision, "BLOCKED");
   assert.ok(result.reasons.includes("gate-evidence-invalid-or-unbound:G03"));
+});
+
+test("stale evidence fails closed", async () => {
+  const context = await fixture();
+  context.release.gates.G05.evidence.verifiedAt = "2026-10-24T12:00:00.000Z";
+  const result = evaluateAuthorization(context);
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.includes("gate-evidence-stale-or-future-dated:G05"));
+});
+
+test("future-dated evidence beyond clock-skew tolerance fails closed", async () => {
+  const context = await fixture();
+  context.release.gates.G05.evidence.verifiedAt = "2026-10-26T13:00:00.000Z";
+  const result = evaluateAuthorization(context);
+  assert.equal(result.decision, "BLOCKED");
+  assert.ok(result.reasons.includes("gate-evidence-stale-or-future-dated:G05"));
 });
 
 test("G02 runner ID zero or missing execution evidence fails closed", async () => {
