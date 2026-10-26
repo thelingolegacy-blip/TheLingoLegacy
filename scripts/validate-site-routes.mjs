@@ -22,8 +22,10 @@ for (const route of manifest.routes) {
   if (!candidates.some((candidate) => fs.existsSync(candidate))) errors.push("No local target for " + route.path);
 }
 const nav = fs.readFileSync("assets/lingo-route-matrix.js", "utf8");
+const worker = fs.readFileSync("worker.js", "utf8");
 for (const route of manifest.routes.filter((item) => item.status !== "planned")) {
   if (!nav.includes(route.path)) errors.push("Navigation misses registered route: " + route.path);
+  if (!worker.includes(route.path)) errors.push("Backend route registry misses route: " + route.path);
 }
 if (errors.length) {
   console.error(errors.join("\n"));
