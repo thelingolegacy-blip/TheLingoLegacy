@@ -1,0 +1,52 @@
+name: Site Route Validation
+
+on:
+  pull_request:
+    paths:
+      - 'config/site-routes.json'
+      - 'assets/lingo-route-matrix.js'
+      - 'index.html'
+      - 'account/**'
+      - 'ai/**'
+      - 'app/**'
+      - 'community/**'
+      - 'contact/**'
+      - 'games/**'
+      - 'lane/**'
+      - 'library/**'
+      - 'loyalty-lane-apparel/**'
+      - 'studio/**'
+      - 'worker.js'
+      - 'scripts/validate-site-routes.mjs'
+      - '.github/workflows/site-route-validation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/site-routes.json'
+      - 'assets/lingo-route-matrix.js'
+      - 'index.html'
+      - 'worker.js'
+      - 'scripts/validate-site-routes.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-route-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate route registry and local targets
+        run: node scripts/validate-site-routes.mjs
+      - name: Check backend route contract markers
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; const s=fs.readFileSync('worker.js','utf8'); for(const p of ['/healthz','/api/v1/platform/status','/api/v1/site/context']) { if(!s.includes(p)) throw new Error('Missing backend route marker: '+p); } console.log('Backend route markers found.');"
