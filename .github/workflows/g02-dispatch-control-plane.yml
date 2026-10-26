@@ -1,0 +1,151 @@
+name: G02 Dispatch Control Plane
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_run_id:
+        description: 'Optional prior GitHub Actions run ID to correlate'
+        required: false
+        type: string
+      enable_target_runner_probe:
+        description: 'Explicitly request the minimal self-hosted runner sentinel job'
+        required: true
+        default: false
+        type: boolean
+      incident_ref:
+        description: 'Incident or change reference for the audit record'
+        required: false
+        type: string
+  pull_request:
+    paths:
+      - '.github/workflows/g02-dispatch-control-plane.yml'
+      - 'ops/g02/**'
+      - 'docs/runbooks/G02-DISPATCH-CONTROL-PLANE.md'
+  push:
+    branches:
+      - 'ops/g02-dispatch-control-plane-2026-10-26'
+    paths:
+      - '.github/workflows/g02-dispatch-control-plane.yml'
+      - 'ops/g02/**'
+      - 'docs/runbooks/G02-DISPATCH-CONTROL-PLANE.md'
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: g02-dispatch-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  control-plane-diagnostics:
+    name: Control-plane inventory and correlation
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      report_status: ${{ steps.diagnostics.outputs.report_status }}
+    steps:
+      - name: Checkout reviewed ref
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Capture dispatch, jobs, runner inventory, and artifacts
+        id: diagnostics
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          TARGET_RUN_ID: ${{ inputs.target_run_id || '' }}
+          INCIDENT_REF: ${{ inputs.incident_ref || '' }}
+        run: python3 ops/g02/dispatch_diagnostics.py --output g02-evidence
+      - name: Publish control-plane evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-control-plane-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  target-runner-sentinel:
+    name: Target runner assignment sentinel
+    if: github.event_name == 'workflow_dispatch' && inputs.enable_target_runner_probe == true
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      # Intentionally no checkout and no repository scripts on the self-hosted runner.
+      # Keep this job to built-in shell diagnostics and safe context metadata only.
+      - name: Emit minimal runner identity and execution sentinel
+        shell: bash
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUNNER_NAME_VALUE: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-target-evidence
+          python3 - <<'PY'
+          import json, os, platform, socket, time
+          report = {
+              'schema': 'lingo.g02.target-sentinel/v1',
+              'component': 'G02 target runner sentinel',
+              'run_id': os.environ['RUN_ID'],
+              'run_attempt': os.environ['RUN_ATTEMPT'],
+              'commit_sha': os.environ['COMMIT_SHA'],
+              'event_name': os.environ['EVENT_NAME'],
+              'runner_name': os.environ['RUNNER_NAME_VALUE'],
+              'runner_os': os.environ['RUNNER_OS_VALUE'],
+              'runner_arch': os.environ['RUNNER_ARCH_VALUE'],
+              'hostname': socket.gethostname(),
+              'platform': platform.platform(),
+              'sentinel_executed': True,
+              'timestamp_utc_epoch': int(time.time()),
+              'release_authorization': False,
+              'gate_state': {'G02': 'BLOCKED_PENDING_INDEPENDENT_CORRELATION', 'production': 'HOLD'},
+          }
+          with open('g02-target-evidence/target-sentinel.json', 'w', encoding='utf-8') as f:
+              json.dump(report, f, indent=2, sort_keys=True)
+          print(json.dumps({k: report[k] for k in ('schema','run_id','run_attempt','commit_sha','runner_name','sentinel_executed','release_authorization')}))
+          PY
+      - name: Upload target runner sentinel artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-target-sentinel-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-target-evidence/
+          if-no-files-found: error
+          retention-days: 14
+
+  gate-summary:
+    name: Fail-closed gate summary
+    if: always()
+    needs: [control-plane-diagnostics, target-runner-sentinel]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Report that workflow completion is not G02 acceptance
+        env:
+          CONTROL_PLANE_RESULT: ${{ needs.control-plane-diagnostics.result }}
+          TARGET_RESULT: ${{ needs.target-runner-sentinel.result }}
+        run: |
+          echo '## G02 Dispatch Control Plane' >> "$GITHUB_STEP_SUMMARY"
+          echo "- Control-plane diagnostics: ${CONTROL_PLANE_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Target runner sentinel: ${TARGET_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo '- G02 acceptance: BLOCKED until independently correlated runner assignment, steps, logs, and artifact evidence pass.' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Production: HOLD; fail-closed: ACTIVE; last-known-good: PROTECTED.' >> "$GITHUB_STEP_SUMMARY"
+          echo '- A skipped or queued target job is not a pass.' >> "$GITHUB_STEP_SUMMARY"
