@@ -17,6 +17,11 @@ export function evaluateAuthorization({ policy, registry, release, now = new Dat
     else if (surface.owner === "UNKNOWN" || surface.environment === "UNKNOWN" ||
       surface.deploymentTarget === "UNKNOWN" || surface.dependencies === "UNKNOWN") {
       reasons.push(`surface-inventory-incomplete:${surfaceId}`);
+    } else {
+      if (surface.environment !== release.environment) reasons.push(`surface-environment-mismatch:${surfaceId}`);
+      for (const osTarget of release.osTargets ?? []) {
+        if (!surface.osTargets.includes(osTarget)) reasons.push(`surface-os-target-not-registered:${surfaceId}:${osTarget}`);
+      }
     }
   }
 
