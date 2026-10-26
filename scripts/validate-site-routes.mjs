@@ -7,7 +7,8 @@ const seen = new Set();
 const errors = [];
 for (const route of manifest.routes) {
   if (!route.path || !route.path.startsWith("/") || !route.label || !route.group) {
-    errors.push("Route needs absolute path, label and group: " + JSON.stringify(route)); continue;
+    errors.push("Route needs absolute path, label and group: " + JSON.stringify(route));
+    continue;
   }
   if (seen.has(route.path)) errors.push("Duplicate route path: " + route.path);
   seen.add(route.path);
@@ -16,7 +17,7 @@ for (const route of manifest.routes) {
     if (!fs.existsSync("index.html")) errors.push("Missing index.html for /");
     continue;
   }
-  const clean = route.path.replace(/^\\/+|\\/+$/g, "");
+  const clean = route.path.split("/").filter(Boolean).join("/");
   const candidates = [path.join(clean, "index.html"), path.join(clean + ".html")];
   if (!candidates.some((candidate) => fs.existsSync(candidate))) errors.push("No local target for " + route.path);
 }
@@ -24,5 +25,8 @@ const nav = fs.readFileSync("assets/lingo-route-matrix.js", "utf8");
 for (const route of manifest.routes.filter((item) => item.status !== "planned")) {
   if (!nav.includes(route.path)) errors.push("Navigation misses registered route: " + route.path);
 }
-if (errors.length) { console.error(errors.join("\\n")); process.exit(1); }
+if (errors.length) {
+  console.error(errors.join("\n"));
+  process.exit(1);
+}
 console.log("Validated " + manifest.routes.length + " routes and navigation registry.");
