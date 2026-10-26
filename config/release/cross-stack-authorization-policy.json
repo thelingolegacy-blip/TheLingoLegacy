@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0.0",
+  "policyId": "lingo-cross-stack-release-authorization",
+  "status": "DESIGN_NOT_ACTIVE_AUTHORIZATION",
+  "defaultDecision": "BLOCKED",
+  "failClosed": true,
+  "productionPromotionEnabledByThisPolicy": false,
+  "requiredEvidenceChain": [
+    "SOURCE",
+    "EVIDENCE",
+    "VERIFICATION",
+    "ACCEPTANCE",
+    "PASSED",
+    "AUTHORIZATION",
+    "PROMOTION"
+  ],
+  "decisionStates": [
+    "BLOCKED",
+    "ELIGIBLE_FOR_APPROVAL",
+    "AUTHORIZED"
+  ],
+  "authorizationScope": {
+    "bindToCommitSha": true,
+    "bindToArtifactDigest": true,
+    "bindToReleaseCandidate": true,
+    "bindToEnvironment": true,
+    "bindToSurfaceIds": true,
+    "bindToOsTargets": true,
+    "expiresOrRequiresRevalidationOnSourceChange": true
+  },
+  "requiredGates": {
+    "G00": "SOURCE_AUTHORITY",
+    "G01": "REPOSITORY_IDENTITY",
+    "G02": "RUNNER_DISPATCH_AND_EXECUTION_EVIDENCE",
+    "G03": "CI_EXECUTION",
+    "G04": "INDEPENDENT_CERTIFICATION",
+    "G05": "RELEASE_CANDIDATE_ACCEPTANCE",
+    "G06": "DEPLOYMENT_AUTHORIZATION",
+    "G07": "LIVE_VALIDATION",
+    "G08": "SYNCHRONIZATION",
+    "G09": "ACTIVATION",
+    "G10": "POST_ACTIVATION_VALIDATION",
+    "G11": "FINAL_ACCEPTANCE"
+  },
+  "g02Acceptance": {
+    "runnerIdGreaterThan": 0,
+    "runnerNameRequired": true,
+    "jobAssignedRequired": true,
+    "stepsInstantiatedRequired": true,
+    "sentinelExecutedRequired": true,
+    "logsRetrievableRequired": true,
+    "runAttemptCommitArtifactCorrelationRequired": true,
+    "emptyJobsOrArtifactsMeansPass": false
+  },
+  "coverageGroups": [
+    "web-nextjs-typescript",
+    "flutter-mobile",
+    "game-runtimes-gdevelop-unity-lingo-engines",
+    "firebase-auth-firestore-cloud-functions",
+    "cloudflare-workers-pages-dns-access",
+    "vercel-hosting-domains",
+    "shopify-commerce-webhooks",
+    "apis-integrations-shared-runtime",
+    "data-analytics-telemetry",
+    "ci-cd-agents-automation"
+  ],
+  "osAndExecutionTargets": [
+    "linux-hosted-runner",
+    "linux-self-hosted-runner",
+    "windows",
+    "macos",
+    "android",
+    "ios",
+    "containers",
+    "cloudflare-workers-edge-runtime",
+    "supported-browsers",
+    "declared-game-runtime-devices"
+  ],
+  "evidenceRules": {
+    "unknownIsPass": false,
+    "missingEvidenceIsPass": false,
+    "staleEvidenceIsPass": false,
+    "staticValidationSatisfiesRuntimeExecutionGate": false,
+    "previewDeploymentSatisfiesProductionAcceptance": false,
+    "heartbeatSatisfiesRunnerAssignment": false,
+    "draftPullRequestSatisfiesAcceptance": false
+  },
+  "approvalRequirements": {
+    "independentVerificationRequired": true,
+    "explicitHumanApprovalRequired": true,
+    "approverIdentityRequired": true,
+    "reasonAndTimestampRequired": true,
+    "leastPrivilegeRequired": true,
+    "rollbackOrLkgReferenceRequired": true,
+    "securityAndAccessibilityEvidenceRequiredWhereApplicable": true
+  },
+  "currentKnownState": {
+    "g02": "BLOCKED",
+    "production": "HOLD",
+    "failClosed": "ACTIVE",
+    "lastKnownGood": "PROTECTED",
+    "productionAuthorization": "NOT_GRANTED"
+  },
+  "prohibitedActionsUnderThisDesign": [
+    "automatic-production-promotion",
+    "bypassing-required-gates",
+    "fabricating-or-inferring-evidence",
+    "treating-unknown-as-pass",
+    "reusing-authorization-for-different-artifact",
+    "changing-production-or-dns-as-a-side-effect-of-validation"
+  ]
+}
