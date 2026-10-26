@@ -1,0 +1,307 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "lingo-legacy-canonical-surface-matrix",
+  "status": "DRAFT_UNRECONCILED",
+  "sourceOfTruthIntent": "This registry is the intended canonical release-governance inventory; it is not yet authoritative until reconciled with Surface Matrix PRs #392/#393 and live platform evidence.",
+  "updatedAt": "2026-10-26",
+  "reconciliationRules": {
+    "unknownValuesBlockRelease": true,
+    "inventoryEntryIsNotDeploymentEvidence": true,
+    "productionAuthorizationEnabled": false,
+    "requireStableSurfaceId": true,
+    "requireOwnerAndEnvironmentEvidence": true,
+    "requireDependencyAndOsReconciliation": true
+  },
+  "surfaces": [
+    {
+      "surfaceId": "web.nextjs-flagship",
+      "coverageGroup": "web-nextjs-typescript",
+      "stack": "Next.js / TypeScript",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "supported-browsers"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "mobile.flutter-super-app",
+      "coverageGroup": "flutter-mobile",
+      "stack": "Flutter",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "android",
+        "ios"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "games.gdevelop-unity-lingo-engines",
+      "coverageGroup": "game-runtimes-gdevelop-unity-lingo-engines",
+      "stack": "GDevelop / Unity / LINGO game engines",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "declared-game-runtime-devices"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "backend.firebase-services",
+      "coverageGroup": "firebase-auth-firestore-cloud-functions",
+      "stack": "Firebase Auth / Firestore / Cloud Functions",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "cloud-runtime"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "edge.cloudflare-platform",
+      "coverageGroup": "cloudflare-workers-pages-dns-access",
+      "stack": "Cloudflare Workers / Pages / DNS / Access",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "cloudflare-workers-edge-runtime"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "hosting.vercel-domains",
+      "coverageGroup": "vercel-hosting-domains",
+      "stack": "Vercel hosting / domains",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "cloud-runtime"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "commerce.shopify-webhooks",
+      "coverageGroup": "shopify-commerce-webhooks",
+      "stack": "Shopify commerce / webhooks",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "supported-browsers",
+        "cloud-runtime"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "integration.apis-shared-runtime",
+      "coverageGroup": "apis-integrations-shared-runtime",
+      "stack": "APIs / integrations / shared runtime",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "linux-hosted-runner",
+        "linux-self-hosted-runner",
+        "windows",
+        "macos",
+        "containers"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "observability.analytics-telemetry",
+      "coverageGroup": "data-analytics-telemetry",
+      "stack": "Data / analytics / telemetry",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "cloud-runtime"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "surfaceId": "delivery.cicd-agent-automation",
+      "coverageGroup": "ci-cd-agents-automation",
+      "stack": "CI/CD / agents / automation",
+      "owner": "UNKNOWN",
+      "environment": "UNKNOWN",
+      "osTargets": [
+        "linux-hosted-runner",
+        "linux-self-hosted-runner",
+        "windows",
+        "macos",
+        "containers"
+      ],
+      "deploymentTarget": "UNKNOWN",
+      "dependencies": "UNKNOWN",
+      "status": "UNRECONCILED",
+      "requiredGates": [
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11"
+      ],
+      "evidenceRefs": []
+    }
+  ]
+}
