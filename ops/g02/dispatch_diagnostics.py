@@ -162,6 +162,7 @@ def main() -> int:
     parser.add_argument("--output", default="g02-evidence")
     parser.add_argument("--target-run-id", default="")
     parser.add_argument("--expected-sha", default="")
+    parser.add_argument("--control-plane-only", action="store_true", help="Validate readable control-plane APIs without requiring a target sentinel job.")
     args = parser.parse_args()
 
     repo = os.environ.get("GITHUB_REPOSITORY", "")
@@ -180,7 +181,7 @@ def main() -> int:
     evaluated = evaluate(run_result, jobs_result, artifacts_result, runners_result, repo)
 
     run = evaluated["run"]
-    target_sha = args.expected_sha or str(run.get("head_sha") or "")
+    target_sha = args.expected_sha or os.environ.get("GITHUB_SHA", "").strip() or str(run.get("head_sha") or "")
     observed_sha = str(run.get("head_sha") or "")
     sha_matches = bool(target_sha and observed_sha and target_sha == observed_sha)
     predicates = dict(evaluated["predicates"])
@@ -279,12 +280,15 @@ def main() -> int:
     # A diagnostic collection can be useful while reporting failures, but the
     # process exits nonzero whenever required APIs are inaccessible or the
     # observable target predicates fail.
-    required = (
-        "run_record_readable", "jobs_list_readable", "artifacts_list_readable",
-        "target_job_present", "runner_id_and_name_present", "sentinel_step_present",
-        "sentinel_step_completed_successfully", "job_logs_retrievable",
-        "target_artifact_metadata_present", "expected_commit_sha_matches_run",
-    )
+    if args.control_plane_only:
+        required = ("run_record_readable", "jobs_list_readable", "artifacts_list_readable")
+    else:
+        required = (
+            "run_record_readable", "jobs_list_readable", "artifacts_list_readable",
+            "target_job_present", "runner_id_and_name_present", "sentinel_step_present",
+            "sentinel_step_completed_successfully", "job_logs_retrievable",
+            "target_artifact_metadata_present", "expected_commit_sha_matches_run",
+        )
     return 0 if all(predicates.get(key) is True for key in required) else 1
 
 
