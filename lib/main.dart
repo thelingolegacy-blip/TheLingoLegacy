@@ -97,7 +97,8 @@ class _UniverseHomeState extends State<UniverseHome> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('ONE UNIVERSE · MANY DESTINATIONS', style: TextStyle(color: cyan, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.6)),
                 const SizedBox(height: 16),
-                const Text('The Lingo\nUniverse Hub', style: TextStyle(fontSize: 42, height: 0.98, fontWeight: FontWeight.w900, letterSpacing: -2)),
+                const Text('The Lingo
+Universe Hub', style: TextStyle(fontSize: 42, height: 0.98, fontWeight: FontWeight.w900, letterSpacing: -2)),
                 const SizedBox(height: 14),
                 const Text('Explore worlds, discover stories, play, build, and connect — all from one home.', style: TextStyle(color: muted, height: 1.5)),
                 const SizedBox(height: 20),
@@ -325,7 +326,8 @@ class _AccountPanelState extends State<AccountPanel> {
     setState(() { busy = true; message = ''; });
     try {
       if (createAccount) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);\n        await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+        await FirebaseAuth.instance.currentUser?.sendEmailVerification();
       } else {
         await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       }
@@ -385,7 +387,8 @@ class _AccountPanelState extends State<AccountPanel> {
               const SizedBox(height: 12),
               FilledButton(onPressed: busy ? null : () => _authenticate(createAccount: false), child: Text(busy ? 'Please wait…' : 'Sign in')),
               const SizedBox(height: 8),
-              OutlinedButton(onPressed: busy ? null : () => _authenticate(createAccount: true), child: const Text('Create account')),\n              TextButton(onPressed: busy ? null : _resetPassword, child: const Text('Reset password')),
+              OutlinedButton(onPressed: busy ? null : () => _authenticate(createAccount: true), child: const Text('Create account')),
+              TextButton(onPressed: busy ? null : _resetPassword, child: const Text('Reset password')),
             ]);
           },
         ),
