@@ -15,6 +15,7 @@ on:
       - 'lane/**'
       - 'library/**'
       - 'loyalty-lane-apparel/**'
+      - 'media/**'
       - 'studio/**'
       - 'worker.js'
       - 'scripts/validate-site-routes.mjs'
