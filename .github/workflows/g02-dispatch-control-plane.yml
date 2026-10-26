@@ -16,6 +16,11 @@ on:
         description: 'Incident or change reference for the audit record'
         required: false
         type: string
+      validate_completed_target_run:
+        description: 'Validate a previously completed target run; provide target_run_id and expected SHA'
+        required: true
+        default: false
+        type: boolean
   pull_request:
     paths:
       - '.github/workflows/g02-dispatch-control-plane.yml'
@@ -69,13 +74,22 @@ jobs:
           TARGET_RUN_ID: ${{ inputs.target_run_id || '' }}
           INCIDENT_REF: ${{ inputs.incident_ref || '' }}
           TARGET_PROBE_ENABLED: ${{ inputs.enable_target_runner_probe || false }}
+          VALIDATE_COMPLETED_TARGET_RUN: ${{ inputs.validate_completed_target_run || false }}
+          EXPECTED_TARGET_SHA: ${{ inputs.expected_sha || '' }}
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" != "workflow_dispatch" || "${TARGET_PROBE_ENABLED}" != "true" ]]; then
-            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence --control-plane-only
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${VALIDATE_COMPLETED_TARGET_RUN}" == "true" ]]; then
+            if [[ -z "${TARGET_RUN_ID}" || -z "${EXPECTED_TARGET_SHA}" ]]; then
+              echo "Completed-run validation requires target_run_id and expected SHA." >&2
+              exit 2
+            fi
+            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence --target-run-id "${TARGET_RUN_ID}" --expected-sha "${EXPECTED_TARGET_SHA}"
           else
-            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence
+            # The sentinel job runs in parallel; do not race it by evaluating
+            # its steps/artifact before it has completed. Validate it in a
+            # separate dispatch against the completed run ID and expected SHA.
+            python3 ops/g02/dispatch_diagnostics.py --output g02-evidence --control-plane-only
           fi
       - name: Publish control-plane evidence artifact
         if: always()
