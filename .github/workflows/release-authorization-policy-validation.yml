@@ -1,0 +1,44 @@
+name: Release Authorization Policy Validation
+
+on:
+  pull_request:
+    paths:
+      - "config/release/**"
+      - "schemas/release-governance/**"
+      - "scripts/release-governance/**"
+      - ".github/workflows/release-authorization-policy-validation.yml"
+  push:
+    branches:
+      - "feat/release-authorization-schema-tests-registry-2026-10-26"
+    paths:
+      - "config/release/**"
+      - "schemas/release-governance/**"
+      - "scripts/release-governance/**"
+      - ".github/workflows/release-authorization-policy-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-authorization-policy-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  policy-validation:
+    name: Validate schema, registry, and fail-closed decisions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate authorization policy against JSON Schema
+        run: npx --yes ajv-cli@5 validate --spec=draft2020 --strict=false -s schemas/release-governance/cross-stack-authorization-policy.schema.json -d config/release/cross-stack-authorization-policy.json
+      - name: Validate Surface Matrix registry against JSON Schema
+        run: npx --yes ajv-cli@5 validate --spec=draft2020 --strict=false -s schemas/release-governance/surface-matrix.registry.schema.json -d config/release/surface-matrix.registry.json
+      - name: Run fail-closed authorization regression tests
+        run: node --test scripts/release-governance/authorization-decision.test.mjs
