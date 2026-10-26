@@ -25,6 +25,21 @@ const PLATFORM_MODULES = Object.freeze([
   'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
+const SITE_ROUTES = Object.freeze([
+  { path: '/', label: 'Home', status: 'implemented', group: 'Discover' },
+  { path: '/app/', label: 'That’s My Lingo', status: 'implemented', group: 'Play' },
+  { path: '/games/', label: 'Games', status: 'implemented', group: 'Play' },
+  { path: '/account/', label: 'Account', status: 'implemented', group: 'Account' },
+  { path: '/community/', label: 'Community', status: 'implemented', group: 'Connect' },
+  { path: '/library/', label: 'Library', status: 'implemented', group: 'Discover' },
+  { path: '/lane/', label: 'Loyalty Lane', status: 'implemented', group: 'Discover' },
+  { path: '/loyalty-lane-apparel/', label: 'Apparel', status: 'implemented', group: 'Shop' },
+  { path: '/ai/', label: 'askLINGO', status: 'implemented', group: 'Tools' },
+  { path: '/studio/', label: 'Studio', status: 'implemented', group: 'Create' },
+  { path: '/contact/', label: 'Contact', status: 'implemented', group: 'Connect' },
+  { path: '/media/', label: 'Media', status: 'planned', group: 'Discover' }
+]);
+
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
   'x-frame-options': 'DENY',
@@ -228,6 +243,7 @@ export default {
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
+      if (url.pathname === '/api/v1/site/routes' && request.method === 'GET') return json({ ok: true, version: 1, routes: SITE_ROUTES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
