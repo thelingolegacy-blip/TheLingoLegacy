@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/release-governance/cross-stack-authorization-policy.schema.json",
+  "title": "LINGO Legacy Cross-Stack Release Authorization Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyId",
+    "status",
+    "defaultDecision",
+    "failClosed",
+    "productionPromotionEnabledByThisPolicy",
+    "requiredEvidenceChain",
+    "decisionStates",
+    "authorizationScope",
+    "requiredGates",
+    "g02Acceptance",
+    "coverageGroups",
+    "osAndExecutionTargets",
+    "evidenceRules",
+    "approvalRequirements",
+    "currentKnownState",
+    "prohibitedActions"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "policyId": {
+      "type": "string",
+      "const": "lingo-cross-stack-release-authorization"
+    },
+    "status": {
+      "type": "string",
+      "const": "DESIGN_NOT_ACTIVE_AUTHORIZATION"
+    },
+    "defaultDecision": {
+      "type": "string",
+      "const": "BLOCKED"
+    },
+    "failClosed": {
+      "type": "boolean",
+      "const": true
+    },
+    "productionPromotionEnabledByThisPolicy": {
+      "type": "boolean",
+      "const": false
+    },
+    "requiredEvidenceChain": {
+      "type": "array",
+      "const": [
+        "SOURCE",
+        "EVIDENCE",
+        "VERIFICATION",
+        "ACCEPTANCE",
+        "PASSED",
+        "AUTHORIZATION",
+        "PROMOTION"
+      ]
+    },
+    "decisionStates": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "BLOCKED",
+          "ELIGIBLE_FOR_APPROVAL",
+          "AUTHORIZED"
+        ]
+      },
+      "minItems": 3,
+      "uniqueItems": true
+    },
+    "authorizationScope": {
+      "type": "object",
+      "required": [
+        "bindToCommitSha",
+        "bindToArtifactDigest",
+        "bindToReleaseCandidate",
+        "bindToEnvironment",
+        "bindToSurfaceIds",
+        "bindToOsTargets",
+        "expiresOrRequiresRevalidationOnSourceChange"
+      ],
+      "properties": {
+        "bindToCommitSha": {
+          "const": true
+        },
+        "bindToArtifactDigest": {
+          "const": true
+        },
+        "bindToReleaseCandidate": {
+          "const": true
+        },
+        "bindToEnvironment": {
+          "const": true
+        },
+        "bindToSurfaceIds": {
+          "const": true
+        },
+        "bindToOsTargets": {
+          "const": true
+        },
+        "expiresOrRequiresRevalidationOnSourceChange": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "requiredGates": {
+      "type": "object",
+      "minProperties": 12,
+      "maxProperties": 12,
+      "propertyNames": {
+        "pattern": "^G(0[0-9]|1[01])$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "g02Acceptance": {
+      "type": "object",
+      "required": [
+        "runnerIdGreaterThan",
+        "runnerNameRequired",
+        "jobAssignedRequired",
+        "stepsInstantiatedRequired",
+        "sentinelExecutedRequired",
+        "logsRetrievableRequired",
+        "runAttemptCommitArtifactCorrelationRequired",
+        "emptyJobsOrArtifactsMeansPass"
+      ],
+      "properties": {
+        "runnerIdGreaterThan": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "runnerNameRequired": {
+          "const": true
+        },
+        "jobAssignedRequired": {
+          "const": true
+        },
+        "stepsInstantiatedRequired": {
+          "const": true
+        },
+        "sentinelExecutedRequired": {
+          "const": true
+        },
+        "logsRetrievableRequired": {
+          "const": true
+        },
+        "runAttemptCommitArtifactCorrelationRequired": {
+          "const": true
+        },
+        "emptyJobsOrArtifactsMeansPass": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverageGroups": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "osAndExecutionTargets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidenceRules": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "approvalRequirements": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "currentKnownState": {
+      "type": "object",
+      "required": [
+        "G02",
+        "production",
+        "failClosed",
+        "lastKnownGood",
+        "authorization"
+      ],
+      "properties": {
+        "G02": {
+          "const": "BLOCKED"
+        },
+        "production": {
+          "const": "HOLD"
+        },
+        "failClosed": {
+          "const": "ACTIVE"
+        },
+        "lastKnownGood": {
+          "const": "PROTECTED"
+        },
+        "authorization": {
+          "const": "NOT_GRANTED"
+        }
+      },
+      "additionalProperties": true
+    },
+    "prohibitedActions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
