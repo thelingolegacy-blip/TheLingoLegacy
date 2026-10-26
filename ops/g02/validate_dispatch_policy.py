@@ -48,6 +48,10 @@ def main() -> int:
     require("actions: write" not in workflow, "workflow must not request actions: write")
     require("contents: write" not in workflow, "workflow must not request contents: write")
     require("secrets: write" not in workflow, "workflow must not request secrets: write")
+    require("ruby -e 'require \"yaml\";" in workflow, "workflow YAML parse step missing")
+    require("python3 -m unittest ops/g02/test_dispatch_diagnostics.py" in workflow, "diagnostic regression tests are not wired into CI")
+    require("--control-plane-only" in workflow, "control-plane-only diagnostic path missing")
+    require("TARGET_PROBE_ENABLED" in workflow, "target probe must be explicitly gated")
 
     if errors:
         print("G02 DISPATCH POLICY VALIDATION: FAIL")
