@@ -76,6 +76,12 @@ if (contract.site && wrangler && release) {
   check('homepage-title', title.length >= 10, 'homepage has a descriptive title');
   check('homepage-description', description.length >= 50, 'homepage has a useful meta description');
   check('homepage-canonical', canonical === contract.requiredLandingMetadata?.canonical, `homepage canonical is ${canonical || 'missing'}`);
+  check('homepage-brand-headline', Boolean(contract.homepage?.headlineText) && html.includes(contract.homepage.headlineText) && html.includes(contract.homepage?.headlineAccentText || ''), 'homepage uses the approved unified-flagship headline');
+  check('homepage-primary-destination', Boolean(contract.homepage?.primaryDestination) && html.includes(`href="${contract.homepage.primaryDestination}"`), 'homepage links to the primary That’s My Lingo destination');
+  check('homepage-universe-destination', Boolean(contract.homepage?.universeDestination) && html.includes(`href="${contract.homepage.universeDestination}"`), 'homepage links to the Universe hub');
+  check('homepage-brand-tagline', Boolean(contract.homepage?.brandTagline) && html.includes(contract.homepage.brandTagline), 'homepage carries the approved LINGO Legacy tagline');
+  check('cloudflare-build-target-match', contract.deployment?.cloudflareGitBuildTargetWorkerName === wrangler.name, 'declared Cloudflare Git build target matches wrangler Worker identity');
+  check('expected-root-route-owner', contract.deployment?.expectedRootRouteOwner === wrangler.name, 'expected exact-root route owner matches the configured Worker');
   check('homepage-h1', /<h1\b/i.test(html), 'homepage has a primary H1');
   check('homepage-main', /<main\b/i.test(html), 'homepage uses a main landmark');
   check('homepage-nav', /<nav\b/i.test(html), 'homepage uses a navigation landmark');
