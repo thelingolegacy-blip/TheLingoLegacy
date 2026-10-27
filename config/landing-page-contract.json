@@ -3,9 +3,7 @@
   "site": {
     "name": "The Lingo Legacy",
     "canonicalOrigin": "https://thelingolegacy.com",
-    "aliases": [
-      "https://www.thelingolegacy.com"
-    ],
+    "aliases": ["https://www.thelingolegacy.com"],
     "pageModel": "static-html-with-cloudflare-worker-edge-runtime",
     "rootDocument": "index.html",
     "notFoundDocument": "404.html",
@@ -13,16 +11,26 @@
     "robots": "robots.txt",
     "manifest": "manifest.webmanifest"
   },
+  "homepage": {
+    "direction": "unified-flagship",
+    "headlineText": "One Legacy.",
+    "headlineAccentText": "Many Worlds.",
+    "primaryDestination": "/thats-my-lingo/",
+    "universeDestination": "/universe/",
+    "brandTagline": "Loyalty. Legacy. Language."
+  },
   "deployment": {
     "provider": "cloudflare-workers-static-assets",
     "workerEntrypoint": "worker.js",
     "config": "wrangler.jsonc",
     "workerName": "thelingolegacyv-5",
+    "cloudflareGitBuildTargetWorkerName": "thelingolegacyv-5",
     "assetDirectory": ".",
     "assetBinding": "ASSETS",
     "canonicalHostRedirect": "www-to-apex",
     "productionChangesRequireAuthorization": true,
     "expectedRootRouteOwner": "thelingolegacyv-5",
+    "expectedExactRootRoutePattern": "thelingolegacy.com/",
     "liveRouteInventoryMustMatch": true,
     "previewBuildTargetMustExist": true
   },
@@ -65,11 +73,11 @@
     "noCredentialFabrication": true,
     "noProductionPromotionWithoutIndependentEvidence": true,
     "requiredExternalAcceptance": [
-      "Confirm canonical landing-page content source",
-      "Reconcile exact apex-root route with the configured Worker",
-      "Align Cloudflare Git build target to an existing intended Worker",
-      "Explicitly classify any Vercel integration as preview-only or retired",
-      "Verify live apex, www, health, runtime and representative public routes"
+      "Reconcile the live exact apex-root route with the configured Worker before any production route change",
+      "Correct the Cloudflare Git build integration target to the existing intended Worker and verify a successful preview build",
+      "Explicitly classify the active Vercel integration as preview-only or retire it through a separately authorized change",
+      "Verify live apex, www, health, runtime, primary destinations, security headers, and deployed source provenance",
+      "Restore G02 runner dispatch and collect independently retrievable CI evidence"
     ]
   }
 }
