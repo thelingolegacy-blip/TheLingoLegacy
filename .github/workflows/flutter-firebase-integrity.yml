@@ -2,6 +2,19 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - 'firebase/**'
+      - 'test/**'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
@@ -13,6 +26,7 @@ on:
       - 'firebase.json'
       - 'firebase/**'
       - 'test/**'
+      - 'scripts/verify-flutter-firebase.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -95,8 +109,9 @@ jobs:
             import fs from "node:fs";
             const config = JSON.parse(fs.readFileSync("firebase.json", "utf8"));
             if (config.database?.rules !== "firebase/database.rules.json") throw new Error("Database rules path missing");
+            if (config.hosting) throw new Error("Hosting must be configured separately with an approved public build directory");
             const rules = JSON.parse(fs.readFileSync(config.database.rules, "utf8")).rules;
             if (rules[".read"] !== false || rules[".write"] !== false) throw new Error("Database root must remain deny-by-default");
             if (rules.users?.["$uid"]?.[".write"] !== undefined) throw new Error("User writes must stay disabled until schema-specific validation");
-            console.log("Firebase database rules are configured deny-by-default; no Hosting deployment is configured.");
+            console.log("Firebase database rules are deny-by-default; Hosting is intentionally not configured.");
           '
