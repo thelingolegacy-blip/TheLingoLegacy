@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "site": {
+    "name": "The Lingo Legacy",
+    "canonicalOrigin": "https://thelingolegacy.com",
+    "aliases": [
+      "https://www.thelingolegacy.com"
+    ],
+    "pageModel": "static-html-with-cloudflare-worker-edge-runtime",
+    "rootDocument": "index.html",
+    "notFoundDocument": "404.html",
+    "sitemap": "sitemap.xml",
+    "robots": "robots.txt",
+    "manifest": "manifest.webmanifest"
+  },
+  "deployment": {
+    "provider": "cloudflare-workers-static-assets",
+    "workerEntrypoint": "worker.js",
+    "config": "wrangler.jsonc",
+    "workerName": "thelingolegacyv-5",
+    "assetDirectory": ".",
+    "assetBinding": "ASSETS",
+    "canonicalHostRedirect": "www-to-apex",
+    "productionChangesRequireAuthorization": true
+  },
+  "runtime": {
+    "healthPath": "/healthz",
+    "apiPrefix": "/api/",
+    "requiredEndpoints": [
+      "/api/v1/runtime",
+      "/api/v1/platform/manifest",
+      "/api/v1/platform/status",
+      "/api/v1/platform/gates",
+      "/api/v1/platform/modules",
+      "/api/v1/site/context"
+    ],
+    "securityHeaderSource": "worker.js",
+    "staticAssetExclusionFile": ".assetsignore"
+  },
+  "requiredPublicFiles": [
+    "index.html",
+    "404.html",
+    "robots.txt",
+    "sitemap.xml",
+    "manifest.webmanifest"
+  ],
+  "requiredLandingMetadata": {
+    "canonical": "https://thelingolegacy.com/",
+    "minimumPrimaryRoutes": [
+      "/thats-my-lingo/",
+      "/universe/",
+      "/loyalty-lane-apparel/",
+      "/trust-compliance/",
+      "/privacy/",
+      "/terms/",
+      "/contact/"
+    ]
+  },
+  "governance": {
+    "ciMustFailClosed": true,
+    "buildSuccessIsNotReleaseAcceptance": true,
+    "noCredentialFabrication": true,
+    "noProductionPromotionWithoutIndependentEvidence": true
+  }
+}
