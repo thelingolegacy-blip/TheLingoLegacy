@@ -22,7 +22,7 @@ test('repository landing page infrastructure matches its contract', () => {
   assert.ok(report.summary.passed >= 25);
 });
 
-test('missing public route fails closed', (t) => {
+test('missing public route and homepage destination fail closed', (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-landing-contract-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   for (const relative of [
@@ -60,4 +60,12 @@ test('missing public route fails closed', (t) => {
   const report = JSON.parse(result.stdout);
   assert.ok(report.errors.some((error) => error.includes('sitemap-route--missing-route-')));
   assert.ok(report.errors.some((error) => error.includes('route-file--missing-route-')));
+
+  const homepagePath = path.join(root, 'index.html');
+  const homepage = fs.readFileSync(homepagePath, 'utf8');
+  fs.writeFileSync(homepagePath, homepage.replace('href="/thats-my-lingo/"', 'href="/missing-game/"'));
+  const homepageResult = run(root);
+  assert.equal(homepageResult.status, 1, homepageResult.stdout + homepageResult.stderr);
+  const homepageReport = JSON.parse(homepageResult.stdout);
+  assert.ok(homepageReport.errors.includes('homepage-primary-destination'));
 });
