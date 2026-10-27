@@ -11,6 +11,8 @@ on:
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'firebase/**'
+      - 'test/**'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -30,14 +32,6 @@ jobs:
         with:
           channel: stable
           cache: true
-
-      - name: Verify Firebase project contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f .firebaserc
-          test -f lib/firebase_options.dart
-          node scripts/verify-flutter-firebase.mjs
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -59,3 +53,11 @@ jobs:
         run: |
           set -euo pipefail
           node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+
+      - name: Verify Firebase project contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .firebaserc
+          test -f lib/firebase_options.dart
+          node scripts/verify-flutter-firebase.mjs
