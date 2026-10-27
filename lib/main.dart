@@ -4,7 +4,22 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    final options = DefaultFirebaseOptions.currentPlatform;
+    final requiredValues = [options.apiKey, options.appId, options.messagingSenderId];
+    final configured = requiredValues.every(
+      (value) => value.isNotEmpty && !value.startsWith('YOUR_'),
+    );
+    if (configured) {
+      await Firebase.initializeApp(options: options);
+    } else {
+      debugPrint('Firebase configuration placeholders detected; starting preview shell without Firebase.');
+    }
+  } catch (error, stackTrace) {
+    // Keep preview navigation usable; this does not imply Firebase is connected.
+    debugPrint('Firebase initialization unavailable; starting preview shell: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
   runApp(const LingoLegacyApp());
 }
 
