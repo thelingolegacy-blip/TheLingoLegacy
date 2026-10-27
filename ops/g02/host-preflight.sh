@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Read-only G02 host preflight. Does not restart or register a runner.
+# Read-only G02 host preflight for the registered self-hosted runner. Does not restart or register a runner.
 set -u
 umask 077
 OUT_DIR="${1:-./g02-evidence}"

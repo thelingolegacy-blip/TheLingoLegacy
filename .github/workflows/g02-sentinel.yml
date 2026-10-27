@@ -1,3 +1,5 @@
+# LEGACY DIAGNOSTIC ONLY: the canonical G02 acceptance workflow is g02-self-hosted-sentinel.yml.
+# Keep this workflow for historical/manual diagnostics; its success alone does not satisfy current G02 acceptance.
 name: G02 Runner Execution Sentinel
 
 on:

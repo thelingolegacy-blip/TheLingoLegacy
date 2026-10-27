@@ -1,4 +1,6 @@
-name: G02 AWS Sentinel — Fail Closed
+# This workflow requires a pre-registered, online self-hosted runner with labels: self-hosted, linux, x64, lingo-g02.
+# It does not provision AWS or any other runner. Expected RUNNER_NAME: lingo-legacy-g02.
+name: G02 Self-Hosted Runner Sentinel — Fail Closed
 on:
   workflow_dispatch:
     inputs:
@@ -11,11 +13,11 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: lingo-g02-aws-sentinel
+  group: lingo-g02-self-hosted-sentinel
   cancel-in-progress: false
 jobs:
   sentinel:
-    name: g02-aws-runner-sentinel
+    name: g02-self-hosted-runner-sentinel
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     env:
@@ -48,7 +50,7 @@ jobs:
           } > g02-evidence/workflow-identity.txt
       - name: Read-only host preflight
         shell: bash
-        run: bash ops/g02/host-preflight-aws.sh ./g02-evidence
+        run: bash ops/g02/host-preflight.sh ./g02-evidence
       - name: Sentinel execution proof
         shell: bash
         run: |
@@ -77,7 +79,7 @@ jobs:
           python3 - <<'PY'
           import json, os, pathlib, sys
           payload = json.loads(pathlib.Path("g02-evidence/jobs-snapshot.json").read_text())
-          jobs = [j for j in payload.get("jobs", []) if j.get("name") == "g02-aws-runner-sentinel"]
+          jobs = [j for j in payload.get("jobs", []) if j.get("name") == "g02-self-hosted-runner-sentinel"]
           if len(jobs) != 1:
               raise SystemExit(f"FAIL: expected exactly one sentinel job, found {len(jobs)}")
           job = jobs[0]
@@ -113,7 +115,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: g02-aws-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          name: g02-self-hosted-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: g02-evidence/
           if-no-files-found: error
           retention-days: 14
