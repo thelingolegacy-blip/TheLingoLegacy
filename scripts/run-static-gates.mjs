@@ -24,6 +24,8 @@ const checks = [
     'scripts/verify-release-config-consistency.mjs',
     'scripts/test-verify-release-config-consistency.mjs',
     'scripts/test-sanitize-cloudflare-only-surface.mjs',
+    'scripts/verify-landing-page-architecture.mjs',
+    'scripts/test-verify-landing-page-architecture.mjs',
   ].map((file) => ({ id: 'syntax-' + path.basename(file, '.mjs'), command: process.execPath, args: ['--check', file] })),
   { id: 'pipeline-failure-propagation', command: 'bash', args: ['scripts/test-pipeline-failure-propagation.sh'] },
   { id: 'test-asset-publication-scope', command: process.execPath, args: ['--test', 'scripts/test-verify-asset-publication-scope.mjs'] },
@@ -34,6 +36,7 @@ const checks = [
   { id: 'test-legacy-gateway-security', command: process.execPath, args: ['--test', 'scripts/test-verify-legacy-gateway-security.mjs'] },
   { id: 'test-release-config-consistency', command: process.execPath, args: ['--test', 'scripts/test-verify-release-config-consistency.mjs'] },
   { id: 'test-cloudflare-surface-readonly', command: process.execPath, args: ['--test', 'scripts/test-sanitize-cloudflare-only-surface.mjs'] },
+  { id: 'test-landing-page-architecture', command: process.execPath, args: ['--test', 'scripts/test-verify-landing-page-architecture.mjs'] },
   { id: 'verify-asset-publication-scope', command: process.execPath, args: ['scripts/verify-asset-publication-scope.mjs'] },
   { id: 'verify-shared-design-system', command: process.execPath, args: ['scripts/verify-shared-design-system.mjs'] },
   { id: 'verify-platform-registries', command: process.execPath, args: ['scripts/verify-platform-registries.mjs'] },
@@ -44,6 +47,7 @@ const checks = [
   { id: 'verify-cloudflare-only-surface', command: process.execPath, args: ['scripts/sanitize-cloudflare-only-surface.mjs'] },
   { id: 'verify-cloudflare-bindings', command: process.execPath, args: ['scripts/verify-cloudflare-bindings.mjs'] },
   { id: 'validate-static-site', command: process.execPath, args: ['scripts/validate-static-site.mjs'] },
+  { id: 'verify-landing-page-architecture', command: process.execPath, args: ['scripts/verify-landing-page-architecture.mjs'] },
 ];
 
 const results = [];
