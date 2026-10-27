@@ -84,6 +84,25 @@ Use a small number of high-intent hero CTAs. Move operator dashboards, release-c
 | Live probes | Apex and www redirect behavior, homepage, `/healthz`, runtime/status endpoints and representative product routes verified against the deployed version |
 | Release authorization | G02 and all downstream gates independently pass; authorized promotion recorded |
 
-## 8. Release boundary
+## 8. Live infrastructure drift found during this review
+
+A read-only Cloudflare account and zone inventory does **not** currently match the single-owner target above:
+
+- The zone has an exact `thelingolegacy.com/` Worker route assigned to `lingo-flagship-root`.
+- The broader `thelingolegacy.com/*` and `www.thelingolegacy.com/*` routes are assigned to `thelingolegacyv-5`.
+- The checked-in `wrangler.jsonc` names `thelingolegacyv-5` and declares both apex and www patterns, so it does not describe the extra exact-root route.
+- The Cloudflare GitHub build check for this PR attempted to build Worker `thelingolegacy`, which is absent from the read-only Worker inventory; Cloudflare reported: “This Worker does not exist on your account.”
+- A Vercel preview check still runs and reports success, despite repository docs describing Vercel as retired. This is evidence of a preview integration, not evidence that Vercel serves production.
+
+These are control-plane drift findings, not permission to delete or redirect any route. The exact-root Worker serves a distinct “One Legacy. Many Worlds.” HTML page, while the repository's `index.html` is a different landing page. **The canonical landing-page content must be explicitly selected before consolidating these surfaces.** Keep all current production routing untouched until the selected source is reviewed, parity is proven, and a controlled promotion/rollback plan is approved.
+
+Required external acceptance checks:
+1. Confirm the intended canonical homepage content and its authoritative source file.
+2. Align the Cloudflare Git integration to an existing intended Worker and verify preview builds.
+3. Reconcile the exact-root route with the intended canonical Worker; verify apex and www paths and queries.
+4. Decide whether Vercel remains preview-only or is formally retired; do not treat its preview status as production acceptance.
+5. Independently test live root, health, runtime, status, representative routes, security headers, and rollback.
+
+## 9. Release boundary
 
 The architecture is reviewable and testable in source, but it is not certified by this document. G02 runner dispatch remains a separate hard blocker. No merge, deploy, DNS change, Worker traffic change, activation or production promotion is authorized by this architecture PR. Preserve the last-known-good production allocation until the existing evidence chain reaches acceptance and authorization.
