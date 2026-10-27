@@ -93,16 +93,19 @@ A read-only Cloudflare account and zone inventory does **not** currently match t
 - The checked-in `wrangler.jsonc` names `thelingolegacyv-5` and declares both apex and www patterns, so it does not describe the extra exact-root route.
 - The Cloudflare GitHub build check for this PR attempted to build Worker `thelingolegacy`, which is absent from the read-only Worker inventory; Cloudflare reported: “This Worker does not exist on your account.”
 - A Vercel preview check still runs and reports success, despite repository docs describing Vercel as retired. This is evidence of a preview integration, not evidence that Vercel serves production.
+- A follow-up read-only inspection of Cloudflare Builds found a build configuration associated with the existing `thelingolegacyv-5` Worker tag. It is explicitly fail-closed: branch `__LINGO_FAIL_CLOSED_HOLD__`, production path include `__LINGO_DEPLOYMENT_DISABLED__/**`, preview builds disabled, and preview path include `__LINGO_PREVIEW_DISABLED__/**`. Its configured production commands are not a basis for an ad hoc preview activation.
+- The missing `thelingolegacy` build configuration returns 404, and the existing `thelingolegacyv-5` configuration is intentionally held. Therefore the safe correction is **not** to enable builds or alter deployment commands in place. First define and review an isolated preview-only build configuration and prove its deployment command cannot publish production; preserve the current hold configuration until that review is accepted.
+- Read-only workflow-job inspection for the latest PR head found zero jobs for all three GitHub Actions runs, each recorded as `startup_failure`. No job logs or step-level evidence exist for these attempts; this remains a dispatch/startup failure, not a test failure or pass.
 
 These are control-plane drift findings, not permission to delete or redirect any route. The canonical content decision is now recorded in this branch: **Unified flagship**. The checked-in `index.html` is the source-level candidate, but the deployed exact-root route still points to the separate `lingo-flagship-root` Worker. This PR does not claim source parity with that Worker and does not authorize a route change. Keep production routing untouched until the source is reviewed, the intended Worker/build target is confirmed, parity is proven, and a controlled migration and rollback plan is approved.
 
 Required external acceptance checks:
 1. Confirm that the `thelingolegacyv-5` Worker and its checked-in `worker.js` are the intended production owner before any exact-root route migration.
-2. Correct the Cloudflare Git integration build target from the missing `thelingolegacy` Worker to the existing intended Worker, then verify a successful preview build.
+2. Review a separate preview-only Cloudflare build configuration for the existing intended Worker. Do not replace the fail-closed production configuration or enable previews until commands, target, isolation, and no-production-deploy behavior are independently reviewed; then verify a successful preview build.
 3. Reconcile the exact-root route with the intended canonical Worker only after source review and explicit production authorization; verify apex and www paths and queries.
 4. Decide whether Vercel remains preview-only or is formally retired through a separately authorized change; do not treat its preview status as production acceptance.
 5. Independently test live root, health, runtime, status, primary destinations, security headers, deployed source provenance, and rollback.
-6. Restore G02 runner dispatch and collect independently retrievable CI evidence before certification.
+6. Restore G02 runner dispatch and collect independently retrievable CI evidence before certification. The latest inspected runs have no jobs, so retrying or interpreting them as test results would not provide acceptance evidence.
 
 ## 9. Release boundary
 
