@@ -74,7 +74,7 @@
     "noProductionPromotionWithoutIndependentEvidence": true,
     "requiredExternalAcceptance": [
       "Reconcile the live exact apex-root route with the configured Worker before any production route change",
-      "Correct the Cloudflare Git build integration target to the existing intended Worker and verify a successful preview build",
+      "Review an isolated preview-only Cloudflare build configuration for the intended Worker; preserve the existing fail-closed production build configuration, then verify a successful preview build with no production deployment capability",
       "Explicitly classify the active Vercel integration as preview-only or retire it through a separately authorized change",
       "Verify live apex, www, health, runtime, primary destinations, security headers, and deployed source provenance",
       "Restore G02 runner dispatch and collect independently retrievable CI evidence"
