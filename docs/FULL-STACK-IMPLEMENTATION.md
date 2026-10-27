@@ -1,51 +1,67 @@
-# Full-Stack Implementation Plan
+# Full-Stack Implementation and Activation
 
-**Status:** proposed implementation package; configuration files do not prove cloud services are connected or deployed.
+**Status:** integration code is under review. Configuration is wired for activation, but cloud services are not represented as active until an authorized deployment and live verification succeeds.
 
-## Existing stack discovered
-- **Web frontend:** static HTML/CSS/JavaScript assets.
-- **Backend:** Cloudflare Worker in `worker.js`; current public endpoints include health, runtime manifest, platform status/gates/modules, and site context.
-- **Mobile frontend:** Flutter app at `lib/main.dart`.
-- **Firebase:** Firebase Core dependencies and client configuration templates exist. Confirm actual Firebase Console configuration; the checked-in options include placeholders.
-- **GitHub:** repository and Actions workflows exist. A workflow file is not proof of a successful workflow run.
+## Connected application layers
 
-## Route registry and navigation
-`config/site-routes.json` records the public route inventory. `assets/lingo-route-matrix.js` creates an accessible responsive navigation bar. It must be included by pages intended to show the shared navigation. `/media/` is marked planned and must not be advertised as live until a real target exists.
+- **Web frontend:** static HTML/CSS/JavaScript; shared route registry and accessible navigation.
+- **Backend:** Cloudflare Worker in `worker.js`; route inventory is exposed at `GET /api/v1/site/routes`. Existing runtime APIs include health, runtime manifest, platform status/gates/modules, and site context.
+- **Flutter frontend:** `lib/main.dart` has destination navigation, backend context connectivity, and an account screen that uses Firebase Auth only when Firebase initialization succeeds.
+- **Firebase:** `firebase_options.dart` accepts per-build `--dart-define` values. `firebase.json` points Firebase CLI to `firebase/database.rules.json`.
+- **GitHub:** Flutter integrity workflow checks analysis/tests, requires configured Firebase values, and passes the appropriate web/Android values to release/debug builds.
 
-## Backend contracts
-Current public endpoints:
-- `GET /healthz`
-- `GET /api/v1/runtime`
-- `GET /api/v1/platform/manifest`
-- `GET /api/v1/platform/status`
-- `GET /api/v1/platform/gates`
-- `GET /api/v1/platform/modules`
-- `GET /api/v1/site/context`
+## Route and API contracts
 
-Checkout and alert endpoints require separate secret, validation, consent, and rate-limit review. Feature flags are not proof downstream services are operational. Every new endpoint needs method/schema validation, authz, quotas, idempotency where appropriate, audit behavior, and stable error codes.
+- Route registry: `config/site-routes.json`
+- Shared responsive navigation: `assets/lingo-route-matrix.js`
+- Public route API: `GET /api/v1/site/routes`
+- OpenAPI contract: `openapi/site-platform.yaml`
 
-## Flutter and Firebase
-1. Firebase Auth: approved providers, email verification, recovery, account deletion and sign-out.
-2. Choose one authoritative database per domain and test security rules with Firebase Emulator.
-3. Storage private by default, with file-size/MIME checks and lifecycle rules.
-4. Analytics should respect consent and avoid sensitive values.
-5. Privileged mutations and payment operations go through the backend, never embedded service-account credentials in Flutter.
-6. The Flutter shell must remain usable if Firebase is not configured; use FlutterFire-generated options for actual production apps.
+A registry entry is not proof that the route is live on the production host. Confirm every route with live HTTP probes after deployment. The Flutter API context check targets `https://thelingolegacy.com/api/v1/site/context`; its successful response must be verified from the device/network used for release.
 
-`firebase/database.rules.json` is a deny-by-default starting point. It is not deployed automatically and is not a complete schema-specific authorization policy.
+## Firebase activation checklist
 
-## GitHub automation
-The route-validation workflow validates the registry, local page targets, navigation routes, and backend route markers. It does not deploy, alter secrets, register runners, change DNS, or provision cloud resources.
+1. Confirm that `lingo-legacy-production` is the correct, authorized Firebase project and that Realtime Database exists in the intended region.
+2. In Firebase Console, enable Email/Password Authentication and configure authorized domains, password reset, and email verification. Configure any additional providers only after reviewing their redirect URLs and account-linking behavior.
+3. Add the GitHub Actions **repository variables**:
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_DATABASE_URL`
+   - `FIREBASE_STORAGE_BUCKET`
+   - `FIREBASE_AUTH_DOMAIN`
+   - `FIREBASE_WEB_APP_ID`
+   - `FIREBASE_ANDROID_APP_ID`
+   - `FIREBASE_IOS_APP_ID`
+   - `FIREBASE_MACOS_APP_ID`
+4. Add the corresponding **Actions secrets**:
+   - `FIREBASE_MESSAGING_SENDER_ID`
+   - `FIREBASE_WEB_API_KEY`
+   - `FIREBASE_ANDROID_API_KEY`
+   - `FIREBASE_IOS_API_KEY`
+   - `FIREBASE_MACOS_API_KEY`
+5. Confirm bundle IDs and app registrations in Firebase Console. Do not paste service-account JSON or private credentials into Flutter, source control, issues, or chat.
+6. Run the Firebase Emulator Suite tests against the actual intended data model before deploying the database rules. The checked-in rules are a deny-by-default starter and may need schema-specific refinement.
+7. Run `firebase deploy --only database --project lingo-legacy-production` from an authorized, reviewed environment after emulator validation. Hosting deployment is a separate release decision.
+8. Run the GitHub Actions workflow, inspect all job logs, build Flutter web/Android, and test signup, verification, sign-in, password reset, sign-out, cross-user data denial, and the backend API connectivity.
+9. Enable production traffic only after route/API probes, security review, rollback readiness, and post-deploy smoke tests pass.
+
+## Build-time Firebase values
+
+Flutter build arguments are supplied by the GitHub Actions workflow using `--dart-define`. The client API keys identify Firebase client applications; they are not substitutes for authorization. Enforce access through Firebase Security Rules and backend authorization. Do not put Admin SDK/service-account credentials in client builds.
+
+For local builds, provide the same `FIREBASE_*` values through `--dart-define=NAME=value` for the target platform. Until real project app IDs and values are supplied, the Flutter shell intentionally remains usable without Firebase-backed account features.
 
 ## Release gates
-- Local route and script validation passes.
-- Every live route has a real page or documented redirect; planned routes are not presented as live.
-- API tests verify methods, errors, no-store and security headers.
-- Firebase emulator tests prove own-user access and cross-user denial.
-- Flutter analyze and tests pass on a runner with a provisioned Flutter SDK.
-- Production builds contain no placeholder Firebase values.
-- A completed GitHub workflow run with job logs exists.
-- Deployment and post-deployment smoke checks pass before the site is described as live.
 
-## Scope limits
-This package provides route navigation, a route inventory, Firebase rules starter, and CI validation. It does not provision Firebase resources, enable providers, verify billing, run a Flutter build, or deploy production.
+- Successful route registry and page-target validation.
+- Real live page/redirect for every advertised route.
+- API tests for methods, errors, no-store, security headers, and authorization.
+- Firebase Emulator tests for own-user access and cross-user denial.
+- Flutter analyze, unit/widget tests, web release build, and Android build pass.
+- No placeholder Firebase configuration in release artifacts.
+- Completed GitHub workflow runs with job logs.
+- Firebase rules deployment and post-deployment verification, when authorized.
+- Production deploy and live smoke checks pass before describing the system as active.
+
+## Known blockers
+
+The previously observed GitHub Actions runs failed with `startup_failure` before jobs were created. These configuration changes do not repair repository-level Actions availability, add missing Firebase values, enable providers in Console, or deploy cloud resources. Confirm the next run produces jobs before interpreting any CI result as a code-level test.
