@@ -93,7 +93,7 @@ function makeWorkspace({ failOne = false } = {}) {
   const releasePath = path.join(root, 'config/release/lingo-legacy-v1.0.0-rc.json');
   fs.mkdirSync(path.dirname(releasePath), { recursive: true });
   fs.writeFileSync(releasePath, JSON.stringify({ includedSurfaces: ['/'] }));
-  fs.writeFileSync(path.join(root, 'index.html'), '<!doctype html><html><head><title>The Lingo Legacy Home</title><meta name="description" content="A sufficiently detailed description of the Lingo Legacy website and its core destinations."><link rel="canonical" href="https://thelingolegacy.com/"></head><body><nav></nav><main><h1>Build the Legacy</h1></main></body></html>');
+  fs.writeFileSync(path.join(root, 'index.html'), '<!doctype html><html><head><title>The Lingo Legacy Home</title><meta name="description" content="A sufficiently detailed description of the Lingo Legacy website and its core destinations."><link rel="canonical" href="https://thelingolegacy.com/"></head><body><nav></nav><main><h1>One Legacy.<span>Many Worlds.</span></h1><p>Loyalty. Legacy. Language.</p><a href="/thats-my-lingo/">Explore That’s My Lingo</a><a href="/universe/">Discover the Universe</a></main></body></html>');
   fs.writeFileSync(path.join(root, '404.html'), '<!doctype html><title>Not found</title>');
   fs.writeFileSync(path.join(root, 'manifest.webmanifest'), '{}');
   fs.writeFileSync(path.join(root, '.assetsignore'), '# fixture; public entrypoints remain publishable\\n');
