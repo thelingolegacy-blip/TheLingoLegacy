@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Output runner assignment and sentinel telemetry
+        id: sentinel
         shell: bash
         env:
           RUNNER_ID: ${{ runner.id }}
@@ -34,33 +35,43 @@ jobs:
           GITHUB_SHA_VALUE: ${{ github.sha }}
           GITHUB_ACTOR_VALUE: ${{ github.actor }}
           GITHUB_EVENT_VALUE: ${{ github.event_name }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
+          GITHUB_JOB_VALUE: ${{ github.job }}
+          GITHUB_REPOSITORY_VALUE: ${{ github.repository }}
+          GITHUB_REF_VALUE: ${{ github.ref }}
         run: |
           set -euo pipefail
+          {
+            echo "schema=lingo-g02-sentinel-v1"
+            echo "captured_utc=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "repository=$GITHUB_REPOSITORY_VALUE"
+            echo "run_id=$GITHUB_RUN_ID_VALUE"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT_VALUE"
+            echo "job=$GITHUB_JOB_VALUE"
+            echo "ref=$GITHUB_REF_VALUE"
+            echo "commit_sha=$GITHUB_SHA_VALUE"
+            echo "runner_id=$RUNNER_ID"
+            echo "runner_name=$RUNNER_NAME"
+            echo "runner_os=$RUNNER_OS_VALUE"
+            echo "runner_arch=$RUNNER_ARCH_VALUE"
+            echo "hostname=$(hostname)"
+            echo "kernel=$(uname -srmo)"
+            echo "actor=$GITHUB_ACTOR_VALUE"
+            echo "event=$GITHUB_EVENT_VALUE"
+            echo "reason=$RUN_REASON"
+          } | tee g02-sentinel-evidence.txt
+
+          # Record observed identity before assertions so failed attempts still leave evidence.
           test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-
           {
-            echo "=========================================="
-            echo "G02 SENTINEL EXECUTION CONFIRMED"
-            echo "Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "Runner ID: $RUNNER_ID"
-            echo "Runner name: $RUNNER_NAME"
-            echo "Runner OS: $RUNNER_OS_VALUE"
-            echo "Runner architecture: $RUNNER_ARCH_VALUE"
-            echo "Hostname: $(hostname)"
-            echo "Kernel: $(uname -srmo)"
-            echo "Actor: $GITHUB_ACTOR_VALUE"
-            echo "Event: $GITHUB_EVENT_VALUE"
-            echo "Reason: $RUN_REASON"
-            echo "Commit: $GITHUB_SHA_VALUE"
-            echo "=========================================="
             echo "G02_RUNNER_ASSIGNMENT=PASS"
             echo "G02_SENTINEL_EXECUTION=PASS"
-          } | tee g02-sentinel-evidence.txt
-
+          } | tee -a g02-sentinel-evidence.txt
       - name: Inspect Docker availability without mutating containers
         shell: bash
         run: |
@@ -76,9 +87,29 @@ jobs:
             echo "DOCKER_BINARY=NOT_INSTALLED"
           fi
 
+      - name: Finalize evidence and calculate SHA-256
+        if: always()
+        shell: bash
+        env:
+          SENTINEL_STEP_OUTCOME: ${{ steps.sentinel.outcome }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ ! -s g02-sentinel-evidence.txt ]; then
+            printf 'schema=lingo-g02-sentinel-v1\nrun_id=%s\nrun_attempt=%s\ncommit_sha=%s\n' "$GITHUB_RUN_ID_VALUE" "$GITHUB_RUN_ATTEMPT_VALUE" "$GITHUB_SHA_VALUE" > g02-sentinel-evidence.txt
+          fi
+          printf 'sentinel_step_outcome=%s\n' "${SENTINEL_STEP_OUTCOME:-unknown}" >> g02-sentinel-evidence.txt
+          printf 'finalized_run_id=%s\nfinalized_run_attempt=%s\nfinalized_commit_sha=%s\n' "$GITHUB_RUN_ID_VALUE" "$GITHUB_RUN_ATTEMPT_VALUE" "$GITHUB_SHA_VALUE" >> g02-sentinel-evidence.txt
+          sha256sum g02-sentinel-evidence.txt > g02-sentinel-evidence.txt.sha256
+
       - name: Upload sentinel evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: g02-sentinel-evidence-${{ github.run_id }}
-          path: g02-sentinel-evidence.txt
+          name: g02-sentinel-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            g02-sentinel-evidence.txt
+            g02-sentinel-evidence.txt.sha256
           if-no-files-found: error
