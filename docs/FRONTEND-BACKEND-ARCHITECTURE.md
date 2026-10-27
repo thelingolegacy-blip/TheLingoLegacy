@@ -1,111 +1,52 @@
-# Lingo ⭐️ Legacy — Frontend + Backend Architecture
+# LINGO Legacy — Frontend + Backend Architecture
 
-This repository is organized as a studio-grade, multi-surface web platform with a clear path toward Flutter app delivery, Firebase-powered backend services, and Cloudflare edge routing.
+**Canonical architecture:** [Landing Page Infrastructure Architecture](landing-page-infrastructure-architecture.md)
 
-## 1. Frontend Architecture
+## Current implemented web architecture
 
-### Core web frontends
-- Homepage and product hubs: static HTML pages in the repo root and nested directories
-- Shared styling layer: `/assets/lingo-os.css`, `/assets/studio-grade.css`, `/assets/unified-brand-system.css`
-- Shared interaction layer: `/assets/lingo-os.js` and platform-specific runtime scripts
+The production web surface is a static-first site controlled by a Cloudflare Worker. The repository's checked-in entrypoints are HTML files in the root and route folders; shared assets live under `assets/`. The current production Worker is configured in `wrangler.jsonc` and enters through `worker.js`.
 
-### Product surfaces
-- Casino / brand landing pages
-- Story and world pages (KottonsCode, Dice Shift Hotel)
-- Commerce pages (Loyalty Lane Apparel, Loyalty Lane Cycle)
-- Admin / studio command surfaces
-- Trust / compliance / governance pages
-- Media and social integration pages
+- **Public UI:** `index.html` plus route-specific `<route>/index.html` files.
+- **Shared presentation:** design tokens under `config/design/design-tokens.json` and CSS/JS under `assets/`.
+- **Edge control plane:** `worker.js` handles canonical-host redirects, security headers, health/status/runtime endpoints, API boundaries, and forwarding to the asset binding.
+- **Asset publication:** `.assetsignore` excludes repository source, operator tooling, configuration, and credential-bearing files from public static delivery.
+- **Release authority:** GitHub source and CI evidence; Cloudflare Worker deployment and live validation; explicit fail-closed release gates.
 
-### Frontend standards
-- Mobile-first responsive layout
-- Shared Lingo brand system across all sub-apps
-- Platform-specific themes layered on top of the global system
-- Accessible color contrast and reduced-motion support
-- Asset versioning and CDN-friendly delivery
+This repository does not have a root Next.js application entrypoint or root `package.json` on the current `main` baseline. Do not represent Next.js as the current production framework unless a separately reviewed migration adds and validates it. Do not create a second hosting origin to work around a CI or runner failure.
 
-## 2. Backend / App Architecture
+## Request and routing model
 
-### Current web-first foundation
-The current repository is a static web app foundation. It can be extended with:
-- Firebase Authentication for account and player identity
-- Firestore / Realtime Database for progress, rewards, and metadata
-- Cloud Functions for server-side orchestration
-- Vercel or Cloudflare edge functions for dynamic experiences
+```text
+Browser
+  -> Cloudflare DNS / TLS / custom domain
+  -> worker.js
+       -> canonicalize www to apex
+       -> handle /healthz and /api/*
+       -> apply security/runtime headers
+       -> forward public documents/assets to ASSETS
+  -> Workers Static Assets
+```
 
-### Future Flutter layer
-A Flutter app can sit on top of the same architecture:
-- App shell: Flutter widgets for home, game, wallet, profile, shop
-- State management: Riverpod or Bloc
-- Authentication: Firebase Auth
-- Data sync: Firestore / Cloud Functions
-- Push notifications: Firebase Cloud Messaging
-- Asset delivery: CDN-backed media pipeline
+The canonical public origin is `https://thelingolegacy.com`; `www.thelingolegacy.com` redirects to the apex. The Worker exposes explicit runtime contracts including `/api/v1/runtime`, `/api/v1/platform/manifest`, `/api/v1/platform/status`, `/api/v1/platform/gates`, `/api/v1/platform/modules`, and `/api/v1/site/context`.
 
-## 3. Firebase Integration Plan
+## Product boundaries
 
-### Recommended services
-- Firebase Auth
-- Firestore
-- Cloud Functions
-- Cloud Storage for media assets
-- Firebase Hosting (optional alternative to Vercel)
-- Cloud Messaging for live updates
+- The landing page is a discovery and navigation surface, not an authority for account, wallet, checkout, reward, or release state.
+- Authentication and persistence must be served by authorized backend services. Firebase placeholders do not constitute a live integration.
+- Shopify and Stripe remain external commerce/payment boundaries; no UI should claim a transaction succeeded without provider confirmation.
+- AI, game persistence, personalization, realtime features and analytics must expose configured/preview/gated states based on evidence.
+- Static HTML must remain navigable without JavaScript. JavaScript is progressive enhancement, not the only path to primary routes.
 
-### Suggested data domains
-- `users` — profile, avatar, prefs
-- `games` — metadata and progress
-- `worlds` — story worlds and unlocks
-- `commerce` — products, inventory, carts
-- `media` — trailers, art, videos
-- `analytics` — telemetry and engagement metrics
-- `governance` — release and approval state
+## Design and accessibility
 
-## 4. Cloudflare Edge Strategy
+Use the shared design token registry, mobile-first layout, semantic landmarks, descriptive headings, keyboard-visible focus, reduced-motion support, useful alt text, and touch targets of at least 48px where practical. The landing page should prioritize a single value proposition, a primary action, a secondary action, a small set of product destinations, proof/status clarity, and trust/legal links. Operator dashboards belong in secondary navigation rather than competing with the primary visitor journey.
 
-Use Cloudflare for:
-- Edge routing to all product surfaces
-- Global asset caching
-- CDN delivery for images, media, and static pages
-- Rate limiting and DDoS protection
-- Worker-based routing and path-level brand application
+## Quality and release gates
 
-### Example routing model
-- `/` → global homepage
-- `/thats-my-lingo/` → casino surface
-- `/kottons-code/` → story world
-- `/loyalty-lane-apparel/` → commerce
-- `/admin-command-center/` → studio production surface
-- `/trust-compliance/` → safety and compliance
+The static gate stack includes asset publication scope, shared design tokens, platform registries, dynamic runtime contracts, gateway security, release configuration consistency, and HTML/link validation. The landing-page architecture contract is enforced by `scripts/verify-landing-page-architecture.mjs` and its test.
 
-## 5. Production Deployment Model
+A passing source check does not prove a real browser render, live DNS/routing, deployed-version provenance, runner assignment, backend connectivity, or release authorization. G02 and downstream release gates must pass with independently retrievable evidence before production promotion.
 
-### Web stack
-- GitHub for source control
-- GitHub Actions for CI/CD
-- Vercel for app deploys and previews
-- Cloudflare for edge performance and routing
+## Future native application layer
 
-### Mobile / Flutter stack
-- Flutter app shell packaged for iOS / Android
-- Firebase for auth, data, and notification services
-- CDN-backed asset delivery for brand media
-
-## 6. Governance / Safety
-
-- Use fail-closed deployment gates
-- Keep real-money or payout logic excluded from static frontend surfaces
-- Ensure all live backend activation remains gated by approval
-- Keep compliance and trust layers visible across all product surfaces
-
-## 7. Future implementation sequence
-
-1. Finish the unified brand shell across all product pages
-2. Add Firebase project config and security rules
-3. Add Cloudflare Worker route layer
-4. Create Flutter app skeleton
-5. Connect Flutter to Firestore and Firebase Auth
-6. Add media and commerce data models
-7. Finalize CI/CD and deployment reviews
-
-This architecture keeps the project coherent while allowing rapid product expansion without losing the Lingo Legacy identity.
+Flutter and Firebase are separate planned/in-progress product layers. They must consume the same approved domain contracts and brand tokens but must not be described as production-ready until real credentials, service connectivity, platform builds, tests and security rules are verified. A future framework migration requires its own architecture decision, staged preview, parity checks, cost/security review, and explicit release approval.
