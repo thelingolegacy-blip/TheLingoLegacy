@@ -21,7 +21,10 @@
     "assetDirectory": ".",
     "assetBinding": "ASSETS",
     "canonicalHostRedirect": "www-to-apex",
-    "productionChangesRequireAuthorization": true
+    "productionChangesRequireAuthorization": true,
+    "expectedRootRouteOwner": "thelingolegacyv-5",
+    "liveRouteInventoryMustMatch": true,
+    "previewBuildTargetMustExist": true
   },
   "runtime": {
     "healthPath": "/healthz",
@@ -60,6 +63,13 @@
     "ciMustFailClosed": true,
     "buildSuccessIsNotReleaseAcceptance": true,
     "noCredentialFabrication": true,
-    "noProductionPromotionWithoutIndependentEvidence": true
+    "noProductionPromotionWithoutIndependentEvidence": true,
+    "requiredExternalAcceptance": [
+      "Confirm canonical landing-page content source",
+      "Reconcile exact apex-root route with the configured Worker",
+      "Align Cloudflare Git build target to an existing intended Worker",
+      "Explicitly classify any Vercel integration as preview-only or retired",
+      "Verify live apex, www, health, runtime and representative public routes"
+    ]
   }
 }
