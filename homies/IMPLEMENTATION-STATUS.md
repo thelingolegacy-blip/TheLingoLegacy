@@ -8,6 +8,7 @@ Release state: **NOT RELEASE-CERTIFIED / NO PROMOTION**
 |---|---|---|
 | PostgreSQL/PostGIS schema | `homies/database/001_initial_schema.sql` | Not executed against PostgreSQL/PostGIS |
 | Design tokens, icons, buttons, tabs | `homies/design-system/` | Static test execution pending |
+| Next.js web companion | `homies/web/` | Preview scaffold committed; dependency install, lint, typecheck, production build, accessibility audit, and browser smoke tests not run |
 | Expo mobile app shell | `homies/mobile/` | Source committed; dependency install, typecheck, Expo bundling, and device smoke tests not run |
 | Grok service | Contract documented; mobile preview screen added | Provider and streaming backend not connected |
 | Chat and profile routes | UI scaffolds added | Authenticated API and WebSocket services not connected |
