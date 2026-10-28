@@ -1,0 +1,52 @@
+name: G02 Administrative Validator Tests
+
+on:
+  pull_request:
+    paths:
+      - "ops/g02/admin/**"
+      - ".github/workflows/g02-admin-validator-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-admin-validator-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validator-tests:
+    name: Syntax, regression, and schema checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      SOURCE_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Fetch only the validator test inputs from the selected commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ops/g02/admin
+          for path in ops/g02/admin/validate-evidence.py ops/g02/admin/test_validate_evidence.py ops/g02/admin/evidence-intake.schema.json; do
+            gh api "repos/${REPO}/contents/${path}?ref=${SOURCE_REF}" --jq .content | tr -d '\n' | base64 --decode > "${path}"
+          done
+      - name: Compile Python sources
+        run: python3 -m py_compile ops/g02/admin/validate-evidence.py ops/g02/admin/test_validate_evidence.py
+      - name: Validate JSON schema syntax
+        run: python3 -m json.tool ops/g02/admin/evidence-intake.schema.json > /dev/null
+      - name: Run fail-closed regression tests
+        run: python3 -m unittest -v ops/g02/admin/test_validate_evidence.py
+      - name: Preserve protected state in summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "G02=BLOCKED"
+            echo "PRODUCTION=HOLD"
+            echo "FAIL_CLOSED=ACTIVE"
+            echo "LKG=PROTECTED"
+            echo "PROMOTION=BLOCKED"
+            echo "This workflow tests validator behavior only; it cannot authorize a gate transition."
+          } >> "$GITHUB_STEP_SUMMARY"
