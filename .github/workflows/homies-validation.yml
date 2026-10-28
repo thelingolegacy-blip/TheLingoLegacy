@@ -1,0 +1,41 @@
+name: Homies design system validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "homies/**"
+      - ".github/workflows/homies-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homies-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-contract-tests:
+    name: Homies static contract tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run dependency-free tests
+        run: node --test homies/tests/design-system.test.mjs
+      - name: Confirm production deployment is not part of this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Eq 'wrangler deploy|firebase deploy|vercel --prod|production-promotion' .github/workflows/homies-validation.yml; then
+            echo "Unexpected production deployment command in Homies validation workflow" >&2
+            exit 1
+          fi
+          echo "PASS: Homies validation workflow contains no production deployment command."
