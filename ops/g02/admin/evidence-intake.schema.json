@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LINGO G02 Administrative Evidence Intake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "repository", "captured_utc", "control_state", "evidence", "dispatch", "review"],
+  "properties": {
+    "schema": {"const": "lingo-g02-administrative-evidence-v1"},
+    "repository": {"const": "thelingolegacy-blip/TheLingoLegacy"},
+    "captured_utc": {"type": "string", "format": "date-time"},
+    "control_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["g02", "production", "fail_closed", "lkg"],
+      "properties": {
+        "g02": {"const": "BLOCKED"},
+        "production": {"const": "HOLD"},
+        "fail_closed": {"const": "ACTIVE"},
+        "lkg": {"const": "PROTECTED"}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "source", "captured_utc", "sha256", "status", "reviewer"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["repository-policy", "runner-inventory", "host-health", "workflow-run", "job-allocation", "step-logs", "artifact-integrity", "governance"]},
+          "source": {"type": "string", "minLength": 1},
+          "captured_utc": {"type": "string", "format": "date-time"},
+          "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+          "status": {"enum": ["CAPTURED", "VERIFIED", "UNAVAILABLE", "REJECTED"]},
+          "reviewer": {"type": "string", "minLength": 1},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "run_attempt", "commit_sha", "job_id", "runner_id", "runner_name", "runner_os", "runner_arch", "required_labels_present", "steps_instantiated", "sentinel_executed", "logs_retrievable"],
+      "properties": {
+        "run_id": {"type": "integer", "minimum": 1},
+        "run_attempt": {"type": "integer", "minimum": 1},
+        "commit_sha": {"type": "string", "pattern": "^[a-fA-F0-9]{40}$"},
+        "job_id": {"type": "integer", "minimum": 1},
+        "runner_id": {"type": "integer", "minimum": 1},
+        "runner_name": {"const": "lingo-legacy-g02"},
+        "runner_os": {"const": "Linux"},
+        "runner_arch": {"const": "X64"},
+        "required_labels_present": {"const": true},
+        "steps_instantiated": {"const": true},
+        "sentinel_executed": {"const": true},
+        "logs_retrievable": {"const": true}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "reviewer", "reviewed_utc"],
+      "properties": {
+        "disposition": {"enum": ["PENDING", "REJECTED", "ACCEPTED"]},
+        "reviewer": {"type": "string", "minLength": 1},
+        "reviewed_utc": {"type": "string", "format": "date-time"},
+        "notes": {"type": "string"}
+      }
+    }
+  }
+}
