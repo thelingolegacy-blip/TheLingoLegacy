@@ -1,0 +1,95 @@
+name: G02 Administrative Evidence Snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      evidence_ticket:
+        description: "Incident or evidence ticket reference"
+        required: true
+        default: "#255"
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: g02-administrative-evidence
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    name: Read-only administrative snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      EVIDENCE_TICKET: ${{ inputs.evidence_ticket }}
+    steps:
+      - name: Capture available administrative evidence without mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime, json, os, subprocess
+          repo = os.environ["REPO"]
+          ticket = os.environ["EVIDENCE_TICKET"]
+          endpoints = {
+              "repository_actions_permissions": f"repos/{repo}/actions/permissions",
+              "repository_runners": f"repos/{repo}/actions/runners?per_page=100",
+              "g02_sentinel_runs": f"repos/{repo}/actions/workflows/g02-aws-sentinel.yml/runs?per_page=10",
+              "g02_control_watch_runs": f"repos/{repo}/actions/workflows/g02-control-watch.yml/runs?per_page=5",
+          }
+          snapshot = {
+              "schema": "lingo-g02-admin-snapshot-v1",
+              "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "repository": repo, "ticket": ticket, "mutation_performed": False,
+              "control_state": {"g02": "BLOCKED", "production": "HOLD", "fail_closed": "ACTIVE", "lkg": "PROTECTED"},
+              "endpoints": {}, "disposition": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
+          }
+          for name, endpoint in endpoints.items():
+              result = subprocess.run(["gh", "api", endpoint], text=True, capture_output=True, check=False, timeout=30)
+              item = {"endpoint": endpoint, "http_access": "AVAILABLE" if result.returncode == 0 else "UNAVAILABLE", "exit_code": result.returncode}
+              if result.returncode == 0:
+                  try:
+                      payload = json.loads(result.stdout)
+                      if name == "repository_actions_permissions":
+                          item["data"] = {k: payload[k] for k in ("enabled", "allowed_actions", "selected_actions_url") if k in payload}
+                      elif name == "repository_runners":
+                          item["data"] = {"total_count": payload.get("total_count"), "runners": [
+                              {"id": r.get("id"), "name": r.get("name"), "os": r.get("os"), "status": r.get("status"),
+                               "busy": r.get("busy"), "labels": [x.get("name") for x in r.get("labels", [])]}
+                              for r in payload.get("runners", [])]}
+                      else:
+                          item["data"] = {"total_count": payload.get("total_count"), "runs": [
+                              {"id": x.get("id"), "name": x.get("name"), "status": x.get("status"),
+                               "conclusion": x.get("conclusion"), "head_sha": x.get("head_sha"),
+                               "created_at": x.get("created_at"), "html_url": x.get("html_url")}
+                              for x in payload.get("workflow_runs", [])]}
+                  except json.JSONDecodeError:
+                      item["parse_error"] = "API returned non-JSON response"
+              else:
+                  item["error_class"] = "request_failed_or_not_authorized"
+              snapshot["endpoints"][name] = item
+          print(json.dumps(snapshot, indent=2, sort_keys=True))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+              f.write("# G02 Administrative Evidence Snapshot\n\n")
+              f.write(f"- Ticket: {ticket}\n- Captured UTC: {snapshot['captured_utc']}\n")
+              f.write("- G02: **BLOCKED**\n- Production: **HOLD**\n- Fail-closed: **ACTIVE**\n- LKG: **PROTECTED**\n")
+              f.write("- Repository mutations: **NONE**\n\nEndpoint access summary:\n\n")
+              for name, item in snapshot["endpoints"].items():
+                  f.write(f"- {name}: **{item['http_access']}**\n")
+              f.write("\nThis is not an acceptance record. Inaccessible endpoints remain blockers.\n")
+          PY
+      - name: Preserve fail-closed posture
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "G02=BLOCKED"
+            echo "PRODUCTION=HOLD"
+            echo "FAIL_CLOSED=ACTIVE"
+            echo "LKG=PROTECTED"
+            echo "PROMOTION=BLOCKED"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
