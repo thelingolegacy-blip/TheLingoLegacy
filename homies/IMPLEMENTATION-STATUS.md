@@ -29,3 +29,13 @@ Release state: **NOT RELEASE-CERTIFIED / NO PROMOTION**
 4. Add app-level type/build, component, accessibility, and integration tests once the actual app package boundary is confirmed.
 5. Implement provider integration only with server-side credentials, authenticated requests, rate limiting, streaming lifecycle, and tested conversation deletion.
 6. Keep release authorization blocked until independent release gates pass.
+## First GitHub Actions execution attempt (2026-10-28 UTC)
+
+- Workflow: `.github/workflows/homies-validation.yml`
+- Run: [40609448150](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40609448150)
+- Conclusion: `startup_failure`
+- Jobs returned by the workflow-jobs endpoint: 0
+- Artifacts returned by the workflow-artifacts endpoint: 0
+- Test steps/logs: unavailable because no job was instantiated
+
+This is evidence that the run failed before observable job execution; it does not establish the specific underlying cause. The Homies tests have **not** been executed by this run. The existing repository-wide runner-dispatch blocker is still active and must be diagnosed using the canonical G02 tools. Do not mark the Homies test suite passed until a real job executes and logs are retrievable.
