@@ -48,6 +48,6 @@ test("Grok contract protects secrets, privacy, deletion, and consent", () => {
 
 test("package explicitly preserves protected production and G02 gates", () => {
   assert.match(readme, /does not change production routes/i);
-  assert.match(readme, /does \*\*not\*\* imply G02 passes/i);
+  assert.match(readme, /does not imply G02 passes/i);
   assert.match(readme, /No production promotion/i);
 });
