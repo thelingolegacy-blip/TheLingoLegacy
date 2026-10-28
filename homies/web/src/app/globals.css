@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; --crimson: #C41E3A; --charcoal: #1C1C1E; }
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--charcoal); }
+body { min-height: 100vh; margin: 0; background: #1C1C1E; color: #FAFAFA; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea { font: inherit; }
+::selection { background: rgba(196,30,58,.35); }
+:focus-visible { outline: 2px solid #F8718A; outline-offset: 3px; }
