@@ -1,0 +1,73 @@
+/* Homies design tokens — dark-first, accessible defaults. */
+:root {
+  color-scheme: dark;
+  --homies-crimson: #C41E3A;
+  --homies-crimson-dark: #9B1B2F;
+  --homies-crimson-glow: rgb(196 30 58 / 35%);
+  --homies-white: #FFFFFF;
+  --homies-charcoal: #1C1C1E;
+  --homies-gray-dark: #2C2C2E;
+  --homies-gray-mid: #3A3A3C;
+  --homies-gray-light: #8E8E93;
+  --homies-success: #30D158;
+  --homies-danger: #FF453A;
+  --homies-focus: #FFB4C0;
+  --homies-radius-sm: 8px;
+  --homies-radius-md: 12px;
+  --homies-radius-lg: 16px;
+  --homies-radius-full: 9999px;
+  --homies-shadow-crimson: 0 4px 20px var(--homies-crimson-glow);
+  --homies-font-sans: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  --homies-weight-body: 400;
+  --homies-weight-semibold: 600;
+  --homies-weight-bold: 700;
+  --homies-icon-stroke: 2.25;
+  --homies-motion-fast: 120ms;
+  --homies-motion-normal: 180ms;
+  --homies-tabbar-height: 83px;
+}
+
+.homies-button {
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: var(--homies-radius-md);
+  padding: 0 18px;
+  font: var(--homies-weight-bold) 1rem/1.2 var(--homies-font-sans);
+  transition: transform var(--homies-motion-fast) ease, background-color var(--homies-motion-fast) ease, box-shadow var(--homies-motion-fast) ease;
+}
+.homies-button:focus-visible,
+.homies-tab:focus-visible {
+  outline: 3px solid var(--homies-focus);
+  outline-offset: 3px;
+}
+.homies-button:active:not(:disabled) {
+  transform: scale(.96);
+  box-shadow: var(--homies-shadow-crimson);
+}
+.homies-button:disabled,
+.homies-button[aria-disabled="true"] { opacity: .4; cursor: not-allowed; }
+.homies-button--primary { color: var(--homies-white); background: var(--homies-crimson); }
+.homies-button--primary:hover:not(:disabled) { background: var(--homies-crimson-dark); }
+.homies-button--secondary { color: var(--homies-white); background: var(--homies-gray-dark); border-color: var(--homies-gray-light); }
+.homies-button--ghost { color: var(--homies-focus); background: transparent; }
+.homies-button--destructive { color: var(--homies-white); background: #7A1829; }
+.homies-button--premium { color: var(--homies-white); background: linear-gradient(135deg, var(--homies-crimson), var(--homies-crimson-dark)); box-shadow: var(--homies-shadow-crimson); }
+
+.homies-tabbar {
+  min-height: var(--homies-tabbar-height);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--homies-charcoal);
+  border-top: 1px solid var(--homies-gray-mid);
+}
+.homies-tab { position: relative; display: grid; place-items: center; gap: 4px; color: var(--homies-gray-light); background: transparent; border: 0; font: 600 12px/1.2 var(--homies-font-sans); }
+.homies-tab[aria-current="page"] { color: var(--homies-focus); }
+.homies-tab[aria-current="page"]::before { content: ""; position: absolute; top: 0; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--homies-crimson); }
+.homies-unread-badge { min-width: 18px; min-height: 18px; border-radius: var(--homies-radius-full); background: var(--homies-crimson); color: white; font-size: 11px; display: inline-grid; place-items: center; }
+.homies-grok-message { border-left: 2px solid var(--homies-crimson); background: var(--homies-gray-dark); border-radius: 0 var(--homies-radius-md) var(--homies-radius-md) 0; padding: 12px 14px; }
+.homies-grok-typing { color: var(--homies-crimson); }
+@media (prefers-reduced-motion: reduce) {
+  .homies-button { transition: none; }
+  .homies-button:active:not(:disabled) { transform: none; }
+}
