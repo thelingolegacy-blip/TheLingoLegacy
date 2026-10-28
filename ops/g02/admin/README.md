@@ -17,7 +17,7 @@ Read-only governance and evidence tooling. It does not change Actions policy, ru
 4. Redact tokens, cookies, runner registration tokens, and secrets before sharing.
 5. This tooling never authorizes deployment or changes the control state.
 
-Run the workflow manually from Actions. Validate a manifest locally:
+Run the workflow manually from Actions. Run regression tests from the repository root with `python3 -m unittest ops/g02/admin/test_validate_evidence.py`. Validate a manifest locally:
 ```bash
 python3 ops/g02/admin/validate-evidence.py /path/to/evidence-manifest.json
 ```
