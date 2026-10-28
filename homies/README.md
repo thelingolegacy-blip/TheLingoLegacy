@@ -2,49 +2,49 @@
 
 Status: **IMPLEMENTATION SCAFFOLD — NOT RELEASE-CERTIFIED**  
 Branch: `feature/homies-design-system-grok`  
-Scope: design tokens, icon primitives, buttons, navigation, Grok service contract, PostgreSQL/PostGIS schema, tests, and CI.
+Scope: design system, PostgreSQL/PostGIS schema, Expo mobile scaffold, Grok contract, tests, and CI.
 
 ## Boundaries
-- This package is isolated under `homies/`; it does not change production routes, hosting, DNS, Firebase configuration, or release policy.
+- All work is isolated under `homies/`; it does not change production routes, hosting, DNS, Firebase configuration, or release policy.
 - No production deployment or merge is authorized by this work.
-- Grok's provider credentials must be stored server-side. Never ship an xAI API key to a client.
-- User profile data and conversation history are private by default. Deletion must remove the app's stored history according to the documented retention contract.
-- LGBTQ+ identity and sexual preferences are sensitive data: collect only what is necessary, provide clear controls, and never use sensitive data for unrelated model training.
-- All AI replies must be clearly labeled **Grok**, and AI output is advisory rather than a safety guarantee.
+- Grok provider credentials must remain server-side. Never ship an xAI API key to a client.
+- Profile data and conversation history are private by default; sensitive context sharing requires explicit opt-in.
+- LGBTQ+ identity and sexual preferences are sensitive data: collect only what is necessary and provide clear controls.
+- AI replies must be clearly labeled Grok and are not a safety guarantee.
 
-## Files
-- `database/001_initial_schema.sql`: initial PostgreSQL schema with PostGIS, validation constraints, indexes, timestamps, safety, subscription, webhook-idempotency, and separate Grok-history tables.
+## Main artifacts
+- `database/001_initial_schema.sql`: initial PostgreSQL/PostGIS schema, constraints, geospatial indexes, separate Grok history, and webhook idempotency ledger.
 - `design-system/tokens.css`: color, type, radius, elevation, and motion tokens.
-- `design-system/icons.tsx`: typed SVG icon primitives with outline/filled states.
-- `design-system/components.tsx`: accessible button and five-tab navigation primitives.
+- `design-system/icons.tsx`: typed SVG icon primitives.
+- `design-system/components.tsx`: button and five-tab navigation primitives.
 - `grok/CONTRACT.md`: server-side API, streaming, privacy, safety, and acceptance contract.
+- `mobile/`: Expo Router + TypeScript + NativeWind mobile app shell.
 - `tests/design-system.test.mjs`: dependency-free static contract tests.
 - `.github/workflows/homies-validation.yml`: path-scoped validation with read-only permissions.
+- `IMPLEMENTATION-STATUS.md`: current status and explicit verification gaps.
+
+## Mobile app
+See [mobile/README.md](mobile/README.md). The scaffold includes Explore, Map, Chat, Circles, Profile, Grok, paywall, conversation, and profile routes. API, real-time chat, location provider, Grok streaming, authentication, and billing are not connected. Preview controls that would create real external side effects remain disabled.
 
 ## Database migration safety
-The SQL file is a versioned starting migration, not evidence of a deployed database. It has **not** been run against a PostgreSQL/PostGIS instance in this work. Before any shared or production database use:
-1. Test against the exact supported PostgreSQL/PostGIS versions in a disposable database.
-2. Review extension privileges, backup/restore, locking, migration rollback strategy, and query plans.
-3. Add repository-specific integration tests and confirm application ORM/driver assumptions.
-4. Enforce adult eligibility, authorization, consent, retention, deletion, and row-level access in trusted application/service layers; schema checks alone do not establish those controls.
-5. Use managed secrets and a least-privilege runtime database role; do not connect as the schema owner.
+The SQL file is a versioned starting migration, not evidence of a deployed database. It has not been run against a PostgreSQL/PostGIS instance. Before shared or production use, validate the exact versions in a disposable database, review privileges/backup/rollback/locking/query plans, and enforce age eligibility, authorization, consent, retention, deletion, and row-level access in trusted application layers. Use a least-privilege runtime database role.
 
-The schema includes an index on `boost_expires_at` that deliberately avoids a time-dependent predicate. PostgreSQL does not permit volatile `NOW()` predicates in index definitions.
+The boost-expiry index intentionally avoids a time-dependent predicate because PostgreSQL does not permit volatile `NOW()` predicates in index definitions.
 
-## Local validation
-Run from the repository root:
+## Validation
+Run the static design contract tests from the repository root:
 
 ```sh
 node --test homies/tests/design-system.test.mjs
 ```
 
-This repository snapshot does not establish a Homies-specific React Native/Next.js build target or dependency manifest. The TSX files are implementation primitives and must be integrated into the actual app package before claiming a framework build or device-level acceptance.
+The Expo app must also have dependencies installed, a reproducible lockfile, passing TypeScript and platform bundling checks, and device/simulator evidence before build readiness can be claimed. These checks have not been performed as part of this scaffold update.
 
 ## Runner and release diagnostics
-For G02, use the canonical runbook and existing tools rather than creating duplicate runner registrations:
+For G02, use the canonical runbooks and existing tools:
 - `docs/G02-ACCEPTANCE-CONTRACT.md`
 - `docs/G02-SELF-HOSTED-RUNNER-RECOVERY.md`
 - `ops/g02/diagnose-actions-dispatch.sh`
-- `ops/g02/runner-control.sh status` (on the authorized runner host)
+- `ops/g02/runner-control.sh status` on the authorized runner host
 
-Homies validation uses GitHub-hosted `ubuntu-latest` only; it does not depend on the blocked canonical self-hosted runner. A successful Homies test does **not** imply G02 passes. Production remains protected until all independent release gates pass.
+Homies CI does not satisfy G02. The latest observed workflow attempt ended in `startup_failure` with zero jobs and artifacts; no passing test run is claimed. Production remains protected until all independent release gates pass.
