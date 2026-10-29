@@ -92,3 +92,9 @@ No runner registration, larger-runner purchase, secret/token change, or billing/
 
 The `.github/workflows/game-art-registry-validation.yml` workflow now includes a first-step runner sentinel and an always-attempted evidence artifact upload for the sentinel, validator output, exit-code report, and registry counts (where generated). This instrumentation is committed but remains unverified until a real workflow run starts, instantiates steps, and produces retrievable logs/artifacts. A pre-job `startup_failure` can still prevent every step from executing.
 
+## Latest parallel recovery attempt
+
+- Local execution attempt: the execution host has Node.js `v22.16.0` and Git `2.47.3`, but `git clone --depth 1 --branch studio/game-art-refresh-phase-a https://github.com/thelingolegacy-blip/TheLingoLegacy.git` failed before checkout because the host could not resolve `github.com` (`Could not resolve host: github.com`). The actual repository validator therefore was not executed; no exit code from that validator is claimed.
+- The connected GitHub interface still returns workflow runs that fail before job creation. Latest observed runs: Game Art Registry Validation #52 (run ID `40798178966`), Studio Preview Package #155 (`40798182495`), Lingo Legacy Static CI #1903 (`40798181732`), G02 Runner Image Build #401 (`40798180794`), Crimson Smoke UI static validation #385 (`40798179971`), and Studio Static Validation #164 (`40798178106`). Each returned conclusion `startup_failure`; no step-level validation evidence is established.
+- Next unblock for the real validator: run from a host with working GitHub network/DNS and repository access, or have an authorized admin provide a verified checkout/package. Do not substitute the earlier independent source-content audit for actual Node execution.
+
