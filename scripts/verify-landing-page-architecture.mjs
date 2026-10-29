@@ -100,6 +100,7 @@ if (contract.site && wrangler && release) {
   check('homepage-search-control', html.includes('id="destination-search"') && html.includes("search.addEventListener('input', refresh)"), 'homepage provides a wired destination search control');
   check('homepage-category-filters', ['games', 'hub', 'commerce', 'stories', 'creative'].every((category) => html.includes('data-filter="' + category + '"')), 'homepage provides category filters for each catalog class');
   check('homepage-route-status-labels', (html.match(/data-route-status="unverified"/g) || []).length >= 6 && html.includes('Not yet verified live'), 'homepage labels unverified routes honestly instead of implying live availability');
+  check('homepage-preview-live-status-separation', contract.homepage?.destinationStatus?.meaning === 'live-production-reachability' && contract.homepage?.destinationStatus?.previewDoesNotProveLiveAvailability === true && html.includes('Preview results do not imply live availability.'), 'route labels distinguish preview checks from live production evidence');
   check('homepage-destination-search-data', (html.match(/data-category="/g) || []).length >= 6 && html.includes('catalog-empty'), 'catalog cards expose category data and an empty-results state');
   check('homepage-h1', /<h1\b/i.test(html), 'homepage has a primary H1');
   check('homepage-main', /<main\b/i.test(html), 'homepage uses a main landmark');
