@@ -81,3 +81,10 @@ This checklist covers the 13 game specifications currently verified in the sourc
 - Game-screen integration: open.
 - 56-title catalog reconciliation: open.
 - Production status: protected; no production promotion authorized.
+
+## Runner and capacity recovery runbook
+
+See [RUNNER-RECOVERY-AND-CAPACITY.md](./RUNNER-RECOVERY-AND-CAPACITY.md) for the administrator checklist covering larger hosted-runner eligibility and approval, self-hosted runner download/registration/service checks, validation workflow requirements, host/bot/API-token inventory, billing/quota, and fail-closed acceptance evidence.
+
+No runner registration, larger-runner purchase, secret/token change, or billing/quota change is claimed by this documentation update. Those actions require authorized administrator access and explicit cost/security approval where applicable.
+
