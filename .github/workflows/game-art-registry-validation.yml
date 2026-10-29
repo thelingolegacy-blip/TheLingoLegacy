@@ -1,0 +1,36 @@
+name: Game Art Registry Validation
+
+on:
+  pull_request:
+    paths:
+      - "studio-sites/art-refresh/**"
+      - "studio-sites/games/**"
+      - ".github/workflows/game-art-registry-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-art-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate planned art registry
+        run: node studio-sites/art-refresh/validate-registry.mjs
+      - name: Validate registry JSON syntax
+        run: node --check studio-sites/art-refresh/validate-registry.mjs
+      - name: Report title and asset counts
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const registry = JSON.parse(fs.readFileSync('studio-sites/art-refresh/asset-registry.v0.1.json', 'utf8'));
+          const assets = registry.games.reduce((sum, game) => sum + game.assets.length, 0);
+          console.log(JSON.stringify({games: registry.games.length, plannedAssetRecords: assets}, null, 2));
+          NODE
