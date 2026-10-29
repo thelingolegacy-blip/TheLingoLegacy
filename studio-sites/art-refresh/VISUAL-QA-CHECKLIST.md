@@ -98,3 +98,11 @@ The `.github/workflows/game-art-registry-validation.yml` workflow now includes a
 - The connected GitHub interface still returns workflow runs that fail before job creation. Latest observed runs: Game Art Registry Validation #52 (run ID `40798178966`), Studio Preview Package #155 (`40798182495`), Lingo Legacy Static CI #1903 (`40798181732`), G02 Runner Image Build #401 (`40798180794`), Crimson Smoke UI static validation #385 (`40798179971`), and Studio Static Validation #164 (`40798178106`). Each returned conclusion `startup_failure`; no step-level validation evidence is established.
 - Next unblock for the real validator: run from a host with working GitHub network/DNS and repository access, or have an authorized admin provide a verified checkout/package. Do not substitute the earlier independent source-content audit for actual Node execution.
 
+## Additional independent execution route attempted
+
+- Attempted to create a temporary Vercel sandbox scoped to the existing `the-lingo-legacy` project to clone the exact branch and execute the real Node.js validator outside GitHub Actions.
+- Vercel rejected sandbox creation with HTTP 402 `resource_creation_blocked`: the account is suspended pending a valid payment method. No sandbox was created and no billing setting was changed.
+- Checked for an existing Vercel sandbox session in that project; none were available.
+- Current alternate execution blockers are therefore: this chat execution host cannot resolve GitHub's raw/download hostnames, GitHub Actions runs are failing before job creation, and Vercel sandbox creation is blocked by account billing status.
+- To finish actual Node execution without changing billing, use an already-authorized developer machine/cloud host with repository access, or attach a verified source archive to the conversation. Do not add payment details or purchase capacity automatically.
+
