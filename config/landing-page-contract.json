@@ -39,7 +39,9 @@
         "unverified"
       ],
       "defaultValue": "unverified",
-      "mustNotInferLiveAvailabilityFromSourcePresence": true
+      "mustNotInferLiveAvailabilityFromSourcePresence": true,
+      "meaning": "live-production-reachability",
+      "previewDoesNotProveLiveAvailability": true
     }
   },
   "deployment": {
@@ -110,7 +112,7 @@
       "Explicitly classify the active Vercel integration as preview-only or retire it through a separately authorized change",
       "Verify live apex, www, health, runtime, primary destinations, security headers, and deployed source provenance",
       "Restore G02 runner dispatch and collect independently retrievable CI evidence",
-      "Verify each homepage destination in the isolated preview and only then change its route-status label to verified or unavailable; do not infer live availability from source files or a successful preview build."
+      "Verify each homepage destination in the isolated preview; retain the 'Not yet verified live' label until separate independent evidence establishes live production reachability. Preview results must not be represented as production verification."
     ]
   }
 }
