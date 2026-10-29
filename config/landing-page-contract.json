@@ -3,7 +3,9 @@
   "site": {
     "name": "The Lingo Legacy",
     "canonicalOrigin": "https://thelingolegacy.com",
-    "aliases": ["https://www.thelingolegacy.com"],
+    "aliases": [
+      "https://www.thelingolegacy.com"
+    ],
     "pageModel": "static-html-with-cloudflare-worker-edge-runtime",
     "rootDocument": "index.html",
     "notFoundDocument": "404.html",
@@ -29,10 +31,19 @@
     "assetBinding": "ASSETS",
     "canonicalHostRedirect": "www-to-apex",
     "productionChangesRequireAuthorization": true,
-    "expectedRootRouteOwner": "thelingolegacyv-5",
+    "expectedRootRouteOwner": "lingo-flagship-root",
     "expectedExactRootRoutePattern": "thelingolegacy.com/",
     "liveRouteInventoryMustMatch": true,
-    "previewBuildTargetMustExist": true
+    "previewBuildTargetMustExist": true,
+    "expectedWildcardRouteOwner": "thelingolegacyv-5",
+    "expectedWildcardRoutePattern": "thelingolegacy.com/*",
+    "expectedWwwRoutePattern": "www.thelingolegacy.com/*",
+    "rootWorkerSnapshotPath": "cloudflare/flagship-root/live-snapshot-2026-10-29.html",
+    "previewWorkerPath": "cloudflare/flagship-root/preview-worker.js",
+    "previewWorkerConfig": "wrangler.flagship-preview.toml",
+    "previewWorkerName": "lingo-legacy-flagship-preview",
+    "previewHasProductionRoutes": false,
+    "rootSourceParityStatus": "snapshot-captured; canonical-index-preview-and-live-source-parity-pending"
   },
   "runtime": {
     "healthPath": "/healthz",
