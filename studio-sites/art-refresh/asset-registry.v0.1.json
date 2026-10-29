@@ -617,17 +617,17 @@
         {
           "assetId": "crazy-weasols.mascot-sheet",
           "role": "mascot-sheet",
-          "status": "concept",
-          "path": "studio-sites/art-refresh/concepts/crazy-weasols.key-art.v1.svg",
-          "format": "image/svg+xml",
-          "width": 1200,
-          "height": 675,
-          "altText": "Original vector concept key art for Crazy Weasols with a bold comedic burst emblem; pending visual review and integration.",
-          "sourceRightsStatus": "pending-review",
+          "status": "planned",
+          "path": null,
+          "format": null,
+          "width": null,
+          "height": null,
+          "altText": null,
+          "sourceRightsStatus": "pending",
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": [],
-          "sourceType": "original-vector-concept"
+          "sourceType": null
         },
         {
           "assetId": "crazy-weasols.logo",
@@ -683,6 +683,21 @@
           "height": null,
           "altText": null,
           "sourceRightsStatus": "pending",
+          "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "crazy-weasols.cover",
+          "role": "cover",
+          "status": "concept",
+          "path": "studio-sites/art-refresh/concepts/crazy-weasols.key-art.v1.svg",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "altText": "Original vector concept key art for Crazy Weasols with a bold comedic burst emblem; pending visual review and integration.",
+          "sourceRightsStatus": "pending-review",
+          "sourceType": "original-vector-concept",
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
