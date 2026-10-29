@@ -119,3 +119,34 @@ This does not prove all linked candidate paths work in production, and the sourc
 ### Acceptance boundary
 
 The branch source changes are not browser acceptance. The Cloudflare Pages integration previously reported a branch preview deployment, while the separate `lingo-legacy-flagship-preview` Workers configuration has not been deployed or validated here. Candidate route HTTP behavior, preview isolation, browser accessibility, and G02 runner execution evidence remain pending. PR #402 remains draft/open/unmerged; production routing, DNS, Worker deployments, and traffic remain unchanged.
+
+
+## 10. Isolated preview route smoke — 2026-10-29
+
+**Preview deployment inspected:** Cloudflare Pages deployment `d5487e86-2e48-46df-a958-146aabbdeae4`, preview URL `https://d5487e86.lingo-legacy-github-integration-test.pages.dev/`, source commit `e84cd12218e824c1319a5bc0d7b067921d9a8eff`. The deployment API reports environment `preview`; the URL is on `pages.dev`, not the production apex or www hostname. No production route or traffic setting was changed.
+
+A headless-browser scrape at a mobile viewport (390×844) returned HTTP 200 and a non-empty page title and H1 for all 11 checked routes:
+
+| Route | HTTP | Page identity confirmed |
+|---|---:|---|
+| `/` | 200 | The Lingo Legacy — One Legacy. Many Worlds. |
+| `/thats-my-lingo/` | 200 | That’s My Lingo — Production Entertainment Platform |
+| `/universe/` | 200 | Lingo Legacy Universe Map |
+| `/loyalty-lane-apparel/` | 200 | Loyalty Lane Apparel — The Lingo Legacy |
+| `/kottons-code/` | 200 | KottonsCode Kids Explorer World |
+| `/lingoarcade/` | 200 | LINGOarcade — The Lingo Legacy |
+| `/studio-production/` | 200 | The Lingo Legacy Studio Production Framework |
+| `/trust-compliance/` | 200 | Lingo Safety Core — Trust & Compliance Center |
+| `/privacy/` | 200 | Privacy Policy — The Lingo Legacy |
+| `/terms/` | 200 | Terms of Service — The Lingo Legacy |
+| `/contact/` | 200 | Contact — The Lingo Legacy |
+
+The root preview rendered all six direct-link catalog cards, the search input, six category controls, six honest `Not yet verified live` labels, and the live-result status element. The preview response included CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, and `X-Robots-Tag: noindex` headers.
+
+### Limits of this evidence
+
+- These are **preview-only HTTP/browser-rendering observations**. They do not establish production route availability or authorize changing the homepage labels to Verified/Unavailable.
+- This was a route and rendering smoke, not a complete interactive browser acceptance. Search/filter state transitions, keyboard-only traversal, reduced-motion/forced-colors emulation, contrast measurement, and focus behavior remain pending.
+- The separately named `lingo-legacy-flagship-preview` Workers configuration has not been deployed; this check used the existing isolated Cloudflare Pages preview deployment.
+- GitHub Actions G02 remains `startup_failure` with zero jobs on the latest observed runs. Node tests and the Wrangler dry-run have not been executed in an accepted CI runner.
+- The newest branch preview deployment was still queued/building when this section was recorded; the inspected `d5487e86` deployment corresponds to the latest homepage HTML commit, while subsequent commits updated the contract, verifier, tests, and evidence documentation.
