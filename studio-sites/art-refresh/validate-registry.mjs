@@ -12,6 +12,8 @@ const registry = JSON.parse(readFileSync(registryPath, "utf8"));
 const errors = [];
 const seenGameIds = new Set();
 const seenAssetIds = new Set();
+const seenAssetPaths = new Set();
+let svgFilesChecked = 0;
 const allowedStatuses = new Set([
   "planned", "in-progress", "concept", "needs-review", "approved",
   "integrated", "verified", "blocked", "not-applicable"
@@ -48,18 +50,36 @@ for (const game of registry.games ?? []) {
       errors.push(`Invalid status ${asset.status} for ${asset.assetId}`);
     }
     if (asset.path) {
+      if (seenAssetPaths.has(asset.path)) errors.push(`Duplicate registered asset path: ${asset.path}`);
+      seenAssetPaths.add(asset.path);
       const assetPath = resolve(asset.path);
       if (!existsSync(assetPath)) {
         errors.push(`Missing registered asset path for ${asset.assetId}: ${asset.path}`);
       } else if (asset.path.endsWith(".svg")) {
         const svg = readFileSync(assetPath, "utf8");
-        if (!/<svg\b/.test(svg) || !/<\/svg>\s*$/.test(svg.trim())) {
+        svgFilesChecked += 1;
+        const rootMatch = svg.match(/<svg\\b([^>]*)>/);
+        const viewBoxMatch = svg.match(/\\bviewBox="([^"]+)"/);
+        if (!rootMatch || !/<\\/svg>\\s*$/.test(svg.trim())) {
           errors.push(`Invalid SVG root/closing tag for ${asset.assetId}: ${asset.path}`);
         }
-        if (!/\bviewBox=/.test(svg)) {
+        if (!viewBoxMatch) {
           errors.push(`SVG missing viewBox for ${asset.assetId}: ${asset.path}`);
+        } else {
+          const dimensions = viewBoxMatch[1].trim().split(/[ ,]+/).map(Number);
+          if (dimensions.length !== 4 || dimensions.some(value => !Number.isFinite(value)) || dimensions[2] <= 0 || dimensions[3] <= 0) {
+            errors.push(`SVG has invalid viewBox dimensions for ${asset.assetId}: ${asset.path}`);
+          } else if (asset.width && asset.height && (dimensions[2] !== asset.width || dimensions[3] !== asset.height)) {
+            errors.push(`SVG viewBox does not match registry dimensions for ${asset.assetId}: ${asset.path}`);
+          }
         }
-        if (/<script\b/i.test(svg)) {
+        if (!/<title\\b[^>]*>[^<]+<\\/title>/i.test(svg)) {
+          errors.push(`SVG missing accessible title for ${asset.assetId}: ${asset.path}`);
+        }
+        if (!/<desc\\b[^>]*>[^<]+<\\/desc>/i.test(svg)) {
+          errors.push(`SVG missing accessible description for ${asset.assetId}: ${asset.path}`);
+        }
+        if (/<script\\b/i.test(svg)) {
           errors.push(`SVG contains embedded script for ${asset.assetId}: ${asset.path}`);
         }
       }
@@ -85,6 +105,6 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Art registry structure PASS: ${registry.games.length} games, ${seenAssetIds.size} planned asset records.`);
+  console.log(`Art registry structure PASS: ${registry.games.length} games, ${seenAssetIds.size} asset records, ${seenAssetPaths.size} unique paths, ${svgFilesChecked} SVGs checked.`);
   console.log("No completion is inferred from planned entries; final statuses require evidence.");
 }
