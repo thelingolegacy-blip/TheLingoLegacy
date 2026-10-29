@@ -7,6 +7,7 @@ const contract = {
     productionWorker: 'thelingolegacyv-5',
     previewWorker: 'lingo-legacy-flagship-preview',
     previewMustNotDeclareCustomDomainRoutes: true,
+    productionRoutes: ['thelingolegacy.com/*', 'www.thelingolegacy.com/*'],
   },
 };
 
