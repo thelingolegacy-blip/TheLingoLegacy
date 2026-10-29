@@ -29,7 +29,9 @@ Production authority:
 
 `GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → canonical domain`
 
-The canonical Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
+The wildcard/runtime Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
+
+**Live routing exception observed 2026-10-29:** the exact route `thelingolegacy.com/` is separately assigned to `lingo-flagship-root` (active version `658acd1a-997b-45cd-b8fc-e59c59b26b45` at 100%). The apex wildcard and www wildcard remain on `thelingolegacyv-5` (latest observed active version `2d161fa5-598f-4998-ada8-7ac4c72c3461`). A source snapshot of the exact-root Worker response is preserved in `cloudflare/flagship-root/live-snapshot-2026-10-29.html`; source parity with the reviewed `index.html` candidate remains pending. Do not collapse these routes or promote the candidate until the isolated preview and release gates pass.
 
 The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its entrypoint is `cloudflare/studio-worker.js`, configuration is `cloudflare/wrangler.toml`, and compatibility date is `2026-10-04`. Its GitHub workflow is dry-run-only and pins Wrangler major version 4. It is not the apex/www production Worker.
 
