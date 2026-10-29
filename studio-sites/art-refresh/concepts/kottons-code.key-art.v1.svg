@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">KOTTON’S CODE — Concept Key Art</title><desc id="desc">Original vector concept cover for KOTTON’S CODE, using #8C5A35 and #F4D7A2 accents, with a genre-specific emblem on a dark premium background. Concept art pending visual and brand review.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#08080E"/><stop offset=".55" stop-color="#8C5A35"/><stop offset="1" stop-color="#0B0B10"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0B0"/><stop offset=".45" stop-color="#F4D7A2"/><stop offset="1" stop-color="#805A1A"/></linearGradient><radialGradient id="glow"><stop stop-color="#8C5A35" stop-opacity=".75"/><stop offset="1" stop-color="#8C5A35" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="675" fill="url(#bg)"/><ellipse cx="600" cy="330" rx="480" ry="360" fill="url(#glow)"/>
+<g stroke="#F4D7A2" stroke-width="2" opacity=".3"><path d="M0 90 H1200 M0 580 H1200 M120 0 V675 M1080 0 V675"/><path d="M0 0 L1200 675 M1200 0 L0 675"/></g>
+<rect x="24" y="24" width="1152" height="627" rx="28" fill="none" stroke="url(#metal)" stroke-width="5"/><rect x="38" y="38" width="1124" height="599" rx="22" fill="none" stroke="#F4D7A2" stroke-opacity=".4" stroke-width="2"/>
+<g><g fill="#F4D7A2" stroke="#8C5A35" stroke-width="8"><ellipse cx="600" cy="370" rx="150" ry="120"/><ellipse cx="445" cy="230" rx="55" ry="75"/><ellipse cx="545" cy="190" rx="55" ry="75"/><ellipse cx="655" cy="190" rx="55" ry="75"/><ellipse cx="755" cy="230" rx="55" ry="75"/></g></g>
+<rect x="70" y="485" width="1060" height="135" rx="18" fill="#08080E" fill-opacity=".88" stroke="#F4D7A2" stroke-width="3"/>
+<text x="600" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="900" letter-spacing="1.5" fill="url(#metal)">KOTTON’S CODE</text>
+<text x="600" y="585" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="5" fill="#F4EFE4">WORDS · HEART · FRIENDSHIP</text>
+<text x="600" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="7" fill="#F4D7A2">THE LINGO LEGACY · ORIGINAL GAME CONCEPT</text>
+</svg>
