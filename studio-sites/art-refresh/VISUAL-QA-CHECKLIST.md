@@ -67,6 +67,8 @@ This checklist covers the 13 game specifications currently verified in the sourc
 - Validator enhancement: checks registered paths, duplicate paths, SVG root/closing tag, viewBox validity and dimensions, accessible title/description, and embedded scripts.
 - Latest observed GitHub Actions run: [Game Art Registry Validation #45](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40796940801) ended with `startup_failure`; the jobs endpoint returned an empty list. This is a runner/dispatch failure, not a validator result. No successful validator execution is evidenced. Earlier run #39 is superseded as the latest observed attempt.
 - Gallery source enhancements committed at `3977d7fd2d00ddf23d9d87b82924c233e063f447` and live asset-load audit added at `8697926f5479a6e309352f383229bf921b036395`.
+- Parallel retry attempt: six latest startup-failure runs were submitted to the GitHub retry endpoint; all returned HTTP 403 `This workflow run cannot be retried`. These were not successful retries and created no new execution evidence.
+- Runner inventory and repository Actions-permission endpoints were not accessible through the connected GitHub interface. The public workflow-run jobs endpoint confirmed `total_count: 0` for run #45. The available connection therefore cannot change runner capacity, inspect live runner inventory, or dispatch a fresh workflow run from this attempt.
 - No workflow run was returned for the latest gallery commit by the PR-run lookup; this does not prove that no run exists elsewhere in GitHub Actions.
 - Browser rendering/accessibility acceptance: open; no browser screenshots or rendered QA results are claimed.
 - Game-screen integration: open.
