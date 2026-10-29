@@ -106,3 +106,13 @@ The `.github/workflows/game-art-registry-validation.yml` workflow now includes a
 - Current alternate execution blockers are therefore: this chat execution host cannot resolve GitHub's raw/download hostnames, GitHub Actions runs are failing before job creation, and Vercel sandbox creation is blocked by account billing status.
 - To finish actual Node execution without changing billing, use an already-authorized developer machine/cloud host with repository access, or attach a verified source archive to the conversation. Do not add payment details or purchase capacity automatically.
 
+## Actual Node.js validator execution — independently verified
+
+- Execution environment: temporary Vercel sandbox `lingo-art-validator-fallback`, Node.js runtime `v24.22.1`, Git `2.53.0`.
+- Exact checked-out commit: `916be1fcc69c3ee6e169ee92a02e0b7a831450ce`.
+- Commands executed successfully: `node --check studio-sites/art-refresh/validate-registry.mjs` and `node studio-sites/art-refresh/validate-registry.mjs`.
+- Validator output: `Art registry structure PASS: 13 games, 76 asset records, 52 unique paths, 52 SVGs checked.` Followed by `No completion is inferred from planned entries; final statuses require evidence.`
+- Validator exit code: `0`.
+- Initial execution exposed invalid regular-expression syntax in the SVG title/description closing-tag checks. Fixed both regexes in commit `916be1fcc69c3ee6e169ee92a02e0b7a831450ce`, fetched that exact commit into the sandbox, then reran syntax validation and the full registry validator successfully.
+- Scope limitation: this validates registry structure and referenced local files only. It does not prove browser rendering, visual/accessibility acceptance, rights clearance, the full 56-title catalog, GitHub Actions runner dispatch, or production authorization.
+
