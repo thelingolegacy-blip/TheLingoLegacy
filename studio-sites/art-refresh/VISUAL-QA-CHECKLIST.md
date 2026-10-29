@@ -49,6 +49,13 @@ For every key-art, wordmark, launcher-icon, and environment concept:
 
 This checklist covers the 13 game specifications currently verified in the source repository. The wider 56-title collection claim remains unreconciled. Do not invent or silently add titles; reconcile the authoritative catalog before declaring the full collection complete.
 
+## Gallery implementation update
+
+- Added title search, asset-type filtering, alphabetical sorting, and a reset control.
+- Added visible keyboard-focus styling, a live result count, reduced-motion handling, and a named gallery region.
+- Missing SVGs now show an explicit per-file warning instead of silently disappearing from review.
+- These are source-level changes only. Browser-based keyboard, responsive, contrast, and rendered-art acceptance remains unchecked until captured evidence is available.
+
 ## Current evidence record
 
 - Registered game specifications: 13
@@ -58,7 +65,8 @@ This checklist covers the 13 game specifications currently verified in the sourc
 - Registry path audit: all 13 spec paths and 52 referenced concept paths were found in the recursive branch tree.
 - Validator enhancement: checks registered paths, duplicate paths, SVG root/closing tag, viewBox validity and dimensions, accessible title/description, and embedded scripts.
 - Latest observed GitHub Actions run: [Game Art Registry Validation #39](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40796192962) ended with `startup_failure`; the jobs endpoint returned an empty list. This is a runner/dispatch failure, not a validator result. No successful validator execution is evidenced.
-- Browser rendering/accessibility acceptance: open.
+- Gallery source enhancements committed at `3977d7fd2d00ddf23d9d87b82924c233e063f447`; no workflow run was returned for this commit by the PR-run lookup.
+- Browser rendering/accessibility acceptance: open; no browser screenshots or rendered QA results are claimed.
 - Game-screen integration: open.
 - 56-title catalog reconciliation: open.
 - Production status: protected; no production promotion authorized.
