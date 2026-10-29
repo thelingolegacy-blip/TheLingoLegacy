@@ -61,6 +61,18 @@ const assetFilter=document.getElementById("asset-filter");
 const sortOrder=document.getElementById("sort-order");
 const resultCount=document.getElementById("result-count");
 const cards=[];
+const assetStates=new Map();
+const assetStatus=document.createElement("p");
+assetStatus.id="asset-status";
+assetStatus.setAttribute("role","status");
+assetStatus.setAttribute("aria-live","polite");
+assetStatus.textContent="Asset load audit: waiting for images to load as they enter the viewport.";
+resultCount.after(assetStatus);
+function updateAssetStatus(){
+ const counts={loaded:0,missing:0,pending:0};
+ for(const state of assetStates.values())counts[state]++;
+ assetStatus.textContent="Asset load audit: "+counts.loaded+" loaded · "+counts.missing+" missing · "+counts.pending+" not yet checked. Lazy-loaded images are checked when requested by the browser.";
+}
 for(const [id,title] of games){
  const article=document.createElement("article");article.dataset.title=title.toLocaleLowerCase();
  const heading=document.createElement("h2");heading.textContent=title;article.append(heading);
@@ -72,7 +84,9 @@ for(const [id,title] of games){
   const figure=document.createElement("figure");figure.className=cls;figure.dataset.role=role;
   const link=document.createElement("a");link.href=base+file;link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label",title+" — open "+role+" SVG in a new tab");
   const img=document.createElement("img");img.src=base+file;img.alt=title+" — "+role+" concept";img.loading="lazy";img.decoding="async";
-  img.addEventListener("error",()=>{link.remove();const error=document.createElement("div");error.className="asset-error";error.setAttribute("role","status");error.textContent="Asset unavailable: "+file+" (investigate path or file)";figure.prepend(error);},{once:true});
+  assetStates.set(file,"pending");updateAssetStatus();
+  img.addEventListener("load",()=>{assetStates.set(file,"loaded");updateAssetStatus();},{once:true});
+  img.addEventListener("error",()=>{assetStates.set(file,"missing");updateAssetStatus();link.remove();const error=document.createElement("div");error.className="asset-error";error.setAttribute("role","status");error.textContent="Asset unavailable: "+file+" (investigate path or file)";figure.prepend(error);},{once:true});
   link.append(img);figure.append(link);
   const caption=document.createElement("figcaption");caption.textContent=role;figure.append(caption);assets.append(figure);figures.push(figure);
  }
