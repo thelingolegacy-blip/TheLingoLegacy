@@ -16,21 +16,71 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Runner dispatch sentinel
+        shell: bash
+        run: |
+          set -eu
+          {
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "commit_sha=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "sentinel=EXECUTED"
+          } | tee runner-sentinel.txt
+
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
       - name: Validate planned art registry
-        run: node studio-sites/art-refresh/validate-registry.mjs
-      - name: Validate registry JSON syntax
-        run: node --check studio-sites/art-refresh/validate-registry.mjs
-      - name: Report title and asset counts
+        shell: bash
         run: |
-          node --input-type=module <<'NODE'
+          set +e
+          node studio-sites/art-refresh/validate-registry.mjs > validator-output.txt 2>&1
+          validator_exit_code=$?
+          cat validator-output.txt
+          {
+            echo "commit_sha=${GITHUB_SHA}"
+            echo "node_version=$(node --version)"
+            echo "command=node studio-sites/art-refresh/validate-registry.mjs"
+            echo "validator_exit_code=${validator_exit_code}"
+          } | tee validation-report.txt
+          exit "$validator_exit_code"
+
+      - name: Validate validator JavaScript syntax
+        run: node --check studio-sites/art-refresh/validate-registry.mjs
+
+      - name: Report registry counts
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE' | tee registry-counts.json
           import fs from 'node:fs';
           const registry = JSON.parse(fs.readFileSync('studio-sites/art-refresh/asset-registry.v0.1.json', 'utf8'));
           const assets = registry.games.reduce((sum, game) => sum + game.assets.length, 0);
-          console.log(JSON.stringify({games: registry.games.length, plannedAssetRecords: assets}, null, 2));
+          console.log(JSON.stringify({
+            commitSha: process.env.GITHUB_SHA,
+            games: registry.games.length,
+            assetRecords: assets,
+            pathBearingAssets: registry.games.reduce((sum, game) => sum + game.assets.filter(asset => asset.path).length, 0)
+          }, null, 2));
           NODE
+
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-art-registry-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runner-sentinel.txt
+            validator-output.txt
+            validation-report.txt
+            registry-counts.json
+          if-no-files-found: warn
+          retention-days: 14
