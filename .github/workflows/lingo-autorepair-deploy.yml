@@ -68,7 +68,7 @@ jobs:
         env:
           TESTED_COMMIT_SHA: ${{ github.sha }}
         run: |
-          set -uo pipefail
+          set -euo pipefail
           mkdir -p release/evidence/backbone-validation
           printf 'tested_commit_sha=%s\n' "$TESTED_COMMIT_SHA" | tee release/evidence/backbone-validation/commit.txt
           failures=0
@@ -77,8 +77,12 @@ jobs:
             shift
             log="release/evidence/backbone-validation/$name.log"
             echo "COMMAND_START=$name"
+            # Temporarily disable errexit so failures are captured and all checks run.
+            set +e
             "$@" 2>&1 | tee "$log"
-            rc=${PIPESTATUS[0]}
+            pipeline_status=("${PIPESTATUS[@]}")
+            set -e
+            rc="${pipeline_status[0]}"
             printf '%s_exit_code=%s\n' "$name" "$rc" | tee -a release/evidence/backbone-validation/exit-codes.txt
             echo "COMMAND_END=$name EXIT_CODE=$rc"
             if [ "$rc" -ne 0 ]; then failures=1; fi
