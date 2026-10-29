@@ -25,6 +25,7 @@ test('repository landing page infrastructure matches its contract', () => {
   assert.match(homepage, /data-filter="games"/);
   assert.match(homepage, /data-route-status="unverified"/);
   assert.match(homepage, /Not yet verified live/);
+  assert.match(homepage, /Preview results do not imply live availability/);
   assert.match(homepage, /search\.addEventListener\('input', refresh\)/);
 
 });
