@@ -75,6 +75,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "lingoarcade.environment-background",
+          "gameId": "lingoarcade",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/lingoarcade.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for LINGOarcade; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -139,6 +160,27 @@
           "altText": null,
           "sourceRightsStatus": "pending",
           "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "lingoslots.environment-background",
+          "gameId": "lingoslots",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/lingoslots.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for LINGOslots; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
           "consumerReferences": [],
           "verificationEvidence": []
         }
@@ -221,6 +263,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "thats-my-lingo.environment-background",
+          "gameId": "thats-my-lingo",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/thats-my-lingo.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for That’s My Lingo; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -301,6 +364,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "spades-is-my-lingo.environment-background",
+          "gameId": "spades-is-my-lingo",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/spades-is-my-lingo.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Spades Is My Lingo; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -364,6 +448,27 @@
           "altText": null,
           "sourceRightsStatus": "pending",
           "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "uhno-lingo-university.environment-background",
+          "gameId": "uhno-lingo-university",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/uhno-lingo-university.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for UhNo Lingo University; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
           "consumerReferences": [],
           "verificationEvidence": []
         }
@@ -446,6 +551,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "kottons-code.environment-background",
+          "gameId": "kottons-code",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/kottons-code.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Kotton’s Code; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -526,6 +652,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "tricias-escape.environment-background",
+          "gameId": "tricias-escape",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/tricias-escape.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Tricia’s Escape; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -604,6 +751,27 @@
           "altText": null,
           "sourceRightsStatus": "pending",
           "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "doughboys-oasis.environment-background",
+          "gameId": "doughboys-oasis",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/doughboys-oasis.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Doughboy’s Oasis; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
           "consumerReferences": [],
           "verificationEvidence": []
         }
@@ -701,6 +869,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "crazy-weasols.environment-background",
+          "gameId": "crazy-weasols",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/crazy-weasols.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Crazy Weasols; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -779,6 +968,27 @@
           "altText": null,
           "sourceRightsStatus": "pending",
           "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "silly-in-philly.environment-background",
+          "gameId": "silly-in-philly",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/silly-in-philly.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Silly in Philly: The Streets Run on Loyalty; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
           "consumerReferences": [],
           "verificationEvidence": []
         }
@@ -861,6 +1071,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "jersey-shore-undead.environment-background",
+          "gameId": "jersey-shore-undead",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/jersey-shore-undead.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Jersey Shore: The Undead; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -941,6 +1172,27 @@
           "sha256": null,
           "consumerReferences": [],
           "verificationEvidence": []
+        },
+        {
+          "assetId": "lingo-eruptions.environment-background",
+          "gameId": "lingo-eruptions",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/lingo-eruptions.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Lingo Eruptions; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
+          "consumerReferences": [],
+          "verificationEvidence": []
         }
       ]
     },
@@ -1019,6 +1271,27 @@
           "altText": null,
           "sourceRightsStatus": "pending",
           "sha256": null,
+          "consumerReferences": [],
+          "verificationEvidence": []
+        },
+        {
+          "assetId": "cashman-lingo-mania.environment-background",
+          "gameId": "cashman-lingo-mania",
+          "role": "environment-background",
+          "path": "studio-sites/art-refresh/concepts/cashman-lingo-mania.environment.v1.svg",
+          "version": "v1",
+          "format": "image/svg+xml",
+          "width": 1200,
+          "height": 675,
+          "aspectRatio": "16:9",
+          "altText": "Original environment background concept for Cashman Lingo Mania; pending visual review and integration.",
+          "decorative": false,
+          "sourceType": "original-vector-concept",
+          "creator": "LINGO Legacy art refresh",
+          "licenseOrRights": "internal original concept; final rights review pending",
+          "sourceRightsStatus": "pending-review",
+          "sha256": null,
+          "status": "concept",
           "consumerReferences": [],
           "verificationEvidence": []
         }
