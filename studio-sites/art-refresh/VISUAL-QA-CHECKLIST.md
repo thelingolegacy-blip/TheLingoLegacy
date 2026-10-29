@@ -88,3 +88,7 @@ See [RUNNER-RECOVERY-AND-CAPACITY.md](./RUNNER-RECOVERY-AND-CAPACITY.md) for the
 
 No runner registration, larger-runner purchase, secret/token change, or billing/quota change is claimed by this documentation update. Those actions require authorized administrator access and explicit cost/security approval where applicable.
 
+## Workflow instrumentation update
+
+The `.github/workflows/game-art-registry-validation.yml` workflow now includes a first-step runner sentinel and an always-attempted evidence artifact upload for the sentinel, validator output, exit-code report, and registry counts (where generated). This instrumentation is committed but remains unverified until a real workflow run starts, instantiates steps, and produces retrievable logs/artifacts. A pre-job `startup_failure` can still prevent every step from executing.
+
