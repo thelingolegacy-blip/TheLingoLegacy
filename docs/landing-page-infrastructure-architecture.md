@@ -15,16 +15,18 @@ Cloudflare's static-asset binding serves the committed public files. The Worker 
 
 ```text
 Browser
-  -> Cloudflare DNS / TLS / custom domain
-  -> Worker: worker.js
-       -> canonicalize www to apex
-       -> apply security and runtime headers
-       -> /healthz and /api/* handled by explicit Worker routes
-       -> public page/asset requests forwarded to ASSETS
+  -> Cloudflare DNS / TLS
+       -> exact apex-root route: thelingolegacy.com/ -> lingo-flagship-root
+            -> currently API-deployed HTML homepage (captured in cloudflare/flagship-root/)
+       -> apex wildcard: thelingolegacy.com/* -> thelingolegacyv-5
+       -> www wildcard: www.thelingolegacy.com/* -> thelingolegacyv-5
+            -> worker.js -> security/runtime/API handlers -> ASSETS
   -> Workers Static Assets: root index.html, route index.html files, assets/*
 ```
 
-The apex is canonical. The `www` hostname should redirect to the same path and query on the apex. This contract does not authorize changing DNS, Worker routes, traffic allocation, or a live deployment.
+**Live routing exception confirmed 2026-10-29:** the exact apex-root route is assigned to `lingo-flagship-root` at 100% on version `658acd1a-997b-45cd-b8fc-e59c59b26b45`. Apex and www wildcard routes remain assigned to `thelingolegacyv-5`, whose latest observed 100% deployment is version `2d161fa5-598f-4998-ada8-7ac4c72c3461`. The exact-root HTML has been captured for source recovery, but its equivalence with the reviewed repository candidate is not yet certified.
+
+The apex is canonical. The `www` hostname should redirect to the same path and query on the apex. The separate preview config uses a new Worker name on `workers.dev` with no custom-domain routes. None of these source changes authorize changing production DNS, routes, traffic allocation, or a live deployment.
 
 ## 3. Repository responsibilities
 
@@ -34,8 +36,10 @@ The apex is canonical. The `www` hostname should redirect to the same path and q
 | Route pages | `<route>/index.html` | Product-specific landing and discovery surfaces |
 | Shared design | `config/design/design-tokens.json`, `assets/*.css` | Tokens, typography, responsive rules, accessible focus/motion behavior |
 | Shared interaction | `assets/*.js` | Progressive enhancement only; core navigation must remain links |
-| Edge runtime | `worker.js` | Canonical redirect, security headers, health, runtime APIs, controlled asset forwarding |
-| Deployment config | `wrangler.jsonc` | Worker identity, custom-domain routes, asset directory and binding |
+| Edge runtime | `worker.js` | Wildcard-route canonical redirect, security headers, health, runtime APIs, controlled asset forwarding |
+| Exact-root evidence | `cloudflare/flagship-root/live-snapshot-2026-10-29.html` | Captured deployed homepage for source recovery and visual/source parity review; not a deployment source by itself |
+| Preview runtime | `cloudflare/flagship-root/preview-worker.js` + `wrangler.flagship-preview.toml` | Isolated workers.dev preview reusing the canonical runtime and the repository asset boundary; no production routes |
+| Deployment config | `wrangler.jsonc` | Wildcard Worker identity, custom-domain routes, asset directory and binding; it does not own the exact-root route |
 | Publication boundary | `.assetsignore` | Exclude source, scripts, docs, configuration and secret-bearing files from public asset upload |
 | Release contract | `config/release/lingo-legacy-v1.0.0-rc.json` | Declared release surfaces and pending gates |
 | Validation | `scripts/verify-landing-page-architecture.mjs` plus existing static/runtime gates | Fail closed on architecture drift |
@@ -106,6 +110,15 @@ Required external acceptance checks:
 4. Decide whether Vercel remains preview-only or is formally retired through a separately authorized change; do not treat its preview status as production acceptance.
 5. Independently test live root, health, runtime, status, primary destinations, security headers, deployed source provenance, and rollback.
 6. Restore G02 runner dispatch and collect independently retrievable CI evidence before certification. The latest inspected runs have no jobs, so retrying or interpreting them as test results would not provide acceptance evidence.
+
+### Live control-plane reconciliation — 2026-10-29
+
+- Cloudflare lists 20 Worker routes in the zone: the exact apex-root route goes to `lingo-flagship-root`; apex/www wildcard and the registered brand subdomains route to `thelingolegacyv-5`; `launch.thelingolegacy.com/*` uses the static-backup proxy Worker.
+- The apex A record is proxied through Cloudflare, `www` aliases the apex, `casino` targets the AppDeploy proxy, `launch` targets the static Pages backup, and `studio-preview` targets a branch-scoped Vercel preview. DNS was inspected read-only; no records were changed.
+- The live root page's search, category filters, and mobile menu are present in its embedded script. Catalog cards intentionally open a launch-intent panel rather than an unverified destination URL. The source-controlled unified-flagship candidate is a different document and is not yet proven equivalent to the deployed exact-root Worker.
+- The Pro Vercel project reports `live=false` and its domain-list API returned zero records, while a deployment response lists apex/www aliases. Treat this as inconsistent control-plane metadata, not proof that Vercel owns live production traffic. The separate Hobby project has verified `launch` and `studio-preview` subdomains.
+- The latest inspected GitHub Actions runs are still `startup_failure` with zero jobs. G02 remains blocked; downstream release gates remain blocked. The current runtime gate response is source-declared fail-closed, not independent CI acceptance.
+- The production environment contract still requires real Firebase public configuration, and placeholder Firebase values were previously found in source. Stripe checkout must remain unavailable until server-side secrets and price IDs are verified. Asset registry entries for slot art and apparel photography still require final license/product-asset review; staged world registry entries are disabled.
 
 ## 9. Release boundary
 
