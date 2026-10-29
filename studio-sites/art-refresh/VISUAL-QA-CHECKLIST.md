@@ -57,6 +57,13 @@ This checklist covers the 13 game specifications currently verified in the sourc
 - Missing SVGs now show an explicit per-file warning instead of silently disappearing from review.
 - These are source-level changes only. Browser-based keyboard, responsive, contrast, and rendered-art acceptance remains unchecked until captured evidence is available.
 
+## Independent source audit (not the Node validator)
+
+- Audited registry content at blob SHA `dc8f308ac18c93f4585fb5b54c37b220d266c8f1` directly through the GitHub file interface.
+- Registry consistency checks performed independently in a separate execution: 13 game records, 76 asset records, 52 unique registered paths, allowed statuses, duplicate game/asset/path detection, and required metadata for any entry marked approved/integrated/verified. Result: zero findings.
+- Read all 52 referenced SVG files and checked SVG root/closing tag, viewBox presence and positive dimensions, non-empty title and description elements, and absence of embedded script elements. Result: zero findings in these checks.
+- This is an independent source-content audit, not execution of `node studio-sites/art-refresh/validate-registry.mjs`. It does not prove browser rendering, spec-path existence in the current checkout, exact registry-to-viewBox dimension agreement for each record, visual quality, rights approval, or GitHub Actions success. Those gates remain open.
+
 ## Current evidence record
 
 - Registered game specifications: 13
