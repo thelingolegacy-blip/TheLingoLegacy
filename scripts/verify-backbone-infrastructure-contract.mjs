@@ -19,7 +19,7 @@ export function validatePreviewIsolation(production, preview, contract) {
   const workersDev = preview.workers_dev === true;
   // Fail closed on either standard TOML route tables or a top-level routes assignment.
   // The preview contract forbids every custom-domain route, not only production-domain routes.
-  const hasRouteTable = /^\s*\[\[\s*routes\s*\]\]\s*$/m.test(routeText);
+  const hasRouteTable = /^\\s*\\[\\[\\s*routes\\s*\\]\\]\\s*(?:#.*)?$/m.test(routeText);
   const hasRoutesAssignment = /^\s*routes\s*=/m.test(routeText);
   const noDeclaredRoutes = routes.length === 0 && !hasRouteTable && !hasRoutesAssignment;
   const noProductionPattern = !/(thelingolegacy\.com\/\*|www\.thelingolegacy\.com\/\*|pattern\s*=\s*["']thelingolegacy\.com)/i.test(routeText);
@@ -30,6 +30,23 @@ export function validatePreviewIsolation(production, preview, contract) {
     { id: 'preview-no-production-pattern', pass: noProductionPattern, detail: 'preview contains no production route pattern' },
     { id: 'preview-contract-isolated', pass: contract.isolation.previewMustNotDeclareCustomDomainRoutes === true && contract.isolation.previewWorker !== contract.isolation.productionWorker, detail: 'machine contract requires separate Worker identity and no production routes' },
   ];
+}
+
+export function validateProductionRoutes(production, contract) {
+  const actualRoutes = Array.isArray(production?.routes)
+    ? production.routes.map((route) => route?.pattern).filter((pattern) => typeof pattern === 'string').sort()
+    : [];
+  const expectedRoutes = Array.isArray(contract?.isolation?.productionRoutes)
+    ? [...contract.isolation.productionRoutes].sort()
+    : [];
+  const pass = expectedRoutes.length > 0 && JSON.stringify(actualRoutes) === JSON.stringify(expectedRoutes);
+  return {
+    id: 'production-routes-exact-baseline',
+    pass,
+    detail: pass
+      ? 'production route set exactly matches the approved baseline'
+      : `production route set differs from approved baseline: expected=${JSON.stringify(expectedRoutes)}, actual=${JSON.stringify(actualRoutes)}`,
+  };
 }
 
 export function validateGateEvidence(evidence) {
@@ -92,9 +109,8 @@ export function verify(rootDir = root) {
   if (production) {
     add('production-worker-identity', production.name === contract.isolation.productionWorker, `expected ${contract.isolation.productionWorker}; found ${production.name || 'missing'}`);
     add('production-entrypoint', production.main === 'worker.js', 'production entrypoint remains worker.js');
-    const patterns = new Set((production.routes || []).map((route) => route.pattern));
-    add('production-apex-route-baseline', patterns.has('thelingolegacy.com/*'), 'expected apex wildcard route is present in source config');
-    add('production-www-route-baseline', patterns.has('www.thelingolegacy.com/*'), 'expected www wildcard route is present in source config');
+    const routeCheck = validateProductionRoutes(production, contract);
+    add(routeCheck.id, routeCheck.pass, routeCheck.detail);
   }
 
   if (previewRaw) {
