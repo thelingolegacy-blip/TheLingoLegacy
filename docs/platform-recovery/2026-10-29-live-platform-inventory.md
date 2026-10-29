@@ -123,7 +123,7 @@ The branch source changes are not browser acceptance. The Cloudflare Pages integ
 
 ## 10. Isolated preview route smoke — 2026-10-29
 
-**Preview deployment inspected:** Cloudflare Pages deployment `d5487e86-2e48-46df-a958-146aabbdeae4`, preview URL `https://d5487e86.lingo-legacy-github-integration-test.pages.dev/`, source commit `e84cd12218e824c1319a5bc0d7b067921d9a8eff`. The deployment API reports environment `preview`; the URL is on `pages.dev`, not the production apex or www hostname. No production route or traffic setting was changed.
+**Preview deployment inspected:** Cloudflare Pages deployment `cd4ed98b-2a39-44ce-857d-5339e913dc1c`, preview URL `https://cd4ed98b.lingo-legacy-github-integration-test.pages.dev/`, source commit `578e1da7a2c549d37b619e12df30b1c4b41bcd7c`. The deployment API reports environment `preview`; the URL is on `pages.dev`, not the production apex or www hostname. No production route or traffic setting was changed.
 
 A headless-browser scrape at a mobile viewport (390×844) returned HTTP 200 and a non-empty page title and H1 for all 11 checked routes:
 
@@ -149,4 +149,4 @@ The root preview rendered all six direct-link catalog cards, the search input, s
 - This was a route and rendering smoke, not a complete interactive browser acceptance. Search/filter state transitions, keyboard-only traversal, reduced-motion/forced-colors emulation, contrast measurement, and focus behavior remain pending.
 - The separately named `lingo-legacy-flagship-preview` Workers configuration has not been deployed; this check used the existing isolated Cloudflare Pages preview deployment.
 - GitHub Actions G02 remains `startup_failure` with zero jobs on the latest observed runs. Node tests and the Wrangler dry-run have not been executed in an accepted CI runner.
-- The newest branch preview deployment was still queued/building when this section was recorded; the inspected `d5487e86` deployment corresponds to the latest homepage HTML commit, while subsequent commits updated the contract, verifier, tests, and evidence documentation.
+- The inspected `cd4ed98b` preview completed the queued, initialize, clone, build, and deploy stages successfully for the reviewed branch state. A subsequent documentation-only evidence update may create another Pages preview; the tested homepage, contract, verifier, and test sources are recorded by the commit SHA above. The successful Pages build is not a substitute for the blocked GitHub Actions runner or executed Node tests.
