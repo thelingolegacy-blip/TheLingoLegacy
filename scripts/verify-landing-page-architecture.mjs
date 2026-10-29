@@ -96,6 +96,11 @@ if (contract.site && wrangler && release) {
   check('preview-worker-import', previewWorker.includes("import worker from '../../worker.js'") && previewWorker.includes('export default worker'), 'preview reuses the canonical Worker runtime source');
   check('preview-worker-isolated', previewConfig.includes('name = "' + contract.deployment?.previewWorkerName + '"') && previewConfig.includes('workers_dev = true') && contract.deployment?.previewHasProductionRoutes === false && !previewConfig.includes('[[routes]]') && !previewConfig.includes('pattern = "thelingolegacy.com'), 'preview uses a distinct workers.dev name with no production custom-domain routes');
   check('preview-worker-assets', previewConfig.includes('run_worker_first = true') && previewConfig.includes('binding = "ASSETS"') && previewConfig.includes('directory = "."'), 'preview serves repository assets through the existing publication boundary');
+  check('homepage-hybrid-direction', contract.homepage?.direction === 'hybrid-discovery-catalog', 'homepage contract selects the approved hybrid discovery catalog');
+  check('homepage-search-control', html.includes('id="destination-search"') && html.includes("search.addEventListener('input', refresh)"), 'homepage provides a wired destination search control');
+  check('homepage-category-filters', ['games', 'hub', 'commerce', 'stories', 'creative'].every((category) => html.includes('data-filter="' + category + '"')), 'homepage provides category filters for each catalog class');
+  check('homepage-route-status-labels', (html.match(/data-route-status="unverified"/g) || []).length >= 6 && html.includes('Not yet verified live'), 'homepage labels unverified routes honestly instead of implying live availability');
+  check('homepage-destination-search-data', (html.match(/data-category="/g) || []).length >= 6 && html.includes('catalog-empty'), 'catalog cards expose category data and an empty-results state');
   check('homepage-h1', /<h1\b/i.test(html), 'homepage has a primary H1');
   check('homepage-main', /<main\b/i.test(html), 'homepage uses a main landmark');
   check('homepage-nav', /<nav\b/i.test(html), 'homepage uses a navigation landmark');
