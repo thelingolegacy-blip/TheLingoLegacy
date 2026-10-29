@@ -150,3 +150,38 @@ The root preview rendered all six direct-link catalog cards, the search input, s
 - The separately named `lingo-legacy-flagship-preview` Workers configuration has not been deployed; this check used the existing isolated Cloudflare Pages preview deployment.
 - GitHub Actions G02 remains `startup_failure` with zero jobs on the latest observed runs. Node tests and the Wrangler dry-run have not been executed in an accepted CI runner.
 - The inspected `cd4ed98b` preview completed the queued, initialize, clone, build, and deploy stages successfully for the reviewed branch state. A subsequent documentation-only evidence update may create another Pages preview; the tested homepage, contract, verifier, and test sources are recorded by the commit SHA above. The successful Pages build is not a substitute for the blocked GitHub Actions runner or executed Node tests.
+
+
+## 11. Follow-up acceptance report — 2026-10-29
+
+**Reviewed branch head at time of report:** `407f04eaf5d8270d5c100a11708ae4add7be9b1f` (PR #402 remains open, draft, and unmerged).
+
+### Results actually observed
+
+| Check | Result | Evidence / limit |
+|---|---|---|
+| Isolated Pages preview deployment | PASS | Preview `https://2c18352f.lingo-legacy-github-integration-test.pages.dev/`; Pages API reports queue, initialize, clone, build, and deploy all successful for head `407f04e`. |
+| Homepage rendered | PASS | Browser-rendering scrape returned HTTP 200 and the expected title/H1. |
+| Six destination cards and direct hrefs | PASS | DOM scrape observed six cards with links to `/thats-my-lingo/`, `/universe/`, `/loyalty-lane-apparel/`, `/kottons-code/`, `/lingoarcade/`, and `/studio-production/`. |
+| Search control / category controls / empty-state markup | PASS — markup only | DOM scrape found one search input, six filter buttons (All + five categories), and the empty-state element. This does **not** establish that interactive state transitions work. |
+| Route smoke | PASS — preview only | Earlier browser-rendering smoke observed HTTP 200, a non-empty title, and H1 for each of the 11 listed routes on the isolated Pages preview. This does not establish production route status. |
+| Security headers | PASS — preview only | Earlier preview response included CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, and `X-Robots-Tag: noindex`. |
+| Interactive search/filter/empty-state behavior | NOT VERIFIED | No successful interaction-level assertion was captured. A DOM scrape is not a substitute for click/input execution evidence. |
+| Keyboard-only, focus, reduced-motion, forced-colors, full contrast | BLOCKED / PENDING | No accepted browser accessibility run or measurements captured. |
+| Node regression test execution | BLOCKED | GitHub Actions run `40871023588` (`Lingo Legacy Static CI`) ended `startup_failure`; job count was zero. No Node test exit code exists. |
+| Wrangler dry-run | BLOCKED | Not executed in an accepted runner; no exit code/log exists. |
+| G02 runner dispatch | BLOCKED | Run `40871022427` (`G02 Runner Image Build (no publish)`) ended `startup_failure` with zero jobs. |
+| Workers build integration | FAIL / UNRESOLVED | PR check reports “This Worker does not exist on your account” for build target `thelingolegacy`. Read-only API lookup found no Workers Build configuration for `thelingolegacy`, `thelingolegacyv-5`, `lingo-flagship-root`, or `lingo-legacy-flagship-preview`. Do not create or retarget a build configuration to the production Worker as an implicit repair. An isolated preview build target requires explicit, isolated configuration and verification. |
+
+### Follow-up interpretation
+
+The source and preview are sufficiently verified for continued review, but the full acceptance gate is **BLOCKED**. The build mismatch cannot be safely resolved by simply renaming the production Worker target: the live production Worker is `thelingolegacyv-5`, while the Pages preview is a separate deployment and no Workers Build configuration was found for either name. Preserve the current production route and deployment state while a separately isolated Workers Build configuration is designed.
+
+### Required next evidence
+
+1. Run a real browser automation pass that executes search and category clicks, checks visible card counts and empty state, follows the six links, and captures keyboard/focus/accessibility results.
+2. Recover the self-hosted G02 runner so a job receives a real runner ID/name, instantiates steps, executes the sentinel, and produces retrievable logs.
+3. Only then execute the Node test suite and Wrangler dry-run; capture command, exit status, and logs.
+4. Keep the Workers build integration failure open until an isolated build configuration can be verified without attaching production routes or changing production traffic.
+
+**Governance:** no DNS, production Worker routes, production deployments, traffic allocations, merge, or promotion changed. Production remains `PROTECTED — HOLD`.
