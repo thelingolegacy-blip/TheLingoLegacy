@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">THAT’S MY LINGO — Concept Key Art</title><desc id="desc">Original vector concept cover for THAT’S MY LINGO, using #7D28C8 and #F3C85B accents, with a genre-specific emblem on a dark premium background. Concept art pending visual and brand review.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#08080E"/><stop offset=".55" stop-color="#7D28C8"/><stop offset="1" stop-color="#0B0B10"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0B0"/><stop offset=".45" stop-color="#F3C85B"/><stop offset="1" stop-color="#805A1A"/></linearGradient><radialGradient id="glow"><stop stop-color="#7D28C8" stop-opacity=".75"/><stop offset="1" stop-color="#7D28C8" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="675" fill="url(#bg)"/><ellipse cx="600" cy="330" rx="480" ry="360" fill="url(#glow)"/>
+<g stroke="#F3C85B" stroke-width="2" opacity=".3"><path d="M0 90 H1200 M0 580 H1200 M120 0 V675 M1080 0 V675"/><path d="M0 0 L1200 675 M1200 0 L0 675"/></g>
+<rect x="24" y="24" width="1152" height="627" rx="28" fill="none" stroke="url(#metal)" stroke-width="5"/><rect x="38" y="38" width="1124" height="599" rx="22" fill="none" stroke="#F3C85B" stroke-opacity=".4" stroke-width="2"/>
+<g><path d="M360 300 L410 170 L510 260 L600 120 L690 260 L790 170 L840 300 Z" fill="#D6AD52" stroke="#FFF0B0" stroke-width="8"/><rect x="370" y="305" width="460" height="55" rx="12" fill="#7D28C8" stroke="#F3C85B" stroke-width="8"/></g>
+<rect x="70" y="485" width="1060" height="135" rx="18" fill="#08080E" fill-opacity=".88" stroke="#F3C85B" stroke-width="3"/>
+<text x="600" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="45" font-weight="900" letter-spacing="1.5" fill="url(#metal)">THAT’S MY LINGO</text>
+<text x="600" y="585" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="5" fill="#F4EFE4">THE ORIGINAL VIRTUAL SLOTS</text>
+<text x="600" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="7" fill="#F3C85B">THE LINGO LEGACY · ORIGINAL GAME CONCEPT</text>
+</svg>
