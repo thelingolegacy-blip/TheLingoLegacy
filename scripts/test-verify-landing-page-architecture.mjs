@@ -20,6 +20,13 @@ test('repository landing page infrastructure matches its contract', () => {
   assert.equal(report.gate, 'LANDING_PAGE_ARCHITECTURE');
   assert.equal(report.summary.failed, 0);
   assert.ok(report.summary.passed >= 25);
+  const homepage = fs.readFileSync(path.join(sourceRoot, 'index.html'), 'utf8');
+  assert.match(homepage, /id="destination-search"/);
+  assert.match(homepage, /data-filter="games"/);
+  assert.match(homepage, /data-route-status="unverified"/);
+  assert.match(homepage, /Not yet verified live/);
+  assert.match(homepage, /search\.addEventListener\('input', refresh\)/);
+
 });
 
 test('missing public route and homepage destination fail closed', (t) => {
