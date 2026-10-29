@@ -17,7 +17,11 @@ export function validatePreviewIsolation(production, preview, contract) {
   const routeText = String(preview.__raw || '');
   const nameDistinct = Boolean(production.name && preview.name && production.name !== preview.name);
   const workersDev = preview.workers_dev === true;
-  const noDeclaredRoutes = routes.length === 0 && !/^\s*\[\[routes\]\]\s*$/m.test(routeText);
+  // Fail closed on either standard TOML route tables or a top-level routes assignment.
+  // The preview contract forbids every custom-domain route, not only production-domain routes.
+  const hasRouteTable = /^\s*\[\[\s*routes\s*\]\]\s*$/m.test(routeText);
+  const hasRoutesAssignment = /^\s*routes\s*=/m.test(routeText);
+  const noDeclaredRoutes = routes.length === 0 && !hasRouteTable && !hasRoutesAssignment;
   const noProductionPattern = !/(thelingolegacy\.com\/\*|www\.thelingolegacy\.com\/\*|pattern\s*=\s*["']thelingolegacy\.com)/i.test(routeText);
   return [
     { id: 'preview-worker-name-distinct', pass: nameDistinct, detail: 'preview Worker identity differs from production' },
