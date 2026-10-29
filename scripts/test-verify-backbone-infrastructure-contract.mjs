@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateGateEvidence, validatePreviewIsolation } from './verify-backbone-infrastructure-contract.mjs';
+import { validateGateEvidence, validatePreviewIsolation, validateProductionRoutes } from './verify-backbone-infrastructure-contract.mjs';
 
 const contract = {
   isolation: {
@@ -100,4 +100,25 @@ test('rejects malformed commit SHA, digest, and non-UTC timestamp', () => {
   });
   assert.equal(result.pass, false);
   assert.equal(result.status, 'FAIL');
+});
+
+test('rejects a route table with a trailing TOML comment', () => {
+  const unsafe = {
+    ...safePreview,
+    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\n[[routes]] # route table hidden by a comment\\npattern = "preview.example.net/*"\\n',
+  };
+  const checks = validatePreviewIsolation(production, unsafe, contract);
+  assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
+});
+
+test('accepts only the exact approved production route set', () => {
+  const approved = {
+    name: 'thelingolegacyv-5',
+    routes: [{ pattern: 'thelingolegacy.com/*' }, { pattern: 'www.thelingolegacy.com/*' }],
+  };
+  assert.equal(validateProductionRoutes(approved, contract).pass, true);
+  const extra = { ...approved, routes: [...approved.routes, { pattern: 'unexpected.example/*' }] };
+  assert.equal(validateProductionRoutes(extra, contract).pass, false);
+  const missing = { ...approved, routes: approved.routes.slice(0, 1) };
+  assert.equal(validateProductionRoutes(missing, contract).pass, false);
 });
