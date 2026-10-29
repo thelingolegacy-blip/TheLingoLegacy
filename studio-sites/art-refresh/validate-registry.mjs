@@ -53,13 +53,13 @@ for (const game of registry.games ?? []) {
         errors.push(`Missing registered asset path for ${asset.assetId}: ${asset.path}`);
       } else if (asset.path.endsWith(".svg")) {
         const svg = readFileSync(assetPath, "utf8");
-        if (!/<svg\\b/.test(svg) || !/<\\/svg>\\s*$/.test(svg.trim())) {
+        if (!/<svg\b/.test(svg) || !/<\/svg>\\s*$/.test(svg.trim())) {
           errors.push(`Invalid SVG root/closing tag for ${asset.assetId}: ${asset.path}`);
         }
-        if (!/\\bviewBox=/.test(svg)) {
+        if (!/\bviewBox=/.test(svg)) {
           errors.push(`SVG missing viewBox for ${asset.assetId}: ${asset.path}`);
         }
-        if (/<script\\b/i.test(svg)) {
+        if (/<script\b/i.test(svg)) {
           errors.push(`SVG contains embedded script for ${asset.assetId}: ${asset.path}`);
         }
       }
