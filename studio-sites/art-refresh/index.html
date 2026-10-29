@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>LINGO Legacy — Art Refresh Concept Gallery</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b10;--panel:#20212a;--gold:#d6ad52;--purple:#5426a8;--text:#f4efe4;--muted:#aeb4c0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:clamp(24px,5vw,64px);background:linear-gradient(120deg,#24113f,#0b0b10 70%);border-bottom:1px solid #6d572b}
+h1{margin:0 0 8px;font-size:clamp(28px,4vw,48px);letter-spacing:-.03em}p{color:var(--muted);max-width:780px}
+main{padding:24px;max-width:1500px;margin:auto}.notice{border:1px solid #6d572b;border-radius:12px;padding:16px;margin-bottom:24px;background:#17141d}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+article{background:var(--panel);border:1px solid #3b3548;border-radius:14px;overflow:hidden;min-width:0}
+h2{font-size:18px;margin:16px 16px 4px}small{display:block;color:var(--muted);margin:0 16px 16px}
+.assets{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+figure{margin:0;min-width:0}img{display:block;width:100%;height:auto;background:#0b0b10;border-radius:8px;border:1px solid #4b405b;aspect-ratio:16/9;object-fit:contain}
+.icon img{aspect-ratio:1/1}.wordmark img{aspect-ratio:10/3}
+figcaption{font-size:12px;color:var(--muted);margin:6px 2px}
+a{color:#f3d16a}footer{padding:24px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header><h1>LINGO Legacy — Art Refresh</h1><p>Parallel concept review gallery · Industrial Noir foundation, metallic gold and royal purple accents, distinct visual language per title.</p></header>
+<main><div class="notice"><strong>Review status: CONCEPT ONLY.</strong><p>These SVGs are original vector concepts. They have not been approved as final assets, cleared for all rights requirements, or integrated into live game screens. Use this gallery to inspect responsive crops and visual consistency before approval.</p></div><section class="grid" id="gallery" aria-label="Game concept art"></section></main>
+<footer>LINGO Legacy · Loyalty. Legacy. Language. · Preview gallery, not production.</footer>
+<script>
+const games=[["lingoarcade","LINGOarcade"],["lingoslots","LINGOslots"],["thats-my-lingo","That’s My Lingo"],["spades-is-my-lingo","Spades Is My Lingo"],["uhno-lingo-university","UhNo Lingo University"],["kottons-code","Kotton’s Code"],["tricias-escape","Tricia’s Escape"],["doughboys-oasis","Doughboy’s Oasis"],["crazy-weasols","Crazy Weasols"],["silly-in-philly","Silly in Philly"],["jersey-shore-undead","Jersey Shore: The Undead"],["lingo-eruptions","Lingo Eruptions"],["cashman-lingo-mania","Cashman Lingo Mania"]];
+const base="./concepts/";
+const gallery=document.getElementById("gallery");
+for(const [id,title] of games){
+ const article=document.createElement("article");
+ const heading=document.createElement("h2");heading.textContent=title;article.append(heading);
+ const note=document.createElement("small");note.textContent="Unapproved concept · Review before integration";article.append(note);
+ const assets=document.createElement("div");assets.className="assets";
+ for(const [role,file,cls] of [["Key art",id+".key-art.v1.svg",""],["Wordmark",id+".wordmark.v1.svg","wordmark"],["Launcher icon",id+".launcher-icon.v1.svg","icon"],["Environment",id+".environment.v1.svg",""]]){
+  const figure=document.createElement("figure");figure.className=cls;
+  const link=document.createElement("a");link.href=base+file;link.target="_blank";link.rel="noopener";
+  const img=document.createElement("img");img.src=base+file;img.alt=title+" — "+role+" concept";img.loading="lazy";
+  img.onerror=()=>{figure.hidden=true};
+  link.append(img);figure.append(link);
+  const caption=document.createElement("figcaption");caption.textContent=role;figure.append(caption);assets.append(figure);
+ }
+ article.append(assets);gallery.append(article);
+}
+</script></body></html>
