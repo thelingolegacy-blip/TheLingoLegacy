@@ -105,7 +105,7 @@ test('rejects malformed commit SHA, digest, and non-UTC timestamp', () => {
 test('rejects a route table with a trailing TOML comment', () => {
   const unsafe = {
     ...safePreview,
-    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\n[[routes]] # route table hidden by a comment\\npattern = "preview.example.net/*"\\n',
+    __raw: 'name = "lingo-legacy-flagship-preview"\nworkers_dev = true\n[[routes]] # route table hidden by a comment\npattern = "preview.example.net/*"\n',
   };
   const checks = validatePreviewIsolation(production, unsafe, contract);
   assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
