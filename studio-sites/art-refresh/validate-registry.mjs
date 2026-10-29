@@ -73,10 +73,10 @@ for (const game of registry.games ?? []) {
             errors.push(`SVG viewBox does not match registry dimensions for ${asset.assetId}: ${asset.path}`);
           }
         }
-        if (!/<title\b[^>]*>[^<]+<\\/title>/i.test(svg)) {
+        if (!/<title\b[^>]*>[^<]+<\/title>/i.test(svg)) {
           errors.push(`SVG missing accessible title for ${asset.assetId}: ${asset.path}`);
         }
-        if (!/<desc\b[^>]*>[^<]+<\\/desc>/i.test(svg)) {
+        if (!/<desc\b[^>]*>[^<]+<\/desc>/i.test(svg)) {
           errors.push(`SVG missing accessible description for ${asset.assetId}: ${asset.path}`);
         }
         if (/<script\b/i.test(svg)) {
