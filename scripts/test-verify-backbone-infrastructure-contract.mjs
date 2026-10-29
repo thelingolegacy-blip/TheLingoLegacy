@@ -41,7 +41,7 @@ test('rejects preview that declares a production custom-domain route', () => {
 test('rejects any custom-domain route table, even when it is not a production domain', () => {
   const unsafe = {
     ...safePreview,
-    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\n[[routes]]\\npattern = "preview.example.net/*"\\n',
+    __raw: 'name = "lingo-legacy-flagship-preview"\nworkers_dev = true\n[[routes]]\npattern = "preview.example.net/*"\n',
   };
   const checks = validatePreviewIsolation(production, unsafe, contract);
   assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
@@ -51,7 +51,7 @@ test('rejects any custom-domain route table, even when it is not a production do
 test('rejects a top-level routes assignment as well as TOML route tables', () => {
   const unsafe = {
     ...safePreview,
-    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\nroutes = [{ pattern = "thelingolegacy.com/*" }]\\n',
+    __raw: 'name = "lingo-legacy-flagship-preview"\nworkers_dev = true\nroutes = [{ pattern = "thelingolegacy.com/*" }]\n',
   };
   const checks = validatePreviewIsolation(production, unsafe, contract);
   assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
