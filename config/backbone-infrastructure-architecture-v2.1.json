@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "2.1.0",
+  "document": "Backbone Infrastructure Architecture Specification",
+  "status": "proposed-source-backed",
+  "authority": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "baselineRef": "8a3de0166a6cca3ea51c82fb48bc161fb0d3e4ca",
+    "existingLandingPr": 402,
+    "existingLandingPrMustRemainUnchanged": true,
+    "productionMutationAllowed": false,
+    "mergeAllowed": false,
+    "gatePromotionAllowed": false
+  },
+  "sourceInventory": {
+    "worker": { "path": "worker.js", "sha": "34acd00591ec493f79746689bd508d4f903d99a1" },
+    "productionWrangler": { "path": "wrangler.jsonc", "sha": "cac19cf0aac2ca4a7369de407d7eff9fdb9c5afa", "workerName": "thelingolegacyv-5", "entrypoint": "worker.js" },
+    "previewWrangler": { "path": "wrangler.flagship-preview.toml", "sha": "e8491e8ebcdc16dbc264569485fa878932b3f62d", "workerName": "lingo-legacy-flagship-preview", "workersDev": true, "productionCustomDomainRoutesAllowed": false },
+    "landingContract": { "path": "config/landing-page-contract.json", "sha": "a2ff2d572a3d9f057032a8f2cbc2b82247859ffa" },
+    "releaseManifest": { "path": "config/release/lingo-legacy-v1.0.0-rc.json", "sha": "34f04ce8407a9fba007bb72871571bdb4a8cb800" }
+  },
+  "architecture": {
+    "controlPlane": ["GitHub source and review", "GitHub Actions runner and CI evidence", "Cloudflare deployment configuration", "release gate and authorization records"],
+    "runtime": ["Cloudflare Worker", "Workers Static Assets binding ASSETS", "static HTML and public assets"],
+    "productModules": ["flagship", "loyalty-lane-world", "designs-promotions", "loyalty-lane-apparel", "laundry-cycle", "lingoslots", "thats-my-lingo", "rewards", "missions", "xp-engine", "universal-legacy-wallet", "lingo-id", "asklingo", "commerce", "legacy-club", "media", "studio", "docs", "blog", "contact", "governance"],
+    "optionalDataBindings": ["DB (D1)", "STUDIO_KV (KV)", "ASSET_BUCKET (R2)", "Firebase project ID"],
+    "observability": ["Cloudflare Worker observability", "x-lingo-runtime response header", "versioned JSON runtime/status/gate endpoints", "commit-bound CI logs and artifacts"],
+    "ownershipBoundary": "GitHub is source authority; Cloudflare is runtime/deployment authority. A declared integration is not evidence that a build target or runtime binding is configured."
+  },
+  "runtime": {
+    "versionSource": "worker.js:RUNTIME_VERSION",
+    "healthPath": "/healthz",
+    "healthCurrentSemantics": "HTTP 200 plain text ok; liveness only, not dependency readiness",
+    "manifestPaths": ["/api/v1/runtime", "/api/v1/platform/manifest"],
+    "statusPath": "/api/v1/platform/status",
+    "gatesPath": "/api/v1/platform/gates",
+    "modulesPath": "/api/v1/platform/modules",
+    "siteContextPath": "/api/v1/site/context",
+    "secretPolicy": "Never return secret values. Expose only configured booleans; fail readiness for required production secrets only after environment-specific requirements are explicitly declared.",
+    "telemetryPolicy": "Structured records include timestamp, runtime version, environment, request/correlation ID when available, route class, status, duration, and outcome. Never log secrets, credentials, raw authorization headers, or unnecessary personal data.",
+    "versioningPolicy": "Existing endpoint shapes are compatibility contracts. Any breaking response change requires a versioned endpoint or explicit schema-version bump and regression tests."
+  },
+  "g02": {
+    "status": "BLOCKED",
+    "requiredLabels": ["self-hosted", "linux", "x64", "lingo-g02"],
+    "acceptancePredicate": [
+      "runner_id is numeric and greater than zero",
+      "runner_name is populated and matches the intended runner",
+      "job is assigned to that runner",
+      "steps are instantiated",
+      "a sentinel step executes and records the expected commit SHA",
+      "raw job logs are retrievable",
+      "validator result is recorded with PASS/FAIL and commit SHA",
+      "a downloadable artifact is present and its digest is recorded"
+    ],
+    "failureSemantics": "No runner assignment, empty jobs/steps, missing logs, or missing artifact means FAIL or BLOCKED, never PASS.",
+    "retryPolicy": "Do not launch retry storms. After runner/dispatch configuration changes, run one controlled diagnostic workflow and inspect its run ID, jobs, runner identity, steps, logs, and artifacts."
+  },
+  "releaseGates": {
+    "allowedStates": ["PASS", "FAIL", "BLOCKED"],
+    "requiredEvidenceFields": ["gateId", "status", "commitSha", "workflowRunId", "jobId", "artifactName", "artifactSha256", "verifiedAt", "verifier"],
+    "passRule": "PASS requires all gate-specific predicates and independently inspectable evidence bound to the tested commit SHA.",
+    "failRule": "FAIL means a tested predicate failed or a contradiction was observed.",
+    "blockedRule": "BLOCKED means a prerequisite or trustworthy evidence is absent; it must not be represented as PASS.",
+    "promotionRule": "No release gate promotion, merge, deployment, activation, or traffic mutation while a required gate is FAIL or BLOCKED."
+  },
+  "isolation": {
+    "productionWorker": "thelingolegacyv-5",
+    "productionRoutes": ["thelingolegacy.com/*", "www.thelingolegacy.com/*"],
+    "previewWorker": "lingo-legacy-flagship-preview",
+    "previewMustUseWorkersDev": true,
+    "previewMustNotDeclareCustomDomainRoutes": true,
+    "previewWorkerNameMustDifferFromProduction": true,
+    "preDeployValidationMustFailOn": ["preview name equals production name", "preview config contains production route patterns", "preview config introduces custom-domain routes", "production config differs unexpectedly from reviewed baseline", "unapproved target or environment binding"]
+  },
+  "implementation": {
+    "branch": "infra/backbone-architecture-v2.1",
+    "plannedFiles": [
+      "docs/platform-recovery/backbone-infrastructure-architecture-spec-v2.1.md",
+      "config/backbone-infrastructure-architecture-v2.1.json",
+      "scripts/verify-backbone-infrastructure-contract.mjs",
+      "scripts/test-verify-backbone-infrastructure-contract.mjs"
+    ],
+    "validationCommands": [
+      "node scripts/verify-backbone-infrastructure-contract.mjs",
+      "node scripts/test-verify-backbone-infrastructure-contract.mjs",
+      "npx wrangler deploy --dry-run --config wrangler.flagship-preview.toml"
+    ],
+    "executionStatus": "NOT_RUN",
+    "rollback": "Revert only commits on this isolated branch; do not alter production configuration. Stop if a proposed diff changes production routes, Worker identity, production secrets, DNS, deployment, or release authorization."
+  }
+}
