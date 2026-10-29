@@ -68,3 +68,37 @@ The public browser crawl confirmed the homepage title, hero, catalog, and contac
 7. Only after independent acceptance and explicit authorization may production route ownership or traffic be changed.
 
 **Current decision:** source reconstruction and preview scaffolding are in review. Production remains protected / HOLD. No promotion is authorized by this inventory.
+
+
+## 8. Homepage parity deep check — 2026-10-29 follow-up
+
+A structural comparison was performed between the captured exact-root response and the reviewed branch's `index.html`. This is a source comparison, not a browser acceptance test.
+
+| Check | Reviewed `index.html` candidate | Captured exact-root snapshot |
+|---|---|---|
+| HTML length | 13,225 characters | 26,845 characters |
+| Title / H1 | “The Lingo Legacy — One Legacy. Many Worlds.” / “One Legacy. Many Worlds.” | Same title and H1 |
+| Description | Emphasizes That’s My Lingo, story worlds, Loyalty Lane, studio projects | Emphasizes games, apparel, books, media, creators, connected experiences |
+| Canonical metadata | `https://thelingolegacy.com/` present | No canonical link found in captured HTML |
+| Main navigation | Root, `/universe/`, `/loyalty-lane-apparel/`, `/trust-compliance/` and in-page Explore anchor | In-page section anchors for Home, Studios, Games, Apparel, Books, Media, Community |
+| Primary game link | `/thats-my-lingo/` | No `/thats-my-lingo/` destination in the captured HTML |
+| Universe link | `/universe/` | No `/universe/` destination in the captured HTML |
+| Catalog interaction | Links to actual path destinations | Catalog cards link to `#module-info`; the click handler updates a notice saying the production route is not verified, rather than navigating to the product |
+| Search / category filters | No search/filter UI detected in candidate source | Search and category filters are present and wired to the catalog |
+| Mobile navigation | No mobile-menu button or Escape-key handling detected in candidate source | A mobile-menu button and responsive quickbar behavior are present; Escape-key handling was not found |
+| Semantic landmarks | One `nav`, one `main`; visible focus and reduced-motion CSS found | Two `nav`, one `main`; visible focus and reduced-motion CSS found |
+| Contact destination | `/contact/` link | `mailto:hello@thelingolegacy.com?subject=Join%20The%20Lingo%20Legacy` |
+
+### Interpretation
+
+The two pages share the brand headline but are **not behaviorally or structurally equivalent**. The live page's catalog currently behaves as a discovery/notice interface: selecting a card does not activate the product destination. The reviewed candidate exposes several direct route links that the captured live page does not. The live capture also lacks a canonical-link element that is present in the candidate.
+
+This does not prove all linked candidate paths work in production, and the source inspection does not replace browser testing. The next preview acceptance should verify every intended route's actual HTTP response and page identity, test mobile-menu state and keyboard operation, and decide explicitly whether the desired flagship is a direct-link landing page or an in-page discovery catalog. Do not silently blend or replace the two information architectures.
+
+### Updated disposition
+
+- Source parity: **FAIL / NOT EQUIVALENT** (structural and interaction differences confirmed).
+- Live catalog navigation to production product destinations: **NOT IMPLEMENTED in captured snapshot** (cards lead to the module-info anchor and notice handler).
+- Candidate route reachability: **NOT VERIFIED** by this source comparison.
+- Browser accessibility: **PENDING**; static markup inspection only.
+- Production routes and traffic: **UNCHANGED**; retain protected HOLD.
