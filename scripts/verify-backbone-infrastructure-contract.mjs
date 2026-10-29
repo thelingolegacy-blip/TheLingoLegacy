@@ -24,7 +24,7 @@ export function validatePreviewIsolation(production, preview, contract) {
     { id: 'preview-workers-dev', pass: workersDev, detail: 'preview uses workers.dev' },
     { id: 'preview-no-routes', pass: noDeclaredRoutes, detail: 'preview declares no custom-domain routes' },
     { id: 'preview-no-production-pattern', pass: noProductionPattern, detail: 'preview contains no production route pattern' },
-    { id: 'preview-contract-isolated', pass: contract.isolation.previewMustNotDeclareCustomDomainRoutes === true && contract.isolation.previewWorkerName !== contract.isolation.productionWorker, detail: 'machine contract requires separate Worker identity and no production routes' },
+    { id: 'preview-contract-isolated', pass: contract.isolation.previewMustNotDeclareCustomDomainRoutes === true && contract.isolation.previewWorker !== contract.isolation.productionWorker, detail: 'machine contract requires separate Worker identity and no production routes' },
   ];
 }
 
