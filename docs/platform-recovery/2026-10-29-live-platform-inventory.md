@@ -102,3 +102,20 @@ This does not prove all linked candidate paths work in production, and the sourc
 - Candidate route reachability: **NOT VERIFIED** by this source comparison.
 - Browser accessibility: **PENDING**; static markup inspection only.
 - Production routes and traffic: **UNCHANGED**; retain protected HOLD.
+
+
+## 9. Approved hybrid homepage direction — 2026-10-29
+
+**Decision:** The flagship homepage will combine in-page discovery with direct product destinations. The discovery catalog retains search, category filters, and in-page product information; each card links directly to its intended route. Route-status labels distinguish verified, unavailable, and not-yet-verified destinations. The source defaults to **Not yet verified live** until independent route evidence exists; source-file presence or a preview build is not proof of live production reachability.
+
+### Branch implementation recorded
+
+- Added an accessible destination search field and category filter controls for Games, Universe, Commerce, Stories, and Creative.
+- Added direct route links and an explicit “Not yet verified live” status label to all six catalog cards.
+- Added a live result count and an empty-results state for search/filter combinations.
+- Extended the machine-readable contract and architecture verifier to require the approved hybrid direction, wired search/filter controls, and honest default route-status labels.
+- Extended the landing-page verifier test assertions. **These tests have not been executed in a real runner in this update.**
+
+### Acceptance boundary
+
+The branch source changes are not browser acceptance. The Cloudflare Pages integration previously reported a branch preview deployment, while the separate `lingo-legacy-flagship-preview` Workers configuration has not been deployed or validated here. Candidate route HTTP behavior, preview isolation, browser accessibility, and G02 runner execution evidence remain pending. PR #402 remains draft/open/unmerged; production routing, DNS, Worker deployments, and traffic remain unchanged.
