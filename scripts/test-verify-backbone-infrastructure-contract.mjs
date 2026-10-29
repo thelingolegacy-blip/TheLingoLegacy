@@ -38,6 +38,26 @@ test('rejects preview that declares a production custom-domain route', () => {
   assert.equal(checks.find((check) => check.id === 'preview-no-production-pattern').pass, false);
 });
 
+test('rejects any custom-domain route table, even when it is not a production domain', () => {
+  const unsafe = {
+    ...safePreview,
+    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\n[[routes]]\\npattern = "preview.example.net/*"\\n',
+  };
+  const checks = validatePreviewIsolation(production, unsafe, contract);
+  assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
+  assert.equal(checks.find((check) => check.id === 'preview-no-production-pattern').pass, true);
+});
+
+test('rejects a top-level routes assignment as well as TOML route tables', () => {
+  const unsafe = {
+    ...safePreview,
+    __raw: 'name = "lingo-legacy-flagship-preview"\\nworkers_dev = true\\nroutes = [{ pattern = "thelingolegacy.com/*" }]\\n',
+  };
+  const checks = validatePreviewIsolation(production, unsafe, contract);
+  assert.equal(checks.find((check) => check.id === 'preview-no-routes').pass, false);
+  assert.equal(checks.find((check) => check.id === 'preview-no-production-pattern').pass, false);
+});
+
 test('preserves BLOCKED without promoting missing evidence', () => {
   const result = validateGateEvidence({ gateId: 'G02', status: 'BLOCKED' });
   assert.equal(result.pass, true);
