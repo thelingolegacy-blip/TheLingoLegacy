@@ -24,13 +24,16 @@ catch (error) { check('wrangler-json', false, String(error)); }
 try { release = JSON.parse(read('config/release/lingo-legacy-v1.0.0-rc.json')); check('release-manifest-json', true, 'release manifest parses'); }
 catch (error) { check('release-manifest-json', false, String(error)); }
 
-let html = '', worker = '', ignore = '', sitemap = '', robots = '';
+let html = '', worker = '', ignore = '', sitemap = '', robots = '', previewConfig = '', previewWorker = '', rootSnapshot = '';
 for (const [key, file] of Object.entries({
   homepage: 'index.html',
   worker: 'worker.js',
   assetExclusions: '.assetsignore',
   sitemap: 'sitemap.xml',
   robots: 'robots.txt',
+  previewConfig: 'wrangler.flagship-preview.toml',
+  previewWorker: 'cloudflare/flagship-root/preview-worker.js',
+  rootWorkerSnapshot: 'cloudflare/flagship-root/live-snapshot-2026-10-29.html',
 })) {
   try {
     const value = read(file);
@@ -39,6 +42,9 @@ for (const [key, file] of Object.entries({
     if (key === 'assetExclusions') ignore = value;
     if (key === 'sitemap') sitemap = value;
     if (key === 'robots') robots = value;
+    if (key === 'previewConfig') previewConfig = value;
+    if (key === 'previewWorker') previewWorker = value;
+    if (key === 'rootWorkerSnapshot') rootSnapshot = value;
     check(`required-file-${key}`, true, `${file} exists`);
   } catch (error) { check(`required-file-${key}`, false, String(error)); }
 }
@@ -81,7 +87,15 @@ if (contract.site && wrangler && release) {
   check('homepage-universe-destination', Boolean(contract.homepage?.universeDestination) && html.includes(`href="${contract.homepage.universeDestination}"`), 'homepage links to the Universe hub');
   check('homepage-brand-tagline', Boolean(contract.homepage?.brandTagline) && html.includes(contract.homepage.brandTagline), 'homepage carries the approved LINGO Legacy tagline');
   check('cloudflare-build-target-match', contract.deployment?.cloudflareGitBuildTargetWorkerName === wrangler.name, 'declared Cloudflare Git build target matches wrangler Worker identity');
-  check('expected-root-route-owner', contract.deployment?.expectedRootRouteOwner === wrangler.name, 'expected exact-root route owner matches the configured Worker');
+  check('expected-root-route-owner', contract.deployment?.expectedRootRouteOwner === 'lingo-flagship-root', 'live exact-root route owner is explicitly recorded separately from wildcard runtime');
+  check('expected-wildcard-route-owner', contract.deployment?.expectedWildcardRouteOwner === wrangler.name, 'apex and www wildcard routes are owned by the configured runtime Worker');
+  check('exact-root-route-pattern', contract.deployment?.expectedExactRootRoutePattern === 'thelingolegacy.com/', 'exact-root route pattern is recorded without a wildcard');
+  check('wildcard-route-pattern', contract.deployment?.expectedWildcardRoutePattern === 'thelingolegacy.com/*' && contract.deployment?.expectedWwwRoutePattern === 'www.thelingolegacy.com/*', 'apex and www wildcard route patterns are explicit');
+  check('root-source-parity-pending', contract.deployment?.rootSourceParityStatus === 'snapshot-captured; canonical-index-preview-and-live-source-parity-pending', 'source parity is represented as pending rather than assumed');
+  check('root-worker-snapshot', rootSnapshot.includes('<title>The Lingo Legacy — One Legacy. Many Worlds.</title>') && rootSnapshot.includes('id="catalog"'), 'captured live exact-root HTML is preserved for source comparison');
+  check('preview-worker-import', previewWorker.includes("import worker from '../../worker.js'") && previewWorker.includes('export default worker'), 'preview reuses the canonical Worker runtime source');
+  check('preview-worker-isolated', previewConfig.includes('name = "' + contract.deployment?.previewWorkerName + '"') && previewConfig.includes('workers_dev = true') && contract.deployment?.previewHasProductionRoutes === false && !previewConfig.includes('[[routes]]') && !previewConfig.includes('pattern = "thelingolegacy.com'), 'preview uses a distinct workers.dev name with no production custom-domain routes');
+  check('preview-worker-assets', previewConfig.includes('run_worker_first = true') && previewConfig.includes('binding = "ASSETS"') && previewConfig.includes('directory = "."'), 'preview serves repository assets through the existing publication boundary');
   check('homepage-h1', /<h1\b/i.test(html), 'homepage has a primary H1');
   check('homepage-main', /<main\b/i.test(html), 'homepage uses a main landmark');
   check('homepage-nav', /<nav\b/i.test(html), 'homepage uses a navigation landmark');
