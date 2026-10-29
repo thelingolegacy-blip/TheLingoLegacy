@@ -58,9 +58,9 @@ for (const game of registry.games ?? []) {
       } else if (asset.path.endsWith(".svg")) {
         const svg = readFileSync(assetPath, "utf8");
         svgFilesChecked += 1;
-        const rootMatch = svg.match(/<svg\\b([^>]*)>/);
-        const viewBoxMatch = svg.match(/\\bviewBox="([^"]+)"/);
-        if (!rootMatch || !/<\\/svg>\\s*$/.test(svg.trim())) {
+        const rootMatch = svg.match(/<svg\b([^>]*)>/);
+        const viewBoxMatch = svg.match(/\bviewBox="([^"]+)"/);
+        if (!rootMatch || !/<\/svg>\s*$/.test(svg.trim())) {
           errors.push(`Invalid SVG root/closing tag for ${asset.assetId}: ${asset.path}`);
         }
         if (!viewBoxMatch) {
@@ -73,13 +73,13 @@ for (const game of registry.games ?? []) {
             errors.push(`SVG viewBox does not match registry dimensions for ${asset.assetId}: ${asset.path}`);
           }
         }
-        if (!/<title\\b[^>]*>[^<]+<\\/title>/i.test(svg)) {
+        if (!/<title\b[^>]*>[^<]+<\\/title>/i.test(svg)) {
           errors.push(`SVG missing accessible title for ${asset.assetId}: ${asset.path}`);
         }
-        if (!/<desc\\b[^>]*>[^<]+<\\/desc>/i.test(svg)) {
+        if (!/<desc\b[^>]*>[^<]+<\\/desc>/i.test(svg)) {
           errors.push(`SVG missing accessible description for ${asset.assetId}: ${asset.path}`);
         }
-        if (/<script\\b/i.test(svg)) {
+        if (/<script\b/i.test(svg)) {
           errors.push(`SVG contains embedded script for ${asset.assetId}: ${asset.path}`);
         }
       }
