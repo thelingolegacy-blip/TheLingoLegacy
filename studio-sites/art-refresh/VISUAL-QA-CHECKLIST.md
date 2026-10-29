@@ -57,7 +57,7 @@ This checklist covers the 13 game specifications currently verified in the sourc
 - SVG concept files in the branch: 52
 - Registry path audit: all 13 spec paths and 52 referenced concept paths were found in the recursive branch tree.
 - Validator enhancement: checks registered paths, duplicate paths, SVG root/closing tag, viewBox validity and dimensions, accessible title/description, and embedded scripts.
-- CI execution: not verified in this record.
+- Latest observed GitHub Actions run: [Game Art Registry Validation #39](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/40796192962) ended with `startup_failure`; the jobs endpoint returned an empty list. This is a runner/dispatch failure, not a validator result. No successful validator execution is evidenced.
 - Browser rendering/accessibility acceptance: open.
 - Game-screen integration: open.
 - 56-title catalog reconciliation: open.
