@@ -2,6 +2,18 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'docs/FIREBASE-RUNTIME-CONFIGURATION.md'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
