@@ -79,7 +79,7 @@ check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cl
 check('auto-repair-deploy-hold', autoRepair.includes('if: ${{ false }}'), 'Cloudflare auto-repair deployment job must remain disabled until separate authorization and acceptance');
 check('canonical-g02-labels-auto-repair', autoRepair.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'auto-repair workflow must retain the canonical G02 runner labels');
 check('runner-id-from-jobs-api', !autoRepair.includes('${{ runner.id }}') && autoRepair.includes('G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'), 'numeric runner identity must be verified from the GitHub Actions Jobs API, not an undocumented runner context property');
-check('deployment-job-dependency', /deploy-cloudflare:\\s*\\n\\s*needs:\\s*repair/.test(autoRepair), 'the disabled Cloudflare deployment job must remain dependent on the repair gate');
+check('deployment-job-dependency', /deploy-cloudflare:\s*\n\s*needs:\s*repair/.test(autoRepair), 'the disabled Cloudflare deployment job must remain dependent on the repair gate');
 check('authority-document-superseded', authority.includes('SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'), 'legacy activation document must explicitly defer to current gates');
 check('docker-ci-targets-runner-image', dockerWorkflow.includes('--file ops/github-runner/Dockerfile') && dockerWorkflow.includes('ops/github-runner') && !dockerWorkflow.includes('--file Dockerfile'), 'Docker CI must build the defined runner image, not a nonexistent root application Dockerfile');
 check('runner-image-build-inputs', fs.existsSync('ops/github-runner/Dockerfile') && fs.existsSync('ops/github-runner/entrypoint.sh'), 'runner image Dockerfile and entrypoint must both exist');
