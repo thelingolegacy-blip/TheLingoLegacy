@@ -8,6 +8,7 @@ on:
       - "scripts/verify-asklingo-contract.mjs"
       - "scripts/verify-platform-surface-contract.mjs"
       - "scripts/verify-release-acceptance.mjs"
+      - "scripts/test-verify-release-acceptance.mjs"
       - "release/acceptance-gates.json"
       - "platforms/**"
       - "cloudflare/lingo-flagship-root.js"
@@ -55,6 +56,8 @@ jobs:
         run: node scripts/verify-platform-surface-contract.mjs
       - name: Validate fail-closed release acceptance registry
         run: node scripts/verify-release-acceptance.mjs
+      - name: Test release acceptance gate requirements
+        run: node --test scripts/test-verify-release-acceptance.mjs
       - name: Validate exact-root flagship Worker contract
         run: node scripts/verify-flagship-root-contract.mjs
       - name: Check exact-root Worker JavaScript syntax

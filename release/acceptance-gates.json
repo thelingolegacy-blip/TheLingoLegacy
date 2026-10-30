@@ -126,7 +126,8 @@
         "replay_protection",
         "reconciliation",
         "fraud_limits",
-        "demo_currency_separation"
+        "demo_currency_separation",
+        "server_authoritative_rng"
       ],
       "evidence": [],
       "owner": "UNASSIGNED",
@@ -159,7 +160,8 @@
         "tool_allowlists",
         "human_approval",
         "audit_trail",
-        "kill_switch"
+        "kill_switch",
+        "shared_rate_limit"
       ],
       "evidence": [],
       "owner": "UNASSIGNED",

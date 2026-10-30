@@ -25,6 +25,17 @@ for (const gate of matrix.gates || []) {
   }
   if (gate.status === 'NOT_APPLICABLE' && (!gate.notes || !gate.owner)) errors.push(gate.id + ' N/A requires rationale and owner.');
 }
+for (const [gateId, predicates] of Object.entries({
+  G07: ['server_authoritative_rng'],
+  G09: ['shared_rate_limit'],
+})) {
+  const gate = (matrix.gates || []).find(item => item.id === gateId);
+  for (const predicate of predicates) {
+    if (!gate?.requiredEvidence?.includes(predicate)) {
+      errors.push(gateId + ' must require ' + predicate + ' before acceptance.');
+    }
+  }
+}
 for (const required of ['G00','G01','G02','G03','G05','G07','G08','G10','G14','G16','G20','G21']) {
   if (!ids.has(required)) errors.push('Required release gate missing: ' + required);
 }
