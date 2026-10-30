@@ -182,7 +182,7 @@ function runtimeManifest(request, env) {
 
 async function readStudioWorldRegistry(request, env) {
   if (!env.ASSETS) return null;
-  const assetUrl = new URL('/studio-sites/config/studio-world-registry.json', request.url);
+  const assetUrl = new URL('/studio-sites/assets/world-registry.json', request.url);
   const response = await env.ASSETS.fetch(new Request(assetUrl.toString(), {
     method: 'GET',
     headers: { accept: 'application/json' },
