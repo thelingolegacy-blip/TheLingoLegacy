@@ -116,6 +116,17 @@
       "owner": "The Lingo Legacy",
       "altOrTranscript": "Initial generated visual concept for the premium LINGO Legacy flagship surface",
       "status": "generated-unverified-not-integrated"
+    },
+    {
+      "assetId": "platform.studio-world-registry",
+      "kind": "public-json-registry",
+      "path": "assets/world-registry.json",
+      "version": "1.0.0",
+      "sha256": null,
+      "license": "original-work",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "Public machine-readable registry for independently namespaced LINGO entity studios",
+      "status": "source-present-pending-integrity-hash"
     }
   ],
   "note": "This manifest intentionally identifies placeholders. It does not claim that final artwork, sound masters, animation exports, hashes, or rights review are complete."
