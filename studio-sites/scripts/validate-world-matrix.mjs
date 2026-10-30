@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const registry = JSON.parse(fs.readFileSync(path.join(root, 'config/studio-world-registry.json'), 'utf8'));
+const registry = JSON.parse(fs.readFileSync(path.join(root, 'assets/world-registry.json'), 'utf8'));
 const errors = [];
 const shared = ['LingoID','UniversalLegacyWallet','progressionAndRewards','assetRegistry','worldRouter','telemetryAndCorrelation','safetyAndPrivacy','releaseGovernance'];
 const ids = new Set();
