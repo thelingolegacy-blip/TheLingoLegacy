@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "baselineDate": "2026-10-30",
+  "policy": "fail-closed",
+  "promotionAllowed": false,
+  "gates": [
+    {
+      "id": "G00",
+      "domain": "Source authority",
+      "status": "SOURCE_PRESENT",
+      "requiredEvidence": [
+        "repository",
+        "branch",
+        "immutable_commit_sha",
+        "provenance",
+        "sbom",
+        "license_inventory"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G01",
+      "domain": "Repository governance",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "branch_protection",
+        "required_reviews",
+        "codeowners",
+        "least_privilege_tokens",
+        "secret_scan",
+        "dependency_policy"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G02",
+      "domain": "CI runner dispatch",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "runner_id_positive",
+        "runner_name",
+        "job_assigned",
+        "steps_instantiated",
+        "sentinel_executed",
+        "retrievable_logs",
+        "artifacts"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G03",
+      "domain": "Build and test",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "static_contracts",
+        "flutter_analyze",
+        "flutter_tests",
+        "flutter_web_build",
+        "android_build",
+        "green_required_checks"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G04",
+      "domain": "Application contracts",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "api_schemas",
+        "error_contracts",
+        "idempotency_tests",
+        "integration_tests",
+        "versioning"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G05",
+      "domain": "Identity and access",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "firebase_project_verified",
+        "auth_provider_tests",
+        "session_tests",
+        "mfa_admin_controls",
+        "firestore_rules_tests",
+        "storage_rules_tests"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G06",
+      "domain": "Data and privacy",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "data_inventory",
+        "retention_policy",
+        "consent",
+        "export_delete_tests",
+        "privacy_notice",
+        "age_safeguards"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G07",
+      "domain": "Wallet and rewards",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "server_authoritative_ledger",
+        "idempotency",
+        "replay_protection",
+        "reconciliation",
+        "fraud_limits",
+        "demo_currency_separation"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G08",
+      "domain": "Commerce and billing",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "stripe_test_checkout",
+        "webhook_signature",
+        "idempotent_fulfillment",
+        "refund_tests",
+        "tax_receipt_review",
+        "live_mode_approval"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G09",
+      "domain": "Assistant and agents",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "prompt_injection_tests",
+        "abuse_limits",
+        "data_minimization",
+        "tool_allowlists",
+        "human_approval",
+        "audit_trail",
+        "kill_switch"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G10",
+      "domain": "Security",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "threat_model",
+        "sast",
+        "dependency_scan",
+        "dast",
+        "authorization_tests",
+        "csp_cors_csrf",
+        "penetration_test_closure"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G11",
+      "domain": "Accessibility and UX",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "wcag_22_aa_audit",
+        "keyboard",
+        "screen_reader",
+        "contrast",
+        "zoom_reflow",
+        "reduced_motion",
+        "forced_colors",
+        "touch_targets"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G12",
+      "domain": "Media and IP",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "music_licenses",
+        "font_image_video_licenses",
+        "creator_releases",
+        "moderation",
+        "reporting",
+        "takedown_process"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G13",
+      "domain": "Web and PWA",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "route_smoke_tests",
+        "browser_matrix",
+        "install_update",
+        "offline_behavior",
+        "cache_invalidation",
+        "service_worker_rollback"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G14",
+      "domain": "Mobile",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "ios_release_build",
+        "android_release_build",
+        "signing",
+        "deep_links",
+        "push_permissions",
+        "device_matrix",
+        "crash_telemetry",
+        "privacy_manifests"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G15",
+      "domain": "Smart TV and ThinQ",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "webos_sdk_build",
+        "webos_device_tests",
+        "tizen_sdk_build",
+        "tizen_device_tests",
+        "store_checks",
+        "thinq_api_authorization"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G16",
+      "domain": "Cloud and deployment",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "preview_asset_parity",
+        "worker_binding_inventory",
+        "environment_separation",
+        "deployment_manifest",
+        "rollback_rehearsal"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G17",
+      "domain": "Observability and operations",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "correlated_logs",
+        "traces_metrics",
+        "alert_routing",
+        "incident_runbooks",
+        "slos",
+        "on_call_owner"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G18",
+      "domain": "Resilience and recovery",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "backup_restore_proof",
+        "rpo_rto",
+        "queue_retry_dlq",
+        "disaster_recovery_exercise",
+        "integrity_checks"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G19",
+      "domain": "Legal policy and stores",
+      "status": "PENDING",
+      "requiredEvidence": [
+        "terms",
+        "privacy",
+        "community_rules",
+        "accessibility_statement",
+        "store_disclosures",
+        "age_ratings",
+        "platform_approvals"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G20",
+      "domain": "Final certification",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "independent_gate_acceptance",
+        "release_notes",
+        "known_issues",
+        "rollback_point",
+        "signed_authorization"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    },
+    {
+      "id": "G21",
+      "domain": "Post activation",
+      "status": "BLOCKED",
+      "requiredEvidence": [
+        "live_synthetics",
+        "error_budget_watch",
+        "billing_reconciliation",
+        "security_alert_review",
+        "rollback_trigger",
+        "24h_72h_signoff"
+      ],
+      "evidence": [],
+      "owner": "UNASSIGNED",
+      "notes": "No evidence recorded in this baseline. Do not infer PASS from source presence."
+    }
+  ]
+}
