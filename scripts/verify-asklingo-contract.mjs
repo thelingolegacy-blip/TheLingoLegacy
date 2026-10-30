@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 const worker = fs.readFileSync('worker.js','utf8');
 const portal = fs.readFileSync('studio-sites/index.html','utf8');
+const dockCss = fs.readFileSync('studio-sites/assets/asklingo-dock.css','utf8');
+const dockJs = fs.readFileSync('studio-sites/assets/asklingo-dock.js','utf8');
 const checks = [
   ['chat endpoint',worker.includes("url.pathname === '/api/v1/asklingo/chat'")],
   ['status endpoint',worker.includes("url.pathname === '/api/v1/asklingo/status'")],
@@ -11,11 +13,12 @@ const checks = [
   ['safe fallback',worker.includes('function askFallback(message)')],
   ['AI is opt-in',worker.includes("env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL")],
   ['correlation ID',worker.includes('crypto.randomUUID()')],
-  ['L dock present',portal.includes('class="ask-l-dock"')],
-  ['accessible chat dialog',portal.includes('role="dialog" aria-modal="false"')],
-  ['chat uses textContent',portal.includes("node.textContent=text")],
-  ['chat API call',portal.includes("fetch('/api/v1/asklingo/chat'")],
-  ['keyboard escape close',portal.includes("e.key==='Escape'")],
+  ['L dock injected globally',worker.includes('asklingo-dock.js') && worker.includes('asklingo-dock.css')],
+  ['L dock asset present',dockCss.includes('.ask-l-dock') && dockJs.includes('ask-l-dock')],
+  ['accessible chat dialog',dockJs.includes('role="dialog" aria-modal="false"')],
+  ['chat uses textContent',dockJs.includes('node.textContent=text')],
+  ['chat API call',dockJs.includes("fetch('/api/v1/asklingo/chat'")],
+  ['keyboard escape close',dockJs.includes("e.key==='Escape'")],
   ['reduced motion',portal.includes('@media(prefers-reduced-motion:reduce)')]
 ];
 const failed = checks.filter(([,ok])=>!ok);
