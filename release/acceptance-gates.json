@@ -178,7 +178,8 @@
         "dast",
         "authorization_tests",
         "csp_cors_csrf",
-        "penetration_test_closure"
+        "penetration_test_closure",
+        "public_asset_boundary_probe"
       ],
       "evidence": [],
       "owner": "UNASSIGNED",

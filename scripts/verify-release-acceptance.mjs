@@ -28,6 +28,7 @@ for (const gate of matrix.gates || []) {
 for (const [gateId, predicates] of Object.entries({
   G07: ['server_authoritative_rng'],
   G09: ['shared_rate_limit'],
+  G10: ['public_asset_boundary_probe'],
 })) {
   const gate = (matrix.gates || []).find(item => item.id === gateId);
   for (const predicate of predicates) {

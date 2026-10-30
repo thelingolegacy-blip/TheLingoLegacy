@@ -40,6 +40,16 @@ test('missing shared rate limit fails closed', (t) => {
   assert.match(result.stderr, /G09 must require shared_rate_limit/);
 });
 
+test('missing public asset boundary probe fails closed', (t) => {
+  const { root, result } = run((matrix) => {
+    const gate = matrix.gates.find(item => item.id === 'G10');
+    gate.requiredEvidence = gate.requiredEvidence.filter(item => item !== 'public_asset_boundary_probe');
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /G10 must require public_asset_boundary_probe/);
+});
+
 test('missing server-authoritative RNG fails closed', (t) => {
   const { root, result } = run((matrix) => {
     const gate = matrix.gates.find(item => item.id === 'G07');
