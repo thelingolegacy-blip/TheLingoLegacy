@@ -63,7 +63,7 @@
     },
     {
       "provider": "Render",
-      "state": "WORKSPACE_CONFIRMED_SERVICE_INVENTORY_UNVERIFIED",
+      "state": "WORKSPACE_CONFIRMED_SERVICE_INVENTORY_UNRESOLVED",
       "evidence": {
         "workspace_name": "My Workspace",
         "workspace_id": "tea-dbiev1gae00c738hk28g",
@@ -71,12 +71,12 @@
         "user_explicit_confirmation": true,
         "service_inventory_call_returned_null": true,
         "provisioning_state": "NOT_PROVISIONED",
-        "reason": "No confirmed service inventory or source-backed deployment specification available; no service created."
+        "reason": "Explicit workspace ID used on each inventory request. PostgreSQL and Key Value inventories returned no instances; services API returned null. No root render.yaml, Dockerfile, or Compose specification found in inspected main paths. No resource created."
       }
     },
     {
       "provider": "Firebase",
-      "state": "PROJECT_IDENTITY_CONFIRMED_RUNTIME_UNVERIFIED",
+      "state": "PROJECT_IDENTITY_CONFLICT_RUNTIME_UNVERIFIED",
       "evidence": {
         "declared_flutter_packages": [
           "firebase_core",
@@ -96,7 +96,12 @@
           "Flutter AI Playground Web"
         ],
         "registered_web_app_count": 2,
-        "authentication_firestore_storage_rules_verified": false
+        "authentication_firestore_storage_rules_verified": false,
+        "repository_default_project_id": "lingo-legacy-production",
+        "repository_verifier_expected_project_id": "lingo-legacy-production",
+        "console_project_id": "flutter-ai-playground-e9ad0",
+        "project_identity_conflict": true,
+        "deploy_blocked_pending_mapping": true
       },
       "connector_plugin": {
         "available": true,
@@ -151,7 +156,8 @@
     "pr417_branch_removes_runner_id_context": true,
     "jobs_api_runner_id_required": true,
     "latest_inspected_runs_had_jobs": 0,
-    "latest_inspected_runs_had_artifacts": 0
+    "latest_inspected_runs_had_artifacts": 0,
+    "acceptance_note": "PR #417 remains draft/unmerged; source correction is not active on main. No real runner/job/artifact evidence is present in inspected startup-failure runs."
   },
   "appdeploy_app_ids": [
     "lingo-legacy-studio-hub-nhda3b",
@@ -190,5 +196,23 @@
     "activate_payments": false,
     "activate_real_money_wagering": false,
     "production_release": "HOLD"
+  },
+  "cloudflare_deployment_targets": {
+    "root": {
+      "worker": "thelingolegacyv-5",
+      "entrypoint": "worker.js",
+      "routes": [
+        "thelingolegacy.com/*",
+        "www.thelingolegacy.com/*"
+      ],
+      "environment": "production"
+    },
+    "studio": {
+      "worker": "lingo-legacy-studio-build",
+      "entrypoint": "cloudflare/studio-worker.js",
+      "environment": "isolated-non-production",
+      "production_routes": false
+    },
+    "reconciliation": "keep separate; no promotion or route mutation"
   }
 }
