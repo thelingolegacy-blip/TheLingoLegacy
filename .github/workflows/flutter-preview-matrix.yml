@@ -1,0 +1,59 @@
+name: Flutter Cross-Platform Preview Matrix
+
+on:
+  pull_request:
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "android/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - ".github/workflows/flutter-preview-matrix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-preview-matrix-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-android-preview:
+    name: Flutter web + Android preview build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve dependencies
+        run: flutter pub get
+      - name: Static analysis
+        run: flutter analyze
+      - name: Unit and widget tests
+        run: flutter test
+      - name: Build web preview
+        run: flutter build web --release
+      - name: Build Android debug preview
+        run: flutter build apk --debug
+      - name: Assemble preview artifacts
+        run: |
+          mkdir -p dist/flutter-preview
+          cp -R build/web dist/flutter-preview/web
+          cp build/app/outputs/flutter-apk/app-debug.apk dist/flutter-preview/lingo-legacy-android-debug.apk
+          printf 'commit=%s\n' "$GITHUB_SHA" > dist/flutter-preview/BUILD-METADATA.txt
+          printf 'environment=preview-only\n' >> dist/flutter-preview/BUILD-METADATA.txt
+          printf 'firebase=not-configured-by-preview-build\n' >> dist/flutter-preview/BUILD-METADATA.txt
+          printf 'production_activation=disabled\n' >> dist/flutter-preview/BUILD-METADATA.txt
+      - name: Upload cross-platform preview artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-flutter-preview-${{ github.sha }}
+          path: dist/flutter-preview/
+          if-no-files-found: error
+          retention-days: 14
