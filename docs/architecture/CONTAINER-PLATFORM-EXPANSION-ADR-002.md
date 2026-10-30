@@ -120,3 +120,34 @@ Promote the exact tested digest from staging to production. Rebuilding independe
 - No production DNS, Worker routes, secrets, release branches, or traffic allocations are changed.
 - No PR is merged and no release gate is bypassed.
 - No G02 PASS is inferred from image source, a successful local build, or an Online runner badge.
+
+
+## Implementation checkpoint (2026-10-30, source-only)
+
+The following source changes were made on `infra/container-platform-expansion-2026-10-30` after the baseline inspection:
+
+- `ops/github-runner/Dockerfile`: added a pinned `RUNNER_SHA256` build argument and strict `sha256sum --check --strict` verification before extracting the Actions Runner archive. The configured v2.337.0 Linux x64 checksum is `70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613`, confirmed on the official `actions/runner` v2.337.0 release page.
+- `ops/github-runner/docker-compose.yml`: added `init: true`, `no-new-privileges:true`, and `cap_drop: [ALL]`. The service remains ephemeral and has no host Docker socket mount or privileged mode.
+- The Dockerfile still uses the mutable `ubuntu:24.04` tag and apt package resolution is not version-locked. Base-image digest pinning and package snapshot/reproducibility remain open work; no digest is invented in this patch.
+- `cap_drop: [ALL]` is a proposed runner profile and must be verified against the actual trusted job set before acceptance. Workloads requiring additional capabilities must use a separately reviewed isolated builder/runtime rather than weakening this runner by default.
+
+### Local checks actually performed
+
+- Compose YAML parsed successfully with PyYAML.
+- Static assertions passed for init, no-new-privileges, dropped capabilities, absence of privileged mode, absence of host Docker socket mounts, non-root Dockerfile user, 64-character SHA-256 argument, and strict checksum verification.
+- Docker Engine, Podman, and Hadolint were unavailable in the validation environment. Therefore no image build, container startup, image scan, SBOM, provenance attestation, or runner runtime test was performed.
+
+### Live platform inventory (read-only)
+
+Cloudflare account/zone and Worker inventory were queried through the connected account on 2026-10-30:
+
+- Zone `thelingolegacy.com` is active.
+- Apex A record `192.0.2.0` is proxied and explicitly commented `Cloudflare Worker route`; this is an intentional placeholder-style Worker route record in the current configuration, not proof of an origin server address.
+- `www` is a proxied CNAME to the apex.
+- `lingo-flagship-root` remains at 100% on version `658acd1a-997b-45cd-b8fc-e59c59b26b45`.
+- `thelingolegacyv-5` remains at 100% on version `2d161fa5-598f-4998-ada8-7ac4c72c3461`.
+- Newer uploaded versions for these Workers are preview versions; this inspection did not promote them.
+- `lingo-legacy-studio-build` has an uploaded version and deployment record but no attached Worker route in the inventory response.
+- `thelingolegacy-web-recovery-preview` has preview/deployment history but no attached Worker route in the inventory response.
+
+This inventory is a point-in-time read-only snapshot. It does not validate page behavior, origin reachability, application APIs, authentication, persistence, or end-user acceptance.
