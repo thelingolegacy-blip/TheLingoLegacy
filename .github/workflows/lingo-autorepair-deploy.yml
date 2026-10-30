@@ -2,6 +2,9 @@
 name: Lingo Legacy Full-Stack Auto Repair + Deploy
 
 on:
+  push:
+    branches:
+      - infra/backbone-architecture-v2.1
   workflow_dispatch:
     inputs:
       deploy:
@@ -60,6 +63,42 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Run backbone verifier, regression tests, and isolated Wrangler dry run
+        shell: bash
+        env:
+          TESTED_COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/backbone-validation
+          printf 'tested_commit_sha=%s\n' "$TESTED_COMMIT_SHA" | tee release/evidence/backbone-validation/commit.txt
+          failures=0
+          run_check() {
+            name="$1"
+            shift
+            log="release/evidence/backbone-validation/$name.log"
+            echo "COMMAND_START=$name"
+            # Temporarily disable errexit so failures are captured and all checks run.
+            set +e
+            "$@" 2>&1 | tee "$log"
+            pipeline_status=("${PIPESTATUS[@]}")
+            set -e
+            rc="${pipeline_status[0]}"
+            printf '%s_exit_code=%s\n' "$name" "$rc" | tee -a release/evidence/backbone-validation/exit-codes.txt
+            echo "COMMAND_END=$name EXIT_CODE=$rc"
+            if [ "$rc" -ne 0 ]; then failures=1; fi
+          }
+          run_check verifier node scripts/verify-backbone-infrastructure-contract.mjs
+          run_check regression-tests node scripts/test-verify-backbone-infrastructure-contract.mjs
+          run_check wrangler-preview-dry-run npx --yes wrangler@4 deploy --dry-run --config wrangler.flagship-preview.toml
+          printf 'overall_exit_code=%s\n' "$failures" | tee -a release/evidence/backbone-validation/exit-codes.txt
+          exit "$failures"
+      - name: Upload commit-bound backbone validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backbone-validation-${{ github.sha }}
+          path: release/evidence/backbone-validation/
+          if-no-files-found: error
       - name: Run canonical deterministic auto-repair artifact
         run: node scripts/lingo-autorepair.mjs
       - name: Run repository production gates
@@ -97,7 +136,7 @@ jobs:
           path: release/evidence/lingo-autorepair-report.json
 
   deploy-cloudflare:
-    needs: 
+    needs: [repair]
     # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
     # HARD HOLD: a manual deploy=true input is not release authorization.
     # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
