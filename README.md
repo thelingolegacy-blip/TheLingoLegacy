@@ -96,8 +96,8 @@ See [platform release matrix](platforms/README.md). Store submission, certificat
 - Studio source lives under `studio-sites/`.
 - Flutter source lives under `lib/`.
 - Cloudflare account currently reports only the `ASSETS`, canonical-domain, and public-site bindings for the production Worker. Firebase, Stripe, D1, KV, R2, Workers AI, and realtime bindings are not confirmed on that Worker.
-- Cloudflare has accepted branch Worker versions as previews. Preview uploads are not production deployments.
-- Production traffic remains on the previously deployed Worker version until all release gates pass.
+- Cloudflare preview versions: main API Worker v172 (`2b95e82d-1410-42cf-b19c-485aad766259`) and exact-root Worker v2 (`1009da37-9128-44c2-9853-f277eb791c31`). Both have preview enabled and neither is deployed to production.
+- Production traffic remains 100% on the previously deployed main Worker v137 (`2d161fa5-598f-4998-ada8-7ac4c72c3461`) and exact-root Worker v1 (`658acd1a-997b-45cd-b8fc-e59c59b26b45`) until all release gates pass.
 
 ## CI and release governance
 
