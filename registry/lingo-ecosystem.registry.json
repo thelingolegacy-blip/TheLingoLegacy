@@ -83,6 +83,12 @@
         ],
         "project_credentials_verified": false,
         "live_runtime_verified": false
+      },
+      "connector_plugin": {
+        "available": true,
+        "connected": false,
+        "connection_handoff_offered": true,
+        "requires_user_connection": true
       }
     },
     {
