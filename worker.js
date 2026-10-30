@@ -164,7 +164,7 @@ function runtimeManifest(request, env) {
     api: true,
     edge_rendering: true,
     assets: 'worker-controlled',
-    observability: true,
+    observability: Boolean(env.OBSERVABILITY_ENABLED),
     integrations: {
       stripe: Boolean(env.STRIPE_SECRET_KEY),
       beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
@@ -174,9 +174,11 @@ function runtimeManifest(request, env) {
       r2: Boolean(env.ASSET_BUCKET),
       firebase: Boolean(env.FIREBASE_PROJECT_ID),
       studio_world_registry: Boolean(env.ASSETS),
+      assistant_ai: Boolean(env.AI && env.ASKLINGO_AI_ENABLED === 'true' && env.ASKLINGO_MODEL),
+      agent_catalog: true,
     },
     safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false },
-    realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'READY' },
+    realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'DISABLED' },
   };
 }
 
