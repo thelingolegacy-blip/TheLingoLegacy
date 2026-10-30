@@ -152,3 +152,16 @@ The current README uses older product labels/domains (`LINGOarena`, `LINGOreads`
 - Do not create a second runner or change runner labels. G02 requires the existing canonical host and real Jobs API evidence.
 - A CI workflow that has no executable runner must remain blocked; do not replace self-hosted execution with a hosted runner and call it G02 acceptance.
 - No secrets, DNS, routes, Worker production allocations, billing, Firebase rules, payment state, wallet state, AI activation, or real-money wagering were mutated during this audit.
+
+
+## Cloudflare account-side execution evidence (read-only, 2026-10-30)
+
+- Authenticated account ID: `16cb6f247cd1b28fca864760c7269606`.
+- Worker Scripts API returned `thelingolegacyv-5`, `lingo-flagship-root`, `thelingolegacy-web-recovery-preview`, and `lingo-static-backup-proxy` among the inspected scripts.
+- The configured staging name `lingo-legacy-studio-build` is **not present** in the account Worker Scripts inventory. Direct GETs for its versions, deployments, settings, and secrets returned Cloudflare 404 / code 10007. The nested Wrangler config is therefore only a source artifact, not a deployed Worker.
+- `thelingolegacyv-5`: production allocation independently resolves to version 137 (100%). Newer uploaded versions exist through version 177, but version 177 is not the production allocation. The latest version's bindings remain `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL`; no Firebase binding was observed. Secrets list returned empty.
+- `lingo-flagship-root`: production allocation remains version 1 (100%). Version 2 is uploaded as a preview and is not promoted. It has no bindings; secrets list returned empty.
+- `thelingolegacy-web-recovery-preview`: version 20 is deployed to the preview Worker; observability is enabled with persisted invocation logs and query-string redaction. It has the `ASSETS` binding only; secrets list returned empty.
+- Root production Worker route inventory includes the apex, www, and numerous product subdomains. Do not infer that each subdomain is independently certified from route presence.
+- Read-only public probes for `/healthz` and `/api/v1/runtime` could not be fetched by the available web retrieval path; this is **not** evidence of endpoint failure or success. A direct authenticated or browser-level live probe is still required.
+- No Cloudflare resource was created, updated, deleted, promoted, or rerouted during this inspection.
