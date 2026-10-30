@@ -5,10 +5,11 @@
   "product": {
     "name": "The Lingo Legacy",
     "tagline": "Loyalty. Legacy. Language.",
-    "theme": "industrial-noir",
+    "theme": "crimson-smoke-enterprise",
     "accentColors": [
-      "gold",
-      "royal-purple"
+      "crimson-red",
+      "white",
+      "smoke-gray"
     ],
     "canonicalNaming": "LINGO + lowercase product/service"
   },
