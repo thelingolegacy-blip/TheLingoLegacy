@@ -176,3 +176,23 @@ For registry commit `7d4dcff47ff9471b4b4130a05ddb7ea78e4b73fc`, GitHub returned 
 - Lingo Legacy Static CI: run `41123562275`
 
 Jobs API and artifacts API returned empty arrays for each run. No runner assignment, step log, sentinel execution, or artifact is available from these attempts. This confirms startup failure persists; it does not identify a specific root cause. G02 remains blocked.
+
+
+## Cloudflare isolated Studio preview — deployment verified (2026-10-30)
+
+The missing staging Worker has now been created from the reviewed GitHub source, after correcting its user-facing labels so the interface does not imply a connected AI backend.
+
+- Worker: `lingo-legacy-studio-build`
+- Source: `cloudflare/studio-worker.js`, branch `audit/registry-verification-2026-10-30`, source commit `856aa0410e18426d24f508c9edb62c8d11cd5203`.
+- Cloudflare version ID: `65fcf071-3fce-4b81-ab4f-117c6f06b3cf`.
+- Deployment ID: `237e48a2-3f80-40fa-b6ba-9f4371da206b`.
+- Deployment allocation: 100% to that version of this new staging Worker.
+- workers.dev subdomain enabled; account subdomain is `thelingolegacy`; preview URLs disabled.
+- Public preview URL: https://lingo-legacy-studio-build.thelingolegacy.workers.dev/
+- No custom-domain route, production route, production binding, or secret was configured for this Worker. The deployment metadata included no bindings.
+- Observability is enabled; persisted invocation logs and query-string redaction are enabled.
+- `/api/health` is implemented to report `status=ok`, `production=false`, `aiConnected=false`, and `mode=demo`.
+- The page explicitly labels itself `STAGING PREVIEW · NOT PRODUCTION`; askLINGO is labeled `DEMO — NOT CONNECTED` and returns local canned text only.
+- Cloudflare API independently confirmed the script, workers.dev setting, observability settings, and 100% deployment allocation. The available public web retrieval path could not fetch the preview URL, so an external HTTP response/body has **not** been independently verified yet. Do not call the health endpoint live-verified until a direct HTTP probe succeeds.
+
+The nested Wrangler configuration was updated to set `workers_dev = true`, `preview_urls = false`, with no custom routes. Production Worker allocations and DNS/routes remain unchanged. This is a deployed isolated staging preview, not production acceptance.
