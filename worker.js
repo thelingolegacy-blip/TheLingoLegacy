@@ -184,19 +184,30 @@ function runtimeManifest(request, env) {
 
 const ASK_RATE_WINDOW_MS = 60 * 60 * 1000;
 const ASK_RATE_LIMIT = 20;
+const ASK_RATE_MAX_BUCKETS = 10000;
 const askRateBuckets = new Map();
 
 function askRateAllowed(request) {
   const forwarded = request.headers.get('CF-Connecting-IP') || 'unknown';
   const now = Date.now();
   const current = askRateBuckets.get(forwarded);
-  if (!current || now - current.startedAt > ASK_RATE_WINDOW_MS) {
-    if (askRateBuckets.size > 10000) askRateBuckets.clear();
-    askRateBuckets.set(forwarded, { startedAt: now, count: 1 });
+
+  if (current && now - current.startedAt <= ASK_RATE_WINDOW_MS) {
+    if (current.count >= ASK_RATE_LIMIT) return false;
+    current.count += 1;
     return true;
   }
-  if (current.count >= ASK_RATE_LIMIT) return false;
-  current.count += 1;
+
+  if (current) askRateBuckets.delete(forwarded);
+
+  if (askRateBuckets.size >= ASK_RATE_MAX_BUCKETS) {
+    for (const [key, bucket] of askRateBuckets) {
+      if (now - bucket.startedAt > ASK_RATE_WINDOW_MS) askRateBuckets.delete(key);
+    }
+    if (askRateBuckets.size >= ASK_RATE_MAX_BUCKETS) return false;
+  }
+
+  askRateBuckets.set(forwarded, { startedAt: now, count: 1 });
   return true;
 }
 
@@ -234,8 +245,8 @@ async function askLingoStatus(request, env) {
     ok: true,
     assistant: 'askLINGO',
     interface: 'universal-l-dock',
-    mode: env.ASKLINGO_AI_ENABLED === 'true' && env.AI ? 'ai-enabled' : 'guided-fallback',
-    ai_ready: env.ASKLINGO_AI_ENABLED === 'true' && Boolean(env.AI),
+    mode: env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL ? 'ai-enabled' : 'guided-fallback',
+    ai_ready: env.ASKLINGO_AI_ENABLED === 'true' && Boolean(env.AI) && Boolean(env.ASKLINGO_MODEL),
     request_limit_per_hour: ASK_RATE_LIMIT,
     note: 'No account data is available to this public assistant.',
   }, 200, request, env);

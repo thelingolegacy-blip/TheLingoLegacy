@@ -7,6 +7,8 @@ The L-shaped askLINGO dock is injected by the flagship Cloudflare Worker into HT
 - `GET /api/v1/asklingo/status` reports whether the optional model binding is available.
 - `POST /api/v1/asklingo/chat` accepts a JSON body with one `message` string.
 - Input is bounded to 1,200 characters; request body to 5 KB; requests are rate-limited per IP per isolate; origins are checked against the canonical domain allowlist.
+- The in-memory limiter is a per-isolate best-effort guard, not a globally consistent abuse or billing control. It prunes expired buckets and fails closed when its bounded capacity is exhausted; it does not replace centralized rate limiting.
+- Keep model inference disabled until a shared durable limiter (for example, a reviewed Durable Object or Cloudflare Rate Limiting policy) is provisioned, tested, and independently verified.
 - A correlation ID is returned for support diagnostics.
 - The default guided fallback runs without an AI model binding or provider token.
 - User messages are not persisted by this Worker endpoint. Do not submit passwords, payment data, API keys, or other secrets.

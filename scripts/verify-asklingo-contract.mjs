@@ -12,6 +12,7 @@ const checks = [
   ['rate limit',worker.includes('ASK_RATE_LIMIT = 20') && worker.includes('askRateAllowed(request)')],
   ['safe fallback',worker.includes('function askFallback(message)')],
   ['AI is opt-in',worker.includes("env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL")],
+  ['status requires complete AI configuration',worker.includes("mode: env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL ? 'ai-enabled' : 'guided-fallback'") && worker.includes("ai_ready: env.ASKLINGO_AI_ENABLED === 'true' && Boolean(env.AI) && Boolean(env.ASKLINGO_MODEL)")],
   ['correlation ID',worker.includes('crypto.randomUUID()')],
   ['L dock injected globally',worker.includes('asklingo-dock.js') && worker.includes('asklingo-dock.css')],
   ['L dock asset present',dockCss.includes('.ask-l-dock') && dockJs.includes('ask-l-dock')],

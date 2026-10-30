@@ -53,6 +53,45 @@ for (let i = 0; i < 9997; i += 1) {
 const saturated = await submit({ ip: '192.0.2.201', phone: '+15551234569' });
 assert.equal(saturated.status, 429, 'a saturated rate-limit map must fail closed');
 
+// askLINGO status must not claim model readiness when the model name is absent.
+const aiBindingOnly = {
+  ...env,
+  ASKLINGO_AI_ENABLED: 'true',
+  AI: { run: async () => ({ response: 'test response' }) },
+};
+const statusWithoutModel = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/v1/asklingo/status'),
+  aiBindingOnly,
+);
+const statusWithoutModelBody = await statusWithoutModel.json();
+assert.equal(statusWithoutModelBody.ai_ready, false);
+assert.equal(statusWithoutModelBody.mode, 'guided-fallback');
+
+const statusWithModel = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/v1/asklingo/status'),
+  { ...aiBindingOnly, ASKLINGO_MODEL: 'test-model' },
+);
+const statusWithModelBody = await statusWithModel.json();
+assert.equal(statusWithModelBody.ai_ready, true);
+assert.equal(statusWithModelBody.mode, 'ai-enabled');
+
+// The assistant's per-isolate limit rejects request 21 for the same edge IP.
+async function askLINGO(ip) {
+  return worker.fetch(new Request('https://thelingolegacy.com/api/v1/asklingo/chat', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      origin: 'https://thelingolegacy.com',
+      'cf-connecting-ip': ip,
+    },
+    body: JSON.stringify({ message: 'Where can I find LINGOarcade?' }),
+  }), env);
+}
+const askStatuses = [];
+for (let i = 0; i < 20; i += 1) askStatuses.push((await askLINGO('203.0.113.77')).status);
+assert.ok(askStatuses.every(status => status === 200));
+assert.equal((await askLINGO('203.0.113.77')).status, 429);
+
 console.log('WORKER_RATE_LIMIT_REGRESSION=PASS');
 console.log('SPOOFED_X_FORWARDED_FOR_BYPASS=BLOCKED');
 console.log('MISSING_EDGE_IDENTITY=FAIL_CLOSED');
