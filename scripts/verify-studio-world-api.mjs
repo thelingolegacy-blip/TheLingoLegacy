@@ -8,7 +8,7 @@ const checks = [
   ['registry asset path',worker.includes('/studio-sites/config/studio-world-registry.json')],
   ['asset binding access',worker.includes('env.ASSETS.fetch')],
   ['collection endpoint',worker.includes("url.pathname === '/api/v1/studios/worlds'")],
-  ['individual world endpoint',worker.includes('/api/v1/studios/worlds/')],
+  ['individual world endpoint',worker.includes('studioWorldMatch')],
   ['method guard',worker.includes("request.method !== 'GET'")],
   ['unavailable registry fails closed',worker.includes('Studio world registry is not available')],
   ['missing world returns 404',worker.includes('Studio world not found.')],
