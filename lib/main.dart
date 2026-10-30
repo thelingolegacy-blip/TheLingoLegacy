@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'services/studio_world_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const LingoLegacyApp());
+  var cloudReady = false;
+  var cloudStatus = 'Preview mode · Firebase runtime configuration is unavailable';
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    cloudReady = true;
+    cloudStatus = 'Firebase initialized · service-specific acceptance still required';
+  } catch (_) {
+    // Keep the visual preview usable without implying cloud identity or sync.
+    cloudReady = false;
+  }
+  runApp(LingoLegacyApp(cloudReady: cloudReady, cloudStatus: cloudStatus));
 }
 
 const gold = Color(0xFFE6BD58);
@@ -15,7 +25,11 @@ const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
 class LingoLegacyApp extends StatelessWidget {
-  const LingoLegacyApp({super.key});
+  const LingoLegacyApp({super.key, required this.cloudReady, required this.cloudStatus});
+
+  final bool cloudReady;
+  final String cloudStatus;
+
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'The Lingo Legacy',
@@ -27,7 +41,7 @@ class LingoLegacyApp extends StatelessWidget {
       useMaterial3: true,
       cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
     ),
-    home: const UniverseHome(),
+    home: UniverseHome(cloudReady: cloudReady, cloudStatus: cloudStatus),
   );
 }
 
@@ -48,13 +62,24 @@ const destinations = <Destination>[
 ];
 
 class UniverseHome extends StatefulWidget {
-  const UniverseHome({super.key});
+  const UniverseHome({super.key, required this.cloudReady, required this.cloudStatus});
+
+  final bool cloudReady;
+  final String cloudStatus;
+
   @override
   State<UniverseHome> createState() => _UniverseHomeState();
 }
 
 class _UniverseHomeState extends State<UniverseHome> {
   int selected = 0;
+  late final Future<List<StudioWorld>> _worldsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _worldsFuture = StudioWorldService().fetchWorlds();
+  }
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.sizeOf(context).width >= 760;
@@ -86,6 +111,28 @@ class _UniverseHomeState extends State<UniverseHome> {
                   FilledButton.icon(onPressed: () => setState(() => selected = 0), icon: const Icon(Icons.explore_outlined), label: const Text('Explore destinations')),
                   OutlinedButton.icon(onPressed: () => _notice('Account and signup services are not connected in this preview.'), icon: const Icon(Icons.person_outline), label: const Text('Account')),
                 ]),
+              ]),
+            ),
+          )),
+          SliverToBoxAdapter(child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: widget.cloudReady ? const Color(0xFF3B665E) : const Color(0xFF6B5530)),
+                color: const Color(0xFF111522),
+              ),
+              child: Row(children: [
+                Icon(widget.cloudReady ? Icons.cloud_done_outlined : Icons.cloud_off_outlined,
+                  color: widget.cloudReady ? const Color(0xFF76D8B2) : gold),
+                const SizedBox(width: 12),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(widget.cloudReady ? 'CLOUD INITIALIZED' : 'PREVIEW MODE',
+                    style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1, fontSize: 11)),
+                  const SizedBox(height: 4),
+                  Text(widget.cloudStatus, style: const TextStyle(color: muted, fontSize: 12, height: 1.4)),
+                ])),
               ]),
             ),
           )),
@@ -131,6 +178,7 @@ class _UniverseHomeState extends State<UniverseHome> {
               ),
             ),
           ),
+          SliverToBoxAdapter(child: _buildStudioWorldDirectory(context)),
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.all(20),
             child: Container(
@@ -159,9 +207,116 @@ class _UniverseHomeState extends State<UniverseHome> {
     );
   }
 
+  Widget _buildStudioWorldDirectory(BuildContext context) {
+    return FutureBuilder<List<StudioWorld>>(
+      future: _worldsFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          final message = snapshot.connectionState == ConnectionState.waiting
+              ? 'Syncing the public studio registry…'
+              : 'Edge registry not available yet. The existing preview destinations remain available.';
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFF30384B)),
+                color: const Color(0xFF111522),
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('INDEPENDENT STUDIO WORLDS', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+                const SizedBox(height: 8),
+                Text(message, style: const TextStyle(color: muted, height: 1.45)),
+              ]),
+            ),
+          );
+        }
+
+        final worlds = snapshot.data!;
+        final columns = MediaQuery.sizeOf(context).width >= 900 ? 3 : 2;
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('INDEPENDENT STUDIO WORLDS', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 1)),
+            const SizedBox(height: 6),
+            Text('${worlds.length} worlds · individual identities · shared platform services',
+              style: const TextStyle(color: muted, fontSize: 12)),
+            const SizedBox(height: 12),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: worlds.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                mainAxisExtent: 156,
+              ),
+              itemBuilder: (context, index) {
+                final world = worlds[index];
+                final accent = _worldAccent(world.palette.length > 1 ? world.palette[1] : '#9871FF');
+                return Card(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(22),
+                    onTap: world.canEnter
+                        ? () => _notice('${world.entity}: ${world.surfaceState}. World-specific production activation remains gated.')
+                        : null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(world.id.toUpperCase(),
+                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: accent, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        const SizedBox(height: 7),
+                        Text(world.entity, maxLines: 2, overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+                        const SizedBox(height: 5),
+                        Expanded(child: Text(world.studio, maxLines: 2, overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: muted, fontSize: 10, height: 1.3))),
+                        Text(_worldStateLabel(world.surfaceState),
+                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: accent, fontSize: 9, fontWeight: FontWeight.w900)),
+                      ]),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ]),
+        );
+      },
+    );
+  }
+
+  Color _worldAccent(String hex) {
+    try {
+      final value = hex.replaceAll('#', '');
+      if (value.length != 6) return violet;
+      return Color(0xFF000000 | int.parse(value, radix: 16));
+    } catch (_) {
+      return violet;
+    }
+  }
+
+  String _worldStateLabel(String state) {
+    switch (state) {
+      case 'preview-present':
+        return 'PREVIEW SURFACE';
+      case 'local-demo':
+        return 'PLAYABLE LOCAL DEMO';
+      case 'local-prototype':
+        return 'LOCAL PROTOTYPE';
+      case 'external-unverified':
+        return 'EXTERNAL · UNVERIFIED';
+      default:
+        return 'PLANNED · NOT ACTIVE';
+    }
+  }
+
   void _openDestination(Destination d) {
     final known = {'Worlds': '/worlds/', 'Games & Play': '/games/', 'Stories & Books': '/library/', 'Loyalty Lane': '/lane/', 'Music & Media': '/media/', 'askLINGO': '/ai/', 'Creator Studio': '/studio/', 'Community': '/community/'};
-    _notice('${d.title}: website route ${known[d.title] ?? d.route}. Native service integration remains pending.');
+    _notice('${d.title}: preview route ${known[d.title] ?? d.route}. Firebase initialized: ${widget.cloudReady}. Destination service acceptance remains pending.');
   }
 
   void _notice(String message) {
