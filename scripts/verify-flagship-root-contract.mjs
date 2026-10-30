@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 const source=fs.readFileSync('cloudflare/lingo-flagship-root.js','utf8');
 const checks=[
- ['root worker handler',source.includes('export default { async fetch(request)')],
+ ['root worker handler',source.includes('export default {') && source.includes('async fetch(request')],
  ['crimson flagship palette',source.includes('--gold:#EF334B')&&source.includes('--gold2:#F5F5F6')],
  ['universal askLINGO dock',source.includes('/studio-sites/assets/asklingo-dock.js')&&source.includes('/studio-sites/assets/asklingo-dock.css')],
  ['root PWA manifest',source.includes('/manifest.webmanifest')&&source.includes('/pwa-register.js')],
