@@ -89,8 +89,9 @@ See [platform release matrix](platforms/README.md). Store submission, certificat
 
 ## Runtime and deployment
 
-- Production Worker: `thelingolegacyv-5`.
-- Worker entrypoint: `worker.js`.
+- Production API/site Worker: `thelingolegacyv-5`, source entrypoint `worker.js`.
+- Exact-root homepage Worker: `lingo-flagship-root`, source entrypoint `cloudflare/lingo-flagship-root.js` and isolated config `cloudflare/wrangler.flagship-root.jsonc`.
+- Both Workers are separately routed. The root Worker must be updated and accepted independently; the API Worker’s HTML injection alone does not affect the exact `/` route.
 - Static assets are served through the Worker asset binding.
 - Studio source lives under `studio-sites/`.
 - Flutter source lives under `lib/`.
