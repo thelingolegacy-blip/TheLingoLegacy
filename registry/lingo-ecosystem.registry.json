@@ -63,11 +63,15 @@
     },
     {
       "provider": "Render",
-      "state": "CONNECTED_WORKSPACE_CONFIRMATION_REQUIRED",
+      "state": "WORKSPACE_CONFIRMED_SERVICE_INVENTORY_UNVERIFIED",
       "evidence": {
         "workspace_name": "My Workspace",
         "workspace_id": "tea-dbiev1gae00c738hk28g",
-        "services_created": 0
+        "services_created": 0,
+        "user_explicit_confirmation": true,
+        "service_inventory_call_returned_null": true,
+        "provisioning_state": "NOT_PROVISIONED",
+        "reason": "No confirmed service inventory or source-backed deployment specification available; no service created."
       }
     },
     {
