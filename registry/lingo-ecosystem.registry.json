@@ -72,7 +72,7 @@
     },
     {
       "provider": "Firebase",
-      "state": "SOURCE_DECLARATIONS_ONLY_RUNTIME_UNVERIFIED",
+      "state": "PROJECT_IDENTITY_CONFIRMED_RUNTIME_UNVERIFIED",
       "evidence": {
         "declared_flutter_packages": [
           "firebase_core",
@@ -82,7 +82,17 @@
           "firebase_analytics"
         ],
         "project_credentials_verified": false,
-        "live_runtime_verified": false
+        "live_runtime_verified": false,
+        "project_name": "Flutter AI Playground",
+        "project_id": "flutter-ai-playground-e9ad0",
+        "project_number": "6714975920",
+        "console_access_confirmed_by_user_screenshot": true,
+        "registered_web_apps": [
+          "Flutter AI Playground",
+          "Flutter AI Playground Web"
+        ],
+        "registered_web_app_count": 2,
+        "authentication_firestore_storage_rules_verified": false
       },
       "connector_plugin": {
         "available": true,
