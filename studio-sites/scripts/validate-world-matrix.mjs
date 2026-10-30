@@ -8,7 +8,7 @@ const registry = JSON.parse(fs.readFileSync(path.join(root, 'config/studio-world
 const errors = [];
 const shared = ['LingoID','UniversalLegacyWallet','progressionAndRewards','assetRegistry','worldRouter','telemetryAndCorrelation','safetyAndPrivacy','releaseGovernance'];
 const ids = new Set();
-const namespaces = new Set();
+const namespaces = { assets:new Set(), audio:new Set(), telemetry:new Set() };
 for (const service of shared) if (!registry.contract?.sharedServices?.includes(service)) errors.push('Shared service missing: ' + service);
 for (const world of registry.worlds || []) {
   if (!world.id || !world.entity || !world.studio || !world.surfaceState || !world.route) { errors.push('Incomplete world: ' + (world.id || '(no id)')); continue; }
@@ -17,9 +17,10 @@ for (const world of registry.worlds || []) {
   const visual = world.visualIdentity || {};
   for (const key of ['theme','palette','assetNamespace']) if (!visual[key]) errors.push(world.id + ': missing visualIdentity.' + key);
   for (const key of ['audioNamespace','worldTelemetryNamespace']) if (!world[key]) errors.push(world.id + ': missing ' + key);
-  for (const namespace of [visual.assetNamespace,world.audioNamespace,world.worldTelemetryNamespace]) {
-    if (namespace && namespaces.has(namespace)) errors.push('Namespace must be unique: ' + namespace);
-    if (namespace) namespaces.add(namespace);
+  const namespaceGroups = { assets:visual.assetNamespace, audio:world.audioNamespace, telemetry:world.worldTelemetryNamespace };
+  for (const [kind,namespace] of Object.entries(namespaceGroups)) {
+    if (namespace && namespaces[kind].has(namespace)) errors.push(kind + ' namespace must be unique: ' + namespace);
+    if (namespace) namespaces[kind].add(namespace);
   }
   if (world.surfaceState === 'external-unverified' && !/^https:\/\//.test(world.route)) errors.push(world.id + ': external route must use HTTPS.');
   if (world.surfaceState === 'planned' && world.sourcePath !== null) errors.push(world.id + ': planned world cannot claim an existing source path.');
