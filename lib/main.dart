@@ -19,9 +19,9 @@ Future<void> main() async {
   runApp(LingoLegacyApp(cloudReady: cloudReady, cloudStatus: cloudStatus));
 }
 
-const gold = Color(0xFFE6BD58);
-const cyan = Color(0xFF54E7F2);
-const violet = Color(0xFF9871FF);
+const gold = Color(0xFFF5F5F6);
+const cyan = Color(0xFFEF334B);
+const violet = Color(0xFF858A93);
 const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
@@ -100,7 +100,7 @@ class _UniverseHomeState extends State<UniverseHome> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: const Color(0x44303C55)),
-                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF242044), Color(0xFF101725), ink]),
+                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF3A2027), Color(0xFF202329), ink]),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('ONE UNIVERSE · MANY DESTINATIONS', style: TextStyle(color: cyan, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.6)),
