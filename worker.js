@@ -21,7 +21,7 @@ const RELEASE_GATES = Object.freeze({
 });
 const PLATFORM_MODULES = Object.freeze([
   'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle','studio-world-registry',
-  'lingoslots','thats-my-lingo','rewards','missions','xp-engine','universal-legacy-wallet',
+  'lingoslots','thats-my-lingo','asklingo-chat','rewards','missions','xp-engine','universal-legacy-wallet',
   'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
@@ -180,6 +180,100 @@ function runtimeManifest(request, env) {
   };
 }
 
+const ASK_RATE_WINDOW_MS = 60 * 60 * 1000;
+const ASK_RATE_LIMIT = 20;
+const askRateBuckets = new Map();
+
+function askRateAllowed(request) {
+  const forwarded = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const current = askRateBuckets.get(forwarded);
+  if (!current || now - current.startedAt > ASK_RATE_WINDOW_MS) {
+    if (askRateBuckets.size > 10000) askRateBuckets.clear();
+    askRateBuckets.set(forwarded, { startedAt: now, count: 1 });
+    return true;
+  }
+  if (current.count >= ASK_RATE_LIMIT) return false;
+  current.count += 1;
+  return true;
+}
+
+function askFallback(message) {
+  const text = message.toLowerCase();
+  if (/\b(studio|world|entity|brand|portal|homepage|navigate|where|find)\b/.test(text)) {
+    return "The LINGO universe is organized into independent worlds. Start at the flagship hub, then choose Arcade, Virtual Library, Music & Art Studio, Loyalty Lane Apparel, Loyalty Lane Designs, Loyalty Lane Cycle, or another registered world. Each destination shows whether it is a preview, local demo, planned, or independently verified.";
+  }
+  if (/\b(game|games|slot|arcade|play|payline)\b/.test(text)) {
+    return "Games live inside LINGOarcade. That’s My Lingo is the signature five-reel experience, with separate 5×3 and 5×5 demo layouts. Demo coins are not cash, prizes, or transferable value. Production gameplay and wallet services remain behind release acceptance.";
+  }
+  if (/\b(book|story|script|movie|contract|award|library|event|publishing)\b/.test(text)) {
+    return "The Virtual Library is the archive for books, scripts, contracts, awards, films, publishing work, and upcoming events. Each collection should retain its own permissions, metadata, and version history.";
+  }
+  if (/\b(music|audio|song|artist|canvas|art|design|creative)\b/.test(text)) {
+    return "The Virtual Music Studio is the home for music, sound, and the creative Art Canvas partner. Original masters, project files, artwork, credits, and rights records should stay attached to each work.";
+  }
+  if (/\b(apparel|clothing|fashion|loyalty lane|laundry|cycle|promotion|campaign)\b/.test(text)) {
+    return "Loyalty Lane has distinct operations: Apparel is the clothing brand; Designs manages promotions and campaigns; Cycle is the laundromat and community hub. They share the LINGO identity layer but keep separate catalogues, workflows, and reporting.";
+  }
+  if (/\b(account|login|sign.?up|wallet|coin|token|points|checkout|payment|buy|purchase)\b/.test(text)) {
+    return "I can explain the account, rewards, and checkout structure, but I cannot access your private account or confirm a transaction here. Sign-in, wallet balances, coin purchases, and checkout stay disabled until their authenticated services and payment webhooks pass production acceptance.";
+  }
+  if (/\b(status|production|deploy|release|live|launch|runner|g02|pipeline)\b/.test(text)) {
+    return "The public flagship site is serving, but full platform activation is separately gated. The current release policy requires verified source, CI execution, security, deployment, live validation, synchronization, and acceptance evidence. A preview or successful Vercel status alone does not satisfy the G02 release gate.";
+  }
+  if (/\b(kotton|kotton's code|puppy|character|storybook)\b/.test(text)) {
+    return "Kotton’s Code is its own illustrated story world. It keeps a warmer cartoon and storybook art direction rather than inheriting the flagship’s crimson, white, smoke-gray enterprise system.";
+  }
+  return "I’m askLINGO, the L-shaped guide to the LINGO universe. I can help navigate the studios, explain products and release status, and point out which services are ready versus still gated. What part of the LINGO world are you working in?";
+}
+
+async function askLingoStatus(request, env) {
+  return json({
+    ok: true,
+    assistant: 'askLINGO',
+    interface: 'universal-l-dock',
+    mode: env.ASKLINGO_AI_ENABLED === 'true' && env.AI ? 'ai-enabled' : 'guided-fallback',
+    ai_ready: env.ASKLINGO_AI_ENABLED === 'true' && Boolean(env.AI),
+    request_limit_per_hour: ASK_RATE_LIMIT,
+    note: 'No account data is available to this public assistant.',
+  }, 200, request, env);
+}
+
+async function askLingoChat(request, env) {
+  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  const origin = request.headers.get('Origin');
+  if (origin && !allowedOrigins(env).has(origin.toLowerCase())) {
+    return json({ ok: false, error: 'Origin not allowed.' }, 403, request, env);
+  }
+  if (!askRateAllowed(request)) return json({ ok: false, error: 'Rate limit reached. Try again later.' }, 429, request, env);
+  const raw = await request.text();
+  if (raw.length > 5000) return json({ ok: false, error: 'Message is too large.' }, 413, request, env);
+  let body;
+  try { body = JSON.parse(raw); } catch { return json({ ok: false, error: 'Invalid request.' }, 400, request, env); }
+  const message = String(body.message || '').trim().slice(0, 1200);
+  if (!message) return json({ ok: false, error: 'Enter a message to continue.' }, 400, request, env);
+  const correlationId = crypto.randomUUID();
+  let reply;
+  let mode = 'guided-fallback';
+  if (env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL) {
+    try {
+      const response = await env.AI.run(String(env.ASKLINGO_MODEL), {
+        messages: [
+          { role: 'system', content: 'You are askLINGO, the concise and professional guide to The Lingo Legacy platform. Explain navigation, studio boundaries, product capabilities, and release states. Never claim a feature is live unless the provided platform context explicitly verifies it. Never claim account access, balances, payments, deployments, or store approval. Do not solicit secrets, passwords, payment details, or sensitive personal information. Demo coins are non-cash and non-transferable. Use direct, respectful language.' },
+          { role: 'user', content: message },
+        ],
+        max_tokens: 350,
+      });
+      reply = String(response?.response || response?.result || '').trim();
+      if (reply) mode = 'ai-enabled';
+    } catch {
+      reply = null;
+    }
+  }
+  if (!reply) reply = askFallback(message);
+  return json({ ok: true, assistant: 'askLINGO', mode, correlation_id: correlationId, reply }, 200, request, env);
+}
+
 async function readStudioWorldRegistry(request, env) {
   if (!env.ASSETS) return null;
   const assetUrl = new URL('/studio-sites/assets/world-registry.json', request.url);
@@ -257,6 +351,8 @@ export default {
       }
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/asklingo/status') return await askLingoStatus(request, env);
+      if (url.pathname === '/api/v1/asklingo/chat') return await askLingoChat(request, env);
       if (url.pathname === '/api/v1/studios/worlds') return await studioWorlds(request, env);
       const studioWorldMatch = url.pathname.match(/^\/api\/v1\/studios\/worlds\/([a-z0-9-]+)$/);
       if (studioWorldMatch) return await studioWorlds(request, env, studioWorldMatch[1]);
