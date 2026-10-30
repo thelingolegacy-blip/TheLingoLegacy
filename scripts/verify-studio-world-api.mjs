@@ -3,9 +3,9 @@ import path from 'node:path';
 const root = process.cwd();
 const worker = fs.readFileSync(path.join(root,'worker.js'),'utf8');
 const portal = fs.readFileSync(path.join(root,'studio-sites/index.html'),'utf8');
-const registry = JSON.parse(fs.readFileSync(path.join(root,'studio-sites/config/studio-world-registry.json'),'utf8'));
+const registry = JSON.parse(fs.readFileSync(path.join(root,'studio-sites/assets/world-registry.json'),'utf8'));
 const checks = [
-  ['registry asset path',worker.includes('/studio-sites/config/studio-world-registry.json')],
+  ['registry asset path',worker.includes('/studio-sites/assets/world-registry.json')],
   ['asset binding access',worker.includes('env.ASSETS.fetch')],
   ['collection endpoint',worker.includes("url.pathname === '/api/v1/studios/worlds'")],
   ['individual world endpoint',worker.includes('studioWorldMatch')],
@@ -13,7 +13,7 @@ const checks = [
   ['unavailable registry fails closed',worker.includes('Studio world registry is not available')],
   ['missing world returns 404',worker.includes('Studio world not found.')],
   ['portal requests edge registry',portal.includes("fetch('/api/v1/studios/worlds'")],
-  ['portal has static preview fallback',portal.includes('/studio-sites/config/studio-world-registry.json')],
+  ['portal has static preview fallback',portal.includes('/studio-sites/assets/world-registry.json')],
   ['portal does not activate unverified external links',portal.includes("String(world.route||'').startsWith('/studio-sites/')")]
 ];
 const failed = checks.filter(([,ok])=>!ok);
