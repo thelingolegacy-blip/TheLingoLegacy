@@ -39,6 +39,72 @@
       "owner": "The Lingo Legacy",
       "altOrTranscript": "Optional short synthesized UI tones; muted by default",
       "status": "code-generated"
+    },
+    {
+      "assetId": "lingoarcade.hero-logo",
+      "kind": "vector-logo",
+      "path": "assets/logos/lingoarcade.svg",
+      "version": "1.0.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "LINGOarcade original vector logo",
+      "status": "source-present-rights-review-pending"
+    },
+    {
+      "assetId": "lingoslots.hero-logo",
+      "kind": "vector-logo",
+      "path": "assets/logos/lingoslots.svg",
+      "version": "1.0.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "LINGOslots original vector logo",
+      "status": "source-present-rights-review-pending"
+    },
+    {
+      "assetId": "thats-my-lingo.hero-logo",
+      "kind": "vector-logo",
+      "path": "assets/logos/thats-my-lingo.svg",
+      "version": "1.0.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "That’s My Lingo original vector logo",
+      "status": "source-present-rights-review-pending"
+    },
+    {
+      "assetId": "lingoslots.machine-background",
+      "kind": "background-image",
+      "path": null,
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "Original premium LINGOslots machine environment artwork",
+      "status": "planned-not-generated"
+    },
+    {
+      "assetId": "lingoslots.symbol-atlas",
+      "kind": "sprite-atlas",
+      "path": null,
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "Original LINGOslots symbol and icon atlas",
+      "status": "planned-not-generated"
+    },
+    {
+      "assetId": "lingoslots.audio-master",
+      "kind": "audio-master",
+      "path": null,
+      "version": "0.1.0",
+      "sha256": null,
+      "license": "original-work-pending-review",
+      "owner": "The Lingo Legacy",
+      "altOrTranscript": "Original LINGOslots ambient loop, reel sounds, and win stingers",
+      "status": "planned-not-generated"
     }
   ],
   "note": "This manifest intentionally identifies placeholders. It does not claim that final artwork, sound masters, animation exports, hashes, or rights review are complete."
