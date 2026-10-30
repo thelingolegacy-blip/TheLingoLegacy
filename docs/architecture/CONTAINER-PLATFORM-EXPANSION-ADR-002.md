@@ -151,3 +151,10 @@ Cloudflare account/zone and Worker inventory were queried through the connected 
 - `thelingolegacy-web-recovery-preview` has preview/deployment history but no attached Worker route in the inventory response.
 
 This inventory is a point-in-time read-only snapshot. It does not validate page behavior, origin reachability, application APIs, authentication, persistence, or end-user acceptance.
+
+
+### Edge security and observability follow-up (read-only)
+
+- Cloudflare account settings returned `enforce_twofactor: false`. This reports that account-level two-factor enforcement is not enabled; it does not prove whether an individual user has MFA enabled. Review and enable enforcement through the account owner after confirming recovery methods.
+- The active `lingo-flagship-root` and `thelingolegacyv-5` Worker settings responses did not include an explicit observability configuration. The isolated `lingo-legacy-studio-build` Worker did return observability/logging enabled with query-string redaction. Review production Worker logging, trace sampling, retention, and redaction before enabling any settings; no production settings were changed.
+- The public apex page currently labels itself a candidate experience and states that destinations must be connected to verified routes before production activation. Account creation and wallet actions are correctly described as gated on secure-service verification. This is a visible product/release readiness gap, not a reason to bypass the production hold.
