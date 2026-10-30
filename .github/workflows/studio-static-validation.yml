@@ -5,6 +5,7 @@ on:
       - "studio-sites/**"
       - "worker.js"
       - "scripts/verify-studio-world-api.mjs"
+      - "scripts/verify-asklingo-contract.mjs"
       - ".github/workflows/studio-static-validation.yml"
   push:
     branches:
