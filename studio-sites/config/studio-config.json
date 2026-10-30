@@ -1,5 +1,7 @@
 {
   "schemaVersion": "1.0.0",
+  "studioWorldRegistry": "config/studio-world-registry.json",
+  "worldIsolation": "Each entity owns its visual, asset, audio, navigation, and telemetry namespaces; shared platform services remain centrally governed.",
   "product": {
     "name": "The Lingo Legacy",
     "tagline": "Loyalty. Legacy. Language.",
