@@ -165,3 +165,14 @@ The current README uses older product labels/domains (`LINGOarena`, `LINGOreads`
 - Root production Worker route inventory includes the apex, www, and numerous product subdomains. Do not infer that each subdomain is independently certified from route presence.
 - Read-only public probes for `/healthz` and `/api/v1/runtime` could not be fetched by the available web retrieval path; this is **not** evidence of endpoint failure or success. A direct authenticated or browser-level live probe is still required.
 - No Cloudflare resource was created, updated, deleted, promoted, or rerouted during this inspection.
+
+
+## Latest workflow recheck (2026-10-30)
+
+For registry commit `7d4dcff47ff9471b4b4130a05ddb7ea78e4b73fc`, GitHub returned three completed workflow runs, all with conclusion `startup_failure`:
+
+- Crimson Smoke UI — static validation: run `41123563640`
+- G02 Runner Image Build (no publish): run `41123565091`
+- Lingo Legacy Static CI: run `41123562275`
+
+Jobs API and artifacts API returned empty arrays for each run. No runner assignment, step log, sentinel execution, or artifact is available from these attempts. This confirms startup failure persists; it does not identify a specific root cause. G02 remains blocked.
