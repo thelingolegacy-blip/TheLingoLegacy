@@ -34,6 +34,9 @@ if(!fs.existsSync('studio-sites/sw.js')||!fs.existsSync('studio-sites/pwa-regist
 if(!fs.existsSync('studio-sites/assets/tv-navigation.js'))errors.push('TV remote navigation script missing.');
 if(!fs.existsSync('platforms/webos/appinfo.json')||!fs.existsSync('platforms/tizen/config.xml'))errors.push('TV packaging metadata missing.');
 if(!worker.includes('/api/v1/agents/catalog')||!worker.includes('autonomous_execution: false'))errors.push('Governed agent catalog API missing or autonomous execution is not disabled.');
+if(config.services?.assistant?.aiInferenceEnabled!==false||config.services?.assistant?.writeAccess!==false)errors.push('askLINGO must remain guided-only until AI and write permissions are approved.');
+if(config.services?.agents?.autonomousExecution!==false||config.services?.agents?.backgroundWorkers!==false)errors.push('Agent execution must remain disabled until explicitly provisioned.');
+for(const platform of ['web','android','ios','webos','tizen'])if(!config.platforms?.[platform])errors.push('Platform readiness state missing: '+platform);
 if(!portal.includes('href="virtual-library/"')||!portal.includes('href="virtual-music-studio/"'))errors.push('Flagship world entry points missing.');
 if(errors.length){console.error('PLATFORM SURFACE CONTRACT FAILED\n- '+errors.join('\n- '));process.exit(1);}
 console.log('PLATFORM_SURFACE_MATRIX=PASS');
