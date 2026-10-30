@@ -30,6 +30,8 @@ jobs:
         run: node studio-sites/scripts/validate-world-matrix.mjs
       - name: Validate Cloudflare studio world API contract
         run: node scripts/verify-studio-world-api.mjs
+      - name: Validate askLINGO assistant contract
+        run: node scripts/verify-asklingo-contract.mjs
       - name: Create preview bundle
         if: success()
         run: |
