@@ -213,6 +213,58 @@
       "environment": "isolated-non-production",
       "production_routes": false
     },
-    "reconciliation": "keep separate; no promotion or route mutation"
+    "reconciliation": "keep separate; no promotion or route mutation",
+    "account_inventory": {
+      "inspected_at": "2026-10-30",
+      "account_id": "16cb6f247cd1b28fca864760c7269606",
+      "scripts": [
+        "thelingolegacyv-5",
+        "lingo-flagship-root",
+        "thelingolegacy-web-recovery-preview",
+        "lingo-static-backup-proxy"
+      ],
+      "configured_studio_worker": "lingo-legacy-studio-build",
+      "configured_studio_worker_exists": false,
+      "studio_worker_get_status": 404,
+      "studio_worker_error_code": 10007,
+      "flagship_worker": {
+        "production_version": 137,
+        "latest_uploaded_version": 177,
+        "latest_uploaded_is_production": false,
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "firebase_binding": false,
+        "secret_names": []
+      },
+      "root_worker": {
+        "production_version": 1,
+        "latest_uploaded_version": 2,
+        "latest_uploaded_is_production": false,
+        "latest_uploaded_preview_only": true,
+        "bindings": [],
+        "secret_names": []
+      },
+      "recovery_preview": {
+        "deployed_version": 20,
+        "observability_enabled": true,
+        "persisted_invocation_logs": true,
+        "query_string_redaction": true,
+        "bindings": [
+          "ASSETS"
+        ],
+        "secret_names": []
+      },
+      "live_probe": {
+        "paths": [
+          "/healthz",
+          "/api/v1/runtime"
+        ],
+        "status": "NOT_VERIFIED",
+        "reason": "Available web retrieval path could not fetch these endpoints; this is not a pass/fail result."
+      }
+    }
   }
 }
