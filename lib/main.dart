@@ -260,7 +260,9 @@ class _UniverseHomeState extends State<UniverseHome> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(22),
                     onTap: world.canEnter
-                        ? () => _notice('${world.entity}: ${world.surfaceState}. World-specific production activation remains gated.')
+                        ? () => Navigator.of(context).push(MaterialPageRoute<void>(
+                              builder: (_) => StudioWorldPage(world: world),
+                            ))
                         : null,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -322,4 +324,75 @@ class _UniverseHomeState extends State<UniverseHome> {
   void _notice(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), behavior: SnackBarBehavior.floating));
   }
+}
+
+class StudioWorldPage extends StatelessWidget {
+  const StudioWorldPage({super.key, required this.world});
+
+  final StudioWorld world;
+
+  Color get _accent {
+    try {
+      final value = world.palette.length > 1
+          ? world.palette[1].replaceAll('#', '')
+          : '9871FF';
+      if (value.length != 6) return violet;
+      return Color(0xFF000000 | int.parse(value, radix: 16));
+    } catch (_) {
+      return violet;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: Text(world.studio)),
+        body: SafeArea(
+          child: ListView(padding: const EdgeInsets.all(20), children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: _accent.withValues(alpha: .55)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    _accent.withValues(alpha: .24),
+                    const Color(0xFF17162B),
+                    ink,
+                  ],
+                ),
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(world.id.toUpperCase(),
+                    style: TextStyle(color: _accent, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                const SizedBox(height: 18),
+                Text(world.entity,
+                    style: const TextStyle(fontSize: 34, height: 1.0, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 12),
+                Text(world.studio, style: const TextStyle(color: muted)),
+                const SizedBox(height: 24),
+                Text(world.surfaceState.toUpperCase(),
+                    style: TextStyle(color: _accent, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              ]),
+            ),
+            const SizedBox(height: 18),
+            Card(child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('WORLD BOUNDARIES', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+                const SizedBox(height: 10),
+                const Text('This world owns its visual identity, artwork, audio, navigation surface, and content rules while sharing Lingo ID, progression, wallet controls, telemetry, safety, and release governance.',
+                    style: TextStyle(color: muted, height: 1.5)),
+                const SizedBox(height: 14),
+                Text('Preview route: ${world.route}',
+                    style: const TextStyle(color: muted, fontSize: 12)),
+              ]),
+            )),
+            const SizedBox(height: 12),
+            const Text('This is a registry-backed studio information surface. Opening the destination application and enabling production services remain separate acceptance gates.',
+                style: TextStyle(color: muted, height: 1.5)),
+          ]),
+        ),
+      );
 }
