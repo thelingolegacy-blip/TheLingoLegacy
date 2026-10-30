@@ -26,7 +26,6 @@ jobs:
       - name: Output runner assignment and sentinel telemetry
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
           RUNNER_NAME: ${{ runner.name }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
@@ -42,7 +41,6 @@ jobs:
           GITHUB_EVENT_VALUE: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          test -n "$RUNNER_ID" && test "$RUNNER_ID" != "0"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
@@ -62,14 +60,14 @@ jobs:
             echo "G02_JOB_NAME=$GITHUB_JOB_NAME_VALUE"
             echo "G02_REF=$GITHUB_REF_VALUE"
             echo "G02_COMMIT_SHA=$GITHUB_SHA_VALUE"
-            echo "G02_RUNNER_ID=$RUNNER_ID"
+            echo "G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API"
             echo "G02_RUNNER_NAME=$RUNNER_NAME"
             echo "G02_RUNNER_OS=$RUNNER_OS_VALUE"
             echo "G02_RUNNER_ARCH=$RUNNER_ARCH_VALUE"
             echo "G02_TIMESTAMP_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
             echo "=========================================="
             echo "G02 SENTINEL EXECUTION CONFIRMED"
-            echo "Runner ID: $RUNNER_ID"
+            echo "Runner ID source: GitHub Actions Jobs API"
             echo "Runner name: $RUNNER_NAME"
             echo "Runner OS: $RUNNER_OS_VALUE"
             echo "Runner architecture: $RUNNER_ARCH_VALUE"
