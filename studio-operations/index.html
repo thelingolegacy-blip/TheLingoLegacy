@@ -44,7 +44,7 @@
 <div class="art-caption"><div><b>THE LINGO SYSTEM MAP</b><small>Domains, infrastructure and evidence converge</small></div><div class="art-code">SYS / 01<br>OBSERVABILITY LAYER</div></div>
 </div>
 </section>
-<nav class="section-nav" aria-label="Operations sections"><a href="#overview">Overview</a><a href="#architecture">Infrastructure</a><a href="#g02">G02 & CI/CD</a><a href="#eye">LINGOeye</a><a href="#move">LINGOmove</a><a href="#surfaces">OS matrix</a><a href="#pipelines">Pipelines</a><a href="#recovery">Recovery</a><a href="#endpoints">Endpoints</a></nav>
+<nav class="section-nav" aria-label="Operations sections"><a href="#overview">Overview</a><a href="#architecture">Infrastructure</a><a href="#g02">G02 & CI/CD</a><a href="#eye">LINGOeye</a><a href="#move">LINGOmove</a><a href="#surfaces">OS matrix</a><a href="#pipelines">Pipelines</a><a href="#recovery">Recovery</a><a href="#endpoints">Endpoints</a><a href="#core">Core</a><a href="#network">Firewalls</a><a href="#security">Security</a><a href="#systems">Tools & files</a><a href="#analytics">Math & analytics</a><a href="#blueprints">Blueprints</a><a href="#timeline">Production loop</a><a href="#scaling">Scaling</a></nav>
 <section class="section" id="overview">
 <div class="section-head"><div><div class="section-kicker">01 / Executive overview</div><h2>System posture</h2></div><p>Initial values reflect the current documented release posture. Runtime values replace them only when the corresponding endpoint responds and its fields are understood.</p></div>
 <div class="grid grid-4">
@@ -177,7 +177,81 @@
 <article class="card endpoint-list"><div class="card-head"><h3>Existing platform probes</h3><span class="status block" id="probe-status">NOT CHECKED</span></div>
 <div class="kv"><span>Platform status</span><a href="/api/v1/platform/status"><code>/api/v1/platform/status</code></a></div><div class="kv"><span>Release gates</span><a href="/api/v1/platform/gates"><code>/api/v1/platform/gates</code></a></div><div class="kv"><span>Platform modules</span><a href="/api/v1/platform/modules"><code>/api/v1/platform/modules</code></a></div><div class="kv"><span>Health</span><a href="/healthz"><code>/healthz</code></a></div><div class="kv"><span>Runtime metadata</span><a href="/api/v1/runtime"><code>/api/v1/runtime</code></a></div><div class="kv"><span>Platform manifest</span><a href="/api/v1/platform/manifest"><code>/api/v1/platform/manifest</code></a></div>
 </article>
-<article class="card"><div class="card-head"><h3>Live probe results</h3><span class="status block">WAITING</span></div><div id="probe-results"><div class="kv"><span>Probe set</span><b>Not yet run</b></div></div><div class="sub">This page requests same-origin GET endpoints only. It does not mutate services, change routes, dispatch workflows, register runners or activate capture.</div></article>
+<article class="card"><div class="card-head"><h3>Live probe results</h3><span class="status block">WAITING</span></div><div id="probe-results"><d
+<section class="section" id="core">
+<div class="section-head"><div><div class="section-kicker">10 / Platform foundation</div><h2>Core services & system registry</h2></div><p>One catalog for realms, services, dependencies, owners and environment boundaries. Registry entries remain targets until backed by authoritative service records.</p></div>
+<div class="grid grid-4">
+<article class="card"><div class="card-head"><h3>Identity & access</h3><span class="status block">INTEGRATION PENDING</span></div><div class="metric">IAM</div><div class="sub">MFA · RBAC/ABAC · session control · service identities · break-glass audit</div></article>
+<article class="card"><div class="card-head"><h3>Realm registry</h3><span class="status block">CATALOG TARGET</span></div><div class="metric">REALMS</div><div class="sub">Product ownership · tenant boundaries · environments · lifecycle and dependencies</div></article>
+<article class="card"><div class="card-head"><h3>Event backbone</h3><span class="status block">CONTRACT TARGET</span></div><div class="metric">EVENTS</div><div class="sub">Versioned schemas · correlation IDs · idempotency · replay and dead-letter queues</div></article>
+<article class="card"><div class="card-head"><h3>Evidence registry</h3><span class="status block">INTEGRATION PENDING</span></div><div class="metric">PROOF</div><div class="sub">Immutable references · checksums · provenance · retention · reviewer access</div></article>
+</div></section>
+<section class="section" id="network">
+<div class="section-head"><div><div class="section-kicker">11 / Network perimeter</div><h2>Firewalls & trust zones</h2></div><p>Default-deny network design. No public database, Docker daemon or administrative ingress. Firewall status is not live until policy and flow-log sources are connected.</p></div>
+<div class="grid grid-3">
+<article class="card"><div class="card-head"><h3>Public edge</h3><span class="status block">POLICY TARGET</span></div><div class="sub">Cloudflare WAF · TLS · bot controls · rate limits · DNS and edge audit</div><div class="pill-row"><span class="pill">WAF</span><span class="pill">TLS</span><span class="pill">DDoS</span></div></article>
+<article class="card"><div class="card-head"><h3>Private application zone</h3><span class="status block">POLICY TARGET</span></div><div class="sub">API gateway · private workers · service-to-service identity · restricted egress</div><div class="pill-row"><span class="pill">Ingress allowlist</span><span class="pill">Egress controls</span></div></article>
+<article class="card"><div class="card-head"><h3>Data & execution zones</h3><span class="status block">POLICY TARGET</span></div><div class="sub">Private databases and object storage; isolated G02 runner; no shared privileged Docker socket</div><div class="pill-row"><span class="pill">Segmentation</span><span class="pill">No public admin ports</span></div></article>
+</div>
+<div class="card" style="margin-top:13px"><div class="card-head"><h3>Firewall change control</h3><span class="status block">REVIEW REQUIRED</span></div><div class="kv"><span>Default policy</span><b>DENY inbound and outbound unless explicitly allowed</b></div><div class="kv"><span>Rule evidence</span><b>Owner · purpose · source/destination · protocol · expiry</b></div><div class="kv"><span>Temporary access</span><b>Time-limited, ticketed, reviewed and automatically expired</b></div><div class="kv"><span>Verification</span><b>Staging test · flow logs · rollback · independent review</b></div></div>
+</section>
+<section class="section" id="security">
+<div class="section-head"><div><div class="section-kicker">12 / Security operations</div><h2>Identity, threat & assurance</h2></div><p>Controls are enforced by server-side policy and independently tested; a dashboard indicator alone is never treated as a security control.</p></div>
+<div class="grid grid-4">
+<article class="card"><div class="card-head"><h3>Access governance</h3><span class="status block">NOT VERIFIED</span></div><div class="sub">MFA · least privilege · role reviews · tenant and purpose scoping</div></article>
+<article class="card"><div class="card-head"><h3>Secrets & certificates</h3><span class="status block">NOT CONNECTED</span></div><div class="sub">Vault references · rotation · revocation · certificate expiry alerts</div></article>
+<article class="card"><div class="card-head"><h3>Supply-chain security</h3><span class="status block">GATE REQUIRED</span></div><div class="sub">SAST · dependency scan · container scan · SBOM · signed provenance</div></article>
+<article class="card"><div class="card-head"><h3>Incident response</h3><span class="status block">RUNBOOK REQUIRED</span></div><div class="sub">Alert triage · containment · evidence preservation · remediation and review</div></article>
+</div></section>
+<section class="section" id="systems">
+<div class="section-head"><div><div class="section-kicker">13 / Tooling & data plane</div><h2>Tools, filesystems & storage</h2></div><p>Every integration and storage class has an owner, permission scope, retention policy and integrity check. Browser clients never receive unrestricted filesystem or cloud-admin access.</p></div>
+<div class="grid grid-2">
+<article class="card"><div class="card-head"><h3>Tool registry</h3><span class="status block">CATALOG TARGET</span></div><div class="kv"><span>Tool identity</span><b>Provider · capability · version · owner</b></div><div class="kv"><span>Permission model</span><b>Role · realm · environment · purpose</b></div><div class="kv"><span>Runtime policy</span><b>Timeout · rate limit · retry · idempotency</b></div><div class="kv"><span>Credential handling</span><b>Secret reference only · never expose secret values</b></div></article>
+<article class="card"><div class="card-head"><h3>Filesystem & storage classes</h3><span class="status block">INTEGRATION PENDING</span></div><div class="kv"><span>Source and build artifacts</span><b>Versioned · reviewed · checksum verified</b></div><div class="kv"><span>Database and event store</span><b>Encrypted · tenant scoped · backed up</b></div><div class="kv"><span>Media and evidence objects</span><b>Private · versioned · retention controlled</b></div><div class="kv"><span>Backup vault</span><b>Immutable copies · isolated restore drills</b></div></article>
+</div>
+<div class="card" style="margin-top:13px"><div class="card-head"><h3>File intake lifecycle</h3><span class="status block">POLICY TARGET</span></div><div class="pill-row"><span class="pill">INGEST</span><span class="pill">TYPE / SIZE VALIDATION</span><span class="pill">MALWARE SCAN</span><span class="pill">CLASSIFY</span><span class="pill">ENCRYPT</span><span class="pill">PRIVATE STORE</span><span class="pill">CHECKSUM</span><span class="pill">AUTHORIZE</span><span class="pill">EXPIRE / HOLD</span></div></div>
+</section>
+<section class="section" id="analytics">
+<div class="section-head"><div><div class="section-kicker">14 / Mathematics & measurement</div><h2>Operational math & analytics</h2></div><p>Metrics must show units, measurement windows, source freshness and assumptions. Forecasts must include model version and uncertainty.</p></div>
+<div class="grid grid-3">
+<article class="card"><div class="card-head"><h3>Availability</h3><span class="status block">FORMULA</span></div><div class="metric">Uptime %</div><div class="sub">(Total time − unavailable time) ÷ total time × 100</div></article>
+<article class="card"><div class="card-head"><h3>Queue drain time</h3><span class="status block">FORMULA</span></div><div class="metric">Backlog ÷ rate</div><div class="sub">Pending events divided by sustainable processing events per second</div></article>
+<article class="card"><div class="card-head"><h3>Capacity headroom</h3><span class="status block">FORMULA</span></div><div class="metric">Headroom %</div><div class="sub">(Provisioned capacity − observed peak) ÷ provisioned capacity × 100</div></article>
+</div>
+<div class="card" style="margin-top:13px"><div class="card-head"><h3>Measurement standards</h3><span class="status block">SOURCE DATA REQUIRED</span></div><div class="kv"><span>Latency</span><b>P50 / P95 / P99 · milliseconds</b></div><div class="kv"><span>Reliability</span><b>Error rate · availability · SLO burn</b></div><div class="kv"><span>Logistics</span><b>On-time rate · exception rate · ETA error</b></div><div class="kv"><span>Storage</span><b>Bytes/day · retention · restore throughput</b></div><div class="kv"><span>Cost</span><b>Compute · storage · transfer · observability · support</b></div></div>
+</section>
+<section class="section" id="blueprints">
+<div class="section-head"><div><div class="section-kicker">15 / Engineering design authority</div><h2>Blueprints & dependency maps</h2></div><p>Each buildable blueprint documents system boundaries, data flows, trust zones, ownership, failure modes, costs and recovery.</p></div>
+<div class="grid grid-3">
+<article class="card"><div class="card-head"><h3>Architecture blueprint</h3><span class="status block">REVIEW REQUIRED</span></div><div class="sub">Context · components · deployment · APIs · event contracts · dependency graph</div></article>
+<article class="card"><div class="card-head"><h3>Security blueprint</h3><span class="status block">REVIEW REQUIRED</span></div><div class="sub">Threat model · data classification · IAM · firewall · encryption · retention</div></article>
+<article class="card"><div class="card-head"><h3>Operations blueprint</h3><span class="status block">REVIEW REQUIRED</span></div><div class="sub">SLO · capacity · cost · alerts · runbooks · backup · rollback · ownership</div></article>
+</div>
+<div class="card" style="margin-top:13px"><div class="card-head"><h3>Blueprint lifecycle</h3><span class="status block">APPROVAL IS NOT RELEASE</span></div><div class="pill-row"><span class="pill">DRAFT</span><span class="pill">IN REVIEW</span><span class="pill">APPROVED FOR BUILD</span><span class="pill">IMPLEMENTED</span><span class="pill">VERIFIED</span><span class="pill">RETIRED</span></div></div>
+</section>
+<section class="section" id="timeline">
+<div class="section-head"><div><div class="section-kicker">16 / Production lifecycle</div><h2>Timeline & production loop</h2></div><p>Milestones carry an owner, dependencies, target date, acceptance criteria and evidence. Completion and independent acceptance are separate states.</p></div>
+<div class="card"><div class="pipeline">
+<div class="pipe"><b>01 · Discover & plan</b><small>Scope, owner, requirements, risk and dependencies</small><span class="pstate">PLANNING</span></div>
+<div class="pipe"><b>02 · Blueprint & review</b><small>Architecture, data flow, security and cost model</small><span class="pstate">DESIGN GATE</span></div>
+<div class="pipe"><b>03 · Build & validate</b><small>Reproducible source, tests, contracts and QA</small><span class="pstate">BUILD GATE</span></div>
+<div class="pipe"><b>04 · Secure & package</b><small>Scans, SBOM, artifact digest and provenance</small><span class="pstate">SECURITY GATE</span></div>
+<div class="pipe"><b>05 · Deploy staging</b><small>Browser/device checks, telemetry and recovery drill</small><span class="pstate">STAGING GATE</span></div>
+<div class="pipe"><b>06 · Independently accept</b><small>Evidence review, operator readiness and approval record</small><span class="pstate">ACCEPTANCE</span></div>
+<div class="pipe"><b>07 · Authorize promotion</b><small>Explicit approver, change window and rollback plan</small><span class="pstate">AUTHORIZATION</span></div>
+<div class="pipe"><b>08 · Observe & improve</b><small>Post-deploy verification, SLO and incident feedback</small><span class="pstate">OPERATIONS</span></div>
+</div></div>
+</section>
+<section class="section" id="scaling">
+<div class="section-head"><div><div class="section-kicker">17 / Capacity engineering</div><h2>Scaling & performance</h2></div><p>Scale from measured bottlenecks, with explicit limits, cost guardrails, cooldowns and tested rollback behavior.</p></div>
+<div class="grid grid-3">
+<article class="card"><div class="card-head"><h3>Compute & workers</h3><span class="status block">POLICY TARGET</span></div><div class="sub">Horizontal scale · bounded concurrency · CPU/RAM/PID limits · replica ceilings</div></article>
+<article class="card"><div class="card-head"><h3>Queues & data</h3><span class="status block">POLICY TARGET</span></div><div class="sub">Queue-age triggers · partitioning · pooling · index and query review</div></article>
+<article class="card"><div class="card-head"><h3>Edge & media</h3><span class="status block">POLICY TARGET</span></div><div class="sub">Safe caching · resumable upload · lifecycle tiers · circuit breakers</div></article>
+</div>
+<div class="card" style="margin-top:13px"><div class="card-head"><h3>Autoscaling guardrails</h3><span class="status block">NO LIVE POLICY CONNECTED</span></div><div class="kv"><span>Trigger</span><b>Measured saturation or queue age with defined evaluation window</b></div><div class="kv"><span>Bounds</span><b>Minimum / maximum replicas and cloud quota</b></div><div class="kv"><span>Cost control</span><b>Budget ceiling, alert threshold and approval for expansion</b></div><div class="kv"><span>Recovery</span><b>Cooldown, rollback behavior and load-test evidence</b></div></div>
+</section>
+iv class="kv"><span>Probe set</span><b>Not yet run</b></div></div><div class="sub">This page requests same-origin GET endpoints only. It does not mutate services, change routes, dispatch workflows, register runners or activate capture.</div></article>
 </div>
 </section>
 </main>
