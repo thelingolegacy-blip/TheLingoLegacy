@@ -48,8 +48,8 @@ const rootFiles = {
   'config/production/launch-foundation.json': JSON.stringify({ observability: { performanceMonitoring: 'Cloudflare deployment metadata; deployment status alone is not acceptance evidence' } }),
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/g02-self-hosted-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
+  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nG02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API\ndeploy-cloudflare:\n  needs: repair\n  if: ${{ false }}',
+  '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
   'docker/README.md': 'application image intentionally not defined; does not publish an image',
@@ -79,6 +79,26 @@ test('configuration consistency passes when Worker, headers, workflow, and instr
   const report = JSON.parse(result.stdout);
   assert.equal(report.status, 'PASS');
   assert.deepEqual(report.failures, []);
+});
+
+test('configuration consistency fails closed when runner ID is read from an undocumented context property', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\n${{ runner.id }}');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('runner-id-from-jobs-api'));
+});
+
+test('configuration consistency fails closed when deployment is not dependent on repair', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8').replace('needs: repair', 'needs:'));
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('deployment-job-dependency'));
 });
 
 test('configuration consistency fails closed on compatibility-date drift and header mismatch', () => {
