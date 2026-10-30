@@ -1,0 +1,174 @@
+{
+  "registry": "LINGOlegacy Ecosystem Registry",
+  "audit_date": "2026-10-30",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "registry_branch": "audit/registry-verification-2026-10-30",
+  "release_authority": "HOLD",
+  "status_vocabulary": [
+    "INSTALLED",
+    "CONNECTED",
+    "CONFIGURED",
+    "DEPLOYED",
+    "EXECUTED",
+    "ACCEPTED",
+    "UNVERIFIED",
+    "BLOCKED"
+  ],
+  "integrations": [
+    {
+      "provider": "GitHub",
+      "state": "CONNECTED",
+      "evidence": {
+        "installation_id": 140995100,
+        "account": "thelingolegacy-blip",
+        "repository": "thelingolegacy-blip/TheLingoLegacy",
+        "repository_selection": "all"
+      }
+    },
+    {
+      "provider": "AppDeploy",
+      "state": "DEPLOYED",
+      "evidence": {
+        "application_count": 15,
+        "latest_audited_studio_hub": "lingo-legacy-studio-hub-nhda3b",
+        "latest_qa_frontend_errors": 0,
+        "latest_qa_network_errors": 0
+      }
+    },
+    {
+      "provider": "Shopify",
+      "state": "CONNECTED",
+      "evidence": {
+        "store": "Loyalty Lane",
+        "domain": "vercel-store-f0dc9593.myshopify.com",
+        "plan": "Advanced",
+        "currency": "USD",
+        "product_count": 15,
+        "active_products": 15,
+        "inventory_zero_products_present": true
+      }
+    },
+    {
+      "provider": "Cloudflare",
+      "state": "CONNECTED_PRODUCTION_PROTECTED",
+      "evidence": {
+        "main_worker": "thelingolegacyv-5",
+        "main_worker_production_version": 137,
+        "main_worker_latest_uploaded_version": 175,
+        "root_worker": "lingo-flagship-root",
+        "root_worker_production_version": 1,
+        "root_worker_latest_uploaded_version": 2,
+        "production_mutations": 0
+      }
+    },
+    {
+      "provider": "Render",
+      "state": "CONNECTED_WORKSPACE_CONFIRMATION_REQUIRED",
+      "evidence": {
+        "workspace_name": "My Workspace",
+        "workspace_id": "tea-dbiev1gae00c738hk28g",
+        "services_created": 0
+      }
+    },
+    {
+      "provider": "Firebase",
+      "state": "SOURCE_DECLARATIONS_ONLY_RUNTIME_UNVERIFIED",
+      "evidence": {
+        "declared_flutter_packages": [
+          "firebase_core",
+          "firebase_database",
+          "firebase_auth",
+          "firebase_storage",
+          "firebase_analytics"
+        ],
+        "project_credentials_verified": false,
+        "live_runtime_verified": false
+      }
+    },
+    {
+      "provider": "AppleAppStore",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "signed_build_verified": false,
+        "store_approval_verified": false
+      }
+    },
+    {
+      "provider": "GooglePlay",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "signed_build_verified": false,
+        "store_approval_verified": false
+      }
+    },
+    {
+      "provider": "LGwebOS",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "platform_build_verified": false,
+        "device_test_verified": false
+      }
+    },
+    {
+      "provider": "SamsungTizen",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "platform_build_verified": false,
+        "device_test_verified": false
+      }
+    }
+  ],
+  "g02": {
+    "state": "BLOCKED",
+    "canonical_labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "pr417_head": "b7d273a5c69c93f5b8d8b4db6b6bec9ee6ba3de1",
+    "main_branch_has_runner_id_context": true,
+    "pr417_branch_removes_runner_id_context": true,
+    "jobs_api_runner_id_required": true,
+    "latest_inspected_runs_had_jobs": 0,
+    "latest_inspected_runs_had_artifacts": 0
+  },
+  "appdeploy_app_ids": [
+    "lingo-legacy-studio-hub-nhda3b",
+    "lingo-legacy-master-project-plan-rkh6r6",
+    "hello-the-lingo-legacy-ois1rj",
+    "that-s-my-lingo-casino-studio-2xntye",
+    "lingo-legacy-universe-rpekc0",
+    "the-lingo-legacy-y67ewl",
+    "obsidian-closet-design-studio-zk6va7",
+    "jersey-shore-the-undead-l4h5ea",
+    "the-lingo-legacy-hq-vhjt6i",
+    "kotton-s-code-cartoon-studio-509py3",
+    "loyalty-lane-community-hub-zb39n2",
+    "lingo-legacy-verification-bridge-wwagn2",
+    "lingo-ai-sonic-boom-2030-7plgl2",
+    "crazy-weasels-0j3ujc",
+    "lingo-traveltm-uyd57n"
+  ],
+  "product_families": [
+    "LINGOlegacy",
+    "LINGOlane",
+    "LINGOslots",
+    "LINGOarcade",
+    "LINGOlibrary",
+    "LINGOmedia",
+    "LINGOworld",
+    "LegacyXclub"
+  ],
+  "constraints": {
+    "merge_prs": false,
+    "promote_workers": false,
+    "change_dns_routes": false,
+    "change_secrets": false,
+    "change_billing": false,
+    "activate_ai": false,
+    "activate_payments": false,
+    "activate_real_money_wagering": false,
+    "production_release": "HOLD"
+  }
+}
