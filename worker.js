@@ -331,7 +331,7 @@ async async function renderDynamicHtml(request, env, response) {
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
   const html = await response.text();
   const runtime = JSON.stringify({ version: RUNTIME_VERSION, canonical: String(env.CANONICAL_DOMAIN || 'thelingolegacy.com') }).replace(/</g, '\\u003c');
-  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><link rel="stylesheet" href="/assets/lingo-design-tokens.css"><link rel="stylesheet" href="/assets/studio-ui-runtime.css"><link rel="stylesheet" href="/assets/asklingo-dock.css"><script defer src="/assets/studio-ui-runtime.js"></script><script defer src="/assets/asklingo-dock.js"></script><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
+  const injection = `<meta name="lingo-runtime" content="${RUNTIME_VERSION}"><meta name="lingo-dynamic" content="true"><link rel="stylesheet" href="/assets/lingo-design-tokens.css"><link rel="stylesheet" href="/assets/studio-ui-runtime.css"><link rel="stylesheet" href="/studio-sites/assets/asklingo-dock.css"><script defer src="/assets/studio-ui-runtime.js"></script><script defer src="/studio-sites/assets/asklingo-dock.js"></script><script>window.__LINGO_RUNTIME__=${runtime};</script>`;
   const rendered = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
   const headers = new Headers(response.headers);
   headers.set('content-type', 'text/html; charset=utf-8');
