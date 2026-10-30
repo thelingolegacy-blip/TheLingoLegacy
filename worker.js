@@ -21,7 +21,7 @@ const RELEASE_GATES = Object.freeze({
 });
 const PLATFORM_MODULES = Object.freeze([
   'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle','studio-world-registry',
-  'lingoslots','thats-my-lingo','asklingo-chat','rewards','missions','xp-engine','universal-legacy-wallet',
+  'lingoslots','thats-my-lingo','asklingo-chat','lingo-assist','lingo-sisters','lingo-system','shields','nexus','vot-next','signal-dispatch','diagnostics','rewards','missions','xp-engine','universal-legacy-wallet',
   'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
 
@@ -274,6 +274,26 @@ async function askLingoChat(request, env) {
   return json({ ok: true, assistant: 'askLINGO', mode, correlation_id: correlationId, reply }, 200, request, env);
 }
 
+const AGENT_CATALOG = Object.freeze([
+  { id: 'LINGOassist', role: 'guided support and diagnostics', mode: 'guided-fallback', status: 'AVAILABLE', writes: false, requires: [] },
+  { id: 'LINGOsisters', role: 'specialist studio, operations, media, and commerce assistants', mode: 'registry-only', status: 'PLANNED', writes: false, requires: ['agent-orchestration','permission-scopes','audit-store'] },
+  { id: 'LINGOsystem', role: 'workflow orchestration and signal coordination', mode: 'control-plane-design', status: 'PLANNED', writes: false, requires: ['durable-workflows','queue','service-identity','approval-gates'] },
+  { id: 'SHIELDS', role: 'security headers, origin checks, rate limits, and policy controls', mode: 'edge-guardrails', status: 'PARTIAL', writes: false, requires: ['centralized-rate-limits','security-events','incident-runbooks'] },
+  { id: 'NEXUS', role: 'world registry, routing, and cross-surface contracts', mode: 'edge-registry', status: 'PREVIEW', writes: false, requires: ['world-acceptance','cross-platform-sync'] },
+  { id: 'VOT-NEXT', role: 'release governance, evidence chain, and activation gates', mode: 'fail-closed-governance', status: 'ACTIVE-GUARDRAILS', writes: false, requires: ['G02-runner-evidence','independent-certification'] },
+]);
+
+function agentCatalog(request, env) {
+  return json({
+    ok: true,
+    policy: 'Agents are informational until each tool, identity, write scope, budget, and approval gate is explicitly provisioned.',
+    autonomous_execution: false,
+    background_workers: false,
+    agents: AGENT_CATALOG,
+    generated_at: new Date().toISOString(),
+  }, 200, request, env);
+}
+
 async function readStudioWorldRegistry(request, env) {
   if (!env.ASSETS) return null;
   const assetUrl = new URL('/studio-sites/assets/world-registry.json', request.url);
@@ -361,6 +381,7 @@ export default {
       }
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/agents/catalog' && request.method === 'GET') return agentCatalog(request, env);
       if (url.pathname === '/api/v1/asklingo/status') return await askLingoStatus(request, env);
       if (url.pathname === '/api/v1/asklingo/chat') return await askLingoChat(request, env);
       if (url.pathname === '/api/v1/studios/worlds') return await studioWorlds(request, env);
