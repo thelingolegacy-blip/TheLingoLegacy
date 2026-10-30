@@ -35,9 +35,9 @@
 | Cloudflare production Workers | `thelingolegacyv-5` production 100% v137 (v175 uploaded); `lingo-flagship-root` production 100% v1 (v2 uploaded) | NO PROMOTION |
 | Cloudflare bindings | Production Worker bindings inspected: ASSETS, CANONICAL_DOMAIN, PUBLIC_SITE_URL only | Firebase/Stripe/D1/KV/R2/Workers AI/realtime not confirmed |
 | DNS | Apex record reported 192.0.2.0 and proxied; exact apex and wildcard routes target different Workers | REVIEW REQUIRED; NO MUTATION |
-| Firebase / Flutter | Flutter manifest declares firebase_core, database, auth, storage, analytics; Firebase hosting config exists; project credentials/runtime not verified; pubspec.lock absent in prior source audit. Firebase connector is available but not yet connected; connection handoff offered. | SOURCE DECLARATIONS ONLY; RUNTIME UNVERIFIED |
+| Firebase / Flutter | Console identity confirmed by user: `Flutter AI Playground` / `flutter-ai-playground-e9ad0` (project number `6714975920`). Repository `.firebaserc` and `verify-flutter-firebase.mjs` instead target `lingo-legacy-production`; project identity conflict. Credentials, Auth, Firestore/Realtime Database, Storage rules, and live runtime remain unverified. | PROJECT CONFLICT — DO NOT DEPLOY OR SWITCH ALIASES |
 | Mobile distribution | No verified signed Android/iOS store artifacts or store approvals; LG webOS/Tizen builds/device tests not verified | NOT CERTIFIED |
-| Render | One workspace returned: My Workspace; no workspace selected for service operations | CONNECTED; USER WORKSPACE CONFIRMATION REQUIRED |
+| Render | User-confirmed workspace `My Workspace` (`tea-dbiev1gae00c738hk28g`); PostgreSQL and Key Value inventories returned no instances; service inventory API returned null even with explicit workspace ID. No `render.yaml`, Dockerfile, or Compose file found at repository root. | WORKSPACE CONFIRMED; SERVICE INVENTORY UNRESOLVED; NO PROVISIONING |
 | AI / payments / wallet | AI and payment activation disabled; wallet/identity acceptance not certified | DISABLED / NOT CERTIFIED |
 | Production release | G02 and integrations not accepted | HOLD |
 
@@ -88,8 +88,10 @@ Deployment-ready is not equivalent to integration acceptance, security review, p
 - Observed production bindings do not establish Firebase, Stripe, database, object storage, AI, or realtime service connectivity.
 
 ### Render
-- One workspace discovered: `My Workspace` (`tea-dbiev1gae00c738hk28g`).
-- Service creation/listing requires the user to select/confirm the intended workspace first. No service was created or modified.
+- User explicitly confirmed `My Workspace` (`tea-dbiev1gae00c738hk28g`); every inventory call now supplies this workspace ID.
+- PostgreSQL inventory: no instances found. Key Value inventory: no instances found. Services inventory: API returned `null`, so the service list is unresolved rather than proven empty.
+- No root `render.yaml`, Dockerfile, or Compose specification was found in the inspected main-branch paths.
+- No service, database, or key-value instance was created. Do not provision a duplicate application host until a distinct Render workload and cost profile are specified.
 
 ## Canonical LINGO product registry
 
@@ -129,3 +131,24 @@ The current README uses older product labels/domains (`LINGOarena`, `LINGOreads`
 - Signed platform-specific builds and store/device acceptance.
 
 **Registry conclusion:** The connected provider inventory and 15 AppDeploy deployments are discoverable; the ecosystem is not fully installed/configured/accepted end-to-end. Production release remains **HOLD**.
+
+
+## Newly verified configuration conflicts (2026-10-30)
+
+### Firebase project identity conflict
+- User-confirmed Firebase Console project: `Flutter AI Playground`, project ID `flutter-ai-playground-e9ad0`, project number `6714975920`.
+- Repository `.firebaserc` currently sets the default alias to `lingo-legacy-production`.
+- `scripts/verify-flutter-firebase.mjs` explicitly requires `lingo-legacy-production` and reads `lib/firebase_options.dart`.
+- These are conflicting project identities. The intended target has not been approved by a repository-level environment mapping or verified by live Firebase credentials. Do not rewrite the alias, deploy rules, initialize data, or ship Flutter builds until an explicit environment mapping and live project verification exist.
+
+### Cloudflare deployment-target split
+- Root `wrangler.jsonc`: Worker `thelingolegacyv-5`, entry point `worker.js`, canonical apex and www routes.
+- `cloudflare/wrangler.toml`: Worker `lingo-legacy-studio-build`, entry point `cloudflare/studio-worker.js`; adjacent README says this is an isolated non-production build and canonical routes remain unchanged.
+- Keep these deployment targets isolated. A staging workflow must not inherit production routes, production secrets, or production bindings. The Cloudflare Studio artifact is not production acceptance.
+
+### Safe activation / blocker policy
+- Safe to disable only demonstrably unused demo UI, onboarding overlays, debug controls, placeholder prompts, and non-production preview auto-starts when their source flags are confirmed and the action is reversible.
+- Do not disable security controls, branch protection, runner labels, approval gates, rate limits, audit logging, payment safety, or production/LKG protections to make a pipeline green.
+- Do not create a second runner or change runner labels. G02 requires the existing canonical host and real Jobs API evidence.
+- A CI workflow that has no executable runner must remain blocked; do not replace self-hosted execution with a hosted runner and call it G02 acceptance.
+- No secrets, DNS, routes, Worker production allocations, billing, Firebase rules, payment state, wallet state, AI activation, or real-money wagering were mutated during this audit.
