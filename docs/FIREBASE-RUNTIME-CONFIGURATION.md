@@ -31,6 +31,12 @@ flutter run --dart-define-from-file=/absolute/path/to/firebase-dart-defines.json
 
 Do not put the local file in the repository. Restrict Firebase API keys by application and API in the Firebase/Google Cloud console. These client configuration values are not substitutes for Firebase Security Rules, App Check, authentication, or server-side authorization.
 
+## Platform scaffold and hosting boundaries
+
+The preview workflows add missing Web and Android platform scaffolding in the ephemeral CI workspace with `flutter create . --platforms=web,android`. This is build preparation, not a production deployment or a committed iOS project. iOS release builds still require a complete Xcode project, a macOS runner, signing assets, and App Store Connect acceptance. The current repository contains only iOS stub files; do not represent iOS as build-ready.
+
+The root `firebase.json` currently points Firebase Hosting at the repository root (`public: "."`). Do not run a Firebase Hosting deployment from this repository: that directory can expose repository documentation, scripts, and source files. Before any Hosting use, establish the intended Firebase site/project and replace the root with a dedicated, reviewed build-output directory. Cloudflare remains the canonical web delivery path.
+
 ## Failure behavior
 
 If configuration is absent or incomplete, the app starts in an explicit preview-only state. Cloud identity, synchronization, wallet, and other server-backed operations must remain unavailable. A preview startup is not evidence that Firebase is connected.

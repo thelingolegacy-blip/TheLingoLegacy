@@ -47,6 +47,8 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Generate missing Web and Android platform scaffolding
+        run: flutter create . --platforms=web,android
 
       - name: Verify Firebase project and stage temporary Dart defines
         shell: bash

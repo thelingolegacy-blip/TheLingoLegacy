@@ -31,6 +31,8 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Generate missing Web and Android platform scaffolding
+        run: flutter create . --platforms=web,android
       - name: Resolve dependencies
         run: flutter pub get
       - name: Static analysis
