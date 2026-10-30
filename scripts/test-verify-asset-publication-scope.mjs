@@ -61,7 +61,7 @@ test('missing nested Firebase backend exclusion fails closed', (t) => {
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const result = runValidator(root);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /missing required exclusion: \.\*\*\/firebase-functions\//);
+  assert.match(result.stderr, /missing required exclusion: \*\*\/firebase-functions\//);
 });
 
 test('excluded release-manifest route fails closed after slash normalization', (t) => {
