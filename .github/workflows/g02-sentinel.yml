@@ -31,6 +31,12 @@ jobs:
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
           RUN_REASON: ${{ inputs.reason }}
+          GITHUB_REPOSITORY_VALUE: ${{ github.repository }}
+          GITHUB_WORKFLOW_VALUE: ${{ github.workflow }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
+          GITHUB_REF_VALUE: ${{ github.ref }}
+          GITHUB_JOB_NAME_VALUE: ${{ github.job }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
           GITHUB_ACTOR_VALUE: ${{ github.actor }}
           GITHUB_EVENT_VALUE: ${{ github.event_name }}
@@ -41,11 +47,28 @@ jobs:
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
+          test -n "$GITHUB_RUN_ID_VALUE"
+          test -n "$GITHUB_RUN_ATTEMPT_VALUE"
+          test -n "$GITHUB_REPOSITORY_VALUE"
+          test -n "$GITHUB_JOB_NAME_VALUE"
 
           {
             echo "=========================================="
+            echo "G02_SENTINEL=START"
+            echo "G02_REPOSITORY=$GITHUB_REPOSITORY_VALUE"
+            echo "G02_WORKFLOW=$GITHUB_WORKFLOW_VALUE"
+            echo "G02_RUN_ID=$GITHUB_RUN_ID_VALUE"
+            echo "G02_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT_VALUE"
+            echo "G02_JOB_NAME=$GITHUB_JOB_NAME_VALUE"
+            echo "G02_REF=$GITHUB_REF_VALUE"
+            echo "G02_COMMIT_SHA=$GITHUB_SHA_VALUE"
+            echo "G02_RUNNER_ID=$RUNNER_ID"
+            echo "G02_RUNNER_NAME=$RUNNER_NAME"
+            echo "G02_RUNNER_OS=$RUNNER_OS_VALUE"
+            echo "G02_RUNNER_ARCH=$RUNNER_ARCH_VALUE"
+            echo "G02_TIMESTAMP_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "=========================================="
             echo "G02 SENTINEL EXECUTION CONFIRMED"
-            echo "Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
             echo "Runner ID: $RUNNER_ID"
             echo "Runner name: $RUNNER_NAME"
             echo "Runner OS: $RUNNER_OS_VALUE"
@@ -59,6 +82,7 @@ jobs:
             echo "=========================================="
             echo "G02_RUNNER_ASSIGNMENT=PASS"
             echo "G02_SENTINEL_EXECUTION=PASS"
+            echo "G02_SENTINEL=PASS"
           } | tee g02-sentinel-evidence.txt
 
       - name: Inspect Docker availability without mutating containers
