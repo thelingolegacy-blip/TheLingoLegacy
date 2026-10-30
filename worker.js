@@ -342,6 +342,8 @@ function platformStatus(request, env) {
       rewards: { mode: 'demo-only', server_authoritative: false },
       assistant: { configured: Boolean(env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL), fallback: true },
       world_registry: { configured: Boolean(env.ASSETS), production_verified: false },
+      telemetry: { configured: Boolean(env.OBSERVABILITY_ENABLED), logpush: Boolean(env.LOGPUSH_ENABLED) },
+      realtime: { configured: Boolean(env.REALTIME_ENABLED) },
       data: { d1: Boolean(env.DB), kv: Boolean(env.STUDIO_KV), r2: Boolean(env.ASSET_BUCKET) },
     },
     control_planes: ['security','devops','data','safety','ai','commerce','games','rewards','studio','applications'],
