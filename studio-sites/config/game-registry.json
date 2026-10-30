@@ -22,11 +22,11 @@
     {
       "id": "thats-my-lingo",
       "title": "That’s My Lingo",
-      "genre": "5-reel virtual slot game",
-      "status": "design-spec",
+      "genre": "5-reel virtual slot game with 5×3 and 5×5 layouts",
+      "status": "local-demo",
       "storyMode": false,
       "monetization": "not enabled",
-      "route": "/studio-sites/#worlds"
+      "route": "/studio-sites/lingoslots/#play"
     },
     {
       "id": "spades-is-my-lingo",

@@ -20,7 +20,7 @@ const RELEASE_GATES = Object.freeze({
   G09_ACTIVATION: 'BLOCKED', G10_POST_ACTIVATION: 'BLOCKED', G11_ACCEPTANCE: 'BLOCKED'
 });
 const PLATFORM_MODULES = Object.freeze([
-  'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle',
+  'flagship','loyalty-lane-world','designs-promotions','loyalty-lane-apparel','laundry-cycle','studio-world-registry',
   'lingoslots','thats-my-lingo','rewards','missions','xp-engine','universal-legacy-wallet',
   'lingo-id','asklingo','commerce','legacy-club','media','studio','docs','blog','contact','governance'
 ]);
@@ -173,10 +173,43 @@ function runtimeManifest(request, env) {
       kv: Boolean(env.STUDIO_KV),
       r2: Boolean(env.ASSET_BUCKET),
       firebase: Boolean(env.FIREBASE_PROJECT_ID),
+      studio_world_registry: Boolean(env.ASSETS),
     },
     safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false },
     realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'READY' },
   };
+}
+
+async function readStudioWorldRegistry(request, env) {
+  if (!env.ASSETS) return null;
+  const assetUrl = new URL('/studio-sites/assets/world-registry.json', request.url);
+  const response = await env.ASSETS.fetch(new Request(assetUrl.toString(), {
+    method: 'GET',
+    headers: { accept: 'application/json' },
+  }));
+  if (!response.ok) return null;
+  try { return await response.json(); } catch { return null; }
+}
+
+async function studioWorlds(request, env, worldId = null) {
+  if (request.method !== 'GET') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  const registry = await readStudioWorldRegistry(request, env);
+  if (!registry || !Array.isArray(registry.worlds)) {
+    return json({ ok: false, error: 'Studio world registry is not available from the current asset bundle.' }, 503, request, env);
+  }
+  if (worldId) {
+    const world = registry.worlds.find(item => item.id === worldId);
+    if (!world) return json({ ok: false, error: 'Studio world not found.' }, 404, request, env);
+    return json({ ok: true, registry_version: registry.schemaVersion, world }, 200, request, env);
+  }
+  return json({
+    ok: true,
+    registry_version: registry.schemaVersion,
+    principle: registry.contract?.principle || 'Distinct worlds; shared platform rails.',
+    shared_services: registry.contract?.sharedServices || [],
+    count: registry.worlds.length,
+    worlds: registry.worlds,
+  }, 200, request, env);
 }
 
 function platformStatus(request, env) {
@@ -224,6 +257,9 @@ export default {
       }
       if (url.pathname === '/healthz') return withSecurityHeaders(new Response('ok\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }), request, env);
       if (url.pathname === '/api/v1/runtime' || url.pathname === '/api/v1/platform/manifest') return json(runtimeManifest(request, env), 200, request, env);
+      if (url.pathname === '/api/v1/studios/worlds') return await studioWorlds(request, env);
+      const studioWorldMatch = url.pathname.match(/^\/api\/v1\/studios\/worlds\/([a-z0-9-]+)$/);
+      if (studioWorldMatch) return await studioWorlds(request, env, studioWorldMatch[1]);
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);

@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - "studio-sites/**"
+      - "worker.js"
+      - "scripts/verify-studio-world-api.mjs"
       - ".github/workflows/studio-static-validation.yml"
   push:
     branches:
@@ -30,3 +32,7 @@ jobs:
           node-version: "20"
       - name: Validate studio configuration and local assets
         run: node studio-sites/scripts/validate-studio.mjs
+      - name: Validate studio world matrix and game engine
+        run: node studio-sites/scripts/validate-world-matrix.mjs
+      - name: Validate Cloudflare studio world API contract
+        run: node scripts/verify-studio-world-api.mjs

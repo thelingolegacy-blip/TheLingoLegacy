@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - "studio-sites/**"
+      - "worker.js"
+      - "scripts/verify-studio-world-api.mjs"
       - ".github/workflows/studio-preview-package.yml"
   workflow_dispatch:
 permissions:
@@ -24,6 +26,10 @@ jobs:
           node-version: "20"
       - name: Validate studio baseline
         run: node studio-sites/scripts/validate-studio.mjs
+      - name: Validate studio world matrix and game engine
+        run: node studio-sites/scripts/validate-world-matrix.mjs
+      - name: Validate Cloudflare studio world API contract
+        run: node scripts/verify-studio-world-api.mjs
       - name: Create preview bundle
         if: success()
         run: |
