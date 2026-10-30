@@ -11,6 +11,9 @@ on:
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'lib/services/**'
+      - 'docs/FIREBASE-RUNTIME-CONFIGURATION.md'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -31,8 +34,11 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Verify Firebase project contract
+      - name: Verify Firebase project and stage temporary Dart defines
         shell: bash
+        env:
+          FIREBASE_OPTIONS_JSON: ${{ secrets.FIREBASE_OPTIONS_JSON }}
+          FIREBASE_DART_DEFINES_PATH: ${{ runner.temp }}/firebase-dart-defines.json
         run: |
           set -euo pipefail
           test -f .firebaserc
@@ -46,13 +52,19 @@ jobs:
         run: flutter analyze
 
       - name: Flutter unit and widget tests
-        run: flutter test
+        env:
+          FIREBASE_DART_DEFINES_PATH: ${{ runner.temp }}/firebase-dart-defines.json
+        run: flutter test --dart-define-from-file="$FIREBASE_DART_DEFINES_PATH"
 
       - name: Flutter web build
-        run: flutter build web --release
+        env:
+          FIREBASE_DART_DEFINES_PATH: ${{ runner.temp }}/firebase-dart-defines.json
+        run: flutter build web --release --dart-define-from-file="$FIREBASE_DART_DEFINES_PATH"
 
       - name: Flutter Android debug build
-        run: flutter build apk --debug
+        env:
+          FIREBASE_DART_DEFINES_PATH: ${{ runner.temp }}/firebase-dart-defines.json
+        run: flutter build apk --debug --dart-define-from-file="$FIREBASE_DART_DEFINES_PATH"
 
       - name: Firebase hosting configuration check
         shell: bash
