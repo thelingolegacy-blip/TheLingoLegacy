@@ -5,10 +5,11 @@
   "product": {
     "name": "The Lingo Legacy",
     "tagline": "Loyalty. Legacy. Language.",
-    "theme": "industrial-noir",
+    "theme": "crimson-smoke-enterprise",
     "accentColors": [
-      "gold",
-      "royal-purple"
+      "crimson-red",
+      "white",
+      "smoke-gray"
     ],
     "canonicalNaming": "LINGO + lowercase product/service"
   },
@@ -35,7 +36,14 @@
     "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
     "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html",
     "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html",
-    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
+    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html",
+    "virtualLibrary": "/studio-sites/virtual-library/",
+    "virtualMusicStudio": "/studio-sites/virtual-music-studio/",
+    "loyaltyLaneApparel": "/studio-sites/loyalty-lane-apparel/",
+    "loyaltyLaneDesigns": "/studio-sites/loyalty-lane-designs/",
+    "loyaltyLaneCycle": "/studio-sites/loyalty-lane-cycle/",
+    "kottonsCode": "/studio-sites/kottons-code/",
+    "operations": "/studio-sites/operations/"
   },
   "services": {
     "identity": {
