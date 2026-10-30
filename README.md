@@ -1,68 +1,151 @@
-# Lingo Legacy Empire — Sovereign Production Core
+# The Lingo Legacy — Enterprise Platform
 
-> **Authoritative Source of Truth:** `thelingolegacy-blip/TheLingoLegacy` (`main` branch)  
-> **Sovereign Runtime:** Cloudflare Edge Workers & Pages  
-> **Status:** Production promotion fail-closed; studio completion remains subject to acceptance evidence  
+> **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
+> **Canonical domain:** `thelingolegacy.com`  
+> **Edge runtime:** Cloudflare Workers + static assets  
+> **Release posture:** fail-closed; production activation requires independently verifiable evidence
 
----
+The Lingo Legacy is a shared platform for independently branded worlds and studios. Each entity owns its visual identity, content, asset namespace, audio namespace, navigation, and product rules. Shared services provide identity, routing, rewards architecture, asset governance, telemetry, safety, and release control.
 
-## 🏛️ Ecosystem Architecture
-The Lingo Legacy Empire is consolidated under a single, authoritative, studio-grade infrastructure:
-- **`thelingolegacy.com` & `www`**: Master Hub & Game Floor (*That's My Lingo*)
-- **`apparel.thelingolegacy.com`**: Loyalty Lane Apparel Studio & Stripe Gateway
-- **`arena.thelingolegacy.com`**: LINGOarena Virtual Arcade & Casino Floor
-- **`reads.thelingolegacy.com`**: LINGOreads Virtual Theater & Literary Hallway
-- **`media.thelingolegacy.com`**: LINGOmedia Sonic Branding & Mixtape Nexus
-- **`ai.thelingolegacy.com`**: AskLINGO ⭐️ AI Omni-Oracle Neural Core
+## Platform architecture
 
----
+```text
+Public Web / PWA / Flutter / Smart-TV surfaces
+                    |
+            LINGO World Registry
+                    |
+       Cloudflare Worker / Edge APIs
+                    |
+  Identity · Wallet · Rewards · Commerce · Media
+                    |
+  Telemetry · SHIELDS · NEXUS · VOT-NEXT · Governance
+                    |
+          GitHub source + CI evidence
+```
 
-## ⚡ Deployment Pipeline
-All deployments are managed natively via Cloudflare Edge Workers and GitHub Actions. Legacy hosting providers such as Vercel are retired and are not part of the production architecture.
+**Important separation:** a source module, preview page, uploaded Worker version, or configured binding is not proof of production acceptance. The public flagship site is serving, but full interactive-platform activation remains gated.
 
----
+## Independent worlds and studios
 
-## 🧱 Runtime Contract
-The production surface is dynamic-runtime-first. The Cloudflare Worker controls runtime headers, edge HTML transformation, platform context, health, manifest, status, checkout, beacon APIs, and asset delivery.
+| World / Studio | Purpose | Current source state |
+|---|---|---|
+| LINGOlegacy HQ | Flagship universe hub and destination router | Preview surface |
+| LINGOarcade | Arcade and game collection | Preview surface |
+| LINGOslots / That’s My Lingo | Five-reel game with 5×3 and 5×5 demo layouts | Local demo |
+| Virtual Library / LINGOreads | Books, contracts, awards, films, scripts, publishing, events | Preview surface |
+| Virtual Music & Art Studio / LINGOmedia | Original sound, music production, and Art Canvas | Preview surface; local canvas/audio demo |
+| Loyalty Lane Apparel | Clothing brand and Tap Stitch collections | Preview lookbook; commerce not verified |
+| Loyalty Lane Designs | Promotions, campaigns, creator management, approvals | Preview operations board |
+| Loyalty Lane Cycle | Laundromat, premium packaging, and community hub | Preview service blueprint |
+| Kotton’s Code | Separate cartoon/storybook world | Preview surface; child-safety review required |
+| Other registered worlds | Games, community, education, stories, and future products | Registry-only / planned until their own surfaces pass acceptance |
 
-Production authority:
+The world registry is `studio-sites/assets/world-registry.json`. It records each world's route, visual theme, asset namespace, audio namespace, telemetry namespace, and truthful surface state.
 
-`GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → canonical domain`
+## Shared assistant and operations
 
-The canonical Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
+### askLINGO
+The universal L-shaped askLINGO dock is injected into HTML surfaces served by the flagship Worker. The Flutter app includes a matching mobile dock.
 
-The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its entrypoint is `cloudflare/studio-worker.js`, configuration is `cloudflare/wrangler.toml`, and compatibility date is `2026-10-04`. Its GitHub workflow is dry-run-only and pins Wrangler major version 4. It is not the apex/www production Worker.
+- Default mode: guided platform navigation and support fallback.
+- Optional model inference: disabled until a Cloudflare AI binding, model, usage budget, privacy review, and explicit enable flag are configured.
+- Public endpoint: `POST /api/v1/asklingo/chat`.
+- Controls: input limits, origin allowlist, per-isolate rate limit, correlation ID, and safe text rendering.
+- No account access, payment authority, deployment authority, or autonomous write access.
 
----
+See [askLINGO runtime contract](docs/ASKLINGO-RUNTIME.md).
 
-## 🔎 Verification Contract
-A successful build alone never marks production LIVE. Repository state, CI evidence, Worker deployment, domain routing, backend bindings, observability, safety controls, and live probes must agree.
+### Operations Center
+`studio-sites/operations/` is a read-only dashboard for runtime health, integration readiness, release gates, wallet/coin mode, telemetry, realtime, and governed agent status.
 
-Required runtime probes include:
+### Agent/control-plane catalog
+- **LINGOassist:** guided support and diagnostics.
+- **LINGOsisters:** planned specialist agents.
+- **LINGOsystem:** planned orchestration and signal coordination.
+- **SHIELDS:** partial edge guardrails.
+- **NEXUS:** preview world registry and routing.
+- **VOT-NEXT:** fail-closed release governance.
 
-- `/api/v1/platform/gates`
-- `/api/v1/platform/modules`
+Autonomous execution, background workers, and agent write scopes are disabled until separately provisioned, budgeted, permissioned, and audited.
 
-- `/healthz`
-- `/api/v1/runtime`
-- `/api/v1/platform/manifest`
-- `/api/v1/platform/status`
-- `/api/v1/site/context`
+## Commerce, wallet, and rewards
 
----
+- Universal Legacy Wallet and Lingo coin surfaces remain demo-only.
+- Demo coins have no cash value and are not transferable or redeemable.
+- Real checkout is unavailable until Stripe secrets, price identifiers, webhooks, tax/legal review, and end-to-end test evidence are configured.
+- No cash-out or real-money gameplay is enabled.
 
-## 🧭 Studio Platform Completion
+## Multi-platform release matrix
 
-The platform surface is organized across flagship, Loyalty Lane World, LINGOslots / That’s My Lingo, rewards, Lingo ID, Universal Legacy Wallet architecture, askLINGO, commerce, Legacy Club, media, Studio, documentation, and governance. Virtual/demo gameplay and presentation layers are separated from real-value transaction and prize activation.
+| Platform | Delivery target | Current state | Remaining gate |
+|---|---|---|---|
+| Desktop / mobile web | Responsive web + PWA | Source preview foundation | Browser/device QA and accepted production deployment |
+| Android | Flutter APK / AAB | Preview build workflow | Firebase config, release signing, Play Console review |
+| iPhone / iPad | Flutter iOS | Shared Flutter source | macOS build, signing certificates, App Store Connect review |
+| LG webOS / ThinQ TV | webOS TV web app | Packaging scaffold + directional remote navigation | LG SDK, TV device QA, signing and store review |
+| Samsung Tizen TV | Tizen WGT | Packaging scaffold + directional remote navigation | Tizen SDK, certificate profile, TV QA and store review |
 
-Production state is evidence-driven:
+See [platform release matrix](platforms/README.md). Store submission, certification, and public availability are separate gates. No store credentials or signing keys are committed to source.
 
-`EVIDENCE → VERIFICATION → ACCEPTANCE → AUTHORITY → TRANSITION`
+## Runtime and deployment
 
-Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `MUTATION FREEZE = ACTIVE`, `LKG = PROTECTED`, downstream promotion/activation = `BLOCKED`.
+- Production Worker: `thelingolegacyv-5`.
+- Worker entrypoint: `worker.js`.
+- Static assets are served through the Worker asset binding.
+- Studio source lives under `studio-sites/`.
+- Flutter source lives under `lib/`.
+- Cloudflare account currently reports only the `ASSETS`, canonical-domain, and public-site bindings for the production Worker. Firebase, Stripe, D1, KV, R2, Workers AI, and realtime bindings are not confirmed on that Worker.
+- Cloudflare has accepted branch Worker versions as previews. Preview uploads are not production deployments.
+- Production traffic remains on the previously deployed Worker version until all release gates pass.
 
-## 🛡️ Production Gate
+## CI and release governance
 
-`RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
+The repository's recent GitHub Actions runs have failed at workflow startup with `startup_failure`, zero jobs, and zero artifacts. This is a runner-dispatch/platform issue, not a failed application test. Do not disable all CI triggers to hide it, and do not bypass the G02 acceptance predicate.
 
-The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
+G02 requires a real assigned runner, positive runner ID, populated runner name, instantiated steps, executed sentinel, and retrievable logs. Until then:
+
+- G02: BLOCKED
+- CI execution: BLOCKED
+- Certification and release candidate: BLOCKED
+- Production deployment and activation: BLOCKED
+- Last Known Good: PROTECTED
+- Fail-closed policy: ACTIVE
+
+Required evidence chain:
+
+`SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → PASSED → AUTHORIZATION → PROMOTION`
+
+No merge or production activation is authorized by a passing local check or a preview build alone.
+
+## Validation
+
+Run the source checks from the repository root:
+
+```sh
+node studio-sites/scripts/validate-studio.mjs
+node studio-sites/scripts/validate-world-matrix.mjs
+node scripts/verify-studio-world-api.mjs
+node scripts/verify-asklingo-contract.mjs
+node scripts/verify-platform-surface-contract.mjs
+node studio-sites/lingoslots/game-engine.test.cjs
+```
+
+Flutter preview build:
+
+```sh
+flutter pub get
+flutter analyze
+flutter test
+flutter build web --release
+flutter build apk --debug
+```
+
+Firebase-backed Flutter builds require the authorized `FIREBASE_OPTIONS_JSON` secret. The preview build intentionally does not claim Firebase connectivity.
+
+## Active engineering reviews
+
+- [PR #414 — Studio worlds and 5×3 / 5×5 game engine](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/414)
+- [PR #415 — Flutter, Firebase runtime contract, and mobile askLINGO](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/415)
+- [PR #416 — Universal askLINGO, world surfaces, operations, PWA, and TV foundations](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/416)
+
+All three are draft and remain unmerged pending runner recovery, independent review, security/accessibility testing, and release evidence.
