@@ -55,7 +55,7 @@
   render(data.worlds,source);
  }catch(_){
   try{
-   const response=await fetch('/studio-sites/config/studio-world-registry.json',{headers:{accept:'application/json'},cache:'no-store'});
+   const response=await fetch('/studio-sites/assets/world-registry.json',{headers:{accept:'application/json'},cache:'no-store'});
    if(!response.ok)throw new Error('static registry unavailable');
    const data=await response.json();
    if(!Array.isArray(data.worlds))throw new Error('static registry invalid');
