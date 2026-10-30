@@ -35,7 +35,7 @@
 | Cloudflare production Workers | `thelingolegacyv-5` production 100% v137 (v175 uploaded); `lingo-flagship-root` production 100% v1 (v2 uploaded) | NO PROMOTION |
 | Cloudflare bindings | Production Worker bindings inspected: ASSETS, CANONICAL_DOMAIN, PUBLIC_SITE_URL only | Firebase/Stripe/D1/KV/R2/Workers AI/realtime not confirmed |
 | DNS | Apex record reported 192.0.2.0 and proxied; exact apex and wildcard routes target different Workers | REVIEW REQUIRED; NO MUTATION |
-| Firebase / Flutter | Flutter manifest declares firebase_core, database, auth, storage, analytics; Firebase hosting config exists; project credentials/runtime not verified; pubspec.lock absent in prior source audit | SOURCE DECLARATIONS ONLY; RUNTIME UNVERIFIED |
+| Firebase / Flutter | Flutter manifest declares firebase_core, database, auth, storage, analytics; Firebase hosting config exists; project credentials/runtime not verified; pubspec.lock absent in prior source audit. Firebase connector is available but not yet connected; connection handoff offered. | SOURCE DECLARATIONS ONLY; RUNTIME UNVERIFIED |
 | Mobile distribution | No verified signed Android/iOS store artifacts or store approvals; LG webOS/Tizen builds/device tests not verified | NOT CERTIFIED |
 | Render | One workspace returned: My Workspace; no workspace selected for service operations | CONNECTED; USER WORKSPACE CONFIRMATION REQUIRED |
 | AI / payments / wallet | AI and payment activation disabled; wallet/identity acceptance not certified | DISABLED / NOT CERTIFIED |
