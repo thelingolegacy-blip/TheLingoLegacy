@@ -6,6 +6,8 @@ on:
       - "worker.js"
       - "scripts/verify-studio-world-api.mjs"
       - "scripts/verify-asklingo-contract.mjs"
+      - "scripts/verify-platform-surface-contract.mjs"
+      - "platforms/**"
       - ".github/workflows/studio-static-validation.yml"
   push:
     branches:
@@ -39,3 +41,5 @@ jobs:
         run: node scripts/verify-studio-world-api.mjs
       - name: Validate askLINGO assistant contract
         run: node scripts/verify-asklingo-contract.mjs
+      - name: Validate multi-platform surface contract
+        run: node scripts/verify-platform-surface-contract.mjs
