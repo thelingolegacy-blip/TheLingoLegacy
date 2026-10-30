@@ -24,6 +24,8 @@ jobs:
           node-version: "20"
       - name: Validate studio baseline
         run: node studio-sites/scripts/validate-studio.mjs
+      - name: Validate studio world matrix and game engine
+        run: node studio-sites/scripts/validate-world-matrix.mjs
       - name: Create preview bundle
         if: success()
         run: |
