@@ -1,0 +1,24 @@
+{
+  "name": "The Lingo Legacy",
+  "short_name": "LINGO",
+  "description": "One universe. Many worlds.",
+  "start_url": "/studio-sites/",
+  "scope": "/studio-sites/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0B0C10",
+  "theme_color": "#EF334B",
+  "categories": [
+    "entertainment",
+    "lifestyle",
+    "books"
+  ],
+  "icons": [
+    {
+      "src": "assets/lingo-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,21 +1,15 @@
 {
   "name": "The Lingo Legacy",
-  "short_name": "Lingo Legacy",
-  "description": "The Lingo Legacy studio platform for worlds, products, games, rewards, media, and conversation.",
+  "short_name": "LINGO",
+  "description": "One Legacy. Many Worlds. The connected LINGO universe.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#05070d",
-  "theme_color": "#d7a63d",
+  "background_color": "#0B0C10",
+  "theme_color": "#EF334B",
   "icons": [
     {
-      "src": "/assets/logo-square.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/thats-my-lingo-mark.svg",
+      "src": "/studio-sites/assets/lingo-app-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
