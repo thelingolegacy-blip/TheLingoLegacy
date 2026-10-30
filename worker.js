@@ -360,7 +360,7 @@ function platformStatus(request, env) {
   };
 }
 
-async async function renderDynamicHtml(request, env, response) {
+async function renderDynamicHtml(request, env, response) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html') || request.method !== 'GET') return response;
   const html = await response.text();
