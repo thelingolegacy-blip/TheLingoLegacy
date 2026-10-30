@@ -22,6 +22,7 @@ const requiredExclusions = [
   '*.tfstate', '*.tfstate.*', '*.tfvars', '*.tfvars.json', '*.log', '*.bak',
   '*.orig', '*.swp', '*.swo', '*~', '*.sqlite', '*.db',
   'firebase.json', 'firebase.client.json', 'firebase-worker.js', 'gateway-router.js',
+  '**/firebase-functions/', '**/*.rules', '**/tsconfig.json', '**/catalog-seed.json',
   'pubspec.yaml', '_headers', '_redirects'
 ];
 const publicFiles = ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest'];
@@ -53,6 +54,14 @@ test('missing sensitive root-file exclusion fails closed', (t) => {
   const result = runValidator(root);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /missing required exclusion: \.firebaserc/);
+});
+
+test('missing nested Firebase backend exclusion fails closed', (t) => {
+  const root = makeRoot(requiredExclusions.filter((entry) => entry !== '**/firebase-functions/'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /missing required exclusion: \*\*\/firebase-functions\//);
 });
 
 test('excluded release-manifest route fails closed after slash normalization', (t) => {
