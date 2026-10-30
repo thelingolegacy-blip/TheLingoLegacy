@@ -26,6 +26,7 @@ on:
       - 'firebase.json'
       - 'scripts/verify-flutter-firebase.mjs'
       - 'lib/services/**'
+      - 'lib/widgets/**'
       - 'docs/FIREBASE-RUNTIME-CONFIGURATION.md'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
