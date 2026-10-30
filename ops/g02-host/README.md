@@ -87,3 +87,28 @@ The G02 GitHub Actions runner remains a separate ephemeral workload with labels:
 G02: **BLOCKED** until host and real execution evidence exist.
 Production: **PROTECTED**.
 Promotion: **HOLD**.
+
+
+## Azure host deployment template
+
+An Azure Bicep template is provided at `ops/g02-host/azure/main.bicep`. It defines:
+- one Ubuntu 24.04 LTS VM with a system-assigned managed identity;
+- Trusted Launch with Secure Boot and vTPM;
+- Premium SSD OS disk (128 GiB);
+- a dedicated VNet, private subnet, and NSG with no inbound allow rules;
+- a private NIC only; no public IP or public Docker API.
+
+Before deployment, confirm the Azure subscription, resource group, region, VM size availability, budget alerts, and private administration path. The default size is `Standard_D4s_v5`; it is a sizing proposal, not a cost approval. No Azure resources are created by committing this template.
+
+Prepare parameters from `parameters.example.json` and replace the SSH public-key placeholder with a public key. Never place a private key in the parameters file or repository. Example deployment after subscription and resource-group selection:
+
+```bash
+az deployment group create \
+  --resource-group <approved-resource-group> \
+  --template-file ops/g02-host/azure/main.bicep \
+  --parameters @ops/g02-host/azure/parameters.json
+```
+
+The template intentionally creates no public IP and no inbound SSH exception. Administer the host through Azure Run Command or an approved private access path such as Azure Bastion after the network design and required Bastion resources are reviewed. Once the host is reachable through the approved management path, transfer and run `install-docker-engine.sh`.
+
+The deployment operator must verify the resulting VM, NIC private address, NSG rules, managed identity, disk encryption posture, Azure activity log, and actual hourly/monthly cost before installing Docker or registering G02.
