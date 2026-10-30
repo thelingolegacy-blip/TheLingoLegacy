@@ -29,6 +29,10 @@ for(const key of ['virtualLibrary','virtualMusicStudio','loyaltyLaneApparel','lo
  if(!config.routes[key])errors.push('Studio route missing from config: '+key);
 }
 const manifest=JSON.parse(read('studio-sites/manifest.webmanifest'));
+const rootManifest=JSON.parse(read('manifest.webmanifest'));
+if(rootManifest.scope!=='/'||rootManifest.start_url!=='/')errors.push('Root PWA scope/start URL contract mismatch.');
+if(!fs.existsSync('sw.js')||!fs.existsSync('pwa-register.js'))errors.push('Root-scope PWA service worker files missing.');
+if(!worker.includes('href="/manifest.webmanifest"')||!worker.includes('src="/pwa-register.js"'))errors.push('Main Worker does not inject root-scope PWA metadata and registration.');
 if(manifest.scope!=='/studio-sites/'||manifest.start_url!=='/studio-sites/')errors.push('PWA scope/start URL contract mismatch.');
 if(!fs.existsSync('studio-sites/sw.js')||!fs.existsSync('studio-sites/pwa-register.js'))errors.push('PWA service worker registration assets missing.');
 if(!fs.existsSync('studio-sites/assets/tv-navigation.js'))errors.push('TV remote navigation script missing.');
