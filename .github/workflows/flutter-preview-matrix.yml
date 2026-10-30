@@ -6,6 +6,8 @@ on:
       - "lib/**"
       - "test/**"
       - "android/**"
+      - "ios/**"
+      - "web/**"
       - "pubspec.yaml"
       - "pubspec.lock"
       - ".github/workflows/flutter-preview-matrix.yml"
@@ -19,6 +21,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ios-preview:
+    name: Flutter iOS unsigned preview build
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate missing iOS platform scaffolding
+        run: flutter create . --platforms=ios
+      - name: Resolve dependencies
+        run: flutter pub get
+      - name: Static analysis
+        run: flutter analyze
+      - name: Unit and widget tests
+        run: flutter test
+      - name: Build unsigned iOS preview
+        run: flutter build ios --no-codesign
+      - name: Assemble unsigned iOS preview artifact
+        run: |
+          mkdir -p dist/flutter-preview/ios
+          cp -R build/ios/iphoneos/Runner.app dist/flutter-preview/ios/Runner.app
+          printf 'commit=%s\n' "$GITHUB_SHA" > dist/flutter-preview/ios/BUILD-METADATA.txt
+          printf 'environment=preview-only\n' >> dist/flutter-preview/ios/BUILD-METADATA.txt
+          printf 'signing=not-configured\n' >> dist/flutter-preview/ios/BUILD-METADATA.txt
+          printf 'app_store_submission=not-authorized\n' >> dist/flutter-preview/ios/BUILD-METADATA.txt
+          printf 'production_activation=disabled\n' >> dist/flutter-preview/ios/BUILD-METADATA.txt
+      - name: Upload unsigned iOS preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-ios-unsigned-preview-${{ github.sha }}
+          path: dist/flutter-preview/ios/
+          if-no-files-found: error
+          retention-days: 14
   web-android-preview:
     name: Flutter web + Android preview build
     runs-on: ubuntu-latest
