@@ -28,7 +28,7 @@ jobs:
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     outputs:
-      runner_gate: ${{ steps.assert.outputs.runner_gate }}
+      runner_context_gate: ${{ steps.assert.outputs.runner_context_gate }}
     steps:
       - name: Prove executable GitHub runner
         id: assert
@@ -43,13 +43,14 @@ jobs:
           test "$RUNNER_OS_VALUE" = "Linux"
           test "${{ runner.arch }}" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
-          echo "G02_RUNNER_ASSIGNMENT=PASS"
-          echo "RUNNER_GATE=PASS runner_id_source=GITHUB_ACTIONS_JOBS_API runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE github_sha=$GITHUB_SHA_VALUE"
+          echo "runner_context_gate=PASS" >> "$GITHUB_OUTPUT"
+          echo "G02_RUNNER_CONTEXT_MATCH=PASS"
+          echo "G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API; independent API verification required"
+          echo "RUNNER_CONTEXT_GATE=PASS runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE github_sha=$GITHUB_SHA_VALUE"
 
   repair:
     needs: runner-gate
-    if: needs.runner-gate.outputs.runner_gate == 'PASS'
+    if: needs.runner-gate.outputs.runner_context_gate == 'PASS'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
