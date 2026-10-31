@@ -80,7 +80,7 @@ function isSafeSourceUri(value) {
   if (typeof value !== "string" || value.length > 2048) return false;
   try {
     const url = new URL(value);
-    return url.protocol === "https:" && Boolean(url.hostname);
+    return url.protocol === "https:" && Boolean(url.hostname) && !url.username && !url.password && !url.search && !url.hash;
   } catch { return /^r2:\/\/[a-z0-9][a-z0-9._/-]{0,500}$/i.test(value); }
 }
 function validateAssetInput(input) {
@@ -211,13 +211,13 @@ async function handle(request, env, ctx) {
     if (!["owned", "licensed", "public-domain", "permission-pending"].includes(input.rightsType)) return reply(400, { error: "Unsupported rights type." });
     let evidenceUrl;
     try { evidenceUrl = new URL(String(input.evidenceUri || "")); } catch { return reply(400, { error: "Evidence must be a retrievable HTTPS URL." }); }
-    if (evidenceUrl.protocol !== "https:" || !evidenceUrl.hostname || String(input.evidenceUri).length > 2048) return reply(400, { error: "Evidence must be a retrievable HTTPS URL." });
+    if (evidenceUrl.protocol !== "https:" || !evidenceUrl.hostname || evidenceUrl.username || evidenceUrl.password || evidenceUrl.search || evidenceUrl.hash || String(input.evidenceUri).length > 2048) return reply(400, { error: "Evidence must be a stable HTTPS URL without embedded credentials, query tokens or fragments." });
     const id = "RGT-" + crypto.randomUUID().toUpperCase();
     const now = new Date().toISOString();
     await env.DB.batch([
       env.DB.prepare("INSERT INTO rights_evidence (evidence_id, asset_id, version_id, rights_type, license_name, evidence_uri, evidence_sha256, submitted_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
         .bind(id, assetId, asset.current_version_id, input.rightsType, String(input.licenseName || "").slice(0, 160), input.evidenceUri, isSha256(input.evidenceSha256) ? input.evidenceSha256.toLowerCase() : null, actor, now),
-      auditStatement(env, actor, "RIGHTS_EVIDENCE_ADDED", assetId, asset.current_version_id, { evidenceId: id, rightsType: input.rightsType, evidenceUri: input.evidenceUri }, requestId)
+      auditStatement(env, actor, "RIGHTS_EVIDENCE_ADDED", assetId, asset.current_version_id, { evidenceId: id, rightsType: input.rightsType, evidenceHost: evidenceUrl.hostname }, requestId)
     ]);
     return reply(201, { evidenceId: id });
   }
