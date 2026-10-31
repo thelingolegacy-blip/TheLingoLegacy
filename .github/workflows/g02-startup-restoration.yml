@@ -3,8 +3,8 @@ name: G02 Startup Restoration — Isolated Lanes
 on:
   workflow_dispatch:
     inputs:
-      run_g02_sentinel:
-        description: "Also request the canonical self-hosted G02 runner (requires an authorized operator)"
+      run_g02_assignment_probe:
+        description: "Also run the canonical G02 runner assignment probe (requires an authorized operator)"
         required: true
         type: boolean
         default: false
@@ -81,7 +81,7 @@ jobs:
 
   canonical-g02-assignment-probe:
     name: Canonical G02 runner assignment probe
-    if: ${{ inputs.run_g02_sentinel == true }}
+    if: ${{ inputs.run_g02_assignment_probe == true }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 15
     steps:
