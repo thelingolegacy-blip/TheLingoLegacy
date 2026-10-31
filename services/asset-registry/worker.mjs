@@ -110,9 +110,12 @@ async function ensureOwnerOrAdmin(asset, actor, role) {
   return null;
 }
 async function handle(request, env, ctx) {
-  if (!env.DB) return reply(503, { error: "Registry database binding REGISTRY_DB is not configured." });
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, "") || "/";
+  if (!path.startsWith("/api/")) {
+    return env.ASSETS ? env.ASSETS.fetch(request) : reply(404, { error: "Static registry interface is not configured." });
+  }
+  if (!env.DB) return reply(503, { error: "Registry database binding DB is not configured." });
   const requestId = request.headers.get("cf-ray") || crypto.randomUUID();
   let identity;
   try { identity = await accessClaims(request, env); }
