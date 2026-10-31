@@ -113,7 +113,7 @@ jobs:
               "runner_arch": os.environ["RUNNER_ARCH"],
               "job": os.environ.get("GITHUB_JOB", ""),
               "step_execution": "started",
-              "sentinel": "PASS",
+              "sentinel": "NOT_ASSERTED",
               "lane": "canonical-self-hosted-g02",
           }
           pathlib.Path("g02-evidence/runner-assignment.json").write_text(
