@@ -2,6 +2,18 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting.mjs'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
@@ -11,6 +23,8 @@ on:
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -51,11 +65,8 @@ jobs:
       - name: Flutter web build
         run: flutter build web --release
 
+      - name: Verify Firebase Hosting publish boundary
+        run: node scripts/verify-firebase-hosting.mjs
+
       - name: Flutter Android debug build
         run: flutter build apk --debug
-
-      - name: Firebase hosting configuration check
-        shell: bash
-        run: |
-          set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
