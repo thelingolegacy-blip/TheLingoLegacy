@@ -20,6 +20,8 @@ test("source references accept HTTPS and controlled R2 object references only", 
   assert.equal(isSafeSourceUri("https://assets.example.com/logo.png"), true);
   assert.equal(isSafeSourceUri("r2://creative/logo.png"), true);
   assert.equal(isSafeSourceUri("http://assets.example.com/logo.png"), false);
+  assert.equal(isSafeSourceUri("https://assets.example.com/logo.png?token=secret"), false);
+  assert.equal(isSafeSourceUri("https://user:pass@assets.example.com/logo.png"), false);
   assert.equal(isSafeSourceUri("javascript:alert(1)"), false);
 });
 test("SHA-256 must be exactly 64 hexadecimal characters", () => {
