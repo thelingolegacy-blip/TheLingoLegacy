@@ -249,10 +249,10 @@ async function handle(request, env, ctx) {
     for (const type of REVIEW_TYPES) {
       latest[type] = await env.DB.prepare("SELECT decision, reviewer_email FROM review_decisions WHERE asset_id=? AND version_id=? AND review_type=? ORDER BY created_at DESC, rowid DESC LIMIT 1").bind(assetId, version.version_id, type).first();
       if (!latest[type] || latest[type].decision !== "APPROVED" || latest[type].reviewer_email === asset.owner_email) {
-        return reply(409, { error: "Publication requires current approved rights, quality and brand reviews from non-owners.", missingReview: type });
+        return reply(409, { error: "Publication requires current approved source-integrity, rights, quality and brand reviews from non-owners.", missingReview: type });
       }
     }
-    if (new Set(REVIEW_TYPES.map(type => latest[type].reviewer_email)).size < 2) return reply(409, { error: "At least two distinct independent reviewers are required across the three review controls." });
+    if (new Set(REVIEW_TYPES.map(type => latest[type].reviewer_email)).size < 2) return reply(409, { error: "At least two distinct independent reviewers are required across the four review controls." });
     const now = new Date().toISOString();
     const publicationId = "PUB-" + crypto.randomUUID().toUpperCase();
     await env.DB.batch([
