@@ -4,7 +4,7 @@ const JSON_HEADERS = {
   "x-content-type-options": "nosniff",
   "referrer-policy": "no-referrer"
 };
-const REVIEW_TYPES = ["rights", "quality", "brand"];
+const REVIEW_TYPES = ["integrity", "rights", "quality", "brand"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function reply(status, body) {
