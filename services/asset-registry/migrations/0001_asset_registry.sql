@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS review_decisions (
   decision_id TEXT PRIMARY KEY,
   asset_id TEXT NOT NULL REFERENCES assets(asset_id),
   version_id TEXT NOT NULL REFERENCES asset_versions(version_id),
-  review_type TEXT NOT NULL CHECK(review_type IN ('rights','quality','brand')),
+  review_type TEXT NOT NULL CHECK(review_type IN ('integrity','rights','quality','brand')),
   decision TEXT NOT NULL CHECK(decision IN ('APPROVED','REJECTED')),
   reviewer_email TEXT NOT NULL,
   notes TEXT NOT NULL DEFAULT '' CHECK(length(notes) <= 1000),
