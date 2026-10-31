@@ -206,7 +206,9 @@ async function handle(request, env, ctx) {
     try { input = await readJson(request); } catch (error) { return reply(400, { error: error.message }); }
     if (!asset.current_version_id) return reply(409, { error: "Create a version before attaching rights evidence." });
     if (!["owned", "licensed", "public-domain", "permission-pending"].includes(input.rightsType)) return reply(400, { error: "Unsupported rights type." });
-    if (!String(input.evidenceUri || "").startsWith("https://") || String(input.evidenceUri).length > 2048) return reply(400, { error: "Evidence must be a retrievable HTTPS URL." });
+    let evidenceUrl;
+    try { evidenceUrl = new URL(String(input.evidenceUri || "")); } catch { return reply(400, { error: "Evidence must be a retrievable HTTPS URL." }); }
+    if (evidenceUrl.protocol !== "https:" || !evidenceUrl.hostname || String(input.evidenceUri).length > 2048) return reply(400, { error: "Evidence must be a retrievable HTTPS URL." });
     const id = "RGT-" + crypto.randomUUID().toUpperCase();
     const now = new Date().toISOString();
     await env.DB.batch([
@@ -238,7 +240,7 @@ async function handle(request, env, ctx) {
     if (!asset.current_version_id) return reply(409, { error: "No current version exists." });
     const version = await env.DB.prepare("SELECT * FROM asset_versions WHERE version_id=? AND asset_id=?").bind(asset.current_version_id, assetId).first();
     if (!version || !isSha256(version.sha256) || !isSafeSourceUri(version.source_uri)) return reply(409, { error: "Current version lacks verified source metadata and SHA-256 integrity." });
-    const evidence = await env.DB.prepare("SELECT COUNT(*) AS total FROM rights_evidence WHERE asset_id=? AND version_id=?").bind(assetId, version.version_id).first();
+    const evidence = await env.DB.prepare("SELECT COUNT(*) AS total FROM rights_evidence WHERE asset_id=? AND version_id=? AND rights_type IN ('owned','licensed','public-domain')").bind(assetId, version.version_id).first();
     if (!Number(evidence?.total)) return reply(409, { error: "Rights evidence is required before publication." });
     const latest = {};
     for (const type of REVIEW_TYPES) {
