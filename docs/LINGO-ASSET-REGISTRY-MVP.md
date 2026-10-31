@@ -13,7 +13,7 @@ A mobile-responsive, Industrial Noir / Crimson Shadow Studio interface backed by
 - Role allowlists for administrator, reviewer, creator and viewer.
 - Server-enforced owner checks and owner/reviewer segregation of duties.
 - SHA-256 and source-reference validation.
-- Publication gate requiring evidence, three current approval types and two distinct independent reviewers.
+- Publication gate requiring evidence, four current approval types and two distinct independent reviewers.
 - Append-only publication/rollback and audit history.
 - Node built-in tests for validation and role policy.
 
