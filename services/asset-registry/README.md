@@ -41,6 +41,7 @@ Version rows, rights evidence, review decisions, publication history and audit e
 ## Current limitations / explicit non-claims
 
 - This MVP stores asset metadata and immutable source references; it does not upload binary files. R2 is not enabled on the current Cloudflare account.
+- The creator supplies the SHA-256 value. The registry validates its format, but does not calculate the digest because it does not ingest the binary. An independent source-integrity reviewer must retrieve the referenced source and compare the digest before approving that review control.
 - It does not create legal rights. A reviewer must inspect the referenced evidence.
 - It does not activate a production Worker, DNS route, public bucket, payment flow or automated media publishing.
 - D1 staging database, Access application, protected role allowlists, staging deployment, live probes and independent security review must exist before this can be called operational.
