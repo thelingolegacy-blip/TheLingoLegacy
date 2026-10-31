@@ -48,7 +48,7 @@ const rootFiles = {
   'config/production/launch-foundation.json': JSON.stringify({ observability: { performanceMonitoring: 'Cloudflare deployment metadata; deployment status alone is not acceptance evidence' } }),
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
+  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nrunner_context_gate: ${{ steps.assert.outputs.runner_context_gate }}\nG02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API\nif: ${{ false }}',
   '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\\nG02_RUNNER_CONTEXT_MATCH=PASS G02_ACCEPTANCE=NOT_EVALUATED',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
