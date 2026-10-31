@@ -81,7 +81,7 @@ function isSafeSourceUri(value) {
   try {
     const url = new URL(value);
     return url.protocol === "https:" && Boolean(url.hostname);
-  } catch { return /^r2:\/\/[a-z0-9][a-z0-9/_-]{0,500}$/i.test(value); }
+  } catch { return /^r2:\/\/[a-z0-9][a-z0-9._/-]{0,500}$/i.test(value); }
 }
 function validateAssetInput(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) return "A JSON object is required.";
@@ -93,9 +93,9 @@ function validateAssetInput(input) {
   return null;
 }
 async function readJson(request) {
-  const length = Number(request.headers.get("content-length") || 0);
-  if (length > 20000) throw new Error("Request body exceeds 20 KB.");
-  try { return await request.json(); } catch { throw new Error("A valid JSON request body is required."); }
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).byteLength > 20000) throw new Error("Request body exceeds 20 KB.");
+  try { return JSON.parse(raw); } catch { throw new Error("A valid JSON request body is required."); }
 }
 function auditStatement(env, actor, action, assetId, versionId, details, requestId) {
   return env.DB.prepare("INSERT INTO audit_events (event_id, actor_email, action, asset_id, version_id, details_json, request_id, occurred_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
@@ -244,7 +244,7 @@ async function handle(request, env, ctx) {
     if (!Number(evidence?.total)) return reply(409, { error: "Rights evidence is required before publication." });
     const latest = {};
     for (const type of REVIEW_TYPES) {
-      latest[type] = await env.DB.prepare("SELECT decision, reviewer_email FROM review_decisions WHERE asset_id=? AND version_id=? AND review_type=? ORDER BY created_at DESC LIMIT 1").bind(assetId, version.version_id, type).first();
+      latest[type] = await env.DB.prepare("SELECT decision, reviewer_email FROM review_decisions WHERE asset_id=? AND version_id=? AND review_type=? undefined").bind(assetId, version.version_id, type).first();
       if (!latest[type] || latest[type].decision !== "APPROVED" || latest[type].reviewer_email === asset.owner_email) {
         return reply(409, { error: "Publication requires current approved rights, quality and brand reviews from non-owners.", missingReview: type });
       }
@@ -261,7 +261,7 @@ async function handle(request, env, ctx) {
   }
   if (action === "rollback") {
     if (role !== "admin") return reply(403, { error: "Administrator role required for rollback." });
-    const previous = await env.DB.prepare("SELECT version_id FROM asset_publications WHERE asset_id=? AND action='PUBLISH' AND version_id!=? ORDER BY created_at DESC LIMIT 1").bind(assetId, asset.current_version_id || "").first();
+    const previous = await env.DB.prepare("SELECT version_id FROM asset_publications WHERE asset_id=? AND action='PUBLISH' AND version_id!=? ORDER BY created_at DESC, rowid DESC LIMIT 1").bind(assetId, asset.current_version_id || "").first();
     if (!previous) return reply(409, { error: "No previously published version is available for rollback." });
     const now = new Date().toISOString();
     const publicationId = "PUB-" + crypto.randomUUID().toUpperCase();
