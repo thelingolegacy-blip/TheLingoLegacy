@@ -1,0 +1,140 @@
+name: G02 Startup Restoration — Isolated Lanes
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_g02_sentinel:
+        description: "Also request the canonical self-hosted G02 runner (requires an authorized operator)"
+        required: true
+        type: boolean
+        default: false
+      change_reference:
+        description: "Optional incident or recovery reference"
+        required: false
+        type: string
+        default: "G02 startup restoration"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-startup-restoration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hosted-diagnostic:
+    name: Hosted runner allocation diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Capture hosted runner assignment and execution
+        shell: bash
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+          CHANGE_REFERENCE: ${{ inputs.change_reference }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          python3 - <<'PY'
+          import json, os, pathlib, datetime
+          record = {
+              "schema": "lingo-g02-startup-evidence/v1",
+              "run_id": os.environ["RUN_ID"],
+              "run_attempt": os.environ["RUN_ATTEMPT"],
+              "commit_sha": os.environ["COMMIT_SHA"],
+              "change_reference": os.environ.get("CHANGE_REFERENCE", ""),
+              "collected_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "runner_id": os.environ.get("RUNNER_ID", ""),
+              "runner_name": os.environ.get("RUNNER_NAME", ""),
+              "runner_os": os.environ.get("RUNNER_OS", ""),
+              "runner_arch": os.environ.get("RUNNER_ARCH", ""),
+              "job": os.environ.get("GITHUB_JOB", ""),
+              "step_execution": "started",
+              "lane": "github-hosted-diagnostic",
+          }
+          pathlib.Path("g02-evidence/runner-assignment.json").write_text(
+              json.dumps(record, indent=2) + "\n", encoding="utf-8"
+          )
+          print(json.dumps({k: record[k] for k in (
+              "run_id", "run_attempt", "commit_sha", "runner_id",
+              "runner_name", "runner_os", "runner_arch", "step_execution"
+          )}, indent=2))
+          PY
+      - name: Verify diagnostic record
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s g02-evidence/runner-assignment.json
+          python3 -m json.tool g02-evidence/runner-assignment.json >/dev/null
+          sha256sum g02-evidence/runner-assignment.json > g02-evidence/SHA256SUMS
+      - name: Upload hosted diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-hosted-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
+
+  canonical-g02-sentinel:
+    name: Canonical G02 runner sentinel
+    if: ${{ inputs.run_g02_sentinel == true }}
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 15
+    steps:
+      - name: Verify canonical runner identity
+        shell: bash
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_ID:-}"
+          test "${RUNNER_ID}" -gt 0
+          test "${RUNNER_NAME:-}" = "lingo-legacy-g02"
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          mkdir -p g02-evidence
+          python3 - <<'PY'
+          import json, os, pathlib, datetime
+          record = {
+              "schema": "lingo-g02-startup-evidence/v1",
+              "run_id": os.environ["RUN_ID"],
+              "run_attempt": os.environ["RUN_ATTEMPT"],
+              "commit_sha": os.environ["COMMIT_SHA"],
+              "collected_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "runner_id": os.environ["RUNNER_ID"],
+              "runner_name": os.environ["RUNNER_NAME"],
+              "runner_os": os.environ["RUNNER_OS"],
+              "runner_arch": os.environ["RUNNER_ARCH"],
+              "job": os.environ.get("GITHUB_JOB", ""),
+              "step_execution": "started",
+              "sentinel": "PASS",
+              "lane": "canonical-self-hosted-g02",
+          }
+          pathlib.Path("g02-evidence/runner-assignment.json").write_text(
+              json.dumps(record, indent=2) + "\n", encoding="utf-8"
+          )
+          print(json.dumps(record, indent=2))
+          PY
+      - name: Verify runtime and evidence integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v bash
+          command -v python3
+          test -s g02-evidence/runner-assignment.json
+          python3 -m json.tool g02-evidence/runner-assignment.json >/dev/null
+          sha256sum g02-evidence/runner-assignment.json > g02-evidence/SHA256SUMS
+      - name: Upload canonical G02 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-canonical-sentinel-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
