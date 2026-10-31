@@ -1,7 +1,12 @@
 name = "lingo-asset-registry-api"
 main = "worker.mjs"
 compatibility_date = "2026-10-31"
-workers_dev = false
+workers_dev = true
+
+[assets]
+directory = "../../studio-sites/asset-registry"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
 [[d1_databases]]
 binding = "DB"
