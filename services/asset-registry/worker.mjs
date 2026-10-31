@@ -244,7 +244,7 @@ async function handle(request, env, ctx) {
     if (!Number(evidence?.total)) return reply(409, { error: "Rights evidence is required before publication." });
     const latest = {};
     for (const type of REVIEW_TYPES) {
-      latest[type] = await env.DB.prepare("SELECT decision, reviewer_email FROM review_decisions WHERE asset_id=? AND version_id=? AND review_type=? undefined").bind(assetId, version.version_id, type).first();
+      latest[type] = await env.DB.prepare("SELECT decision, reviewer_email FROM review_decisions WHERE asset_id=? AND version_id=? AND review_type=? ORDER BY created_at DESC, rowid DESC LIMIT 1").bind(assetId, version.version_id, type).first();
       if (!latest[type] || latest[type].decision !== "APPROVED" || latest[type].reviewer_email === asset.owner_email) {
         return reply(409, { error: "Publication requires current approved rights, quality and brand reviews from non-owners.", missingReview: type });
       }
