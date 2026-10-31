@@ -66,7 +66,7 @@ jobs:
             echo "G02_RUNNER_ARCH=$RUNNER_ARCH_VALUE"
             echo "G02_TIMESTAMP_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
             echo "=========================================="
-            echo "G02 SENTINEL EXECUTION CONFIRMED"
+            echo "G02 SENTINEL STEP EXECUTED; independent job/runner verification remains required"
             echo "Runner ID source: GitHub Actions Jobs API"
             echo "Runner name: $RUNNER_NAME"
             echo "Runner OS: $RUNNER_OS_VALUE"
@@ -78,9 +78,9 @@ jobs:
             echo "Reason: $RUN_REASON"
             echo "Commit: $GITHUB_SHA_VALUE"
             echo "=========================================="
-            echo "G02_RUNNER_ASSIGNMENT=PASS"
-            echo "G02_SENTINEL_EXECUTION=PASS"
-            echo "G02_SENTINEL=PASS"
+            echo "G02_RUNNER_CONTEXT_MATCH=PASS"
+            echo "G02_SENTINEL_STEP_EXECUTION=OBSERVED"
+            echo "G02_ACCEPTANCE=NOT_EVALUATED"
           } | tee g02-sentinel-evidence.txt
 
       - name: Inspect Docker availability without mutating containers
