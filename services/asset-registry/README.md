@@ -10,7 +10,7 @@ A fail-closed Cloudflare Worker + D1 metadata registry. The browser interface is
 - Versioned source metadata with mandatory SHA-256 and immutable version rows.
 - Append-only rights evidence, review decisions, publication history and audit events.
 - Segregation of duties: owners cannot approve their own assets.
-- Publication requires rights evidence plus current rights, quality and brand approvals, with at least two distinct reviewers.
+- Publication requires rights evidence plus current source-integrity, rights, quality and brand approvals, with at least two distinct reviewers.
 - Rollback creates a new publication-history event and points the asset to a prior published version; it never deletes version history.
 
 ## Configure a staging environment
