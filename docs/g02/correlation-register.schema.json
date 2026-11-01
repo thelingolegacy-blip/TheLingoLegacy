@@ -15,6 +15,9 @@
     "logs": {"type": "array", "items": {"type": "object", "required": ["job_id", "retrievable"], "properties": {"job_id": {"type": "integer"}, "retrievable": {"type": "boolean"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
     "artifacts": {"type": "array", "items": {"type": "object", "required": ["artifact_id", "name", "retrievable"], "properties": {"artifact_id": {"type": "integer"}, "name": {"type": "string"}, "retrievable": {"type": "boolean"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
     "canonical_g02_sentinel_pass": {"type": "boolean"},
+    "canonical_g02_job_completed_successfully": {"type": "boolean"},
+    "canonical_g02_job_logs_retrievable": {"type": "boolean"},
+    "canonical_g02_sentinel_artifact_retrievable": {"type": "boolean"},
     "eligible_for_independent_review": {"type": "boolean"},
     "acceptance_verdict": {"const": "PENDING_INDEPENDENT_REVIEW"},
     "promotion_authorized": {"const": false}
