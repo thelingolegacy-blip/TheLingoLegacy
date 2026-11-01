@@ -92,6 +92,25 @@ for (let i = 0; i < 20; i += 1) askStatuses.push((await askLINGO('203.0.113.77')
 assert.ok(askStatuses.every(status => status === 200));
 assert.equal((await askLINGO('203.0.113.77')).status, 429);
 
+
+const falseStringFlags = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/v1/runtime'),
+  { ...env, OBSERVABILITY_ENABLED: 'false', REALTIME_ENABLED: 'false' },
+);
+const falseStringFlagsBody = await falseStringFlags.json();
+assert.equal(falseStringFlagsBody.observability, false, "the string 'false' must not enable observability");
+assert.equal(falseStringFlagsBody.realtime.websocket, false, "the string 'false' must not enable realtime");
+assert.equal(falseStringFlagsBody.realtime.status, 'DISABLED');
+
+const trueStringFlags = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/v1/runtime'),
+  { ...env, OBSERVABILITY_ENABLED: 'true', REALTIME_ENABLED: 'true' },
+);
+const trueStringFlagsBody = await trueStringFlags.json();
+assert.equal(trueStringFlagsBody.observability, true, "the string 'true' must enable observability");
+assert.equal(trueStringFlagsBody.realtime.websocket, true, "the string 'true' must enable realtime");
+assert.equal(trueStringFlagsBody.realtime.status, 'ENABLED');
+
 console.log('WORKER_RATE_LIMIT_REGRESSION=PASS');
 console.log('SPOOFED_X_FORWARDED_FOR_BYPASS=BLOCKED');
 console.log('MISSING_EDGE_IDENTITY=FAIL_CLOSED');
