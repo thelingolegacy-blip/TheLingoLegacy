@@ -5,13 +5,13 @@
 
 ## Objective
 
-Turn G02 runner qualification into a traceable evidence chain. Every assertion must point to an independently retrievable GitHub job, runner identity, executed sentinel, log archive, artifact, and checksum.
+Turn G02 runner qualification into a traceable evidence chain. The workflow supports a scoped push diagnostic on the dedicated recovery branch and a manual dispatch; the canonical self-hosted lane remains explicitly opt-in. Every assertion must point to an independently retrievable GitHub job, runner identity, executed sentinel, log archive, artifact, and checksum.
 
 ## Evidence flow
 
 ```mermaid
 flowchart TD
-  A[Manual workflow dispatch] --> B[GitHub-hosted diagnostic]
+  A[Recovery-branch push or manual dispatch] --> B[GitHub-hosted diagnostic]
   A --> C[Optional canonical G02 runner]
   B --> D[Jobs API assignment lookup]
   C --> D
