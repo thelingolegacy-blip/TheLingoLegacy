@@ -5,6 +5,11 @@ const CHECKOUT_TIERS = {
 };
 
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
+
+// Parse feature flags by value; Boolean('false') is true in JavaScript.
+function isEnabledFlag(value) {
+  return value === true || ['1', 'true', 'yes', 'on'].includes(String(value ?? '').trim().toLowerCase());
+}
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
@@ -164,7 +169,7 @@ function runtimeManifest(request, env) {
     api: true,
     edge_rendering: true,
     assets: 'worker-controlled',
-    observability: Boolean(env.OBSERVABILITY_ENABLED),
+    observability: isEnabledFlag(env.OBSERVABILITY_ENABLED),
     integrations: {
       stripe: Boolean(env.STRIPE_SECRET_KEY),
       beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
@@ -178,7 +183,7 @@ function runtimeManifest(request, env) {
       agent_catalog: true,
     },
     safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false },
-    realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'DISABLED' },
+    realtime: { websocket: isEnabledFlag(env.REALTIME_ENABLED), status: isEnabledFlag(env.REALTIME_ENABLED) ? 'ENABLED' : 'DISABLED' },
   };
 }
 
@@ -353,8 +358,8 @@ function platformStatus(request, env) {
       rewards: { mode: 'demo-only', server_authoritative: false },
       assistant: { configured: Boolean(env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL), fallback: true },
       world_registry: { configured: Boolean(env.ASSETS), production_verified: false },
-      telemetry: { configured: Boolean(env.OBSERVABILITY_ENABLED), logpush: Boolean(env.LOGPUSH_ENABLED) },
-      realtime: { configured: Boolean(env.REALTIME_ENABLED) },
+      telemetry: { configured: isEnabledFlag(env.OBSERVABILITY_ENABLED), logpush: isEnabledFlag(env.LOGPUSH_ENABLED) },
+      realtime: { configured: isEnabledFlag(env.REALTIME_ENABLED) },
       data: { d1: Boolean(env.DB), kv: Boolean(env.STUDIO_KV), r2: Boolean(env.ASSET_BUCKET) },
     },
     control_planes: ['security','devops','data','safety','ai','commerce','games','rewards','studio','applications'],
