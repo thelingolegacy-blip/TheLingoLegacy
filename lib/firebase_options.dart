@@ -85,6 +85,6 @@ class DefaultFirebaseOptions {
         projectId: _projectId,
         databaseURL: _optional(const String.fromEnvironment('FIREBASE_DATABASE_URL')),
         storageBucket: _optional(const String.fromEnvironment('FIREBASE_STORAGE_BUCKET')),
-        iosBundleId: _required('FIREBASE_MACOS_BUNDLE_ID', const String.fromEnvironment('FIREBASE_MACOS_BUNDLE_ID')),
+        macOSBundleId: _required('FIREBASE_MACOS_BUNDLE_ID', const String.fromEnvironment('FIREBASE_MACOS_BUNDLE_ID')),
       );
 }
