@@ -1,6 +1,13 @@
 name: G02 Startup Restoration — Isolated Lanes
 
 on:
+  push:
+    branches:
+      - recovery/g02-startup-restoration-lanes-2026-10-31
+    paths:
+      - .github/workflows/g02-startup-restoration.yml
+      - scripts/g02/**
+      - docs/g02/**
   workflow_dispatch:
     inputs:
       run_g02_assignment_probe:
