@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/g02-correlation-register-v1.json",
+  "title": "LINGOlegacy G02 Correlation Register",
+  "type": "object",
+  "required": ["schema", "correlation_id", "repository", "run_id", "run_attempt", "jobs", "logs", "artifacts", "acceptance_verdict", "promotion_authorized"],
+  "properties": {
+    "schema": {"const": "lingo-g02-correlation-register/v1"},
+    "correlation_id": {"type": "string", "pattern": "^g02:"},
+    "repository": {"type": "string", "minLength": 3},
+    "run_id": {"type": "integer", "minimum": 1},
+    "run_attempt": {"type": "integer", "minimum": 1},
+    "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "jobs": {"type": "array", "items": {"type": "object", "required": ["job_id", "job_name", "status", "runner_id", "runner_name", "steps"], "properties": {"job_id": {"type": ["integer", "null"]}, "job_name": {"type": ["string", "null"]}, "status": {"type": ["string", "null"]}, "conclusion": {"type": ["string", "null"]}, "runner_id": {"type": ["integer", "null"]}, "runner_name": {"type": ["string", "null"]}, "steps": {"type": "array"}}}},
+    "logs": {"type": "array", "items": {"type": "object", "required": ["job_id", "retrievable"], "properties": {"job_id": {"type": "integer"}, "retrievable": {"type": "boolean"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
+    "artifacts": {"type": "array", "items": {"type": "object", "required": ["artifact_id", "name", "retrievable"], "properties": {"artifact_id": {"type": "integer"}, "name": {"type": "string"}, "retrievable": {"type": "boolean"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
+    "canonical_g02_sentinel_pass": {"type": "boolean"},
+    "eligible_for_independent_review": {"type": "boolean"},
+    "acceptance_verdict": {"const": "PENDING_INDEPENDENT_REVIEW"},
+    "promotion_authorized": {"const": false}
+  },
+  "additionalProperties": true
+}
