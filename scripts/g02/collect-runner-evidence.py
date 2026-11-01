@@ -286,19 +286,34 @@ def finalize() -> int:
 
     sentinel_records = []
     for item in downloaded_artifacts:
+        item["contains_canonical_sentinel"] = False
         if not item.get("retrievable"):
             continue
         try:
             with zipfile.ZipFile(item["path"]) as archive:
                 for name in archive.namelist():
                     if name.endswith("sentinel.json"):
-                        sentinel_records.append(json.loads(archive.read(name).decode("utf-8")))
+                        record = json.loads(archive.read(name).decode("utf-8"))
+                        sentinel_records.append(record)
+                        if (record.get("sentinel_status") in ("PASS", "FAIL") and
+                                record.get("runner_name") == "lingo-legacy-g02" and
+                                isinstance(record.get("runner_id"), int) and record["runner_id"] > 0):
+                            item["contains_canonical_sentinel"] = True
         except (OSError, zipfile.BadZipFile, json.JSONDecodeError):
             continue
     canonical = [s for s in sentinel_records if s.get("sentinel_status") in ("PASS", "FAIL")]
-    canonical_pass = any(s.get("sentinel_status") == "PASS" and
-                         s.get("runner_name") == "lingo-legacy-g02" and
-                         isinstance(s.get("runner_id"), int) and s["runner_id"] > 0 for s in canonical)
+    canonical_pass_records = [s for s in canonical if s.get("sentinel_status") == "PASS" and
+                              s.get("runner_name") == "lingo-legacy-g02" and
+                              isinstance(s.get("runner_id"), int) and s["runner_id"] > 0]
+    canonical_pass = bool(canonical_pass_records)
+    canonical_job_ids = {s.get("job_id") for s in canonical_pass_records}
+    canonical_job_success = any(j.get("id") in canonical_job_ids and
+                                j.get("status") == "completed" and
+                                j.get("conclusion") == "success" for j in jobs)
+    canonical_logs_retrievable = any(x.get("job_id") in canonical_job_ids and x.get("retrievable")
+                                     for x in downloaded_logs)
+    canonical_artifact_retrievable = any(x.get("contains_canonical_sentinel") and x.get("retrievable")
+                                         for x in downloaded_artifacts)
     all_files = []
     for folder in (logs_dir, artifacts_dir):
         for path in sorted(folder.iterdir()):
@@ -324,9 +339,11 @@ def finalize() -> int:
         "artifacts": downloaded_artifacts,
         "retrieved_file_checksums": all_files,
         "canonical_g02_sentinel_pass": canonical_pass,
-        "eligible_for_independent_review": bool(canonical_pass and downloaded_logs and
-                                                any(x.get("retrievable") for x in downloaded_logs) and
-                                                any(x.get("retrievable") for x in downloaded_artifacts)),
+        "canonical_g02_job_completed_successfully": canonical_job_success,
+        "canonical_g02_job_logs_retrievable": canonical_logs_retrievable,
+        "canonical_g02_sentinel_artifact_retrievable": canonical_artifact_retrievable,
+        "eligible_for_independent_review": bool(canonical_pass and canonical_job_success and
+                                                canonical_logs_retrievable and canonical_artifact_retrievable),
         "acceptance_verdict": "PENDING_INDEPENDENT_REVIEW",
         "promotion_authorized": False,
         "interpretation": "Evidence correlation only; this register never grants acceptance or promotion.",
@@ -342,6 +359,9 @@ def finalize() -> int:
     print(json.dumps({"job_count": len(jobs), "retrievable_logs": sum(x.get("retrievable", False) for x in downloaded_logs),
                       "retrievable_g02_artifacts": sum(x.get("retrievable", False) for x in downloaded_artifacts),
                       "canonical_g02_sentinel_pass": canonical_pass,
+                      "canonical_g02_job_completed_successfully": canonical_job_success,
+                      "canonical_g02_job_logs_retrievable": canonical_logs_retrievable,
+                      "canonical_g02_sentinel_artifact_retrievable": canonical_artifact_retrievable,
                       "eligible_for_independent_review": register["eligible_for_independent_review"],
                       "acceptance_verdict": register["acceptance_verdict"]}, indent=2))
     return 0
