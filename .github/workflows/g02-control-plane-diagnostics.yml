@@ -1,0 +1,52 @@
+name: G02 Control Plane Diagnostics
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    name: G02 Control Plane Diagnostics (non-authority)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout control-plane source
+        uses: actions/checkout@v4
+
+      - name: Validate G02 contract and fail-closed boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/workflows/g02-executing-runner-sentinel.yml
+          test -f ops/g02-runner/JOB-MODEL.yaml
+          test -f ops/g02-deploy/deploy/deploy.sh
+          test -f ops/g02-deploy/preflight/check.sh
+          grep -q 'G02_PRODUCTION_PROMOTION=BLOCKED' .github/workflows/g02-executing-runner-sentinel.yml
+          grep -q 'P8_LOGS_RETRIEVABLE=REQUIRES_EXTERNAL_VERIFICATION' .github/workflows/g02-executing-runner-sentinel.yml
+          grep -q 'P9_INDEPENDENT_VERIFICATION=REQUIRED' .github/workflows/g02-executing-runner-sentinel.yml
+          grep -q 'production_promotion: blocked' ops/g02-deploy/config/targets.yaml
+
+      - name: Produce diagnostic artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p g02-diagnostics
+          {
+            echo "DIAGNOSTIC_RUN_ID=${GITHUB_RUN_ID}"
+            echo "DIAGNOSTIC_SHA=${GITHUB_SHA}"
+            echo "HOSTED_DIAGNOSTIC_EXECUTION=TRUE"
+            echo "G02_RUNNER_EXECUTION=NOT_PROVEN"
+            echo "G02_EVIDENCE=NOT_ESTABLISHED"
+            echo "G02_VERIFICATION=NOT_ESTABLISHED"
+            echo "G02_ACCEPTANCE=NOT_ESTABLISHED"
+            echo "PRODUCTION_AUTHORITY=NONE"
+          } | tee g02-diagnostics/diagnostic-boundary.txt
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-control-plane-diagnostics-${{ github.run_id }}
+          path: g02-diagnostics/
+          if-no-files-found: error
