@@ -14,7 +14,7 @@ test("reward credits require server-side verification", () => {
   assert.match(worker, /VERIFY_AD_REWARD/);
   assert.match(worker, /ad_verification_unconfigured/);
 });
-test("game credits are a separate unit", () => {
+test("game credit grants require a trusted server proof", () => {\n  assert.match(worker, /VERIFY_GAME_GRANT/);\n  assert.match(worker, /game_grant_verification_unconfigured/);\n});\ntest("game credits are a separate unit", () => {
   assert.match(schema, /'LINGOCOIN','GAME_CREDIT'/);
   assert.match(worker, /GAME_CREDIT/);
 });
