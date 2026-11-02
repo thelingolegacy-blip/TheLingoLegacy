@@ -18,6 +18,18 @@
     "CANONICAL_DOMAIN": "thelingolegacy.com",
     "PUBLIC_SITE_URL": "https://thelingolegacy.com"
   },
+  "ratelimits": [
+    {
+      "name": "BEACON_RATE_LIMITER",
+      "namespace_id": "9101",
+      "simple": { "limit": 5, "period": 60 }
+    },
+    {
+      "name": "ASK_RATE_LIMITER",
+      "namespace_id": "9102",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
   "observability": {
     "enabled": true
   },
