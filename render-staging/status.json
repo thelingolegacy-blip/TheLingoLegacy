@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02",
+  "generated_at": "2026-11-02T04:39:00-05:00",
   "scope": "Read-only cross-platform inventory plus isolated World Engine D1 schema creation",
   "render": {
     "workspace": "My Workspace",
@@ -23,7 +23,7 @@
     ],
     "worker_routes": "existing routes preserved",
     "d1_databases": 2,
-    "production_d1_application_tables": 17,
+    "production_d1_application_tables": 18,
     "world_engine_d1": {
       "name": "world-engine-db",
       "tables": 12,
@@ -45,7 +45,40 @@
         "STUDIO_KV"
       ],
       "mode": "GET-only; published-world registry only",
-      "runtime_probe": "pending"
+      "runtime_probe": "not independently verified by available external HTTP probe",
+      "observability": {
+        "enabled": true,
+        "logs_persistent": true,
+        "query_string_redaction": true
+      }
+    },
+    "access_apps": 11,
+    "everyone_bypass_policies": 9,
+    "all_workers_everyone_bypass": true,
+    "account_member_count": 1,
+    "account_super_admin": true,
+    "account_member_mfa_enrolled": false,
+    "dns_records": 32,
+    "apex_dns": {
+      "record_type": "A",
+      "proxied": true,
+      "target": "documentation-placeholder",
+      "runtime_route": "production Worker route exists; failover/origin path requires validation"
+    },
+    "unproxied_cnames": [
+      "admin.thelingolegacy.com -> admin-thelingolegacy.firebaseapp.com",
+      "app.thelingolegacy.com -> my-flutter-app.pages.dev",
+      "studio-preview.thelingolegacy.com -> Vercel DNS target"
+    ],
+    "zone_security": {
+      "ssl_mode": "strict",
+      "minimum_tls": "1.3",
+      "always_use_https": "on",
+      "automatic_https_rewrites": "on",
+      "brotli": "on",
+      "browser_check": "on",
+      "security_level": "medium",
+      "http3": "on"
     }
   },
   "github": {
@@ -81,6 +114,12 @@
       "Kotton's Code",
       "LINGO AI Sonic Boom",
       "LINGO Travel"
+    ],
+    "current_state": "15 apps reported ready; four historic frontend errors have no new errors since 2026-11-02 04:33 EST; LINGO AI Sonic Boom branding fix deployed and QA returned zero frontend/network/backend errors",
+    "historic_error_surfaces": [
+      "Jersey Shore: The Undead",
+      "Kotton's Code",
+      "LINGO Travel"
     ]
   },
   "billing": {
@@ -88,5 +127,37 @@
     "cloudflare": "Free Website plan",
     "paid_services": "not enabled"
   },
-  "production_boundary": "No production DNS, routes, Worker allocations, secrets, payments, or billing settings changed. New Render and Cloudflare services are isolated staging resources."
+  "production_boundary": "No production DNS, routes, Worker allocations, production D1 data, secrets, payments, or billing settings changed. New Render and Cloudflare resources remain isolated staging.",
+  "security_findings": [
+    {
+      "id": "CF-IDENTITY-01",
+      "severity": "critical",
+      "status": "open",
+      "finding": "Only Cloudflare account member is Super Administrator and its 2FA enrollment is false; account-level enforcement control is not exposed by connected API."
+    },
+    {
+      "id": "CF-ACCESS-01",
+      "severity": "high",
+      "status": "open",
+      "finding": "9 Cloudflare Access bypass policies include everyone; one applies to All Workers. Confirm public-surface intent and narrow scope before changing."
+    },
+    {
+      "id": "CF-DNS-01",
+      "severity": "high",
+      "status": "open",
+      "finding": "Proxied apex A record points to documentation-only placeholder; production Worker route currently intercepts root traffic, but origin/failover behavior is unverified."
+    },
+    {
+      "id": "CF-DNS-02",
+      "severity": "medium",
+      "status": "open",
+      "finding": "admin, app and studio-preview CNAME records are DNS-only; studio-preview still targets Vercel DNS."
+    },
+    {
+      "id": "GL-CRED-01",
+      "severity": "critical",
+      "status": "owner_action_required",
+      "finding": "GitLab project metadata exposed a runner registration credential; revoke/rotate immediately and audit runner registrations."
+    }
+  ]
 }
