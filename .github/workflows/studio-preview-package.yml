@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - "studio-sites/**"
+      - ".assetsignore"
+      - "scripts/verify-static-asset-boundary.mjs"
       - "worker.js"
       - "scripts/verify-studio-world-api.mjs"
       - "scripts/verify-asklingo-contract.mjs"
@@ -33,6 +35,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Validate Cloudflare static asset publication boundary
+        run: node scripts/verify-static-asset-boundary.mjs
       - name: Validate studio baseline
         run: node studio-sites/scripts/validate-studio.mjs
       - name: Validate studio world matrix and game engine
