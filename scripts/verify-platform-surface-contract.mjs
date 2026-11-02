@@ -4,6 +4,7 @@ const read=p=>fs.readFileSync(p,'utf8');
 const registry=JSON.parse(read('studio-sites/assets/world-registry.json'));
 const config=JSON.parse(read('studio-sites/config/studio-config.json'));
 const worker=read('worker.js');
+const wrangler=JSON.parse(read('wrangler.jsonc'));
 const portal=read('studio-sites/index.html');
 const expected=[
  ['virtual-library','studio-sites/virtual-library/index.html','/studio-sites/virtual-library/'],
@@ -15,6 +16,7 @@ const expected=[
  ['operations','studio-sites/operations/index.html','/studio-sites/operations/']
 ];
 const errors=[];
+if(!wrangler.name.endsWith('-preview')||wrangler.workers_dev!==true||Array.isArray(wrangler.routes)&&wrangler.routes.length>0)errors.push('Preview Worker must use an isolated workers.dev name and have no production routes.');
 for(const [id,file,route] of expected){
  if(!fs.existsSync(file))errors.push('Missing surface: '+file);
  if(id!=='operations'&&!registry.worlds.some(w=>w.id===id||w.route===route))errors.push('World registry route missing: '+id);
