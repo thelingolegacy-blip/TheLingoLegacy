@@ -1,0 +1,11 @@
+name = "lingo-studio-control-center-staging"
+main = "worker.js"
+compatibility_date = "2026-11-02"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ENVIRONMENT = "staging"
+
+# Deliberately no routes, custom domains, production bindings, or secrets.
+# Deploy only to the workers.dev preview endpoint after review.

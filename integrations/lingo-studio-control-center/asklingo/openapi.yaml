@@ -1,0 +1,78 @@
+openapi: 3.1.0
+info:
+  title: askLINGO Studio Control API
+  version: 1.0.0
+  description: >
+    Staging-only contract for ChatGPT Actions. The server URL below is a
+    deliberate placeholder. Replace it only after the authenticated API
+    is deployed and independently tested. No production operations exist.
+servers:
+  - url: https://asklingo-staging-endpoint-not-configured.invalid
+    description: Placeholder — not a live endpoint
+security:
+  - bearerAuth: []
+paths:
+  /api/v1/apps:
+    get:
+      operationId: listStagingApps
+      summary: List registered staging application surfaces
+      parameters:
+        - in: query
+          name: environment
+          schema:
+            type: string
+            const: staging
+      responses:
+        "200":
+          description: Registered staging applications
+  /api/v1/gates/{gateId}:
+    get:
+      operationId: getReleaseGate
+      summary: Read gate state and evidence references
+      parameters:
+        - in: path
+          name: gateId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Gate state and evidence references
+        "404":
+          description: Gate not found
+  /api/v1/tasks:
+    post:
+      operationId: createStagingTask
+      summary: Create a staging task request without executing it
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [title, scope, environment]
+              properties:
+                title:
+                  type: string
+                  minLength: 4
+                  maxLength: 160
+                scope:
+                  type: string
+                  enum: [askLINGO, LINGOarts, Cloudflare, Firebase, AppDeploy, cross-stack]
+                environment:
+                  type: string
+                  const: staging
+      responses:
+        "201":
+          description: Task request created; no deployment or execution implied
+        "401":
+          description: Authentication required
+        "403":
+          description: Insufficient role
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

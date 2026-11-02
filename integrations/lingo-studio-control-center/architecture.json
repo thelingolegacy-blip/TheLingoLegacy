@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "LINGOlegacy Studio Control Center",
+  "environment": "staging",
+  "status": "scaffolded-not-deployed",
+  "controlPlane": {
+    "dashboard": "AppDeploy existing LINGO Enterprise Control Center; extension pending deployment quota",
+    "governance": "fail-closed",
+    "productionMutation": false
+  },
+  "systems": [
+    {
+      "name": "askLINGO",
+      "role": "AI orchestration and MCP tool contract",
+      "state": "manifest-defined-endpoint-unconfigured"
+    },
+    {
+      "name": "LINGOarts",
+      "role": "creative assets, rights, publishing intake",
+      "state": "integration-contract-only"
+    },
+    {
+      "name": "Cloudflare",
+      "role": "staging-only read-only application preview proxy",
+      "state": "worker-source-prepared-no-deployment"
+    },
+    {
+      "name": "Firebase",
+      "role": "server-authoritative RBAC, tasks, evidence, gate acceptance",
+      "state": "rules-and-functions-prepared-no-deployment"
+    },
+    {
+      "name": "AppDeploy",
+      "role": "existing application surfaces",
+      "state": "16-application-registry-included"
+    }
+  ],
+  "gates": [
+    {
+      "id": "ASK-01",
+      "name": "askLINGO manifest and endpoint validation",
+      "required": [
+        "manifest-json-valid",
+        "authenticated-endpoint-live",
+        "tool-schema-validation"
+      ]
+    },
+    {
+      "id": "EDGE-01",
+      "name": "Cloudflare staging proxy",
+      "required": [
+        "workers-dev-only",
+        "exact-route-allowlist",
+        "GET-HEAD-only",
+        "no-credential-forwarding",
+        "origin-smoke-tests"
+      ]
+    },
+    {
+      "id": "FB-01",
+      "name": "Firebase RBAC and rules",
+      "required": [
+        "staging-project-confirmed",
+        "custom-claims-tested",
+        "client-write-denied",
+        "callable-authorization-tested"
+      ]
+    },
+    {
+      "id": "APP-16",
+      "name": "16 application surfaces",
+      "required": [
+        "16-unique-app-ids",
+        "16-staging-origins",
+        "http-health-evidence-per-app",
+        "no-production-route-changes"
+      ]
+    },
+    {
+      "id": "REL-01",
+      "name": "Independent acceptance",
+      "required": [
+        "source-commit",
+        "executed-run",
+        "runner-and-job-identity",
+        "retrievable-logs",
+        "artifact-sha256",
+        "independent-review",
+        "human-authorization"
+      ]
+    }
+  ],
+  "invariants": {
+    "productionProtected": true,
+    "automaticPromotion": false,
+    "unverifiedStatus": "unknown",
+    "defaultGateState": "blocked",
+    "evidenceRequired": true
+  }
+}
