@@ -1,111 +1,58 @@
-# Lingo ⭐️ Legacy — Frontend + Backend Architecture
+# LINGOlegacy Frontend, Backend and Edge Architecture
 
-This repository is organized as a studio-grade, multi-surface web platform with a clear path toward Flutter app delivery, Firebase-powered backend services, and Cloudflare edge routing.
+## Canonical platform direction
 
-## 1. Frontend Architecture
+- **Source and CI:** GitHub, with pull-request checks and immutable build artifacts.
+- **Production edge and web delivery:** Cloudflare Workers, Pages, DNS, CDN and security controls.
+- **Mobile:** Flutter for iOS and Android.
+- **Identity and application services:** Firebase only after project/app registration, security rules and environment separation are verified.
+- **Structured world and knowledge metadata:** Cloudflare D1.
+- **Cache:** Cloudflare KV for non-authoritative, TTL-bound data.
+- **Media and approved documents:** Cloudflare R2.
+- **AI retrieval:** Workers AI and Vectorize behind explicit policy, consent, cost and feature gates.
+- **Preview/studio delivery:** Existing AppDeploy applications; a preview being deployed does not certify the Cloudflare production release.
+- **Creative and design:** Figma, Adobe and Canva; exported assets must pass provenance, rights and asset-manifest checks.
 
-### Core web frontends
-- Homepage and product hubs: static HTML pages in the repo root and nested directories
-- Shared styling layer: `/assets/lingo-os.css`, `/assets/studio-grade.css`, `/assets/unified-brand-system.css`
-- Shared interaction layer: `/assets/lingo-os.js` and platform-specific runtime scripts
+Vercel is not the approved production deployment target for this architecture.
 
-### Product surfaces
-- Casino / brand landing pages
-- Story and world pages (KottonsCode, Dice Shift Hotel)
-- Commerce pages (Loyalty Lane Apparel, Loyalty Lane Cycle)
-- Admin / studio command surfaces
-- Trust / compliance / governance pages
-- Media and social integration pages
+## Product surfaces
 
-### Frontend standards
-- Mobile-first responsive layout
-- Shared Lingo brand system across all sub-apps
-- Platform-specific themes layered on top of the global system
-- Accessible color contrast and reduced-motion support
-- Asset versioning and CDN-friendly delivery
+The LINGOlegacy Studio Hub is the ecosystem gateway. Product-specific surfaces remain separately registered and owned by the canonical product tree: LINGOlegacy, LINGOlane, LINGOslots, LINGOarcade, LINGOlibrary, LINGOmedia and LINGOworld.
 
-## 2. Backend / App Architecture
+Every surface must declare a canonical product ID, owner, repository path, source commit, runtime, environment, public route, API contract, identity requirements, data classification, asset-rights manifest, support owner, release gate and rollback target.
 
-### Current web-first foundation
-The current repository is a static web app foundation. It can be extended with:
-- Firebase Authentication for account and player identity
-- Firestore / Realtime Database for progress, rewards, and metadata
-- Cloud Functions for server-side orchestration
-- Vercel or Cloudflare edge functions for dynamic experiences
+## Environment separation
 
-### Future Flutter layer
-A Flutter app can sit on top of the same architecture:
-- App shell: Flutter widgets for home, game, wallet, profile, shop
-- State management: Riverpod or Bloc
-- Authentication: Firebase Auth
-- Data sync: Firestore / Cloud Functions
-- Push notifications: Firebase Cloud Messaging
-- Asset delivery: CDN-backed media pipeline
+Use distinct development, staging and production resource identifiers. Never point a staging build at the production D1 database, Firebase project, R2 bucket, KV namespace, payment provider or secret set. Production IDs are injected through protected deployment configuration; they are not copied into preview manifests.
 
-## 3. Firebase Integration Plan
+## Data flow
 
-### Recommended services
-- Firebase Auth
-- Firestore
-- Cloud Functions
-- Cloud Storage for media assets
-- Firebase Hosting (optional alternative to Vercel)
-- Cloud Messaging for live updates
+`Flutter / Web → Cloudflare Edge → authenticated Worker API → D1 metadata / R2 objects / KV cache / AI retrieval`
 
-### Suggested data domains
-- `users` — profile, avatar, prefs
-- `games` — metadata and progress
-- `worlds` — story worlds and unlocks
-- `commerce` — products, inventory, carts
-- `media` — trailers, art, videos
-- `analytics` — telemetry and engagement metrics
-- `governance` — release and approval state
+Firebase Auth may provide identity tokens where configured. The Worker must verify issuer, audience, signature, expiry and entitlement claims before authorizing writes. A client-side feature flag is never an authorization boundary.
 
-## 4. Cloudflare Edge Strategy
+## Service responsibilities
 
-Use Cloudflare for:
-- Edge routing to all product surfaces
-- Global asset caching
-- CDN delivery for images, media, and static pages
-- Rate limiting and DDoS protection
-- Worker-based routing and path-level brand application
+- **D1:** authoritative world registry, immutable versions, knowledge metadata, feature flags, idempotency and audit records.
+- **KV:** non-authoritative cache only, namespaced by environment and schema version with explicit TTLs.
+- **R2:** media and approved documents with MIME, size, hash, rights and provenance checks.
+- **Workers AI / Vectorize:** governed retrieval and inference, disabled by default until privacy, cost, access and safety gates pass.
+- **Firebase:** identity/mobile services only after app registration and security rules are verified.
+- **AppDeploy:** isolated preview and Studio surfaces; not a substitute for production release acceptance.
 
-### Example routing model
-- `/` → global homepage
-- `/thats-my-lingo/` → casino surface
-- `/kottons-code/` → story world
-- `/loyalty-lane-apparel/` → commerce
-- `/admin-command-center/` → studio production surface
-- `/trust-compliance/` → safety and compliance
+## Reliability and fallback
 
-## 5. Production Deployment Model
+- Public static content may use a versioned offline cache.
+- Private, authenticated, API, payment and user-specific responses must not be cached by the service worker.
+- KV cache misses fall back to D1; D1 failures fail closed for mutations.
+- R2 media failure falls back to a known approved asset or explicit unavailable state.
+- AI failure falls back to deterministic search/help content; never fabricate a successful AI response.
+- Firebase unavailability must not create anonymous elevated access.
+- Payment provider or webhook failure never grants entitlements.
+- Release-gate failure stops promotion and preserves last-known-good.
 
-### Web stack
-- GitHub for source control
-- GitHub Actions for CI/CD
-- Vercel for app deploys and previews
-- Cloudflare for edge performance and routing
+## Release sequence
 
-### Mobile / Flutter stack
-- Flutter app shell packaged for iOS / Android
-- Firebase for auth, data, and notification services
-- CDN-backed asset delivery for brand media
+`DISCOVER → DESIGN → SPECIFY → IMPLEMENT → TEST → BUILD → DEPLOY CANDIDATE → LIVE PROBE → CERTIFY → AUTHORIZE → ACTIVATE`
 
-## 6. Governance / Safety
-
-- Use fail-closed deployment gates
-- Keep real-money or payout logic excluded from static frontend surfaces
-- Ensure all live backend activation remains gated by approval
-- Keep compliance and trust layers visible across all product surfaces
-
-## 7. Future implementation sequence
-
-1. Finish the unified brand shell across all product pages
-2. Add Firebase project config and security rules
-3. Add Cloudflare Worker route layer
-4. Create Flutter app skeleton
-5. Connect Flutter to Firestore and Firebase Auth
-6. Add media and commerce data models
-7. Finalize CI/CD and deployment reviews
-
-This architecture keeps the project coherent while allowing rapid product expansion without losing the Lingo Legacy identity.
+No production mutation occurs before independent acceptance and explicit release authorization.
