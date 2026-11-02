@@ -464,3 +464,7 @@ After the latest PR #416 source commits, the current head was `c1eb5abb3d92ea62f
 After the latest PR #430 documentation commits, head `2c3f66f644725cce0cf8c3f8bb27c9a11ee3cb38` produced G02 Runner Image Build `41380883591`, Lingo Legacy Static CI `41380884471`, and Crimson Smoke UI static validation `41380882701`. All concluded `startup_failure`; each had zero jobs and zero artifacts.
 
 These results establish that the new source and documentation checks remain unexecuted. They do not identify a root cause. The verifier syntax repair, D1 migration, PWA cache changes, shared rate-limit tests, Flutter build and registry tests remain pending executable validation. Production remains protected.
+
+
+### Additional product-surface readiness findings
+The Sonic Boom AppDeploy source contains static Apple/Google/social connector tiles marked READY; these are not verified account connections or publish permissions. LINGO Travel source contains hard-coded estimated/demo routes and provider placeholders, not live fare or booking data. Kotton's Code injects askLINGO DOM and a recurring heartbeat timer from the React entrypoint without lifecycle cleanup; its historical script error needs reproduction and repair. Jersey Shore's CSS error needs current asset-manifest verification before source changes. These remain QA findings; no AppDeploy source update or redeployment was performed.
