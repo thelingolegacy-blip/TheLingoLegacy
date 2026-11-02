@@ -284,7 +284,7 @@ function askFallback(message) {
     return "I can explain the account, rewards, and checkout structure, but I cannot access your private account or confirm a transaction here. Sign-in, wallet balances, coin purchases, and checkout stay disabled until their authenticated services and payment webhooks pass production acceptance.";
   }
   if (/\b(status|production|deploy|release|live|launch|runner|g02|pipeline)\b/.test(text)) {
-    return "The public flagship site is serving, but full platform activation is separately gated. The current release policy requires verified source, CI execution, security, deployment, live validation, synchronization, and acceptance evidence. A preview or successful Vercel status alone does not satisfy the G02 release gate.";
+    return "The public flagship site is serving, but full platform activation is separately gated. The current release policy requires verified source, CI execution, security, deployment, live validation, synchronization, and acceptance evidence. A preview or static deployment status alone does not satisfy the G02 release gate.";
   }
   if (/\b(kotton|kotton's code|puppy|character|storybook)\b/.test(text)) {
     return "Kotton’s Code is its own illustrated story world. It keeps a warmer cartoon and storybook art direction rather than inheriting the flagship’s crimson, white, smoke-gray enterprise system.";
