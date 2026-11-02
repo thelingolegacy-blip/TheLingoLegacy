@@ -39,7 +39,7 @@ for (const [file, cacheName] of [['sw.js','lingo-shell-v2'],['studio-sites/sw.js
  const source=read(file);
  if(!source.includes(cacheName)||!source.includes('isCacheable')||!source.includes("no-store|private|no-cache"))errors.push('Service worker cache policy missing for '+file);
  if(source.includes("event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)))"))errors.push('Service worker must not blindly precache HTML or no-store responses: '+file);
- if(source.includes("url.pathname.startsWith('/api/')"))errors.push('Service worker API bypass contract changed unexpectedly: '+file);
+ if(!source.includes("url.pathname.startsWith('/api/')"))errors.push('Service worker must bypass API requests: '+file);
 }
 if(!fs.existsSync('studio-sites/assets/tv-navigation.js'))errors.push('TV remote navigation script missing.');
 if(!fs.existsSync('platforms/webos/appinfo.json')||!fs.existsSync('platforms/tizen/config.xml'))errors.push('TV packaging metadata missing.');
