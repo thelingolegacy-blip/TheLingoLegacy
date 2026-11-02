@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const worker = await readFile(new URL("../worker.js", import.meta.url), "utf8");
 const schema = await readFile(new URL("../migrations/0001_ledger.sql", import.meta.url), "utf8");
+const guards = await readFile(new URL("../migrations/0002_ledger_guards.sql", import.meta.url), "utf8");
 const docs = await readFile(new URL("../README.md", import.meta.url), "utf8");
 
 test("no cash-out, transfer, or payment routes are implemented", () => {
@@ -27,9 +28,13 @@ test("ledger is append-only and idempotent", () => {
   assert.match(schema, /loyalty_ledger_no_update/);
   assert.match(schema, /loyalty_ledger_no_delete/);
 });
-test("CORS preflight is handled once before session authentication", () => {
-  assert.equal((worker.match(/request\.method === "OPTIONS"/g) || []).length, 1);
-  assert.ok(worker.indexOf('request.method === "OPTIONS"') < worker.indexOf('const userId = await authenticate(request, env)'));
+test("ledger enforces unit/event consistency and positive grant signs", () => {
+  assert.match(guards, /loyalty_ledger_unit_event_guard/);
+  assert.match(guards, /loyalty_ledger_event_sign_guard/);
+});
+test("ledger prevents negative balances at insert time", () => {
+  assert.match(guards, /loyalty_ledger_nonnegative_balance/);
+  assert.match(guards, /ledger balance cannot become negative/);
 });
 test("mutations fail closed without rate limiting", () => {
   assert.match(worker, /RATE_LIMITER/);
@@ -42,4 +47,8 @@ test("reward daily cap is enforced in the insert statement", () => {
 test("missing authentication and merchant adapters fail closed", () => {
   assert.match(worker, /authentication_required/);
   assert.match(worker, /merchant_redemption_unconfigured/);
+});
+test("CORS preflight is handled once before session authentication", () => {
+  assert.equal((worker.match(/request\.method === "OPTIONS"/g) || []).length, 1);
+  assert.ok(worker.indexOf('request.method === "OPTIONS"') < worker.indexOf('const userId = await authenticate(request, env)'));
 });
