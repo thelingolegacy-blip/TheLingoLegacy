@@ -67,13 +67,41 @@ check('readme-runtime-identity', readme.includes('thelingolegacyv-5') && readme.
 check('studio-worker-identity', studioConfig.includes('name = "lingo-legacy-studio-build"') && studioConfig.includes('main = "cloudflare/studio-worker.js"') && studioConfig.includes('compatibility_date = "2026-10-04"'), 'Studio build Worker name, entrypoint, and compatibility date must match its dedicated config');
 check('studio-wrangler-pinned-dry-run', studioWorkflow.includes('npx --yes wrangler@4 deploy --dry-run --config cloudflare/wrangler.toml') && !studioWorkflow.includes('wrangler@latest'), 'Studio Worker validation must use Wrangler v4 and remain dry-run-only');
 check('readme-studio-identity', readme.includes('lingo-legacy-studio-build') && readme.includes('2026-10-04') && readme.includes('not the apex/www production Worker'), 'README must distinguish the Studio build Worker from the apex/www production Worker');
-check('surface-gate-read-only', surfaceGate.includes("mode: 'read-only'") && !/\\bwriteFileSync\\b|\\bwriteFile\\s*\\(/.test(surfaceGate), 'Cloudflare-only surface validation must never rewrite release source files');
+check('surface-gate-read-only', surfaceGate.includes("mode: 'read-only'") && !/\bwriteFileSync\b|\bwriteFile\s*\(/.test(surfaceGate), 'Cloudflare-only surface validation must never rewrite release source files');
 check('surface-gate-regression-wired', staticGateRunner.includes('scripts/test-sanitize-cloudflare-only-surface.mjs') && staticGateRunner.includes("id: 'verify-cloudflare-only-surface'"), 'Static gates must test the read-only surface verifier and label it as verification, not sanitization');
 check('promotion-policy-gate-alignment', promotionPolicy.noLegacyHostingExecutionPath === true && promotionPolicy.promotionSequence.includes('cloudflare-only-runtime') && promotionPolicy.promotionSequence.includes('cloudflare-only-static-surface') && !promotionPolicy.promotionSequence.includes('vercel-eradication'), 'Promotion policy must require the current Cloudflare runtime and static-surface gate IDs');
 check('certificate-gate-alignment', certificateGenerator.includes("'cloudflare-only-runtime'") && certificateGenerator.includes("'cloudflare-only-static-surface'") && !certificateGenerator.includes('vercel-eradication'), 'Release certificate must consume the same Cloudflare gate IDs as the promotion policy');
 check('launch-observability-provider-alignment', launchFoundation.observability?.performanceMonitoring?.includes('Cloudflare deployment metadata') && !launchFoundation.observability.performanceMonitoring.includes('Vercel'), 'Launch observability instructions must use the current Cloudflare evidence source');
 check('casino-provider-plan-alignment', casinoMaster.principles?.deployment?.includes('Cloudflare Worker') && casinoMaster.principles?.storagePlan?.relational?.includes('planned only') && casinoMaster.principles?.storagePlan?.cache?.includes('planned only') && !JSON.stringify(casinoMaster).includes('Vercel Marketplace'), 'Game manifest must distinguish Cloudflare static delivery from unverified planned backend services');
 check('sentinel-does-not-claim-independent-assignment', !sentinel.includes('G02_RUNNER_ASSIGNMENT=PASS') && sentinel.includes('G02_RUNNER_CONTEXT_MATCH=PASS') && sentinel.includes('G02_ACCEPTANCE=NOT_EVALUATED'), 'Sentinel may report context matching and step execution only; independent Jobs API evidence is required for runner assignment and acceptance');
+check('runner-id-from-jobs-api', !autoRepair.includes(' !autoRepair.includes('G02_RUNNER_ASSIGNMENT=PASS') && autoRepair.includes('runner_context_gate:') && autoRepair.includes('G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'), 'Auto-repair runner gate must be labeled as context-only and defer numeric runner assignment to independent Jobs API evidence');
+check('canonical-g02-labels-promotion', promotion.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'production-promotion must retain the canonical G02 runner labels');
+check('canonical-g02-labels-sentinel', sentinel.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'G02 sentinel must retain the canonical runner labels');
+check('production-job-remains-held', promotion.includes('if: ${{ false }}'), 'Cloudflare promotion job must remain disabled until separate authorization and acceptance');
+check('auto-repair-deploy-hold', autoRepair.includes('if: ${{ false }}'), 'Cloudflare auto-repair deployment job must remain disabled until separate authorization and acceptance');
+check('canonical-g02-labels-auto-repair', autoRepair.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'auto-repair workflow must retain the canonical G02 runner labels');
+check('authority-document-superseded', authority.includes('SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION'), 'legacy activation document must explicitly defer to current gates');
+check('docker-ci-targets-runner-image', dockerWorkflow.includes('--file ops/github-runner/Dockerfile') && dockerWorkflow.includes('ops/github-runner') && !dockerWorkflow.includes('--file Dockerfile'), 'Docker CI must build the defined runner image, not a nonexistent root application Dockerfile');
+check('runner-image-build-inputs', fs.existsSync('ops/github-runner/Dockerfile') && fs.existsSync('ops/github-runner/entrypoint.sh'), 'runner image Dockerfile and entrypoint must both exist');
+check('docker-application-boundary', dockerReadme.includes('application image intentionally not defined') && dockerReadme.includes('does not publish an image'), 'Docker documentation must distinguish runner-image validation from application-image publication');
+check('circleci-is-validation-only', !/\b(?:wrangler|firebase)\s+deploy\b|docker\s+push|kubectl\s+apply/i.test(circleci) && /ignore:\s*main/.test(circleci), 'CircleCI must remain non-production validation and ignore main');
+check('gitlab-production-deploy-denied', gitlab.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && gitlab.includes('G02_ACCEPTANCE=NOT_EVALUATED'), 'GitLab must explicitly disclaim production authorization and G02 acceptance');
+check('jenkins-production-deploy-denied', jenkins.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && jenkins.includes('KUBERNETES_DEPLOYMENT=NOT_AUTHORIZED'), 'Jenkins must explicitly disclaim production and Kubernetes deployment authority');
+
+const result = {
+  gate: 'release-configuration-consistency',
+  status: failures.length ? 'FAIL' : 'PASS',
+  worker: config.name || null,
+  entrypoint: config.main || null,
+  compatibilityDate: config.compatibility_date || null,
+  checks,
+  failures,
+  note: 'Static consistency evidence only; this does not prove Cloudflare account configuration, runner execution, preview acceptance, or production health.'
+};
+console.log(JSON.stringify(result, null, 2));
+if (failures.length) process.exit(1);
+ + '{{ runner.id }}') && autoRepair.includes('G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'), 'Numeric runner identity must not be read from an undocumented runner context property');
+check('deployment-job-dependency', /deploy-cloudflare:\s*\n\s*needs:\s*\[runner-gate,\s*repair\]/.test(autoRepair), 'The disabled deployment job must depend on both the runner context gate and repair job');
 check('auto-repair-does-not-claim-independent-assignment', !autoRepair.includes('G02_RUNNER_ASSIGNMENT=PASS') && autoRepair.includes('runner_context_gate:') && autoRepair.includes('G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'), 'Auto-repair runner gate must be labeled as context-only and defer numeric runner assignment to independent Jobs API evidence');
 check('canonical-g02-labels-promotion', promotion.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'production-promotion must retain the canonical G02 runner labels');
 check('canonical-g02-labels-sentinel', sentinel.includes('runs-on: [self-hosted, linux, x64, lingo-g02]'), 'G02 sentinel must retain the canonical runner labels');
@@ -84,7 +112,7 @@ check('authority-document-superseded', authority.includes('SUPERSEDED HISTORICAL
 check('docker-ci-targets-runner-image', dockerWorkflow.includes('--file ops/github-runner/Dockerfile') && dockerWorkflow.includes('ops/github-runner') && !dockerWorkflow.includes('--file Dockerfile'), 'Docker CI must build the defined runner image, not a nonexistent root application Dockerfile');
 check('runner-image-build-inputs', fs.existsSync('ops/github-runner/Dockerfile') && fs.existsSync('ops/github-runner/entrypoint.sh'), 'runner image Dockerfile and entrypoint must both exist');
 check('docker-application-boundary', dockerReadme.includes('application image intentionally not defined') && dockerReadme.includes('does not publish an image'), 'Docker documentation must distinguish runner-image validation from application-image publication');
-check('circleci-is-validation-only', !/\\b(?:wrangler|firebase)\\s+deploy\\b|docker\\s+push|kubectl\\s+apply/i.test(circleci) && /ignore:\\s*main/.test(circleci), 'CircleCI must remain non-production validation and ignore main');
+check('circleci-is-validation-only', !/\b(?:wrangler|firebase)\s+deploy\b|docker\s+push|kubectl\s+apply/i.test(circleci) && /ignore:\s*main/.test(circleci), 'CircleCI must remain non-production validation and ignore main');
 check('gitlab-production-deploy-denied', gitlab.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && gitlab.includes('G02_ACCEPTANCE=NOT_EVALUATED'), 'GitLab must explicitly disclaim production authorization and G02 acceptance');
 check('jenkins-production-deploy-denied', jenkins.includes('PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED') && jenkins.includes('KUBERNETES_DEPLOYMENT=NOT_AUTHORIZED'), 'Jenkins must explicitly disclaim production and Kubernetes deployment authority');
 
