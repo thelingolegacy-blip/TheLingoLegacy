@@ -48,7 +48,6 @@ export default {
       const respond = (status, body) => response(status, body, request.headers.get("Origin"));
       if (!env.DB || !safeEqualOrigin(request, env)) return respond(403, { error: "origin_not_allowed" });
       const url = new URL(request.url);
-      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...JSON_HEADERS, "access-control-allow-origin": request.headers.get("Origin"), "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "content-type,idempotency-key" } });
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...JSON_HEADERS, "access-control-allow-origin": request.headers.get("Origin"), "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "content-type,idempotency-key", "access-control-max-age": "600", vary: "Origin" } });
       const userId = await authenticate(request, env);
       if (!userId) return respond(401, { error: "authentication_required" });
