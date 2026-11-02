@@ -35,6 +35,12 @@ if(!fs.existsSync('sw.js')||!fs.existsSync('pwa-register.js'))errors.push('Root-
 if(!worker.includes('href="/manifest.webmanifest"')||!worker.includes('src="/pwa-register.js"'))errors.push('Main Worker does not inject root-scope PWA metadata and registration.');
 if(manifest.scope!=='/studio-sites/'||manifest.start_url!=='/studio-sites/')errors.push('PWA scope/start URL contract mismatch.');
 if(!fs.existsSync('studio-sites/sw.js')||!fs.existsSync('studio-sites/pwa-register.js'))errors.push('PWA service worker registration assets missing.');
+for (const [file, cacheName] of [['sw.js','lingo-shell-v2'],['studio-sites/sw.js','lingo-studio-shell-v2']]) {
+ const source=read(file);
+ if(!source.includes(cacheName)||!source.includes('isCacheable')||!source.includes("no-store|private|no-cache"))errors.push('Service worker cache policy missing for '+file);
+ if(source.includes("event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)))"))errors.push('Service worker must not blindly precache HTML or no-store responses: '+file);
+ if(source.includes("url.pathname.startsWith('/api/')"))errors.push('Service worker API bypass contract changed unexpectedly: '+file);
+}
 if(!fs.existsSync('studio-sites/assets/tv-navigation.js'))errors.push('TV remote navigation script missing.');
 if(!fs.existsSync('platforms/webos/appinfo.json')||!fs.existsSync('platforms/tizen/config.xml'))errors.push('TV packaging metadata missing.');
 if(!worker.includes('/api/v1/agents/catalog')||!worker.includes('autonomous_execution: false'))errors.push('Governed agent catalog API missing or autonomous execution is not disabled.');
