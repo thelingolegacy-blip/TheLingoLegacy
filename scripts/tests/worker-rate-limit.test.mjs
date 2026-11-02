@@ -26,7 +26,7 @@ const env = {
 };
 
 async function submit({ ip, forwarded, phone = '+15551234567' } = {}) {
-  const headers = { 'content-type': 'application/json' };
+  const headers = { 'content-type': 'application/json', origin: 'https://thelingolegacy.com' };
   if (ip) headers['cf-connecting-ip'] = ip;
   if (forwarded) headers['x-forwarded-for'] = forwarded;
   const request = new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
