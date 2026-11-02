@@ -1,19 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "thelingolegacyv-5",
+  "name": "thelingolegacyv-5-preview",
   "main": "worker.js",
   "compatibility_date": "2026-09-01",
-  "workers_dev": false,
-  "routes": [
-    {
-      "pattern": "thelingolegacy.com/*",
-      "zone_name": "thelingolegacy.com"
-    },
-    {
-      "pattern": "www.thelingolegacy.com/*",
-      "zone_name": "thelingolegacy.com"
-    }
-  ],
+  "workers_dev": true,
   "vars": {
     "CANONICAL_DOMAIN": "thelingolegacy.com",
     "PUBLIC_SITE_URL": "https://thelingolegacy.com",
@@ -25,12 +15,18 @@
     {
       "name": "BEACON_RATE_LIMITER",
       "namespace_id": "9101",
-      "simple": { "limit": 5, "period": 60 }
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
     },
     {
       "name": "ASK_RATE_LIMITER",
       "namespace_id": "9102",
-      "simple": { "limit": 20, "period": 60 }
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
     }
   ],
   "observability": {
