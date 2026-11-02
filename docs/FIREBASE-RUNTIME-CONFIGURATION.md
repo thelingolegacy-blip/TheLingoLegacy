@@ -35,7 +35,7 @@ Do not put the local file in the repository. Restrict Firebase API keys by appli
 
 The preview workflows add missing Web and Android platform scaffolding in the ephemeral CI workspace with `flutter create . --platforms=web,android`. This is build preparation, not a production deployment or a committed iOS project. iOS release builds still require a complete Xcode project, a macOS runner, signing assets, and App Store Connect acceptance. The current repository contains only iOS stub files; do not represent iOS as build-ready.
 
-The root `firebase.json` currently points Firebase Hosting at the repository root (`public: "."`). Do not run a Firebase Hosting deployment from this repository: that directory can expose repository documentation, scripts, and source files. Before any Hosting use, establish the intended Firebase site/project and replace the root with a dedicated, reviewed build-output directory. Cloudflare remains the canonical web delivery path.
+The branch-local `firebase.json` now limits Firebase Hosting to `build/web`, and `scripts/verify-firebase-hosting.mjs` fails closed unless that exact build-output directory and its `index.html` entrypoint exist. The Flutter integrity workflow runs this check after the web build. This narrows the publication boundary but does not authorize a Firebase Hosting deployment; establish the intended Firebase site/project and obtain separate release authorization before any Hosting use. Cloudflare remains the canonical web delivery path.
 
 ## Failure behavior
 
