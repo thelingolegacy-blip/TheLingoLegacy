@@ -5,6 +5,18 @@ on:
       - "studio-sites/**"
       - "worker.js"
       - "scripts/verify-studio-world-api.mjs"
+      - "scripts/verify-asklingo-contract.mjs"
+      - "scripts/verify-platform-surface-contract.mjs"
+      - "scripts/verify-release-acceptance.mjs"
+      - "scripts/test-verify-release-acceptance.mjs"
+      - "release/acceptance-gates.json"
+      - "platforms/**"
+      - "cloudflare/lingo-flagship-root.js"
+      - "cloudflare/wrangler.flagship-root.jsonc"
+      - "scripts/verify-flagship-root-contract.mjs"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - "pwa-register.js"
       - ".github/workflows/studio-static-validation.yml"
   push:
     branches:
@@ -36,3 +48,17 @@ jobs:
         run: node studio-sites/scripts/validate-world-matrix.mjs
       - name: Validate Cloudflare studio world API contract
         run: node scripts/verify-studio-world-api.mjs
+      - name: Test Worker rate limits and askLINGO readiness
+        run: node --test scripts/tests/worker-rate-limit.test.mjs
+      - name: Validate askLINGO assistant contract
+        run: node scripts/verify-asklingo-contract.mjs
+      - name: Validate multi-platform surface contract
+        run: node scripts/verify-platform-surface-contract.mjs
+      - name: Validate fail-closed release acceptance registry
+        run: node scripts/verify-release-acceptance.mjs
+      - name: Test release acceptance gate requirements
+        run: node --test scripts/test-verify-release-acceptance.mjs
+      - name: Validate exact-root flagship Worker contract
+        run: node scripts/verify-flagship-root-contract.mjs
+      - name: Check exact-root Worker JavaScript syntax
+        run: node --check cloudflare/lingo-flagship-root.js

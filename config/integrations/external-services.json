@@ -6,15 +6,75 @@
   "productionHost": "thelingolegacy.com",
   "productionPath": "GitHub Actions -> Cloudflare Worker -> static assets",
   "services": {
-    "appdeploy": { "role": "app-build-deploy-qa", "mutation": "gated" },
-    "github": { "role": "repository-ci-release-evidence", "mutation": "allowed", "production": "gated" },
-    "canva": { "role": "brand-design", "mutation": "authorized-designs-only" },
-    "figma": { "role": "product-design-system", "mutation": "authorized-files-only" },
-    "adobe": { "role": "creative-assets", "mutation": "explicit-workflow-only" },
-    "dataAnalytics": { "role": "telemetry-and-operational-analysis", "mutation": "measured-data-only" },
-    "gameStudio": { "role": "game-design-assets-builds-playtest", "mutation": "release-gated" },
-    "deepResearch": { "role": "evidence-and-research", "mutation": "read-and-synthesis" },
-    "clinicalTrialsGov": { "role": "public-clinical-trial-registry-research", "mutation": "read-only" }
+    "appdeploy": {
+      "role": "app-build-deploy-qa",
+      "mutation": "gated"
+    },
+    "github": {
+      "role": "repository-ci-release-evidence",
+      "mutation": "allowed",
+      "production": "gated"
+    },
+    "canva": {
+      "role": "brand-design",
+      "mutation": "authorized-designs-only"
+    },
+    "figma": {
+      "role": "product-design-system",
+      "mutation": "authorized-files-only"
+    },
+    "adobe": {
+      "role": "creative-assets",
+      "mutation": "explicit-workflow-only"
+    },
+    "dataAnalytics": {
+      "role": "telemetry-and-operational-analysis",
+      "mutation": "measured-data-only"
+    },
+    "gameStudio": {
+      "role": "game-design-assets-builds-playtest",
+      "mutation": "release-gated"
+    },
+    "deepResearch": {
+      "role": "evidence-and-research",
+      "mutation": "read-and-synthesis"
+    },
+    "clinicalTrialsGov": {
+      "role": "public-clinical-trial-registry-research",
+      "mutation": "read-only"
+    },
+    "cloudflare": {
+      "role": "production-edge-workers-pages-dns-security",
+      "mutation": "gated",
+      "production": "protected"
+    },
+    "firebase": {
+      "role": "mobile-identity-and-application-services",
+      "mutation": "staging-first",
+      "production": "unverified"
+    },
+    "gitlab": {
+      "role": "secondary-mirror-and-ci",
+      "mutation": "read-only-until-reconciled"
+    },
+    "appleAppStoreConnect": {
+      "role": "ios-testflight-and-store-distribution",
+      "mutation": "not-connected"
+    },
+    "googlePlayConsole": {
+      "role": "android-internal-testing-and-store-distribution",
+      "mutation": "not-connected"
+    },
+    "stripe": {
+      "role": "external-payment-provider",
+      "mutation": "disabled",
+      "production": "blocked"
+    },
+    "workersAI": {
+      "role": "governed-inference",
+      "mutation": "disabled",
+      "production": "blocked"
+    }
   },
   "prohibitions": [
     "no-secret-values-in-source",
@@ -27,7 +87,13 @@
   "runnerGate": {
     "required": true,
     "runnerLabel": "ubuntu-latest",
-    "requires": ["runner_id", "runner_name", "executable_step", "step_execution", "step_logs"]
+    "requires": [
+      "runner_id",
+      "runner_name",
+      "executable_step",
+      "step_execution",
+      "step_logs"
+    ]
   },
   "currentAuthority": {
     "runnerGate": "FAIL",

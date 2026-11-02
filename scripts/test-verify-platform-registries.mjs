@@ -52,6 +52,15 @@ test('non-array engine list fails with a clear validation error', (t) => {
   assert.doesNotMatch(result.stderr, /TypeError|not iterable/);
 });
 
+test('enabled world fails closed before activation', (t) => {
+  const worlds = worldIds.map((id) => ({ id, engine: 'lingoworld-engine', state: id === 'money-mile' ? 'active' : 'staged', enabled: id === 'money-mile', assetNamespace: 'worlds/' + id, accessPolicy: 'feature-flag' }));
+  const root = makeRoot({ worlds });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must remain staged and disabled/);
+});
+
 test('unknown world engine reference fails closed', (t) => {
   const worlds = worldIds.map((id) => ({ id, engine: 'missing-engine', state: 'staged', enabled: false, assetNamespace: 'worlds/' + id, accessPolicy: 'feature-flag' }));
   const root = makeRoot({ worlds });

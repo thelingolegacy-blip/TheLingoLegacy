@@ -5,10 +5,11 @@
   "product": {
     "name": "The Lingo Legacy",
     "tagline": "Loyalty. Legacy. Language.",
-    "theme": "industrial-noir",
+    "theme": "crimson-smoke-enterprise",
     "accentColors": [
-      "gold",
-      "royal-purple"
+      "crimson-red",
+      "white",
+      "smoke-gray"
     ],
     "canonicalNaming": "LINGO + lowercase product/service"
   },
@@ -35,7 +36,14 @@
     "oasisStore": "/studio-sites/games/doughboys-oasis-store.html",
     "oasis856Region": "/studio-sites/games/doughboys-oasis-856-region.html",
     "doughboysOasisModePlatformHub": "/studio-sites/games/doughboys-oasis-mode-platform-hub.html",
-    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html"
+    "doughboysOasisLifeLegacyLab": "/studio-sites/games/doughboys-oasis-life-legacy-lab.html",
+    "virtualLibrary": "/studio-sites/virtual-library/",
+    "virtualMusicStudio": "/studio-sites/virtual-music-studio/",
+    "loyaltyLaneApparel": "/studio-sites/loyalty-lane-apparel/",
+    "loyaltyLaneDesigns": "/studio-sites/loyalty-lane-designs/",
+    "loyaltyLaneCycle": "/studio-sites/loyalty-lane-cycle/",
+    "kottonsCode": "/studio-sites/kottons-code/",
+    "operations": "/studio-sites/operations/"
   },
   "services": {
     "identity": {
@@ -77,6 +85,28 @@
     "api": {
       "mode": "design-only-not-provisioned",
       "edgeWorkerConfigured": false
+    },
+    "assistant": {
+      "name": "askLINGO",
+      "mode": "guided-fallback",
+      "aiInferenceEnabled": false,
+      "requiresExplicitAIApproval": true,
+      "writeAccess": false,
+      "accountAccess": false
+    },
+    "agents": {
+      "catalog": [
+        "LINGOassist",
+        "LINGOsisters",
+        "LINGOsystem",
+        "SHIELDS",
+        "NEXUS",
+        "VOT-NEXT"
+      ],
+      "autonomousExecution": false,
+      "backgroundWorkers": false,
+      "writeScopes": [],
+      "requiresApproval": true
     }
   },
   "gates": {
@@ -108,6 +138,28 @@
       "canonicalHost": "GitHub",
       "gitLabMirror": "not-configured",
       "productionAuthority": "single-protected-release-pipeline"
+    }
+  },
+  "platforms": {
+    "web": {
+      "status": "preview-foundation",
+      "pwa": true
+    },
+    "android": {
+      "status": "preview-build-workflow",
+      "releaseSigning": "not-configured"
+    },
+    "ios": {
+      "status": "source-foundation",
+      "releaseSigning": "not-configured"
+    },
+    "webos": {
+      "status": "packaging-scaffold",
+      "storeSubmission": "not-configured"
+    },
+    "tizen": {
+      "status": "packaging-scaffold",
+      "storeSubmission": "not-configured"
     }
   }
 }
