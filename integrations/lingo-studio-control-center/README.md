@@ -47,7 +47,7 @@ Provide one reviewable integration contract for askLINGO, LINGOarts, Cloudflare,
 ## Current limitations
 
 - The AppDeploy daily free deployment allowance is below its 16-credit minimum; the platform reported deployment pause until 2026-11-03 00:00 UTC.
-- No Firebase connector or project mutation channel is available in this session. Firebase files are prepared for review only.
+- The Firebase plugin is available but not installed/connected in this session; no dedicated staging Firebase project has been confirmed. Firebase files are prepared for review only.
 - The askLINGO app's inspected backend currently exposes a health check and realtime subscription routes; no chat/MCP endpoint was verified.
 - A separate staging Worker was deployed and workers.dev enabled. No existing production Worker, DNS record, or zone route was changed. Runtime HTTP smoke verification remains pending.
 - All 16 registered AppDeploy surfaces currently report deployment ready and their latest status snapshots report zero frontend/network/backend errors; this is not independent HTTP health evidence or proof of 16 working micro-frontends.

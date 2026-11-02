@@ -29,11 +29,14 @@ for (const route of registry.routes) {
 assert.equal(manifest.server.endpointState, "NOT_CONFIGURED");
 assert.equal(manifest.governance.productionMutation, false);
 assert.ok(manifest.tools.some((tool) => tool.name === "lingo.tasks.create"));
-assert.match(worker, /request\.method !== "GET" && request\.method !== "HEAD"/);
-assert.match(worker, /Route not registered/);\nassert.match(worker, /const ENVIRONMENT = "staging"/);\nassert.match(worker, /ENVIRONMENT !== "staging"/);\nassert.match(worker, /routeCount:ROUTES\\.length/);\nassert.match(worker, /\\/healthz/);
+assert.match(worker, /request\.method!==\s*"GET"&&request\.method!==\s*"HEAD"/);
+assert.match(worker, /Route not registered/);
 assert.match(worker, /Protected application endpoints are not proxied/);
+assert.match(worker, /const ENVIRONMENT = "staging"/);
 assert.match(worker, /ENVIRONMENT !== "staging"/);
-assert.match(worker, /decodedPath\.startsWith/);
+assert.match(worker, /decoded\.startsWith/);
+assert.match(worker, /routeCount:ROUTES\.length/);
+assert.match(worker, /\/healthz/);
 assert.match(rules, /allow write: if false;/);
 assert.match(rules, /match \/\{document=\*\*\}/);
 assert.match(rules, /studioEvidenceReviews/);
