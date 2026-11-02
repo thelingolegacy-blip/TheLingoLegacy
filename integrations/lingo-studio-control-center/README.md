@@ -13,7 +13,7 @@ Provide one reviewable integration contract for askLINGO, LINGOarts, Cloudflare,
 - **Studio Control Center:** operator-facing orchestration and evidence review.
 - **askLINGO:** MCP/tool contract and ChatGPT Actions schema. The endpoint is intentionally marked unconfigured until a real authenticated service is deployed.
 - **LINGOarts:** creative asset and publishing workflow integration point; rights and publication approvals remain human gates.
-- **Cloudflare:** separate staging Worker deployed on workers.dev only; no production/zone route declarations. Worker is GET/HEAD-only, uses a 16-origin allowlist, and does not forward credentials.
+- **Cloudflare:** separate staging Worker deployed on workers.dev only; no production/zone route declarations. Worker is GET/HEAD-only, uses a 16-origin allowlist, does not forward credentials, and exposes /healthz/apps for a read-only HEAD probe of all registered origins.
 - **Firebase:** server-authoritative task/evidence functions and deny-by-default client writes. Rules/functions are templates and are not deployed.
 - **AppDeploy:** 16 existing application origins registered as staging surfaces; existing apps remain untouched.
 
