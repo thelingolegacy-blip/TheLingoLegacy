@@ -25,6 +25,18 @@ class ExecutionBoundaryTests(unittest.TestCase):
         report = MODULE.classify({}, {"jobs": [{"id": 2, "runner_id": 77, "runner_name": "hosted-linux"}]})
         self.assertEqual(report["execution_boundary"], "RUNNER_ASSIGNED")
 
+    def test_boolean_runner_id_is_not_an_integer_identity(self):
+        report = MODULE.classify({}, {"jobs": [{"id": 3, "runner_id": True, "runner_name": "hosted-linux"}]})
+        self.assertEqual(report["execution_boundary"], "JOB_EXISTS_RUNNER_UNASSIGNED")
+
+    def test_non_string_runner_name_is_rejected_as_identity(self):
+        report = MODULE.classify({}, {"jobs": [{"id": 4, "runner_id": 77, "runner_name": 123}]})
+        self.assertEqual(report["execution_boundary"], "JOB_EXISTS_RUNNER_UNASSIGNED")
+
+    def test_whitespace_runner_name_is_not_an_identity(self):
+        report = MODULE.classify({}, {"jobs": [{"id": 5, "runner_id": 77, "runner_name": "   "}]})
+        self.assertEqual(report["execution_boundary"], "JOB_EXISTS_RUNNER_UNASSIGNED")
+
     def test_missing_jobs_array_is_rejected(self):
         with self.assertRaises(ValueError):
             MODULE.classify({}, {})
