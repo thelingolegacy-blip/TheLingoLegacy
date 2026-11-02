@@ -54,7 +54,7 @@ jobs:
           } | tee g02-evidence/runner-identity.txt
 
           echo "G02_RUNNER_IDENTITY=PASS" | tee -a g02-evidence/runner-identity.txt
-          echo "G02_RUNNER_ASSIGNMENT=PASS" | tee -a g02-evidence/runner-identity.txt
+          echo "G02_RUNNER_LABEL_IDENTITY=PASS" | tee -a g02-evidence/runner-identity.txt
 
           # The inner Node diagnostic is deliberately bounded below the job-level
           # timeout. If Node stalls, the OS timeout kills it and the fallback
