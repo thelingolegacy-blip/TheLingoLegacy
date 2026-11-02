@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T04:39:00-05:00",
+  "generated_at": "2026-11-02",
   "scope": "Read-only cross-platform inventory plus isolated World Engine D1 schema creation",
   "render": {
     "workspace": "My Workspace",
@@ -34,7 +34,12 @@
     "kv_namespaces": 5,
     "queues": 2,
     "pages_projects": 3,
-    "r2": "not enabled; dashboard activation required",
+    "r2": {
+      "activation": "blocked",
+      "attempt": "API create bucket returned HTTP 403 / code 10042: enable R2 through Cloudflare Dashboard",
+      "bucket_created": false,
+      "billing_changed": false
+    },
     "two_factor_enforcement": false,
     "staging_worker": {
       "name": "lingo-world-engine-staging",
@@ -79,6 +84,23 @@
       "browser_check": "on",
       "security_level": "medium",
       "http3": "on"
+    },
+    "access_policy_review": {
+      "applications": 11,
+      "public_everyone_bypass_policies": 9,
+      "shared_policy_name": "Make this Worker public",
+      "all_workers_policy": true,
+      "status": "review required; no policy changed because public Worker intent and private route inventory are not confirmed"
+    },
+    "dns_validation": {
+      "zone_status": "active",
+      "apex_route": "thelingolegacy.com/* -> thelingolegacyv-5",
+      "root_route": "thelingolegacy.com/ -> lingo-flagship-root",
+      "www_route": "www.thelingolegacy.com/* -> thelingolegacyv-5",
+      "public_homepage": "HTTP content retrieved; candidate landing page served",
+      "apex_dns_target": "documentation-placeholder",
+      "health_endpoint": "not independently verified",
+      "origin_failover": "not established; Worker route currently intercepts site requests"
     }
   },
   "github": {
@@ -88,23 +110,92 @@
     "asset_bytes": 234706,
     "main_commit": "59af084f5784ac5649c5c48537572a3f870aa4c1",
     "preview_branch": "recovery/platform-ops-preview-2026-11-02",
-    "latest_pages_preview": "https://recovery-platform-ops-previe.lingo-legacy-github-integration-test.pages.dev"
+    "latest_pages_preview": "https://recovery-platform-ops-previe.lingo-legacy-github-integration-test.pages.dev",
+    "latest_runs": [
+      {
+        "id": 41422993354,
+        "workflow": "Platform operations preview validation",
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "id": 41422991844,
+        "workflow": "Lingo Legacy Static CI",
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "id": 41422989963,
+        "workflow": "Crimson Smoke UI — static validation",
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "id": 41422988479,
+        "workflow": "G02 Runner Image Build (no publish)",
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "id": 41422980251,
+        "workflow": "lingo-autorepair-deploy",
+        "conclusion": "failure",
+        "jobs": 0,
+        "artifacts": 0
+      }
+    ]
   },
   "firebase": {
-    "project": "lingo-legacy-production",
-    "options": "placeholder API keys and app IDs",
-    "hosting_public_dir": "build/web (source hardening candidate)"
+    "project_id": "lingo-legacy-production",
+    "actual_registration": "not independently verified; current options contain placeholders",
+    "hosting_public_dir": "build/web in PR #432 branch; main still uses repository root until merge",
+    "android_application_id": "com.thelingolegacy.app",
+    "android_google_services_file": "missing",
+    "android_release_signing": "debug signingConfig; not store-ready",
+    "ios_xcode_project": "stub only; no complete Runner project",
+    "ios_bundle_id": "com.thelingolegacy.app",
+    "app_store_connect": "not connected/verified",
+    "google_play_console": "not connected/verified",
+    "blocker": "Firebase project registration and platform-specific app configuration require authorized Firebase/Google account access"
   },
   "mobile_stores": {
     "app_store_connect": "not connected/verified",
-    "google_play_console": "not connected/verified"
+    "google_play_console": "not connected/verified",
+    "android_signing": "not configured",
+    "ios_signing": "not configured",
+    "package_id": "com.thelingolegacy.app",
+    "status": "preparation only; no store registration or publication"
   },
   "gitlab": {
-    "legacy_projects": [
+    "projects": [
       "zavionecook/FameMoneyFortune",
       "thatsmylingo/FameMoneyFortune"
     ],
-    "credential_exposure": "runner registration credential appeared in project metadata; rotate before use"
+    "owner_project_id": 75092923,
+    "owner_account": "zavionecook",
+    "account_two_factor_enabled": false,
+    "owner_project_direct_members": 1,
+    "latest_owner_pipeline": {
+      "id": 2928475549,
+      "status": "failed",
+      "created_at": "2026-10-08T23:13:41Z",
+      "started_at": null,
+      "jobs": 0
+    },
+    "latest_group_pipeline": {
+      "id": 2084502353,
+      "status": "failed",
+      "created_at": "2025-10-06T23:50:02Z",
+      "started_at": null,
+      "jobs": 0
+    },
+    "runner_credential_incident": "open; credential value not stored in this report",
+    "confidential_incident_issue": "https://gitlab.com/zavionecook/FameMoneyFortune/-/issues/2",
+    "rotation_status": "owner action required; connected GitLab actions do not expose project runner-token reset"
   },
   "appdeploy": {
     "apps": 15,
@@ -127,37 +218,55 @@
     "cloudflare": "Free Website plan",
     "paid_services": "not enabled"
   },
-  "production_boundary": "No production DNS, routes, Worker allocations, production D1 data, secrets, payments, or billing settings changed. New Render and Cloudflare resources remain isolated staging.",
+  "production_boundary": "No production DNS, routes, Worker allocations, production D1 data, secrets, payments, or billing settings changed. R2 bucket creation was blocked by account activation requirement. PR #432 remains draft and unmerged.",
   "security_findings": [
-    {
-      "id": "CF-IDENTITY-01",
-      "severity": "critical",
-      "status": "open",
-      "finding": "Only Cloudflare account member is Super Administrator and its 2FA enrollment is false; account-level enforcement control is not exposed by connected API."
-    },
-    {
-      "id": "CF-ACCESS-01",
-      "severity": "high",
-      "status": "open",
-      "finding": "9 Cloudflare Access bypass policies include everyone; one applies to All Workers. Confirm public-surface intent and narrow scope before changing."
-    },
-    {
-      "id": "CF-DNS-01",
-      "severity": "high",
-      "status": "open",
-      "finding": "Proxied apex A record points to documentation-only placeholder; production Worker route currently intercepts root traffic, but origin/failover behavior is unverified."
-    },
-    {
-      "id": "CF-DNS-02",
-      "severity": "medium",
-      "status": "open",
-      "finding": "admin, app and studio-preview CNAME records are DNS-only; studio-preview still targets Vercel DNS."
-    },
     {
       "id": "GL-CRED-01",
       "severity": "critical",
       "status": "owner_action_required",
-      "finding": "GitLab project metadata exposed a runner registration credential; revoke/rotate immediately and audit runner registrations."
+      "finding": "GitLab project runner registration credential was exposed in a private project metadata response. A confidential incident issue was created; reset/revoke the token and audit runner registrations before use."
+    },
+    {
+      "id": "GL-MFA-01",
+      "severity": "critical",
+      "status": "owner_action_required",
+      "finding": "Authenticated GitLab account reports two_factor_enabled=false. Enable account 2FA through GitLab security settings."
+    },
+    {
+      "id": "CF-IDENTITY-01",
+      "severity": "critical",
+      "status": "owner_action_required",
+      "finding": "Only Cloudflare account member is Super Administrator and MFA enrollment is false. Connected API does not expose the user's MFA enrollment action."
+    },
+    {
+      "id": "CF-ACCESS-01",
+      "severity": "high",
+      "status": "review_required",
+      "finding": "Nine Cloudflare Access policies bypass for Everyone across public Worker applications, including All Workers. Verify intended public exposure and isolate any private/admin endpoints before changing policy."
+    },
+    {
+      "id": "CF-DNS-01",
+      "severity": "medium",
+      "status": "partially_validated",
+      "finding": "Zone is active and apex homepage is served through existing Worker routes; apex A record is a documentation placeholder and origin/failover is not established."
+    },
+    {
+      "id": "CF-R2-01",
+      "severity": "medium",
+      "status": "owner_action_required",
+      "finding": "R2 bucket creation API returned 403 code 10042; R2 must first be enabled in Cloudflare Dashboard. No bucket or billing change was made."
+    },
+    {
+      "id": "FB-APP-01",
+      "severity": "high",
+      "status": "owner_action_required",
+      "finding": "Firebase options remain placeholders; Android google-services.json is missing; iOS Xcode project remains a stub."
+    },
+    {
+      "id": "STORE-01",
+      "severity": "high",
+      "status": "owner_action_required",
+      "finding": "App Store Connect and Google Play Console accounts are not connected or verified; Android/iOS signing is not configured."
     }
   ]
 }
