@@ -427,3 +427,31 @@ The user has explicitly requested production activation. Technical acceptance is
 8. Only then consider a separately scoped Cloudflare production promotion with rollback evidence.
 
 **No billing bypass is implemented or recommended.** Paid capabilities remain disabled; free-tier limits and provider terms still apply. No production routes, DNS, Worker allocations, secrets, databases, billing settings or release state were changed during this audit.
+
+
+## 12. Latest connected-account and source reconciliation — 2026-11-01
+
+### AppDeploy and domains
+- The connected AppDeploy account lists 15 existing apps; all 15 report deployed/ready. Status checks returned no backend errors. Historical frontend error entries remain on Jersey Shore: The Undead (CSS asset URL), Kotton's Code (script error), LINGO AI Sonic Boom (script error) and LINGO Travel (two script errors). Reproduce against the current stored snapshot before treating a historical error as current.
+- The Studio Hub domain instructions report that custom-domain serving requires AppDeploy Plus. The Master Project Plan already has seven domain registrations (apex, www, casino, crazyweasels, kottonscode, sonicboom, travel), all pending_dns. The AppDeploy proxy target is proxy-v2.appdeploy.ai. Existing Cloudflare production routes remain authoritative and untouched; do not point those hostnames to AppDeploy without a planned route migration and rollback.
+- No App Store Connect or Google Play Console integration was found in the searched plugin results. Store account access, developer registration, signing and publication remain external prerequisites.
+
+### Firebase and D1
+- .firebaserc currently names lingo-legacy-production; lib/firebase_options.dart contains placeholder platform app IDs/API keys. The existing Flutter verifier fails closed on those placeholders. Do not replace them with guessed values or commit private credentials.
+- The separate world-engine-db D1 database has no application tables. PR #416 now contains a local-first migration for world registry, immutable versions, rights-aware assets, internal KB source/document/chunk metadata, ingestion jobs, feature flags, idempotency, world events and append-only audit events. Publication triggers require cleared rights and an approver. This migration has not been applied to any remote D1 database.
+- PR #416 repairs the fconst syntax error in scripts/verify-platform-registries.mjs and adds a regression test rejecting premature world activation. The test has not executed.
+
+### Current PR ownership and overlaps
+- #414 owns the main-based Studio / LINGOslots world/game layer.
+- #415 owns the main-based Flutter world directory and Firebase Hosting/identity boundary.
+- #416 is explicitly stacked on #414. It overlaps #415 on Flutter entrypoint, preview workflow and askLINGO widget integration. Keep #416 stacked until the shared Flutter entrypoint/workflow is reconciled; do not merge #415 and #416 independently without conflict and behavior review.
+- #423 owns the Studio Operations Command Center UI/prototype. The new #416 operations matrix is a documentation/control-plane companion, not a replacement UI. Consolidate duplicated control requirements before implementation.
+- #428 owns the separate Asset Registry proposal; use its rights/provenance model rather than creating a second asset registry.
+- #424/#425/#431 remain the distinct G02 sentinel semantics, startup restoration and pre-job classifier lanes. Do not duplicate them in another repair branch.
+- #430 remains the canonical cross-stack recovery dossier.
+
+### Latest execution check
+PR #416 head e62d86a76684a1cbe71cfbfa30f632d8cf62c779 generated three GitHub Actions runs: Studio Preview Package 41380702848, Flutter Cross-Platform Preview Matrix 41380700496, and Studio Static Validation 41380701684. All three concluded startup_failure. Direct Jobs API and artifact queries returned empty arrays for all three. Therefore the migration, verifier repair, rate-limit tests, Flutter build and PWA tests have not been executed.
+
+### Current operational boundary
+No PR was merged; no remote D1 migration was applied; no AppDeploy app was redeployed; no App Store/Google Play account was connected; no DNS record, Cloudflare route, secret, payment, billing or production release setting was changed. The operations matrix and D1 migration are draft source artifacts only.
