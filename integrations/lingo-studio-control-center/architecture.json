@@ -4,7 +4,7 @@
   "environment": "staging",
   "status": "partially-deployed-staging",
   "controlPlane": {
-    "dashboard": "Existing AppDeploy LINGO Enterprise Control Center is deployed and ready; integration extension awaits AppDeploy daily quota reset.",
+    "dashboard": "Extend the existing LINGO Enterprise Control Center; do not create a duplicate. Deployment-specific AppDeploy preflight remains pending. Latest account overview reports 194.368 monthly credits available, but daily deployment eligibility has not been reconfirmed.",
     "governance": "fail-closed",
     "productionMutation": false
   },
@@ -110,7 +110,32 @@
       "runtimeSmokeTest": "not independently invoked from this session; public health probe endpoint deployed",
       "healthEndpoint": "/healthz/apps",
       "healthProbeMethod": "HEAD",
-      "versionId": "6827a64d53b64b9693fe89fb864ff4d9"
+      "versionId": "6827a64d53b64b9693fe89fb864ff4d9",
+      "deploymentHistory": [
+        {
+          "deploymentId": "3e86b188-1697-414c-b7bd-637e5eccdc5e",
+          "versionId": "6827a64d-53b6-4b96-93fe-89fb864ff4d9",
+          "trafficPercent": 100,
+          "state": "active"
+        },
+        {
+          "deploymentId": "7f4d6a26-3866-405c-9909-0b58693bd134",
+          "versionId": "69e9af5a-30e3-4abf-82ed-485f7c52e099",
+          "state": "historical"
+        },
+        {
+          "deploymentId": "5b3da71c-3b04-4758-bb3d-feb44d3b452b",
+          "versionId": "50fdc7c7-813b-47de-aa64-74d3c585350b",
+          "state": "historical"
+        },
+        {
+          "deploymentId": "fc5d79bb-712d-42ef-8ed0-1fd0788b1854",
+          "versionId": "048b74be-cb67-4099-983e-574d72153ab5",
+          "state": "historical"
+        }
+      ],
+      "unverifiedReportedVersionTag": "cbf77cdb34764bc282f235de0e8be6c8",
+      "unverifiedReportedVersionTagState": "not present in Cloudflare version-list response"
     },
     "appdeploy": {
       "existingApplications": 16,
@@ -119,28 +144,29 @@
       "latestStatusSnapshotsReportedNetworkErrors": 0,
       "latestStatusSnapshotsReportedBackendErrors": 0,
       "directHttpHealthChecks": "pending",
-      "dailyQuotaReset": "2026-11-03T00:00:00Z"
+      "monthlyCreditsAvailableAtLastAccountRead": 194.368329855,
+      "deploymentPreflight": "not-rechecked-after-daily-reset"
     },
     "githubActions": {
-      "latestCommit": "eb53a4c283adc83fd16673c7d221362c8c248267",
+      "latestCommit": "72783a4232b047a1561848ac1deddde93b1e2f7f",
       "runs": [
         {
-          "id": 41541387681,
+          "id": 41541831211,
           "name": "Lingo Legacy Static CI",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
         },
         {
-          "id": 41541385229,
-          "name": "Crimson Smoke UI static validation",
+          "id": 41541828855,
+          "name": "G02 Runner Image Build (no publish)",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
         },
         {
-          "id": 41541386429,
-          "name": "G02 Runner Image Build (no publish)",
+          "id": 41541827404,
+          "name": "Crimson Smoke UI — static validation",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
