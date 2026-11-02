@@ -20,3 +20,8 @@ Cloudflare Workers AI binding documentation: https://developers.cloudflare.com/w
 
 ## Not included
 This assistant does not have GitHub write access, deployment authority, store credentials, payment authority, user-account access, or background autonomy. Future agent tools must be separately permissioned, audited, rate-limited, and approved before they can execute mutations.
+
+
+## Deployment boundary
+
+The root `wrangler.jsonc` in this branch is preview-only: `thelingolegacyv-5-preview`, `workers_dev: true`, and no production routes. The production Worker name and apex/www routes must never be inherited by a feature branch. The static asset exclusion gate in PR #419 is a prerequisite before deploying this preview because the asset directory is the repository root. No production route or Worker is changed by this source update.
