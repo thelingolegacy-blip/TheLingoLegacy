@@ -331,3 +331,6 @@ The latest Actions runs associated with the corrected #424 head were:
 - Lingo Legacy Static CI: run 41378551574
 
 All three concluded `startup_failure`; direct Jobs API and artifact inventory checks returned zero jobs and zero artifacts for each. The unrelated Vercel status context was successful but is not GitHub Actions execution or Cloudflare production evidence. The new regression tests have not executed because the Actions jobs never initialized.
+
+
+Latest corrected #424 head `17b3e33d22dfb412eee1316b3869840587d55be` produced three more pre-job failures: Lingo Legacy Static CI run `41378785199`, Crimson Smoke UI run `41378784478`, and G02 Runner Image Build run `41378783600`. Each had `startup_failure`, zero jobs, and zero artifacts. The regression suite now contains nine cases, but none ran because no job initialized.
