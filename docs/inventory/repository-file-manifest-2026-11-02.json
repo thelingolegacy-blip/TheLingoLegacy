@@ -1,0 +1,3089 @@
+{
+  "generated_at": "2026-11-02",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "source_ref": "main",
+  "source_commit": "59af084f5784ac5649c5c48537572a3f870aa4c1",
+  "file_count": 513,
+  "asset_file_count": 51,
+  "asset_bytes": 234706,
+  "files": [
+    {
+      "path": ".assetsignore",
+      "sha": "5cf78ef4832a396f6a841b7666df7828b5be851f",
+      "size": 1191,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".circleci/config.yml",
+      "sha": "54f77490d8825be84da8f91de66250b9da4a857b",
+      "size": 1574,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".env.example",
+      "sha": "658202592b0d30f456d65d3a568bbc195ced74ab",
+      "size": 558,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".firebaserc",
+      "sha": "bccc7b25034bbd009cb477f80171b10e11efee76",
+      "size": 65,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/cache-policy.yml",
+      "sha": "95b784d9b90a2624c67219e71d794b589838eb72",
+      "size": 1384,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/actions-runner-smoke.yml",
+      "sha": "592fad612ecaaf8892af8242084cfab5dde2cf5f",
+      "size": 1315,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/ci-runner-observation.yml",
+      "sha": "e702407951393ea0a2c56dd4141b89304999de09",
+      "size": 4906,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/crimson-smoke-ui-validation.yml",
+      "sha": "c2cf5429f06683b2255d584e1b7aa04cd588660e",
+      "size": 2724,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/devops-foundation-validation.yml",
+      "sha": "4f43f6c9507e8037fc27ea51faa2a2e0c9bb189f",
+      "size": 3451,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/docker-image.yml",
+      "sha": "ba78885e646e4b05e12997a27feb0c0d11ce2321",
+      "size": 1383,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/flutter-firebase-integrity.yml",
+      "sha": "5bd261b25d859d78536d45dd398129e951cc4422",
+      "size": 1477,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-aws-sentinel.yml",
+      "sha": "5b5ebf6e955cda792732f7748a085ca4b38b1bd9",
+      "size": 5419,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-control-watch.yml",
+      "sha": "82604d402d6fbfc1f55d9269874a2da8f1a1ea18",
+      "size": 1674,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-fresh-assignment-probe.yml",
+      "sha": "733345f1b0da65894abd8a206be2ddb1a052d797",
+      "size": 657,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-isolated-staging-sentinel.yml",
+      "sha": "913816ac7ca8084dd7b12caffba5d6d390fcef9d",
+      "size": 3401,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-qualified-evidence-probe.yml",
+      "sha": "a553d45cfcdc96d63758c407ac0eef51ee404550",
+      "size": 2740,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-run-wrapper.yml",
+      "sha": "9803f70cd3af03075c5756f5e152f1de3d2fdc9c",
+      "size": 6576,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/g02-sentinel.yml",
+      "sha": "a28ad6f548398bf0c31455cb3a3357ecbd3604ac",
+      "size": 2874,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/jekyll-docker.yml",
+      "sha": "f5b1aaf16ee5a113fc724509f32a9a6076b72314",
+      "size": 4174,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/lingo-autorepair-deploy.yml",
+      "sha": "84c07439813a7fddc6e648f14cd398ed1fb15eb5",
+      "size": 6212,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/production-promotion.yml",
+      "sha": "e2a13ae440f0b3acf46bb945a68574210d903794",
+      "size": 7950,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/recovery-foundation.yml",
+      "sha": "abf87bf8720ca226e5aacd5e79f424146aa7f329",
+      "size": 3687,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/runner-dispatch-diagnostic.yml",
+      "sha": "0fa365b5236c6755107b6cca0faac412c753f135",
+      "size": 3065,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/runner-self-hosted-g02.yml",
+      "sha": "8e1a31bea8cc4515d59104ffc6605d6ffc2dd50d",
+      "size": 4652,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/sentinel-check.yml",
+      "sha": "77c438b26934eeaacbec6927555f0ed30a706d41",
+      "size": 2724,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/studio-preview-package.yml",
+      "sha": "bed5b86d3c03e0595ce2f049ca87dbbfd05d3945",
+      "size": 1410,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/studio-sandbox-guard.yml",
+      "sha": "e1b5ec222307914ffdc43ac9fa24a0e9d63bb187",
+      "size": 805,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/studio-static-validation.yml",
+      "sha": "06520e038b2ed962c386ad0c76322d90cfa11103",
+      "size": 876,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/studio-surface-integrity.yml",
+      "sha": "a69aa4608dbdfe9556f2190a9f86bc335502ded8",
+      "size": 1831,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".github/workflows/tooling-validation.yml",
+      "sha": "e6c3aecdcc34cf0c875439e2234b1cb3663db265",
+      "size": 3284,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".gitignore",
+      "sha": "a011b106ecb78d5fa8888ee1ff0254a48a76c257",
+      "size": 77,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "sha": "d780ad38bd7351994360a401a125fa241f62e86e",
+      "size": 933,
+      "category": "source_or_document"
+    },
+    {
+      "path": ".yamllint",
+      "sha": "40e3735696abbea8683c02ab77b6d410e9197a1c",
+      "size": 167,
+      "category": "source_or_document"
+    },
+    {
+      "path": "404.html",
+      "sha": "9ee2e21c06a37988669d3b1a347e3619f03770dd",
+      "size": 2311,
+      "category": "source_or_document"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha": "bafd4317f417227911cf9bf79e9d453de5ab57a5",
+      "size": 7221,
+      "category": "source_or_document"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha": "4054c0fed190e969cfca613b141be1d9bbd8c29f",
+      "size": 1610,
+      "category": "source_or_document"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha": "91e68b8ab64dd4375d33910f8a266232cbf7a4b9",
+      "size": 1023,
+      "category": "source_or_document"
+    },
+    {
+      "path": "Jenkinsfile",
+      "sha": "3ded16fb723bc1cf76febbf9805424429caf9fc1",
+      "size": 2894,
+      "category": "source_or_document"
+    },
+    {
+      "path": "README.md",
+      "sha": "5e54a76cde14f5ce831cf4c672b28c066a58191b",
+      "size": 3470,
+      "category": "source_or_document"
+    },
+    {
+      "path": "SYSTEM-ACTIVATION-AUTHORITY.md",
+      "sha": "254fce42d3622ca46fe2991b90bfec2c6e953592",
+      "size": 11672,
+      "category": "source_or_document"
+    },
+    {
+      "path": "_headers",
+      "sha": "ce1896010635031406d1fbc7454075687ea402fb",
+      "size": 635,
+      "category": "source_or_document"
+    },
+    {
+      "path": "_redirects",
+      "sha": "2ab32efc269e554d797a7eb25a90b1801fbf4251",
+      "size": 36,
+      "category": "source_or_document"
+    },
+    {
+      "path": "account/index.html",
+      "sha": "da85ed90e78d4eebafac6e2fbcb744f4da6d9eb3",
+      "size": 2282,
+      "category": "source_or_document"
+    },
+    {
+      "path": "admin-command-center/index.html",
+      "sha": "5b46c62c34911a1682cfa9c2fb4971cd78b0f220",
+      "size": 21636,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ai/index.html",
+      "sha": "0df2ac4c830eb52e7c8fdc091ff3a3f802e777af",
+      "size": 2048,
+      "category": "source_or_document"
+    },
+    {
+      "path": "android/app/build.gradle",
+      "sha": "9270e6b2a61f0d6a23fc17b4727b8d3cf0fbbb48",
+      "size": 292,
+      "category": "source_or_document"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "sha": "35b68cfa956c228f81a280a48bbee60c6dfdb90b",
+      "size": 1195,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ansible/playbooks/read-only-diagnostics.yml",
+      "sha": "cf2c3aea96c0ce71261a96feceefd183abfc4432",
+      "size": 734,
+      "category": "source_or_document"
+    },
+    {
+      "path": "app/index.html",
+      "sha": "9c1818a7042217dd81838271fccf61fa26945025",
+      "size": 27564,
+      "category": "source_or_document"
+    },
+    {
+      "path": "apple-touch-icon-precomposed.png",
+      "sha": "c40f84bb3db96908914a950456cfe43dfb8f4f2e",
+      "size": 1582,
+      "category": "source_or_document"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "sha": "c40f84bb3db96908914a950456cfe43dfb8f4f2e",
+      "size": 1582,
+      "category": "source_or_document"
+    },
+    {
+      "path": "asset-request-queue/index.html",
+      "sha": "bfe225adac237000a83b8f173d4322e424b081ea",
+      "size": 1737,
+      "category": "source_or_document"
+    },
+    {
+      "path": "assets/beacon-text-alerts.js",
+      "sha": "8f625f263d6c36b0398467f938e8cc334fc26633",
+      "size": 1493,
+      "category": "asset"
+    },
+    {
+      "path": "assets/crimson-smoke.css",
+      "sha": "8354fd7a63594de7fe7ce47f78c79b8b0357547d",
+      "size": 4411,
+      "category": "asset"
+    },
+    {
+      "path": "assets/crimson-smoke.js",
+      "sha": "e7cf11467dfcbbb0c223668daacf872395b08804",
+      "size": 2222,
+      "category": "asset"
+    },
+    {
+      "path": "assets/facebook-banner.svg",
+      "sha": "223228857d060065c2feda844bfabf52d75cc479",
+      "size": 855,
+      "category": "asset"
+    },
+    {
+      "path": "assets/hq-studio.css",
+      "sha": "e581f80bbe94e078cc82d2c09a251fd5be925951",
+      "size": 7795,
+      "category": "asset"
+    },
+    {
+      "path": "assets/index.html",
+      "sha": "a46155c50691a653036c8c3fc7cef9effd807ce5",
+      "size": 19892,
+      "category": "asset"
+    },
+    {
+      "path": "assets/instagram-post.svg",
+      "sha": "bec91b558482bb78e68fa3a1eab419644efa14ae",
+      "size": 706,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-crimson-studio.css",
+      "sha": "1366b5a78901703f757315e2f8b46998312c196b",
+      "size": 3327,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-design-tokens.css",
+      "sha": "5669fa0a6ac248a38e98ded5f0788682b5da799e",
+      "size": 3124,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-legacy-crimson-mark.svg",
+      "sha": "a03e24660d719b16de63542fa6a184ec03310a97",
+      "size": 657,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-os.css",
+      "sha": "860b5b204a6806a99eee765bb2aa2eb89494e2af",
+      "size": 29668,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-os.js",
+      "sha": "aca64a897a5ed86da7059363316b4fe314b0365a",
+      "size": 23600,
+      "category": "asset"
+    },
+    {
+      "path": "assets/lingo-worlds.svg",
+      "sha": "005da709ffb3dec12f413da671d3389dde10d2c2",
+      "size": 1172,
+      "category": "asset"
+    },
+    {
+      "path": "assets/logo-horizontal.svg",
+      "sha": "bc72e35ecb8fd19750fcca1383525d85b299b5d9",
+      "size": 584,
+      "category": "asset"
+    },
+    {
+      "path": "assets/logo-main.svg",
+      "sha": "4eb7dad01d86220c9111de1cc1d7a5cc24fbc04d",
+      "size": 550,
+      "category": "asset"
+    },
+    {
+      "path": "assets/logo-square.svg",
+      "sha": "c239d66a046086d63f4c7dfe12b3bc826978b0b1",
+      "size": 564,
+      "category": "asset"
+    },
+    {
+      "path": "assets/logo.svg",
+      "sha": "ea6cfb3fcf29189c105e80f2870f037ce12d1530",
+      "size": 258,
+      "category": "asset"
+    },
+    {
+      "path": "assets/premium-studio-refresh.css",
+      "sha": "487076fe479570837acc1b5c7aba88059c9b4f06",
+      "size": 15668,
+      "category": "asset"
+    },
+    {
+      "path": "assets/premium-studio-refresh.js",
+      "sha": "035bc3a63abcd61b5ceac74fec6c4f49114f2bda",
+      "size": 13652,
+      "category": "asset"
+    },
+    {
+      "path": "assets/stripe-checkout.js",
+      "sha": "3fa2b6f9abfa5d42e2af7f794a220485cf610096",
+      "size": 2238,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-grade.css",
+      "sha": "6e02bf612779554c92182ccbc467d3ae9b8fff08",
+      "size": 13604,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-grade.js",
+      "sha": "0256d88fd1a4dac5eb116ebd90f07f4666954b4f",
+      "size": 3180,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-production-landing.css",
+      "sha": "0a2e79af9c2ca20e2ce95c69f7c3aec98c91425d",
+      "size": 4472,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-ui-icons.svg",
+      "sha": "1037b9009fdd31fa9866bbccd244e6d1ff4bbfc7",
+      "size": 2157,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-ui-runtime.css",
+      "sha": "540c6efe157720652cc657624e5b607ffe4301ea",
+      "size": 3437,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-ui-runtime.js",
+      "sha": "88ee39a57163defdc8015b0744e9279f14d84fec",
+      "size": 4671,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio-version.css",
+      "sha": "de50183f4710d112d2497ee83fa1256f8c49ee62",
+      "size": 3849,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio/README.md",
+      "sha": "643f55bb3758dda5bbdb3d6c7c2d05f958b9e1e3",
+      "size": 812,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio/manifests/audio.json",
+      "sha": "2976619aef2c8e9964d97f293fcc5592459b48f6",
+      "size": 374,
+      "category": "asset"
+    },
+    {
+      "path": "assets/studio/manifests/runtime-media.json",
+      "sha": "ae2b9d3b094d1b066665516a6f7145f3d583e104",
+      "size": 514,
+      "category": "asset"
+    },
+    {
+      "path": "assets/sweepstakes-visual-system.css",
+      "sha": "914bde0641adfa401f5ea9ccb3849a5b9846dbd3",
+      "size": 19718,
+      "category": "asset"
+    },
+    {
+      "path": "assets/thats-my-lingo-mark.svg",
+      "sha": "331155b5606001978381558846da4d216ee13187",
+      "size": 1566,
+      "category": "asset"
+    },
+    {
+      "path": "assets/twitter-header.svg",
+      "sha": "4df8e88f20a828c391c628351ed5e0133b729a44",
+      "size": 748,
+      "category": "asset"
+    },
+    {
+      "path": "assets/unified-brand-system.css",
+      "sha": "d1ba6f01c2fc816d74540dc46f84fbda6f516472",
+      "size": 4067,
+      "category": "asset"
+    },
+    {
+      "path": "assets/vegas-studio.css",
+      "sha": "5a8505ca5153a7b46f5e3223537a4513247be421",
+      "size": 16135,
+      "category": "asset"
+    },
+    {
+      "path": "auth0-details/index.html",
+      "sha": "7a72c25c3bd0fcc5f8e917c6e5bf190575a423d3",
+      "size": 2411,
+      "category": "source_or_document"
+    },
+    {
+      "path": "auth0-implementation/index.html",
+      "sha": "70dc0aefbc88f205569d86ccc81b8b04c719d0ff",
+      "size": 3291,
+      "category": "source_or_document"
+    },
+    {
+      "path": "auto-racing-universe/index.html",
+      "sha": "8140ec8413d4e1e32d779aea840a5aabb0b04e1f",
+      "size": 8450,
+      "category": "source_or_document"
+    },
+    {
+      "path": "beta-support/index.html",
+      "sha": "45934ff4b77041581d2c4950aac2005cd2156e5b",
+      "size": 2026,
+      "category": "source_or_document"
+    },
+    {
+      "path": "bots/g02-evidence-triage.md",
+      "sha": "3647a60ff36224cf9806443823514035026795c0",
+      "size": 490,
+      "category": "source_or_document"
+    },
+    {
+      "path": "bots/g02-host-diagnostics.md",
+      "sha": "74f59b4ec9acbd845abf08ed6fcf9fc6ba5c7b4f",
+      "size": 650,
+      "category": "source_or_document"
+    },
+    {
+      "path": "bots/g02-independent-auditor.md",
+      "sha": "48bd74649b4acf70b56c07fcd183eda9404a7283",
+      "size": 515,
+      "category": "source_or_document"
+    },
+    {
+      "path": "bots/g02-workflow-repair.md",
+      "sha": "ac32eee9d03e119e462bb6d4e2c2889d7cb553aa",
+      "size": 474,
+      "category": "source_or_document"
+    },
+    {
+      "path": "casino-config/index.html",
+      "sha": "d3453344cf2b921eec550ac589d348aebadd1a44",
+      "size": 16307,
+      "category": "source_or_document"
+    },
+    {
+      "path": "casino-upgrade/index.html",
+      "sha": "259f0250d99a019e8acba48bfcd31fb051d9568b",
+      "size": 12781,
+      "category": "source_or_document"
+    },
+    {
+      "path": "casino/index.html",
+      "sha": "fdc6c73d4b13549129bc5b766efdfec58e105b9f",
+      "size": 40854,
+      "category": "source_or_document"
+    },
+    {
+      "path": "cloudflare/README.md",
+      "sha": "cd7e2c327172b5dd5c91fdd1797444f649c625b4",
+      "size": 478,
+      "category": "source_or_document"
+    },
+    {
+      "path": "cloudflare/studio-worker.js",
+      "sha": "fa03c39beda3420841e6c69cd16304426ea38dee",
+      "size": 6482,
+      "category": "source_or_document"
+    },
+    {
+      "path": "cloudflare/workers/lingo-legacy-router.js",
+      "sha": "bcea962a1abc9da16f6d1e1f3dc5c0aa69de5076",
+      "size": 1231,
+      "category": "source_or_document"
+    },
+    {
+      "path": "cloudflare/wrangler.toml",
+      "sha": "e0c8bf439b42894efd2d9f9604fd33db81bc84bd",
+      "size": 106,
+      "category": "source_or_document"
+    },
+    {
+      "path": "community-guidelines/index.html",
+      "sha": "a22943a3b0520e81a4eb70ed2b6d24e43cb4f533",
+      "size": 1852,
+      "category": "source_or_document"
+    },
+    {
+      "path": "community/index.html",
+      "sha": "51bf772d24362780d72becbbacc9fbdb1d68a7f1",
+      "size": 5214,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config.yaml",
+      "sha": "92857eb07af8965629ab8bb51b81712e845bdc10",
+      "size": 1907,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/assets/asset-registry.json",
+      "sha": "db5bceef15a7e158a557daef362dba4acbe5b874",
+      "size": 1360,
+      "category": "asset"
+    },
+    {
+      "path": "config/assets/media-pipeline-contract.json",
+      "sha": "ec04175bc330559f5edb74c341c0350a285e8e4d",
+      "size": 1967,
+      "category": "asset"
+    },
+    {
+      "path": "config/canon/canon-registry.json",
+      "sha": "0e991c036713479af67ebf49de9b3891b039d4e6",
+      "size": 1308,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/casino/master.json",
+      "sha": "25aef98beb98b7ff56e08133afc4e5738e11c830",
+      "size": 8398,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/design/design-tokens.json",
+      "sha": "28fcfcd44ff04496e65347c247608efdcac002b1",
+      "size": 1792,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/economy/monitoring-contracts.json",
+      "sha": "27e7151a645236606de33977afcae94cee33bb61",
+      "size": 7103,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/icons/icon-registry.json",
+      "sha": "03ab42733d840566e389d5108a7ac598471bfe2f",
+      "size": 854,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/integration/front-back-stack.json",
+      "sha": "a951eb5eef314ae75557c8548ef0f56ae8f23d40",
+      "size": 3851,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/integrations/external-services.json",
+      "sha": "4b38e0e99c2c28d00e9ff00c5d1049f4957eda23",
+      "size": 1706,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/lingo-master-control-matrix.json",
+      "sha": "c6fb6ba22c3b832a61bdd759ab3883e24ffb70c5",
+      "size": 6411,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/monetization/safety-os.json",
+      "sha": "e9b0bc06d8005480306503c3b7f19526fb851a18",
+      "size": 5071,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/payload/matrix.json",
+      "sha": "ed34bdfd4e9aad76414936f6874b60001ac0e33e",
+      "size": 6254,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/platform/engine-registry.json",
+      "sha": "aaad88e8c5a0404ac9df36fd3289864a495fd359",
+      "size": 2573,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/production.json",
+      "sha": "9ab6ecbfccb3a1c9991c0acc95aa7ed438a184cc",
+      "size": 665,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/production/env-contract.json",
+      "sha": "419cc1d12299b69ddd8ac12fff4f050d67433700",
+      "size": 1875,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/production/launch-foundation.json",
+      "sha": "1cf2446d9377eac0b135712576476db7633f6a32",
+      "size": 1174,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/release/gate-matrix.json",
+      "sha": "af453d15bda8399bdf16fda10157c55dc893bfd4",
+      "size": 537,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/release/lingo-legacy-v1.0.0-rc.json",
+      "sha": "34f04ce8407a9fba007bb72871571bdb4a8cb800",
+      "size": 3659,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/release/promotion-policy.json",
+      "sha": "f650b4003c7cca1d285e3137976fcdf80d6372e8",
+      "size": 814,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/release/rollback-manifest.json",
+      "sha": "34d886f4e2a3960d0b9c5dcbd063e8f2e79f0323",
+      "size": 288,
+      "category": "source_or_document"
+    },
+    {
+      "path": "config/worlds/world-registry.json",
+      "sha": "086f84cfeaecb6c31f71333d723e892b468d03c6",
+      "size": 2422,
+      "category": "source_or_document"
+    },
+    {
+      "path": "contact/index.html",
+      "sha": "25f5b361787a2a0f2ad732410b908a7b3d24f1d8",
+      "size": 4418,
+      "category": "source_or_document"
+    },
+    {
+      "path": "content-approvals/index.html",
+      "sha": "808962528b32c26bff8318ebbcec35a31af27dc5",
+      "size": 1876,
+      "category": "source_or_document"
+    },
+    {
+      "path": "content-calendar/index.html",
+      "sha": "350440c0b808cbe52e9b8687b998af2d55d0aadb",
+      "size": 2236,
+      "category": "source_or_document"
+    },
+    {
+      "path": "creator-outreach/index.html",
+      "sha": "1e55223da8764145a53f7bf6234b469d3102902f",
+      "size": 1886,
+      "category": "source_or_document"
+    },
+    {
+      "path": "daily-standup/index.html",
+      "sha": "fef830f70a43c3aec106543e731ab59f4ab3b51b",
+      "size": 1709,
+      "category": "source_or_document"
+    },
+    {
+      "path": "dashboard-integration-links/index.html",
+      "sha": "72c9e666daf24f5ffc9d246adc5d6781f3b7929a",
+      "size": 3555,
+      "category": "source_or_document"
+    },
+    {
+      "path": "day-one-monitoring/index.html",
+      "sha": "862402fe1018820ee60a76c63611321b27df7a18",
+      "size": 2529,
+      "category": "source_or_document"
+    },
+    {
+      "path": "design-previews/universe-hub/README.md",
+      "sha": "39b89979481c21bf0b2b05a2c4a48f7e479f0535",
+      "size": 1228,
+      "category": "source_or_document"
+    },
+    {
+      "path": "design-previews/universe-hub/index.html",
+      "sha": "2e5a04c1ec4027380d22d591fca6f76b27d56548",
+      "size": 19780,
+      "category": "source_or_document"
+    },
+    {
+      "path": "diagnostics/g02/README.md",
+      "sha": "afb4bdd4f199e342d84ef06650cd642760c8d9a6",
+      "size": 2242,
+      "category": "source_or_document"
+    },
+    {
+      "path": "diagnostics/g02/index.html",
+      "sha": "c55ea695c218aeb19377e6f04e51031a5c020788",
+      "size": 13466,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docker/README.md",
+      "sha": "26639132930f9e40e4a0319f5aa022b8291d14de",
+      "size": 947,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/AGENT-LEADERSHIP-GOVERNANCE.md",
+      "sha": "9d47c9b3f975bef7d31b1f06a152cd1a7afc7b69",
+      "size": 24876,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/ASKLINGO-AI-INTEGRATION.md",
+      "sha": "5c29f83b0801cffed55746abd6ac0cfe3e1f72dc",
+      "size": 5604,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/COMPLETE-VISUAL-AUDIO-ASSET-GUIDE.md",
+      "sha": "7d9140445295c455631ce2a473d6779600ef3923",
+      "size": 15901,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/FLUTTER-FIREBASE-CLOUDFLARE-ROADMAP.md",
+      "sha": "21c58cc93680473ae0b5a163998839149fab028b",
+      "size": 3428,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/FRONTEND-BACKEND-ARCHITECTURE.md",
+      "sha": "69a00bc9072ef2e9de399f9927dc16712d285a6b",
+      "size": 4043,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/G02-ACCEPTANCE-CONTRACT.md",
+      "sha": "de452005f2496ce45c20fbd3d3034fa60b27e9d4",
+      "size": 8827,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/G02-AWS-ADVANCEMENT.md",
+      "sha": "9db9fe9fe1efeb81d571297ac33c9c493a6e3a90",
+      "size": 1612,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/G02-SELF-HOSTED-RUNNER-RECOVERY.md",
+      "sha": "c22343bcc798e292ead4339101bffdcf04b70d35",
+      "size": 8143,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/GAME-BUILD-LEDGER.md",
+      "sha": "d415aaa2241cdbee5d256a1e4ea1a192c30e1a5c",
+      "size": 19824,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/MASTER_PRODUCTION_CONTEXT_2026-08-17.md",
+      "sha": "c2c0f3d4864f9777d0fea734ca9cc4d1e70b4c32",
+      "size": 2595,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/RELEASE-AND-CREATIVE-EVIDENCE-POLICY.md",
+      "sha": "ba4b5ebdbb1898f240de53faf2ae597ac5e75ebc",
+      "size": 10828,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/UNIFIED-BRAND-FRAMEWORK.md",
+      "sha": "f7b55ae5721372579f9d4036ea6aefc410a56e3d",
+      "size": 13326,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/agent-cost-guardrails.md",
+      "sha": "bd3ebe45d06b6438a1dc4b8c90de1b7d7e5ea5e7",
+      "size": 1846,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/architecture/CI-LOCALITY-AND-INTEGRITY-ADR-001.md",
+      "sha": "8d3985af7a0842ebdbc4fb489c9faadc6d9bbb1b",
+      "size": 9186,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/architecture/DEVOPS-FOUNDATION.md",
+      "sha": "465e42a728ee0f79515fc9d2be6fa7c6481fbfb9",
+      "size": 2705,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/architecture/alternate-routes-tunnels-subscription-wave-plan.md",
+      "sha": "4dec6532271211f55c9aeee904a4307e57bcd6c5",
+      "size": 8447,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/architecture/lingo-assistant-recovery-framework.md",
+      "sha": "f0be3e7c73e854a0540331db5eb204ebcec64f13",
+      "size": 6898,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/audits/2026-10-16-platform-infrastructure-audit.md",
+      "sha": "dbcca6a738adc7665fd61b863b04397db1be4fba",
+      "size": 12443,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/blueprint-studio-phase-2.md",
+      "sha": "63145fb242c3edf9858a9528f19276029f1d75c2",
+      "size": 3450,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/canon-asset-registry.md",
+      "sha": "d0d177111711f3525d9db941aa9de6d75d5a5493",
+      "size": 449,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/constellation-three-way-splitter-recovery-control-plane-2026-09.md",
+      "sha": "db04c934a6a36a966fe9e2a365c2afb66a63ec72",
+      "size": 10027,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/creative-experience-upgrade.md",
+      "sha": "4011479a1339bce4eb0c600a898410edcdb90229",
+      "size": 2069,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/deploy.md",
+      "sha": "84a316089eefc0ad3ba3fed2a745f5a282ffc6b2",
+      "size": 1159,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/dynamic-runtime-architecture.md",
+      "sha": "1f4f2febc73135e69f5b1d2259ac7536bb722d19",
+      "size": 1297,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/environment-hard-lock.md",
+      "sha": "4b37ea246240af36e9a6db1a0b34771e29648ed9",
+      "size": 1008,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/external-integration-operating-system.md",
+      "sha": "1046ae40fa1de280182ea5cc58e26c375c7cb127",
+      "size": 4575,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/flutter-firebase-cloudflare-master-platform-upgrade-2026-09.md",
+      "sha": "93c4871dfa65c24e1190b93c82766a73cb952d52",
+      "size": 16108,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/front-back-integration-os.md",
+      "sha": "a63eb2ca7e73ea68cfad5500e2713da76e913781",
+      "size": 3146,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/google-ai-studio-lingo-workstream.md",
+      "sha": "546b49172cd22f5c8199737b62aa21dfe314533f",
+      "size": 8796,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/kottons-code-digital-system.md",
+      "sha": "76603596daad68e387ad36b8d0f375522cee78f4",
+      "size": 2897,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/launch-operations-guardrails.md",
+      "sha": "a965c33b004704367956a453e7a9bab780043773",
+      "size": 1389,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-casino-config-system.md",
+      "sha": "5b24d1afe4d4e996f16507ad28ce636497ac7f3b",
+      "size": 3213,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-casino-upgrade-package.md",
+      "sha": "fce865bc666000804ac646da686b60136f03437d",
+      "size": 2654,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-economy-monitoring-master-spec.md",
+      "sha": "6b31a20493389cc59ae62371d0aa74416e2f842f",
+      "size": 9889,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-external-integration-contract.md",
+      "sha": "c601e05cc55c6c250ae920a9a76def82b3aa0f90",
+      "size": 3958,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-github-appdeploy-master-build-system-upgrade-2026-09.md",
+      "sha": "44f464ed07bb11d4afcc5f97390052909be08b58",
+      "size": 7301,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-master-control-matrix.md",
+      "sha": "e145fb692b8be3c15dd7c9c46debf827b2b3a2d6",
+      "size": 2130,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-monetization-safety-os.md",
+      "sha": "b99043e2752e04d41aee50a8a7f237a94d0b5581",
+      "size": 2283,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-payload-url-matrix.md",
+      "sha": "3aeac9fa1b773c23a6e77d4ca16a2d78d16491ef",
+      "size": 1734,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/lingo-safety-core.md",
+      "sha": "17ce9878282dbb7cc2f94ab21d60838a9e8a6d98",
+      "size": 2365,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/operations/g02-two-sided-readiness.md",
+      "sha": "8b1d59e67fd561c8ca274a1e77149116acbbdcf4",
+      "size": 3276,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/operations/wave-0-github-actions-restriction-runner-eligibility-report.md",
+      "sha": "83c72b3b2fba31d2ee1d29f57d2ba879007e0efe",
+      "size": 9181,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/operations/wave-0-inventory-evidence-register.md",
+      "sha": "b0552ec1461dc392ccd100028c3b6120eaf4dc45",
+      "size": 9158,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/premium-production-layout-system.md",
+      "sha": "1d2b0c8680fad5595edcd441935902017394317c",
+      "size": 1460,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/production-launch-foundation.md",
+      "sha": "dde7d44127a517668d65ce9b154fc27838663de6",
+      "size": 1441,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/release-candidate-v1.md",
+      "sha": "5c290b548dff4943f509930c336f493f970e7b38",
+      "size": 307,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runbooks/G02-CANONICAL-RUNNER-RECOVERY.md",
+      "sha": "7bf5a884684b33eeceabfef81a3a2cb2bf455cd4",
+      "size": 3828,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runbooks/GITHUB-ACTIONS-CACHE-POLICY.md",
+      "sha": "49317299174274ca092773e93e2f33a0615fb6be",
+      "size": 9784,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runbooks/HASHICORP-VAULT-INTEGRATION.md",
+      "sha": "26721cba8fdcab107fbfd3b8124023be4749efcd",
+      "size": 909,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runbooks/SMART-CACHE-POLICY.md",
+      "sha": "665d6acdebd9502fa4b42be634d48725e76b09ad",
+      "size": 1535,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runbooks/deployment-roadmap.md",
+      "sha": "219d9bafb76803ea38e68b8a146d29186801bd52",
+      "size": 3261,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/runner-gate-next-check.md",
+      "sha": "98b6d9d10b2cef273159804187d5cc7b7a15c1e6",
+      "size": 582,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/specs/VECTOR_02_SETTLEMENT_SPEC.md",
+      "sha": "6d9e531cbb210fe191132edfc55c305b5a634e08",
+      "size": 6168,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/studio-release-system.md",
+      "sha": "bdef485affa029b3a3df21be45b34f7bbf456672",
+      "size": 2290,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/studio-safety-guardrails.md",
+      "sha": "3529f22c4326ef80ecd4a86492031fe8435fb04d",
+      "size": 1889,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/studio-stack-runtime-contract-2026-09.md",
+      "sha": "4bd3f5d887d2315406b888199f0b3b80eee3d4f0",
+      "size": 1429,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/studio-ui-cleanup-pass.md",
+      "sha": "610d708df0561b98a3fe583959fecae911f2319d",
+      "size": 1950,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/thats-my-lingo-design-system.md",
+      "sha": "921c9746dc86d27d66d820ff8c4e7bfb377907ca",
+      "size": 3388,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/thats-my-lingo-enterprise-foundation.md",
+      "sha": "920a296079fd53206f612e1fd473c92083027005",
+      "size": 3562,
+      "category": "source_or_document"
+    },
+    {
+      "path": "docs/thats-my-lingo-production-roadmap.md",
+      "sha": "ca8aec8253c8c0e3deb1e23a84c730c9781c118d",
+      "size": 2350,
+      "category": "source_or_document"
+    },
+    {
+      "path": "drop/index.html",
+      "sha": "7008478cfab919f1e7b5bc8e71f1bbdf394af1c0",
+      "size": 18890,
+      "category": "source_or_document"
+    },
+    {
+      "path": "economy-command-center/index.html",
+      "sha": "ea01a64e95f063fb8dcfc85c052fe15250fa3787",
+      "size": 13501,
+      "category": "source_or_document"
+    },
+    {
+      "path": "email-announcement/index.html",
+      "sha": "9886ea073f6cd785e885cdb2bb38092602af4860",
+      "size": 1888,
+      "category": "source_or_document"
+    },
+    {
+      "path": "exa-readiness/index.html",
+      "sha": "f4753e87859412995bfd46a63f5a2e47bad5927a",
+      "size": 2335,
+      "category": "source_or_document"
+    },
+    {
+      "path": "exact-dashboard-links/index.html",
+      "sha": "1a0c367473afc102ff400af4e36b7ac26cb35c8a",
+      "size": 3381,
+      "category": "source_or_document"
+    },
+    {
+      "path": "favicon.ico",
+      "sha": "1436a0a107871e1c1dad149d3c0797172c1ef181",
+      "size": 335,
+      "category": "source_or_document"
+    },
+    {
+      "path": "feedback-summary/index.html",
+      "sha": "7c717c3a8eeee2ba19205325da89ce99d1c0ec84",
+      "size": 1836,
+      "category": "source_or_document"
+    },
+    {
+      "path": "firebase-worker.js",
+      "sha": "bd602170366019a70f11950b2e5fa8148a12af1f",
+      "size": 2258,
+      "category": "source_or_document"
+    },
+    {
+      "path": "firebase.client.json",
+      "sha": "5a96733442158f55b023a2ae51a29b89e33ab7ed",
+      "size": 356,
+      "category": "source_or_document"
+    },
+    {
+      "path": "firebase.json",
+      "sha": "982714f06b24c99f7cdea0e5921f384e93024abd",
+      "size": 210,
+      "category": "source_or_document"
+    },
+    {
+      "path": "full-entity-simulcast/index.html",
+      "sha": "09e5ea81de4d336c4c80b253a03757efa04d0c4d",
+      "size": 18926,
+      "category": "source_or_document"
+    },
+    {
+      "path": "games/index.html",
+      "sha": "fa3179347605aba57852c5dce5793d15ea43a768",
+      "size": 4844,
+      "category": "source_or_document"
+    },
+    {
+      "path": "gateway-router.js",
+      "sha": "50d44b10c9dac5602135ff06eaef499480e3e699",
+      "size": 6153,
+      "category": "source_or_document"
+    },
+    {
+      "path": "healthz",
+      "sha": "9766475a4185a151dc9d56d614ffb9aaea3bfd42",
+      "size": 3,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/games.svg",
+      "sha": "91d7dbc9eb9f67c8210c2cc452a247eff495a419",
+      "size": 378,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/home.svg",
+      "sha": "236da2d6e7a8fad1ce2e98f872980cf531c45677",
+      "size": 337,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/profile.svg",
+      "sha": "28063d3630c82ae5902ccb042b0872ea153abcc2",
+      "size": 328,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/rewards.svg",
+      "sha": "1fe5147a0baca56dd025f1808811a11e85528b0c",
+      "size": 312,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/shop.svg",
+      "sha": "a8dd913462f7e8e19a70378c975c372fa9740b91",
+      "size": 409,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/studio.svg",
+      "sha": "79bfabeee965e65c921a95c93e982956e595063d",
+      "size": 394,
+      "category": "source_or_document"
+    },
+    {
+      "path": "icons/wallet.svg",
+      "sha": "709f113d36f36ee5a4bea59239b06adc6ae6d47c",
+      "size": 328,
+      "category": "source_or_document"
+    },
+    {
+      "path": "index.html",
+      "sha": "82ff2aba2ed9ed89e029a91690a5baaf15baa656",
+      "size": 61913,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/README.md",
+      "sha": "a4a0501c36a4e21d022aa7efcf8baa9f89b5179c",
+      "size": 1578,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/main.tf",
+      "sha": "6a2e5abeb6cc429dd3907646428fbd5c2f6389de",
+      "size": 2652,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/terraform.tfvars.example",
+      "sha": "d943aa497d5a5d92d8b0bbcc7f57495e20796292",
+      "size": 517,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/user-data.sh",
+      "sha": "3f8f1c1cb1df0dfb22c1210f48a507b055c99578",
+      "size": 380,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/variables.tf",
+      "sha": "eb9f29ab64839df9cefec10a6fd03cd02036b343",
+      "size": 1263,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/aws/g02-runner/versions.tf",
+      "sha": "468c349a038a6129c46470fa26d3bec076273213",
+      "size": 148,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/recovery/README.md",
+      "sha": "be6baec47b7d7fe349d8a8f9463c0c0e5eb5f4f9",
+      "size": 2191,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infra/recovery/lingo-g02-control-agent.js",
+      "sha": "2e1f117e62d529c502281497133c8c6bb412c55a",
+      "size": 3388,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infrastructure/terraform/README.md",
+      "sha": "c3839359173529168da0810fb8c29743d9fd8165",
+      "size": 821,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infrastructure/terraform/main.tf",
+      "sha": "9c28d8ae4c74c57fe8d40e927b93f9d32bc74200",
+      "size": 187,
+      "category": "source_or_document"
+    },
+    {
+      "path": "infrastructure/terraform/versions.tf",
+      "sha": "161fea1622bd653d632b8465d4388e859d826003",
+      "size": 55,
+      "category": "source_or_document"
+    },
+    {
+      "path": "installed-integrations/index.html",
+      "sha": "e8df69e50b72566e57ecfdaf355eccffc6702cb9",
+      "size": 3906,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-action-plan/index.html",
+      "sha": "f23254d1bfbdf8e2be42ea6c227966a2ed14f54e",
+      "size": 4296,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-configurations/index.html",
+      "sha": "51c11eadaf65c1b76bfd7725d1c692b2381ee0cf",
+      "size": 3439,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-dashboard-snapshot/index.html",
+      "sha": "ba638f93108a45fcee68a8ae3a6a8f7215440b60",
+      "size": 3366,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-decision-queue/index.html",
+      "sha": "7b0caff8b2fdc99d9ce03a38f6859d62794f7f61",
+      "size": 3600,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-ids-register/index.html",
+      "sha": "f15b97752de8022b923b2cd7378762edd25d6d17",
+      "size": 3496,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-links-register/index.html",
+      "sha": "e229a116b06b55edab682a4d7ea9a73e1d92e134",
+      "size": 3632,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-management/index.html",
+      "sha": "ccec032b2a865f0227e946966ff671719a7470f7",
+      "size": 3718,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-os/index.html",
+      "sha": "ab2a9f88e33b9c36e21fecceba4244c79358c21b",
+      "size": 12899,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-qa-matrix/index.html",
+      "sha": "d43575f6dd9d1beec1f362505eb4e866df305544",
+      "size": 3697,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integration-resource-assignment/index.html",
+      "sha": "5b09e79e3c0a7b027ae14e1c0e90fa9195c031e6",
+      "size": 4194,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integrations-console-checklist/index.html",
+      "sha": "d8beb9a8ee34578626efeed1f7b3cc694de17d1b",
+      "size": 3783,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integrations-dashboard-status/index.html",
+      "sha": "63bdc2806fab0808fa75722c2fd3390520a81768",
+      "size": 3626,
+      "category": "source_or_document"
+    },
+    {
+      "path": "integrations-readiness/index.html",
+      "sha": "69cf3251fcd9b9a74a24005d93e2ced896a785e2",
+      "size": 4486,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/project.pbxproj.stub",
+      "sha": "e72b21f03d24d28a11809b1481f33edf1c13fadc",
+      "size": 107,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ios/Runner/GeneratedPluginRegistrant.m.stub",
+      "sha": "8831f4e94f7a60d65765852e70093cc4032191ad",
+      "size": 70,
+      "category": "source_or_document"
+    },
+    {
+      "path": "known-issues/index.html",
+      "sha": "93c9cdd923036f679ee05445242c0d74bcfda2ee",
+      "size": 1987,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/app-wireframes/index.html",
+      "sha": "44515e926f559691bc03ecf71316e25e1c8da75a",
+      "size": 10029,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/book-1/index.html",
+      "sha": "66ad37d91233145d7a4a4b0149deb8ac792d5441",
+      "size": 5501,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/coloring-pages/index.html",
+      "sha": "ca5a6b45f52f25471bcefa43c887cc9765ece1db",
+      "size": 5618,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/educators/index.html",
+      "sha": "30265e456696b008e10b9f4b893a1daa6a0e0528",
+      "size": 6280,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/episodes/blue-clue-trail/index.html",
+      "sha": "660d8cfed4e8a04f43a50ab6ca1bdd62903e25d4",
+      "size": 6282,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/episodes/sunny-key/index.html",
+      "sha": "fb2d40408ce71d6bd682ba4ffa78ab5bfc050e65",
+      "size": 6344,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/games/index.html",
+      "sha": "d02351fe3a2820fa2ca52e19a42cc4a16dda88d5",
+      "size": 5157,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kottons-code/index.html",
+      "sha": "f46d3a499c9fa0a963b82efeb128bdd68d7d3e13",
+      "size": 38127,
+      "category": "source_or_document"
+    },
+    {
+      "path": "kubernetes/README.md",
+      "sha": "fc214ed96f2a30e9704f04799d48acf9878c3580",
+      "size": 962,
+      "category": "source_or_document"
+    },
+    {
+      "path": "landing/index.html",
+      "sha": "9e075dd219050ad82615df404cd9341b01bf129f",
+      "size": 15067,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lane/index.html",
+      "sha": "b7b460db953dd601d949dc1f173ee76741fea6f9",
+      "size": 2271,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-countdown/index.html",
+      "sha": "fdced5e2803f518dc063f773bb3996b595ad4228",
+      "size": 1826,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-decision-log/index.html",
+      "sha": "8ebb17432aa9740a9c3bc96367a46afe0853e48a",
+      "size": 1844,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-media-kit/index.html",
+      "sha": "a224fc31456490ec08f61855e3d1bf5d70b1c477",
+      "size": 2229,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-metrics-glossary/index.html",
+      "sha": "5468dc52596adfd249e727787b17006989ec760b",
+      "size": 1678,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-readiness-scorecard/index.html",
+      "sha": "d28d4b9f1589d65b5b8032ae6f7efae52d23d7b0",
+      "size": 2423,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-retrospective/index.html",
+      "sha": "8ae5d8f20e6ec4ff46da62330eb8721f5acbfd34",
+      "size": 1683,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-risk-register/index.html",
+      "sha": "eb918f748ff6e8cf1652d57132434ac3412128a3",
+      "size": 1726,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-verification/index.html",
+      "sha": "fe9095b87cf77b81d0b68560aebe3c2e27d03e1f",
+      "size": 9503,
+      "category": "source_or_document"
+    },
+    {
+      "path": "launch-war-room/index.html",
+      "sha": "ceaf6f03f8509ffdcf89df2cef700994c2bb897c",
+      "size": 11641,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lib/firebase_options.dart",
+      "sha": "5e90180f1f91e1b5597f62ce39a8ec828b94df30",
+      "size": 2543,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lib/main.dart",
+      "sha": "74756392e1fb1478b3e164c568354e8d264e4bc9",
+      "size": 9484,
+      "category": "source_or_document"
+    },
+    {
+      "path": "library/index.html",
+      "sha": "77c4aac8a5fe1dff561bb9ee7d128ff0f2ef18d7",
+      "size": 5102,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingo-ai/index.html",
+      "sha": "ec983b39852288e8ecaa2aad0965355e7efe9a80",
+      "size": 14730,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingo-id/index.html",
+      "sha": "c1a83862bc759d020511d23cca1de733f3d48c52",
+      "size": 3005,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingoarcade/index.html",
+      "sha": "f5f8d9032a0db9c6481dd6e7e24bcf489bab634c",
+      "size": 3005,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingoassister/README.md",
+      "sha": "f4b28b15ad6cb1d3bfef9e73e7521664c7cb4bbc",
+      "size": 4091,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingoassister/repair-engine.mjs",
+      "sha": "627daf3550d51e788855ec3fd2634c106e4560ea",
+      "size": 12558,
+      "category": "source_or_document"
+    },
+    {
+      "path": "lingoassister/repair-engine.test.mjs",
+      "sha": "a9f5f86ec90d94df3a50f9b0fd34e583637e1e7b",
+      "size": 8793,
+      "category": "source_or_document"
+    },
+    {
+      "path": "live-beta-faq/index.html",
+      "sha": "7f0eb05a84e05f7874941d1e61dd91fac2435ac1",
+      "size": 1732,
+      "category": "source_or_document"
+    },
+    {
+      "path": "live-casino-studio/index.html",
+      "sha": "3c2d9c4495c9c9aa3c138596ebc3d06c5aef8e7b",
+      "size": 18762,
+      "category": "source_or_document"
+    },
+    {
+      "path": "live-readiness/index.html",
+      "sha": "2fb24aa1b978a8f146c6a2861f7b87e7a1a90b5d",
+      "size": 10250,
+      "category": "source_or_document"
+    },
+    {
+      "path": "live-test-run/index.html",
+      "sha": "bf632ae061891989128b437b92634f7c1ecc2fb7",
+      "size": 5431,
+      "category": "source_or_document"
+    },
+    {
+      "path": "living-universe/index.html",
+      "sha": "386a43df1f058f03f0302513e986184c251dc69f",
+      "size": 19358,
+      "category": "source_or_document"
+    },
+    {
+      "path": "loading/index.html",
+      "sha": "5460eb3f3c10287c8de953ca78f9270d4e12c331",
+      "size": 17633,
+      "category": "source_or_document"
+    },
+    {
+      "path": "loyalty-lane-apparel/index.html",
+      "sha": "3b262582a11e382579960024a961441bfddacde1",
+      "size": 13599,
+      "category": "source_or_document"
+    },
+    {
+      "path": "loyalty-lane-cycles/index.html",
+      "sha": "24bd8b1b638ec66cc8147f3e2ae2e4953e9ae8fd",
+      "size": 8869,
+      "category": "source_or_document"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "sha": "ffd3252a1ca4fce2591308128ce2e1b0c9eba6d5",
+      "size": 606,
+      "category": "source_or_document"
+    },
+    {
+      "path": "marketplace-expansion/index.html",
+      "sha": "7e3b536b64bcd60feb11dc24ac66369aa3d554c9",
+      "size": 4186,
+      "category": "source_or_document"
+    },
+    {
+      "path": "master-interface/index.html",
+      "sha": "c82b43c8c2209328f30afe479bddd70d725f4138",
+      "size": 19182,
+      "category": "source_or_document"
+    },
+    {
+      "path": "media/index.html",
+      "sha": "78043e69600755a74411d31d0ff04554870646b3",
+      "size": 2219,
+      "category": "asset"
+    },
+    {
+      "path": "monetization-safety/index.html",
+      "sha": "ee912f1ebdfe68ccadf4ea51d5453fff05a30409",
+      "size": 11486,
+      "category": "source_or_document"
+    },
+    {
+      "path": "monetization/index.html",
+      "sha": "9f0cf26ea56d47cd35b7b5fc7d59558dd08205db",
+      "size": 9717,
+      "category": "source_or_document"
+    },
+    {
+      "path": "motherduck-readiness/index.html",
+      "sha": "4c7a066c42c48ac865be35b27241c1b6d59ce611",
+      "size": 3407,
+      "category": "source_or_document"
+    },
+    {
+      "path": "multiplayer-rap-arena/index.html",
+      "sha": "ad2d82db8e06462854b434351c1503a7ded09db1",
+      "size": 8188,
+      "category": "source_or_document"
+    },
+    {
+      "path": "next-sprint-plan/index.html",
+      "sha": "a966f712afaf8bf14ea7878a64816f70cfab8f05",
+      "size": 2272,
+      "category": "source_or_document"
+    },
+    {
+      "path": "observability/README.md",
+      "sha": "856ed8932c9998fea901dc4764da653a7b14377b",
+      "size": 1743,
+      "category": "source_or_document"
+    },
+    {
+      "path": "observability/elk/docker-compose.yml",
+      "sha": "0cfaeeb97d33df2ad429ddfe096aac9c82b52c43",
+      "size": 1278,
+      "category": "source_or_document"
+    },
+    {
+      "path": "observability/elk/logstash/pipeline/logstash.conf",
+      "sha": "f6582ab25f65fd2dcf45b4b111cee2a99b4bb908",
+      "size": 449,
+      "category": "source_or_document"
+    },
+    {
+      "path": "observability/grafana/provisioning/datasources/datasource.yml",
+      "sha": "28ba9e7b179a3617134d9dfcb3958b88a678f8c6",
+      "size": 185,
+      "category": "source_or_document"
+    },
+    {
+      "path": "observability/prometheus/prometheus.yml",
+      "sha": "3c5f167e781892c2a0dbc2c266bc993588b9eacc",
+      "size": 322,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/G02-SIX-GATE-STAGING-ACCEPTANCE.md",
+      "sha": "b28e504a2d8d79dceb47df426d090769429a902a",
+      "size": 4729,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/ISOLATED-STAGING-RUNBOOK.md",
+      "sha": "c74560b82f9c72690af33a3cf5b7957d5dead9fe",
+      "size": 3197,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/RECOVERY-BRIDGE.md",
+      "sha": "3fe5218e828311f56b7edf476f65826123488b2c",
+      "size": 4248,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/STAGING-AGENT-PREREQUISITES.md",
+      "sha": "0fcd50137f4ed909139f52bf20bff2624c1ec8ea",
+      "size": 1656,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/audit_production_lock.sh",
+      "sha": "385509e147f2f55acec84ee911f58d06a616f5d5",
+      "size": 2569,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/diagnose-actions-dispatch.sh",
+      "sha": "bcead34f0c88b49f4c5893310343c63f9d0e2a0a",
+      "size": 4470,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/diagnose-runner.sh",
+      "sha": "ec267dac44cdb7cc83e7c3e82486462d9ecf3c2a",
+      "size": 5037,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/evidence/2026-10-10-dispatch-checkpoint.md",
+      "sha": "26fb91fe19fc9620df16d74ba14966579d907f96",
+      "size": 6071,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/evidence/github-support-escalation.md",
+      "sha": "dc574457e9329d64f80f01872bbb0ba5a9fc1269",
+      "size": 5299,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/g02-independent-verification.template.json",
+      "sha": "f1e9a78f245d9e1fa1144fb39d5fb077723a0f18",
+      "size": 854,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/host-preflight-aws.sh",
+      "sha": "c3d8d73fa069fc1f2cfd827089a936625c80e393",
+      "size": 1546,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/host-provisioning.md",
+      "sha": "80c097bdfea082580eefd9443b9e9abfa0788b3a",
+      "size": 4147,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/install-runner.sh",
+      "sha": "1be946ef1c33a732d0232ad44a2ff3723c9b4777",
+      "size": 5235,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/recovery_agent.py",
+      "sha": "4b171a9a506cffcc1749d91c532840f8fba7ea40",
+      "size": 5113,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/runner-control.sh",
+      "sha": "e6a1b904cd0566001e725b4e5e366a20c712a4b9",
+      "size": 3295,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/tests/test-recovery-guard.sh",
+      "sha": "bbd56a2de05a5c753a30b546ed6561f88b829a04",
+      "size": 1339,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/validate_gates_1_2.py",
+      "sha": "17264cf1814f823c159764ef64915e860cf27a11",
+      "size": 2822,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/g02/verify-evidence.py",
+      "sha": "a3b8db620a5481df965dc69cba7998e07210ed56",
+      "size": 7057,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/Dockerfile",
+      "sha": "e02534ca3725ae027d584f2487417ee429456b27",
+      "size": 817,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/README.md",
+      "sha": "1366eaf98a2bc6af1087a5d02a58eba14c81010c",
+      "size": 4542,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/benchmark-image-cache.sh",
+      "sha": "798c1b2c9dffb1200970a62e57fc9c7c24712292",
+      "size": 1412,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/bootstrap.sh",
+      "sha": "cf62e0688fa1707a62a01cdeab5231b1bbabf783",
+      "size": 2095,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/collect-host-telemetry.sh",
+      "sha": "825239b7e78ee98e978c52755b63c93e0ace0bc8",
+      "size": 3388,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/docker-compose.yml",
+      "sha": "d34ebf3a3bd11b48e90c255075958a8366bc3eb8",
+      "size": 357,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/entrypoint.sh",
+      "sha": "7932753af5624947533b0c2ee2a44ee7f11dd871",
+      "size": 415,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/lib/telemetry-sanitizer.sh",
+      "sha": "9e7b36cce53f8b08c60b3d125e78fe7b5dec4d3d",
+      "size": 648,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/lib/telemetry-schema.sh",
+      "sha": "a271e4be87369563253faf97ffd099f62ae2a1e9",
+      "size": 1468,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/github-runner/tests/local-harness.sh",
+      "sha": "aed01658b3c3af63f914bbcfdddc7ba9d9109204",
+      "size": 4305,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/README.md",
+      "sha": "af23a53359fa8e4cace6428214c193307e7e8cd6",
+      "size": 5762,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/bridge-adapter.sh",
+      "sha": "9cca9a696cff046e32edfa96281fd0d5413501cd",
+      "size": 2286,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/checkpoint_gate.py",
+      "sha": "795f10f447a8424e17a0b6d039fcec7ee198550f",
+      "size": 4087,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/evidence-template.json",
+      "sha": "6d8b7534c90a4dbda15820712468a33d8d6258f1",
+      "size": 630,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/quarantine-manifest.json",
+      "sha": "074ad6bad37441bb564ced282b31280c36bac135",
+      "size": 2489,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/schema/lingo-approval-v1.schema.json",
+      "sha": "726caacca33495c9e874774f0654f701aab93c9e",
+      "size": 1311,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/schema/lingo-evidence-v1.schema.json",
+      "sha": "5f4dad1a7c6a7e731d81c851e1bf2da63b44a25d",
+      "size": 10884,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/tests/test_checkpoint_gate.py",
+      "sha": "cdd7d886942cce687135c71e2f74fe8985fc42f0",
+      "size": 2649,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/tests/test_unified_gate.py",
+      "sha": "77465102c4042c0ecee92f4d72fe725df3bb9e8c",
+      "size": 8250,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/tests/test_verify_approval.py",
+      "sha": "b3db6f5d7b1aae705d4dc90ce011f5dfd9f59a58",
+      "size": 6677,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/unified_gate.py",
+      "sha": "24f46e9518756be62ad323b65966b8484fbad97c",
+      "size": 14261,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/recovery/verify_approval.py",
+      "sha": "7db8224e7ab7e8be0774596bda479e23bb28b479",
+      "size": 9004,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/studio/validate-sandbox.sh",
+      "sha": "22c28893a9fbf65d724254413bf2e4ed2436dbfc",
+      "size": 1929,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/tooling/README.md",
+      "sha": "211259fa40f345bb19000e27f1fe2da9ff7e273c",
+      "size": 3774,
+      "category": "source_or_document"
+    },
+    {
+      "path": "ops/tooling/bootstrap-dev-tools.sh",
+      "sha": "626859ce75a8c95960b66d0582c8d3707b1150fc",
+      "size": 2455,
+      "category": "source_or_document"
+    },
+    {
+      "path": "outer-crown-expansion/index.html",
+      "sha": "105139748e82de8443f4b6965af5c1d98003a622",
+      "size": 19067,
+      "category": "source_or_document"
+    },
+    {
+      "path": "partner-brief/index.html",
+      "sha": "626feb5572cd8c8b8160bf0a01656e746d489b86",
+      "size": 1732,
+      "category": "source_or_document"
+    },
+    {
+      "path": "payload-matrix/index.html",
+      "sha": "c0fc5a79cdc01d7380fea2a05a22c70edc153dad",
+      "size": 16051,
+      "category": "source_or_document"
+    },
+    {
+      "path": "post-launch-ops/index.html",
+      "sha": "76d5ba4d6a88025113d0e44b766fbe11d299ef86",
+      "size": 11198,
+      "category": "source_or_document"
+    },
+    {
+      "path": "post-launch-recap/index.html",
+      "sha": "fccfd987bf1a6406b6bacb26b4dd34cb31de9926",
+      "size": 2379,
+      "category": "source_or_document"
+    },
+    {
+      "path": "press-kit-checklist/index.html",
+      "sha": "914a4b8e76286aaf1ea8f93b2260fb02bf87b104",
+      "size": 1680,
+      "category": "source_or_document"
+    },
+    {
+      "path": "privacy/index.html",
+      "sha": "0cfcab5ce7241da392016e204a4268ff2618929f",
+      "size": 4307,
+      "category": "source_or_document"
+    },
+    {
+      "path": "production-lock/index.html",
+      "sha": "d69f3c261678c41d0aa4d265136802fadb587300",
+      "size": 15700,
+      "category": "source_or_document"
+    },
+    {
+      "path": "protected-routes/index.html",
+      "sha": "53d716769b2d431953122cd4a1ea59993924f4e7",
+      "size": 1850,
+      "category": "source_or_document"
+    },
+    {
+      "path": "provider-handoff/index.html",
+      "sha": "fa4358a93be5c55d729c05646eaef51b81466034",
+      "size": 3968,
+      "category": "source_or_document"
+    },
+    {
+      "path": "public-roadmap/index.html",
+      "sha": "9436a250b2b0eab548aba7ab7256168538fea0f7",
+      "size": 1830,
+      "category": "source_or_document"
+    },
+    {
+      "path": "pubspec.yaml",
+      "sha": "66ca3239e1402e3ba14a3b63ad1d6d4dc2966c31",
+      "size": 860,
+      "category": "source_or_document"
+    },
+    {
+      "path": "recovery/audit-reconciliation-2026-10-19.md",
+      "sha": "073d80c0c890c4759218fb55c435bb78ed88679b",
+      "size": 924,
+      "category": "source_or_document"
+    },
+    {
+      "path": "release-notes/index.html",
+      "sha": "a3dc73d866bd0fafc477f9d458dd7ee16b9122f2",
+      "size": 5130,
+      "category": "source_or_document"
+    },
+    {
+      "path": "robots.txt",
+      "sha": "f76bf8117607d39d4ada3664ad32c57e703b3b04",
+      "size": 582,
+      "category": "source_or_document"
+    },
+    {
+      "path": "rollback-drill/index.html",
+      "sha": "ca0673b7e153099868fc74c92b75fee5e87ecd30",
+      "size": 1848,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/g02-host-readiness.sh",
+      "sha": "0552f551cf55f94daf651a6333ad6d01b0158ef7",
+      "size": 2281,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/generate-release-certificate.mjs",
+      "sha": "aa89300fe594d588233b24d0f952620959f724ff",
+      "size": 2213,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/generate-release-evidence.mjs",
+      "sha": "a0f0e2ef29b221fa2a565d948afe02aaa91b94ad",
+      "size": 1947,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/lingo-autorepair.mjs",
+      "sha": "61f68784b1969ae10885f4e6855ba3cd3522d866",
+      "size": 3352,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/live-probes.mjs",
+      "sha": "b0b320363e55de7b24b39df5d5d2df0a20011505",
+      "size": 1749,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/ops/lingo-wave0-finalize-once.sh",
+      "sha": "7efa0cdbc4e04de16f570d255e53c89cbcc8e229",
+      "size": 8752,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/run-static-gates.mjs",
+      "sha": "44fce2d712a6f6996719fc2ab9fc0729773db87e",
+      "size": 5840,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/sanitize-cloudflare-only-surface.mjs",
+      "sha": "303b423c72027e5ea0db39696479bf6aa4f66ed4",
+      "size": 1587,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/smoke-static-site.mjs",
+      "sha": "01f9fb5b021b34e5fc6b548ee7d3f9616ccda315",
+      "size": 1819,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-pipeline-failure-propagation.sh",
+      "sha": "9ec18633e3c55ec74a0f7c3352ddad9dee18908b",
+      "size": 706,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-run-static-gates.mjs",
+      "sha": "5293ce05f6df3b12f1480971479572378d06c579",
+      "size": 7309,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-sanitize-cloudflare-only-surface.mjs",
+      "sha": "b58ae1e2c40738bc7952d440d022d3efd02901e6",
+      "size": 1665,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-asset-publication-scope.mjs",
+      "sha": "d919b39babf8d879e7c79e18687880df95e9de9c",
+      "size": 3781,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-dynamic-runtime.mjs",
+      "sha": "3a317233c542f63ff366e58599bb3b922c90a195",
+      "size": 2128,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-legacy-gateway-security.mjs",
+      "sha": "c276aaf5bd39a879265240b29ddc4d01240a98ab",
+      "size": 1674,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-media-pipeline.mjs",
+      "sha": "e86173d4df601220ad8d9d9c3251024bc0185002",
+      "size": 4585,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-platform-registries.mjs",
+      "sha": "a1b4d85fc933cd173f47cf7f22a50bf5041fec23",
+      "size": 3318,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-release-config-consistency.mjs",
+      "sha": "c1902d1acc43b52b29feae204116c8d3a3329b4d",
+      "size": 6394,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/test-verify-shared-design-system.mjs",
+      "sha": "ec8a299f21ebaa4528c1ddc0335d72b32a13af15",
+      "size": 3030,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/tests/worker-rate-limit.test.mjs",
+      "sha": "2eda228d5bc5b9f32922a29f65e22fbd6bda2786",
+      "size": 2717,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/validate-static-site.mjs",
+      "sha": "20bbbd11598978636c48bfbd1540aab1a7f8cb14",
+      "size": 8942,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-asset-publication-scope.mjs",
+      "sha": "c3fb79cc761b2ab6efa624b85004a147e810e391",
+      "size": 5270,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-cloudflare-bindings.mjs",
+      "sha": "521a6f61a93e3b7d9bd96acccfaf9bd8a8124a55",
+      "size": 2199,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-cloudflare-only.mjs",
+      "sha": "db7bb0b274accfe42191ee1768102567b43ac1f6",
+      "size": 1944,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-dynamic-runtime.mjs",
+      "sha": "6f8fd975d2eb54d6e99a13dd301fb854753b20fb",
+      "size": 1494,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-flutter-firebase.mjs",
+      "sha": "4d287ab4eaa6d67622d222ed0fd20076685d2986",
+      "size": 896,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-legacy-gateway-security.mjs",
+      "sha": "091f60b932229bc4e46920f6b66a79a5dc543e5f",
+      "size": 1342,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-media-pipeline.mjs",
+      "sha": "42fc245ee8d40a047c3649890018f8d79aa83fce",
+      "size": 3802,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-platform-registries.mjs",
+      "sha": "33cb5512dc90ec977753878d184c5e54b1c41ddb",
+      "size": 2945,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-production-authority.mjs",
+      "sha": "26cde45d8c5cab659e4fa1237378fcfc924bd6f6",
+      "size": 1789,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-release-config-consistency.mjs",
+      "sha": "257a82d044691148f89d6c8cb76dbf88ae69bf96",
+      "size": 10725,
+      "category": "source_or_document"
+    },
+    {
+      "path": "scripts/verify-shared-design-system.mjs",
+      "sha": "bf51fd1d6909e375a551129b88aad6487fd46496",
+      "size": 3216,
+      "category": "source_or_document"
+    },
+    {
+      "path": "session-test/index.html",
+      "sha": "0127bb8ef10c63ba43c6f0c2bab0e9ae5e9a0807",
+      "size": 1768,
+      "category": "source_or_document"
+    },
+    {
+      "path": "shopify-readiness/index.html",
+      "sha": "f82e784adb0043516dda44af7d2215af6f0c944c",
+      "size": 2476,
+      "category": "source_or_document"
+    },
+    {
+      "path": "signup-preview/index.html",
+      "sha": "5c33a021e2c822975210cf0db76865e8df9bf00a",
+      "size": 11938,
+      "category": "source_or_document"
+    },
+    {
+      "path": "sitemap.xml",
+      "sha": "89da79526f3a271706973e27e2fdd05540423d67",
+      "size": 8076,
+      "category": "source_or_document"
+    },
+    {
+      "path": "social-launch-rollout/index.html",
+      "sha": "1416cc5b1de1886ffc9f48a5a5c5cf322958bfdf",
+      "size": 5044,
+      "category": "source_or_document"
+    },
+    {
+      "path": "social-play/index.html",
+      "sha": "72ca4745b62b6cb9c704a63b66f9502b54335f4d",
+      "size": 18310,
+      "category": "source_or_document"
+    },
+    {
+      "path": "sonar-project.properties",
+      "sha": "2c640e500471c5dd91dc6c6298fe09b1413bf20a",
+      "size": 460,
+      "category": "source_or_document"
+    },
+    {
+      "path": "spades-is-my-lingo/index.html",
+      "sha": "16ac7955d08ebd5d1a46d628dd5532b48e140a0e",
+      "size": 8580,
+      "category": "source_or_document"
+    },
+    {
+      "path": "stakeholder-update/index.html",
+      "sha": "86b20658783691fd3141add97bdddb49796d4351",
+      "size": 2086,
+      "category": "source_or_document"
+    },
+    {
+      "path": "store/index.html",
+      "sha": "55b13fa203ecca97f3ffdcf1bc49663f209759ed",
+      "size": 2150,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-assets/index.html",
+      "sha": "af19d6fb656634dd5dc1a36f323232549f71b2e9",
+      "size": 8256,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-os/index.html",
+      "sha": "4ac91b5659aa902a86634c48924d51d9ce686237",
+      "size": 12721,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-production/index.html",
+      "sha": "43597c0871ef96cd0ed61c0f4aa765e6b7cdc2ed",
+      "size": 20517,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/DESIGN-SYSTEM-AND-ASSET-BLUEPRINT.md",
+      "sha": "a8f281b9900804537bef1805fb7d68025bee6ec2",
+      "size": 8581,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/ECONOMY-AND-PROMOTIONS-SPEC.md",
+      "sha": "e436de0d264d7211b0fea7b914a4faa3ff2e37f5",
+      "size": 4081,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/GAME-BIBLE-INDEX.md",
+      "sha": "4860bc49b2366ec5c4c8acb07f7e07c37b914b84",
+      "size": 1201,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/GAME-MASTER-TREE.md",
+      "sha": "c6d263f13e7c0c7b33a4d323d45c3ebec7244ef4",
+      "size": 10172,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/README.md",
+      "sha": "0953524125098e6d297c3a4f03984c4a7004174e",
+      "size": 1911,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/UNIVERSE-SITE-README.md",
+      "sha": "ebec56fde826762a1ea25385501bc8f2872aa6c8",
+      "size": 2193,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/assets/logos/cashman-lingo-mania.svg",
+      "sha": "4a81e39fb1221a891c7c6e568b72139d68cdf15d",
+      "size": 1326,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/crazy-weasols.svg",
+      "sha": "746b03d64f1e28404c8e5a1b52a679ff00135446",
+      "size": 1326,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/doughboys-oasis.svg",
+      "sha": "a7d165e8e59dddd99f66b2c46d16bf3b290157a6",
+      "size": 1326,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/jersey-shore-undead.svg",
+      "sha": "052cf7b184394beee6021ee5bb8c984f15a2360f",
+      "size": 1342,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/lingo-eruptions.svg",
+      "sha": "913976d3cc26d0438c6219e3482147c05bd1c3ab",
+      "size": 1326,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/lingoarcade.svg",
+      "sha": "401af9a231f9756298c73b5feb18e96ceb86e0a0",
+      "size": 1338,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/lingoslots.svg",
+      "sha": "5f59346fff77315413047b6c6cc95372036ef55c",
+      "size": 1334,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/silly-in-philly.svg",
+      "sha": "cbd263b4d1d1ad8c315f530d55f46caaa2e34652",
+      "size": 1314,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/spades-is-my-lingo.svg",
+      "sha": "8e015acd964cb75bd012bf718be4c06524d727e7",
+      "size": 1346,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/thats-my-lingo.svg",
+      "sha": "0f0bfc4b350774216c93b109809585a094823cb6",
+      "size": 1344,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/tricias-escape.svg",
+      "sha": "ae1e71326f6dc4beb8ae0ea321a34ff41920c8fe",
+      "size": 1328,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/logos/uhno-lingo-university.svg",
+      "sha": "e290d473f51a1bb860f2b57bfc31760c109dcfd6",
+      "size": 1342,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/assets/manifest.json",
+      "sha": "56899b0fa2d3d7ac19bb9c01acc5f5a594d95cdf",
+      "size": 1428,
+      "category": "asset"
+    },
+    {
+      "path": "studio-sites/config/game-registry.json",
+      "sha": "858b430545375c36557b38d10027d0d7f24c6458",
+      "size": 5183,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/config/studio-config.json",
+      "sha": "dd762d967efa9e38688b0a011d96586b3131f356",
+      "size": 3081,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/dashboard/index.html",
+      "sha": "00e1a2433d27a732e1e4d4bdaea91515dcfa68b0",
+      "size": 22086,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-2026-2027-SENIOR-ENGINEERING-BLUEPRINT.md",
+      "sha": "3239cf39e0e4804a9a6e1148f902d379ee67a73b",
+      "size": 15934,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-ENGINEERING-EXECUTION-PLAN-2026-10-14.md",
+      "sha": "c24de57ec801b658593689ed367fb34adaa74e47",
+      "size": 11125,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-MODE-PLATFORM-CONTRACT.md",
+      "sha": "a21ebfd2c6ea58b9f3980379eac969864f1a5d00",
+      "size": 6636,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-PLATFORM-INTEGRATION.md",
+      "sha": "577990e10b79f2fd840d7cf173eecc609a20ecb0",
+      "size": 10833,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-UNITY-VERTICAL-SLICE-BOOTSTRAP.md",
+      "sha": "5ab88b7d836af1602f125ace39c02276f9a56cbc",
+      "size": 2345,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/DOUGHBOYS-OASIS-VERTICAL-SLICE-QA.md",
+      "sha": "1942e287709c445f493b723c7e390454270a6eef",
+      "size": 10606,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/cashman-lingo-mania.md",
+      "sha": "b587479e3190103d35e696a06395006c29aec6f8",
+      "size": 6105,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/crazy-weasols.md",
+      "sha": "55bd8cce640db07791c6bc87670078f53c227244",
+      "size": 6002,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-856-region.html",
+      "sha": "fd1e04a260e3603a6d8a6b6db746a37d2c03b996",
+      "size": 19689,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-full-game-spec-v2.md",
+      "sha": "71fe1fe0aaf320382bd4009bc57c602974b78de3",
+      "size": 43410,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-life-legacy-lab.html",
+      "sha": "b98e45971b119276c01b84fc6e2e9b73a1ba8d4c",
+      "size": 36442,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-mode-platform-hub.html",
+      "sha": "ab7dd18b20b89678ee09ac9dcaeaa8ba81b84833",
+      "size": 14866,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-playable-prototype.html",
+      "sha": "1e84167d8113694a06a96cadffe72eb1239b25fd",
+      "size": 29782,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-racing/campaign-state.js",
+      "sha": "3842bc745f5c16f17fa38025a7e0c2331cd1e924",
+      "size": 9243,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-racing/campaign-state.test.js",
+      "sha": "2a86977b9e29d5449151feb3bf7bcf828f6d1cf9",
+      "size": 7506,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-racing/index.html",
+      "sha": "de63f10411885c447ede02feca41af4407f4f39e",
+      "size": 20317,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-store.html",
+      "sha": "fa0cbd6ff0695f0830831670a1813304a9f4009e",
+      "size": 20306,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis-vertical-slice.html",
+      "sha": "9571b8c05f79ba5bd7cb7cbd13fdf0bb9a469ef7",
+      "size": 37137,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/doughboys-oasis.md",
+      "sha": "5dd11eae7446f5bcffd1dde3fcfb3c2ae21ca615",
+      "size": 6047,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/jersey-shore-undead.md",
+      "sha": "4662664ae103cead0819e83a76c10a944d2e720c",
+      "size": 6120,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/kottons-code.md",
+      "sha": "b42749c78f8bf40b16bcc7b1c86687069d89ef0f",
+      "size": 6135,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/lingo-eruptions.md",
+      "sha": "d1c43d928fb50d2e3672f1ce14c54f2d656f320f",
+      "size": 6001,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/lingoarcade.md",
+      "sha": "8dd058ee02488e949b00fbd6fceef86abbf3ef6b",
+      "size": 6105,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/lingoslots.md",
+      "sha": "5fd87273a08be9285e802eb2c4c93af9fcf44280",
+      "size": 6159,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-decks/lingo-deck-catalog.v1.json",
+      "sha": "2a4509088f93d2512e4837572780e79ffd22a2b5",
+      "size": 10549,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-mystery/doughboy-past-clue-manifest.v1.json",
+      "sha": "a0cc9f18142d741ca5ab6939eaf11a43c5c80161",
+      "size": 2079,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/PLATFORM-PERMISSIONS.md",
+      "sha": "7fac44391d36fb662fdf6dea9f2e2a4f33577964",
+      "size": 2146,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/README.md",
+      "sha": "d56836ac274b4c7b157b3cf5d01286b62bfc2c27",
+      "size": 2108,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/api/openapi.yaml",
+      "sha": "9229a2c439c104a7c831394299a555885e3a6842",
+      "size": 3790,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/cloudflare/worker.js",
+      "sha": "75caa08e9ae72e397de469d3952798b1c265882b",
+      "size": 4944,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/cloudflare/wrangler.toml",
+      "sha": "9d1f1f32a453fff1a4d9be4c8461ceb7fd169876",
+      "size": 380,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/catalog-seed.json",
+      "sha": "36b8340834f4b5086a8292dd34fb6d2be6eeb89f",
+      "size": 3204,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/firestore.rules",
+      "sha": "4706209d3285d6a5c438eb1dcea966e435f2aa05",
+      "size": 829,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/package.json",
+      "sha": "2939dce8d74e1b54f314cfc18ec9432b6e495769",
+      "size": 423,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/scripts/seed-catalog.mjs",
+      "sha": "c2df3249b15b8ed946dec687e90dd03ba31368ca",
+      "size": 1103,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/src/index.ts",
+      "sha": "5fbb1e9e9121b7dfda64f8049c73c02232167954",
+      "size": 4826,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/firebase-functions/tsconfig.json",
+      "sha": "fa55757bd0900bc365e0d3b7456a924d9101ac7b",
+      "size": 264,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/flutter/lib/main.dart",
+      "sha": "15c4251ce162a63d9ee7a810748c6272dbd4485f",
+      "size": 7966,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/oasis-platform/flutter/pubspec.yaml",
+      "sha": "f45b65073b0c954baa53bf58b90fe42a2b811e38",
+      "size": 447,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/silly-in-philly.md",
+      "sha": "8764f587d628bd30cd76b47615df4d7e0dcb0629",
+      "size": 6306,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/spades-is-my-lingo.md",
+      "sha": "57188248f718929cd5210e0e85f38c7612ba95c1",
+      "size": 6199,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/thats-my-lingo.md",
+      "sha": "eac86165f8aaa1d58b1faa7ee36b32313b4707bd",
+      "size": 6083,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/tricias-escape.md",
+      "sha": "8a3648d025cbd57af97c826d3134e8ab7dab9d0e",
+      "size": 6008,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/games/uhno-lingo-university.md",
+      "sha": "e9177c5f54a7b0f25e1a92054856217c103b5900",
+      "size": 6151,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/index.html",
+      "sha": "32df123c5b9720e765be348fe28c811981649e70",
+      "size": 13641,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/lingoarcade/index.html",
+      "sha": "9328fb2e3679e5950c0422b5f6d20784add73685",
+      "size": 4567,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/lingoslots/index.html",
+      "sha": "f7ecd767c5e75e756f010df8930346ba45837881",
+      "size": 5489,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/play/index.html",
+      "sha": "de2e8d2350c1376b8f1bfe13f0e2b4a224360575",
+      "size": 24196,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/scripts/validate-studio.mjs",
+      "sha": "6fdfe952c24d3a4de82902e82f63ca40e3c6d45a",
+      "size": 16320,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/shared/studio.css",
+      "sha": "40733ad7e438ff2d4be23ddd3ae86fe0e1960a79",
+      "size": 7260,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/shared/studio.js",
+      "sha": "3b55cc8c752b900ca0423a98c3311a0e698d0558",
+      "size": 974,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-sites/storyboards/UNIVERSE-STORYBOARD-PACK.md",
+      "sha": "15637e3dbf436808b250a531ed294b0c9ec2a9ee",
+      "size": 7064,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-ui-cleanup/index.html",
+      "sha": "17d0eea17073c2229285792598c5afcf33cbb4f8",
+      "size": 19132,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio-world-os/index.html",
+      "sha": "c749d2a07fb6f62499c1402c031bd388eb997ee6",
+      "size": 13594,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/INTEGRATION_STATUS.md",
+      "sha": "da10930080b2664dcad93828ce353471b442baf0",
+      "size": 840,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/MEDIA_PRODUCTION_UPGRADE.md",
+      "sha": "2db928ccb87fb9e54803bdb6fbfbd0f905df7177",
+      "size": 1894,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/MEDIA_RUNTIME_GUIDE.md",
+      "sha": "5cd3c7dc30a0bb098d910e8c526874ef088a1383",
+      "size": 1190,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/README.md",
+      "sha": "f296219dcbef82c170a56b17621d312c57b0adc0",
+      "size": 1633,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/ecosystem.json",
+      "sha": "7766d4493bfbfd737d261adf10a45f7244a7e6ec",
+      "size": 2476,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/google-ai-studio-build-prompt.md",
+      "sha": "f0332339b7e350d7507a1b1d5f3e705bdfd3bc55",
+      "size": 6228,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/index.html",
+      "sha": "118f4db78e58a3ca8af637ce01870a3179abd303",
+      "size": 12596,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/lingo-ai/index.html",
+      "sha": "6e000c23d95b4a2e01172facaeb020dfae70c3b9",
+      "size": 11612,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/media-manifest.json",
+      "sha": "4a2cce2da4f349eb1ea2cf627fe6695bbe36d157",
+      "size": 621,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/production-feature-manifest.json",
+      "sha": "3245b6879316a50afae3a0090f10647f6327a38e",
+      "size": 1431,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/routes.json",
+      "sha": "e54e3ae642a6c49986fde5839836fd0b4d01b278",
+      "size": 1208,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/STATE_CONTRACT.md",
+      "sha": "9e4e29a9c46b59643bbc4add23c522afff277ab6",
+      "size": 777,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/studio-runtime-contract.json",
+      "sha": "e3c36892da86dd1fde90da9d00191f3cd23af396",
+      "size": 777,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/studio-runtime.css",
+      "sha": "5ee6222e1a7d169bd439312027504311e7ebdbd6",
+      "size": 3361,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/studio-runtime.js",
+      "sha": "2cc9eb170ce5a142e3b3f57b2866ed0618eadb9e",
+      "size": 3716,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/studio-surface.css",
+      "sha": "50ad81aa82044d46b932041c7f177e3a0d59bed3",
+      "size": 610,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/studio-surface.js",
+      "sha": "0fae52e7b7298a8ce766abce8f89feeb2a6f2315",
+      "size": 1615,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/runtime/surface-integrity.js",
+      "sha": "1f95cd7c137a1e3c3dfa11e0a862e9127b3c4e32",
+      "size": 3284,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/studio-runtime.css",
+      "sha": "4e679e6cafda88016c88a44bbf3b39f1b14adcbb",
+      "size": 2144,
+      "category": "source_or_document"
+    },
+    {
+      "path": "studio/surface-contracts.json",
+      "sha": "0e71ecc594b65f84d11b4fc191d6996168edeed2",
+      "size": 3687,
+      "category": "source_or_document"
+    },
+    {
+      "path": "sweepstakes-visual-system/index.html",
+      "sha": "7f9946ed23b75117473c3b54d4fa425c222d4617",
+      "size": 7625,
+      "category": "source_or_document"
+    },
+    {
+      "path": "tapstich/index.html",
+      "sha": "ae3c250e730e37a23805ab1cfa144e3504bfe2a8",
+      "size": 10010,
+      "category": "source_or_document"
+    },
+    {
+      "path": "terms/index.html",
+      "sha": "b2332e7805c18ab6fd96eb96dcfef632bf473fb1",
+      "size": 4245,
+      "category": "source_or_document"
+    },
+    {
+      "path": "tester-feedback/index.html",
+      "sha": "dc15fd6a6c0b872b4d97cd76ded987c474eed469",
+      "size": 4876,
+      "category": "source_or_document"
+    },
+    {
+      "path": "tester-invite/index.html",
+      "sha": "ff5fb20c60572a4eafdafe09013685af09260146",
+      "size": 4759,
+      "category": "source_or_document"
+    },
+    {
+      "path": "tester-results-log/index.html",
+      "sha": "e3531102e8b9bacafa09bdf1ee1f3e74d2d85e93",
+      "size": 1735,
+      "category": "source_or_document"
+    },
+    {
+      "path": "thats-my-lingo/index.html",
+      "sha": "1b3e87dc6aee3f14c59b978b4efa0e670363646d",
+      "size": 56125,
+      "category": "source_or_document"
+    },
+    {
+      "path": "trust-compliance/index.html",
+      "sha": "36937bb194709340b3a74b86822c8fda85ad2fb1",
+      "size": 16865,
+      "category": "source_or_document"
+    },
+    {
+      "path": "universe/index.html",
+      "sha": "85a7c36b07192e697ccbdb36255b4f86bfa56510",
+      "size": 13367,
+      "category": "source_or_document"
+    },
+    {
+      "path": "visual-expansion/index.html",
+      "sha": "ce65137c217d5a7ae3be61b8ce36fd7cdd098c61",
+      "size": 7511,
+      "category": "source_or_document"
+    },
+    {
+      "path": "visual-showcase/index.html",
+      "sha": "6e0e53dd2669d0c674976a6c988a11975d38d680",
+      "size": 7061,
+      "category": "source_or_document"
+    },
+    {
+      "path": "worker.js",
+      "sha": "34acd00591ec493f79746689bd508d4f903d99a1",
+      "size": 15237,
+      "category": "source_or_document"
+    },
+    {
+      "path": "worlds/index.html",
+      "sha": "441ab1e7f656ceed965318eda4cafd6ae8f4bfe6",
+      "size": 5135,
+      "category": "source_or_document"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "sha": "cac19cf0aac2ca4a7369de407d7eff9fdb9c5afa",
+      "size": 664,
+      "category": "source_or_document"
+    }
+  ]
+}

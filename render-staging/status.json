@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-11-02",
+  "scope": "Read-only cross-platform inventory plus isolated World Engine D1 schema creation",
+  "render": {
+    "workspace": "My Workspace",
+    "static_preview_services": 1,
+    "web_services": 0,
+    "postgres_instances": 0,
+    "key_value_instances": 0,
+    "service_name": "lingo-legacy-platform-ops-preview",
+    "url": "https://lingo-legacy-platform-ops-preview.onrender.com",
+    "deploy_status": "live",
+    "auto_deploy": "off",
+    "logs_metrics": "Render log retrieval returned provider-side HTTP 503; runtime logs not independently verified"
+  },
+  "cloudflare": {
+    "zone": "thelingolegacy.com",
+    "plan": "Free Website",
+    "worker_scripts": 6,
+    "production_workers": [
+      "thelingolegacyv-5",
+      "lingo-flagship-root"
+    ],
+    "worker_routes": "existing routes preserved",
+    "d1_databases": 2,
+    "production_d1_application_tables": 17,
+    "world_engine_d1": {
+      "name": "world-engine-db",
+      "tables": 12,
+      "indexes": 9,
+      "triggers": 8,
+      "application_rows": 0
+    },
+    "kv_namespaces": 5,
+    "queues": 2,
+    "pages_projects": 3,
+    "r2": "not enabled; dashboard activation required",
+    "two_factor_enforcement": false,
+    "staging_worker": {
+      "name": "lingo-world-engine-staging",
+      "workers_dev": "enabled",
+      "url": "https://lingo-world-engine-staging.thelingolegacy.workers.dev",
+      "bindings": [
+        "world-engine-db",
+        "STUDIO_KV"
+      ],
+      "mode": "GET-only; published-world registry only",
+      "runtime_probe": "pending"
+    }
+  },
+  "github": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "tracked_files": 513,
+    "asset_related_files": 51,
+    "asset_bytes": 234706,
+    "main_commit": "59af084f5784ac5649c5c48537572a3f870aa4c1",
+    "preview_branch": "recovery/platform-ops-preview-2026-11-02",
+    "latest_pages_preview": "https://recovery-platform-ops-previe.lingo-legacy-github-integration-test.pages.dev"
+  },
+  "firebase": {
+    "project": "lingo-legacy-production",
+    "options": "placeholder API keys and app IDs",
+    "hosting_public_dir": "build/web (source hardening candidate)"
+  },
+  "mobile_stores": {
+    "app_store_connect": "not connected/verified",
+    "google_play_console": "not connected/verified"
+  },
+  "gitlab": {
+    "legacy_projects": [
+      "zavionecook/FameMoneyFortune",
+      "thatsmylingo/FameMoneyFortune"
+    ],
+    "credential_exposure": "runner registration credential appeared in project metadata; rotate before use"
+  },
+  "appdeploy": {
+    "apps": 15,
+    "deploy_status": "all reported deployed; not end-to-end certified",
+    "known_frontend_error_surfaces": [
+      "Jersey Shore: The Undead",
+      "Kotton's Code",
+      "LINGO AI Sonic Boom",
+      "LINGO Travel"
+    ]
+  },
+  "billing": {
+    "render": "no resources created yet; static preview will use free plan",
+    "cloudflare": "Free Website plan",
+    "paid_services": "not enabled"
+  },
+  "production_boundary": "No production DNS, routes, Worker allocations, secrets, payments, or billing settings changed. New Render and Cloudflare services are isolated staging resources."
+}
