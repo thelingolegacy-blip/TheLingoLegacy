@@ -16,7 +16,7 @@ Current checkpoint: 2026-11-02. This register is evidence-led; source presence a
 | Merchant redemption | Merchant agreements, coupon inventory and signed authorization service | **Pending** |
 | Privacy/legal | Terms, privacy, loyalty/tax/consumer and sweepstakes review as applicable | **Owner/legal review required** |
 | Visual staging preview | Mobile-first sample-only wallet UI | **AppDeploy status ready**: https://lingoloyalty-staging-preview-x4ld0h.v2.appdeploy.ai/; QA snapshot reported no frontend or network errors. This is not a live wallet or backend integration. |
-| CI execution | Actual hosted runner assignment, job steps, test logs and artifacts | **Blocked**: latest run `41436818353` (`LINGOloyalty Staging Validation`) concluded `startup_failure`; job list is empty. |
+| CI execution | Actual hosted runner assignment, job steps, test logs and artifacts | **Blocked**: latest run `41436908099` (`LINGOloyalty Staging Validation`) concluded `startup_failure`; job list is empty. |
 | G02 runner | Actual host assignment, sentinel execution, telemetry and artifacts | **Blocked**; no persistent runner host execution evidence |
 | Independent verification | Independent code/security review and reproducible CI evidence | **Pending**; PR #435 has no submitted reviews |
 | Production authorization | Explicit owner approval after all prior gates | **Not authorized** |
