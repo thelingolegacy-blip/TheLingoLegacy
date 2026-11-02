@@ -100,14 +100,14 @@
   "deploymentEvidence": {
     "cloudflare": {
       "worker": "lingo-studio-control-center-staging",
-      "deploymentId": "50fdc7c7813b47deaa6474d3c585350b",
+      "deploymentId": "69e9af5a30e34abf82ed485f7c52e099",
       "workersDevUrl": "https://lingo-studio-control-center-staging.thelingolegacy.workers.dev",
       "workersDevEnabled": true,
       "previewsEnabled": false,
       "registeredOrigins": 16,
       "zoneRoutesAdded": 0,
       "productionChanges": 0,
-      "runtimeSmokeTest": "not independently verified"
+      "runtimeSmokeTest": "not independently verified; method guard ordering checked in source"
     },
     "appdeploy": {
       "existingApplications": 16,

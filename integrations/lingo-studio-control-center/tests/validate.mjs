@@ -30,6 +30,8 @@ assert.equal(manifest.server.endpointState, "NOT_CONFIGURED");
 assert.equal(manifest.governance.productionMutation, false);
 assert.ok(manifest.tools.some((tool) => tool.name === "lingo.tasks.create"));
 assert.match(worker, /request\.method!==\s*"GET"&&request\.method!==\s*"HEAD"/);
+assert.ok(worker.indexOf('request.method!=="GET"') < worker.indexOf('if(incoming.pathname==="/healthz")'));
+assert.ok(worker.indexOf('request.method!=="GET"') < worker.indexOf('if(incoming.pathname==="/")'));
 assert.match(worker, /Route not registered/);
 assert.match(worker, /Protected application endpoints are not proxied/);
 assert.match(worker, /const ENVIRONMENT = "staging"/);

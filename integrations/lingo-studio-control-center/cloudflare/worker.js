@@ -5,10 +5,11 @@ function response(body,status=200,headers={}) { const h=new Headers(headers);h.s
 class Rewriter { constructor(prefix){this.prefix=prefix;} element(el){for(const a of ["href","src","action","poster"]){const v=el.getAttribute(a);if(v&&v.startsWith("/")&&!v.startsWith("//"))el.setAttribute(a,this.prefix.slice(0,-1)+v);}}}
 export default { async fetch(request) {
  if (ENVIRONMENT !== "staging") return new Response("Staging environment required.", { status: 503 });
+ if(request.method!=="GET"&&request.method!=="HEAD") return response("Read-only staging preview. Method not allowed.",405,{allow:"GET, HEAD"});
  const incoming=new URL(request.url);
  if(incoming.pathname==="/healthz") return response(JSON.stringify({service:"lingo-studio-control-center-staging",environment:"staging",status:"ready",routeCount:ROUTES.length,mode:"read-only"}),200,{"content-type":"application/json"});
  if(incoming.pathname==="/") return response(INDEX,200,{"content-type":"text/html; charset=utf-8"});
- if(request.method!=="GET"&&request.method!=="HEAD") return response("Read-only staging preview. Method not allowed.",405,{allow:"GET, HEAD"});
+ 
  const parts=incoming.pathname.split("/");
  if(parts.length<4||parts[1]!=="apps") return response("Route not registered.",404);
  const slug=parts[2];
