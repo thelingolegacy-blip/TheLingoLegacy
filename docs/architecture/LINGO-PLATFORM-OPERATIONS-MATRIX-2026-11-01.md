@@ -240,3 +240,11 @@ flowchart LR
 ```
 
 D1 is authoritative for metadata. KV is disposable cache only. R2 stores approved binary assets. Vectorize/Workers AI remain disabled until rights, privacy, cost and access checks pass. A payment provider is an external service, not a Cloudflare binding.
+
+
+## 14. Product-surface claim hygiene
+
+- Sonic Boom's current AppDeploy UI contains static connector tiles labelled READY (including Apple, Google and social providers). These labels are presentation copy, not proof of OAuth, API scopes, account ownership or working publish pipelines. Replace them with truthful states such as planned, not connected, connected-read-only or verified-write only after live provider checks.
+- LINGO Travel's stored source includes hard-coded demo/estimated trip offers and provider placeholders. Its visible prices are not live quotes and its booking actions are not verified provider bookings. Keep clear demo/estimate labels until authorized live fare/booking APIs are connected.
+- Kotton's Code contains an inline global askLINGO DOM injection and recurring heartbeat timer in the React entrypoint. Its historical script error should be reproduced and the global side effects moved into a lifecycle-managed component with cleanup before redeployment.
+- Jersey Shore's CSS load error may be a stale/missing hashed build asset; verify the current deployment manifest and asset object before changing source.
