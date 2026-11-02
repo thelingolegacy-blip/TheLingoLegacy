@@ -148,31 +148,33 @@
       "deploymentPreflight": "not-rechecked-after-daily-reset"
     },
     "githubActions": {
-      "latestCommit": "72783a4232b047a1561848ac1deddde93b1e2f7f",
+      "latestCommit": "19efc57be7950a29832c185c7c37d289e9710650",
       "runs": [
         {
-          "id": 41541831211,
+          "id": 41548184488,
           "name": "Lingo Legacy Static CI",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
         },
         {
-          "id": 41541828855,
-          "name": "G02 Runner Image Build (no publish)",
+          "id": 41548186021,
+          "name": "Crimson Smoke UI — static validation",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
         },
         {
-          "id": 41541827404,
-          "name": "Crimson Smoke UI — static validation",
+          "id": 41548187161,
+          "name": "G02 Runner Image Build (no publish)",
           "conclusion": "startup_failure",
           "jobs": 0,
           "artifacts": 0
         }
       ],
-      "g02Execution": "blocked-no-runner-job-evidence"
+      "g02Execution": "blocked-no-runner-job-evidence",
+      "vercelStatus": "success",
+      "vercelStatusMeaning": "provider deployment status only; not test acceptance or production promotion"
     }
   }
 }
