@@ -14,7 +14,11 @@ test("reward credits require server-side verification", () => {
   assert.match(worker, /VERIFY_AD_REWARD/);
   assert.match(worker, /ad_verification_unconfigured/);
 });
-test("game credit grants require a trusted server proof", () => {\n  assert.match(worker, /VERIFY_GAME_GRANT/);\n  assert.match(worker, /game_grant_verification_unconfigured/);\n});\ntest("game credits are a separate unit", () => {
+test("game credit grants require a trusted server proof", () => {
+  assert.match(worker, /VERIFY_GAME_GRANT/);
+  assert.match(worker, /game_grant_verification_unconfigured/);
+});
+test("game credits are a separate unit", () => {
   assert.match(schema, /'LINGOCOIN','GAME_CREDIT'/);
   assert.match(worker, /GAME_CREDIT/);
 });
@@ -23,7 +27,15 @@ test("ledger is append-only and idempotent", () => {
   assert.match(schema, /loyalty_ledger_no_update/);
   assert.match(schema, /loyalty_ledger_no_delete/);
 });
-test("mutations fail closed without rate limiting", () => {\n  assert.match(worker, /RATE_LIMITER/);\n  assert.match(worker, /rate_limiter_unconfigured/);\n});\ntest("reward daily cap is enforced in the insert statement", () => {\n  assert.match(worker, /SELECT COUNT\\(\\*\\).*AD_REWARD/);\n  assert.match(worker, /daily_reward_limit_reached/);\n});\ntest("missing authentication and merchant adapters fail closed", () => {
+test("mutations fail closed without rate limiting", () => {
+  assert.match(worker, /RATE_LIMITER/);
+  assert.match(worker, /rate_limiter_unconfigured/);
+});
+test("reward daily cap is enforced in the insert statement", () => {
+  assert.match(worker, /SELECT COUNT\(\*\).*AD_REWARD/);
+  assert.match(worker, /daily_reward_limit_reached/);
+});
+test("missing authentication and merchant adapters fail closed", () => {
   assert.match(worker, /authentication_required/);
   assert.match(worker, /merchant_redemption_unconfigured/);
 });
