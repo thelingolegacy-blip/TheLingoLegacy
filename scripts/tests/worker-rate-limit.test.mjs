@@ -5,10 +5,24 @@ import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../../worker.js', import.meta.url), 'utf8');
 const encoded = Buffer.from(source).toString('base64');
 const { default: worker } = await import(`data:text/javascript;base64,${encoded}`);
+const { default: secondIsolate } = await import(`data:text/javascript;base64,${encoded}#second-isolate`);
 
+const sharedBeaconCounts = new Map();
+const sharedAskCounts = new Map();
+function rateLimitBinding(store, limit) {
+  return {
+    async limit({ key }) {
+      const count = store.get(key) || 0;
+      store.set(key, count + 1);
+      return { success: count < limit };
+    },
+  };
+}
 const env = {
   CANONICAL_DOMAIN: 'thelingolegacy.com',
   ASSETS: { fetch: async () => new Response('asset') },
+  BEACON_RATE_LIMITER: rateLimitBinding(sharedBeaconCounts, 5),
+  ASK_RATE_LIMITER: rateLimitBinding(sharedAskCounts, 20),
 };
 
 async function submit({ ip, forwarded, phone = '+15551234567' } = {}) {
@@ -30,6 +44,24 @@ for (let i = 0; i < 6; i += 1) {
   spoofableHeaderStatuses.push(response.status);
 }
 assert.deepEqual(spoofableHeaderStatuses, [202, 202, 202, 202, 202, 429]);
+
+// A Cloudflare-managed binding carries the same key across separate Worker isolates.
+async function submitWith(targetWorker, ip, phone) {
+  const request = new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'cf-connecting-ip': ip },
+    body: JSON.stringify({ phone, zone: 'delaware-crown-zone', consent: true }),
+  });
+  return targetWorker.fetch(request, env);
+}
+const sharedBeaconStatuses = [];
+for (let i = 0; i < 5; i += 1) {
+  const target = i % 2 ? secondIsolate : worker;
+  sharedBeaconStatuses.push((await submitWith(target, '198.51.100.77', '+15551234570')).status);
+}
+sharedBeaconStatuses.push((await submitWith(secondIsolate, '198.51.100.77', '+15551234570')).status);
+assert.deepEqual(sharedBeaconStatuses, [202, 202, 202, 202, 202, 429]);
+
 
 // A different Cloudflare edge IP receives an independent bucket.
 const independentIp = await submit({ ip: '198.51.100.11', phone: '+15551234567' });
@@ -76,8 +108,8 @@ assert.equal(statusWithModelBody.ai_ready, true);
 assert.equal(statusWithModelBody.mode, 'ai-enabled');
 
 // The assistant's per-isolate limit rejects request 21 for the same edge IP.
-async function askLINGO(ip) {
-  return worker.fetch(new Request('https://thelingolegacy.com/api/v1/asklingo/chat', {
+async function askLINGO(ip, targetWorker = worker) {
+  return targetWorker.fetch(new Request('https://thelingolegacy.com/api/v1/asklingo/chat', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -91,6 +123,17 @@ const askStatuses = [];
 for (let i = 0; i < 20; i += 1) askStatuses.push((await askLINGO('203.0.113.77')).status);
 assert.ok(askStatuses.every(status => status === 200));
 assert.equal((await askLINGO('203.0.113.77')).status, 429);
+
+// The edge binding must enforce the same per-IP key across separate isolates.
+const sharedAskStatuses = [];
+for (let i = 0; i < 20; i += 1) {
+  const target = i % 2 ? secondIsolate : worker;
+  sharedAskStatuses.push((await askLINGO('203.0.113.88', target)).status);
+}
+sharedAskStatuses.push((await askLINGO('203.0.113.88', secondIsolate)).status);
+assert.ok(sharedAskStatuses.slice(0, 20).every(status => status === 200));
+assert.equal(sharedAskStatuses[20], 429);
+
 
 
 const falseStringFlags = await worker.fetch(
