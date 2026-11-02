@@ -1,0 +1,8 @@
+{
+  "name": "lingo-loyalty-staging",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
