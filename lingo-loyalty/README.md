@@ -1,6 +1,6 @@
 # LINGOloyalty — staging ledger
 
-This package defines a non-cash loyalty ledger for LINGOlegacy, Loyalty Lane, and participating LINGO games. It is intentionally isolated from the production Worker and Shopify checkout.
+This package defines a non-cash loyalty ledger for LINGOlegacy, Loyalty Lane, and participating LINGO games. It is isolated from production Workers and Shopify checkout.
 
 ## Non-negotiable boundaries
 
@@ -8,46 +8,50 @@ This package defines a non-cash loyalty ledger for LINGOlegacy, Loyalty Lane, an
 - Game credits are a separate, non-transferable gameplay unit.
 - No cash-out, person-to-person transfer, purchase of coins, wagering, prize conversion, or real-money payout endpoints exist.
 - Rewarded-ad credits require server-to-server verification. Client-side completion signals are never sufficient.
-- Coupon redemption requires a merchant-side approval adapter and a single-use redemption record.
-- All writes require authenticated identity, origin allowlisting, idempotency, and audit records.
+- Game credits require a trusted game-server grant or spend authorization.
+- Coupon redemption requires merchant-side approval and a single-use redemption record.
 - No production bindings, secrets, routes, Shopify checkout changes, or payment-provider credentials are included.
 
 ## Components
 
-- `migrations/0001_ledger.sql`: D1 schema, append-only ledger, event idempotency, daily earning controls, coupon redemption records.
-- `worker.js`: fail-closed Cloudflare Worker API. It expects injected `AUTHENTICATE`, `VERIFY_AD_REWARD`, and `AUTHORIZE_MERCHANT_REDEMPTION` adapters. Missing adapters cause denial, not fallback.
-- `package.json`: local test command.
+- `migrations/0001_ledger.sql`: D1 schema, append-only ledger, idempotency constraints, balance view, and coupon redemption records.
+- `worker.js`: fail-closed API draft. It is not deployable as-is: its `env.AUTHENTICATE`, `env.VERIFY_AD_REWARD`, `env.VERIFY_GAME_GRANT`, `env.VERIFY_GAME_EVENT`, `env.RATE_LIMITER`, and `env.AUTHORIZE_MERCHANT_REDEMPTION` hooks are interface placeholders, not Cloudflare binding types. Replace them with reviewed module implementations or supported bindings before deployment.
+- `package.json`: Node policy test command.
 
-## Required environment bindings
+## Staging database
 
-- `DB`: dedicated staging D1 database only.
-- `ALLOWED_ORIGINS`: comma-separated exact HTTPS origins.
-- `AUTHENTICATE(request)`: validates session and returns `{ userId }`; must reject expired, revoked, or invalid sessions.
-- `VERIFY_AD_REWARD(payload)`: validates network-signed server-side callback and returns `{ userId, eventId, coins }`; reject client-supplied proof.
-- `RATE_LIMITER({ userId, route, request })`: enforces per-user and per-route request limits; missing adapter denies mutations.\n- `AUTHORIZE_MERCHANT_REDEMPTION(payload, userId)`: checks merchant, offer, eligibility, and available coupon inventory, returning a signed/unique authorization.
+A dedicated U.S.-jurisdiction Cloudflare D1 database named `lingo-loyalty-staging` has been provisioned and the migration has been applied. Its identifier is recorded in the release-gate register. It is not a production database and is not bound to a Worker. No user, reward, or merchant data has been seeded.
 
-No production deployment is authorized by this package. Do not bind a production database or route.
-
-## API
+## API draft
 
 - `GET /v1/wallet`: returns separated balances and recent ledger activity.
 - `POST /v1/rewards/ad`: server-verified rewarded-ad event; idempotent.
-- `POST /v1/game/spend`: consumes game credits only; server-issued game event required.
+- `POST /v1/game/grant`: trusted game-server credit grant.
+- `POST /v1/game/spend`: consumes game credits only; trusted game event required.
 - `POST /v1/coupons/redeem`: issues a merchant-approved, single-use coupon; never pays cash.
 
-Browser origins must match the exact HTTPS allowlist. Native requests without an Origin header are allowed only through authenticated sessions. OPTIONS preflight is handled before session authentication. All mutation requests require a configured rate-limit adapter and an `Idempotency-Key` header. Requests without one are rejected.
+## Required implementation before deployment
+
+- Replace function-shaped environment placeholders with supported Worker module implementations and secret/binding contracts.
+- Implement Firebase/session token verification, expiry and revocation handling.
+- Implement HMAC or provider-native signature validation and replay protection for ad, game, and merchant callbacks.
+- Implement an atomic per-user/per-route rate limiter using supported Cloudflare primitives.
+- Check every D1 mutation result and return explicit duplicate/idempotency outcomes.
+- Add negative-balance protection, unit/event consistency constraints, and concurrency tests.
+- Configure exact HTTPS origins, CSP, CORS, and security headers.
+- Add integration tests for auth failures, replayed callbacks, duplicate events, daily caps, insufficient game credits, coupon reuse, and suspended wallets.
 
 ## Release gates
 
 1. Source review and schema review.
 2. Local unit/integration tests.
 3. Dedicated staging D1 provisioning and migration.
-4. Authentication adapter security review.
+4. Authentication and callback signature security review.
 5. Ad-network server-side verification certification.
 6. Merchant agreement, coupon inventory, and redemption adapter validation.
 7. Privacy notice, loyalty terms, tax/accounting, consumer-protection and sweepstakes review as applicable.
 8. Independent security review and abuse testing.
-9. Staging deployment with retrievable logs, test evidence, and rollback.
+9. Staging Worker deployment with retrievable logs, test evidence, and rollback.
 10. Explicit owner authorization before any production promotion.
 
-A passing local test does not satisfy gates 3–10.
+A passing local test does not satisfy gates 4–10.
