@@ -12,7 +12,7 @@
 
 - Cloudflare Worker `lingo-studio-control-center-staging` deployed to `https://lingo-studio-control-center-staging.thelingolegacy.workers.dev` (deployment `50fdc7c7813b47deaa6474d3c585350b`). Workers.dev enabled; previews disabled; no zone routes added.
 - All 16 registered AppDeploy applications report deployment status `ready`; latest status snapshots show zero frontend, network, and backend errors. These are provider status/QA observations, not independently executed HTTP probes.
-- GitHub Actions startup attempts returned zero jobs and zero artifacts; no G02 runner execution or artifact evidence was produced.
+- Latest commit eb53a4c283adc83fd16673c7d221362c8c248267 has three startup_failure workflow runs: 41541387681 (Lingo Legacy Static CI), 41541385229 (Crimson Smoke UI static validation), and 41541386429 (G02 Runner Image Build). Each returned zero jobs and zero artifacts; no G02 runner assignment or execution evidence was produced.
 
 ## Acceptance rule
 

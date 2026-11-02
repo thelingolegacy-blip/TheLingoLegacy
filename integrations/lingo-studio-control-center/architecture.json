@@ -27,7 +27,7 @@
     {
       "name": "Firebase",
       "role": "server-authoritative RBAC, tasks, evidence, gate acceptance",
-      "state": "rules-and-functions-prepared-no-deployment"
+      "state": "rules-and-functions-prepared-plugin-available-not-connected-staging-project-unconfirmed"
     },
     {
       "name": "AppDeploy",
@@ -117,6 +117,33 @@
       "latestStatusSnapshotsReportedBackendErrors": 0,
       "directHttpHealthChecks": "pending",
       "dailyQuotaReset": "2026-11-03T00:00:00Z"
+    },
+    "githubActions": {
+      "latestCommit": "eb53a4c283adc83fd16673c7d221362c8c248267",
+      "runs": [
+        {
+          "id": 41541387681,
+          "name": "Lingo Legacy Static CI",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "id": 41541385229,
+          "name": "Crimson Smoke UI static validation",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "id": 41541386429,
+          "name": "G02 Runner Image Build (no publish)",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        }
+      ],
+      "g02Execution": "blocked-no-runner-job-evidence"
     }
   }
 }
