@@ -13,7 +13,7 @@ The workflow does not commit generated native scaffolds, sign a release, publish
 ## Verified blockers before production release
 
 - `lib/firebase_options.dart` contains placeholder app IDs and API-key values for web, Android, iOS, and macOS.
-- The checked-in Android application Gradle file configures the release build type to use the debug signing configuration.
+- The checked-in Android release build type no longer uses the debug keystore; it remains unsigned until owner-controlled release signing is configured.
 - The iOS project folder contains only stub files, not a complete Xcode project.
 - The Android platform directory lacks the standard Flutter Gradle settings/wrapper scaffolding in the audited default-branch inventory.
 - Apple Developer and Google Play Console enrollment and signing assets have not been verified through connected tools.
@@ -22,7 +22,7 @@ The workflow does not commit generated native scaffolds, sign a release, publish
 
 1. Register and verify Firebase web, Android, and iOS apps in the intended Firebase project; provide generated client configuration through a secure, approved process.
 2. Confirm Android application ID and iOS bundle ID against their Firebase registrations and store records.
-3. Create protected Android release-signing configuration using a secure keystore workflow. Never use debug signing for a release.
+3. Create protected Android release-signing configuration using a secure keystore workflow. The checked-in release build is intentionally unsigned until that is complete; never use debug signing for a release.
 4. Complete Apple signing, provisioning, capabilities, privacy declarations, and App Store Connect access using the owner-controlled developer account.
 5. Complete Google Play Console access, app signing, data safety, content rating, privacy, and store metadata.
 6. Run real-device functional, accessibility, security, media, and account-lifecycle tests.
