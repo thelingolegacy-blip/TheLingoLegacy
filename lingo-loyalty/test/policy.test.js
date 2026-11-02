@@ -16,7 +16,7 @@ test("no cash-out, transfer, or payment routes are implemented", () => {
 test("Firebase identity validation verifies RS256 and standard claims", () => {
   assert.match(worker, /authenticateFirebase/);
   assert.match(worker, /RSASSA-PKCS1-v1_5/);
-  assert.match(worker, /securetoken\.googleapis\.com/);
+  assert.match(worker, /securetoken@system\\.gserviceaccount\\.com/);
   assert.match(worker, /claims\.exp <= now/);
   assert.match(worker, /claims\.aud !== projectId/);
 });
