@@ -29,7 +29,7 @@ test("ledger is append-only and idempotent", () => {
 });
 test("CORS preflight is handled once before session authentication", () => {
   assert.equal((worker.match(/request\.method === "OPTIONS"/g) || []).length, 1);
-  assert.ok(worker.indexOf('request.method === "OPTIONS"') < worker.indexOf('authenticate(request, env)'));
+  assert.ok(worker.indexOf('request.method === "OPTIONS"') < worker.indexOf('const userId = await authenticate(request, env)'));
 });
 test("mutations fail closed without rate limiting", () => {
   assert.match(worker, /RATE_LIMITER/);
