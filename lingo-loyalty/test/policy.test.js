@@ -23,7 +23,7 @@ test("ledger is append-only and idempotent", () => {
   assert.match(schema, /loyalty_ledger_no_update/);
   assert.match(schema, /loyalty_ledger_no_delete/);
 });
-test("missing authentication and merchant adapters fail closed", () => {
+test("mutations fail closed without rate limiting", () => {\n  assert.match(worker, /RATE_LIMITER/);\n  assert.match(worker, /rate_limiter_unconfigured/);\n});\ntest("reward daily cap is enforced in the insert statement", () => {\n  assert.match(worker, /SELECT COUNT\\(\\*\\).*AD_REWARD/);\n  assert.match(worker, /daily_reward_limit_reached/);\n});\ntest("missing authentication and merchant adapters fail closed", () => {
   assert.match(worker, /authentication_required/);
   assert.match(worker, /merchant_redemption_unconfigured/);
 });
