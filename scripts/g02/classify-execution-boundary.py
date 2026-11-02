@@ -25,6 +25,20 @@ def load_json(path: pathlib.Path) -> dict[str, Any]:
     return value
 
 
+def has_runner_identity(job: Any) -> bool:
+    """Return true only for a real positive integer ID and non-empty string name."""
+    if not isinstance(job, dict):
+        return False
+    runner_id = job.get("runner_id")
+    runner_name = job.get("runner_name")
+    return (
+        type(runner_id) is int
+        and runner_id > 0
+        and isinstance(runner_name, str)
+        and bool(runner_name.strip())
+    )
+
+
 def classify(run: dict[str, Any], jobs_payload: dict[str, Any]) -> dict[str, Any]:
     jobs = jobs_payload.get("jobs")
     if not isinstance(jobs, list):
@@ -42,13 +56,7 @@ def classify(run: dict[str, Any], jobs_payload: dict[str, Any]) -> dict[str, Any
             "A controlled comparison run on an approved independent hosted workflow",
         ]
     else:
-        assigned = [
-            job for job in jobs
-            if isinstance(job, dict)
-            and isinstance(job.get("runner_id"), int)
-            and job.get("runner_id") > 0
-            and bool(job.get("runner_name"))
-        ]
+        assigned = [job for job in jobs if has_runner_identity(job)]
         if assigned:
             boundary = "RUNNER_ASSIGNED"
             explanation = (
