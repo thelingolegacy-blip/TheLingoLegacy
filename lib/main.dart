@@ -4,8 +4,23 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const LingoLegacyApp());
+  var firebaseReady = false;
+
+  try {
+    final options = DefaultFirebaseOptions.currentPlatform;
+    if (options.apiKey.startsWith('YOUR_') ||
+        options.appId.startsWith('YOUR_') ||
+        options.messagingSenderId.startsWith('YOUR_')) {
+      throw StateError('Firebase platform configuration is still a placeholder.');
+    }
+    await Firebase.initializeApp(options: options);
+    firebaseReady = true;
+  } catch (error, stackTrace) {
+    debugPrint('Firebase is unavailable; starting in preview-only mode: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+
+  runApp(LingoLegacyApp(firebaseReady: firebaseReady));
 }
 
 const gold = Color(0xFFE6BD58);
@@ -15,7 +30,10 @@ const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
 class LingoLegacyApp extends StatelessWidget {
-  const LingoLegacyApp({super.key});
+  const LingoLegacyApp({super.key, required this.firebaseReady});
+
+  final bool firebaseReady;
+
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'The Lingo Legacy',
@@ -27,7 +45,7 @@ class LingoLegacyApp extends StatelessWidget {
       useMaterial3: true,
       cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
     ),
-    home: const UniverseHome(),
+    home: UniverseHome(firebaseReady: firebaseReady),
   );
 }
 
@@ -48,7 +66,10 @@ const destinations = <Destination>[
 ];
 
 class UniverseHome extends StatefulWidget {
-  const UniverseHome({super.key});
+  const UniverseHome({super.key, required this.firebaseReady});
+
+  final bool firebaseReady;
+
   @override
   State<UniverseHome> createState() => _UniverseHomeState();
 }
@@ -89,6 +110,33 @@ class _UniverseHomeState extends State<UniverseHome> {
               ]),
             ),
           )),
+          if (!widget.firebaseReady)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF332713),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: gold.withValues(alpha: .55)),
+                  ),
+                  child: const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.cloud_off_outlined, color: gold),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Preview mode: Firebase services are not configured. Account, sync, and cloud features remain unavailable.',
+                          style: TextStyle(color: muted, height: 1.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
             child: Text('CHOOSE YOUR DESTINATION', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 1.1)),
