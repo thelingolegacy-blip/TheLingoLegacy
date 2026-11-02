@@ -166,7 +166,7 @@ jobs:
 
           # Require and download the target run's own evidence artifact.
           artifact_name="g02-qualified-evidence-${TARGET_RUN_ID}"
-          artifact_count="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/artifacts" --jq --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and .expired == false)] | length')"
+          artifact_count="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/artifacts" | jq --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and .expired == false)] | length')"
           test "$artifact_count" -gt 0
           mkdir -p target-artifacts
           gh run download "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir target-artifacts
