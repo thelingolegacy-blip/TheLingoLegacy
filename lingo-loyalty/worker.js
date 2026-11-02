@@ -168,6 +168,8 @@ export default {
         userId = payload.userId;
         eventId = payload.eventId;
         if (!validId(userId) || !validId(eventId) || !Number.isInteger(payload.coins) || payload.coins < 1 || payload.coins > MAX_AD_REWARD) return respond(400, { error: "reward_payload_invalid" });
+        const activeWallet = await ensureWallet(env.DB, userId);
+        if (!activeWallet || activeWallet.status !== "active") return respond(403, { error: "wallet_unavailable" });
         if (!(await applyRateLimit(env.DB, userId, "ad_reward"))) return respond(429, { error: "rate_limited" });
         const inserted = await env.DB.prepare(`INSERT OR IGNORE INTO loyalty_ledger
           (id,user_id,unit,delta,event_type,external_event_id,idempotency_key,metadata_json)
@@ -184,6 +186,8 @@ export default {
         userId = payload.userId;
         eventId = payload.eventId;
         if (!validId(userId) || !validId(eventId) || !Number.isInteger(payload.credits) || payload.credits < 1 || payload.credits > 100) return respond(400, { error: "game_grant_invalid" });
+        const activeWallet = await ensureWallet(env.DB, userId);
+        if (!activeWallet || activeWallet.status !== "active") return respond(403, { error: "wallet_unavailable" });
         if (!(await applyRateLimit(env.DB, userId, "game_grant"))) return respond(429, { error: "rate_limited" });
         mutation = await insertLedger(env.DB, { userId, unit: "GAME_CREDIT", delta: payload.credits, eventType: "GAME_GRANT", eventId, idempotencyKey, metadata: { source: "signed_game_server" } });
         if (!mutation.meta?.changes) return respond(409, { error: "duplicate_game_grant" });
@@ -192,6 +196,8 @@ export default {
         if (!userId || !validId(userId)) return respond(401, { error: "authentication_required" });
         eventId = payload.gameEventId;
         if (!validId(eventId) || payload.userId !== userId || !Number.isInteger(payload.credits) || payload.credits < 1 || payload.credits > MAX_GAME_SPEND) return respond(400, { error: "invalid_game_spend" });
+        const activeWallet = await ensureWallet(env.DB, userId);
+        if (!activeWallet || activeWallet.status !== "active") return respond(403, { error: "wallet_unavailable" });
         if (!(await verifySignedPayload(request, raw, env.GAME_EVENT_HMAC_SECRET))) return respond(403, { error: "game_event_signature_invalid" });
         if (!(await applyRateLimit(env.DB, userId, "game_spend"))) return respond(429, { error: "rate_limited" });
         mutation = await env.DB.prepare(`INSERT OR IGNORE INTO loyalty_ledger
@@ -207,6 +213,8 @@ export default {
         userId = await authenticateFirebase(request, env);
         if (!userId || !validId(userId)) return respond(401, { error: "authentication_required" });
         if (payload.userId !== userId || !validId(payload.merchantId) || !validId(payload.offerId) || !validId(payload.authorizationId)) return respond(400, { error: "coupon_payload_invalid" });
+        const activeWallet = await ensureWallet(env.DB, userId);
+        if (!activeWallet || activeWallet.status !== "active") return respond(403, { error: "wallet_unavailable" });
         if (!(await verifySignedPayload(request, raw, env.MERCHANT_AUTH_HMAC_SECRET))) return respond(403, { error: "merchant_authorization_invalid" });
         if (!(await applyRateLimit(env.DB, userId, "coupon_redeem"))) return respond(429, { error: "rate_limited" });
         mutation = await env.DB.prepare(`INSERT OR IGNORE INTO coupon_redemptions
@@ -225,5 +233,8 @@ export default {
       const message = error?.message === "body_too_large" ? "body_too_large" : "request_invalid";
       return respond(400, { error: message });
     }
+  },
+  async scheduled(_controller, env, ctx) {
+    ctx.waitUntil(env.DB.prepare("DELETE FROM loyalty_rate_limits WHERE window_start < strftime('%Y-%m-%dT%H:%M:00Z','now','-1 day')").run());
   }
 };
