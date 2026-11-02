@@ -36,8 +36,12 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Regenerate missing native platform scaffolds in CI workspace
-        run: flutter create --platforms=android,ios --project-name lingo_legacy --org com.thelingolegacy .
+      - name: Generate clean native platform scaffolds in a disposable directory
+        run: |
+          flutter create --platforms=android,ios --project-name app --org com.thelingolegacy /tmp/lingo-native-scaffold
+          rm -rf android ios
+          cp -R /tmp/lingo-native-scaffold/android ./android
+          cp -R /tmp/lingo-native-scaffold/ios ./ios
 
       - name: Resolve dependencies
         run: flutter pub get
@@ -78,8 +82,11 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Regenerate missing iOS platform scaffold in CI workspace
-        run: flutter create --platforms=ios --project-name lingo_legacy --org com.thelingolegacy .
+      - name: Generate clean iOS scaffold in a disposable directory
+        run: |
+          flutter create --platforms=ios --project-name app --org com.thelingolegacy /tmp/lingo-ios-scaffold
+          rm -rf ios
+          cp -R /tmp/lingo-ios-scaffold/ios ./ios
 
       - name: Resolve dependencies
         run: flutter pub get
