@@ -11,8 +11,9 @@ function response(status, body, origin) {
 }
 function safeEqualOrigin(request, env) {
   const origin = request.headers.get("Origin");
+  if (!origin) return true; // Native clients still require authenticated sessions.
   const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean);
-  return Boolean(origin && allowed.includes(origin) && origin.startsWith("https://"));
+  return allowed.includes(origin) && origin.startsWith("https://");
 }
 async function readJson(request) {
   const raw = await request.text();
@@ -48,6 +49,7 @@ export default {
       if (!env.DB || !safeEqualOrigin(request, env)) return respond(403, { error: "origin_not_allowed" });
       const url = new URL(request.url);
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...JSON_HEADERS, "access-control-allow-origin": request.headers.get("Origin"), "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "content-type,idempotency-key" } });
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...JSON_HEADERS, "access-control-allow-origin": request.headers.get("Origin"), "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "content-type,idempotency-key", "access-control-max-age": "600", vary: "Origin" } });
       const userId = await authenticate(request, env);
       if (!userId) return respond(401, { error: "authentication_required" });
       const wallet = await ensureWallet(env.DB, userId);
@@ -59,6 +61,8 @@ export default {
       }
 
       if (request.method !== "POST") return respond(405, { error: "method_not_allowed" });
+      if (typeof env.RATE_LIMITER !== "function") return respond(503, { error: "rate_limiter_unconfigured" });
+      if (!(await env.RATE_LIMITER({ userId, route: url.pathname, request }))) return respond(429, { error: "rate_limited" });
       const key = request.headers.get("Idempotency-Key");
       if (!validId(key)) return respond(400, { error: "valid_idempotency_key_required" });
       const payload = await readJson(request);
@@ -67,9 +71,15 @@ export default {
         if (typeof env.VERIFY_AD_REWARD !== "function") return respond(503, { error: "ad_verification_unconfigured" });
         const proof = await env.VERIFY_AD_REWARD(payload);
         if (!proof || proof.userId !== userId || !validId(proof.eventId) || !Number.isInteger(proof.coins) || proof.coins < 1 || proof.coins > MAX_AD_REWARD) return respond(403, { error: "reward_proof_invalid" });
-        const todayCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM loyalty_ledger WHERE user_id=? AND event_type='AD_REWARD' AND created_at >= date('now')").bind(userId).first();
-        if ((todayCount?.n || 0) >= DAILY_AD_CAP) return respond(429, { error: "daily_reward_limit_reached" });
-        await ledgerInsert(env.DB, { userId, unit: "LINGOCOIN", delta: proof.coins, eventType: "AD_REWARD", externalEventId: proof.eventId, idempotencyKey: key, metadata: { source: "server_verified_rewarded_ad" } });
+        const inserted = await env.DB.prepare(`INSERT OR IGNORE INTO loyalty_ledger
+          (id,user_id,unit,delta,event_type,external_event_id,idempotency_key,metadata_json)
+          SELECT ?,?, 'LINGOCOIN', ?, 'AD_REWARD', ?, ?, ?
+          WHERE (SELECT COUNT(*) FROM loyalty_ledger WHERE user_id=? AND event_type='AD_REWARD' AND created_at >= date('now')) < ?`)
+          .bind(id(), userId, proof.coins, proof.eventId, key, JSON.stringify({ source: "server_verified_rewarded_ad" }), userId, DAILY_AD_CAP).run();
+        if (!inserted.meta?.changes) {
+          const prior = await env.DB.prepare("SELECT id FROM loyalty_ledger WHERE user_id=? AND idempotency_key=?").bind(userId, key).first();
+          if (!prior) return respond(429, { error: "daily_reward_limit_reached_or_duplicate_event" });
+        }
       } else if (url.pathname === "/v1/game/grant") {
         if (typeof env.VERIFY_GAME_GRANT !== "function") return respond(503, { error: "game_grant_verification_unconfigured" });
         const grant = await env.VERIFY_GAME_GRANT(payload);
