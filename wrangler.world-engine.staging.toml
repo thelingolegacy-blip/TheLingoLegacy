@@ -1,0 +1,18 @@
+name = "lingo-world-engine-staging"
+main = "cloudflare/world-engine-staging-worker.js"
+compatibility_date = "2026-11-02"
+workers_dev = true
+preview_urls = false
+
+[[d1_databases]]
+binding = "WORLD_ENGINE_DB"
+database_name = "world-engine-db"
+database_id = "3c307c69-c65a-43bf-9a01-33b33972177a"
+
+[[kv_namespaces]]
+binding = "WORLD_REGISTRY_KV"
+id = "7da6b33bdf9746c49bbedde585bef8e5"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
