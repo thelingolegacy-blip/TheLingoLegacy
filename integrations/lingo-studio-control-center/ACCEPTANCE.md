@@ -19,15 +19,16 @@ Cloudflare's deployment and version APIs were read directly for `lingo-studio-co
 | Previous | `5b3da71c-3b04-4758-bb3d-feb44d3b452b` | `50fdc7c7-813b-47de-aa64-74d3c585350b` | Historical |
 | Earliest | `fc5d79bb-712d-42ef-8ed0-1fd0788b1854` | `048b74be-cb67-4099-983e-574d72153ab5` | Historical |
 
-The user-supplied identifier `048b74becb674099983e574d72153ab5` is the earliest Worker version ID with UUID separators omitted; it is not a deployment record ID. The additional supplied tag `cbf77cdb34764bc282f235de0e8be6c8` does not match any of the four Worker versions returned by Cloudflare's version-list API and remains unverified. Do not substitute either identifier for the active deployment/version pair above.
+The supplied identifier `048b74becb674099983e574d72153ab5` is the earliest Worker version ID with UUID separators omitted; it is not a deployment record ID. The additional supplied tag `cbf77cdb34764bc282f235de0e8be6c8` does not match any of the four Worker versions returned by Cloudflare's version-list API and remains unverified. Do not substitute either identifier for the active deployment/version pair above.
 
 ## Latest execution evidence
 
 - Worker: `lingo-studio-control-center-staging` at `https://lingo-studio-control-center-staging.thelingolegacy.workers.dev`; workers.dev enabled, previews disabled, no zone routes added, 16 explicit origins registered.
 - The four deployment records are history for one Worker. Retain them as rollback/audit history; do not delete them as duplicates.
 - All 16 registered AppDeploy applications report deployment status `ready`; latest status snapshots show zero frontend, network, and backend errors. These are provider status/QA observations, not independently executed HTTP probes.
-- Current PR head `72783a4232b047a1561848ac1deddde93b1e2f7f` has three GitHub Actions runs: 41541831211 (Lingo Legacy Static CI), 41541828855 (G02 Runner Image Build), and 41541827404 (Crimson Smoke UI static validation). All concluded `startup_failure`; each has zero jobs and zero artifacts. No runner assignment, execution steps, logs, or artifact evidence was produced.
-- PR #445 compares cleanly with `main`: 9 commits ahead, 0 behind, 14 new files, no changed/deleted base files. It is mergeable at the Git level but remains draft and has no successful required checks. It is not ready to merge.
+- Current PR head `19efc57be7950a29832c185c7c37d289e9710650` has three workflow runs: 41548184488 (Lingo Legacy Static CI), 41548186021 (Crimson Smoke UI static validation), and 41548187161 (G02 Runner Image Build). All concluded `startup_failure`; each has zero jobs and zero artifacts. No runner assignment, execution steps, logs, or artifact evidence was produced.
+- The same commit has a successful Vercel deployment status context, but this is not a test run or gate acceptance. The production edge architecture remains Cloudflare; no Vercel production promotion is authorized.
+- PR #445 compares cleanly with `main`: 12 commits ahead, 0 behind, 14 new files, no changed/deleted base files. It remains draft. Git-level mergeability does not satisfy CI or acceptance requirements.
 
 ## Acceptance rule
 
