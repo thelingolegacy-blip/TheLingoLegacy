@@ -62,6 +62,17 @@ for (let i = 0; i < 5; i += 1) {
 sharedBeaconStatuses.push((await submitWith(secondIsolate, '198.51.100.77', '+15551234570')).status);
 assert.deepEqual(sharedBeaconStatuses, [202, 202, 202, 202, 202, 429]);
 
+const missingBeaconBinding = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'cf-connecting-ip': '198.51.100.90' },
+    body: JSON.stringify({ phone: '+15551234590', zone: 'delaware-crown-zone', consent: true }),
+  }),
+  { ...env, BEACON_RATE_LIMITER: undefined },
+);
+assert.equal(missingBeaconBinding.status, 503, 'Beacon delivery must fail closed without the edge rate-limit binding');
+
+
 
 // A different Cloudflare edge IP receives an independent bucket.
 const independentIp = await submit({ ip: '198.51.100.11', phone: '+15551234567' });
@@ -77,7 +88,7 @@ assert.deepEqual(missingEdgeIdentityStatuses, [202, 202, 202, 202, 202, 429]);
 
 // The map is bounded. Fill the remaining slots with unique valid phone keys,
 // then verify that a new key is rejected instead of growing memory unbounded.
-for (let i = 0; i < 9997; i += 1) {
+for (let i = 0; i < 9996; i += 1) {
   const phone = `+1${String(i).padStart(10, '0')}`;
   const response = await submit({ ip: '192.0.2.200', phone });
   assert.equal(response.status, 202, `unexpected rejection while filling bounded buckets at index ${i}`);
@@ -133,6 +144,17 @@ for (let i = 0; i < 20; i += 1) {
 sharedAskStatuses.push((await askLINGO('203.0.113.88', secondIsolate)).status);
 assert.ok(sharedAskStatuses.slice(0, 20).every(status => status === 200));
 assert.equal(sharedAskStatuses[20], 429);
+
+const missingAskBinding = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/v1/asklingo/chat', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://thelingolegacy.com', 'cf-connecting-ip': '203.0.113.99' },
+    body: JSON.stringify({ message: 'Where can I find LINGOarcade?' }),
+  }),
+  { ...env, ASK_RATE_LIMITER: undefined },
+);
+assert.equal(missingAskBinding.status, 503, 'askLINGO must fail closed without the edge rate-limit binding');
+
 
 
 
