@@ -200,3 +200,43 @@ Required execution record: `request_id, change_reference, source_sha, workflow_i
 ## 11. Explicit non-completion register
 
 The following are not complete based on current evidence: G02 host recovery; Actions runner execution; Firebase app registration/configuration; iOS/Android signing; App Store / Google Play account connection; custom-domain activation; AppDeploy Plus eligibility; R2 enablement; production KV/D1/AI bindings; AI model approval; payment provider activation; end-to-end security review; production release acceptance. These remain visible blockers, not hidden assumptions.
+
+
+## 12. Control-plane topology
+
+```mermaid
+flowchart TD
+  A[Source: GitHub PR + commit SHA] --> B[Trigger registry]
+  B --> C[Dispatch broker: schema + idempotency]
+  C --> D[GitHub Actions job]
+  D --> E{Runner assigned?}
+  E -->|No| F[Pre-job / assignment diagnostics]
+  E -->|Yes| G[Runner identity + executing steps]
+  G --> H[Logs + artifacts + checksums]
+  F --> H
+  H --> I[Independent evidence verifier]
+  I --> J{Acceptance complete?}
+  J -->|No| K[Hold + repair lane]
+  J -->|Yes| L[Explicit release authorization]
+  L --> M[Staging candidate]
+  M --> N[Live probes + rollback readiness]
+  N --> O[Production promotion gate]
+  O --> P[Controlled release]
+```
+
+## 13. Resource binding map (design only)
+
+```mermaid
+flowchart LR
+  W[Web / Flutter clients] --> E[Cloudflare Edge Worker]
+  E --> I[Verified identity / entitlement]
+  I --> D[(D1: world + KB metadata)]
+  I --> K[(KV: short TTL cache)]
+  I --> R[(R2: approved assets/docs)]
+  I --> V[(Vectorize: retrieval index)]
+  V --> A[Workers AI: gated inference]
+  E --> O[Append-only audit + observability]
+  E --> P[Payment provider: disabled]
+```
+
+D1 is authoritative for metadata. KV is disposable cache only. R2 stores approved binary assets. Vectorize/Workers AI remain disabled until rights, privacy, cost and access checks pass. A payment provider is an external service, not a Cloudflare binding.
