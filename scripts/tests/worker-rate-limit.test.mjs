@@ -49,7 +49,7 @@ assert.deepEqual(spoofableHeaderStatuses, [202, 202, 202, 202, 202, 429]);
 async function submitWith(targetWorker, ip, phone) {
   const request = new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'cf-connecting-ip': ip },
+    headers: { 'content-type': 'application/json', origin: 'https://thelingolegacy.com', 'cf-connecting-ip': ip },
     body: JSON.stringify({ phone, zone: 'delaware-crown-zone', consent: true }),
   });
   return targetWorker.fetch(request, env);
@@ -65,7 +65,7 @@ assert.deepEqual(sharedBeaconStatuses, [202, 202, 202, 202, 202, 429]);
 const missingBeaconBinding = await worker.fetch(
   new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'cf-connecting-ip': '198.51.100.90' },
+    headers: { 'content-type': 'application/json', origin: 'https://thelingolegacy.com', 'cf-connecting-ip': '198.51.100.90' },
     body: JSON.stringify({ phone: '+15551234590', zone: 'delaware-crown-zone', consent: true }),
   }),
   { ...env, BEACON_RATE_LIMITER: undefined },
@@ -157,6 +157,37 @@ assert.equal(missingAskBinding.status, 503, 'askLINGO must fail closed without t
 
 
 
+
+
+const checkoutDisabled = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/create-checkout-session', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://thelingolegacy.com' },
+    body: JSON.stringify({ tier: 'xp' }),
+  }),
+  { ...env, STRIPE_SECRET_KEY: 'test-secret', STRIPE_PRICE_XP_PACK: 'price_test' },
+);
+assert.equal(checkoutDisabled.status, 503, 'Checkout must remain disabled even when Stripe credentials are present');
+
+const checkoutCrossOrigin = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/create-checkout-session', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://attacker.example' },
+    body: JSON.stringify({ tier: 'xp' }),
+  }),
+  { ...env, CHECKOUT_ENABLED: 'true', STRIPE_SECRET_KEY: 'test-secret', STRIPE_PRICE_XP_PACK: 'price_test' },
+);
+assert.equal(checkoutCrossOrigin.status, 403, 'Checkout must reject untrusted origins');
+
+const beaconDisabled = await worker.fetch(
+  new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://thelingolegacy.com', 'cf-connecting-ip': '198.51.100.91' },
+    body: JSON.stringify({ phone: '+15551234591', zone: 'delaware-crown-zone', consent: true }),
+  }),
+  { ...env, BEACON_SMS_SEND_ENABLED: 'true', TWILIO_ACCOUNT_SID: 'ACtest', TWILIO_AUTH_TOKEN: 'test', TWILIO_FROM_NUMBER: '+15551234500' },
+);
+assert.equal(beaconDisabled.status, 503, 'SMS must fail closed without server-side consent verification');
 
 const falseStringFlags = await worker.fetch(
   new Request('https://thelingolegacy.com/api/v1/runtime'),
