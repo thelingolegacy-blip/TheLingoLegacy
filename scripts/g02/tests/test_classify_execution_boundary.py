@@ -1,10 +1,8 @@
 import importlib.util
-import json
-import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[2] / "classify-execution-boundary.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "classify-execution-boundary.py"
 SPEC = importlib.util.spec_from_file_location("classify_execution_boundary", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
