@@ -5,7 +5,7 @@ Current checkpoint: 2026-11-02. This register is evidence-led; source presence a
 | Gate | Required evidence | Current state |
 |---|---|---|
 | Source isolation | Dedicated feature branch and package; no production bindings | **Implemented** on `feature/lingo-loyalty-staging-ledger-2026-11-02`; PR #435 remains draft |
-| Ledger schema | D1 migration review, constraints and append-only behavior | **Migration applied and objects verified** in dedicated staging D1; deeper constraint/concurrency tests pending |
+| Ledger schema | D1 migration review, constraints and append-only behavior | **Migrations 0001 and 0002 applied and objects verified** in dedicated staging D1. Separate ephemeral D1 runtime checks passed: separated balances, duplicate idempotency no-op, negative-balance rejection, unit/event mismatch rejection, and append-only update rejection. Ephemeral database deleted after tests; production staging DB remains empty. |
 | D1 staging | Dedicated isolated database, correct jurisdiction, no production binding | **Provisioned**: `lingo-loyalty-staging`, UUID `54ce928b-d540-4bce-816f-e89cb30b8fdf`, U.S. jurisdiction; zero user/reward rows seeded; not bound to a Worker |
 | API behavior | Authenticated wallet, server-verified ad reward, trusted game grants/spend, merchant-authorized coupon | **Source draft only**; runtime adapter placeholders are not valid Cloudflare environment bindings and must be replaced before deployment |
 | Idempotency | Duplicate callback and request replay tests | **Constraints and insert guards drafted; integration tests not executed** |
@@ -15,7 +15,7 @@ Current checkpoint: 2026-11-02. This register is evidence-led; source presence a
 | Merchant redemption | Signed coupon authorization and merchant acceptance | **Partner agreements/adapters pending** |
 | Privacy/legal | Terms, privacy, loyalty/tax/consumer and sweepstakes review as applicable | **Owner/legal review required** |
 | Visual staging preview | Mobile-first sample-only wallet UI | **AppDeploy status ready**: https://lingoloyalty-staging-preview-x4ld0h.v2.appdeploy.ai/; QA snapshot reported no frontend or network errors. This is not a live wallet or backend integration. |
-| CI execution | Actual hosted runner assignment, job steps, test logs and artifacts | **Blocked**: latest run `41435362977` (`LINGOloyalty Staging Validation`) concluded `startup_failure`; no jobs executed. GitHub rejected retry with HTTP 403 because the run cannot be retried. |
+| CI execution | Actual hosted runner assignment, job steps, test logs and artifacts | **Blocked**: latest run `41435816103` (`LINGOloyalty Staging Validation`) concluded `startup_failure`; no jobs executed. GitHub rejected retry with HTTP 403 because the run cannot be retried. |
 | G02 runner | Actual host assignment, sentinel execution, telemetry and artifacts | **Blocked**; no persistent runner host execution evidence |
 | Staging Worker | Reviewed Worker module, supported auth/rate-limit/signature implementations, D1 binding, secret bindings, no production routes | **Not deployed**; Worker source is explicitly marked not deployable as-is |
 | Independent verification | Independent code/security review and reproducible CI evidence | **Pending**; PR #435 has no submitted reviews |
