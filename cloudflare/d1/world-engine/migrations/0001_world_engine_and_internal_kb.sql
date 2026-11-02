@@ -1,8 +1,6 @@
 -- LINGOlegacy World Engine + Internal Knowledge Base
 -- Target: isolated Cloudflare D1 database "world-engine-db" only.
 -- Apply locally first. Do not apply to the production user/session database.
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE IF NOT EXISTS worlds (
   world_id TEXT PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
@@ -193,3 +191,38 @@ BEGIN SELECT RAISE(ABORT, 'audit_events are append-only'); END;
 CREATE TRIGGER IF NOT EXISTS trg_audit_events_no_delete
 BEFORE DELETE ON audit_events
 BEGIN SELECT RAISE(ABORT, 'audit_events are append-only'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_world_publish_requires_cleared_version
+BEFORE UPDATE OF lifecycle_state ON worlds
+WHEN NEW.lifecycle_state = 'published'
+BEGIN
+  SELECT CASE WHEN NOT EXISTS (
+    SELECT 1 FROM world_versions
+    WHERE world_id = NEW.world_id AND rights_state = 'cleared'
+  ) THEN RAISE(ABORT, 'world publication requires a rights-cleared version') END;
+  SELECT CASE WHEN EXISTS (
+    SELECT 1 FROM world_assets
+    WHERE world_id = NEW.world_id AND rights_state <> 'cleared'
+  ) THEN RAISE(ABORT, 'world publication requires all assets rights-cleared') END;
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_kb_publish_requires_cleared_source
+BEFORE UPDATE OF lifecycle_state ON kb_documents
+WHEN NEW.lifecycle_state = 'published'
+BEGIN
+  SELECT CASE WHEN NOT EXISTS (
+    SELECT 1 FROM kb_sources
+    WHERE source_id = NEW.source_id AND rights_state = 'cleared'
+      AND trust_tier <> 'restricted'
+  ) THEN RAISE(ABORT, 'knowledge publication requires a rights-cleared source') END;
+  SELECT CASE WHEN NEW.approved_by IS NULL OR length(trim(NEW.approved_by)) = 0
+    THEN RAISE(ABORT, 'knowledge publication requires an approver') END;
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_world_events_no_update
+BEFORE UPDATE ON world_events
+BEGIN SELECT RAISE(ABORT, 'world_events are append-only'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_world_events_no_delete
+BEFORE DELETE ON world_events
+BEGIN SELECT RAISE(ABORT, 'world_events are append-only'); END;
