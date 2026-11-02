@@ -70,6 +70,11 @@ export default {
         const todayCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM loyalty_ledger WHERE user_id=? AND event_type='AD_REWARD' AND created_at >= date('now')").bind(userId).first();
         if ((todayCount?.n || 0) >= DAILY_AD_CAP) return respond(429, { error: "daily_reward_limit_reached" });
         await ledgerInsert(env.DB, { userId, unit: "LINGOCOIN", delta: proof.coins, eventType: "AD_REWARD", externalEventId: proof.eventId, idempotencyKey: key, metadata: { source: "server_verified_rewarded_ad" } });
+      } else if (url.pathname === "/v1/game/grant") {
+        if (typeof env.VERIFY_GAME_GRANT !== "function") return respond(503, { error: "game_grant_verification_unconfigured" });
+        const grant = await env.VERIFY_GAME_GRANT(payload);
+        if (!grant || grant.userId !== userId || !validId(grant.eventId) || !Number.isInteger(grant.credits) || grant.credits < 1 || grant.credits > 100) return respond(403, { error: "game_grant_invalid" });
+        await ledgerInsert(env.DB, { userId, unit: "GAME_CREDIT", delta: grant.credits, eventType: "GAME_GRANT", externalEventId: grant.eventId, idempotencyKey: key, metadata: { source: "verified_game_server" } });
       } else if (url.pathname === "/v1/game/spend") {
         if (!validId(payload.gameEventId) || !Number.isInteger(payload.credits) || payload.credits < 1 || payload.credits > MAX_GAME_SPEND) return respond(400, { error: "invalid_game_spend" });
         if (typeof env.VERIFY_GAME_EVENT !== "function" || !(await env.VERIFY_GAME_EVENT(payload, userId))) return respond(403, { error: "game_event_unverified" });
