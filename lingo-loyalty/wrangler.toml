@@ -1,0 +1,16 @@
+name = "lingo-loyalty-staging-api"
+main = "worker.js"
+compatibility_date = "2026-11-02"
+workers_dev = false
+preview_urls = false
+
+# No routes are declared. A deployment must not attach to production hostnames.
+[[d1_databases]]
+binding = "DB"
+database_name = "lingo-loyalty-staging"
+database_id = "54ce928b-d540-4bce-816f-e89cb30b8fdf"
+migrations_dir = "migrations"
+
+[vars]
+ALLOWED_ORIGINS = ""
+FIREBASE_PROJECT_ID = ""
