@@ -83,6 +83,11 @@ function safeEmail(value = '') { const email = String(value).trim().slice(0, 160
 
 async function createCheckout(request, env) {
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  if (env.CHECKOUT_ENABLED !== 'true') return json({ ok: false, error: 'Checkout is disabled; no payment session was created.' }, 503, request, env);
+  const origin = request.headers.get('Origin');
+  if (!origin || !allowedOrigins(env).has(origin.toLowerCase())) return json({ ok: false, error: 'Origin not allowed.' }, 403, request, env);
+  const contentType = String(request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (contentType !== 'application/json') return json({ ok: false, error: 'Content-Type must be application/json.' }, 415, request, env);
   const secret = env.STRIPE_SECRET_KEY;
   if (!secret) return json({ ok: false, error: 'Stripe checkout is not configured yet.' }, 503, request, env);
   const body = await parseJson(request);
@@ -91,8 +96,8 @@ async function createCheckout(request, env) {
   if (!tier) return json({ ok: false, error: 'Unknown checkout tier.' }, 400, request, env);
   const price = env[tier.priceEnv];
   if (!price) return json({ ok: false, error: `${tier.label} is not configured for checkout yet.` }, 503, request, env);
-  const origin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
-  const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
+  const checkoutOrigin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
+  const params = new URLSearchParams({ mode: 'payment', success_url: `${checkoutOrigin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${checkoutOrigin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
   const customerEmail = safeEmail(body.email);
   if (customerEmail) params.set('customer_email', customerEmail);
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params });
@@ -146,7 +151,7 @@ function alertMessage(zone, source) { const zoneLabel = zone.split('-').map((par
 
 async function sendBeacon(payload, env) {
   const webhookUrl = env.BEACON_ALERTS_WEBHOOK_URL;
-  if (webhookUrl) { const headers = { 'Content-Type': 'application/json' }; if (env.BEACON_ALERTS_WEBHOOK_SECRET) headers.Authorization = `Bearer ${env.BEACON_ALERTS_WEBHOOK_SECRET}`; const response = await fetch(webhookUrl, { method: 'POST', headers, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Webhook returned ${response.status}`); return { provider: 'webhook' }; }
+  if (webhookUrl) { if (!env.BEACON_ALERTS_WEBHOOK_SECRET) throw new Error('Beacon webhook secret is required.'); const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${env.BEACON_ALERTS_WEBHOOK_SECRET}` }; const response = await fetch(webhookUrl, { method: 'POST', headers, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Webhook returned ${response.status}`); return { provider: 'webhook' }; }
   const sid = env.TWILIO_ACCOUNT_SID; const token = env.TWILIO_AUTH_TOKEN; const from = env.TWILIO_FROM_NUMBER;
   if (!sid || !token || !from) return null;
   const body = new URLSearchParams({ To: payload.phone, From: from, Body: payload.message });
@@ -155,8 +160,30 @@ async function sendBeacon(payload, env) {
   return { provider: 'twilio' };
 }
 
+async function verifyBeaconConsent(env, body, phone, zone) {
+  const verifier = env.BEACON_CONSENT_VERIFIER;
+  const consentReference = String(body.consentReference || '').trim().slice(0, 200);
+  if (!verifier || typeof verifier.fetch !== 'function' || !consentReference) return null;
+  try {
+    const response = await verifier.fetch(new Request('https://beacon-consent.internal/verify', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ phone, zone, consentReference }),
+    }));
+    if (!response.ok) return false;
+    const result = await response.json();
+    return result?.verified === true && result?.phone === phone && result?.zone === zone &&
+      typeof result?.consentId === 'string' && result.consentId.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function beaconAlerts(request, env) {
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
+  const origin = request.headers.get('Origin');
+  if (!origin || !allowedOrigins(env).has(origin.toLowerCase())) return json({ ok: false, error: 'Origin not allowed.' }, 403, request, env);
+  if (env.BEACON_SMS_SEND_ENABLED !== 'true') return json({ ok: false, error: 'Beacon SMS delivery is disabled; no message was sent.' }, 503, request, env);
   const body = await parseJson(request); const phone = normalizePhone(body.phone); const zone = String(body.zone || '').trim(); const source = normalizeSource(body.source); const consent = body.consent === true || body.consent === 'true' || body.consent === 'on';
   if (!PHONE_RE.test(phone)) return json({ ok: false, error: 'Enter a phone number in E.164 format.' }, 400, request, env);
   if (!BEACON_ZONES.has(zone)) return json({ ok: false, error: 'Unknown beacon alert zone.' }, 400, request, env);
@@ -165,9 +192,12 @@ async function beaconAlerts(request, env) {
   const edgeAllowed = await edgeRateAllowed(env.BEACON_RATE_LIMITER, rateKey);
   if (edgeAllowed === null) return json({ ok: false, error: 'Beacon rate limiting is not configured or unavailable.' }, 503, request, env);
   if (!edgeAllowed || isRateLimited(rateKey)) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
+  const consentVerified = await verifyBeaconConsent(env, body, phone, zone);
+  if (consentVerified === null) return json({ ok: false, error: 'Server-side consent verification is not configured; no message was sent.' }, 503, request, env);
+  if (!consentVerified) return json({ ok: false, error: 'Verified consent could not be established; no message was sent.' }, 403, request, env);
   const payload = { phone, zone, source, message: alertMessage(zone, source), consent: true, createdAt: new Date().toISOString() };
   const result = await sendBeacon(payload, env);
-  if (!result) return json({ ok: true, staged: true, message: 'Beacon alert validated but no delivery provider is configured.' }, 202, request, env);
+  if (!result) return json({ ok: false, error: 'No verified delivery provider is configured; no message was sent.' }, 503, request, env);
   return json({ ok: true, provider: result.provider, message: 'Beacon text alerts started.' }, 200, request, env);
 }
 
@@ -186,9 +216,9 @@ function runtimeManifest(request, env) {
     assets: 'worker-controlled',
     observability: isEnabledFlag(env.OBSERVABILITY_ENABLED),
     integrations: {
-      stripe: Boolean(env.STRIPE_SECRET_KEY),
-      beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
-      twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER),
+      stripe: env.CHECKOUT_ENABLED === 'true' && Boolean(env.STRIPE_SECRET_KEY),
+      beacon_webhook: env.BEACON_SMS_SEND_ENABLED === 'true' && Boolean(env.BEACON_ALERTS_WEBHOOK_URL && env.BEACON_ALERTS_WEBHOOK_SECRET),
+      twilio: env.BEACON_SMS_SEND_ENABLED === 'true' && Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER && env.BEACON_CONSENT_VERIFIER),
       d1: Boolean(env.DB),
       kv: Boolean(env.STUDIO_KV),
       r2: Boolean(env.ASSET_BUCKET),
@@ -376,7 +406,7 @@ function platformStatus(request, env) {
       identity: { configured: Boolean(env.FIREBASE_PROJECT_ID), production_verified: false },
       wallet: { mode: 'demo-only', real_value: false, transfers: false, cashout: false },
       coins: { mode: 'demo-only', purchasable: false, transferable: false, redeemable: false },
-      checkout: { configured: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_XP_PACK), production_verified: false },
+      checkout: { enabled: env.CHECKOUT_ENABLED === 'true', configured: env.CHECKOUT_ENABLED === 'true' && Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_XP_PACK), production_verified: false },
       rewards: { mode: 'demo-only', server_authoritative: false },
       assistant: { configured: Boolean(env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL), fallback: true, rate_limit_configured: Boolean(env.ASK_RATE_LIMITER && typeof env.ASK_RATE_LIMITER.limit === 'function') },
       world_registry: { configured: Boolean(env.ASSETS), production_verified: false },
@@ -432,7 +462,7 @@ export default {
       if (url.pathname === '/api/v1/platform/status') return json(platformStatus(request, env), 200, request, env);
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
-      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
+      if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: false, live_ops: false, ask_lingo: true, analytics: isEnabledFlag(env.OBSERVABILITY_ENABLED) } }, 200, request, env);
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
