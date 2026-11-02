@@ -155,7 +155,24 @@ jobs:
 
           gh api "/repos/$GITHUB_REPOSITORY/actions/jobs/$TARGET_JOB_ID" --jq '{id,name,status,conclusion,runner_id,runner_name,started_at,completed_at}' | tee execution-evidence.json
 
-          jq -e --arg rid "$RUNNER_ID" --arg rname "$RUNNER_NAME"             '.runner_id != null and (.runner_id|tostring) == $rid and .runner_name == $rname and .status == "completed" and .conclusion == "success"'             execution-evidence.json >/dev/null
+          jq -e --arg rid "$RUNNER_ID" --arg rname "$RUNNER_NAME" \
+            '(.runner_id | type == "number") and .runner_id > 0 and (.runner_id|tostring) == $rid and .runner_name == $rname and .status == "completed" and .conclusion == "success"' \
+            execution-evidence.json >/dev/null
+
+          # Independently retrieve the target job log and require the sentinel marker.
+          gh run view "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --log > target-job.log
+          test -s target-job.log
+          grep -Fq "G02_EXECUTION_SENTINEL=PASS" target-job.log
+
+          # Require and download the target run's own evidence artifact.
+          artifact_name="g02-qualified-evidence-${TARGET_RUN_ID}"
+          artifact_count="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/artifacts" | jq --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and .expired == false)] | length')"
+          test "$artifact_count" -gt 0
+          mkdir -p target-artifacts
+          gh run download "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir target-artifacts
+          find target-artifacts -type f -print -quit | grep -q .
+          find target-artifacts -type f -print0 | sort -z | xargs -0 sha256sum > target-artifact-sha256.txt
+
 
           printf '%s\n' \
             "G02_WRAPPER_EXECUTION=PASS" \
@@ -163,13 +180,20 @@ jobs:
             "G02_TARGET_JOB_ID=$TARGET_JOB_ID" \
             "G02_RUNNER_ID=$RUNNER_ID" \
             "G02_RUNNER_NAME=$RUNNER_NAME" \
+            "G02_TARGET_LOG_RETRIEVAL=PASS" \
+            "G02_TARGET_ARTIFACT_RETRIEVAL=PASS" \
             "G02_EXECUTION_CREDIT=ELIGIBLE_FOR_GATE_VERIFICATION" | tee execution-summary.txt
 
       - name: Upload execution evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: g02-wrapper-execution-evidence
           path: |
             execution-evidence.json
             execution-summary.txt
-          if-no-files-found: error
+            target-job.log
+            target-artifact-sha256.txt
+            target-artifacts/
+          if-no-files-found: warn
+          retention-days: 14

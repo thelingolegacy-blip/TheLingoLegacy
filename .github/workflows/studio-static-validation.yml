@@ -10,6 +10,8 @@ on:
       - "scripts/verify-release-acceptance.mjs"
       - "scripts/test-verify-release-acceptance.mjs"
       - "release/acceptance-gates.json"
+      - ".assetsignore"
+      - "scripts/verify-static-asset-boundary.mjs"
       - "platforms/**"
       - "cloudflare/lingo-flagship-root.js"
       - "cloudflare/wrangler.flagship-root.jsonc"
@@ -42,6 +44,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Validate Cloudflare static asset publication boundary
+        run: node scripts/verify-static-asset-boundary.mjs
       - name: Validate studio configuration and local assets
         run: node studio-sites/scripts/validate-studio.mjs
       - name: Validate studio world matrix and game engine

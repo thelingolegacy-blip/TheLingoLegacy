@@ -46,8 +46,15 @@ jobs:
           test -n "$RUN_ID"
           test -n "$SHA"
 
-          echo "G02_RUNNER_IDENTITY=PASS"
-          echo "G02_RUNNER_ASSIGNMENT=PASS"
+          mkdir -p g02-evidence
+          {
+            printf '%s\n' "run_id=$RUN_ID" "run_number=$RUN_NUMBER" "job_name=$JOB_ID" \
+              "runner_name=$RUNNER_NAME" "runner_os=$RUNNER_OS" "runner_arch=$RUNNER_ARCH" \
+              "runner_environment=$RUNNER_ENVIRONMENT" "github_sha=$SHA"
+          } | tee g02-evidence/runner-identity.txt
+
+          echo "G02_RUNNER_IDENTITY=PASS" | tee -a g02-evidence/runner-identity.txt
+          echo "G02_RUNNER_LABEL_IDENTITY=PASS" | tee -a g02-evidence/runner-identity.txt
 
           # The inner Node diagnostic is deliberately bounded below the job-level
           # timeout. If Node stalls, the OS timeout kills it and the fallback
@@ -76,5 +83,14 @@ jobs:
             exit "$NODE_RC"
           fi
 
-          echo "G02_EXECUTION_SENTINEL=PASS"
-          echo "G02_QUALIFIED_PROBE=PASS"
+          echo "G02_EXECUTION_SENTINEL=PASS" | tee -a g02-evidence/runner-identity.txt
+          echo "G02_QUALIFIED_PROBE=PASS" | tee -a g02-evidence/runner-identity.txt
+
+      - name: Upload G02 execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-qualified-evidence-${{ github.run_id }}
+          path: g02-evidence/
+          if-no-files-found: warn
+          retention-days: 14
