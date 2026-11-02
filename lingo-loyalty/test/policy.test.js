@@ -27,6 +27,10 @@ test("ledger is append-only and idempotent", () => {
   assert.match(schema, /loyalty_ledger_no_update/);
   assert.match(schema, /loyalty_ledger_no_delete/);
 });
+test("CORS preflight is handled once before session authentication", () => {
+  assert.equal((worker.match(/request\.method === "OPTIONS"/g) || []).length, 1);
+  assert.ok(worker.indexOf('request.method === "OPTIONS"') < worker.indexOf('authenticate(request, env)'));
+});
 test("mutations fail closed without rate limiting", () => {
   assert.match(worker, /RATE_LIMITER/);
   assert.match(worker, /rate_limiter_unconfigured/);
