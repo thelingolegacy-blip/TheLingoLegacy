@@ -96,3 +96,44 @@ test('configuration consistency fails closed on compatibility-date drift and hea
   assert.ok(report.failures.includes('compatibility-date'));
   assert.ok(report.failures.includes('assets-frame-policy'));
 });
+
+
+test('configuration consistency rejects undocumented runner.id context access', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\n' + '$' + '{{ runner.id }}');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('runner-id-from-jobs-api'));
+});
+
+test('configuration consistency requires the held deployment job to depend on runner and repair gates', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8').replace('needs: [runner-gate, repair]', 'needs: [runner-gate]'));
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('deployment-job-dependency'));
+});
+
+test('configuration consistency rejects write operations in the read-only surface gate', () => {
+  const result = run({ mutate(root) {
+    const gatePath = path.join(root, 'scripts/sanitize-cloudflare-only-surface.mjs');
+    fs.writeFileSync(gatePath, fs.readFileSync(gatePath, 'utf8') + '\nfs.writeFileSync("release.json", "{}");');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('surface-gate-read-only'));
+});
+
+test('configuration consistency rejects deployment commands in CircleCI validation config', () => {
+  const result = run({ mutate(root) {
+    const configPath = path.join(root, '.circleci/config.yml');
+    fs.writeFileSync(configPath, 'workflows:\n  deploy:\n    jobs:\n      - run: wrangler deploy');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('circleci-is-validation-only'));
+});
