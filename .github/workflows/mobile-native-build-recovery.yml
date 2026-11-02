@@ -1,0 +1,92 @@
+name: Mobile Native Build Recovery
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - recovery/platform-ops-preview-2026-11-02
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/mobile-native-build-recovery.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-native-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-and-web:
+    name: Regenerate native scaffold, analyze, web and Android debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Regenerate missing native platform scaffolds in CI workspace
+        run: flutter create --platforms=android,ios --project-name lingo_legacy --org com.thelingolegacy .
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Build web release artifact (not production publication)
+        run: flutter build web --release
+
+      - name: Build Android debug artifact (not store-signed)
+        run: flutter build apk --debug
+
+      - name: Upload web and Android development artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-mobile-development-builds
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            build/web/
+            build/app/outputs/flutter-apk/app-debug.apk
+
+  ios-simulator:
+    name: iOS simulator compile (unsigned)
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Regenerate missing iOS platform scaffold in CI workspace
+        run: flutter create --platforms=ios --project-name lingo_legacy --org com.thelingolegacy .
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Compile iOS simulator app without signing
+        run: flutter build ios --simulator --no-codesign
+
+      - name: Upload iOS simulator development artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-ios-simulator-development-build
+          if-no-files-found: error
+          retention-days: 7
+          path: build/ios/iphonesimulator/Runner.app
