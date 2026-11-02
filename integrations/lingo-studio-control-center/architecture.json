@@ -100,7 +100,7 @@
   "deploymentEvidence": {
     "cloudflare": {
       "worker": "lingo-studio-control-center-staging",
-      "deploymentId": "6827a64d53b64b9693fe89fb864ff4d9",
+      "deploymentId": "3e86b1881697414cb7bd637e5eccdc5e",
       "workersDevUrl": "https://lingo-studio-control-center-staging.thelingolegacy.workers.dev",
       "workersDevEnabled": true,
       "previewsEnabled": false,
@@ -109,7 +109,8 @@
       "productionChanges": 0,
       "runtimeSmokeTest": "not independently invoked from this session; public health probe endpoint deployed",
       "healthEndpoint": "/healthz/apps",
-      "healthProbeMethod": "HEAD"
+      "healthProbeMethod": "HEAD",
+      "versionId": "6827a64d53b64b9693fe89fb864ff4d9"
     },
     "appdeploy": {
       "existingApplications": 16,
