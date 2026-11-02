@@ -16,7 +16,10 @@
   ],
   "vars": {
     "CANONICAL_DOMAIN": "thelingolegacy.com",
-    "PUBLIC_SITE_URL": "https://thelingolegacy.com"
+    "PUBLIC_SITE_URL": "https://thelingolegacy.com",
+    "CHECKOUT_ENABLED": "false",
+    "BEACON_SMS_SEND_ENABLED": "false",
+    "ASKLINGO_AI_ENABLED": "false"
   },
   "ratelimits": [
     {
