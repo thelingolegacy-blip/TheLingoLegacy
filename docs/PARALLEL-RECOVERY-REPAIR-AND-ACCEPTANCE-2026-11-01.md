@@ -307,15 +307,15 @@ No branch was deleted. No PR was merged.
 ### Remaining overlap requiring controlled reconciliation
 
 - #267 and #421 both modify `ops/github-runner/Dockerfile` and `ops/github-runner/docker-compose.yml`. #421 owns the hardened container baseline; #267's unique heartbeat/handshake and host-telemetry work must be rebased onto that baseline before acceptance.
-- #416 remains dependent on #414 and overlaps #415 on `lib/main.dart` and `.github/workflows/flutter-preview-matrix.yml`. The shared askLINGO widget is currently identical. Do not retarget or merge this stack blindly.
+- #416 remains dependent on #414 and is now ancestry-synchronized with that base. It overlaps #415 on `lib/main.dart` and `.github/workflows/flutter-preview-matrix.yml`; the shared askLINGO widget is identical. Reconcile the shared Flutter entry point and workflow before accepting either stack.
 - Older host, dispatch-rule, evidence-architecture and control-plane proposals (#261–#286 and related branches) remain separate staged work; they are not certified or promoted by this pass.
 
 ### Validation and execution status
 
 - The latest sampled GitHub Actions runs for PRs #414, #415, #424, #425 and #431 ended in `startup_failure`. Direct Jobs API and artifact inventory checks for representative runs returned zero jobs and zero artifacts.
-- A successful Vercel status context appeared on several PR commits. It is not GitHub Actions execution evidence, Cloudflare validation, or production acceptance; production architecture remains Cloudflare.
+- Non-GitHub status contexts are not GitHub Actions execution evidence, Cloudflare validation, or production acceptance; production architecture remains Cloudflare.
 - The new #424 regression tests and #415 Hosting verifier were committed to their existing branches but were not executed in a full repository checkout or successful hosted CI.
-- No workflow was dispatched; no runner was registered, restarted or reconfigured; no host was provisioned.
+- No workflow was manually dispatched; no runner was registered, restarted or reconfigured; no host was provisioned. Source pushes did trigger automated checks, but they failed before job initialization.
 - No production Worker, DNS, route, secret, billing, payment, Firebase project or release setting was changed.
 - A repository-wide open-PR search returned its 100-result limit, so this is a targeted reconciliation of the active maintenance workstreams, not a claim that every historical open PR has been audited.
 
@@ -334,3 +334,96 @@ All three concluded `startup_failure`; direct Jobs API and artifact inventory ch
 
 
 Latest corrected #424 head `17b3e33d22dfb412eee1316b3869840587d55be` produced three more pre-job failures: Lingo Legacy Static CI run `41378785199`, Crimson Smoke UI run `41378784478`, and G02 Runner Image Build run `41378783600`. Each had `startup_failure`, zero jobs, and zero artifacts. The regression suite now contains nine cases, but none ran because no job initialized.
+
+## 11. Cross-platform deep-dive snapshot — 2026-11-01
+
+**Evidence class:** read-only provider inventory plus source inspection. No customer rows, message bodies, secret values, private keys or token values were retrieved or included. Source patches listed below remain draft and unexecuted.
+
+### 11.1 Platform and operating-system matrix
+
+| Surface / OS | Source present | Actual execution evidence | Current disposition |
+|---|---|---|---|
+| Desktop web | Yes — Cloudflare Worker/Pages and Studio sources | Production Worker allocation exists; browser QA not independently accepted | Live surface, release acceptance incomplete |
+| Mobile web / PWA | Yes — root and Studio service workers, manifests and responsive UI | No device/browser test artifact | Source hardening prepared; offline and cache behavior unverified |
+| Android | Flutter source and debug preview workflow | No build job initialized | Debug preview only; no release signing or store acceptance |
+| iOS / iPadOS | Flutter shared source | No macOS build/signing job evidence | Not release-ready |
+| macOS desktop | No signed native build evidence | None | Not verified |
+| Windows / Linux desktop | No signed native build evidence | None | Not verified |
+| Tizen | Platform metadata/config scaffold | No SDK package or device test | Metadata only |
+| webOS | App metadata scaffold | No SDK package or device test | Metadata only |
+| LG ThinQ / connected devices | No verified device connector or test | None | Not integrated |
+| Smart-TV browser surfaces | Responsive/navigation source exists | No device matrix or remote-control test | Not accepted |
+| Game / arcade surfaces | Registry and browser game source proposals | No reproducible package/build artifact | Preview/source only |
+
+Color tokens and component shapes can be inspected in source, including the Industrial Noir/Crimson Shadow Studio direction and the separate bright KottonsCode direction. This is not a visual acceptance result: WCAG contrast, text scaling, touch targets, keyboard focus, screen-reader semantics, reduced motion and actual device rendering still require executed tests and screenshots.
+
+### 11.2 GitHub / G02 execution evidence
+
+Latest sampled source heads and run results:
+- PR #416 head `bf5d946a87bb9bac293e64791a6bbe5f05277b11`: Studio Static Validation run `41380187208`, Flutter Cross-Platform Preview Matrix `41380185931`, Studio Preview Package `41380185074`.
+- PR #424 head `17b3e33d22dfb412eee1316b3869840587d55be4`: Static CI run `41378785199`, Crimson Smoke UI run `41378784478`, Runner Image Build run `41378783600`.
+- PR #415 head `7b04985f4c6dbb0e70f5d3450356776f733b75be`: Flutter Cross-Platform Preview Matrix run `41377436805` and Flutter Firebase Integrity run `41377435943`.
+- PR #431 head `e2923641b720a7b3d3f388b7942989d66d808a02`: Static CI run `41371470701`.
+- PR #425 head `bec03e42a6f8404abb1d7d63a271366073031450`: Static CI run `41263611673`.
+
+Each sampled run concluded `startup_failure`; direct job and artifact queries returned empty arrays. No test, build, sentinel step, runner assignment, log artifact or acceptance result was produced. This remains a pre-job boundary, not proof of a specific runner-host root cause.
+
+### 11.3 GitLab mirror status
+
+- Two private legacy `FameMoneyFortune` projects are visible: the owner project and a fork/mirror. The owner project's `master` head is `f7672ce79bcfa5e7c5b9d27c6e80789f5a6bbc9f` (2026-10-08); the fork's `master` head is `dc6f1e077095cb53776a385341446c349e593d99` (2025-10-06). Neither is the canonical GitHub `TheLingoLegacy` repository.
+- The owner project has two open draft MRs (#1 G02 evidence artifacts, #2 TML source validation/upgrade contract). The fork's duplicate G02 MR #1 had the same source SHA as owner MR #1 and was closed as a duplicate; its branch and commits were retained.
+- Sampled latest GitLab pipelines are failed and their job lists are empty. The fork pipeline is archived.
+- GitLab account 2FA is disabled. A legacy project runner-registration credential was returned in project metadata during inspection; its value is intentionally omitted. Rotate it before any runner registration or reuse. No runner was registered or restarted.
+
+### 11.4 Cloudflare account, edge and access boundary
+
+Observed zone controls:
+- SSL mode `strict`; minimum TLS `1.3`; Always Use HTTPS and Automatic HTTPS Rewrites enabled; Brotli enabled; security level `medium`.
+- Managed Free WAF rules and L7 DDoS rulesets are present.
+- The custom request-firewall phase has two overlapping managed-challenge rules for `POST /admin` followed by a block rule for the same method/path. That path is therefore intentionally or effectively unavailable; confirm the intended admin workflow before changing it.
+- The HTTP rate-limit phase has an entrypoint but no rules.
+- The dynamic redirect canonicalizes `www.thelingolegacy.com` to the apex and preserves the query string.
+- The Cloudflare account has 2FA enforcement disabled.
+
+Access-policy risk:
+- The Cloudflare Access application named `All Workers` targets all Workers and includes a `bypass` policy for everyone. Several individual Worker/preview applications also include a public-bypass policy. This may be intentional for public surfaces, but it is too broad to assume internal preview, diagnostics or admin endpoints are protected. Do not attach sensitive control-plane endpoints to this policy; split public and private Access applications and require MFA for private administration.
+- The Asset Registry has no verified dedicated Access application or protected staging deployment. Its own README correctly requires both edge Access protection and Worker-side JWT/role verification.
+
+Worker and storage inventory:
+- The active production Worker allocations were not modified. The production script settings inspected expose asset/public-text bindings but no D1, KV, R2, AI, Stripe or Beacon delivery/consent bindings. The root Worker likewise has no production integration bindings.
+- The production D1 database contains 17 application tables. Schema names/columns include user identities, session records, GPS coordinates, AI conversations, game activity and submissions. The `sessions.token` column is plaintext in the observed schema. No data rows were read. This needs a data-owner review, token hashing/rotation plan, access controls, retention policy and backup/restore evidence before any integration is reactivated.
+- The separate world-engine D1 database has no application tables. R2 is not enabled.
+- Candidate Worker versions have been uploaded to the production Worker namespace in prior source/preview activity, but the active traffic allocations remain unchanged. Uploading a candidate version is not a deployment or acceptance signal.
+- The Pages inventory includes a production `my-flutter-app` project on branch `main`; its latest deployment status is successful but the returned deployment record did not provide a source SHA. The integration-test and static-backup Pages projects have production deployments disabled.
+
+### 11.5 Application and integration inventory
+
+- AppDeploy returned 15 known application surfaces with platform state `deployed/ready`. That label is not functional acceptance. Historical error records exist for Jersey Shore, KottonsCode, Sonic Boom and LINGOtravel; current runtime/device QA is not independently evidenced.
+- The That’s My Lingo AppDeploy backend is demo-coin only: no real-money cashout or live checkout was verified. Its askLINGO client uses a local guided-answer stub rather than a verified production AI provider. Wallet/spin/profile updates are separate writes and need transaction/idempotency protection before any value-bearing economy is enabled.
+- The AppDeploy runtime's production-contract endpoint reports a `secretsInUrls` value that conflicts with the live endpoint's security metadata. Treat the production-contract response as inaccurate until reconciled.
+- PR #415 keeps Firebase Hosting pointed at `build/web` and adds a publication-boundary verifier. The Firebase options secret/project runtime and Firebase Hosting deployment were not verified; no Firebase deploy occurred.
+- PR #428 is a metadata-only Asset Registry proposal. It requires a separate staging D1 and Access application; R2 is unavailable. Its publication event records registry approval, not binary upload or actual public asset delivery.
+
+### 11.6 Source hardening prepared on existing draft branches
+
+- PR #424: repaired the malformed consistency verifier and restored the auto-repair/sentinel test fixture. Still no CI job execution.
+- PR #416: added per-location Cloudflare Rate Limiting bindings with cross-isolate tests; made missing bindings fail closed; added same-origin checkout/SMS checks; explicitly disabled checkout, SMS and AI; required a server-side consent verifier before SMS; isolated Wrangler to `thelingolegacyv-5-preview` with workers.dev and no production routes; hardened PWA cache policy to avoid no-store/private responses and bypass API requests.
+- PR #415: Firebase Hosting output restricted to `build/web`; no Firebase deployment.
+- PR #419: static asset exclusion is a prerequisite before deploying a Worker whose assets directory is the repository root.
+- PR #431 and #425 remain distinct G02 classifier and startup-restoration proposals.
+
+These are source proposals only. The latest GitHub Actions runs above all failed before job initialization, so the new tests have not been executed.
+
+### 11.7 Launch decision and sequence
+
+The user has explicitly requested production activation. Technical acceptance is still absent, so no production promotion was performed. Required sequence:
+1. Rotate the exposed GitLab runner-registration credential; enforce MFA on GitLab and Cloudflare; review Cloudflare Access bypass policies.
+2. Resolve GitHub/GitLab CI startup failures and obtain actual hosted execution evidence; then prove G02 separately.
+3. Review the D1 plaintext-session-token schema and data retention/backup controls before binding or exposing the database.
+4. Reconcile PR #415/#416 shared Flutter entrypoint/workflow, and require PR #419 asset exclusion before any preview Worker deployment.
+5. Execute web/PWA, Flutter, Android, iOS and smart-TV test matrices on the actual target platforms.
+6. Complete security/privacy/accessibility review and independently verify every source SHA, test result, artifact and environment boundary.
+7. Keep checkout, real-money value, SMS delivery and AI inference disabled until their own consent, security, cost and operational gates pass.
+8. Only then consider a separately scoped Cloudflare production promotion with rollback evidence.
+
+**No billing bypass is implemented or recommended.** Paid capabilities remain disabled; free-tier limits and provider terms still apply. No production routes, DNS, Worker allocations, secrets, databases, billing settings or release state were changed during this audit.
