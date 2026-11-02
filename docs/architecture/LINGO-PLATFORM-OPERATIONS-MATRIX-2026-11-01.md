@@ -248,3 +248,10 @@ D1 is authoritative for metadata. KV is disposable cache only. R2 stores approve
 - LINGO Travel's stored source includes hard-coded demo/estimated trip offers and provider placeholders. Its visible prices are not live quotes and its booking actions are not verified provider bookings. Keep clear demo/estimate labels until authorized live fare/booking APIs are connected.
 - Kotton's Code contains an inline global askLINGO DOM injection and recurring heartbeat timer in the React entrypoint. Its historical script error should be reproduced and the global side effects moved into a lifecycle-managed component with cleanup before redeployment.
 - Jersey Shore's CSS load error may be a stale/missing hashed build asset; verify the current deployment manifest and asset object before changing source.
+
+
+## 15. Mobile store enrollment cost and prerequisites
+
+- Apple Developer account registration is free for basic tools and on-device testing, but App Store distribution and TestFlight access require Apple Developer Program membership at USD 99 per year (regional pricing may vary). Organization enrollment requires legal-entity verification and a D-U-N-S number. Official reference: https://developer.apple.com/help/account/membership/program-enrollment
+- Google Play Console registration requires a USD 25 one-time developer registration fee, identity verification, and acceptance of the Developer Distribution Agreement. Personal developer accounts may have additional closed-testing and device-verification requirements. Official reference: https://support.google.com/googleplay/android-developer/answer/6112435
+- No fee bypass or alternative publisher identity is permitted. The free path is to build and test locally/through authorized internal tooling until the publisher account is ready.
