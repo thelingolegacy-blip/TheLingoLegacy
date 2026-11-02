@@ -1,0 +1,81 @@
+{
+  "contractVersion": "1.0.0",
+  "system": "LINGO Legacy",
+  "asOf": "2026-10-10",
+  "changeClass": "architecture-reconstruction",
+  "source": {
+    "provider": "github",
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "defaultBranch": "main",
+    "releaseRequiresFullCommitSha": true
+  },
+  "production": {
+    "authority": "cloudflare-workers",
+    "mutationFreeze": true,
+    "failClosed": true,
+    "lastKnownGoodProtected": true,
+    "promotionAuthorized": false,
+    "activationAuthorized": false,
+    "currentReleaseGate": "G02",
+    "requiredGateOrder": ["G00", "G01", "G02", "G03", "G04", "G05", "G06", "G07", "G08", "G09", "G10", "G11"]
+  },
+  "runtime": {
+    "provider": "cloudflare-workers",
+    "zone": "thelingolegacy.com",
+    "observedLiveWorker": "thelingolegacy",
+    "declaredWranglerWorker": "thelingolegacyv-5",
+    "authorityDrift": true,
+    "routes": [
+      {"pattern": "thelingolegacy.com/*", "expectedWorker": "thelingolegacy"},
+      {"pattern": "www.thelingolegacy.com/*", "expectedWorker": "thelingolegacy"}
+    ],
+    "publicReachability": "UNVERIFIED",
+    "requiredProbes": [
+      "/healthz",
+      "/api/v1/platform/gates",
+      "/api/v1/platform/modules",
+      "/api/v1/runtime",
+      "/api/v1/platform/manifest",
+      "/api/v1/platform/status",
+      "/api/v1/site/context"
+    ]
+  },
+  "ci": {
+    "provider": "github-actions",
+    "runner": {
+      "name": "lingo-legacy-g02",
+      "labels": ["self-hosted", "linux", "x64", "lingo-g02"],
+      "gate": "G02",
+      "status": "BLOCKED",
+      "requiresAssignedJob": true,
+      "requiresInstantiatedSteps": true,
+      "requiresRetrievableLogs": true,
+      "requiresIndependentlyVerifiedEvidence": true
+    }
+  },
+  "services": {
+    "firebase": {"role": "identity-data-functions", "productionWritesAllowedDuringReconstruction": false},
+    "flutter": {"role": "mobile-client", "clientSecretsAllowed": false},
+    "appdeploy": {"role": "isolated-staging-qa", "productionPromotionAllowed": false},
+    "vercel": {"role": "legacy-preview", "currentObservedState": "DEPLOYMENT_DISABLED_402", "productionAuthority": false},
+    "googleAiStudio": {
+      "role": "model-prototyping",
+      "runtimeAuthority": false,
+      "provider": "google-gemini",
+      "runtimeAdapter": "cloudflare-worker-server-side",
+      "environment": "staging-first",
+      "enabled": false,
+      "modes": ["observe", "analyze", "propose", "verify"],
+      "secretName": "GEMINI_API_KEY",
+      "secretValueCommitted": false,
+      "clientSideKeyExposureAllowed": false,
+      "autonomousActionsAllowed": false,
+      "productionDataAllowedDuringReconstruction": false
+    }
+  },
+  "release": {
+    "lifecycle": ["DISCOVER", "SNAPSHOT", "RECONCILE", "BUILD", "STATIC_VALIDATE", "TEST", "REVIEW", "STAGE", "EVIDENCE", "ACCEPT", "AUTHORIZE", "PROMOTE", "LIVE_VERIFY", "SEAL_LKG"],
+    "lkgMayChangeOnlyAfterG00ThroughG11Pass": true,
+    "requiredEvidence": ["source_sha", "workflow_run_id", "artifact_sha256", "runtime_version", "configuration_snapshot", "live_probe_results", "independent_verifier", "authorization_record"]
+  }
+}

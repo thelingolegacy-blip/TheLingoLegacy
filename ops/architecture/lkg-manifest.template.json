@@ -1,0 +1,43 @@
+{
+  "manifestVersion": "1.0.0",
+  "status": "UNRESOLVED_PROTECTED",
+  "environment": "production",
+  "source": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "commitSha": null
+  },
+  "artifact": {
+    "id": null,
+    "sha256": null,
+    "buildRunId": null
+  },
+  "runtime": {
+    "provider": "cloudflare-workers",
+    "workerName": null,
+    "deploymentId": null,
+    "runtimeVersion": null,
+    "routeSnapshotSha256": null,
+    "dnsSnapshotSha256": null
+  },
+  "data": {
+    "firebaseProjectId": null,
+    "schemaVersion": null,
+    "backupSnapshotId": null,
+    "restoreRequired": null
+  },
+  "acceptance": {
+    "ciRunId": null,
+    "testEvidenceSha256": null,
+    "liveProbeEvidenceSha256": null,
+    "independentVerifier": null,
+    "authorizationRecord": null,
+    "acceptedAt": null
+  },
+  "governance": {
+    "lkgProtected": true,
+    "restoreExecuted": false,
+    "productionPromotionAuthorized": false,
+    "activationAuthorized": false,
+    "requiredRule": "Every identity/evidence field must be populated and independently verified before a restore can be authorized."
+  }
+}
