@@ -39,6 +39,8 @@ assert.match(worker, /ENVIRONMENT !== "staging"/);
 assert.match(worker, /decoded\.startsWith/);
 assert.match(worker, /routeCount:ROUTES\.length/);
 assert.match(worker, /\/healthz/);
+assert.match(worker, /\/healthz\/apps/);
+assert.match(worker, /ROUTES\.map\(async/);
 assert.match(rules, /allow write: if false;/);
 assert.match(rules, /match \/\{document=\*\*\}/);
 assert.match(rules, /studioEvidenceReviews/);
