@@ -96,3 +96,20 @@ A second read-only pass fetched the Access application objects and each applicat
 - Account-member allow policies are also present on several applications, but do not neutralize an Everyone-bypass policy.
 - No Access application or policy was modified. Before remediation, obtain an owner-approved route inventory mapping each application to exact hostnames and classifying every endpoint as public, authenticated-user, admin, or internal. Replace broad bypass only for confirmed private/admin surfaces, test allowed and denied identities, and retain rollback evidence.
 - Account owner action remains required for MFA enrollment. No MFA state change was performed by this read-only pass.
+
+## 2026-11-02 follow-up — owner-access, credential safety, and preview exposure
+
+### GitLab project credential and MFA
+- A fresh owner-visible project metadata response included the project runner-registration credential field. The credential value is not copied into repository content or this report. Treat the existing registration credential as exposed and rotate/revoke it through GitLab's owner-controlled CI/CD runner settings; verify the old credential is rejected.
+- The connected GitLab tool surface does not expose a registration-token reset operation. No rotation or runner re-registration is claimed.
+- The authenticated GitLab profile still reports two_factor_enabled=false. MFA enrollment requires the account owner to complete the provider's authentication flow.
+- Internal follow-up note added to confidential issue #2. Latest observed pipeline failed before job creation (started_at=null; Jobs API returned no jobs); no runner workload execution is evidenced.
+
+### Render preview network boundary
+- The Render service inventory confirms the operations preview static site has an IP allow-list entry of 0.0.0.0/0 (everywhere). This makes the preview reachable from any source network, subject to the app's own controls.
+- No allow-list change was made because the correct owner/admin access ranges and whether this preview is intentionally public have not been confirmed. Classify the preview as public or private, then apply a verified owner/admin allow-list or an explicit public-content approval. Test both permitted and denied access before closing.
+- The service is a static preview only; this inventory does not prove runtime health, API behavior, or user-journey acceptance.
+
+### Owner-access boundary
+- The connected Cloudflare identity is present, but Cloudflare account MFA remains unenrolled. A chat-level authorization does not substitute for provider MFA, recovery factors, billing authority, or legal account enrollment.
+- No GitLab credential, Cloudflare Access policy, Render network allow-list, production route, secret, DNS record, billing setting, or production resource was mutated by this follow-up.
