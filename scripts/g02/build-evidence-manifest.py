@@ -99,15 +99,16 @@ def build_manifest(
             steps_state = "PROVIDED"
         else:
             steps = None
-            steps_state = "NOT_PROVIDED"
+            steps_state = "NOT_RETRIEVABLE" if steps_dir else "NOT_PROVIDED"
             missing.append({"job_id": job_id, "evidence": "steps", "state": steps_state})
 
         if log_path and log_path.is_file():
             log = {"state": "PROVIDED", "file": log_path.name, "sha256": sha256_file(log_path)}
             supplied_files.append(log_path)
         else:
-            log = {"state": "NOT_PROVIDED", "file": None, "sha256": None}
-            missing.append({"job_id": job_id, "evidence": "logs", "state": "NOT_PROVIDED"})
+            log_state = "NOT_RETRIEVABLE" if logs_dir else "NOT_PROVIDED"
+            log = {"state": log_state, "file": None, "sha256": None}
+            missing.append({"job_id": job_id, "evidence": "logs", "state": log_state})
 
         runner_id = job.get("runner_id")
         runner_name = job.get("runner_name")
