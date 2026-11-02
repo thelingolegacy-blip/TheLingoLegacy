@@ -1,0 +1,39 @@
+name: Studio VNext Contract Checks
+
+on:
+  pull_request:
+    paths:
+      - "studio-vnext/**"
+      - ".github/workflows/studio-vnext-contract.yml"
+  push:
+    branches:
+      - "studio/enterprise-environment-vnext-2026-10-24"
+    paths:
+      - "studio-vnext/**"
+      - ".github/workflows/studio-vnext-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-vnext-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract-checks:
+    name: Studio VNext static contract checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: studio-vnext
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify application contracts
+        run: npm run check
