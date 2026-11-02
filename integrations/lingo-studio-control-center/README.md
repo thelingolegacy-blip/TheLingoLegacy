@@ -1,7 +1,7 @@
 # LINGOlegacy Studio Control Center — Integration Package
 
 **Environment:** staging only  
-**State:** implementation scaffold prepared; not deployed or activated  
+**State:** partially deployed to isolated staging; Cloudflare gateway live, AppDeploy integration extension quota-blocked  
 **Production boundary:** no DNS, Worker route, production secret, Firebase project, or production app mutation is included.
 
 ## Purpose
@@ -13,7 +13,7 @@ Provide one reviewable integration contract for askLINGO, LINGOarts, Cloudflare,
 - **Studio Control Center:** operator-facing orchestration and evidence review.
 - **askLINGO:** MCP/tool contract and ChatGPT Actions schema. The endpoint is intentionally marked unconfigured until a real authenticated service is deployed.
 - **LINGOarts:** creative asset and publishing workflow integration point; rights and publication approvals remain human gates.
-- **Cloudflare:** isolated Worker preview on workers.dev; no production route declarations.
+- **Cloudflare:** separate staging Worker deployed on workers.dev only; no production/zone route declarations. Worker is GET/HEAD-only, uses a 16-origin allowlist, and does not forward credentials.
 - **Firebase:** server-authoritative task/evidence functions and deny-by-default client writes. Rules/functions are templates and are not deployed.
 - **AppDeploy:** 16 existing application origins registered as staging surfaces; existing apps remain untouched.
 
@@ -38,7 +38,7 @@ Provide one reviewable integration contract for askLINGO, LINGOarts, Cloudflare,
 
 1. Review this branch and its static checks.
 2. Configure a dedicated staging Firebase project and staging custom claims.
-3. Deploy the isolated Cloudflare Worker to workers.dev only.
+3. COMPLETE — deploy the isolated Cloudflare Worker to workers.dev only; runtime smoke verification remains.
 4. Implement and deploy the authenticated askLINGO MCP/API service.
 5. Wire the dashboard to read-only registry and evidence APIs.
 6. Run each gate and preserve raw logs/artifacts.
@@ -49,5 +49,5 @@ Provide one reviewable integration contract for askLINGO, LINGOarts, Cloudflare,
 - The AppDeploy daily free deployment allowance is below its 16-credit minimum; the platform reported deployment pause until 2026-11-03 00:00 UTC.
 - No Firebase connector or project mutation channel is available in this session. Firebase files are prepared for review only.
 - The askLINGO app's inspected backend currently exposes a health check and realtime subscription routes; no chat/MCP endpoint was verified.
-- The Cloudflare zone and Worker inventory were inspected read-only. No Worker or route was changed.
-- App registration is not a successful health check or proof of 16 working micro-frontends.
+- A separate staging Worker was deployed and workers.dev enabled. No existing production Worker, DNS record, or zone route was changed. Runtime HTTP smoke verification remains pending.
+- All 16 registered AppDeploy surfaces currently report deployment ready and their latest status snapshots report zero frontend/network/backend errors; this is not independent HTTP health evidence or proof of 16 working micro-frontends.

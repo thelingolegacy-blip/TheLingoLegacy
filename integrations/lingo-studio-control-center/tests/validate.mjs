@@ -15,7 +15,7 @@ const wrangler = await read("cloudflare/wrangler.toml");
 const functions = await read("firebase/functions/src/index.ts");
 
 assert.equal(architecture.environment, "staging");
-assert.equal(architecture.status, "scaffolded-not-deployed");
+assert.equal(architecture.status, "partially-deployed-staging");
 assert.equal(architecture.invariants.productionProtected, true);
 assert.equal(architecture.invariants.automaticPromotion, false);
 assert.equal(registry.environment, "staging");
@@ -30,8 +30,8 @@ assert.equal(manifest.server.endpointState, "NOT_CONFIGURED");
 assert.equal(manifest.governance.productionMutation, false);
 assert.ok(manifest.tools.some((tool) => tool.name === "lingo.tasks.create"));
 assert.match(worker, /request\.method !== "GET" && request\.method !== "HEAD"/);
-assert.match(worker, /Route not registered/);
-assert.match(worker, /Application APIs are not exposed/);
+assert.match(worker, /Route not registered/);\nassert.match(worker, /const ENVIRONMENT = "staging"/);\nassert.match(worker, /ENVIRONMENT !== "staging"/);\nassert.match(worker, /routeCount:ROUTES\\.length/);\nassert.match(worker, /\\/healthz/);
+assert.match(worker, /Protected application endpoints are not proxied/);
 assert.match(worker, /ENVIRONMENT !== "staging"/);
 assert.match(worker, /decodedPath\.startsWith/);
 assert.match(rules, /allow write: if false;/);
@@ -46,4 +46,4 @@ assert.doesNotMatch(wrangler, /^\s*routes\s*=/m);
 assert.doesNotMatch(wrangler, /thelingolegacy\.com/);
 
 console.log("PASS: integration package structure and fail-closed invariants validated.");
-console.log("NOT RUN: Firebase emulator, Cloudflare Worker runtime, live API, and 16-origin health checks.");
+console.log("NOT RUN: Firebase emulator, public Cloudflare Worker runtime smoke tests, authenticated MCP handshake, and direct HTTP probes for all 16 origins.");

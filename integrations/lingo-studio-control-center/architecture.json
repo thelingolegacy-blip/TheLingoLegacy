@@ -2,9 +2,9 @@
   "schemaVersion": "1.0.0",
   "name": "LINGOlegacy Studio Control Center",
   "environment": "staging",
-  "status": "scaffolded-not-deployed",
+  "status": "partially-deployed-staging",
   "controlPlane": {
-    "dashboard": "AppDeploy existing LINGO Enterprise Control Center; extension pending deployment quota",
+    "dashboard": "Existing AppDeploy LINGO Enterprise Control Center is deployed and ready; integration extension awaits AppDeploy daily quota reset.",
     "governance": "fail-closed",
     "productionMutation": false
   },
@@ -12,17 +12,17 @@
     {
       "name": "askLINGO",
       "role": "AI orchestration and MCP tool contract",
-      "state": "manifest-defined-endpoint-unconfigured"
+      "state": "frontend-deployed-health-and-realtime-backend-present-mcp-endpoint-unverified"
     },
     {
       "name": "LINGOarts",
       "role": "creative assets, rights, publishing intake",
-      "state": "integration-contract-only"
+      "state": "existing-studio-creative-asset-and-rights-review-workflows-present-not-yet-wired-to-control-center"
     },
     {
       "name": "Cloudflare",
       "role": "staging-only read-only application preview proxy",
-      "state": "worker-source-prepared-no-deployment"
+      "state": "staging-worker-deployed-workers-dev-only-runtime-smoke-pending"
     },
     {
       "name": "Firebase",
@@ -32,7 +32,7 @@
     {
       "name": "AppDeploy",
       "role": "existing application surfaces",
-      "state": "16-application-registry-included"
+      "state": "16-existing-apps-deployment-ready-qa-snapshots-zero-reported-errors-live-http-probes-pending"
     }
   ],
   "gates": [
@@ -96,5 +96,27 @@
     "unverifiedStatus": "unknown",
     "defaultGateState": "blocked",
     "evidenceRequired": true
+  },
+  "deploymentEvidence": {
+    "cloudflare": {
+      "worker": "lingo-studio-control-center-staging",
+      "deploymentId": "50fdc7c7813b47deaa6474d3c585350b",
+      "workersDevUrl": "https://lingo-studio-control-center-staging.thelingolegacy.workers.dev",
+      "workersDevEnabled": true,
+      "previewsEnabled": false,
+      "registeredOrigins": 16,
+      "zoneRoutesAdded": 0,
+      "productionChanges": 0,
+      "runtimeSmokeTest": "not independently verified"
+    },
+    "appdeploy": {
+      "existingApplications": 16,
+      "deploymentStatusReady": 16,
+      "latestStatusSnapshotsReportedFrontendErrors": 0,
+      "latestStatusSnapshotsReportedNetworkErrors": 0,
+      "latestStatusSnapshotsReportedBackendErrors": 0,
+      "directHttpHealthChecks": "pending",
+      "dailyQuotaReset": "2026-11-03T00:00:00Z"
+    }
   }
 }
