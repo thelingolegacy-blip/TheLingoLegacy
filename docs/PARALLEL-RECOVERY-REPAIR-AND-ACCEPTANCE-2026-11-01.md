@@ -274,3 +274,49 @@ Attach per incident: run URL, run ID, attempt, workflow file, event, branch, hea
 This document is the consolidated recovery procedure and evidence framework. It does not perform or certify runner registration, host repair, service restart, workflow dispatch, application build execution, staging provisioning, deployment, merge, financial transaction or production promotion. Those actions remain subject to the current authorization boundary.
 
 Final status at document creation: recovery plan and paperwork prepared; technical restoration and acceptance remain open. Production remains protected.
+
+
+## 10. Source-maintenance reconciliation — 2026-11-01
+
+This section records a source-only maintenance pass. It is an inventory of draft ownership and blockers, not a release decision.
+
+### Retained owners
+
+| Area | PR | Ownership / dependency |
+|---|---:|---|
+| Studio and LINGOslots world/game surface | #414 | Main-based studio/game implementation; draft, mergeable, remote CI still fails before jobs |
+| Flutter world directory and Firebase runtime contract | #415 | Includes the Firebase Hosting `build/web` publication boundary and verifier; draft, mergeable |
+| askLINGO and multi-platform foundations | #416 | Stacked on #414; overlaps #415 on Flutter app/preview files; base is one commit behind and PR is non-mergeable pending controlled rebase |
+| Runner container hardening | #421 | Authoritative `ops/github-runner/Dockerfile` and compose baseline, including archive checksum validation and hardened container defaults |
+| G02 telemetry and fail-closed sentinel semantics | #424 | Consolidates prior #417/#418 source work; main-based, draft, mergeable |
+| G02 startup restoration lanes | #425 | Retained hosted diagnostic plus explicitly opt-in canonical G02 assignment/host probe and final evidence correlation |
+| G02 offline execution-boundary classifier | #431 | Distinguishes pre-job/no-jobs, job/unassigned and runner-assigned without guessing root cause |
+| Asset Registry | #428 | Separate governed staging proposal; no production activation |
+| Ecosystem recovery dossier | #430 | Canonical cross-stack recovery and acceptance documentation |
+
+### Superseded duplicate proposals
+
+The following open proposals were closed without merging; their branches remain preserved:
+- #417 and #418 — overlapping G02 telemetry, runner-context and release-consistency repairs, consolidated into #424.
+- #247, #251, #274, #288 and #373 — older dispatch, hosted/self-hosted bridge, smoke and canary workflows superseded by #425 and #431.
+- #353 — competing canonical sentinel naming and overlapping control-watch/release-consistency changes superseded by #424/#425 and the current recovery dossier.
+- #427 — Firebase Hosting publication-boundary change incorporated into #415.
+
+No branch was deleted. No PR was merged.
+
+### Remaining overlap requiring controlled reconciliation
+
+- #267 and #421 both modify `ops/github-runner/Dockerfile` and `ops/github-runner/docker-compose.yml`. #421 owns the hardened container baseline; #267's unique heartbeat/handshake and host-telemetry work must be rebased onto that baseline before acceptance.
+- #416 remains dependent on #414 and overlaps #415 on `lib/main.dart` and `.github/workflows/flutter-preview-matrix.yml`. The shared askLINGO widget is currently identical. Do not retarget or merge this stack blindly.
+- Older host, dispatch-rule, evidence-architecture and control-plane proposals (#261–#286 and related branches) remain separate staged work; they are not certified or promoted by this pass.
+
+### Validation and execution status
+
+- The latest sampled GitHub Actions runs for PRs #414, #415, #424, #425 and #431 ended in `startup_failure`. Direct Jobs API and artifact inventory checks for representative runs returned zero jobs and zero artifacts.
+- A successful Vercel status context appeared on several PR commits. It is not GitHub Actions execution evidence, Cloudflare validation, or production acceptance; production architecture remains Cloudflare.
+- The new #424 regression tests and #415 Hosting verifier were committed to their existing branches but were not executed in a full repository checkout or successful hosted CI.
+- No workflow was dispatched; no runner was registered, restarted or reconfigured; no host was provisioned.
+- No production Worker, DNS, route, secret, billing, payment, Firebase project or release setting was changed.
+- A repository-wide open-PR search returned its 100-result limit, so this is a targeted reconciliation of the active maintenance workstreams, not a claim that every historical open PR has been audited.
+
+**Current decision:** source maintenance is in progress; independent runtime acceptance remains pending. G02 remains BLOCKED. Production/LKG remains PROTECTED. No merge, deployment, release authorization or promotion is implied.
