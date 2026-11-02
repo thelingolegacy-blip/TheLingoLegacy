@@ -97,6 +97,7 @@ infrastructure/
 recovery/
 rollback-drill/
 release/
+production-lock/
 auth0-details/
 auth0-implementation/
 admin-command-center/
