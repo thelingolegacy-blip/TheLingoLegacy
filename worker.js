@@ -109,6 +109,18 @@ function clientKey(request, phone) {
   const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
   return `${ip}:${phone}`;
 }
+// Cloudflare Rate Limiting bindings provide a per-location shared throttle.
+// They are approximate; the in-memory hourly maps below remain secondary only.
+async function edgeRateAllowed(binding, key) {
+  if (!binding || typeof binding.limit !== 'function') return null;
+  try {
+    const result = await binding.limit({ key });
+    return result?.success === true;
+  } catch {
+    return null;
+  }
+}
+
 function isRateLimited(key) {
   const now = Date.now();
   const bucket = rateBuckets.get(key);
@@ -149,7 +161,10 @@ async function beaconAlerts(request, env) {
   if (!PHONE_RE.test(phone)) return json({ ok: false, error: 'Enter a phone number in E.164 format.' }, 400, request, env);
   if (!BEACON_ZONES.has(zone)) return json({ ok: false, error: 'Unknown beacon alert zone.' }, 400, request, env);
   if (!consent) return json({ ok: false, error: 'Consent is required before starting text alerts.' }, 400, request, env);
-  if (isRateLimited(clientKey(request, phone))) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
+  const rateKey = clientKey(request, phone);
+  const edgeAllowed = await edgeRateAllowed(env.BEACON_RATE_LIMITER, rateKey);
+  if (edgeAllowed === null) return json({ ok: false, error: 'Beacon rate limiting is not configured or unavailable.' }, 503, request, env);
+  if (!edgeAllowed || isRateLimited(rateKey)) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
   const payload = { phone, zone, source, message: alertMessage(zone, source), consent: true, createdAt: new Date().toISOString() };
   const result = await sendBeacon(payload, env);
   if (!result) return json({ ok: true, staged: true, message: 'Beacon alert validated but no delivery provider is configured.' }, 202, request, env);
@@ -179,6 +194,8 @@ function runtimeManifest(request, env) {
       r2: Boolean(env.ASSET_BUCKET),
       firebase: Boolean(env.FIREBASE_PROJECT_ID),
       studio_world_registry: Boolean(env.ASSETS),
+      beacon_rate_limit: Boolean(env.BEACON_RATE_LIMITER && typeof env.BEACON_RATE_LIMITER.limit === 'function'),
+      asklingo_rate_limit: Boolean(env.ASK_RATE_LIMITER && typeof env.ASK_RATE_LIMITER.limit === 'function'),
       assistant_ai: Boolean(env.AI && env.ASKLINGO_AI_ENABLED === 'true' && env.ASKLINGO_MODEL),
       agent_catalog: true,
     },
@@ -253,6 +270,7 @@ async function askLingoStatus(request, env) {
     mode: env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL ? 'ai-enabled' : 'guided-fallback',
     ai_ready: env.ASKLINGO_AI_ENABLED === 'true' && Boolean(env.AI) && Boolean(env.ASKLINGO_MODEL),
     request_limit_per_hour: ASK_RATE_LIMIT,
+    edge_rate_limit_configured: Boolean(env.ASK_RATE_LIMITER && typeof env.ASK_RATE_LIMITER.limit === 'function'),
     note: 'No account data is available to this public assistant.',
   }, 200, request, env);
 }
@@ -263,7 +281,11 @@ async function askLingoChat(request, env) {
   if (origin && !allowedOrigins(env).has(origin.toLowerCase())) {
     return json({ ok: false, error: 'Origin not allowed.' }, 403, request, env);
   }
-  if (!askRateAllowed(request)) return json({ ok: false, error: 'Rate limit reached. Try again later.' }, 429, request, env);
+  const askRateKey = String(request.headers.get('CF-Connecting-IP') || '').trim().slice(0, 64);
+  if (!askRateKey) return json({ ok: false, error: 'Edge client identity is unavailable.' }, 503, request, env);
+  const edgeAllowed = await edgeRateAllowed(env.ASK_RATE_LIMITER, askRateKey);
+  if (edgeAllowed === null) return json({ ok: false, error: 'Assistant rate limiting is not configured or unavailable.' }, 503, request, env);
+  if (!edgeAllowed || !askRateAllowed(request)) return json({ ok: false, error: 'Rate limit reached. Try again later.' }, 429, request, env);
   const raw = await request.text();
   if (raw.length > 5000) return json({ ok: false, error: 'Message is too large.' }, 413, request, env);
   let body;
@@ -356,7 +378,7 @@ function platformStatus(request, env) {
       coins: { mode: 'demo-only', purchasable: false, transferable: false, redeemable: false },
       checkout: { configured: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_XP_PACK), production_verified: false },
       rewards: { mode: 'demo-only', server_authoritative: false },
-      assistant: { configured: Boolean(env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL), fallback: true },
+      assistant: { configured: Boolean(env.ASKLINGO_AI_ENABLED === 'true' && env.AI && env.ASKLINGO_MODEL), fallback: true, rate_limit_configured: Boolean(env.ASK_RATE_LIMITER && typeof env.ASK_RATE_LIMITER.limit === 'function') },
       world_registry: { configured: Boolean(env.ASSETS), production_verified: false },
       telemetry: { configured: isEnabledFlag(env.OBSERVABILITY_ENABLED), logpush: isEnabledFlag(env.LOGPUSH_ENABLED) },
       realtime: { configured: isEnabledFlag(env.REALTIME_ENABLED) },
