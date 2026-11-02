@@ -159,3 +159,14 @@ test('configuration consistency rejects sentinel output that claims independent 
   const report = JSON.parse(result.stdout);
   assert.ok(report.failures.includes('sentinel-does-not-claim-independent-assignment'));
 });
+
+
+test('configuration consistency rejects auto-repair output that claims independent runner assignment', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\nG02_RUNNER_ASSIGNMENT=PASS');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('auto-repair-does-not-claim-independent-assignment'));
+});
