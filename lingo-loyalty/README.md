@@ -14,13 +14,13 @@ This package defines a non-cash loyalty ledger for LINGOlegacy, Loyalty Lane, an
 
 ## Components
 
-- `migrations/0001_ledger.sql`: D1 schema, append-only ledger, idempotency constraints, balance view, and coupon redemption records.
+- `migrations/0001_ledger.sql`: D1 schema, append-only ledger, idempotency constraints, balance view, and coupon redemption records.\n- `migrations/0002_ledger_guards.sql`: unit/event compatibility, event-sign, and nonnegative-balance triggers.
 - `worker.js`: fail-closed API draft. It is not deployable as-is: its `env.AUTHENTICATE`, `env.VERIFY_AD_REWARD`, `env.VERIFY_GAME_GRANT`, `env.VERIFY_GAME_EVENT`, `env.RATE_LIMITER`, and `env.AUTHORIZE_MERCHANT_REDEMPTION` hooks are interface placeholders, not Cloudflare binding types. Replace them with reviewed module implementations or supported bindings before deployment.
 - `package.json`: Node policy test command.
 
 ## Staging database
 
-A dedicated U.S.-jurisdiction Cloudflare D1 database named `lingo-loyalty-staging` has been provisioned and the migration has been applied. Its identifier is recorded in the release-gate register. It is not a production database and is not bound to a Worker. No user, reward, or merchant data has been seeded.
+A dedicated U.S.-jurisdiction Cloudflare D1 database named `lingo-loyalty-staging` has been provisioned and both migrations have been applied. Its identifier is recorded in the release-gate register. It is not a production database and is not bound to a Worker. No user, reward, or merchant data has been seeded. A separate ephemeral D1 database was used to execute positive-balance, negative-balance rejection, unit/event mismatch rejection, append-only update rejection, idempotency and separated-balance checks; it was deleted after the checks.
 
 ## API draft
 
