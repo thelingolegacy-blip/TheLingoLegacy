@@ -6,7 +6,7 @@ Firebase initialization is no longer allowed to prevent the Flutter shell from s
 
 ## CI development builds
 
-The new GitHub Actions workflow creates missing Android and iOS native scaffolding in disposable CI workspaces, then runs Flutter dependency resolution, static analysis, widget tests, a web build, an Android debug APK build, and an unsigned iOS simulator compile. It uploads short-retention development artifacts.
+The new GitHub Actions workflow creates clean Android and iOS native scaffolding in disposable CI workspaces, replaces only the ephemeral runner's incomplete native directories, preserves the checked-out Dart source and pubspec, then runs Flutter dependency resolution, static analysis, widget tests, a web build, an Android debug APK build, and an unsigned iOS simulator compile. It uploads short-retention development artifacts.
 
 The workflow does not commit generated native scaffolds, sign a release, publish to Firebase Hosting, or submit to app stores.
 
