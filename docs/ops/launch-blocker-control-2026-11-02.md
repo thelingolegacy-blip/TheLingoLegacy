@@ -75,3 +75,24 @@ No actual job assignment, runner ID, runner name, steps, sentinel, logs, or arti
 - Render staging operations portal is live; provider-side logs remain unverified.
 - Cloudflare staging World Engine schema and GET-only Worker remain separate from production.
 - Production routes, DNS, Worker allocations, D1 production data, secrets, billing, payments, and release authorization remain unchanged.
+
+## 2026-11-02 follow-up — Access policy inventory precision
+
+A second read-only pass fetched the Access application objects and each application's policy list directly.
+
+- 11 applications were returned. The API response did not include an application domain for any of the 11, so hostname-to-application mapping remains unresolved.
+- The nine bypass/everyone policies are attached to:
+  - All Workers
+  - thats-my-lingo - Cloudflare Workers
+  - sparkling-rain-29a3 - Cloudflare Workers
+  - thelingolegacyv5 - Cloudflare Workers
+  - thelingolegacy - Cloudflare Workers
+  - legacyweb1 - Cloudflare Workers
+  - nextjs-lingolegacy - Cloudflare Workers
+  - thelingolegacy-v2 - Cloudflare Workers
+  - thelingolegacy-v3 - Cloudflare Workers
+- thelingolegacyv4 - Cloudflare Workers and astro-blog-starter-template - Cloudflare Workers did not return an Everyone-bypass policy in this inventory.
+- Four policies named Email domain use an email_domain.domain value that is a full email address (for example, therealzavione@thelingolegacy.com or thelingolegacy@gmail.com) rather than a domain value. Treat these as malformed/misconfigured policy selectors pending provider validation; do not assume they grant access or provide effective protection.
+- Account-member allow policies are also present on several applications, but do not neutralize an Everyone-bypass policy.
+- No Access application or policy was modified. Before remediation, obtain an owner-approved route inventory mapping each application to exact hostnames and classifying every endpoint as public, authenticated-user, admin, or internal. Replace broad bypass only for confirmed private/admin surfaces, test allowed and denied identities, and retain rollback evidence.
+- Account owner action remains required for MFA enrollment. No MFA state change was performed by this read-only pass.
