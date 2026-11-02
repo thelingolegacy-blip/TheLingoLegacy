@@ -105,7 +105,7 @@ test('configuration consistency rejects undocumented runner.id context access', 
   }});
   assert.equal(result.status, 1);
   const report = JSON.parse(result.stdout);
-  assert.ok(report.failures.includes('runner-id-from-jobs-api'));
+  assert.ok(report.failures.includes('runner-id-verification-boundary'));
 });
 
 test('configuration consistency requires the held deployment job to depend on runner and repair gates', () => {
@@ -136,4 +136,26 @@ test('configuration consistency rejects deployment commands in CircleCI validati
   assert.equal(result.status, 1);
   const report = JSON.parse(result.stdout);
   assert.ok(report.failures.includes('circleci-is-validation-only'));
+});
+
+
+test('configuration consistency rejects a false claim that the workflow captured runner ID from the Jobs API', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    const source = fs.readFileSync(workflowPath, 'utf8');
+    fs.writeFileSync(workflowPath, source.replace('G02_RUNNER_ID_CAPTURE=NOT_PERFORMED', 'G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'));
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('runner-id-verification-boundary'));
+});
+
+test('configuration consistency rejects sentinel output that claims independent runner assignment', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/g02-sentinel.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\nG02_RUNNER_ASSIGNMENT=PASS');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('sentinel-does-not-claim-independent-assignment'));
 });
