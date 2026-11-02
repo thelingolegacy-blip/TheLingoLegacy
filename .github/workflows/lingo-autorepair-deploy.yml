@@ -29,11 +29,16 @@ jobs:
     timeout-minutes: 10
     outputs:
       runner_gate: ${{ steps.assert.outputs.runner_gate }}
+      runner_id: ${{ steps.assert.outputs.runner_id }}
+      runner_name: ${{ steps.assert.outputs.runner_name }}
     steps:
-      - name: Prove executable GitHub runner
+      - name: Prove executable GitHub runner and API assignment
         id: assert
         shell: bash
         env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+          REPOSITORY: ${{ github.repository }}
           RUNNER_NAME: ${{ runner.name }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
@@ -44,8 +49,52 @@ jobs:
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
-          echo "G02_RUNNER_ASSIGNMENT=PASS"
+
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+
+          const { GH_TOKEN, RUN_ID, REPOSITORY, RUNNER_NAME, GITHUB_OUTPUT } = process.env;
+          if (!GH_TOKEN || !RUN_ID || !REPOSITORY || !GITHUB_OUTPUT) {
+            throw new Error('Missing GitHub Actions API verification inputs.');
+          }
+
+          const url = `https://api.github.com/repos/${REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100`;
+          let verified;
+          for (let attempt = 0; attempt < 20; attempt += 1) {
+            const response = await fetch(url, {
+              headers: {
+                Authorization: `Bearer ${GH_TOKEN}`,
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+            });
+            if (!response.ok) {
+              throw new Error(`GitHub Actions jobs API returned HTTP ${response.status}.`);
+            }
+            const payload = await response.json();
+            const job = (payload.jobs ?? []).find(item => item.name === 'runner-gate');
+            if (job && Number.isSafeInteger(job.runner_id) && job.runner_id > 0) {
+              if (job.runner_name !== RUNNER_NAME || job.runner_name !== 'lingo-legacy-g02') {
+                throw new Error('GitHub API runner name does not match the expected G02 identity.');
+              }
+              if (!['in_progress', 'completed'].includes(job.status)) {
+                throw new Error(`Unexpected G02 job status: ${job.status}`);
+              }
+              verified = job;
+              break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+
+          if (!verified) {
+            throw new Error('No positive API-reported runner ID was retrieved for runner-gate.');
+          }
+
+          appendFileSync(GITHUB_OUTPUT,
+            `runner_gate=PASS\nrunner_id=${verified.runner_id}\nrunner_name=${verified.runner_name}\n`);
+          console.log(`G02_RUNNER_ASSIGNMENT=PASS runner_id=${verified.runner_id} runner_name=${verified.runner_name}`);
+          NODE
+
           echo "RUNNER_GATE=PASS runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE runner_arch=$RUNNER_ARCH_VALUE github_sha=$GITHUB_SHA_VALUE"
 
   repair:
