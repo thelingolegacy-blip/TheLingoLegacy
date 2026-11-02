@@ -45,7 +45,8 @@ jobs:
           test -n "$GITHUB_SHA_VALUE"
           echo "runner_context_gate=PASS" >> "$GITHUB_OUTPUT"
           echo "G02_RUNNER_CONTEXT_MATCH=PASS"
-          echo "G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API; independent API verification required"
+          echo "G02_RUNNER_ID_CAPTURE=NOT_PERFORMED"
+          echo "G02_RUNNER_ID_VERIFICATION=INDEPENDENT_JOBS_API_REQUIRED"
           echo "RUNNER_CONTEXT_GATE=PASS runner_name=$RUNNER_NAME runner_os=$RUNNER_OS_VALUE github_sha=$GITHUB_SHA_VALUE"
 
   repair:
