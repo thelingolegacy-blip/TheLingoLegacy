@@ -30,8 +30,8 @@ class EvidenceManifestTests(unittest.TestCase):
 
     def test_missing_steps_logs_and_artifacts_remain_missing(self):
         report = MODULE.build_manifest(self.run, self.jobs, steps_dir=self.steps, logs_dir=self.logs)
-        self.assertEqual(report["jobs"][0]["steps_state"], "NOT_PROVIDED")
-        self.assertEqual(report["jobs"][0]["logs"]["state"], "NOT_PROVIDED")
+        self.assertEqual(report["jobs"][0]["steps_state"], "NOT_RETRIEVABLE")
+        self.assertEqual(report["jobs"][0]["logs"]["state"], "NOT_RETRIEVABLE")
         self.assertEqual(report["artifacts_state"], "NOT_PROVIDED")
         self.assertEqual(len(report["missing_evidence"]), 3)
         self.assertFalse(report["promotion_authorized"])
