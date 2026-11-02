@@ -24,7 +24,7 @@ This package defines a non-cash loyalty ledger for LINGOlegacy, Loyalty Lane, an
 - `ALLOWED_ORIGINS`: comma-separated exact HTTPS origins.
 - `AUTHENTICATE(request)`: validates session and returns `{ userId }`; must reject expired, revoked, or invalid sessions.
 - `VERIFY_AD_REWARD(payload)`: validates network-signed server-side callback and returns `{ userId, eventId, coins }`; reject client-supplied proof.
-- `AUTHORIZE_MERCHANT_REDEMPTION(payload, userId)`: checks merchant, offer, eligibility, and available coupon inventory, returning a signed/unique authorization.
+- `RATE_LIMITER({ userId, route, request })`: enforces per-user and per-route request limits; missing adapter denies mutations.\n- `AUTHORIZE_MERCHANT_REDEMPTION(payload, userId)`: checks merchant, offer, eligibility, and available coupon inventory, returning a signed/unique authorization.
 
 No production deployment is authorized by this package. Do not bind a production database or route.
 
@@ -35,7 +35,7 @@ No production deployment is authorized by this package. Do not bind a production
 - `POST /v1/game/spend`: consumes game credits only; server-issued game event required.
 - `POST /v1/coupons/redeem`: issues a merchant-approved, single-use coupon; never pays cash.
 
-All mutation requests require an `Idempotency-Key` header. Requests without one are rejected.
+Browser origins must match the exact HTTPS allowlist. Native requests without an Origin header are allowed only through authenticated sessions. OPTIONS preflight is handled before session authentication. All mutation requests require a configured rate-limit adapter and an `Idempotency-Key` header. Requests without one are rejected.
 
 ## Release gates
 
