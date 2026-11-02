@@ -100,7 +100,8 @@ jobs:
   repair:
     needs: runner-gate
     if: needs.runner-gate.outputs.runner_gate == 'PASS'
-    runs-on: ubuntu-latest
+    # The actual repair and validation workload must execute on the qualified G02 host.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
     steps:
       - uses: actions/checkout@v4
         with:
