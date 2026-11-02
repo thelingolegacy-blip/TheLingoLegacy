@@ -320,3 +320,14 @@ No branch was deleted. No PR was merged.
 - A repository-wide open-PR search returned its 100-result limit, so this is a targeted reconciliation of the active maintenance workstreams, not a claim that every historical open PR has been audited.
 
 **Current decision:** source maintenance is in progress; independent runtime acceptance remains pending. G02 remains BLOCKED. Production/LKG remains PROTECTED. No merge, deployment, release authorization or promotion is implied.
+
+
+### Latest G02 source and CI refresh — 2026-11-01
+The consolidated #424 branch now emits `G02_RUNNER_ID_CAPTURE=NOT_PERFORMED` and `G02_RUNNER_ID_VERIFICATION=INDEPENDENT_JOBS_API_REQUIRED` from both the sentinel and auto-repair runner-context gate. It no longer labels the Jobs API as a source queried by those workflow steps. Static checks also reject undocumented `runner.id` access, false independent-assignment claims, and missing deployment dependencies.
+
+The latest Actions runs associated with the corrected #424 head were:
+- Crimson Smoke UI — static validation: run 41378552451
+- G02 Runner Image Build (no publish): run 41378553345
+- Lingo Legacy Static CI: run 41378551574
+
+All three concluded `startup_failure`; direct Jobs API and artifact inventory checks returned zero jobs and zero artifacts for each. The unrelated Vercel status context was successful but is not GitHub Actions execution or Cloudflare production evidence. The new regression tests have not executed because the Actions jobs never initialized.
