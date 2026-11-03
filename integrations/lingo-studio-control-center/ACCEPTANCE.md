@@ -1,8 +1,8 @@
 # Integration acceptance matrix
 
-**Audit window:** 2026-11-03T00:10:31Z–2026-11-03T00:14:02Z  
+**Audit window:** 2026-11-03T00:10:31Z–2026-11-03T00:17:00Z  
 **PR:** #445 · `staging/lingo-studio-control-center-integration-2026-11-02`  
-**Audited source head:** `21982512220409096eeabe43ddd6ac969c740c52`  
+**Audited source head:** `248542dee1063411e888134a00737210de8a195f`  
 **PR posture:** open, draft, unmerged. Production remains protected.
 
 ## Gate status
@@ -34,6 +34,7 @@ The existing LINGO Enterprise Control Center was extended in place; no second Co
 - Existing UI test suite: 5 tests, exactly one `sanity: true` test.
 - Added a staging-only Staging Integrations page with the 16-origin registry, provider-versus-HTTP evidence distinction, Cloudflare health/probe links, integration gate states, and G02 run references.
 - Added read-only `GET /api/_healthcheck` returning staging/read-only metadata and `productionMutation: false`.
+- The deployed dashboard's G02 run cards are a static snapshot from the preceding UI build (source head `21982512220409096eeabe43ddd6ac969c740c52`); this matrix records the newer documentation-head CI evidence. The dashboard does not query GitHub Actions live.
 - The first deployment attempt failed preflight because the existing frontend+backend snapshot lacked `backend/index.ts`. A minimal read-only backend entry point was added and the retry completed `ready`.
 - The deployment service accepted the update after the daily reset boundary `2026-11-03T00:00:00Z`. The account overview does not expose a separate remaining daily counter.
 
@@ -115,13 +116,13 @@ Retain all four deployment records as the history of one Worker; they are not du
 
 ## GitHub Actions and G02 evidence
 
-At audited source head `21982512220409096eeabe43ddd6ac969c740c52`:
+At executable source head `248542dee1063411e888134a00737210de8a195f` (the subsequent acceptance/README commit is documentation-only):
 
 | Workflow | Run ID | Conclusion | Jobs | Artifacts |
 |---|---:|---|---:|---:|
-| Crimson Smoke UI — static validation | `41548253052` | `startup_failure` | 0 | 0 |
-| Lingo Legacy Static CI | `41548251877` | `startup_failure` | 0 | 0 |
-| G02 Runner Image Build (no publish) | `41548250689` | `startup_failure` | 0 | 0 |
+| Crimson Smoke UI — static validation | `41551726108` | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | `41551724909` | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | `41551723274` | `startup_failure` | 0 | 0 |
 
 All three run records concluded `startup_failure`. Job-list calls returned empty arrays; consequently no job ID, runner ID/name, execution steps or job logs were available. Artifact-list calls returned empty arrays. These runs are not PASS and do not establish runner assignment or host execution.
 
