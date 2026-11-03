@@ -22,13 +22,19 @@ RUNNER_LABELS="${RUNNER_LABELS:-self-hosted,linux,x64,lingo-g02-render}"
 
 key_file="$(mktemp /run/g02-app-key.XXXXXX)"
 cycle_dir=""
+runner_pid=""
 cleanup() {
+  if [[ -n "$runner_pid" ]]; then
+    kill -TERM "$runner_pid" 2>/dev/null || true
+    wait "$runner_pid" 2>/dev/null || true
+  fi
   if [[ -n "$cycle_dir" && -d "$cycle_dir" ]]; then
     rm -rf -- "$cycle_dir"
   fi
   rm -f -- "$key_file"
 }
 trap cleanup EXIT
+trap 'exit 143' TERM INT
 printf '%s' "$GITHUB_APP_PRIVATE_KEY_B64" | base64 --decode > "$key_file"
 chmod 0600 "$key_file"
 
@@ -71,20 +77,34 @@ runner_name="${RUNNER_NAME_PREFIX}-${host_suffix}-$(date +%s)-${RANDOM}"
 cycle_dir="$(mktemp -d /opt/g02-runner-cycle.XXXXXX)"
 cp -a /opt/runner-dist/. "$cycle_dir/"
 chown -R runner:runner "$cycle_dir"
+chmod -R u+rwX "$cycle_dir"
 
 printf 'G02_RENDER_RUNNER_CONFIG=START name=%s\n' "$runner_name"
 runuser -u runner -- env -i HOME=/home/runner PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
   bash -c 'cd "$1"; exec ./config.sh --unattended --url "$2" --token "$3" --name "$4" --labels "$5" --ephemeral --disableupdate' \
-  _ "$cycle_dir" "$GITHUB_URL" "$registration_token" "$runner_name" "$RUNNER_LABELS"
+  _ "$cycle_dir" "$GITHUB_URL" "$registration_token" "$runner_name" "$RUNNER_LABELS" &
+runner_pid="$!"
+set +e
+wait "$runner_pid"
+config_rc="$?"
+set -e
+runner_pid=""
 unset registration_token
+if [[ "$config_rc" -ne 0 ]]; then
+  echo "G02_RENDER_RUNNER_CONFIG=FAILED exit=$config_rc" >&2
+  exit "$config_rc"
+fi
 
 # Job steps receive a clean environment. GitHub App credentials and API tokens
 # stay in the root-owned supervisor and are never inherited by job processes.
 printf 'G02_RENDER_RUNNER_LISTENER=START name=%s\n' "$runner_name"
-set +e
 runuser -u runner -- env -i HOME=/home/runner PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
-  bash -c 'cd "$1"; exec ./run.sh' _ "$cycle_dir"
+  bash -c 'cd "$1"; exec ./run.sh' _ "$cycle_dir" &
+runner_pid="$!"
+set +e
+wait "$runner_pid"
 runner_rc="$?"
 set -e
+runner_pid=""
 printf 'G02_RENDER_RUNNER_LISTENER_EXIT=%s name=%s\n' "$runner_rc" "$runner_name"
 exit "$runner_rc"
