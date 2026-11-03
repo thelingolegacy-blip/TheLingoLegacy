@@ -1,0 +1,95 @@
+name: G02 Render Ephemeral Runner Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: g02-render-ephemeral-probe
+  cancel-in-progress: false
+
+jobs:
+  render-ephemeral-probe:
+    name: Render Ephemeral Evidence Probe
+    runs-on: [self-hosted, linux, x64, lingo-g02-render]
+    timeout-minutes: 10
+    steps:
+      - name: Capture and verify runner assignment
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_WORKFLOW_REF: ${{ github.workflow_ref }}
+          GH_JOB_KEY: ${{ github.job }}
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          EXPECTED_JOB_NAME: Render Ephemeral Evidence Probe
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ID" -gt 0
+          [[ "$RUNNER_NAME" == lingo-g02-render-* ]]
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          test "$RUNNER_ENVIRONMENT" = "self-hosted"
+          test -n "$GH_RUN_ID"
+          test -n "$GH_SHA"
+
+          jobs_json="$(curl -fsS \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}/jobs?per_page=100")"
+          job_json="$(jq -ce --arg expected "$EXPECTED_JOB_NAME" \
+            '[.jobs[] | select(.name == $expected)] | if length == 1 then .[0] else error("expected exactly one matching job") end' \
+            <<< "$jobs_json")"
+          api_job_id="$(jq -er '.id' <<< "$job_json")"
+          api_runner_id="$(jq -er '.runner_id' <<< "$job_json")"
+          api_runner_name="$(jq -er '.runner_name' <<< "$job_json")"
+          steps_json="$(jq -c '.steps' <<< "$job_json")"
+          test "$api_job_id" -gt 0
+          test "$api_runner_id" = "$RUNNER_ID"
+          test "$api_runner_name" = "$RUNNER_NAME"
+
+          mkdir -p evidence
+          jq -n \
+            --arg repository "$GH_REPOSITORY" \
+            --arg run_id "$GH_RUN_ID" \
+            --arg run_attempt "$GH_RUN_ATTEMPT" \
+            --arg commit_sha "$GH_SHA" \
+            --arg workflow_ref "$GH_WORKFLOW_REF" \
+            --arg job_key "$GH_JOB_KEY" \
+            --arg runner_name "$RUNNER_NAME" \
+            --arg runner_os "$RUNNER_OS" \
+            --arg runner_arch "$RUNNER_ARCH" \
+            --arg runner_environment "$RUNNER_ENVIRONMENT" \
+            --arg captured_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --argjson runner_id "$RUNNER_ID" \
+            --argjson job_id "$api_job_id" \
+            --argjson steps "$steps_json" \
+            '{schemaVersion:1,repository:$repository,runId:$run_id,runAttempt:$run_attempt,commitSha:$commit_sha,workflowRef:$workflow_ref,jobKey:$job_key,jobId:$job_id,runner:{id:$runner_id,name:$runner_name,os:$runner_os,arch:$runner_arch,environment:$runner_environment},stepsAtCapture:$steps,capturedAt:$captured_at}' \
+            > evidence/g02-render-evidence.json
+          sha256sum evidence/g02-render-evidence.json > evidence/SHA256SUMS
+          (cd evidence && sha256sum --check SHA256SUMS)
+          echo "G02_RENDER_RUNNER_ASSIGNMENT=PASS"
+          echo "G02_RENDER_EVIDENCE_MANIFEST=PASS"
+          echo "G02_RENDER_RUNNER_ID=$RUNNER_ID"
+          echo "G02_RENDER_RUNNER_NAME=$RUNNER_NAME"
+          echo "G02_RENDER_JOB_ID=$api_job_id"
+
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-render-evidence-${{ github.run_id }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
