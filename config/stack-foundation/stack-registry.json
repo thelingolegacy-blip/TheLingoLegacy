@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "1.0.0",
+  "observedAt": "2026-11-03",
+  "authority": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "baseBranch": "main",
+    "workBranch": "foundation/full-stack-orchestration-2026-11-03",
+    "productionMutation": false
+  },
+  "policy": {
+    "billing": "NO_BILLING",
+    "paidUpgrades": false,
+    "usageOverages": false,
+    "paidApiCalls": false,
+    "realMoneyWagering": false,
+    "cashout": false,
+    "payments": false,
+    "productionPromotion": "EXPLICIT_SEPARATE_AUTHORIZATION_REQUIRED",
+    "failClosed": true,
+    "evidenceSequence": [
+      "SOURCE",
+      "ACTUAL_EXECUTION",
+      "RETRIEVABLE_EVIDENCE",
+      "INDEPENDENT_VERIFICATION",
+      "ACCEPTANCE",
+      "AUTHORIZATION",
+      "PROMOTION"
+    ]
+  },
+  "lanes": [
+    {
+      "id": "governance",
+      "path": "docs/architecture",
+      "owner": "LINGOlegacy_MASTER",
+      "status": "existing-canon-preserved"
+    },
+    {
+      "id": "source-control",
+      "path": "GitHub",
+      "owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "connected-public-repository"
+    },
+    {
+      "id": "web",
+      "path": "static-site; studio-sites",
+      "owner": "Cloudflare Pages + Workers",
+      "status": "existing-projects-observed"
+    },
+    {
+      "id": "mobile",
+      "path": "Flutter",
+      "owner": "existing my-flutter-app Pages project",
+      "status": "deployment-old-not-currently-verified"
+    },
+    {
+      "id": "identity-data",
+      "path": "Firebase",
+      "owner": "lingo-legacy-production (historical reference)",
+      "status": "staging-project-and-emulator-not-verified"
+    },
+    {
+      "id": "game-runtime",
+      "path": "studio-sites/games",
+      "owner": "LINGOarcade / LINGOslots",
+      "status": "mixed-design-spec-and-local-prototypes"
+    },
+    {
+      "id": "media",
+      "path": "studio-sites/assets",
+      "owner": "asset-manifest-and-rights-ledger",
+      "status": "pipeline-required"
+    },
+    {
+      "id": "edge-api",
+      "path": "Cloudflare Workers",
+      "owner": "staging-workers-isolated-from-production",
+      "status": "existing-workers-observed"
+    },
+    {
+      "id": "storage",
+      "path": "repository-assets-first; local-backup",
+      "owner": "R2 optional",
+      "status": "R2-not-enabled"
+    },
+    {
+      "id": "observability",
+      "path": "Worker logs + GitHub Actions artifacts",
+      "owner": "read-only evidence collection",
+      "status": "partial"
+    },
+    {
+      "id": "recovery",
+      "path": "ops/recovery",
+      "owner": "LKG + checksums + restore drills",
+      "status": "must-be-built-and-verified"
+    },
+    {
+      "id": "ci",
+      "path": ".github/workflows",
+      "owner": "GitHub-hosted runners for this public repo",
+      "status": "new-isolated-contract-check"
+    },
+    {
+      "id": "g02",
+      "path": "LINGO-G02-Control",
+      "owner": "separate runner recovery lane",
+      "status": "blocked-until-real-runner-evidence"
+    }
+  ],
+  "providers": {
+    "github": {
+      "connected": true,
+      "repository": "thelingolegacy-blip/TheLingoLegacy",
+      "visibility": "public",
+      "accessibleRepositoryCount": 38,
+      "ciRunner": "ubuntu-latest GitHub-hosted",
+      "g02Authority": "not-substituted"
+    },
+    "cloudflare": {
+      "connected": true,
+      "accountId": "16cb6f247cd1b28fca864760c7269606",
+      "plan": "Free Website",
+      "zone": "thelingolegacy.com",
+      "zoneStatus": "active",
+      "workersObserved": 8,
+      "pagesProjectsObserved": 3,
+      "d1DatabasesObserved": 3,
+      "d1ReportedTables": 0,
+      "r2": {
+        "enabled": false,
+        "reason": "Cloudflare API returned 403 requiring dashboard enablement; leave disabled under no-billing policy"
+      }
+    },
+    "appdeploy": {
+      "connected": true,
+      "plan": "free",
+      "existingApps": 18,
+      "creditBalanceObserved": "179.747103031",
+      "creditResetAt": "2026-11-17T00:00:00Z",
+      "deploymentPolicy": "no-new-deployments-until-credit-consumption-budget-and-zero-billing-path-verified"
+    },
+    "firebase": {
+      "connected": false,
+      "stagingProject": "not-verified",
+      "emulatorExecution": "not-run"
+    },
+    "flutter": {
+      "project": "my-flutter-app",
+      "domain": "app.thelingolegacy.com",
+      "lastObservedDeployment": "2026-08-30",
+      "currentHealth": "not-verified"
+    },
+    "selfHosted": {
+      "hostInventory": "not-verified",
+      "dockerRuntime": "not-verified",
+      "persistentG02Runner": "not-verified"
+    }
+  },
+  "existingAppDeployApps": [
+    "lingo-enterprise-control-center-qos4ix",
+    "lingolegacy-universe-gateway-h6kqu4",
+    "lingoloyalty-staging-preview-x4ld0h",
+    "lingo-ai-sonic-boom-2030-7plgl2",
+    "lingo-legacy-studio-hub-nhda3b",
+    "lingo-legacy-master-project-plan-rkh6r6",
+    "hello-the-lingo-legacy-ois1rj",
+    "that-s-my-lingo-casino-studio-2xntye",
+    "lingo-legacy-universe-rpekc0",
+    "the-lingo-legacy-y67ewl",
+    "obsidian-closet-design-studio-zk6va7",
+    "jersey-shore-the-undead-l4h5ea",
+    "the-lingo-legacy-hq-vhjt6i",
+    "kotton-s-code-cartoon-studio-509py3",
+    "loyalty-lane-community-hub-zb39n2",
+    "lingo-legacy-verification-bridge-wwagn2",
+    "crazy-weasels-0j3ujc",
+    "lingo-traveltm-uyd57n"
+  ],
+  "canonicalIntegrationVehicle": {
+    "pullRequest": 445,
+    "branch": "staging/lingo-studio-control-center-integration-2026-11-02",
+    "state": "open-draft",
+    "merge": "prohibited-until-acceptance"
+  },
+  "games": {
+    "lingoEruptions": {
+      "source": "studio-sites/games/lingo-eruptions.md",
+      "registryStatus": "design-spec",
+      "releaseStatus": "not-certified",
+      "moneyMode": "free-only",
+      "nextMilestone": "playable-browser-vertical-slice"
+    }
+  },
+  "generatedAssets": {
+    "policy": "original-or-rights-cleared-only",
+    "manifestRequired": true,
+    "sha256Required": true,
+    "altTextRequired": true,
+    "sourceAndLicenseRequired": true,
+    "approvalRequired": true
+  }
+}
