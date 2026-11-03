@@ -18,7 +18,7 @@
     "private keys",
     "API tokens",
     "passwords",
-    "raw webhook secrets",
+    "raw webhook secrets"
   ],
   "dashboardVerificationRequired": [
     "Cloudflare Worker bindings and secrets",
