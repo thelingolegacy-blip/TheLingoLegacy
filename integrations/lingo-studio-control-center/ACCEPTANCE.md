@@ -2,7 +2,7 @@
 
 **Audit window:** 2026-11-03T00:10:31Z–2026-11-03T00:17:00Z  
 **PR:** #445 · `staging/lingo-studio-control-center-integration-2026-11-02`  
-**Audited source head:** `248542dee1063411e888134a00737210de8a195f`  
+**Audited source head:** `2f5bffb8a07aefa8d703990c30d8d4db38667bb4`  
 **PR posture:** open, draft, unmerged. Production remains protected.
 
 ## Gate status
@@ -116,13 +116,13 @@ Retain all four deployment records as the history of one Worker; they are not du
 
 ## GitHub Actions and G02 evidence
 
-At executable source head `248542dee1063411e888134a00737210de8a195f` (the subsequent acceptance/README commit is documentation-only):
+At executable source head `2f5bffb8a07aefa8d703990c30d8d4db38667bb4` (the subsequent acceptance/README commit is documentation-only):
 
-| Workflow | Run ID | Conclusion | Jobs | Artifacts |
-|---|---:|---|---:|---:|
-| Crimson Smoke UI — static validation | `41551726108` | `startup_failure` | 0 | 0 |
-| Lingo Legacy Static CI | `41551724909` | `startup_failure` | 0 | 0 |
-| G02 Runner Image Build (no publish) | `41551723274` | `startup_failure` | 0 | 0 |
+| Workflow | Run ID | Started (UTC) | Conclusion | Jobs | Artifacts |
+|---|---:|---|---|---:|---:|
+| Crimson Smoke UI — static validation | `41551831872` | 2026-11-03T00:17:50Z | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | `41551830758` | 2026-11-03T00:17:50Z | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | `41551829530` | 2026-11-03T00:17:49Z | `startup_failure` | 0 | 0 |
 
 All three run records concluded `startup_failure`. Job-list calls returned empty arrays; consequently no job ID, runner ID/name, execution steps or job logs were available. Artifact-list calls returned empty arrays. These runs are not PASS and do not establish runner assignment or host execution.
 
