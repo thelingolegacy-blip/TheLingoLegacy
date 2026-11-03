@@ -9,7 +9,7 @@
 ## 🏛️ Ecosystem Architecture
 The Lingo Legacy Empire is consolidated under a single, authoritative, studio-grade infrastructure:
 - **`thelingolegacy.com` & `www`**: Master Hub & Game Floor (*That's My Lingo*)
-- **`apparel.thelingolegacy.com`**: Loyalty Lane Apparel Studio & Stripe Gateway
+- **`apparel.thelingolegacy.com`**: Loyalty Lane Apparel design showcase
 - **`arena.thelingolegacy.com`**: LINGOarena Virtual Arcade & Casino Floor
 - **`reads.thelingolegacy.com`**: LINGOreads Virtual Theater & Literary Hallway
 - **`media.thelingolegacy.com`**: LINGOmedia Sonic Branding & Mixtape Nexus
@@ -23,7 +23,7 @@ All deployments are managed natively via Cloudflare Edge Workers and GitHub Acti
 ---
 
 ## 🧱 Runtime Contract
-The production surface is dynamic-runtime-first. The Cloudflare Worker controls runtime headers, edge HTML transformation, platform context, health, manifest, status, checkout, beacon APIs, and asset delivery.
+The production surface is dynamic-runtime-first. The Cloudflare Worker controls runtime headers, edge HTML transformation, platform context, health, manifest, status, payment-free community APIs, and asset delivery.
 
 Production authority:
 
