@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "record_type": "g02-host-recovery-evidence",
+  "status": "UNVERIFIED",
+  "timestamp_utc": null,
+  "environment": null,
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "source_commit": null,
+  "workflow_path": null,
+  "workflow_run_id": null,
+  "workflow_attempt": null,
+  "job_id": null,
+  "runner_id": null,
+  "runner_name": null,
+  "runner_labels": [],
+  "host": {
+    "provider": null,
+    "resource_id": null,
+    "hostname": null,
+    "os": null,
+    "architecture": null,
+    "image_digest": null,
+    "runner_version": null,
+    "service_unit": "actions.runner.lingo-legacy-g02.service",
+    "install_path": "/opt/actions-runner"
+  },
+  "execution": {
+    "steps_instantiated": false,
+    "sentinel_result": "UNVERIFIED",
+    "job_conclusion": null,
+    "started_at_utc": null,
+    "completed_at_utc": null
+  },
+  "evidence_files": [
+    {
+      "path": null,
+      "sha256": null,
+      "media_type": null,
+      "retrieved_at_utc": null
+    }
+  ],
+  "verification": {
+    "run_job_commit_correlated": false,
+    "hashes_recomputed_independently": false,
+    "secrets_exposure_check": "NOT_RUN",
+    "reviewer": null,
+    "reviewed_at_utc": null,
+    "decision": "PENDING",
+    "decision_reason": null
+  },
+  "authorization": {
+    "change_reference": null,
+    "operator": null,
+    "authorizer": null,
+    "production_promotion_authorized": false
+  }
+}
