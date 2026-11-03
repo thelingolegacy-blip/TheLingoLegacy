@@ -92,3 +92,21 @@ The Cloudflare zone `thelingolegacy.com` is active and on the Free Website plan.
 6. Reconcile the Pages `wrangler.json` warning and missing build command in a separate isolated change if the Pages project is intended to perform a real build. Do not mistake static asset upload for build validation.
 7. Run fresh regression checks on surfaces with historical errors and verify app integrations, domain routing, data flows, accessibility, mobile behavior, and release-specific acceptance criteria.
 8. Keep production promotion, DNS/secret mutation, payment activation, and merges blocked until every gate is evidenced and explicitly authorized.
+
+
+## Follow-up after diagnostic addendum commit
+
+The addendum was committed to the same isolated branch as commit `2a370411df800a200a64625b68404cb74264c6ea`; PR #449 head now points to this commit. Cloudflare Pages created a new preview deployment for this exact commit:
+- Deployment: `fd256225-6c47-4cb1-a2cb-f2a1e47dfab6`
+- Preview URL: `https://fd256225.lingo-legacy-github-integration-test.pages.dev`
+- All stages (queue, initialize, clone, build, deploy) reported success.
+
+The push also produced two more GitHub Actions runs:
+- `41674141093` — Lingo Legacy Static CI: `startup_failure`
+- `41674131623` — `.github/workflows/lingo-autorepair-deploy.yml`: `failure`
+
+Both runs returned zero jobs and zero artifacts. No job logs or step-level evidence are available.
+
+### Source defect identified in auto-repair workflow
+
+Read-only source inspection found that the default-branch version of `.github/workflows/lingo-autorepair-deploy.yml` contains a blank `needs:` value under `deploy-cloudflare`. The unmerged PR #436 branch changes this to `needs: repair` while preserving the production deployment hard hold `if: ${{ false }}`. This is a concrete source defect and PR #436 contains a candidate correction. However, PR #436's own Actions runs are also `startup_failure` with no inspectable jobs. The missing job logs prevent proving that the blank `needs:` value caused run `41674131623`; treat the source defect as confirmed and the causal link as unverified. Do not merge PR #436 until its workflow validation and independent acceptance evidence are retrievable.
