@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "gameId": "LINGO_LIONS_ERUPTIONS",
+  "state": "prototype-assets-only",
+  "generatedAt": "2026-11-03",
+  "assets": [
+    {
+      "assetId": "volcanic-atmosphere-css-v1",
+      "kind": "background",
+      "path": "index.html#css",
+      "source": "original CSS gradients and procedural effects",
+      "license": "original project code",
+      "sha256": "pending",
+      "status": "prototype"
+    },
+    {
+      "assetId": "glyph-set-unicode-v1",
+      "kind": "gameplay-glyphs",
+      "path": "game-engine.mjs",
+      "source": "Unicode emoji glyph rendering",
+      "license": "platform-provided glyph rendering; replace with approved original SVG atlas before release",
+      "sha256": "pending",
+      "status": "prototype"
+    },
+    {
+      "assetId": "lion-crest-emoji-v1",
+      "kind": "mascot-placeholder",
+      "path": "index.html#header",
+      "source": "Unicode lion emoji placeholder",
+      "license": "platform-provided glyph rendering; replace with approved original LINGO lion art",
+      "sha256": "pending",
+      "status": "placeholder"
+    }
+  ],
+  "requiredBeforeRelease": [
+    "original-lion-character-sheet",
+    "approved-wordmark",
+    "layered-volcanic-backgrounds",
+    "glyph-sprite-atlas",
+    "wild-symbol-art",
+    "particle-effects",
+    "animation-clips",
+    "original-sfx-and-music",
+    "captions-and-transcripts",
+    "rights-and-provenance-review",
+    "asset-sha256-manifest"
+  ]
+}

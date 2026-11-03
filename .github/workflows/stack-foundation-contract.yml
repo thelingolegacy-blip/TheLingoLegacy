@@ -7,12 +7,14 @@ on:
       - "config/stack-foundation/**"
       - "docs/architecture/LINGO-FULL-STACK-EXECUTION-MATRIX-2026-11-03.md"
       - "ops/stack-foundation/**"
+      - "studio-sites/games/lingo-eruptions/**"
       - ".github/workflows/stack-foundation-contract.yml"
   pull_request:
     paths:
       - "config/stack-foundation/**"
       - "docs/architecture/LINGO-FULL-STACK-EXECUTION-MATRIX-2026-11-03.md"
       - "ops/stack-foundation/**"
+      - "studio-sites/games/lingo-eruptions/**"
       - ".github/workflows/stack-foundation-contract.yml"
   workflow_dispatch:
 
@@ -34,7 +36,8 @@ jobs:
       - name: Validate stack registry and governance invariants
         run: python3 ops/stack-foundation/validate-foundation.py
       - name: Validate shell syntax
-        run: |
-          bash -n ops/stack-foundation/validate-foundation.sh
+        run: bash -n ops/stack-foundation/validate-foundation.sh
       - name: Validate JSON syntax
         run: python3 -m json.tool config/stack-foundation/stack-registry.json >/dev/null
+      - name: Test game rules engine
+        run: node --test studio-sites/games/lingo-eruptions/test/engine.test.mjs
