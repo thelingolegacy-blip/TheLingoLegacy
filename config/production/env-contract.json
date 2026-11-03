@@ -18,14 +18,12 @@
     "private keys",
     "API tokens",
     "passwords",
-    "raw webhook secrets",
-    "payment provider secret keys"
+    "raw webhook secrets"
   ],
   "dashboardVerificationRequired": [
     "Cloudflare Worker bindings and secrets",
     "Cloudflare D1/KV/R2 resources where enabled",
     "Firebase Auth, Firestore rules, Storage rules, backups, environment separation",
-    "Payment provider live-mode configuration, products, prices, webhooks, receipts, tax, refunds, and fraud controls when commerce is activated",
     "DNS and custom-domain configuration",
     "Analytics retention and access policy"
   ]

@@ -1,9 +1,3 @@
-const CHECKOUT_TIERS = {
-  xp: { label: 'Digital XP Pack', priceEnv: 'STRIPE_PRICE_XP_PACK' },
-  key: { label: 'Mystery Key Pack', priceEnv: 'STRIPE_PRICE_MYSTERY_KEY_PACK' },
-  avalon: { label: 'Avalon House Badge Set', priceEnv: 'STRIPE_PRICE_AVALON_BADGE_SET' },
-};
-
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -76,26 +70,6 @@ function requestOrigin(request) { return new URL(request.url).origin; }
 async function parseJson(request) { try { return await request.json(); } catch { return {}; } }
 function safeEmail(value = '') { const email = String(value).trim().slice(0, 160); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : ''; }
 
-async function createCheckout(request, env) {
-  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
-  const secret = env.STRIPE_SECRET_KEY;
-  if (!secret) return json({ ok: false, error: 'Stripe checkout is not configured yet.' }, 503, request, env);
-  const body = await parseJson(request);
-  const tierKey = String(body.tier || '').trim();
-  const tier = CHECKOUT_TIERS[tierKey];
-  if (!tier) return json({ ok: false, error: 'Unknown checkout tier.' }, 400, request, env);
-  const price = env[tier.priceEnv];
-  if (!price) return json({ ok: false, error: `${tier.label} is not configured for checkout yet.` }, 503, request, env);
-  const origin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
-  const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
-  const customerEmail = safeEmail(body.email);
-  if (customerEmail) params.set('customer_email', customerEmail);
-  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params });
-  const result = await response.json();
-  if (!response.ok) return json({ ok: false, error: result.error?.message || 'Stripe checkout failed.' }, response.status, request, env);
-  return json({ ok: true, url: result.url }, 200, request, env);
-}
-
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
 function normalizeSource(value = '') { return String(value || 'beacon-alert-form').replace(/[^a-z0-9 _.-]/gi, '').slice(0, 80) || 'beacon-alert-form'; }
 function clientKey(request, phone) {
@@ -166,7 +140,6 @@ function runtimeManifest(request, env) {
     assets: 'worker-controlled',
     observability: true,
     integrations: {
-      stripe: Boolean(env.STRIPE_SECRET_KEY),
       beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
       twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER),
       d1: Boolean(env.DB),
@@ -228,7 +201,6 @@ export default {
       if (url.pathname === '/api/v1/platform/gates') return json({ ok: true, gates: RELEASE_GATES, fail_closed: true, mutation_freeze: true, lkg: 'PROTECTED', generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/platform/modules') return json({ ok: true, modules: PLATFORM_MODULES, generated_at: new Date().toISOString() }, 200, request, env);
       if (url.pathname === '/api/v1/site/context') return json({ ok: true, runtime: RUNTIME_VERSION, domain: env.CANONICAL_DOMAIN || 'thelingolegacy.com', generated_at: new Date().toISOString(), navigation_mode: 'dynamic', feature_flags: { premium_studio: true, live_ops: true, ask_lingo: true, analytics: true } }, 200, request, env);
-      if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       const assetResponse = await env.ASSETS.fetch(request);

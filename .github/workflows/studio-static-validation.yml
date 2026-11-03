@@ -4,6 +4,18 @@ on:
     paths:
       - "studio-sites/**"
       - ".github/workflows/studio-static-validation.yml"
+      - "worker.js"
+      - ".env.example"
+      - "drop/index.html"
+      - "index.html"
+      - "monetization/index.html"
+      - "live-casino-studio/index.html"
+      - "loyalty-lane-apparel/index.html"
+      - "assets/premium-studio-refresh.js"
+      - "thats-my-lingo/index.html"
+      - "studio/index.html"
+      - "config/production/env-contract.json"
+      - "scripts/verify-no-payment-paths.mjs"
   push:
     branches:
       - "studio/lingoarcade-lingoslots-enterprise-2026-10-11"
@@ -28,5 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Verify payment-free application source
+        run: node scripts/verify-no-payment-paths.mjs
       - name: Validate studio configuration and local assets
         run: node studio-sites/scripts/validate-studio.mjs
