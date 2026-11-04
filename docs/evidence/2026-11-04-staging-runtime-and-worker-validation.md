@@ -82,3 +82,31 @@ All six concluded `startup_failure`; each Jobs API response returned zero jobs a
 6. A production cutover plan for the exact root Worker and catch-all Worker, with rollback evidence and explicit release approval.
 
 **Disposition:** STAGING RUNTIME CHECKS PASS FOR THE READ-ONLY ENDPOINTS ABOVE. RELEASE CANDIDATE NOT ACCEPTED. PRODUCTION HOLD.
+
+
+## 7. Production live-route and commerce safety recheck — 2026-11-04T22:43Z
+
+Read-only live checks were performed against `https://thelingolegacy.com` using a 390 × 844 mobile browser-rendering session.
+
+| Production URL / action | Observed result |
+|---|---|
+| `GET /` | HTTP 200; current page title “The Lingo Legacy — One Legacy. Many Worlds.”; served by the separate exact-root Worker `lingo-flagship-root` |
+| `GET /healthz` | HTTP 200; plain `ok` |
+| `GET /api/v1/platform/status` | HTTP 200; runtime `5.0.0-studio-platform`; status `SERVING / RELEASE-LOCKED` |
+| `GET /studio-hub/` | Browser-rendered not-found page; the new Studio Hub is not live on the production route |
+| Production platform integrations | Stripe, beacon webhook, Twilio, D1, KV, R2, Firebase all report `false` |
+| Production release gates | G02 is `FAIL / UNVERIFIED`; G03 through G11 are `BLOCKED`; production promotion authorization is `false`; mutation freeze is `FROZEN`; LKG is `PROTECTED` |
+
+### Production checkout drift
+
+The current production `/drop/` page still renders three enabled buttons labelled “Checkout with Stripe”; production `/thats-my-lingo/` still links to the drop checkout anchor. The buttons were **not clicked**. A harmless direct POST probe to `/api/create-checkout-session` using a dummy test tier returned HTTP 503 with `Stripe checkout is not configured yet.` No checkout session or payment was created. The backend is currently fail-closed, but the production UI is misleading and should be replaced with the disabled-payment staging version before a new public release.
+
+### Current isolated Pages release candidate
+
+- Pages deployment: `af5316e7-360a-45fb-b93a-d91327bf6bbc`
+- Preview URL: https://af5316e7.lingo-legacy-github-integration-test.pages.dev
+- Deployed source commit: `56fad2b02f06a14039fa83fc765cf92671489980`
+- All Pages deployment stages reported success.
+- Pages project has no custom domains configured; this remains an isolated `pages.dev` preview.
+
+**Release disposition remains PRODUCTION HOLD.** The current production site is reachable and its runtime is serving, but it is not the new Studio Hub release. The old production Drop UI still exposes checkout calls-to-action despite the backend rejecting checkout. The new free-mode UI is available only in staging until review, CI/G02 evidence, and cutover authorization pass.
