@@ -168,3 +168,58 @@ The same five workflows were retriggered on the Studio Hub root-entry commit `b9
 - Archive-label commit: `41922770293`, `41922772316`, `41922768243`, `41922765963`, `41922764035`.
 
 Every one of these ten runs returned zero jobs and zero artifacts. This repeatability across unrelated static and runner-image workflows confirms the current PR CI evidence gap remains unresolved; it is not a source-level test failure because the jobs never instantiated.
+
+
+## Latest staging regression pass — 2026-11-04T22:13Z
+
+**Cloudflare Pages deployment:** `2a2c8893-fa53-4c4b-bd8b-adaea41c3785`  
+**Preview URL:** https://2a2c8893.lingo-legacy-github-integration-test.pages.dev  
+**Source commit:** `122ea3c3f14ff05443df97713dd46292f486cd8c`  
+**Cloudflare stages:** queued, initialize, clone_repo, build, deploy — all `success`; deploy completed `2026-11-04T22:12:51.403492Z`.
+
+### Primary entry and visual checks
+
+- Preview root `/` redirected to `/studio-hub/`; rendered title `LINGO Studio Hub — One Legacy. Many Worlds.`.
+- Hub rendered at 390 × 844 mobile viewport, no horizontal overflow, and mobile menu opened.
+- All seven Hub brand/experience images loaded: LINGOlegacy, LINGOarcade, LINGOslots, That’s My Lingo, KottonsCode, Doughboy’s Oasis, and Crazy Weasols.
+- LINGOlegacy tile copy now labels the linked destination as a **portal preview** and explicitly says shared identity, account and wallet services are not connected.
+- LINGOslots decorative sigil is now `LL.`, not a star mark.
+
+### Route and game-floor checks
+
+- Twelve primary Hub destinations rendered their expected page titles; no 404 page was observed on the tested routes: `/studio-sites/`, `/studio-sites/lingoarcade/`, `/studio-sites/lingoslots/`, `/thats-my-lingo/`, `/kottons-code/`, `/library/`, `/media/`, `/lingo-ai/`, `/loyalty-lane-apparel/`, the Oasis vertical slice, the Crazy Weasols Play Lab route, and `/studio/`.
+- All 13 Play Lab game IDs loaded a named game surface with at least one interactive control and no horizontal overflow: `arcade`, `slots`, `tml`, `spades`, `uhno`, `kotton`, `tricia`, `doughboy`, `weasols`, `philly`, `undead`, `eruptions`, and `cashman`.
+- LINGOslots spin executed; demo bank changed from 1,000 to 990 coins. No checkout action was present.
+- The dedicated Doughboy’s Oasis vertical slice rendered one canvas and 33 buttons at the tested mobile viewport. The first delivery mission completed in browser testing: local demo Dough increased from 120 to 148, reputation from 0 to 14, one Supplier Agreement item was added, and the local save indicator updated.
+- Oasis crew creation, territory contest, radio station change, and CPU rival toggle were exercised. Territory influence changed from 5 to 16, rival influence from 20 to 14, reputation to 3; save indicator updated; no browser error occurred.
+
+### Defect found and corrected
+
+The Oasis territory contest referenced an undeclared `territories` array. Browser error capture confirmed `ReferenceError: territories is not defined`, which prevented the post-contest UI update. The branch patch now retains the already-defined Amity Heights district rather than selecting from a nonexistent array. The latest deployment retest confirmed updated influence/reputation, radio station change, CPU toggle, autosave indicator, and zero browser errors. This is a tested preview-only correction.
+
+### Free-mode UI audit
+
+On the current staging preview, the following mobile pages were inspected for enabled purchase/payment actions: `/drop/`, `/monetization/`, `/loyalty-lane-apparel/`, `/thats-my-lingo/`, and `/kottons-code/`. The Drop page exposes three disabled buttons labelled “Payments paused”; the other four pages expose no matching payment/checkout/purchase/subscribe actions. No checkout flow was initiated. This is a UI-level check only; Worker billing behavior still needs isolated Worker-runtime tests.
+
+### GitHub Actions execution status
+
+Latest tested source commit: `122ea3c3f14ff05443df97713dd46292f486cd8c`.
+
+Five required workflows completed with conclusion `startup_failure`:
+- G02 Runner Image Build (no publish), run `41923229460`
+- Crimson Smoke UI — static validation, run `41923227642`
+- Studio Static Validation, run `41923225727`
+- Lingo Legacy Static CI, run `41923223943`
+- Studio Preview Package, run `41923222267`
+
+For each of these runs, GitHub's jobs endpoint returned **zero jobs** and the artifacts endpoint returned **zero artifacts**. These runs therefore do not provide step-level execution evidence, runner assignment, logs, or artifacts. They are not PASS results. The independent Cloudflare Pages preview deployment succeeded; it does not replace GitHub Actions or G02 acceptance.
+
+## Current branch / review boundary
+
+- Draft PR: [#451](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/451)
+- Branch: `studio-hub/recovery-preview-2026-11-04`
+- Comparison snapshot: 52 commits ahead of `main`, 0 behind; 22 changed files at inspection time.
+- PR remains open and draft. No merge, production deployment, DNS change, production Worker route change, or promotion occurred.
+- `_redirects` adds a root-to-`/studio-hub/` 302 for the isolated Pages preview project only. Production DNS and Worker routing are unchanged.
+
+**Disposition:** STAGING PREVIEW FUNCTIONALITY VERIFIED FOR THE FLOWS LISTED ABOVE; PRODUCTION HOLD. Backend identity, cloud saves, Firebase initialization, native app builds, Worker runtime acceptance, G02 host/runner evidence, full accessibility/security/performance review, and explicit promotion authorization remain outstanding.
