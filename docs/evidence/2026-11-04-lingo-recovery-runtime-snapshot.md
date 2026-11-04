@@ -66,3 +66,16 @@ These are platform deployment/QA snapshots, not authenticated end-to-end accepta
 ## Audit boundary
 
 This document records observed API and HTTP results. It does not claim that all LINGO services are fully operational. Existing staging deployments and the public health endpoint are reachable; GitHub Actions pre-job execution and G02 host/tunnel availability remain blocked.
+
+
+## Follow-up workflow attempts after the snapshot commit
+
+The evidence snapshot itself was committed as `5068c90dbbc243e7d3130577c915a3c0f2f2bda2`. Three PR-triggered runs were subsequently created for that exact commit and again failed before job creation:
+
+| Workflow | Run ID | Result | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Studio Sandbox Guard | 41936220970 | startup_failure | 0 | 0 |
+| Studio Preview Package | 41936218040 | startup_failure | 0 | 0 |
+| G02 Runner Image Build (no publish) | 41936219426 | startup_failure | 0 | 0 |
+
+The three job-list and artifact-list calls independently returned empty arrays. This fresh reproduction on the evidence commit, after GitHub's public Nov 4 Actions incidents had been marked resolved, reinforces that the remaining issue cannot be cleared by a source-code-only change in this branch. Repository Actions settings / job-graph diagnostics and GitHub-side control-plane support are still required. No workflow rerun, settings toggle, merge, or production change was performed.
