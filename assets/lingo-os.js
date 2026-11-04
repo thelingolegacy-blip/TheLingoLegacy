@@ -2,6 +2,8 @@
   const doc = document;
   const body = doc.body;
   if (!body || doc.getElementById('hud-layer')) return;
+  const hasPrimaryNav = !!body.querySelector('header.top nav, header.topbar nav, header nav[aria-label="Primary navigation"], [data-primary-nav]');
+  if (hasPrimaryNav) body.classList.add('has-primary-nav');
 
   const isKidsExplorer = body.dataset.osSurface === 'kids-explorer';
   const productionConfig = Object.freeze({
