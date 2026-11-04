@@ -97,7 +97,7 @@ jobs:
           path: release/evidence/lingo-autorepair-report.json
 
   deploy-cloudflare:
-    needs: 
+    needs: repair
     # HARD HOLD: manual input is not acceptance evidence. Keep deployment disabled until independent P/E/V/A acceptance and staging isolation are implemented and verified.
     # HARD HOLD: a manual deploy=true input is not release authorization.
     # Keep Cloudflare production deployment disabled until independent acceptance and staging isolation pass.
