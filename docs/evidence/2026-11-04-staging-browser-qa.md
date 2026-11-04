@@ -158,3 +158,13 @@ The current preview root was tested after the root redirect change:
 - The 12 non-control-plane Studio Hub destinations tested loaded; the `/studio/` control-center shell also loads, but its live status fetch returns 404 on the static Pages preview because that preview has no attached Worker API. The UI correctly displays “Live status unavailable” and keeps its release state fail-closed.
 - The production root has not been redirected. Production `/studio-hub/` remains unavailable until a separately reviewed production promotion.
 
+
+
+### Repeated Actions startup failure after root-entry changes
+
+The same five workflows were retriggered on the Studio Hub root-entry commit `b9abb2611ef69c8e6d04bab99d2dd5da794556af` and the archived-homepage labeling commit `e81f4a720c11d5790ffe17826b6a2ca99e00ee3a`. All ten additional runs completed with `startup_failure`:
+
+- Root-entry commit: `41922734675`, `41922736781`, `41922732935`, `41922731051`, `41922729116`.
+- Archive-label commit: `41922770293`, `41922772316`, `41922768243`, `41922765963`, `41922764035`.
+
+Every one of these ten runs returned zero jobs and zero artifacts. This repeatability across unrelated static and runner-image workflows confirms the current PR CI evidence gap remains unresolved; it is not a source-level test failure because the jobs never instantiated.
