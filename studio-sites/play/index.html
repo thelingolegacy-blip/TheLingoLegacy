@@ -70,5 +70,7 @@ $('#closeGame').addEventListener('click',()=>{clearTimers();current=null;$('#gam
 $('#restart').addEventListener('click',()=>{if(current)mount(current.id);else say('Choose a game first.')});
 $('#resetAll').addEventListener('click',()=>{clearTimers();xp=0;$('#total').textContent='0 XP';if(current)mount(current.id);else say('Session reset.')});
 buildCatalog();
+const requestedGame = new URLSearchParams(window.location.search).get('game');
+if (requestedGame && games.some(game => game.id === requestedGame)) mount(requestedGame);
 })();
 </script></body></html>
