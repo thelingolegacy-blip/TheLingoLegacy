@@ -1,13 +1,16 @@
 /* LINGO Studio Surface Adapter UI */
 .studio-surface-nav{
-  position:sticky;top:0;z-index:90;
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  position:relative;z-index:90;
+  display:flex;gap:8px;flex-wrap:nowrap;align-items:center;
+  max-width:100%;overflow-x:auto;white-space:nowrap;
   padding:10px 16px;
-  background:rgba(8,8,12,.78);
+  background:rgba(8,8,12,.88);
   border-bottom:1px solid rgba(255,255,255,.1);
   backdrop-filter:blur(16px);
+  scrollbar-width:none;
 }
-.studio-surface-nav a{font-size:.78rem;text-decoration:none}
+.studio-surface-nav::-webkit-scrollbar{display:none}
+.studio-surface-nav a{flex:0 0 auto;font-size:.78rem;text-decoration:none}
 [data-studio-state="ERROR"] .studio-surface-nav{border-bottom-color:rgba(255,80,80,.35)}
 [data-studio-state="DEGRADED"] .studio-surface-nav{border-bottom-color:rgba(255,180,80,.35)}
 @media (prefers-reduced-motion:reduce){.studio-surface-nav{backdrop-filter:none}}
