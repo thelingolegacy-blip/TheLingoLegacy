@@ -103,3 +103,20 @@ Production was inspected without changing DNS, Workers, source, or routing:
 - The corresponding latest staging preview pages have zero Stripe/checkout/payment anchors.
 
 **Production risk / release blocker:** the payment-related links are still present in production source/runtime. They were not clicked and no purchase was initiated. Keep production protected; prepare a reviewed production patch and release checklist before any promotion. Do not treat the staging fixes as already applied to the live domain.
+
+
+## Production Worker status — read-only API snapshot
+
+At `2026-11-04T22:02:57Z`, read-only requests to the production Worker returned:
+
+- `/api/v1/platform/status`: `SERVING / RELEASE-LOCKED`, runtime `cloudflare-worker`, version `5.0.0-studio-platform`.
+- Production mutation: `FROZEN`; LKG: `PROTECTED`.
+- G02 runner: `FAIL / UNVERIFIED`.
+- G03 CI execution through G11 acceptance: `BLOCKED`.
+- Reported integrations: Stripe, Beacon webhook, Twilio, D1, KV, R2, and Firebase all `false`.
+- Real-money gameplay, cash-out, and harmful bypass all `false`.
+- `/healthz` returned `ok`.
+- `/api/v1/platform/modules` returned a 21-name module catalog. A catalog entry is not proof that its backend, storage, authentication, or live operations are connected.
+- `/api/v1/site/context` reported feature flags for premium studio, live ops, askLINGO, and analytics as true, while the platform status reports those external integrations/storage services as false. Treat these flags as surface/UI declarations, not integration acceptance.
+
+No production API mutations were sent.
