@@ -141,7 +141,7 @@
           <article class="premium-promo-card"><span class="tag">6 AM - 10 AM</span><h3>Morning launch push</h3><p>Lead with homepage, app, launch list, and studio story clips for early traffic.</p><div><a class="button primary" href="/">Homepage</a><a class="button" href="/app/">Daily App</a></div></article>
           <article class="premium-promo-card"><span class="tag">10 AM - 2 PM</span><h3>Midday game-floor lane</h3><p>Push That’s My Lingo, casino mini-game, visuals, and entertainment-only reward framing.</p><div><a class="button primary" href="/thats-my-lingo/">Game Floor</a><a class="button" href="/casino/">Casino</a></div></article>
           <article class="premium-promo-card"><span class="tag">2 PM - 6 PM</span><h3>Studio platform sweep</h3><p>Route visitors through live studio, visual showcase, racing universe, and rap arena surfaces.</p><div><a class="button primary" href="/live-casino-studio/">Live Studio</a><a class="button" href="/visual-showcase/">Visuals</a></div></article>
-          <article class="premium-promo-card"><span class="tag">6 PM - 10 PM</span><h3>Prime-time conversion</h3><p>Feature the founder-drop preview, social play, and premium brand pages. Checkout remains disabled in free mode.</p><div><span class="button primary" aria-disabled="true">Founder Drop · disabled</span><a class="button" href="/social-play/">Social Play</a></div></article>
+          <article class="premium-promo-card"><span class="tag">6 PM - 10 PM</span><h3>Prime-time discovery</h3><p>Feature the founder-drop preview, social play, and premium brand pages. Checkout remains disabled in free mode.</p><div><span class="button primary" aria-disabled="true">Founder Drop · disabled</span><a class="button" href="/social-play/">Social Play</a></div></article>
           <article class="premium-promo-card"><span class="tag">10 PM - 2 AM</span><h3>Late-night loyalty loop</h3><p>Promote rewards language, Loyalty Lane, universe map, and replayable visual systems.</p><div><a class="button primary" href="/loyalty-lane-cycles/">Loyalty Lane</a><a class="button" href="/universe/">Universe</a></div></article>
           <article class="premium-promo-card"><span class="tag">Always on</span><h3>Budget-safe posting queue</h3><p>Use this as the manual schedule for TikTok, Instagram, Facebook, YouTube, X, Threads, email, SMS, and link-in-bio. Keep spend caps on before boosting.</p><div><a class="button primary" href="/landing/">Launch List</a><a class="button" href="/trust-compliance/">Trust Core</a></div></article>
         </div>
@@ -149,7 +149,7 @@
       <div class="premium-blowout-hub" aria-label="Extreme cross-platform promotion and monetization hub">
         <div class="section-head">
           <h2>Extreme blowout promotion hub</h2>
-          <p>One static command center for all live apps, games, web properties, TV surfaces, store listings, banners, surveys, 30-second ad scripts, and payment-ready conversion lanes.</p>
+          <p>One static preview command center for LINGO app and game surfaces, web properties, TV concepts, store previews, banners, surveys, and short-form ad scripts. Live account connections and payment processing are not active here.</p>
         </div>
         <div class="premium-platform-grid">
           <article class="premium-platform-card"><span class="tag">Mobile stores</span><h3>Google Play + Apple App Store</h3><p>Promote app install, daily game, casino entertainment, launch list, reviews, screenshots, and short-form trailers.</p><a class="button primary" href="/app/">Promote App</a></article>
@@ -176,7 +176,7 @@
     dock.querySelectorAll('[data-premium-burst]').forEach((button) => button.addEventListener('click', () => burst('Premium motion burst active')));
     dock.querySelectorAll('[data-premium-sound]').forEach((button) => button.addEventListener('click', () => { playTone('reward'); toast('Premium sound cue active'); }));
     dock.querySelector('[data-premium-survey]')?.addEventListener('click', () => toast('Survey prompt: Which platform should launch first: mobile, TV, web, or games?'));
-    dock.querySelector('[data-premium-square]')?.addEventListener('click', () => toast('Square lane staged. Add approved Square checkout details before taking payments.'));
+    dock.querySelector('[data-premium-square]')?.addEventListener('click', () => toast('Square integration preview only. No Square account or payment processing is connected.'));
   }
 
   function init() {
