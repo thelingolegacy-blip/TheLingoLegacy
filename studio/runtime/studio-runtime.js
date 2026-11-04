@@ -37,7 +37,7 @@
   function ready(){
     setState("READY");
     const boot=document.querySelector(".studio-boot");
-    if(boot){ boot.dataset.ready="true"; setTimeout(()=>boot.remove(),500); }
+    if(boot){ boot.dataset.ready="true"; boot.setAttribute("aria-hidden","true"); boot.style.opacity="0"; boot.style.visibility="hidden"; boot.style.pointerEvents="none"; boot.remove(); }
     document.documentElement.dataset.studioReady="true";
   }
 
