@@ -36,6 +36,9 @@ All viewport checks below used a 390 × 844 mobile viewport with touch enabled.
 | That’s My Lingo | No horizontal overflow | PASS |
 | Doughboy’s Oasis vertical slice | Canvas and 33 interactive controls render | PASS |
 | Doughboy’s Oasis vertical slice | No horizontal overflow | PASS |
+| KottonsCode | Two inline scripts pass syntax checks; mobile world and controls render | PASS |
+| KottonsCode | Safe-crossing quest choice updates feedback and completion progress; restart resets progress | PASS |
+| KottonsCode | No horizontal overflow | PASS |
 | Tricia’s Escape | First memory room completes; +3 XP; next room increases to four symbols | PASS |
 
 ### Play Lab route smoke test
@@ -55,6 +58,8 @@ Interaction samples:
 - Cashman Lingo Mania: gold-token tap awarded 1 demo XP.
 
 Earlier Oasis Play Lab check reached “Oasis reached” and awarded 5 XP after three resource decisions. Earlier Crazy Weasols check accepted a target tap and awarded 1 XP. These are local-session prototypes, not account-backed or production game services.
+
+KottonsCode privacy note: the source contains a release comment requiring permission confirmation before publishing real family names, especially minors. Treat this as a public-release blocker until names are approved or replaced with approved aliases.
 
 ## Source identifiers at inspection
 
