@@ -120,3 +120,20 @@ At `2026-11-04T22:02:57Z`, read-only requests to the production Worker returned:
 - `/api/v1/site/context` reported feature flags for premium studio, live ops, askLINGO, and analytics as true, while the platform status reports those external integrations/storage services as false. Treat these flags as surface/UI declarations, not integration acceptance.
 
 No production API mutations were sent.
+
+
+## GitHub Actions status for draft PR #451
+
+For head commit `3b20a20969bc46a1db183c41c398d43bfc3014ff`, GitHub reported five pull-request workflow runs, all completed with conclusion `startup_failure`:
+
+- `Studio Static Validation` — run `41921935970`
+- `Crimson Smoke UI — static validation` — run `41921937686`
+- `Studio Preview Package` — run `41921934205`
+- `Lingo Legacy Static CI` — run `41921932363`
+- `G02 Runner Image Build (no publish)` — run `41921930678`
+
+Each run returned zero job records and zero artifacts. With no jobs, there are no runner IDs, step summaries, job logs, or build artifacts to inspect. The affected workflow definitions use `ubuntu-latest`, so this startup failure is broader than the dedicated `lingo-g02` self-hosted runner label alone. The production Worker independently continues to report G02 as `FAIL / UNVERIFIED`.
+
+GitHub also returned a successful Vercel status context for the commit. This is not accepted as evidence for the approved Cloudflare architecture, static validation, G02 execution, or release acceptance.
+
+**CI acceptance:** BLOCKED. Do not merge draft PR #451. The successful Cloudflare Pages static preview deployment is separate evidence and does not repair the GitHub Actions startup failure.
