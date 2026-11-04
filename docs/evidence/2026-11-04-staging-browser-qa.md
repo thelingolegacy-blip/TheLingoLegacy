@@ -28,7 +28,7 @@ All viewport checks below used a 390 × 844 mobile viewport with touch enabled.
 | Surface | Check | Result |
 |---|---|---|
 | Studio Hub | Mobile menu opens | PASS |
-| Studio Hub | Preview root [0mredirects to `/studio-hub/`; legacy casino home is preserved at `/legacy-home/` with `noindex,nofollow` | PASS |
+| Studio Hub | Preview root redirects to `/studio-hub/`; legacy casino home is preserved at `/legacy-home/` with `noindex,nofollow` | PASS |
 | Studio Hub | Three featured product logos load (That’s My Lingo, Doughboy’s Oasis, Crazy Weasols) | PASS |
 | Studio Hub | No horizontal overflow | PASS |
 | LINGOarcade | Six world cards render with launch destinations | PASS |
