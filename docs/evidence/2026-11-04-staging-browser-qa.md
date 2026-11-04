@@ -10,6 +10,7 @@
 - Latest preview deployment for the page-title correction: `a4ae44a3-663d-43d5-b9cc-28f7331e973a`
 - Preview origin at the page-title correction: `https://a4ae44a3.lingo-legacy-github-integration-test.pages.dev`
 - Latest KottonsCode identity preview: deployment `29317584-6a34-4fe5-a90e-b67c7001523d`, source commit `53a1b540ee44a62b69fe6a01dc07d02fe4df767a`, URL `https://29317584.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:00:44.822836Z`.
+- Latest complete evidence preview: deployment `ed865832-32c9-4511-ab0f-ea37626eda0d`, source commit `31f02cb2836d0e2e31c9a65404575b0f0c52eddb`, URL `https://ed865832.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:06:10.078680Z`.
 - Source commit: `8c4462dc2ca3ad2d77f70a7770fb599779fc8d01`
 - Cloudflare Pages stages: queued, initialize, clone_repo, build, deploy — all reported `success`.
 - Deploy completed: `2026-11-04T21:56:36.817917Z`.
@@ -42,6 +43,7 @@ All viewport checks below used a 390 × 844 mobile viewport with touch enabled.
 | KottonsCode | No horizontal overflow | PASS |
 | KottonsCode | Dedicated book-and-paw icon and favicon load; header no longer uses the That’s My Lingo mark | PASS |
 | TML and KottonsCode preview | Rendered pages contain zero Stripe/checkout/payment anchors | PASS |
+| TML preview | Square CTA reports preview-only; no Square account/payment processing connected | PASS |
 | Tricia’s Escape | First memory room completes; +3 XP; next room increases to four symbols | PASS |
 
 ### Play Lab route smoke test
