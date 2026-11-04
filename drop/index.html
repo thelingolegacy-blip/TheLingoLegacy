@@ -47,7 +47,7 @@
         <h1>Claim the <span>Legacy Keys</span></h1>
         <p class="lead">A fast, limited digital drop for early supporters: identity badges, XP collectibles, and mystery-key lore that can showcase future founder concepts without collecting payments.</p><div class="drop-visual-grid" aria-label="Drop visual readiness"><span><b>Responsive</b>Fits phone and desktop screens</span><span><b>Visual</b>Founder vault glow layer</span><span><b>Checkout</b>preview-only concept cards</span></div>
         <div class="actions">
-          <a class="button primary" href="#claim">Reserve a Pack</a>
+          <a class="button primary" href="#claim">View launch status</a>
           <a class="button" href="#tiers">View Tiers</a>
           <a class="button" href="/landing/">Join Launch List</a>
         </div>
@@ -93,32 +93,19 @@
 
     <section class="section order" id="claim">
       <div class="steps">
-        <article class="step"><strong>1. Choose tier</strong><p class="fine">Pick the pack that matches your support level.</p></article>
-        <article class="step"><strong>2. Send request</strong><p class="fine">The form saves locally and opens a prefilled email to start fulfillment.</p></article>
+        <article class="step"><strong>1. Choose tier</strong><p class="fine">Browse the future concept; no support purchase is offered.</p></article>
+        <article class="step"><strong>2. Send request</strong><p class="fine">No form, email request, or order workflow is active.</p></article>
         <article class="step"><strong>3. Deliver manually</strong><p class="fine">No orders or fulfillment requests are accepted until a future payment and operations plan is approved.</p></article>
       </div>
-      <form class="panel" id="dropForm" aria-label="Reserve Lingo Legacy micro-drop">
-        <span class="eyebrow">Reserve now</span>
-        <h2 style="margin:14px 0 8px">Claim request</h2>
-        <label for="name">Name</label><input id="name" name="name" autocomplete="name" required placeholder="Legacy Member" />
-        <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" data-checkout-email required placeholder="you@example.com" />
-        <label for="tier">Tier</label><select id="tier" name="tier"><option>Digital XP Pack — $10</option><option selected>Mystery Key Pack — preview only</option><option>Avalon House Badge Set — preview only</option></select>
-        <label for="note">Optional note</label><textarea id="note" name="note" placeholder="Tell us your founder name, preferred badge vibe, or delivery question."></textarea>
-        <button class="button primary" type="submit">Save + Open Email Request</button>
-        <div class="success" id="success" role="status"></div>
-        <p class="fine">Payment details are handled by Stripe Checkout. This page never collects card numbers.</p>
-      </form>
+      <div class="panel" id="dropForm" aria-label="Future founder concept status">
+        <span class="eyebrow">Browse-only mode</span>
+        <h2 style="margin:14px 0 8px">No orders or payments</h2>
+        <p class="lead">This page is a visual preview only. It does not collect names, email addresses, order requests, payment details, or deposits. Future pricing and fulfillment will be announced only after a separate plan is approved.</p>
+        <p class="fine">All checkout controls are disabled. No payment provider is contacted.</p>
+      </div>
     </section>
   </main>
   <footer class="footer"><div class="wrap">© 2026 The Lingo Legacy · hello@thelingolegacy.com · Digital founder-drop request page</div></footer>
-  <script>
-    const form=document.getElementById('dropForm'),success=document.getElementById('success'),tier=document.getElementById('tier'),nameInput=document.getElementById('name'),emailInput=document.getElementById('email'),noteInput=document.getElementById('note');
-    const store={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value);return true}catch{return false}}};
-    for(const link of document.querySelectorAll('[data-tier]')) link.addEventListener('click',()=>{tier.value=link.dataset.tier});
-    let saved=null;try{saved=JSON.parse(store.get('lingoLegacyDropClaim')||'null')}catch{saved=null}
-    if(saved){nameInput.value=saved.name||'';emailInput.value=saved.email||'';tier.value=saved.tier||tier.value;noteInput.value=saved.note||'';success.style.display='block';success.textContent=`Saved locally: ${saved.tier}`}
-    form.addEventListener('submit',event=>{event.preventDefault();const entry={name:nameInput.value.trim(),email:emailInput.value.trim(),tier:tier.value,note:noteInput.value.trim()};const savedOk=store.set('lingoLegacyDropClaim',JSON.stringify(entry));success.style.display='block';success.textContent=savedOk?`Saved locally. Opening email request for ${entry.tier}.`:`Opening email request for ${entry.tier}. Local saving is blocked in this browser.`;const subject=encodeURIComponent(`Lingo Legacy drop reservation: ${entry.tier}`);const body=encodeURIComponent(`Name: ${entry.name}\nEmail: ${entry.email}\nTier: ${entry.tier}\nNote: ${entry.note || 'N/A'}\n\nI want to reserve this Lingo Legacy founder micro-drop.`);location.href=`mailto:hello@thelingolegacy.com?subject=${subject}&body=${body}`});
-  </script>
   <div class="sg-toast" data-sg-toast role="status" aria-live="polite"></div>
 
 </body>
