@@ -275,5 +275,16 @@
       document.getElementById('play')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   </script>
+<style id="lingo-mobile-nav-fix">
+@media(max-width:980px){
+  .top nav{height:auto;min-height:70px;flex-wrap:wrap;justify-content:flex-start;align-items:center;padding:8px 0 4px}
+  .top .brand{flex:0 0 100%;width:100%}
+  .top .links{display:flex;flex:1 1 100%;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;white-space:nowrap;gap:12px;padding:6px 0 8px;scrollbar-width:none}
+  .top .links::-webkit-scrollbar{display:none}
+  .top .links a{flex:0 0 auto}
+  .casino-floor{padding-top:156px}
+}
+@media(max-width:620px){.casino-floor{padding-top:156px}}
+</style>
 </body>
 </html>
