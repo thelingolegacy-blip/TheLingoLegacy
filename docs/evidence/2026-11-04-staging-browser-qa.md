@@ -233,3 +233,17 @@ For each of these runs, GitHub's jobs endpoint returned **zero jobs** and the ar
 - Five principal surfaces (Studio Hub, That’s My Lingo, KottonsCode, LINGOarcade, and Doughboy’s Oasis) each completed a mobile interaction smoke test with zero captured JavaScript window errors and no horizontal overflow. These are the specific tested actions documented above, not a blanket claim that every control is production-ready.
 
 The evidence-only commit `fab3ec592e3c327ee31a3146c3139ae774ca59b2` also triggered five GitHub Actions workflows. All five again concluded `startup_failure`: runs `41923437419`, `41923435508`, `41923431399`, `41923433439`, and `41923429564`. Each run returned zero jobs and zero artifacts. This confirms the Actions startup issue is recurring; it still does not establish runner assignment or job execution.
+
+
+## Production route precedence recheck — 2026-11-04T22:16Z
+
+A fresh read-only Cloudflare route inventory and live browser check supersedes the earlier production homepage snapshot:
+
+- Exact root route `thelingolegacy.com/` is assigned to Worker `lingo-flagship-root` (route ID `04e6903aedf14510b58b34b57df699e1`).
+- Catch-all `thelingolegacy.com/*` is assigned to Worker `thelingolegacyv-5` (route ID `41e8d027e8cd4cb19d21df7143a2c25e`).
+- The exact root Worker currently serves a separate LINGO Legacy flagship landing page titled “The Lingo Legacy — One Legacy. Many Worlds.” Its visible world cards are mostly anchor links to `#module-info`, not direct product launches. It is not the new Studio Hub.
+- Production `/studio-hub/` currently returns HTTP 404 through the catch-all route. The new Studio Hub is available only on the isolated Pages preview.
+- Production `/thats-my-lingo/` still serves the older “Production Entertainment Platform” version. Its rendered page contains five visible links to `/drop/#stripe-checkout` (including Sweepstakes Visual Pass, Founder Checkout and Open Stripe Lane). None was clicked; no purchase was attempted.
+- The staging versions of That’s My Lingo and Drop have disabled or absent checkout actions as documented above.
+
+This confirms two separate production integration gaps: the production flagship landing cards are not wired to the product routes, and the Studio Hub preview is not yet on the production route. Do not resolve either by editing Worker routes or replacing the root Worker before the release gates and G02 evidence pass. No production route, Worker, DNS, or source mutation was made during this audit.
