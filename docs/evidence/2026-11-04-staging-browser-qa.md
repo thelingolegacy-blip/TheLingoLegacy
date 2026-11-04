@@ -223,3 +223,13 @@ For each of these runs, GitHub's jobs endpoint returned **zero jobs** and the ar
 - `_redirects` adds a root-to-`/studio-hub/` 302 for the isolated Pages preview project only. Production DNS and Worker routing are unchanged.
 
 **Disposition:** STAGING PREVIEW FUNCTIONALITY VERIFIED FOR THE FLOWS LISTED ABOVE; PRODUCTION HOLD. Backend identity, cloud saves, Firebase initialization, native app builds, Worker runtime acceptance, G02 host/runner evidence, full accessibility/security/performance review, and explicit promotion authorization remain outstanding.
+
+
+## Evidence-record publication and final recheck — 2026-11-04T22:14Z
+
+- The QA record itself was published in Cloudflare Pages deployment `3e87daf8-0f45-4d92-a299-a3ab00ce7cc5`, URL https://3e87daf8.lingo-legacy-github-integration-test.pages.dev; all five Pages stages completed successfully.
+- The deployment contains the same tested application source as commit `122ea3c3f14ff05443df97713dd46292f486cd8c`; the new source change after that commit was this evidence document only.
+- Final root-entry recheck on the evidence deployment again resolved `/` to `/studio-hub/`, rendered the Studio Hub title and H1, and reported no horizontal overflow.
+- Five principal surfaces (Studio Hub, That’s My Lingo, KottonsCode, LINGOarcade, and Doughboy’s Oasis) each completed a mobile interaction smoke test with zero captured JavaScript window errors and no horizontal overflow. These are the specific tested actions documented above, not a blanket claim that every control is production-ready.
+
+The evidence-only commit `fab3ec592e3c327ee31a3146c3139ae774ca59b2` also triggered five GitHub Actions workflows. All five again concluded `startup_failure`: runs `41923437419`, `41923435508`, `41923431399`, `41923433439`, and `41923429564`. Each run returned zero jobs and zero artifacts. This confirms the Actions startup issue is recurring; it still does not establish runner assignment or job execution.
