@@ -43,7 +43,7 @@
   <main class="wrap">
     <section class="hero">
       <div>
-        <span class="eyebrow">7-day founder micro-drop</span>
+        <span class="eyebrow">Future founder concepts · preview only</span>
         <h1>Claim the <span>Legacy Keys</span></h1>
         <p class="lead">A fast, limited digital drop for early supporters: identity badges, XP collectibles, and mystery-key lore that can showcase future founder concepts without collecting payments.</p><div class="drop-visual-grid" aria-label="Drop visual readiness"><span><b>Responsive</b>Fits phone and desktop screens</span><span><b>Visual</b>Founder vault glow layer</span><span><b>Checkout</b>preview-only concept cards</span></div>
         <div class="actions">
@@ -66,15 +66,15 @@
     </section>
 
     <section class="section" id="tiers">
-      <div class="section-head"><h2>Pick a founder tier</h2><p>Simple digital packs make the offer clear enough to share in DMs, community posts, and launch announcements.</p></div>
+      <div class="section-head"><h2>Explore future founder concepts</h2><p>Simple digital packs make the offer clear enough to share in DMs, community posts, and launch announcements.</p></div>
       <div class="tiers">
-        <article class="tier"><span class="eyebrow">Starter</span><h3>Digital XP Pack</h3><div class="price">$10</div><ul><li>Founder XP card</li><li>Starter spell prompt</li><li>Launch-list priority note</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="xp" disabled aria-disabled="true">Payments paused</button><a class="button" href="#claim" data-tier="Digital XP Pack — $10">Email request</a></div></article>
-        <article class="tier featured"><span class="eyebrow">Best push</span><h3>Mystery Key Pack</h3><div class="price">$25</div><ul><li>Collectible mystery key identity</li><li>One lore clue from the Lingo vault</li><li>Early access delivery email</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="key" disabled aria-disabled="true">Payments paused</button><a class="button" href="#claim" data-tier="Mystery Key Pack — $25">Email request</a></div></article>
-        <article class="tier"><span class="eyebrow">Premium</span><h3>Avalon House Badge Set</h3><div class="price">$50</div><ul><li>Limited badge-set concept</li><li>Personalized founder title</li><li>Micro-tool starter spell add-on</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="avalon" disabled aria-disabled="true">Payments paused</button><a class="button" href="#claim" data-tier="Avalon House Badge Set — $50">Email request</a></div></article>
+        <article class="tier"><span class="eyebrow">Starter</span><h3>Digital XP Pack</h3><div class="price">Paused</div><ul><li>Founder XP card</li><li>Starter spell prompt</li><li>Launch-list priority note</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="xp" disabled aria-disabled="true">Payments paused</button><span class="button" aria-disabled="true">Preview only · no orders</span></div></article>
+        <article class="tier featured"><span class="eyebrow">Best push</span><h3>Mystery Key Pack</h3><div class="price">Paused</div><ul><li>Collectible mystery key identity</li><li>One lore clue from the Lingo vault</li><li>Early access delivery email</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="key" disabled aria-disabled="true">Payments paused</button><span class="button" aria-disabled="true">Preview only · no orders</span></div></article>
+        <article class="tier"><span class="eyebrow">Premium</span><h3>Avalon House Badge Set</h3><div class="price">Paused</div><ul><li>Limited badge-set concept</li><li>Personalized founder title</li><li>Micro-tool starter spell add-on</li></ul><div class="tier-actions"><button class="button primary" type="button" data-stripe-tier="avalon" disabled aria-disabled="true">Payments paused</button><span class="button" aria-disabled="true">Preview only · no orders</span></div></article>
       </div>
     </section>
 
-    <section class="section checkout-band" id="stripe-checkout">
+    <section class="section checkout-band" id="billing-paused">
       <div class="checkout-grid">
         <div>
           <span class="eyebrow">Future monetization · paused</span>
@@ -102,7 +102,7 @@
         <h2 style="margin:14px 0 8px">Claim request</h2>
         <label for="name">Name</label><input id="name" name="name" autocomplete="name" required placeholder="Legacy Member" />
         <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" data-checkout-email required placeholder="you@example.com" />
-        <label for="tier">Tier</label><select id="tier" name="tier"><option>Digital XP Pack — $10</option><option selected>Mystery Key Pack — $25</option><option>Avalon House Badge Set — $50</option></select>
+        <label for="tier">Tier</label><select id="tier" name="tier"><option>Digital XP Pack — $10</option><option selected>Mystery Key Pack — preview only</option><option>Avalon House Badge Set — preview only</option></select>
         <label for="note">Optional note</label><textarea id="note" name="note" placeholder="Tell us your founder name, preferred badge vibe, or delivery question."></textarea>
         <button class="button primary" type="submit">Save + Open Email Request</button>
         <div class="success" id="success" role="status"></div>
