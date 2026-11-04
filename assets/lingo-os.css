@@ -1142,3 +1142,20 @@ body.lingo-os-active main :is(h1, h2, .eyebrow, .tag) {
   animation-duration: 720ms !important;
   animation-iteration-count: 1 !important;
 }
+
+
+/* Native page headers own navigation; do not stack the global HUD on top. */
+body.has-primary-nav #hud-layer .os-command-bar,
+body.has-primary-nav #hud-layer .os-side-rail,
+body.has-primary-nav #hud-layer .os-fab-stack,
+body.has-primary-nav #hud-layer .os-toast-dock {
+  display: none !important;
+}
+
+/* Floating OS controls must not cover gameplay or story content on phones. */
+@media (max-width: 620px) {
+  #hud-layer .os-fab-stack,
+  #hud-layer .os-side-rail {
+    display: none !important;
+  }
+}
