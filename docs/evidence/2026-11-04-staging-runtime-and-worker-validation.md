@@ -110,3 +110,25 @@ The current production `/drop/` page still renders three enabled buttons labelle
 - Pages project has no custom domains configured; this remains an isolated `pages.dev` preview.
 
 **Release disposition remains PRODUCTION HOLD.** The current production site is reachable and its runtime is serving, but it is not the new Studio Hub release. The old production Drop UI still exposes checkout calls-to-action despite the backend rejecting checkout. The new free-mode UI is available only in staging until review, CI/G02 evidence, and cutover authorization pass.
+
+
+## 8. Isolated release-candidate Worker runtime execution — 2026-11-04T22:45Z
+
+An additional Cloudflare Worker was created solely for isolated API runtime validation:
+
+- Worker: `lingo-release-candidate-validation-20261104`
+- Source: `worker.js` from the PR branch, blob `f3916fe6658845d08c3727da1caecdf4b24387ca`
+- Worker deployment ID: `3d72d425c65e490a9b3bf6f6df6c2bcc`
+- Workers.dev URL: https://lingo-release-candidate-validation-20261104.thelingolegacy.workers.dev
+- Tags: `lingo`, `staging`, `release-candidate-validation`, `no-production-route`
+- No custom routes, no secrets, no D1/KV/R2 bindings, and no production service bindings. Workers.dev was enabled only for this isolated validation hostname; preview URLs remain disabled.
+
+Live read-only endpoint results:
+- `GET /healthz` → HTTP 200, runtime header `5.0.0-studio-platform`
+- `GET /api/v1/runtime` → HTTP 200; integrations all false; billing DISABLED; checkout false; subscriptions false; paid game credits false; cash-out false
+- `GET /api/v1/platform/status` → HTTP 200; SERVING / RELEASE-LOCKED; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; mutation freeze true; LKG PROTECTED
+- `GET /api/v1/platform/gates` → HTTP 200; fail-closed true; mutation freeze true; LKG PROTECTED
+- `GET /api/v1/platform/modules` → HTTP 200; module manifest returned
+- `POST /api/create-checkout-session` with a dummy test tier → HTTP 410 `BILLING_DISABLED`; no checkout session created
+
+This proves the corrected Worker source compiles, deploys to an isolated Cloudflare Worker, and serves the expected API contracts at runtime. It does not verify static asset serving because this validation Worker intentionally has no `ASSETS` binding; it does not prove production integration or G02 acceptance. The Worker has no production route and does not receive production traffic.
