@@ -1,9 +1,3 @@
-const CHECKOUT_TIERS = {
-  xp: { label: 'Digital XP Pack', priceEnv: 'STRIPE_PRICE_XP_PACK' },
-  key: { label: 'Mystery Key Pack', priceEnv: 'STRIPE_PRICE_MYSTERY_KEY_PACK' },
-  avalon: { label: 'Avalon House Badge Set', priceEnv: 'STRIPE_PRICE_AVALON_BADGE_SET' },
-};
-
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -74,26 +68,14 @@ function json(body, status = 200, request, env) {
 
 function requestOrigin(request) { return new URL(request.url).origin; }
 async function parseJson(request) { try { return await request.json(); } catch { return {}; } }
-function safeEmail(value = '') { const email = String(value).trim().slice(0, 160); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : ''; }
-
 async function createCheckout(request, env) {
-  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
-  const secret = env.STRIPE_SECRET_KEY;
-  if (!secret) return json({ ok: false, error: 'Stripe checkout is not configured yet.' }, 503, request, env);
-  const body = await parseJson(request);
-  const tierKey = String(body.tier || '').trim();
-  const tier = CHECKOUT_TIERS[tierKey];
-  if (!tier) return json({ ok: false, error: 'Unknown checkout tier.' }, 400, request, env);
-  const price = env[tier.priceEnv];
-  if (!price) return json({ ok: false, error: `${tier.label} is not configured for checkout yet.` }, 503, request, env);
-  const origin = canonicalOrigin(env) || env.PUBLIC_SITE_URL || requestOrigin(request);
-  const params = new URLSearchParams({ mode: 'payment', success_url: `${origin}/drop/?checkout=success&tier=${encodeURIComponent(tierKey)}`, cancel_url: `${origin}/drop/?checkout=cancelled&tier=${encodeURIComponent(tierKey)}`, 'line_items[0][price]': price, 'line_items[0][quantity]': '1', 'metadata[tier]': tierKey, 'metadata[source]': 'lingo-legacy-drop', 'payment_intent_data[metadata][tier]': tierKey });
-  const customerEmail = safeEmail(body.email);
-  if (customerEmail) params.set('customer_email', customerEmail);
-  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params });
-  const result = await response.json();
-  if (!response.ok) return json({ ok: false, error: result.error?.message || 'Stripe checkout failed.' }, response.status, request, env);
-  return json({ ok: true, url: result.url }, 200, request, env);
+  // Payment processing is deliberately unavailable during the no-billing launch phase.
+  // Keep the endpoint fail-closed so stale clients cannot create a checkout session.
+  return json({
+    ok: false,
+    code: 'BILLING_DISABLED',
+    error: 'Checkout is disabled. No payments or purchases are accepted in this launch phase.',
+  }, 410, request, env);
 }
 
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
@@ -128,6 +110,8 @@ function isRateLimited(key) {
 function alertMessage(zone, source) { const zoneLabel = zone.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '); return `Lingo Legacy Beacon Alerts active for ${zoneLabel}. Source: ${source || 'web'}. Reply STOP to opt out.`; }
 
 async function sendBeacon(payload, env) {
+  // Outbound paid providers remain off unless separately approved after a cost plan.
+  if (env.PAID_SERVICES_ENABLED !== 'true') return null;
   const webhookUrl = env.BEACON_ALERTS_WEBHOOK_URL;
   if (webhookUrl) { const headers = { 'Content-Type': 'application/json' }; if (env.BEACON_ALERTS_WEBHOOK_SECRET) headers.Authorization = `Bearer ${env.BEACON_ALERTS_WEBHOOK_SECRET}`; const response = await fetch(webhookUrl, { method: 'POST', headers, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Webhook returned ${response.status}`); return { provider: 'webhook' }; }
   const sid = env.TWILIO_ACCOUNT_SID; const token = env.TWILIO_AUTH_TOKEN; const from = env.TWILIO_FROM_NUMBER;
@@ -166,15 +150,16 @@ function runtimeManifest(request, env) {
     assets: 'worker-controlled',
     observability: true,
     integrations: {
-      stripe: Boolean(env.STRIPE_SECRET_KEY),
-      beacon_webhook: Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
-      twilio: Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER),
+      stripe: false,
+      beacon_webhook: env.PAID_SERVICES_ENABLED === 'true' && Boolean(env.BEACON_ALERTS_WEBHOOK_URL),
+      twilio: env.PAID_SERVICES_ENABLED === 'true' && Boolean(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER),
       d1: Boolean(env.DB),
       kv: Boolean(env.STUDIO_KV),
       r2: Boolean(env.ASSET_BUCKET),
       firebase: Boolean(env.FIREBASE_PROJECT_ID),
     },
     safety: { real_money_gameplay: false, cash_out: false, harmful_bypass: false },
+    billing: { mode: 'DISABLED', checkout: false, subscriptions: false, paid_game_credits: false, cash_out: false },
     realtime: { websocket: Boolean(env.REALTIME_ENABLED), status: env.REALTIME_ENABLED ? 'ENABLED' : 'READY' },
   };
 }
@@ -193,7 +178,7 @@ function platformStatus(request, env) {
     production_mutation: 'FROZEN',
     lkg: 'PROTECTED',
     gates: RELEASE_GATES,
-    authorization: { production_promotion: false, activation: false, real_money_gameplay: false, cash_out: false },
+    authorization: { production_promotion: false, activation: false, real_money_gameplay: false, cash_out: false, billing: false },
     acceptance_predicate: 'P1..P9 all true required for G02 PASS',
     dynamic_contract: 'active',
   };
