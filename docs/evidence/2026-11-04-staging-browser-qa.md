@@ -8,7 +8,8 @@
 ## Verified deployment
 
 - Latest preview deployment for the page-title correction: `a4ae44a3-663d-43d5-b9cc-28f7331e973a`
-- Preview origin: `https://a4ae44a3.lingo-legacy-github-integration-test.pages.dev`
+- Preview origin at the page-title correction: `https://a4ae44a3.lingo-legacy-github-integration-test.pages.dev`
+- Latest KottonsCode identity preview: deployment `29317584-6a34-4fe5-a90e-b67c7001523d`, source commit `53a1b540ee44a62b69fe6a01dc07d02fe4df767a`, URL `https://29317584.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:00:44.822836Z`.
 - Source commit: `8c4462dc2ca3ad2d77f70a7770fb599779fc8d01`
 - Cloudflare Pages stages: queued, initialize, clone_repo, build, deploy — all reported `success`.
 - Deploy completed: `2026-11-04T21:56:36.817917Z`.
@@ -39,6 +40,8 @@ All viewport checks below used a 390 × 844 mobile viewport with touch enabled.
 | KottonsCode | Two inline scripts pass syntax checks; mobile world and controls render | PASS |
 | KottonsCode | Safe-crossing quest choice updates feedback and completion progress; restart resets progress | PASS |
 | KottonsCode | No horizontal overflow | PASS |
+| KottonsCode | Dedicated book-and-paw icon and favicon load; header no longer uses the That’s My Lingo mark | PASS |
+| TML and KottonsCode preview | Rendered pages contain zero Stripe/checkout/payment anchors | PASS |
 | Tricia’s Escape | First memory room completes; +3 XP; next room increases to four symbols | PASS |
 
 ### Play Lab route smoke test
@@ -69,6 +72,9 @@ KottonsCode privacy note: the source contains a release comment requiring permis
 - `thats-my-lingo/index.html`: `c557c43c668d1aae40a03d63f1ad20c46f853222`
 - `studio-sites/games/doughboys-oasis-vertical-slice.html`: `2173af8b8f7e7426ee1b1ddbf720ad66c0fd18fe`
 - `assets/premium-studio-refresh.js`: `5e11cfcf1f0beea08ddfa1b7ea68344955de2044`
+- `kottons-code/index.html`: `58cca1bac201b0aa23968e6189dbd85f74c50d17`
+- `assets/logos/kottons-code-icon.svg`: `7bb1d49a98b3a0b64646ef8cd547a54a809f8fc9`
+- `assets/logos/kottons-code-mark.svg`: `b91c6f220dafa11f394c863a2caae8543b23afd9`
 
 These are Git blob identifiers, not SHA-256 checksums.
 
@@ -84,3 +90,16 @@ These are Git blob identifiers, not SHA-256 checksums.
 ## Acceptance statement
 
 This record establishes successful static preview deployment and the specific mobile browser smoke tests listed above. It does **not** establish production readiness, backend integration, account security, release acceptance, G02 qualification, or authorization to promote.
+
+
+## Production baseline — read-only route audit
+
+Production was inspected without changing DNS, Workers, source, or routing:
+
+- `https://thelingolegacy.com/` and `https://www.thelingolegacy.com/` both rendered the current legacy homepage title.
+- `https://thelingolegacy.com/studio-hub/` returned a not-found response. The new Studio Hub remains preview-only.
+- Production `/thats-my-lingo/` still serves the older title “Production Entertainment Platform” and exposes five anchors to `/drop/#stripe-checkout`.
+- Production `/kottons-code/` exposes two anchors to `/drop/#stripe-checkout`.
+- The corresponding latest staging preview pages have zero Stripe/checkout/payment anchors.
+
+**Production risk / release blocker:** the payment-related links are still present in production source/runtime. They were not clicked and no purchase was initiated. Keep production protected; prepare a reviewed production patch and release checklist before any promotion. Do not treat the staging fixes as already applied to the live domain.
