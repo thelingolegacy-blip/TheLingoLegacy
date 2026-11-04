@@ -10,7 +10,8 @@
 - Latest preview deployment for the page-title correction: `a4ae44a3-663d-43d5-b9cc-28f7331e973a`
 - Preview origin at the page-title correction: `https://a4ae44a3.lingo-legacy-github-integration-test.pages.dev`
 - Latest KottonsCode identity preview: deployment `29317584-6a34-4fe5-a90e-b67c7001523d`, source commit `53a1b540ee44a62b69fe6a01dc07d02fe4df767a`, URL `https://29317584.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:00:44.822836Z`.
-- Latest complete evidence preview: deployment `ed865832-32c9-4511-ab0f-ea37626eda0d`, source commit `31f02cb2836d0e2e31c9a65404575b0f0c52eddb`, URL `https://ed865832.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:06:10.078680Z`.
+- Latest complete evidence preview at that stage: deployment `ed865832-32c9-4511-ab0f-ea37626eda0d`, source commit `31f02cb2836d0e2e31c9a65404575b0f0c52eddb`, URL `https://ed865832.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:06:10.078680Z`.
+- Latest Studio Hub root-entry preview: deployment `9f7c0b67-cf90-470b-9384-b9f2a519ddf1`, source commit `e81f4a720c11d5790ffe17826b6a2ca99e00ee3a`, URL `https://9f7c0b67.lingo-legacy-github-integration-test.pages.dev`; build and deploy both reported `success`, deploy completed `2026-11-04T22:09:57.767173Z`.
 - Source commit: `8c4462dc2ca3ad2d77f70a7770fb599779fc8d01`
 - Cloudflare Pages stages: queued, initialize, clone_repo, build, deploy — all reported `success`.
 - Deploy completed: `2026-11-04T21:56:36.817917Z`.
@@ -27,6 +28,7 @@ All viewport checks below used a 390 × 844 mobile viewport with touch enabled.
 | Surface | Check | Result |
 |---|---|---|
 | Studio Hub | Mobile menu opens | PASS |
+| Studio Hub | Preview root [0mredirects to `/studio-hub/`; legacy casino home is preserved at `/legacy-home/` with `noindex,nofollow` | PASS |
 | Studio Hub | Three featured product logos load (That’s My Lingo, Doughboy’s Oasis, Crazy Weasols) | PASS |
 | Studio Hub | No horizontal overflow | PASS |
 | LINGOarcade | Six world cards render with launch destinations | PASS |
@@ -77,6 +79,10 @@ KottonsCode privacy note: the source contains a release comment requiring permis
 - `kottons-code/index.html`: `58cca1bac201b0aa23968e6189dbd85f74c50d17`
 - `assets/logos/kottons-code-icon.svg`: `7bb1d49a98b3a0b64646ef8cd547a54a809f8fc9`
 - `assets/logos/kottons-code-mark.svg`: `b91c6f220dafa11f394c863a2caae8543b23afd9`
+- `index.html` (preview root redirect): `fe597272d65a2d93fbb4310ae1d8ef67a18eacf9`
+- `legacy-home/index.html` (noindex archive): `d5d34dbeb73e6d52ed2c332cbfe2c3d8c0237c85`
+- `studio-hub/index.html`: `001722833875afe7dd2599812f2225e0999b1d38`
+- `studio-sites/lingoslots/index.html`: `e3eb4a9c87e1a3bb556c864692a6f4c2a5476738`
 
 These are Git blob identifiers, not SHA-256 checksums.
 
@@ -139,3 +145,16 @@ Each run returned zero job records and zero artifacts. With no jobs, there are n
 GitHub also returned a successful Vercel status context for the commit. This is not accepted as evidence for the approved Cloudflare architecture, static validation, G02 execution, or release acceptance.
 
 **CI acceptance:** BLOCKED. Do not merge draft PR #451. The successful Cloudflare Pages static preview deployment is separate evidence and does not repair the GitHub Actions startup failure.
+
+
+## Studio Hub root and internal route audit
+
+The current preview root was tested after the root redirect change:
+
+- Requesting `/` lands at `/studio-hub/` and renders “LINGO Studio Hub — One Legacy. Many Worlds.”
+- `/legacy-home/` preserves the former casino homepage as a noindex archive.
+- The Studio Hub search input filters the directory; the mobile menu opens; featured product logos load; no horizontal overflow was observed.
+- All 31 internal destinations extracted from the That’s My Lingo and KottonsCode navigation/content link sets loaded with their expected page titles in the preview browser.
+- The 12 non-control-plane Studio Hub destinations tested loaded; the `/studio/` control-center shell also loads, but its live status fetch returns 404 on the static Pages preview because that preview has no attached Worker API. The UI correctly displays “Live status unavailable” and keeps its release state fail-closed.
+- The production root has not been redirected. Production `/studio-hub/` remains unavailable until a separately reviewed production promotion.
+
