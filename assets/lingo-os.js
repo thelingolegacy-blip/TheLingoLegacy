@@ -279,6 +279,16 @@
     motionTargets.forEach((node, index) => {
       node.classList.add('motion-in');
       node.style.setProperty('--motion-order', String(index % 6));
+      const rect = node.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || doc.documentElement.clientHeight;
+      if (rect.top < viewportHeight * 0.96 && rect.bottom > 0) node.classList.add('is-visible');
+    });
+    requestAnimationFrame(() => {
+      motionTargets.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || doc.documentElement.clientHeight;
+        if (rect.top < viewportHeight * 0.96 && rect.bottom > 0) node.classList.add('is-visible');
+      });
     });
 
     if (!('IntersectionObserver' in window)) {
