@@ -12,10 +12,12 @@
 
   function nav(){
     if(document.querySelector("[data-studio-nav]")) return;
+    if(document.querySelector("header nav, .topbar nav, [data-primary-nav]")) return;
     const items=[
-      ["/","Legacy"],["/lingoarcade/","Arcade"],["/thats-my-lingo/","LINGOslots"],
-      ["/kottons-code/","KOTTONSCODE"],["/lane/","Lane"],["/media/","Media"],
-      ["/store/","Store"],["/ai/","askLINGO"]
+      ["/studio-hub/","Hub"],["/studio-sites/lingoarcade/","LINGOarcade"],
+      ["/studio-sites/lingoslots/","LINGOslots"],["/thats-my-lingo/","That’s My Lingo"],
+      ["/kottons-code/","KottonsCode"],["/loyalty-lane-apparel/","LINGOlane"],
+      ["/media/","LINGOmedia"],["/lingo-ai/","askLINGO"]
     ];
     const nav=document.createElement("nav");
     nav.dataset.studioNav="";
