@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       run_g02_assignment_probe:
-        description: "Also run the canonical G02 runner assignment and host sentinel (requires an authorized operator)"
+        description: "Reserved input; canonical self-hosted execution is disabled pending a trusted private control plane"
         required: true
         type: boolean
         default: false
@@ -59,36 +59,20 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  # SECURITY HOLD: this public-repository workflow must never execute checkout-ref
+  # code on the persistent privileged G02 runner. Keep this job hard-disabled.
+  # Re-enable only after the runner control plane is private and immutable/trusted,
+  # with a separately enforced isolation boundary protecting host credentials.
   canonical-g02-assignment-probe:
-    name: Canonical G02 runner assignment probe
-    if: ${{ inputs.run_g02_assignment_probe == true }}
+    name: Canonical G02 runner assignment probe (SECURITY DISABLED)
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 15
     steps:
-      - name: Check out evidence collector
-        uses: actions/checkout@v4
-      - name: Capture canonical G02 assignment, host telemetry, and sentinel
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
-          GITHUB_SHA: ${{ github.sha }}
-          EXPECTED_JOB_NAME: Canonical G02 runner assignment probe
-          G02_EVIDENCE_LANE: canonical-self-hosted-g02
-          G02_EXPECTED_RUNNER_NAME: lingo-legacy-g02
-          G02_RUNNER_ROOT: /opt/actions-runner
-          G02_RUNNER_SERVICE: actions.runner.lingo-legacy-g02.service
-          CHANGE_REFERENCE: ${{ inputs.change_reference }}
-        run: python3 scripts/g02/collect-runner-evidence.py --require-g02-sentinel
-      - name: Upload canonical G02 evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: g02-canonical-assignment-${{ github.run_id }}-${{ github.run_attempt }}
-          path: g02-evidence/
-          if-no-files-found: warn
-          retention-days: 14
+      - name: Refuse untrusted self-hosted execution
+        run: |
+          echo "Canonical G02 execution is disabled pending a trusted private control plane."
+          exit 1
 
   evidence-collector:
     name: Correlate jobs, logs, artifacts, and checksums
