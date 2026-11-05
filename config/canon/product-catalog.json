@@ -81,6 +81,29 @@
     "lingoTravel": {
       "url": "https://lingo-traveltm-uyd57n.v2.appdeploy.ai/",
       "status": "deployed-preview"
+    },
+    "founderDrop": {
+      "url": "https://thelingolegacy.com/drop/",
+      "status": "live-reachable",
+      "contentStatus": "stale-public-checkout-ui",
+      "productionRouteStatus": "requires-replacement-before-launch",
+      "observedIssues": [
+        "three Stripe checkout buttons are visible",
+        "page describes Stripe Checkout as ready",
+        "paid founder tiers are presented"
+      ],
+      "paymentActivation": "not-verified-in-this-audit"
+    },
+    "legacyThatsMyLingo": {
+      "url": "https://thelingolegacy.com/thats-my-lingo/",
+      "status": "live-reachable",
+      "contentStatus": "legacy-v7-experience",
+      "productionRouteStatus": "requires-brand-and-copy-reconciliation",
+      "observedIssues": [
+        "uses star decoration in brand headings",
+        "product name omits canonical apostrophe",
+        "older copy and navigation differ from the current free-play staging candidate"
+      ]
     }
   },
   "properties": [
@@ -131,7 +154,9 @@
         "cashEquivalentPrizes": false,
         "sweepstakesEnabled": false
       },
-      "studioHubSlug": "thats-my-lingo"
+      "studioHubSlug": "thats-my-lingo",
+      "productionRoute": "/thats-my-lingo/",
+      "productionRouteStatus": "legacy-v7-requires-replacement-before-release"
     },
     {
       "id": "spades-is-my-lingo",
@@ -523,7 +548,9 @@
     "paymentActivationAuthorized": false,
     "youthProductLaunchRequiresPrivacyReview": true,
     "assetRightsReviewRequired": true,
-    "finalPublicLinksRequireLiveRouteProbe": true
+    "finalPublicLinksRequireLiveRouteProbe": true,
+    "publicCheckoutUi": "stale-enabled-stripe-buttons-visible-on-drop-route",
+    "productionThatsMyLingo": "legacy-v7-brand-and-copy-drift"
   },
   "notes": [
     "studioHubSlug values are source-confirmed preview slugs from the current AppDeploy Studio Hub code, not verified production paths.",
