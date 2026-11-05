@@ -21,7 +21,8 @@
       "design-only",
       "not-yet-deployed",
       "blocked",
-      "unverified"
+      "unverified",
+      "candidate-experience"
     ]
   },
   "destinations": {
