@@ -1,31 +1,36 @@
 # G02 Evidence and Acceptance Design
 
-**Status:** Proposed implementation on PR #425; not yet executed or accepted.  
-**Security posture:** Read-only GitHub API access, host-local read-only telemetry, no production mutations.
+**Status:** Proposed implementation; not yet executed or accepted.  
+**Security posture:** Read-only GitHub API access, host-local read-only telemetry, no production mutations.  
+**Canonical runner posture:** HARD DISABLED in the public repository pending a trusted private control plane and verified host isolation.
 
 ## Objective
 
-Turn G02 runner qualification into a traceable evidence chain. The workflow supports a scoped push diagnostic on the dedicated recovery branch and a manual dispatch; the canonical self-hosted lane remains explicitly opt-in. Every assertion must point to an independently retrievable GitHub job, runner identity, executed sentinel, log archive, artifact, and checksum.
+Turn G02 runner qualification into a traceable evidence chain. The hosted diagnostic lane may test GitHub-hosted runner allocation. It cannot qualify G02. Canonical self-hosted execution is intentionally disabled in this public repository: the workflow must not execute code from a user-selectable dispatch ref on a persistent privileged runner.
+
+## Security boundary
+
+- The canonical self-hosted job has a literal false job condition and cannot be enabled by the workflow-dispatch boolean input.
+- Its body contains no checkout, script execution, token use, or host inspection.
+- Do not remove this hard disable merely because a Linux host becomes available.
+- Before designing a replacement, establish a private runner-control repository or equivalent private control plane with independently enforced protected refs and immutable trusted revisions.
+- The runner must be isolated from host credentials, the Docker socket/host, unrelated workloads, and untrusted pull-request code. A persistent privileged host running code checked out from a public repository is not an acceptable boundary.
+- The trust policy and isolation must be independently reviewed and tested before any canonical runner registration or dispatch.
 
 ## Evidence flow
 
 ```mermaid
 flowchart TD
   A[Recovery-branch push or manual dispatch] --> B[GitHub-hosted diagnostic]
-  A --> C[Optional canonical G02 runner]
-  B --> D[Jobs API assignment lookup]
-  C --> D
-  D --> E[runner_id + runner_name + steps]
-  E --> F[Host telemetry]
-  F --> G[Canonical host sentinel]
-  G --> H[Per-job evidence artifact + SHA-256]
-  H --> I[Evidence collector]
-  I --> J[Retrieve job logs + artifact metadata]
-  J --> K[Correlation register + checksums]
-  K --> L[Independent reviewer]
-  L --> M{Acceptance decision}
-  M -->|Accepted by authorized reviewer| N[Separate authorization gate]
-  M -->|Missing or failed evidence| O[HOLD / BLOCKED]
+  B --> C[Jobs API assignment lookup]
+  C --> D[runner_id + runner_name + steps]
+  D --> E[Hosted environment telemetry]
+  E --> F[Evidence artifact + SHA-256]
+  F --> G[Independent reviewer]
+  G --> H{Acceptance decision}
+  H -->|Missing or failed evidence| I[HOLD / BLOCKED]
+  H -->|Accepted by authorized reviewer| J[Separate authorization gate]
+  K[Canonical G02 lane] --> L[HARD DISABLED until private trusted control plane]
 ```
 
 ## Correlation model
@@ -37,9 +42,9 @@ flowchart TD
 - The job's returned `steps` array is preserved as execution evidence.
 - Host telemetry includes OS/kernel, architecture, CPU/memory/disk/uptime, a one-way host fingerprint, runner root and registration-file presence, diagnostic directory presence, service state, and runner process counts. No secrets, environment dumps, IP addresses, or raw machine identifiers are collected.
 
-## Canonical G02 sentinel
+## Canonical G02 acceptance requirements
 
-The optional self-hosted lane requires:
+After the private trusted control plane and host isolation are independently approved, a future canonical lane must require:
 - Positive API-derived runner ID.
 - Exact runner name `lingo-legacy-g02`.
 - Labels `self-hosted, linux, x64, lingo-g02`.
@@ -47,12 +52,13 @@ The optional self-hosted lane requires:
 - `/opt/actions-runner`, `.runner`, and `_diag` presence.
 - `actions.runner.lingo-legacy-g02.service` active.
 - A live `Runner.Listener` process.
+- Executed steps, retrievable logs and artifacts, and recomputed SHA-256 hashes.
 
 A failed or missing check is a failed sentinel. Hosted-runner evidence is diagnostic only and cannot qualify G02.
 
 ## Logs, artifacts, and integrity
 
-The final collector queries the run's Jobs and Artifacts APIs after dependent jobs complete. It downloads job log archives and G02 evidence artifacts, records HTTP retrieval status, and computes SHA-256 for every retrieved file. The correlation register records job IDs, runner identity, step summaries, artifact IDs, log availability, checksums, and a conservative eligibility flag.
+A future final collector may query the run's Jobs and Artifacts APIs after dependent jobs complete. It must download job log archives and G02 evidence artifacts, record HTTP retrieval status, and compute SHA-256 for every retrieved file. The correlation register records job IDs, runner identity, step summaries, artifact IDs, log availability, checksums, and a conservative eligibility flag.
 
 ## Acceptance boundary
 
@@ -60,4 +66,4 @@ The final collector queries the run's Jobs and Artifacts APIs after dependent jo
 
 ## Known external dependency
 
-A workflow with zero instantiated jobs cannot collect its own evidence. The observed G02 Control Watch run #44 ended in `startup_failure` with zero jobs and zero artifacts. This repository change cannot repair GitHub's hosted-runner allocation service or provision the missing persistent G02 host. Those are separate infrastructure/provider actions.
+Recent GitHub Actions runs have ended in `startup_failure` with zero jobs and zero artifacts. A workflow with zero instantiated jobs cannot collect its own evidence. Repository changes cannot repair GitHub's hosted-runner allocation service or provision the missing persistent G02 host. Those are separate provider and infrastructure actions.
