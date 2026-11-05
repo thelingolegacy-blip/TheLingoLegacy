@@ -128,7 +128,55 @@
         "collectionId": "gid://shopify/Collection/333352992929",
         "collectionName": "LINGOlane | Apparel",
         "listedProductCount": 7,
-        "inventoryStatus": "requires-variant-level-reconciliation"
+        "inventoryStatus": "requires-variant-level-reconciliation",
+        "supplierDisclosure": "Current collection copy states selected items are fulfilled by independent Shopify Collective suppliers and are not represented as original LINGO designs.",
+        "observedProducts": [
+          {
+            "title": "District 09 Streetwear Hockey Jersey | Men's Relaxed Fit — Hunter & Havoc",
+            "price": "79.99 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "G West Skull Streetwear Graphic Oversized T-Shirt Mens",
+            "price": "75.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "G West Streetwear Graphic Oversized T-Shirt Mens",
+            "price": "75.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "Noisy Boy-Inspired T-Shirt – Sci-Fi Robot Graphic Tee for Movie Fans",
+            "price": "50.00 USD",
+            "status": "ACTIVE",
+            "review": "supplier and third-party IP/brand review required"
+          },
+          {
+            "title": "Winchester Undertaker T-Shirt - Grim Reaper Cowboy Graphic Tee",
+            "price": "25.00 USD",
+            "status": "ACTIVE",
+            "review": "supplier and third-party IP/brand review required"
+          },
+          {
+            "title": "May the Bridges I Burn Light My Way Skull Print Hoodie",
+            "price": "40.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "3D Evil Smile Shirt for Men – Streetwear Graphic Short Sleeve Tee",
+            "price": "36.99 USD",
+            "status": "ACTIVE"
+          }
+        ],
+        "productLaunchStatus": "active-third-party-supplier-listings; not yet verified as proprietary LINGO apparel",
+        "requiredChecks": [
+          "variant-level inventory",
+          "supplier fulfillment and delivery terms",
+          "trademark and artwork rights",
+          "product-title and brand alignment",
+          "mobile product-page and checkout QA"
+        ]
       },
       "studioHubSlug": "loyalty-lane-apparel"
     },
