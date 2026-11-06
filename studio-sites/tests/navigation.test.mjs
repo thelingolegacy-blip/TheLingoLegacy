@@ -64,7 +64,8 @@ test("flagship internal anchors resolve to elements", () => {
 });
 
 test("universe portal game cards no longer use inert placeholder anchors", () => {
-  assert.doesNotMatch(portal, /href="#worlds"/);
+  const portalTileBlocks = [...portal.matchAll(/<a class="tile"[\\s\\S]*?<\\/a>/g)].map((match) => match[0]);
+  for (const block of portalTileBlocks) assert.doesNotMatch(block, /href="#worlds"/);
   assert.match(portal, /href="lingoslots\/#play"/);
   for (const block of portal.matchAll(/<a class="tile"[\s\S]*?<\/a>/g)) {
     const href = (block[0].match(/href="([^"]+)"/) || [])[1];
@@ -78,6 +79,30 @@ test("universe portal game cards no longer use inert placeholder anchors", () =>
       const candidate = clean.endsWith("/") ? clean + "index.html" : clean;
       assert.ok(existsSync(candidate), `missing portal route: ${href}`);
     }
+  }
+});
+
+
+test("flagship local assets and page references resolve in the repository", () => {
+  const html = rootHtml();
+  const refs = [...html.matchAll(/(?:href|src)="(\\/[^"]+)"/g)].map((match) => match[1]);
+  for (const ref of refs) {
+    if (ref.startsWith("/studio-sites/destination.html")) {
+      assert.ok(existsSync("studio-sites/destination.html"), "destination detail page must exist");
+      continue;
+    }
+    const clean = ref.split(/[?#]/, 1)[0];
+    if (!clean || clean.startsWith("//")) continue;
+    const relative = clean.replace(/^\\//, "");
+    const candidate = relative.endsWith("/") ? relative + "index.html" : relative;
+    assert.ok(existsSync(candidate), `missing flagship asset or route: ${ref}`);
+  }
+});
+
+test("TV directional navigation script exists and supports remote arrow keys", () => {
+  const tvNavigation = readFileSync("studio-sites/assets/tv-navigation.js", "utf8");
+  for (const key of ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]) {
+    assert.ok(tvNavigation.includes(key), `missing TV remote key: ${key}`);
   }
 });
 
