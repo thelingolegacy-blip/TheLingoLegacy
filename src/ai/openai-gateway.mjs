@@ -70,13 +70,11 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
   }
   let rawBody;
   try {
-    rawBody = await request.text();
+    rawBody = await readBodyLimited(request, MAX_BODY_BYTES);
   } catch {
     return json({ ok: false, error: 'Request body could not be read.' }, 400);
   }
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
-    return json({ ok: false, error: 'Request body exceeds the 16 KB limit.' }, 413);
-  }
+  if (rawBody === null) return json({ ok: false, error: 'Request body exceeds the 16 KB limit.' }, 413);
   let body;
   try {
     body = JSON.parse(rawBody);
@@ -138,4 +136,29 @@ function json(value, status = 200) {
       'cache-control': 'no-store'
     }
   });
+}
+
+async function readBodyLimited(request, maxBytes) {
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return new TextDecoder().decode(bytes);
 }
