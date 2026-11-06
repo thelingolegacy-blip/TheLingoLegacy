@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "1.0.0",
+  "policy": "Catalog only. No plugin is represented as installed, licensed, approved, or tested until evidence is recorded.",
+  "candidates": [
+    {
+      "name": "Unreal Engine Gameplay Ability System",
+      "category": "gameplay-framework",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "engine-version compatibility",
+        "license",
+        "network authority",
+        "automated tests"
+      ]
+    },
+    {
+      "name": "Unreal Engine Mass Entity",
+      "category": "crowd-and-entity-simulation",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "target platform support",
+        "entity scale profiling",
+        "memory budget",
+        "AI integration"
+      ]
+    },
+    {
+      "name": "Unreal Engine Niagara",
+      "category": "vfx",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "GPU/CPU budget",
+        "mobile fallback",
+        "reduced-motion settings"
+      ]
+    },
+    {
+      "name": "Unreal Engine Chaos Vehicles",
+      "category": "vehicle-physics",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "vehicle handling tests",
+        "collision tests",
+        "target device performance"
+      ]
+    },
+    {
+      "name": "Unreal Engine World Partition",
+      "category": "world-streaming",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "streaming boundaries",
+        "memory budget",
+        "save/load integration"
+      ]
+    },
+    {
+      "name": "Unity Universal Render Pipeline",
+      "category": "rendering",
+      "engine": "Unity",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "render pipeline compatibility",
+        "device matrix",
+        "shader fallback"
+      ]
+    },
+    {
+      "name": "Unity Addressables",
+      "category": "asset-delivery",
+      "engine": "Unity",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "content catalog integrity",
+        "offline behavior",
+        "cache recovery"
+      ]
+    },
+    {
+      "name": "Phaser",
+      "category": "2d-browser-runtime",
+      "engine": "Browser",
+      "status": "EXISTING_USE_IN_CRAZY_WEASOLS",
+      "verification": [
+        "input QA",
+        "scene lifecycle",
+        "asset loading",
+        "mobile performance"
+      ]
+    },
+    {
+      "name": "PixiJS",
+      "category": "2d-rendering",
+      "engine": "Browser",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "renderer comparison",
+        "texture memory",
+        "accessibility overlay"
+      ]
+    },
+    {
+      "name": "Three.js",
+      "category": "3d-browser-runtime",
+      "engine": "Browser",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "WebGL fallback",
+        "GLB loading",
+        "GPU performance",
+        "context-loss recovery"
+      ]
+    },
+    {
+      "name": "Blender",
+      "category": "3d-content-creation",
+      "engine": "DCC",
+      "status": "CANDIDATE_TOOL",
+      "verification": [
+        "project version",
+        "export settings",
+        "asset provenance"
+      ]
+    },
+    {
+      "name": "Spine",
+      "category": "2d-skeletal-animation",
+      "engine": "DCC/runtime",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "commercial license",
+        "runtime integration",
+        "atlas budget"
+      ]
+    },
+    {
+      "name": "Git LFS",
+      "category": "binary-version-control",
+      "engine": "GitHub",
+      "status": "CANDIDATE_NOT_CONFIGURED",
+      "verification": [
+        "tracking rules",
+        "storage quota",
+        "clone/fetch test"
+      ]
+    },
+    {
+      "name": "Perforce Helix Core",
+      "category": "large-asset-version-control",
+      "engine": "Source control",
+      "status": "CANDIDATE_NOT_CONFIGURED",
+      "verification": [
+        "hosting cost",
+        "permissions",
+        "workspace workflow",
+        "backup"
+      ]
+    },
+    {
+      "name": "Playwright",
+      "category": "browser-qa",
+      "engine": "Browser",
+      "status": "CANDIDATE_NOT_CONFIGURED",
+      "verification": [
+        "browser matrix",
+        "stable selectors",
+        "screenshot evidence"
+      ]
+    },
+    {
+      "name": "Unity Test Framework",
+      "category": "automated-testing",
+      "engine": "Unity",
+      "status": "CANDIDATE_NOT_INSTALLED",
+      "verification": [
+        "edit-mode tests",
+        "play-mode tests",
+        "CI compatibility"
+      ]
+    },
+    {
+      "name": "Unreal Automation Testing",
+      "category": "automated-testing",
+      "engine": "Unreal Engine 5",
+      "status": "CANDIDATE_NOT_CONFIGURED",
+      "verification": [
+        "functional tests",
+        "Gauntlet coverage",
+        "headless execution"
+      ]
+    },
+    {
+      "name": "Firebase",
+      "category": "backend-services",
+      "engine": "Cross-engine",
+      "status": "EXISTING_PLATFORM_REQUIRES_GAME_SPECIFIC_AUDIT",
+      "verification": [
+        "rules tests",
+        "identity boundaries",
+        "offline sync",
+        "data minimization"
+      ]
+    },
+    {
+      "name": "Cloudflare Workers",
+      "category": "edge-runtime",
+      "engine": "Cross-engine",
+      "status": "EXISTING_PLATFORM_PROTECTED",
+      "verification": [
+        "environment isolation",
+        "route ownership",
+        "health probes",
+        "release gates"
+      ]
+    }
+  ]
+}
