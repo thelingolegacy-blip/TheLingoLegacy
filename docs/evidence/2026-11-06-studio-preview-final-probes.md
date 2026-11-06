@@ -44,3 +44,8 @@
 - Starting at `/apps/universe/studio/`, Browser Rendering clicked the Membership link and reached the Legacy page; final title was `LINGOlegacy | LINGOlegacy` and the `IDENTITY.` content was present.
 - Starting at `/apps/universe/legacy/`, Browser Rendering clicked the Studio link and returned to the Studio page; final title was `Studio / Enterprise | LINGOlegacy` and the Studio headline was present.
 - Both transitions completed with the gateway's root-level Next.js data/static aliases active.
+
+## Kotton’s Code image acceptance
+
+- `/apps/kottonscode/` returned the expected `Kotton’s Code — Cartoon Studio` page.
+- Browser Rendering forced lazy images to load and inspected their natural dimensions. All four unique world assets (`KottonsCode-world-1.jpeg` through `KottonsCode-world-4.jpeg`) completed successfully at 1024×1024.
