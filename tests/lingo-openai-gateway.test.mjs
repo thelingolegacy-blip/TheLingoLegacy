@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { handleLingoAIRequest } from '../src/ai/openai-gateway.js';
+import { handleLingoAIRequest } from '../src/ai/openai-gateway.mjs';
 
 const request = (path, method = 'GET', body) => new Request(`https://lingo.test${path}`, {
   method,
