@@ -63,6 +63,7 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Credential-presence signal removed from public status response.
 - [x] Responses API adapter and bounded input validation implemented.
 - [x] Authenticated askLINGO facade wired into the isolated Worker branch.
+- [x] Native-fetch web and Flutter/Dart client scaffolds added with Firebase token-provider injection and destination allowlisting.
 - [x] Firebase ID-token verifier checks signature, project audience/issuer, subject, expiration, issue time and auth time.
 - [x] Request bodies are streamed with hard byte ceilings before buffering.
 - [x] Automated test suites authored for the gateway, Firebase verifier, and askLINGO facade (full combined suite has not yet executed).
