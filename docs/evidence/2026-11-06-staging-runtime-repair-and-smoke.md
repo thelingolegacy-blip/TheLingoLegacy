@@ -95,3 +95,33 @@ Worker: `lingo-world-engine-staging`
 If the isolated validation Worker regresses, restore the prior 100% version `3d72d425-c65e-490a-9b3b-f6f6df6c2bcc` through a new Cloudflare deployment for this Worker. The prior deployment record remains available. No production rollback is required because no production route targets this Worker.
 
 **Final disposition:** The isolated Cloudflare API runtime is serving and its tested contracts pass. The Studio gateway and World Engine staging services are serving; 16 configured origin HEAD checks pass and five staging worlds are queryable. This is a functioning staging environment, not an accepted or production-integrated LINGO release.
+
+
+## 9. Connected Studio staging hostname
+
+At 2026-11-06T03:06:39Z, the previously unused/retired-Vercel staging hostname was connected to the Cloudflare Studio Control Center Worker.
+
+- Hostname: `studio-preview.thelingolegacy.com`
+- Previous DNS record removed: CNAME record ID `977d165572aa3dfa8bdb6c0a24a3ba99`, target `eee6999da059dddb.vercel-dns-017.com`, unproxied; comment identified it as a branch-scoped Vercel Studio VNext preview, not production apex.
+- New Cloudflare Worker Domain ID: `987eff32ee4e30c4916fb4a9693ee24f4b5c590a`
+- Worker service: `lingo-studio-control-center-staging`
+- TLS certificate ID: `657c7e2c-504c-4cda-ab6e-37c8377eb74f`
+- Domain enabled: true; preview routing: false.
+- Cloudflare-managed proxied DNS record ID: `db9217763e3b12c7db4ec193b8997cbf`.
+- The Cloudflare API's deprecated `environment` metadata field reports `production`; the Worker itself returns `environment: staging`, `mode: read-only`, and its root page explicitly labels itself STAGING ONLY. Treat the service as staging; it has no apex or www route.
+
+Fresh browser-rendered checks through the new hostname:
+
+| Request | HTTP | Result |
+|---|---:|---|
+| `GET /` | 200 | LINGOlegacy Studio Preview — Application Gateway |
+| `GET /healthz` | 200 | Service ready; staging; read-only; 16 routes |
+| `GET /healthz/apps` | 200 | All 16 configured origins returned HTTP 200 to HEAD checks |
+| `GET /apps/universe/` | 200 | Universe Gateway page |
+| `GET /apps/control-center/` | 200 | Enterprise Control Center page |
+| `GET /apps/asklingo/` | 200 | askLINGO page |
+| `GET /apps/thats-my-lingo/` | 200 | That’s My Lingo page |
+| `GET /apps/arcade/` | 200 | LINGO arcade page |
+| `GET /apps/kottonscode/` | 200 | Kotton’s Code page |
+
+This connects a working staging entry point without changing `thelingolegacy.com`, `www.thelingolegacy.com`, production Worker routes, or any production service. The gateway remains GET/HEAD-only; it does not expose product API writes, authentication callbacks, OAuth, or admin paths. The removed Vercel CNAME is recorded above for rollback/reference.
