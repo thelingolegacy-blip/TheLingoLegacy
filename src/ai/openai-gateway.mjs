@@ -97,7 +97,7 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
       authorization: `Bearer ${env.OPENAI_API_KEY}`,
       'content-type': 'application/json'
     },
-    body: JSON.stringify({ model, input, max_output_tokens: 512 }),
+    body: JSON.stringify({ model, input, max_output_tokens: 512, store: false }),
     signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
     });
   } catch {
