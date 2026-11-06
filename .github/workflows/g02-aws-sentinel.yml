@@ -15,7 +15,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sentinel:
-    name: g02-aws-runner-sentinel
+    name: g02-aws-runner-sentinel (SECURITY DISABLED)
+    # SECURITY HOLD: this public workflow must not run checkout-controlled code on persistent G02.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     env:
