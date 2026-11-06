@@ -19,9 +19,9 @@ All clients use the first-party LINGO API boundary. No client calls api.openai.c
 
 | Surface | Client integration target | Current readiness |
 |---|---|---|
-| Web | Shared HTTPS API client | Contract prepared; identity not verified |
-| iOS | Flutter/Dart API client | Firebase options are placeholders |
-| Android | Flutter/Dart API client | Firebase options are placeholders |
+| Web | `src/ai/lingo-ai-client.mjs` | Client module and tests authored; not wired into UI |
+| iOS | `lib/services/lingo_ai_client.dart` | Client module and tests authored; Firebase options remain placeholders |
+| Android | Flutter/Dart API client | Shared service scaffold; Firebase options remain placeholders |
 | Desktop | Same HTTPS API contract | No client integration verified |
 | Smart TV | Restricted HTTPS client | No client integration verified |
 | Unity / Unreal games | Game-side service adapter | No client integration verified |
@@ -68,6 +68,10 @@ It must return a stable product envelope, independent of provider-specific respo
 ```
 
 The Worker validates the identity token, request fields, and message length, then returns HTTP 423 `ASKLINGO_DISABLED` while the zero-spend policy is active. It does not call a model or persist prompts. The facade's in-memory rate limit is per Worker isolate, not a shared global control. It must not forward the private internal token or provider credential to the client.
+
+## Client SDK scaffolds
+
+A native-fetch JavaScript client and a Flutter/Dart client are now included. Both obtain a Firebase ID token from a caller-supplied token provider, send only the bearer token to the first-party endpoint, use bounded request data, avoid cookie credentials, and map the disabled-service response. They do not contain provider secrets. UI wiring and real-device tests remain outstanding.
 
 ## No-cost development mode
 
