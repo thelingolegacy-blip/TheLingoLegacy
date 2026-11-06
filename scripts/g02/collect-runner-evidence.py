@@ -308,15 +308,37 @@ def finalize() -> int:
                             item["contains_canonical_sentinel"] = True
         except (OSError, zipfile.BadZipFile, json.JSONDecodeError):
             continue
-    canonical = [s for s in sentinel_records if s.get("sentinel_status") in ("PASS", "FAIL")]
-    canonical_pass_records = [s for s in canonical if s.get("sentinel_status") == "PASS" and
-                              s.get("runner_name") == "lingo-legacy-g02" and
-                              isinstance(s.get("runner_id"), int) and s["runner_id"] > 0]
+    required_labels = {"self-hosted", "linux", "x64", "lingo-g02"}
+    api_canonical_jobs = {
+        j.get("id"): j for j in jobs
+        if isinstance(j.get("id"), int)
+        and j.get("runner_name") == "lingo-legacy-g02"
+        and isinstance(j.get("runner_id"), int) and j["runner_id"] > 0
+        and required_labels.issubset(set(j.get("labels") or []))
+        and j.get("head_sha") == SHA
+    }
+    canonical_pass_records = [
+        s for s in sentinel_records
+        if s.get("sentinel_status") == "PASS"
+        and s.get("run_id") == int(RUN_ID)
+        and s.get("commit_sha") == SHA
+        and s.get("runner_name") == "lingo-legacy-g02"
+        and isinstance(s.get("runner_id"), int) and s["runner_id"] > 0
+        and required_labels.issubset(set(s.get("runner_labels") or []))
+        and s.get("job_id") in api_canonical_jobs
+        and s.get("runner_id") == api_canonical_jobs[s.get("job_id")].get("runner_id")
+    ]
     canonical_pass = bool(canonical_pass_records)
     canonical_job_ids = {s.get("job_id") for s in canonical_pass_records}
-    canonical_job_success = any(j.get("id") in canonical_job_ids and
-                                j.get("status") == "completed" and
-                                j.get("conclusion") == "success" for j in jobs)
+    canonical_job_success = any(
+        j.get("id") in canonical_job_ids
+        and j.get("status") == "completed"
+        and j.get("conclusion") == "success"
+        and bool(j.get("steps"))
+        and any(step.get("status") == "completed" and step.get("conclusion") == "success"
+                for step in (j.get("steps") or []))
+        for j in jobs
+    )
     canonical_logs_retrievable = any(x.get("job_id") in canonical_job_ids and x.get("retrievable")
                                      for x in downloaded_logs)
     canonical_artifact_retrievable = any(x.get("contains_canonical_sentinel") and x.get("retrievable")
