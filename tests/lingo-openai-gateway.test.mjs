@@ -60,7 +60,7 @@ test('enabled requests use Responses API and return output text', async () => {
     { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' },
     async (url, options) => {
       captured = { url, options };
-      return new Response(JSON.stringify({ output_text: 'hello back' }), { status: 200 });
+      return new Response(JSON.stringify({ output: [{ type: 'message', content: [{ type: 'output_text', text: 'hello back' }] }] }), { status: 200 });
     }
   );
   assert.equal(response.status, 200);
