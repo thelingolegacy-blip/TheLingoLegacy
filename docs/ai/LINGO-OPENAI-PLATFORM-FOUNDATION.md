@@ -62,11 +62,13 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Upstream timeout and sanitized network-failure response implemented.
 - [x] Credential-presence signal removed from public status response.
 - [x] Responses API adapter and bounded input validation implemented.
-- [x] Automated tests authored for disabled, missing-key, success, and input-limit paths.
-- [x] Local Node verification: gateway syntax check passed and 14/14 isolated tests passed against a local mirror of the branch gateway/test behavior.
-- [ ] GitHub Actions run 42292387394 (workflow run #34) ended `startup_failure` before job creation; job list and artifact list are empty. This is not test execution evidence. Several unrelated workflows on the same commit also show startup failures, so classify this as runner/platform startup blockage, not an application test result.
-- [ ] GitHub Actions CI execution evidence.
-- [ ] Independent security review, including shared-secret rotation, caller identity, and Cloudflare rate limiting before paid activation.
+- [x] Authenticated askLINGO facade wired into the isolated Worker branch.
+- [x] Firebase ID-token verifier checks signature, project audience/issuer, subject, expiration, issue time and auth time.
+- [x] Request bodies are streamed with hard byte ceilings before buffering.
+- [x] Automated test suites authored for the gateway, Firebase verifier, and askLINGO facade (full combined suite has not yet executed).
+- [ ] Earlier GitHub Actions run 42292387394 (workflow run #34) ended `startup_failure` before job creation; job list and artifact list were empty. This is not test execution evidence.
+- [ ] New branch CI execution, logs and artifact evidence.
+- [ ] Independent security review, including Firebase token revocation/disabled-account checks, shared-secret rotation, caller identity, and global Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
 - [ ] Staging integration and cross-platform client contracts verified.
 - [ ] Founder approval for any paid API activation (not granted).
