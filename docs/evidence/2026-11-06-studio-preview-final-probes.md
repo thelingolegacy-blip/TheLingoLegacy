@@ -53,3 +53,7 @@
 ## Complete static page-data allowlist
 
 A same-origin Browser Rendering probe fetched all nine allowlisted static-export data routes. Every request returned HTTP 200, valid JSON, `__N_SSG: true`, and a `pageProps` object: `legacy`, `slots`, `arcade`, `library`, `media`, `world`, `lane`, `legacyxclub`, and `studio`.
+
+## Complete Studio bundle HEAD check
+
+From the rendered Studio page, Browser Rendering enumerated all same-origin Next.js static CSS/JS assets (including the root-level runtime prefetch assets) and issued HEAD requests. All **15/15** returned HTTP 200 with the expected JavaScript or CSS content type.
