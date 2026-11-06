@@ -148,3 +148,15 @@ test('upstream network failure returns sanitized error', async () => {
   assert.equal(response.status, 502);
   assert.equal(JSON.stringify(await response.json()).includes('secret upstream details'), false);
 });
+
+test('streaming oversized body without content-length is rejected before JSON parsing', async () => {
+  const stream = new ReadableStream({ start(controller) { controller.enqueue(new TextEncoder().encode('x'.repeat(17000))); controller.close(); } });
+  const response = await handleLingoAIRequest(
+    new Request('https://lingo.test/api/v1/ai/responses', {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-lingo-internal-token': 'caller-secret' },
+      body: stream, duplex: 'half'
+    }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' }
+  );
+  assert.equal(response.status, 413);
+});
