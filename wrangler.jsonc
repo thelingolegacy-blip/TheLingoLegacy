@@ -16,7 +16,8 @@
   ],
   "vars": {
     "CANONICAL_DOMAIN": "thelingolegacy.com",
-    "PUBLIC_SITE_URL": "https://thelingolegacy.com"
+    "PUBLIC_SITE_URL": "https://thelingolegacy.com",
+    "FIREBASE_AUTH_PROJECT_ID": "lingo-legacy-production"
   },
   "observability": {
     "enabled": true
