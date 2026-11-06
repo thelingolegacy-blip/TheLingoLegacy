@@ -35,5 +35,7 @@ jobs:
           node-version: '22'
       - name: Verify gateway module syntax
         run: node --check src/ai/openai-gateway.mjs
+      - name: Verify Worker module syntax
+        run: node --check --input-type=module < worker.js
       - name: Run isolated gateway tests
         run: node --test tests/lingo-openai-gateway.test.mjs
