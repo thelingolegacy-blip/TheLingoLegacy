@@ -75,8 +75,44 @@ paths:
         '503': { description: Server credential or internal auth not configured }
 components:
   securitySchemes:
+    FirebaseIdToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase Authentication ID token. Verified server-side; client UID values are not trusted.
     LingoInternalToken:
       type: apiKey
       in: header
       name: x-lingo-internal-token
       description: Server-only shared secret. Never distribute to end-user clients.
+
+  /api/v1/ask-lingo/query:
+    post:
+      operationId: postAskLingoQuery
+      summary: Authenticated askLINGO facade (currently disabled)
+      description: >
+        Requires a Firebase Authentication ID token in the Authorization
+        bearer header. Verifies the token signature and core project claims.
+        Does not persist or send the prompt to a model. Returns 423 until a
+        separately reviewed inference or mock mode is enabled. Rate limiting
+        is currently per Worker isolate and is not a global abuse control.
+      security:
+        - FirebaseIdToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [message]
+              properties:
+                message: { type: string, minLength: 1, maxLength: 2000 }
+                surface: { type: string, enum: [web, ios, android, desktop, tv, unity, unreal] }
+                locale: { type: string, maxLength: 16 }
+      responses:
+        '401': { description: Missing or invalid Firebase identity token }
+        '415': { description: JSON content type required }
+        '423': { description: askLINGO is disabled; no model request was sent }
+        '429': { description: Per-isolate rate limit exceeded }
+        '503': { description: Firebase project or signing-key service unavailable }
