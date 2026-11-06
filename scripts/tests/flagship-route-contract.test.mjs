@@ -23,7 +23,41 @@ assert.ok(routeManifest.routes.some((route) => route.path === '/' && route.surfa
 
 const rootResponse = await rootWorker.fetch(new Request('https://thelingolegacy.com/'));
 assert.equal(rootResponse.status, 200);
-assert.match(await rootResponse.text(), /Candidate experience/);
+const rootHtml = await rootResponse.text();
+assert.match(rootHtml, /Candidate experience/);
+
+async function exists(relativePath) {
+  try {
+    await readFile(new URL(relativePath, import.meta.url));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const localLinks = [...rootHtml.matchAll(/(?:href|src)="([^"]+)"/g)]
+  .map((match) => match[1])
+  .filter((value) => value.startsWith('/') && !value.startsWith('//'));
+
+for (const link of localLinks) {
+  const routePath = new URL(link, 'https://thelingolegacy.com').pathname;
+  const repoPath = routePath.replace(/^\\/|\\/$/g, '');
+  const candidates = [
+    `../../${repoPath}/index.html`,
+    `../../${repoPath}.html`,
+    `../../${repoPath}`,
+  ];
+  let found = false;
+  for (const candidate of candidates) {
+    if (await exists(candidate)) {
+      found = true;
+      break;
+    }
+  }
+  assert.equal(found, true, `homepage link has no matching repository asset: ${link}`);
+}
+
+assert.doesNotMatch(rootHtml, /asklingo-dock|pwa-register\\.js|tv-navigation\\.js/);
 
 const deepPathResponse = await rootWorker.fetch(new Request('https://thelingolegacy.com/studio-sites/'));
 assert.equal(deepPathResponse.status, 404, 'the exact-root Worker must not be mistaken for the deep-route Worker');
