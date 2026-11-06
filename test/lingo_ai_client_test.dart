@@ -20,11 +20,10 @@ void main() {
         );
       }),
     );
-    expect(
-      () => client.query(message: 'hello', surface: 'ios'),
+    await expectLater(
+      client.query(message: 'hello', surface: 'ios'),
       throwsA(isA<LingoAiException>().having((e) => e.code, 'code', 'ASKLINGO_DISABLED')),
     );
-    await Future<void>.delayed(Duration.zero);
     expect(captured.headers['authorization'], 'Bearer firebase-id-token-placeholder');
     expect(captured.url.path, '/api/v1/ask-lingo/query');
     expect(jsonDecode(captured.body), {'message': 'hello', 'surface': 'ios', 'locale': 'en-US'});
