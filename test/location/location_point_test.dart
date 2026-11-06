@@ -4,7 +4,7 @@ import 'package:lingo_legacy/features/location/models/location_point.dart';
 void main() {
   group('LocationPoint', () {
     test('accepts valid latitude and longitude', () {
-      const point = LocationPoint(
+      final point = LocationPoint(
         latitude: 39.9526,
         longitude: -75.1636,
         capturedAt: DateTime.utc(2026, 11, 6),
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('rejects latitude outside the valid range', () {
-      const point = LocationPoint(
+      final point = LocationPoint(
         latitude: 91,
         longitude: 0,
         capturedAt: DateTime.utc(2026, 11, 6),
@@ -27,12 +27,12 @@ void main() {
     });
 
     test('rejects non-finite coordinates and accuracy', () {
-      const invalidCoordinates = LocationPoint(
+      final invalidCoordinates = LocationPoint(
         latitude: double.nan,
         longitude: 0,
         capturedAt: DateTime.utc(2026, 11, 6),
       );
-      const invalidAccuracy = LocationPoint(
+      final invalidAccuracy = LocationPoint(
         latitude: 0,
         longitude: 0,
         capturedAt: DateTime.utc(2026, 11, 6),
