@@ -160,3 +160,25 @@ test('streaming oversized body without content-length is rejected before JSON pa
   );
   assert.equal(response.status, 413);
 });
+
+test('paid inference requires explicit billing approval even when API enablement is true', async () => {
+  let called = false;
+  const response = await handleLingoAIRequest(
+    request('/api/v1/ai/responses', 'POST', { input: 'hello' }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'false' },
+    async () => { called = true; }
+  );
+  assert.equal(response.status, 423);
+  assert.equal(called, false);
+});
+
+test('billing approval alone cannot enable paid inference', async () => {
+  let called = false;
+  const response = await handleLingoAIRequest(
+    request('/api/v1/ai/responses', 'POST', { input: 'hello' }),
+    { LINGO_AI_PAID_API_ENABLED: 'false', LINGO_AI_BILLING_APPROVED: 'true' },
+    async () => { called = true; }
+  );
+  assert.equal(response.status, 423);
+  assert.equal(called, false);
+});
