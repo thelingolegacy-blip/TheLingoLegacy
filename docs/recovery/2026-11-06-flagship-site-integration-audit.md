@@ -57,6 +57,26 @@ The exact-root Worker returns its embedded HTML only for `/` and returns 404 for
 - The Hello The Lingo Legacy monitor cron is disabled with reason `credits_exhausted`.
 - AppDeploy reports the connected account's credit balance is exhausted. This prevents treating AppDeploy as an available deployment/repair path until the account balance is addressed.
 
+
+## Recovery branch changes and execution evidence
+
+The isolated recovery branch now contains a candidate repair to the exact-root homepage source:
+- Catalog links were redirected to repository-backed destinations such as `/loyalty-lane-apparel/`, `/kottons-code/`, `/thats-my-lingo/`, `/lingoarcade/`, `/media/`, `/library/`, and `/loyalty-lane-cycles/`.
+- Links to unfinished destinations remain in-page information cards rather than pointing at nonexistent routes.
+- Missing stylesheet/script references were removed; the app icon reference now points to the existing `/assets/logo-square.svg`.
+- A source-tree audit of the root Worker HTML found **zero unresolved internal file paths** after these edits.
+
+This is a source-level correction only. The Cloudflare production Worker and DNS routes were not changed.
+
+The branch's read-only route/acceptance workflow was triggered, but GitHub did not assign a runner. Latest run:
+- Run: [42270948147](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42270948147)
+- Job: `128075045763`
+- Runner ID: `0`; runner name: empty
+- Steps: empty
+- Job logs: `BlobNotFound`
+
+Therefore the local Worker contract and live-site smoke script were **not executed**. The run is a CI execution failure, not a pass or a finding that the homepage is healthy. The Flutter workflow on the mobile branch exhibits the same startup/runner-assignment failure. Preserve this as a platform-level CI blocker; do not substitute an unrelated runner or infer test success.
+
 ## Gap register
 
 | ID | Gap | Evidence | Closure requirement |
