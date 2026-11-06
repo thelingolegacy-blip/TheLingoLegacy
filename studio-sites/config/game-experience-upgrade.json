@@ -1,0 +1,343 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "development-specification-not-release-accepted",
+  "principle": "Shared technology rails; isolated game identity, content, assets, audio, profiles, and telemetry per world.",
+  "sharedRuntime": {
+    "animation": {
+      "timeline": "deterministic-event-driven",
+      "supports": [
+        "reel-spin",
+        "symbol-land",
+        "win-highlight",
+        "cascade",
+        "character-emote",
+        "scene-transition",
+        "particle-burst"
+      ],
+      "reducedMotion": "replace-continuous-motion-with-short-state-transitions"
+    },
+    "audio": {
+      "defaultState": "muted-until-user-gesture",
+      "controls": [
+        "master",
+        "music",
+        "effects",
+        "voice"
+      ],
+      "supports": [
+        "ui-cues",
+        "reel-loop",
+        "reel-stop",
+        "card-deal",
+        "card-flip",
+        "win-stinger",
+        "bonus-stinger",
+        "ambient-loop"
+      ],
+      "licenseGate": "verified-original-or-explicitly-licensed"
+    },
+    "visuals": {
+      "formats": [
+        "SVG",
+        "WebP",
+        "AVIF",
+        "PNG"
+      ],
+      "responsiveVariants": true,
+      "contrastAndAltTextRequired": true
+    },
+    "profiles": {
+      "localPreviewOnly": true,
+      "fields": [
+        "displayName",
+        "avatarId",
+        "avatarFrameId",
+        "bannerId",
+        "earnedBadges",
+        "cosmeticLoadout"
+      ],
+      "privateByDefault": true,
+      "identityIntegration": "not-connected"
+    },
+    "assetIsolation": {
+      "namespaceRequired": true,
+      "immutableVersionedPaths": true,
+      "sha256RequiredForRelease": true,
+      "rightsReviewRequired": true,
+      "noCrossWorldAssetReuseWithoutExplicitGrant": true
+    },
+    "economy": {
+      "demoOnly": true,
+      "realMoneyWagering": false,
+      "cashout": false,
+      "redeemableValue": false,
+      "sweepstakesEnabled": false
+    }
+  },
+  "gameClasses": {
+    "deluxeSlots": {
+      "sharedFeatures": [
+        "5-reel-engine",
+        "configurable-3-or-5-row-layout",
+        "payline-evaluation",
+        "wild-symbols",
+        "expanding-wilds",
+        "free-spins",
+        "bonus-rounds",
+        "symbol-cascades",
+        "win-celebrations",
+        "missions-and-xp",
+        "cosmetic-profiles"
+      ],
+      "math": "game-specific-reviewed-paytable-required",
+      "rng": "local-demo-only-not-certified"
+    },
+    "deluxeCards": {
+      "sharedFeatures": [
+        "touch-first-card-controls",
+        "turn-state-machine",
+        "legal-move-validation",
+        "table-and-seat-animations",
+        "card-deal-and-flip-audio",
+        "player-profiles",
+        "bot-difficulty-options",
+        "match-history-preview"
+      ],
+      "competitiveResults": "server-authoritative-service-required"
+    },
+    "arcadeAdventure": {
+      "sharedFeatures": [
+        "character-roster",
+        "movement-and-emotes",
+        "world-scenes",
+        "quests-and-challenges",
+        "collectibles",
+        "camera-transitions",
+        "controller-and-touch-input",
+        "save-state-contract"
+      ],
+      "physics": "deterministic-simulation-and-replay-tests-required"
+    }
+  },
+  "games": [
+    {
+      "id": "thats-my-lingo",
+      "division": "LINGOslots",
+      "class": "deluxeSlots",
+      "status": "local-demo",
+      "identity": "Vegas Studio / crimson-black-white-gold",
+      "signature": [
+        "signature-reel-symbol-family",
+        "wild-rush",
+        "free-spins",
+        "grand-order-bonus",
+        "jackpot-build-up"
+      ],
+      "mascots": [
+        "original-cashman-avatar"
+      ],
+      "assetNamespace": "thats-my-lingo",
+      "audioNamespace": "thats-my-lingo"
+    },
+    {
+      "id": "lingo-lions-eruptions",
+      "division": "LINGOslots",
+      "class": "deluxeSlots",
+      "status": "design-spec",
+      "identity": "Lion eruption / crimson-shadow / gold",
+      "signature": [
+        "lion-emblem-symbols",
+        "eruption-cascade",
+        "roar-stingers",
+        "volcanic-particle-field"
+      ],
+      "mascots": [
+        "original-lion-mascot"
+      ],
+      "assetNamespace": "lingo-lions-eruptions",
+      "audioNamespace": "lingo-lions-eruptions"
+    },
+    {
+      "id": "cashman-lingo-mania",
+      "division": "LINGOslots",
+      "class": "deluxeSlots",
+      "status": "design-spec",
+      "identity": "Cashman arcade / noir-gold",
+      "signature": [
+        "cashman-original-symbol-set",
+        "vault-build-up",
+        "cashman-bonus-room",
+        "score-attack"
+      ],
+      "mascots": [
+        "original-cashman-character"
+      ],
+      "assetNamespace": "cashman-lingo-mania",
+      "audioNamespace": "cashman-lingo-mania"
+    },
+    {
+      "id": "spades-is-my-lingo",
+      "division": "LINGOslots",
+      "class": "deluxeCards",
+      "status": "design-spec",
+      "identity": "Premium card-room / black-royal-purple-gold",
+      "signature": [
+        "spades-table",
+        "bid-and-trick-flow",
+        "partner-signals",
+        "table-emotes",
+        "club-and-tournament-shell"
+      ],
+      "mascots": [],
+      "assetNamespace": "spades-is-my-lingo",
+      "audioNamespace": "spades-is-my-lingo"
+    },
+    {
+      "id": "uhno-lingo-u-no",
+      "division": "LINGOslots",
+      "class": "deluxeCards",
+      "status": "design-spec",
+      "identity": "Campus party / bold color / polished card-table",
+      "signature": [
+        "original-action-card-set",
+        "turn-and-challenge-effects",
+        "stacked-card-motion",
+        "table-reactions",
+        "campus-story-challenges"
+      ],
+      "mascots": [
+        "original-bulldog-mascot"
+      ],
+      "assetNamespace": "uhno-lingo-u-no",
+      "audioNamespace": "uhno-lingo-u-no"
+    },
+    {
+      "id": "doughboys-oasis",
+      "division": "LINGOarcade",
+      "class": "arcadeAdventure",
+      "status": "local-prototype",
+      "identity": "Coastal urban adventure / oasis gold and teal",
+      "signature": [
+        "money-mile-racing",
+        "crew-and-territory",
+        "character-roster",
+        "district-scenes",
+        "vehicle-motion",
+        "quest-cinematics"
+      ],
+      "mascots": [
+        "original-oasis-cast"
+      ],
+      "assetNamespace": "doughboys-oasis",
+      "audioNamespace": "doughboys-oasis"
+    },
+    {
+      "id": "tricias-escape",
+      "division": "LINGOarcade",
+      "class": "arcadeAdventure",
+      "status": "design-spec",
+      "identity": "Cinematic mystery / violet and antique gold",
+      "signature": [
+        "escape-room-puzzles",
+        "clue-reveal",
+        "environmental-storytelling",
+        "character-portrait-dialogue"
+      ],
+      "mascots": [],
+      "assetNamespace": "tricias-escape",
+      "audioNamespace": "tricias-escape"
+    },
+    {
+      "id": "crazy-weasols",
+      "division": "LINGOarcade",
+      "class": "arcadeAdventure",
+      "status": "design-spec",
+      "identity": "Chaotic cartoon arcade / electric lime and violet",
+      "signature": [
+        "physics-comedy",
+        "ragdoll-safe-failures",
+        "combo-chains",
+        "character-emotes",
+        "stage-hazards"
+      ],
+      "mascots": [
+        "original-weasols"
+      ],
+      "assetNamespace": "crazy-weasols",
+      "audioNamespace": "crazy-weasols"
+    },
+    {
+      "id": "silly-in-philly",
+      "division": "LINGOarcade",
+      "class": "arcadeAdventure",
+      "status": "design-spec",
+      "identity": "Philadelphia street-story / crimson and warm gold",
+      "signature": [
+        "neighborhood-stories",
+        "dialogue-choices",
+        "district-discovery",
+        "crew-progression"
+      ],
+      "mascots": [],
+      "assetNamespace": "silly-in-philly",
+      "audioNamespace": "silly-in-philly"
+    },
+    {
+      "id": "jersey-shore-the-undead",
+      "division": "LINGOarcade",
+      "class": "arcadeAdventure",
+      "status": "design-spec",
+      "identity": "Coastal survival horror / moonlit blue and hazard amber",
+      "signature": [
+        "co-op-survival-framework",
+        "creature-telegraphs",
+        "environmental-hazards",
+        "cinematic-suspense-audio"
+      ],
+      "mascots": [
+        "original-undead-creatures"
+      ],
+      "assetNamespace": "jersey-shore-the-undead",
+      "audioNamespace": "jersey-shore-the-undead"
+    }
+  ],
+  "assetFamilies": [
+    "symbol-atlas",
+    "reel-symbols",
+    "card-faces-and-backs",
+    "game-board-and-table",
+    "character-portraits",
+    "player-avatar-portraits",
+    "avatar-frames",
+    "profile-banners",
+    "background-environments",
+    "ui-icons",
+    "particles-and-overlays",
+    "animation-spritesheets",
+    "music-loops",
+    "sound-effects",
+    "voice-lines",
+    "accessibility-transcripts"
+  ],
+  "productionAcceptance": [
+    "source-file-present",
+    "asset-dimensions-and-format-verified",
+    "sha256-recorded",
+    "rights-and-provenance-reviewed",
+    "alt-text-or-transcript-present",
+    "mobile-and-desktop-render-checked",
+    "reduced-motion-checked",
+    "audio-mix-and-mute-controls-checked",
+    "gameplay-contract-tests-pass",
+    "independent-browser-qa-pass",
+    "security-and-privacy-review-pass",
+    "explicit-release-approval"
+  ],
+  "prohibitions": [
+    "No asset, character, profile image, sound, or telemetry crosses a game namespace without explicit authorization.",
+    "No third-party or licensed character is included without documented rights.",
+    "No real-money wagering, cashout, redeemable currency, or sweepstakes activation.",
+    "No profile picture or player identity is exposed publicly by default.",
+    "A concept, generated image, placeholder, static preview, or source file is not production acceptance."
+  ]
+}
