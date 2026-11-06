@@ -35,7 +35,10 @@ class LingoAiClient {
       throw const LingoAiException(400, 'INVALID_REQUEST', 'The askLINGO request is invalid.');
     }
 
-    final token = await _getIdToken();
+    String? token;
+    try { token = await _getIdToken(); } catch (_) {
+      throw const LingoAiException(401, 'AUTHENTICATION_REQUIRED', 'A signed-in Firebase user is required.');
+    }
     if (token == null || token.length < 20) {
       throw const LingoAiException(401, 'AUTHENTICATION_REQUIRED', 'A signed-in Firebase user is required.');
     }
