@@ -24,7 +24,10 @@ env:
 
 jobs:
   runner-gate:
-    # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
+    # SECURITY HOLD: this public repository must not execute checkout-controlled code on persistent G02.
+    # Re-enable only from a private, trusted control plane with independently verified host isolation.
+    if: ${{ false }}
+    # Preserve canonical labels for the future private runner contract; do not use a hosted substitute.
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     outputs:
