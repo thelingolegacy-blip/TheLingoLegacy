@@ -1,6 +1,7 @@
 # LINGO Location — shared Flutter implementation
 
 **Branch:** `feature/lingo-location-shared`  
+**Draft PR:** [#487](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/487)  
 **Base commit:** `3923a08b77c8cc93ec5447e9623045318c825234`  
 **Current implementation commit:** `7a84539be8731687ac01ccde0cb99c19d6ba9abc`  
 **Release posture:** staging-only candidate; production unchanged.
