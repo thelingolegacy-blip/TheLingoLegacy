@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "network": "LINGOlegacy AI Agent Network",
+  "runtime_state": "not_connected",
+  "agents": [
+    {"id":"dusse-1","name":"Dusse 1.0","family":"Dusse","generation":"1.0","status":"planned","role":"Founding conversational assistant, voice interaction, and user support","capabilities":["conversation","voice_interface","user_support"],"permissions_profile":"assistant_read_only"},
+    {"id":"dusse-2","name":"Dusse 2.0","family":"Dusse","generation":"2.0","status":"planned","role":"Advanced reasoning, orchestration, research, and complex task planning","capabilities":["reasoning","orchestration","research","task_planning"],"permissions_profile":"advanced_assistant_reviewed"},
+    {"id":"zay-1","name":"Zay 1.0","family":"Zay","generation":"1.0","status":"planned","role":"Founding companion, knowledge retrieval, conversation, and independent second opinions","capabilities":["conversation","knowledge_retrieval","comparison"],"permissions_profile":"assistant_read_only"},
+    {"id":"zay-2","name":"Zay 2.0","family":"Zay","generation":"2.0","status":"planned","role":"Advanced analysis, technical assistance, and cross-agent collaboration","capabilities":["analysis","technical_assistance","collaboration"],"permissions_profile":"advanced_assistant_reviewed"},
+    {"id":"ava-1","name":"Ava 1.0","family":"Ava","generation":"1.0","status":"planned","role":"Administration, organization, scheduling, and operational assistance","capabilities":["organization","scheduling","administration"],"permissions_profile":"operations_read_only"},
+    {"id":"ava-2","name":"Ava 2.0","family":"Ava","generation":"2.0","status":"planned","role":"Workflow automation, coordination, and specialized operations","capabilities":["workflow_design","coordination","automation"],"permissions_profile":"operations_reviewed"}
+  ],
+  "policy": {"shared_knowledge":"scoped_by_project_and_role","cross_agent_handoffs":"explicitly_routed_and_audited","production_mutations":"human_approval_required","secret_access":"never_exposed_to_agent_prompts_or_logs","agent_self_approval":false}
+}
