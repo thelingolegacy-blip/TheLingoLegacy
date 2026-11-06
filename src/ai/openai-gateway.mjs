@@ -50,6 +50,12 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
   if (!env.OPENAI_API_KEY) {
     return json({ ok: false, code: 'OPENAI_KEY_MISSING', error: 'Server-side OpenAI credential is not configured.' }, 503);
   }
+  if (!env.LINGO_AI_INTERNAL_TOKEN) {
+    return json({ ok: false, code: 'INTERNAL_AUTH_NOT_CONFIGURED', error: 'Trusted server-to-server authentication is not configured.' }, 503);
+  }
+  if (request.headers.get('x-lingo-internal-token') !== env.LINGO_AI_INTERNAL_TOKEN) {
+    return json({ ok: false, code: 'UNAUTHORIZED_CALLER', error: 'Trusted server-to-server authentication is required.' }, 401);
+  }
 
   let body;
   try {
@@ -69,7 +75,7 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
       authorization: `Bearer ${env.OPENAI_API_KEY}`,
       'content-type': 'application/json'
     },
-    body: JSON.stringify({ model, input })
+    body: JSON.stringify({ model, input, max_output_tokens: 512 })
   });
 
   const payload = await upstream.json().catch(() => ({}));
