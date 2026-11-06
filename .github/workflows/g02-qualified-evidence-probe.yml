@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   qualified-evidence:
+    # SECURITY HOLD: public-repository workflow code must not execute on persistent G02.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:

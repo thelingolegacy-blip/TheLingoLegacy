@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   runner-sentinel:
+    # SECURITY HOLD: do not execute public-repository code on the persistent G02 host.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     steps:

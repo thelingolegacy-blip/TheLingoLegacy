@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   assignment-probe:
+    # SECURITY HOLD: keep the runner dormant until a private trusted control plane is established.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
