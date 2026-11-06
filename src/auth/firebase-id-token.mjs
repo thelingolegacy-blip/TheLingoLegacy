@@ -36,14 +36,16 @@ export async function verifyFirebaseIdToken(token, projectId, options = {}) {
   if (claims?.aud !== projectId || claims?.iss !== issuer
     || typeof claims?.sub !== 'string' || claims.sub.length < 1 || claims.sub.length > 128
     || !Number.isFinite(claims.exp) || claims.exp <= now
-    || !Number.isFinite(claims.iat) || claims.iat > now + 300
+    || !Number.isFinite(claims.iat) || claims.iat > now + 300 || now - claims.iat > 3900
+    || claims.exp - claims.iat > 3900
     || !Number.isFinite(claims.auth_time) || claims.auth_time > now + 300
     || claims.auth_time > claims.iat + 300) {
     return { ok: false, code: 'INVALID_TOKEN' };
   }
 
   const key = await getSigningKey(header.kid, fetchImpl, now, options.certUrl || CERT_URL);
-  if (!key) return { ok: false, code: 'TOKEN_VERIFICATION_UNAVAILABLE' };
+  if (key === undefined) return { ok: false, code: 'TOKEN_VERIFICATION_UNAVAILABLE' };
+  if (!key) return { ok: false, code: 'INVALID_TOKEN' };
 
   try {
     const cryptoKey = await crypto.subtle.importKey(
@@ -63,26 +65,26 @@ export async function verifyFirebaseIdToken(token, projectId, options = {}) {
 async function getSigningKey(kid, fetchImpl, now, certUrl) {
   const cached = keyCache.get(certUrl);
   if (cached && cached.expiresAt > now && cached.keys.has(kid)) return cached.keys.get(kid);
-  if (cached && cached.expiresAt > now && !cached.keys.has(kid)) return null;
+  if (cached && cached.expiresAt > now && !cached.keys.has(kid) && cached.nextUnknownKidRefreshAt > now) return null;
 
   let response;
   try {
     response = await fetchImpl(certUrl, { signal: AbortSignal.timeout(5000) });
   } catch {
-    return null;
+    return undefined;
   }
-  if (!response.ok) return null;
+  if (!response.ok) return undefined;
 
   let payload;
-  try { payload = await response.json(); } catch { return null; }
-  if (!Array.isArray(payload?.keys)) return null;
+  try { payload = await response.json(); } catch { return undefined; }
+  if (!Array.isArray(payload?.keys)) return undefined;
 
   const keys = new Map(payload.keys
     .filter((entry) => entry?.kid && entry.kty === 'RSA' && entry.alg === 'RS256' && entry.use === 'sig')
     .map((entry) => [entry.kid, entry]));
   const cacheControl = response.headers.get('cache-control') || '';
   const maxAge = Number(cacheControl.match(/max-age=(\d+)/i)?.[1] || 300);
-  keyCache.set(certUrl, { keys, expiresAt: now + Math.min(Math.max(maxAge, 60), 3600) });
+  keyCache.set(certUrl, { keys, expiresAt: now + Math.min(Math.max(maxAge, 60), 3600), nextUnknownKidRefreshAt: now + 60 });
   return keys.get(kid) || null;
 }
 
