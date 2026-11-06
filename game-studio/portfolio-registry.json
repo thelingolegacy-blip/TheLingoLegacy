@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "1.0.0",
+  "portfolio": "LINGOlegacy",
+  "sourceOfTruth": "thelingolegacy-blip/TheLingoLegacy",
+  "branch": "studio/lingo-game-universe-foundation-2026-11-06",
+  "releasePolicy": {
+    "production": "PROTECTED_HOLD",
+    "g02": "FAIL_UNVERIFIED",
+    "promotion": "BLOCKED_UNTIL_INDEPENDENT_ACCEPTANCE",
+    "lastKnownGood": "PROTECTED"
+  },
+  "sharedArchitecture": {
+    "gameplay": "data-driven component architecture; simulation separated from rendering; event-driven modules",
+    "coreModules": [
+      "LINGO-Core",
+      "LINGO-Stats",
+      "LINGO-Effects",
+      "LINGO-Combat",
+      "LINGO-World",
+      "LINGO-AI",
+      "LINGO-Inventory",
+      "LINGO-Building",
+      "LINGO-Production",
+      "LINGO-Progression",
+      "LINGO-Network",
+      "LINGO-Economy",
+      "LINGO-RNG",
+      "LINGO-Save",
+      "LINGO-Analytics",
+      "LINGO-QA"
+    ],
+    "enginePolicy": "Unreal Engine 5 for high-fidelity 3D/open-world/FPS; Unity for selected stylized or cross-platform 3D; Phaser/PixiJS/Three.js for browser-native 2D/3D; select per title",
+    "persistence": "versioned serializable simulation state; cloud sync only after security and integration verification",
+    "multiplayer": "server authoritative; prediction/reconciliation/lag compensation where genre requires",
+    "rng": "server-side cryptographic RNG; independently testable math and fairness; no client-trusted outcomes"
+  },
+  "games": [
+    {
+      "studio": "LINGOslots",
+      "title": "That's My Lingo",
+      "type": "virtual slot / casino-style demo",
+      "existingAppId": "that-s-my-lingo-casino-studio-2xntye",
+      "preview": "https://that-s-my-lingo-casino-studio-2xntye.v2.appdeploy.ai/",
+      "knownSystems": [
+        "5x3 reels",
+        "20 paylines",
+        "demo-credit accounting",
+        "transparent payout math",
+        "local demo persistence",
+        "five-letter Vegas word challenge"
+      ],
+      "status": "EXISTING_STAGING_APP_LISTED",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOslots",
+      "title": "Spades Is My Lingo",
+      "type": "trick-taking card game",
+      "existingRepositories": [
+        "Spades_is_my-lingo",
+        "Spades-is-my_Lingo"
+      ],
+      "status": "REPOSITORY_CANDIDATE_REQUIRES_RECONCILIATION",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOslots",
+      "title": "Uhno Lingo U-No",
+      "type": "original shedding card game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOslots",
+      "title": "Lingo Lions Eruptions",
+      "type": "arcade slot / character game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOslots",
+      "title": "Cashman Lingo Mania",
+      "type": "arcade slot / character game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOarcade",
+      "title": "Tricias Escape",
+      "type": "adventure / escape game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOarcade",
+      "title": "Doughboys Oasis",
+      "type": "open-world adventure and racing",
+      "knownSystems": [
+        "Money Mile racing concept",
+        "three mini races",
+        "Ultimate Oasis",
+        "crew and territory systems"
+      ],
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOarcade",
+      "title": "Crazy Weasols",
+      "type": "3D-style 2D platformer / rhythm action",
+      "existingAppId": "crazy-weasels-0j3ujc",
+      "preview": "https://crazy-weasels-0j3ujc.v2.appdeploy.ai/",
+      "knownSystems": [
+        "Phaser runtime",
+        "Funk-Flow movement",
+        "rhythm combat",
+        "touch controls",
+        "local synthesized sound effects",
+        "four zones",
+        "original weasel and city SVG art"
+      ],
+      "status": "EXISTING_STAGING_APP_LISTED",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOarcade",
+      "title": "Silly in Philly",
+      "type": "city adventure / action",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOarcade",
+      "title": "Jersey Shore: The Undead",
+      "type": "survival action",
+      "existingAppId": "jersey-shore-the-undead-l4h5ea",
+      "preview": "https://jersey-shore-the-undead-l4h5ea.v2.appdeploy.ai/",
+      "knownSystems": [
+        "movement and combat",
+        "difficulty settings",
+        "sound cues",
+        "campaign progression",
+        "local saves",
+        "three map themes",
+        "missions and upgrades"
+      ],
+      "status": "EXISTING_STAGING_APP_LISTED",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOlibrary",
+      "title": "KottonsCode",
+      "type": "family-friendly educational adventure and story universe",
+      "existingAppId": "kotton-s-code-cartoon-studio-509py3",
+      "preview": "https://kotton-s-code-cartoon-studio-509py3.v2.appdeploy.ai/",
+      "knownSystems": [
+        "character and episode studio",
+        "world atlas visuals",
+        "production pipeline controls",
+        "Code XP",
+        "books and games hub"
+      ],
+      "canon": [
+        "Loyalty Lane",
+        "Animal HQ",
+        "Memory Forest",
+        "Hidden Code Realm",
+        "The First Clue: The Secret of Memory Forest"
+      ],
+      "status": "EXISTING_STAGING_APP_LISTED",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOlibrary",
+      "title": "Dice Shift Hotel",
+      "type": "narrative / puzzle adventure",
+      "knownSystems": [
+        "Episode 1: The Shift Begins",
+        "three screenplay sections"
+      ],
+      "status": "CONCEPT_AND_SCRIPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOlibrary",
+      "title": "Legacy Legends",
+      "type": "story-driven game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOlibrary",
+      "title": "The Block I Grew Up On",
+      "type": "narrative / community game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    },
+    {
+      "studio": "LINGOlibrary",
+      "title": "Say It Again",
+      "type": "language / learning game",
+      "status": "CONCEPT_CANON",
+      "acceptance": "NOT_VERIFIED"
+    }
+  ],
+  "acceptanceGates": [
+    "source and asset inventory",
+    "license and provenance review",
+    "clean dependency install",
+    "production build",
+    "unit and integration tests",
+    "real gameplay smoke test",
+    "mobile and desktop input QA",
+    "audio and visual QA",
+    "save/reload verification",
+    "security and backend verification where applicable",
+    "independent evidence review"
+  ],
+  "notes": [
+    "Existing AppDeploy entries are staging previews, not proof of end-to-end acceptance or canonical production release.",
+    "Do not overwrite or replace existing implementations before source/asset reconciliation.",
+    "Licensed reference franchises are inspiration only; LINGO games must use original IP, characters, names, art, audio, maps and code."
+  ]
+}
