@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 RUNNER_NAME = os.getenv("RUNNER_NAME", "")
-RUNNER_LABEL = "lingo-legacy-g02-staging"
+RUNNER_LABEL = "lingo-g02"
 
 
 def command(argv: list[str], timeout: int = 8) -> dict[str, Any]:
@@ -41,8 +41,8 @@ def main() -> int:
     if not project_id or project_id == "lingo-legacy-production":
         print("REFUSED: configure a dedicated non-production FIREBASE_PROJECT_ID.", file=sys.stderr)
         return 2
-    if "staging" not in RUNNER_NAME.lower():
-        print("REFUSED: RUNNER_NAME must explicitly identify the staging runner.", file=sys.stderr)
+    if RUNNER_NAME != "lingo-legacy-g02":
+        print("REFUSED: RUNNER_NAME must equal the canonical G02 runner name.", file=sys.stderr)
         return 2
     if platform.system() != "Linux":
         print("REFUSED: this staging probe requires Linux.", file=sys.stderr)
