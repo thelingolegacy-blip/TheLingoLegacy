@@ -36,3 +36,5 @@ jobs:
         run: node studio-sites/scripts/validate-world-matrix.mjs
       - name: Validate Cloudflare studio world API contract
         run: node scripts/verify-studio-world-api.mjs
+      - name: Validate parallel game experience upgrade registry
+        run: node studio-sites/scripts/validate-game-experience-upgrade.mjs
