@@ -38,3 +38,9 @@
 - Production routes, Worker code, DNS, payment settings, Firebase, and secrets were not changed. PR #473 remains draft and unmerged.
 
 **Disposition: STAGING ROUTING AND METHOD-GUARD PROBES PASS; RELEASE ACCEPTANCE REMAINS BLOCKED.**
+
+## Interactive navigation
+
+- Starting at `/apps/universe/studio/`, Browser Rendering clicked the Membership link and reached the Legacy page; final title was `LINGOlegacy | LINGOlegacy` and the `IDENTITY.` content was present.
+- Starting at `/apps/universe/legacy/`, Browser Rendering clicked the Studio link and returned to the Studio page; final title was `Studio / Enterprise | LINGOlegacy` and the Studio headline was present.
+- Both transitions completed with the gateway's root-level Next.js data/static aliases active.
