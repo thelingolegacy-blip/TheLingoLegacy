@@ -1,0 +1,39 @@
+name: LINGO OpenAI Gateway Tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/ai/**'
+      - 'tests/lingo-openai-gateway.test.mjs'
+      - 'worker.js'
+      - '.github/workflows/lingo-openai-gateway-tests.yml'
+  push:
+    branches:
+      - 'feat/lingo-openai-platform-foundation'
+    paths:
+      - 'src/ai/**'
+      - 'tests/lingo-openai-gateway.test.mjs'
+      - 'worker.js'
+      - '.github/workflows/lingo-openai-gateway-tests.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-openai-gateway-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gateway-tests:
+    name: Zero-spend gateway unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify gateway module syntax
+        run: node --check src/ai/openai-gateway.mjs
+      - name: Run isolated gateway tests
+        run: node --test tests/lingo-openai-gateway.test.mjs
