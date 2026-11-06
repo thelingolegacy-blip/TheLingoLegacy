@@ -103,6 +103,7 @@ At the time of this runbook:
 - `https://thelingolegacy.com/` is reachable and serves the existing flagship root page.
 - `https://thelingolegacy.com/healthz` returns HTTP 200.
 - `https://thelingolegacy.com/api/v1/platform/status` reports `SERVING / RELEASE-LOCKED`, G02 `FAIL / UNVERIFIED`, G03–G11 blocked, promotion authorization false, production mutation frozen, and LKG protected.
+- Fresh live status reports Worker runtime `5.0.0-studio-platform`; API and edge rendering are enabled, but Stripe, Firebase, D1, KV, R2, Beacon webhook, and Twilio integrations are all `false`. WebSocket realtime is `false`. `G00_SOURCE_AUTHORITY` and `G01_REPOSITORY` are `PASS`; G02 remains `FAIL / UNVERIFIED`; G03–G11 remain `BLOCKED`; promotion and activation authorization remain `false`.
 - `https://thelingolegacy.com/studio-hub/` returns a not-found page.
 - The new Hub is available in GitHub source and historical Pages previews only. The shared integration-test Pages project is no longer an approved staging target; its automatic preview deployments are disabled pending a safe output-directory rebuild.
 
