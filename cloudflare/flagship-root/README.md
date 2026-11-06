@@ -13,6 +13,14 @@ This directory contains a source snapshot recovered from the currently deployed 
 - Traffic allocation observed: 100%
 - Bindings observed in the cutover runbook: none
 
+
+- Compatibility date: `2026-09-01`
+- Compatibility flags: `nodejs_compat`
+- Usage model: `standard`
+- Cloudflare script ETag: `763efc28368aa4585b0e92bcd546918d69acfe10f05e1ed099c66fde6a7005a8`
+
+The separate catch-all Worker was independently observed at version `137` (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`) with the `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL` bindings. The exact-root Worker has no bindings. Do not treat these two runtime contracts as interchangeable.
+
 ## Important boundary
 
 This is a recovered source baseline, not a deployment authorization or a completed migration. It was not deployed or modified in Cloudflare by this change. The live root Worker is still a separate production route from the catch-all Worker `thelingolegacyv-5`.
