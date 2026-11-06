@@ -52,6 +52,29 @@ test('allowlisted Next.js page data proxies the exact build path and slug query'
   assert.match(response.headers.get('content-type'), /application\/json/);
 });
 
+test('prefixed app static assets proxy to the registered app origin', async () => {
+  let upstream;
+  const response = await withMockFetch(async (request) => {
+    upstream = request;
+    return new Response('prefixed-chunk-fixture', { status: 200, headers: { 'content-type': 'application/javascript' } });
+  }, () => worker.fetch(new Request('https://preview.example/apps/universe/_next/static/chunks/pages/index-test.js')));
+
+  assert.equal(upstream.url, 'https://lingolegacy-universe-gateway-h6kqu4.v2.appdeploy.ai/_next/static/chunks/pages/index-test.js');
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), 'prefixed-chunk-fixture');
+});
+
+test('prefixed app page-data paths remain blocked by the generic proxy guard', async () => {
+  let called = false;
+  const response = await withMockFetch(async () => {
+    called = true;
+    return new Response('unexpected');
+  }, () => worker.fetch(new Request('https://preview.example/apps/universe/_next/data/build_123/legacy.json?slug=legacy')));
+
+  assert.equal(response.status, 403);
+  assert.equal(called, false);
+});
+
 test('page-data proxy rejects unapproved slugs and duplicate or mismatched slug parameters', async (t) => {
   for (const path of [
     '/_next/data/build_123/not-registered.json?slug=not-registered',
