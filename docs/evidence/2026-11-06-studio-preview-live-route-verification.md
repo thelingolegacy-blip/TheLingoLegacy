@@ -109,3 +109,5 @@ The account overview and app-status credit warning are contradictory. Do not cla
 - **NOT ACCEPTED:** Full preview experience, application-shell availability, and normal browser image rendering remain unverified.
 
 **Operational conclusion:** Do not change the Worker, DNS, hotlink-protection setting, or AppDeploy app source to work around the 403s. First reconcile AppDeploy's account-level credit state and provider access restriction, then repeat the 16-origin health check and a browser-based app-shell/image test. Keep production HOLD and last-known-good protected.
+
+A second connected AppDeploy authorization for the same account/user ID was checked read-only. It returned the same free-plan monthly balance (`21.682826667`, reset `2026-11-17T00:00:00Z`) and reproduced the same per-app “credit balance is exhausted” warnings for both apps. This makes a single-connection token anomaly less likely, but the account-level/per-app contradiction remains unresolved.
