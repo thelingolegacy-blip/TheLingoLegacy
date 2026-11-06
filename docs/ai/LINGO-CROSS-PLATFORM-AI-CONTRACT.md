@@ -71,7 +71,7 @@ The Worker validates the identity token, request fields, and message length, the
 
 ## Client SDK scaffolds
 
-A native-fetch JavaScript client and a Flutter/Dart client are now included. Both obtain a Firebase ID token from a caller-supplied token provider, send only the bearer token to the first-party endpoint, use bounded request data, avoid cookie credentials, and map the disabled-service response. They do not contain provider secrets. UI wiring and real-device tests remain outstanding.
+A native-fetch JavaScript client and a Flutter/Dart client are now included. Both enforce an approved LINGO HTTPS origin allowlist before sending Firebase bearer tokens. Both obtain a Firebase ID token from a caller-supplied token provider, send only the bearer token to the first-party endpoint, use bounded request data, avoid cookie credentials, and map the disabled-service response. They do not contain provider secrets. UI wiring and real-device tests remain outstanding.
 
 ## No-cost development mode
 
