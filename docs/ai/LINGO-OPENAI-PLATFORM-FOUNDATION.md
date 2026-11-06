@@ -5,6 +5,7 @@ Status: implementation scaffold; production integration and acceptance are NOT c
 ## Non-negotiable operating policy
 
 - API spend is **$0 authorized**. Do not buy credits, enable automatic recharge, or issue paid API requests.
+- GPT-6 Astra is a paid API model. The current official model page lists $10 per million input tokens and $50 per million output tokens; API free tier is not supported. This makes the zero-spend gate mandatory, not optional.
 - `LINGO_AI_PAID_API_ENABLED` must remain unset or `false`.
 - A second independent gate, `LINGO_AI_BILLING_APPROVED`, must also remain unset or `false`; both gates are required before any inference can run.
 - The gateway blocks inference before making a network request unless BOTH the paid-inference flag and separate billing-approval flag are explicitly enabled.
@@ -56,9 +57,14 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Server-only credential contract documented.
 - [x] Trusted server-to-server caller authentication required for paid inference.
 - [x] Output token ceiling applied to Responses API requests.
+- [x] Responses API storage disabled with `store: false`.
+- [x] Request content type and body-size limits enforced.
+- [x] Upstream timeout and sanitized network-failure response implemented.
+- [x] Credential-presence signal removed from public status response.
 - [x] Responses API adapter and bounded input validation implemented.
 - [x] Automated tests authored for disabled, missing-key, success, and input-limit paths.
-- [x] Local Node 22 verification: syntax check passed and 7/7 unit tests passed against the retrieved branch files.
+- [x] Local Node verification: gateway syntax check passed and 14/14 isolated tests passed against a local mirror of the branch gateway/test behavior.
+- [ ] Exact GitHub Actions run, logs, and uploaded artifact evidence.
 - [ ] GitHub Actions CI execution evidence.
 - [ ] Independent security review, including shared-secret rotation, caller identity, and Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
