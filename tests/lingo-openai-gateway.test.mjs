@@ -31,7 +31,7 @@ test('paid inference is blocked before any upstream request', async () => {
 test('enabled requests reject missing OpenAI server credentials', async () => {
   const response = await handleLingoAIRequest(
     request('/api/v1/ai/responses', 'POST', { input: 'hello' }),
-    { LINGO_AI_PAID_API_ENABLED: 'true' }
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true' }
   );
   assert.equal(response.status, 503);
 });
