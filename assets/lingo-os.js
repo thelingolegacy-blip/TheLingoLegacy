@@ -2,6 +2,8 @@
   const doc = document;
   const body = doc.body;
   if (!body || doc.getElementById('hud-layer')) return;
+  const hasPrimaryNav = !!body.querySelector('header.top nav, header.topbar nav, header nav[aria-label="Primary navigation"], [data-primary-nav]');
+  if (hasPrimaryNav) body.classList.add('has-primary-nav');
 
   const isKidsExplorer = body.dataset.osSurface === 'kids-explorer';
   const productionConfig = Object.freeze({
@@ -277,6 +279,16 @@
     motionTargets.forEach((node, index) => {
       node.classList.add('motion-in');
       node.style.setProperty('--motion-order', String(index % 6));
+      const rect = node.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || doc.documentElement.clientHeight;
+      if (rect.top < viewportHeight * 0.96 && rect.bottom > 0) node.classList.add('is-visible');
+    });
+    requestAnimationFrame(() => {
+      motionTargets.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || doc.documentElement.clientHeight;
+        if (rect.top < viewportHeight * 0.96 && rect.bottom > 0) node.classList.add('is-visible');
+      });
     });
 
     if (!('IntersectionObserver' in window)) {

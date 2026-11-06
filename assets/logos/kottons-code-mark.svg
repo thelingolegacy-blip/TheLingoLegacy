@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" aria-labelledby="title desc">
+  <title id="title">KottonsCode story-world mark</title>
+  <desc id="desc">A warm orange and sky-blue learning book with a friendly fluffy puppy face and the KottonsCode wordmark.</desc>
+  <defs>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff7ed"/>
+      <stop offset="1" stop-color="#fed7aa"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#d97706" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M36 54c38-22 78-20 116 5v135c-39-24-78-27-116-5z" fill="url(#book)"/>
+    <path d="M152 59c38-25 79-27 117-5v135c-39-22-78-19-117 5z" fill="#e0f2fe" stroke="#0ea5e9"/>
+    <path d="M152 59v135" fill="none" stroke="#0ea5e9"/>
+    <path d="M62 91c22-9 43-8 65 4M62 116c22-9 43-8 65 4M62 141c22-9 43-8 65 4" fill="none" stroke="#f59e0b" stroke-width="6"/>
+    <path d="M180 91c22-9 43-8 65 4M180 116c22-9 43-8 65 4M180 141c22-9 43-8 65 4" fill="none" stroke="#38bdf8" stroke-width="6"/>
+  </g>
+  <g transform="translate(88 8)">
+    <path d="M82 52c-20-25-47-22-57 1-8 18 0 37 17 44-12 15-17 33-14 51 5 30 31 50 67 50s62-20 67-50c3-18-2-36-14-51 17-7 25-26 17-44-10-23-37-26-57-1-8-8-18-8-26 0z" fill="#fffdf8" stroke="#d97706" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M36 79c-22-9-34 6-28 25 5 15 19 21 34 16M170 79c22-9 34 6 28 25-5 15-19 21-34 16" fill="#fed7aa" stroke="#d97706" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="66" cy="111" rx="7" ry="9" fill="#334155"/>
+    <ellipse cx="126" cy="111" rx="7" ry="9" fill="#334155"/>
+    <ellipse cx="96" cy="132" rx="12" ry="9" fill="#334155"/>
+    <path d="M96 140c-6 11-17 13-25 7M96 140c6 11 17 13 25 7" fill="none" stroke="#d97706" stroke-width="5" stroke-linecap="round"/>
+    <path d="M43 160c15 13 29 19 53 19s38-6 53-19" fill="none" stroke="#0ea5e9" stroke-width="5" stroke-linecap="round"/>
+    <path d="M27 43l-9-13M165 43l9-13M96 26V9" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(330 0)">
+    <text x="0" y="112" fill="#d97706" font-family="Trebuchet MS, Arial, sans-serif" font-size="58" font-weight="900" letter-spacing="-2">KOTTONS</text>
+    <text x="0" y="174" fill="#0ea5e9" font-family="Trebuchet MS, Arial, sans-serif" font-size="58" font-weight="900" letter-spacing="-2">CODE</text>
+    <path d="M4 194h286" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>
+    <text x="5" y="225" fill="#475569" font-family="Trebuchet MS, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">LEARN · PLAY · DISCOVER</text>
+  </g>
+</svg>
