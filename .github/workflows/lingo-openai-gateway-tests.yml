@@ -1,0 +1,76 @@
+name: LINGO OpenAI Gateway Tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/ai/**'
+      - 'src/auth/**'
+      - 'tests/firebase-id-token.test.mjs'
+      - 'tests/ask-lingo-facade.test.mjs'
+      - 'tests/lingo-openai-gateway.test.mjs'
+      - 'worker.js'
+      - '.github/workflows/lingo-openai-gateway-tests.yml'
+  push:
+    branches:
+      - 'feat/lingo-openai-platform-foundation'
+    paths:
+      - 'src/ai/**'
+      - 'src/auth/**'
+      - 'tests/firebase-id-token.test.mjs'
+      - 'tests/ask-lingo-facade.test.mjs'
+      - 'tests/lingo-openai-gateway.test.mjs'
+      - 'worker.js'
+      - '.github/workflows/lingo-openai-gateway-tests.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-openai-gateway-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gateway-tests:
+    name: Zero-spend gateway unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Verify gateway module syntax
+        run: node --check src/ai/openai-gateway.mjs
+      - name: Verify Firebase identity and askLINGO module syntax
+        run: |
+          node --check src/auth/firebase-id-token.mjs
+          node --check src/ai/ask-lingo-facade.mjs
+      - name: Verify Worker module syntax
+        run: node --check --input-type=module < worker.js
+      - name: Run isolated gateway tests
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-reporter=tap tests/lingo-openai-gateway.test.mjs tests/firebase-id-token.test.mjs tests/ask-lingo-facade.test.mjs | tee lingo-ai-test-results.tap
+      - name: Record non-secret run metadata
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "node=$(node --version)"
+          } > lingo-ai-run-metadata.txt
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lingo-openai-gateway-evidence
+          path: |
+            lingo-ai-test-results.tap
+            lingo-ai-run-metadata.txt
+          if-no-files-found: warn
+          retention-days: 7
