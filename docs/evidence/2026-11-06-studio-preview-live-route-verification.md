@@ -74,3 +74,38 @@ Cloudflare documents per-version URLs at [Workers Version URLs](https://develope
 ## 7. Safety
 
 All checks were read-only. No Worker, Worker Domain, DNS, zone setting, AppDeploy source/resource/deployment, account credits, secrets, billing, or production configuration was changed. No build, deployment, retry, or promotion was initiated. Production remains HOLD; G02 remains BLOCKED / UNVERIFIED; LKG remains PROTECTED.
+
+
+## 8. Aggregate origin health and AppDeploy account-credit discrepancy
+
+A subsequent live read-only request to `GET /healthz/apps` returned HTTP 200 JSON with:
+- `checked: 16`
+- `ok: false`
+- all 16 registered app slugs reporting `status: 403`, `ok: false`
+
+The Worker source shows that this endpoint performs a `HEAD /` request to each registered AppDeploy origin and marks only 2xx/3xx as healthy. This result is consistent with the independently observed 403 app-root responses for the Universe Gateway and Kotton's Code apps. It is not inconsistent with the individual static chunk/data/image resource checks returning 200: the health endpoint probes app-root access, not those specific static resources.
+
+By contrast, `GET /healthz` returns HTTP 200 with `status: "ready"` and `routeCount: 16`. The source confirms this is a process/configuration readiness response and does not test origin availability. Therefore:
+- `/healthz` = Worker process/route registration readiness.
+- `/healthz/apps` = current app-origin reachability; presently failing 16/16.
+
+A new no-dependency regression test covers this distinction and asserts that 16 upstream 403 responses produce `ok: false` while the process-level `/healthz` remains ready. It has been added to the PR test harness but remains NOT RUN.
+
+AppDeploy account-level and per-app status signals also conflict:
+- Read-only account overview for the connected AppDeploy account reports free plan, `monthly.available = 21.682826667`, reset `2026-11-17T00:00:00Z`, top-up balance 0, and no renewal payment failure.
+- Per-app status for both affected apps separately emits the warning “credit balance is exhausted.”
+- Both per-app status records report deployment `ready` and empty frontend/backend error arrays since the v6 deployment timestamp.
+- A second read-only scrape using the stealth proxy also received HTTP 403 “Access restricted” for both app roots; this is not specific to the basic scraper.
+
+The account overview and app-status credit warning are contradictory. Do not claim the account has no credits, and do not claim credits definitively cause the 403. No payment, top-up, plan change, deployment, or retry was performed. Provider support/account-level reconciliation is required to establish the actual credit enforcement state.
+
+## 9. Updated assessment
+
+- **PASS:** Tested static resources are individually available at their AppDeploy origins and through the preview Worker.
+- **FAIL:** Aggregate app-origin health is 16/16 HTTP 403.
+- **FAIL:** Both tested AppDeploy app roots are HTTP 403 “Access restricted” through basic and stealth scraping.
+- **CONFLICT:** Account overview reports 21.682826667 monthly credits available while per-app status warns that credits are exhausted.
+- **PASS (limited meaning):** Worker process health endpoint responds ready; this does not imply app-origin readiness.
+- **NOT ACCEPTED:** Full preview experience, application-shell availability, and normal browser image rendering remain unverified.
+
+**Operational conclusion:** Do not change the Worker, DNS, hotlink-protection setting, or AppDeploy app source to work around the 403s. First reconcile AppDeploy's account-level credit state and provider access restriction, then repeat the 16-origin health check and a browser-based app-shell/image test. Keep production HOLD and last-known-good protected.
