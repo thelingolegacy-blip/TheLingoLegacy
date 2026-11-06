@@ -9,6 +9,9 @@ on:
       - 'tests/ask-lingo-facade.test.mjs'
       - 'tests/lingo-ai-client.test.mjs'
       - 'tests/lingo-openai-gateway.test.mjs'
+      - 'lib/services/lingo_ai_client.dart'
+      - 'test/lingo_ai_client_test.dart'
+      - 'pubspec.yaml'
       - 'worker.js'
       - '.github/workflows/lingo-openai-gateway-tests.yml'
   push:
@@ -21,6 +24,10 @@ on:
       - 'tests/firebase-id-token.test.mjs'
       - 'tests/ask-lingo-facade.test.mjs'
       - 'tests/lingo-openai-gateway.test.mjs'
+      - 'tests/lingo-ai-client.test.mjs'
+      - 'lib/services/lingo_ai_client.dart'
+      - 'test/lingo_ai_client_test.dart'
+      - 'pubspec.yaml'
       - 'worker.js'
       - '.github/workflows/lingo-openai-gateway-tests.yml'
 
