@@ -1,0 +1,118 @@
+openapi: 3.1.0
+info:
+  title: LINGO AI Internal Gateway
+  version: 1.0.0
+  description: >
+    Internal server-side adapter for LINGO AI. Paid inference is disabled under
+    the current zero-spend policy. This contract does not describe a public
+    client-facing chat API.
+servers:
+  - url: https://thelingolegacy.com
+    description: Canonical origin; production deployment is not implied.
+paths:
+  /api/v1/ai/status:
+    get:
+      operationId: getLingoAIStatus
+      summary: Read non-secret AI service mode
+      responses:
+        '200':
+          description: Service mode; not proof of provider connectivity or key validity.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, service, provider, mode, paid_inference_enabled, note]
+                properties:
+                  ok: { type: boolean }
+                  service: { const: lingoai }
+                  provider: { const: openai }
+                  mode: { type: string, enum: [ZERO_SPEND_DISABLED, API_ENABLED] }
+                  paid_inference_enabled: { type: boolean }
+                  model: { type: string }
+                  note: { type: string }
+  /api/v1/ai/responses:
+    post:
+      operationId: createLingoAIResponse
+      summary: Private server-to-server inference adapter
+      description: >
+        Requires both independent paid-use gates, a server-side OpenAI key,
+        and a trusted internal caller token. Do not call from browser, mobile,
+        desktop, smart-TV, Unity, or Unreal clients. Returns 423 under the
+        current zero-spend authorization.
+      security:
+        - LingoInternalToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [input]
+              properties:
+                input:
+                  type: string
+                  minLength: 1
+                  maxLength: 4000
+      responses:
+        '200':
+          description: Provider response text
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, model, output_text]
+                properties:
+                  ok: { const: true }
+                  model: { type: string }
+                  output_text: { type: string }
+        '400': { description: Invalid JSON or input }
+        '401': { description: Missing or invalid internal caller token }
+        '413': { description: Request body exceeds 16 KB }
+        '415': { description: Content-Type must be application/json }
+        '423': { description: Paid inference disabled by policy }
+        '502': { description: Sanitized upstream failure or timeout }
+        '503': { description: Server credential or internal auth not configured }
+  /api/v1/ask-lingo/query:
+    post:
+      operationId: postAskLingoQuery
+      summary: Authenticated askLINGO facade (currently disabled)
+      description: >
+        Requires a Firebase Authentication ID token in the Authorization
+        bearer header. Verifies the token signature and core project claims.
+        Does not persist or send the prompt to a model. Returns 423 until a
+        separately reviewed inference or mock mode is enabled. Rate limiting
+        is currently per Worker isolate and is not a global abuse control.
+      security:
+        - FirebaseIdToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [message]
+              properties:
+                message: { type: string, minLength: 1, maxLength: 2000 }
+                surface: { type: string, enum: [web, ios, android, desktop, tv, unity, unreal] }
+                locale: { type: string, maxLength: 16 }
+      responses:
+        '401': { description: Missing or invalid Firebase identity token }
+        '415': { description: JSON content type required }
+        '423': { description: askLINGO is disabled; no model request was sent }
+        '429': { description: Per-isolate rate limit exceeded }
+        '503': { description: Firebase project or signing-key service unavailable }
+components:
+  securitySchemes:
+    FirebaseIdToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase Authentication ID token. Verified server-side; client UID values are not trusted.
+    LingoInternalToken:
+      type: apiKey
+      in: header
+      name: x-lingo-internal-token
+      description: Server-only shared secret. Never distribute to end-user clients.
+
