@@ -58,7 +58,8 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Output token ceiling applied to Responses API requests.
 - [x] Responses API adapter and bounded input validation implemented.
 - [x] Automated tests authored for disabled, missing-key, success, and input-limit paths.
-- [ ] CI execution and passing test evidence.
+- [x] Local Node 22 verification: syntax check passed and 7/7 unit tests passed against the retrieved branch files.
+- [ ] GitHub Actions CI execution evidence.
 - [ ] Independent security review, including shared-secret rotation, caller identity, and Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
 - [ ] Staging integration and cross-platform client contracts verified.
