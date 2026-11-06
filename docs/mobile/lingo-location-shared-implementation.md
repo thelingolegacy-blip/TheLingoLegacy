@@ -2,7 +2,7 @@
 
 **Branch:** `feature/lingo-location-shared`  
 **Base commit:** `3923a08b77c8cc93ec5447e9623045318c825234`  
-**Current implementation commit:** see branch head  
+**Current implementation commit:** `7a84539be8731687ac01ccde0cb99c19d6ba9abc`  
 **Release posture:** staging-only candidate; production unchanged.
 
 ## Architecture
@@ -30,6 +30,7 @@
 - Added a foreground location provider interface. The HERE adapter is not yet implemented because the licensed HERE SDK package is not present in the repository.
 - Added `MarkerRepository` using the authenticated user's path `users/{uid}/saved_locations/{markerId}`.
 - Added model validation tests.
+- Made the mobile shell skip Firebase initialization when the checked-in Firebase options are still placeholders, and show an explicit backend-not-connected status instead of implying a successful connection.
 - Added a separate `firebase.staging.json` and staging-only Firestore rules candidate. The root `.firebaserc` remains pointed at the existing production project and has not been changed.
 - Changed Flutter startup so the preview shell can still render when Firebase placeholders are present; it clearly reports that backend services are not connected instead of treating placeholder configuration as a successful backend connection.
 
@@ -57,8 +58,8 @@ The rules are not deployed and have not passed Firestore Emulator Suite tests. N
 ## CI and verification status
 
 The existing Flutter Firebase workflow was triggered by branch pushes. The latest run for this branch is a GitHub Actions startup failure:
-- Run: `42270677674`
-- Head SHA: `589260bf0da90198df94a70af058c56ccc3fe780`
+- Run: `42271063069`
+- Head SHA: `7a84539be8731687ac01ccde0cb99c19d6ba9abc`
 - Conclusion: `startup_failure`
 - Jobs returned: none
 
