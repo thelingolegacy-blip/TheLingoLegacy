@@ -17,7 +17,9 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
       return json({ ok: false, error: 'Method not allowed.' }, 405);
     }
     const enabled = env.LINGO_AI_PAID_API_ENABLED === 'true'
-      && Boolean(env.OPENAI_API_KEY);
+      && env.LINGO_AI_BILLING_APPROVED === 'true'
+      && Boolean(env.OPENAI_API_KEY)
+      && Boolean(env.LINGO_AI_INTERNAL_TOKEN);
     return json({
       ok: true,
       service: 'lingoai',
@@ -40,7 +42,7 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
   }
 
   // Zero-spend guard executes before parsing input or contacting OpenAI.
-  if (env.LINGO_AI_PAID_API_ENABLED !== 'true') {
+  if (env.LINGO_AI_PAID_API_ENABLED !== 'true' || env.LINGO_AI_BILLING_APPROVED !== 'true') {
     return json({
       ok: false,
       code: 'PAID_INFERENCE_DISABLED',
