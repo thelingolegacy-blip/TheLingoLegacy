@@ -86,9 +86,11 @@ During the $0 phase, test UI rendering and client networking against local mocks
 - [x] Internal inference route requires a trusted backend token.
 - [x] Paid inference and billing approval are independent gates.
 - [x] Web, mobile, desktop, TV, and game-client boundaries documented.
-- [ ] Firebase project/app configuration and ID-token verification independently verified.
-- [ ] Authenticated backend facade implemented and security-reviewed.
-- [ ] Shared rate limiting, quotas, abuse controls, and request tracing implemented.
+- [x] Server-side Firebase ID-token signature and core claim verification implemented in the isolated feature branch.
+- [ ] Genuine Firebase app options and Firebase project configuration independently verified.
+- [x] Authenticated askLINGO facade scaffold validates Firebase bearer identity and request shape; inference remains disabled.
+- [ ] Authenticated facade receives independent security review.
+- [ ] Shared edge rate limiting across Worker isolates, quotas, abuse controls, and request tracing implemented. Current in-memory limit is per isolate only.
 - [ ] Client SDKs integrated and tested on actual target platforms.
 - [ ] Privacy/retention review completed.
 - [ ] Staging probes and independent acceptance completed.
