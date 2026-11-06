@@ -12,13 +12,13 @@ function makeRequest({ method = 'POST', headers = {}, body = { message: 'Hello f
 const validIdentity = async () => ({ ok: true, uid: 'test-user-' + crypto.randomUUID() });
 
 test('requires Firebase bearer authentication', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ headers: { authorization: '' } }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' });
+  const response = await handleAskLingoRequest(makeRequest({ headers: { authorization: '' } }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' });
   assert.equal(response.status, 401);
   assert.equal((await response.json()).code, 'AUTHENTICATION_REQUIRED');
 });
 
 test('rejects invalid Firebase identity before accepting request content', async () => {
-  const response = await handleAskLingoRequest(makeRequest(), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' }, {
+  const response = await handleAskLingoRequest(makeRequest(), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' }, {
     verifyToken: async () => ({ ok: false, code: 'INVALID_TOKEN' })
   });
   assert.equal(response.status, 401);
@@ -34,18 +34,18 @@ test('fails closed when Firebase project configuration is missing', async () => 
 });
 
 test('requires JSON content type', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ headers: { 'content-type': 'text/plain' } }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' });
+  const response = await handleAskLingoRequest(makeRequest({ headers: { 'content-type': 'text/plain' } }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' });
   assert.equal(response.status, 415);
 });
 
 test('rejects unknown request fields', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'hello', uid: 'spoofed-user' } }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
+  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'hello', uid: 'spoofed-user' } }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
   assert.equal(response.status, 400);
   assert.equal((await response.json()).code, 'INVALID_REQUEST_FIELDS');
 });
 
 test('authenticated requests never invoke paid inference in zero-spend mode', async () => {
-  const response = await handleAskLingoRequest(makeRequest(), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
+  const response = await handleAskLingoRequest(makeRequest(), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
   assert.equal(response.status, 423);
   const body = await response.json();
   assert.equal(body.code, 'ASKLINGO_DISABLED');
@@ -54,17 +54,17 @@ test('authenticated requests never invoke paid inference in zero-spend mode', as
 });
 
 test('rejects unsupported client surface', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'hello', surface: 'unknown', locale: 'en-US' } }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
+  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'hello', surface: 'unknown', locale: 'en-US' } }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
   assert.equal(response.status, 400);
 });
 
 test('rejects oversized messages', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'x'.repeat(2001), surface: 'web', locale: 'en-US' } }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
+  const response = await handleAskLingoRequest(makeRequest({ body: { message: 'x'.repeat(2001), surface: 'web', locale: 'en-US' } }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' }, { verifyToken: validIdentity });
   assert.equal(response.status, 400);
 });
 
 test('rejects non-POST methods', async () => {
-  const response = await handleAskLingoRequest(makeRequest({ method: 'GET' }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' });
+  const response = await handleAskLingoRequest(makeRequest({ method: 'GET' }), { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' });
   assert.equal(response.status, 405);
 });
 
@@ -75,7 +75,7 @@ test('streaming oversized askLINGO body without content-length is rejected', asy
       method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer test.firebase.token' },
       body: stream, duplex: 'half'
     }),
-    { FIREBASE_PROJECT_ID: 'lingo-legacy-production' },
+    { FIREBASE_AUTH_PROJECT_ID: 'lingo-legacy-production' },
     { verifyToken: validIdentity }
   );
   assert.equal(response.status, 413);
