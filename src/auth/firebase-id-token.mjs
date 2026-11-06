@@ -44,7 +44,8 @@ export async function verifyFirebaseIdToken(token, projectId, options = {}) {
   }
 
   const key = await getSigningKey(header.kid, fetchImpl, now, options.certUrl || CERT_URL);
-  if (!key) return { ok: false, code: 'TOKEN_VERIFICATION_UNAVAILABLE' };
+  if (key === undefined) return { ok: false, code: 'TOKEN_VERIFICATION_UNAVAILABLE' };
+  if (!key) return { ok: false, code: 'INVALID_TOKEN' };
 
   try {
     const cryptoKey = await crypto.subtle.importKey(
@@ -70,13 +71,13 @@ async function getSigningKey(kid, fetchImpl, now, certUrl) {
   try {
     response = await fetchImpl(certUrl, { signal: AbortSignal.timeout(5000) });
   } catch {
-    return null;
+    return undefined;
   }
-  if (!response.ok) return null;
+  if (!response.ok) return undefined;
 
   let payload;
-  try { payload = await response.json(); } catch { return null; }
-  if (!Array.isArray(payload?.keys)) return null;
+  try { payload = await response.json(); } catch { return undefined; }
+  if (!Array.isArray(payload?.keys)) return undefined;
 
   const keys = new Map(payload.keys
     .filter((entry) => entry?.kid && entry.kty === 'RSA' && entry.alg === 'RS256' && entry.use === 'sig')
