@@ -14,7 +14,8 @@ Neveah compiles:
 - task estimates and agent capacity;
 - security incidents and service health signals;
 - outstanding approval requests;
-- previous day's unfinished tasks and accepted decisions.
+- previous day's unfinished tasks and accepted decisions;
+- latest valid checkpoints, restore-test status and collision/health reports.
 
 ## Priority order
 
@@ -40,6 +41,8 @@ Each daily plan includes:
 - expected evidence;
 - approval gates;
 - capacity and collision warnings;
+- health status and unknown telemetry;
+- current checkpoint and rollback target;
 - carryover tasks;
 - risks and unresolved conflicts.
 
@@ -65,6 +68,20 @@ Neveah proposes assignments. Specialists may accept, request clarification, or r
 - Noz: business operations, SOPs, vendor and process coordination.
 - Derrick: metrics, data quality, dashboards and outcome reporting.
 
+## Ecosystem pipeline
+
+All portfolio work follows the stage contract in [Ecosystem Operating Model](ECOSYSTEM_OPERATING_MODEL.md): DISCOVER → DEFINE → DESIGN → BUILD → INTEGRATE → VERIFY → ACCEPT → RELEASE → OBSERVE → MAINTAIN. Each handoff includes the stage manifest, dependencies, owner, checkpoint, evidence, risks and next action. Landing pages and hidden/preview worlds remain distinct products connected through explicit, consent-aware navigation handoffs.
+
+## Distributed checkpoints and daily reset
+
+Follow [Distributed Pipeline Checkpoints and Recovery](PIPELINE_CHECKPOINTS.md). Every agent spot can create and request restoration of project-owned checkpoints; the host coordinates but is not the only custodian. A daily reset refreshes schedules, temporary locks, agent capacity, health snapshots and daily metrics only. It never wipes project memory, active work, accepted checkpoints, Git history, durable chat, user data, audit history, release holds or unresolved incidents.
+
+Unfinished tasks carry forward with their original owner, stage, dependencies, blocker, checkpoint and next action. Do not close or replace them merely because a new daily schedule is generated.
+
+## Health, collisions and measurements
+
+Follow [Health, Collision Detection and Design Measurements](HEALTH_COLLISION_DESIGN_SYSTEM.md). Every health report distinguishes healthy, degraded, unhealthy, unknown and maintenance. Preflight checks cover shared routes, assets, schemas, components, CSS/design tokens, dependencies, task ownership and concurrent writes. Unknown telemetry is never reported as healthy. Responsive checks cover the documented mobile, tablet and desktop viewport matrix, accessibility, contrast, focus, overflow and image sizing.
+
 ## End-of-day report
 
 Report separately:
@@ -75,6 +92,8 @@ Report separately:
 - waiting for founder approval;
 - carried to next day;
 - newly discovered risks;
+- health changes and collision warnings;
+- checkpoints created and restore tests performed;
 - changes to project status with source evidence.
 
 ## Portfolio continuity rules
