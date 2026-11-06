@@ -1,0 +1,105 @@
+{
+  "manifestVersion": "1.0.0",
+  "server": {
+    "name": "askLINGO",
+    "description": "Authenticated orchestration interface for LINGOlegacy Studio Control Center.",
+    "protocol": "MCP",
+    "transport": "streamable-http",
+    "endpointEnv": "ASKLINGO_MCP_URL",
+    "endpointState": "NOT_CONFIGURED",
+    "authentication": {
+      "type": "OAuth2 bearer",
+      "required": true,
+      "scopes": [
+        "lingo.apps.read",
+        "lingo.gates.read",
+        "lingo.tasks.create"
+      ]
+    }
+  },
+  "governance": {
+    "environment": "staging",
+    "productionMutation": false,
+    "toolExecutionRequiresAuthenticatedPrincipal": true,
+    "unknownEvidenceFailsClosed": true
+  },
+  "tools": [
+    {
+      "name": "lingo.apps.list",
+      "description": "List registered LINGO application surfaces and their declared environment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "environment": {
+            "type": "string",
+            "enum": [
+              "staging"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lingo.gates.get",
+      "description": "Read a release gate and its attached evidence references.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "gateId": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "gateId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lingo.tasks.create",
+      "description": "Create a staging task request; this does not execute or deploy it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 160
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "askLINGO",
+              "LINGOarts",
+              "Cloudflare",
+              "Firebase",
+              "AppDeploy",
+              "cross-stack"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "staging"
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "scope",
+          "environment"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "notes": [
+    "This is an integration contract, not a live MCP server.",
+    "Do not paste secrets into this manifest.",
+    "Configure ASKLINGO_MCP_URL only after an authenticated staging endpoint is deployed and independently tested.",
+    "Custom GPT Actions require the separate OpenAPI contract and a reachable HTTPS API; this manifest alone does not create that endpoint."
+  ]
+}

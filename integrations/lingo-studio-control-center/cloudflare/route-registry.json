@@ -1,0 +1,86 @@
+{
+  "environment": "staging",
+  "proxyMode": "read-only-static-preview",
+  "routes": [
+    {
+      "slug": "universe",
+      "appId": "lingolegacy-universe-gateway-h6kqu4",
+      "origin": "https://lingolegacy-universe-gateway-h6kqu4.v2.appdeploy.ai"
+    },
+    {
+      "slug": "control-center",
+      "appId": "lingo-enterprise-control-center-qos4ix",
+      "origin": "https://lingo-enterprise-control-center-qos4ix.v2.appdeploy.ai"
+    },
+    {
+      "slug": "loyalty",
+      "appId": "lingoloyalty-staging-preview-x4ld0h",
+      "origin": "https://lingoloyalty-staging-preview-x4ld0h.v2.appdeploy.ai"
+    },
+    {
+      "slug": "asklingo",
+      "appId": "lingo-ai-sonic-boom-2030-7plgl2",
+      "origin": "https://lingo-ai-sonic-boom-2030-7plgl2.v2.appdeploy.ai"
+    },
+    {
+      "slug": "studio",
+      "appId": "lingo-legacy-studio-hub-nhda3b",
+      "origin": "https://lingo-legacy-studio-hub-nhda3b.v2.appdeploy.ai"
+    },
+    {
+      "slug": "master-plan",
+      "appId": "lingo-legacy-master-project-plan-rkh6r6",
+      "origin": "https://lingo-legacy-master-project-plan-rkh6r6.v2.appdeploy.ai"
+    },
+    {
+      "slug": "runtime",
+      "appId": "hello-the-lingo-legacy-ois1rj",
+      "origin": "https://hello-the-lingo-legacy-ois1rj.v2.appdeploy.ai"
+    },
+    {
+      "slug": "thats-my-lingo",
+      "appId": "that-s-my-lingo-casino-studio-2xntye",
+      "origin": "https://that-s-my-lingo-casino-studio-2xntye.v2.appdeploy.ai"
+    },
+    {
+      "slug": "arcade",
+      "appId": "lingo-legacy-universe-rpekc0",
+      "origin": "https://lingo-legacy-universe-rpekc0.v2.appdeploy.ai"
+    },
+    {
+      "slug": "verification",
+      "appId": "lingo-legacy-verification-bridge-wwagn2",
+      "origin": "https://lingo-legacy-verification-bridge-wwagn2.v2.appdeploy.ai"
+    },
+    {
+      "slug": "jersey-shore",
+      "appId": "jersey-shore-the-undead-l4h5ea",
+      "origin": "https://jersey-shore-the-undead-l4h5ea.v2.appdeploy.ai"
+    },
+    {
+      "slug": "hq",
+      "appId": "the-lingo-legacy-hq-vhjt6i",
+      "origin": "https://the-lingo-legacy-hq-vhjt6i.v2.appdeploy.ai"
+    },
+    {
+      "slug": "kottonscode",
+      "appId": "kotton-s-code-cartoon-studio-509py3",
+      "origin": "https://kotton-s-code-cartoon-studio-509py3.v2.appdeploy.ai"
+    },
+    {
+      "slug": "loyalty-lane",
+      "appId": "loyalty-lane-community-hub-zb39n2",
+      "origin": "https://loyalty-lane-community-hub-zb39n2.v2.appdeploy.ai"
+    },
+    {
+      "slug": "crazy-weasels",
+      "appId": "crazy-weasels-0j3ujc",
+      "origin": "https://crazy-weasels-0j3ujc.v2.appdeploy.ai"
+    },
+    {
+      "slug": "travel",
+      "appId": "lingo-traveltm-uyd57n",
+      "origin": "https://lingo-traveltm-uyd57n.v2.appdeploy.ai"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "LINGOlegacy Studio Control Center",
+  "environment": "staging",
+  "status": "partially-deployed-staging",
+  "controlPlane": {
+    "dashboard": "Extend the existing LINGO Enterprise Control Center; do not create a duplicate. Deployment-specific AppDeploy preflight remains pending. Latest account overview reports 194.368 monthly credits available, but daily deployment eligibility has not been reconfirmed.",
+    "governance": "fail-closed",
+    "productionMutation": false
+  },
+  "systems": [
+    {
+      "name": "askLINGO",
+      "role": "AI orchestration and MCP tool contract",
+      "state": "frontend-deployed-health-and-realtime-backend-present-mcp-endpoint-unverified"
+    },
+    {
+      "name": "LINGOarts",
+      "role": "creative assets, rights, publishing intake",
+      "state": "existing-studio-creative-asset-and-rights-review-workflows-present-not-yet-wired-to-control-center"
+    },
+    {
+      "name": "Cloudflare",
+      "role": "staging-only read-only application preview proxy",
+      "state": "staging-worker-deployed-workers-dev-only-runtime-smoke-pending"
+    },
+    {
+      "name": "Firebase",
+      "role": "server-authoritative RBAC, tasks, evidence, gate acceptance",
+      "state": "rules-and-functions-prepared-plugin-available-not-connected-staging-project-unconfirmed"
+    },
+    {
+      "name": "AppDeploy",
+      "role": "existing application surfaces",
+      "state": "16-existing-apps-deployment-ready-qa-snapshots-zero-reported-errors-live-http-probes-pending"
+    }
+  ],
+  "gates": [
+    {
+      "id": "ASK-01",
+      "name": "askLINGO manifest and endpoint validation",
+      "required": [
+        "manifest-json-valid",
+        "authenticated-endpoint-live",
+        "tool-schema-validation"
+      ]
+    },
+    {
+      "id": "EDGE-01",
+      "name": "Cloudflare staging proxy",
+      "required": [
+        "workers-dev-only",
+        "exact-route-allowlist",
+        "GET-HEAD-only",
+        "no-credential-forwarding",
+        "origin-smoke-tests"
+      ]
+    },
+    {
+      "id": "FB-01",
+      "name": "Firebase RBAC and rules",
+      "required": [
+        "staging-project-confirmed",
+        "custom-claims-tested",
+        "client-write-denied",
+        "callable-authorization-tested"
+      ]
+    },
+    {
+      "id": "APP-16",
+      "name": "16 application surfaces",
+      "required": [
+        "16-unique-app-ids",
+        "16-staging-origins",
+        "http-health-evidence-per-app",
+        "no-production-route-changes"
+      ]
+    },
+    {
+      "id": "REL-01",
+      "name": "Independent acceptance",
+      "required": [
+        "source-commit",
+        "executed-run",
+        "runner-and-job-identity",
+        "retrievable-logs",
+        "artifact-sha256",
+        "independent-review",
+        "human-authorization"
+      ]
+    }
+  ],
+  "invariants": {
+    "productionProtected": true,
+    "automaticPromotion": false,
+    "unverifiedStatus": "unknown",
+    "defaultGateState": "blocked",
+    "evidenceRequired": true
+  },
+  "deploymentEvidence": {
+    "cloudflare": {
+      "worker": "lingo-studio-control-center-staging",
+      "deploymentId": "3e86b1881697414cb7bd637e5eccdc5e",
+      "workersDevUrl": "https://lingo-studio-control-center-staging.thelingolegacy.workers.dev",
+      "workersDevEnabled": true,
+      "previewsEnabled": false,
+      "registeredOrigins": 16,
+      "zoneRoutesAdded": 0,
+      "productionChanges": 0,
+      "runtimeSmokeTest": "not independently invoked from this session; public health probe endpoint deployed",
+      "healthEndpoint": "/healthz/apps",
+      "healthProbeMethod": "HEAD",
+      "versionId": "6827a64d53b64b9693fe89fb864ff4d9",
+      "deploymentHistory": [
+        {
+          "deploymentId": "3e86b188-1697-414c-b7bd-637e5eccdc5e",
+          "versionId": "6827a64d-53b6-4b96-93fe-89fb864ff4d9",
+          "trafficPercent": 100,
+          "state": "active"
+        },
+        {
+          "deploymentId": "7f4d6a26-3866-405c-9909-0b58693bd134",
+          "versionId": "69e9af5a-30e3-4abf-82ed-485f7c52e099",
+          "state": "historical"
+        },
+        {
+          "deploymentId": "5b3da71c-3b04-4758-bb3d-feb44d3b452b",
+          "versionId": "50fdc7c7-813b-47de-aa64-74d3c585350b",
+          "state": "historical"
+        },
+        {
+          "deploymentId": "fc5d79bb-712d-42ef-8ed0-1fd0788b1854",
+          "versionId": "048b74be-cb67-4099-983e-574d72153ab5",
+          "state": "historical"
+        }
+      ],
+      "unverifiedReportedVersionTag": "cbf77cdb34764bc282f235de0e8be6c8",
+      "unverifiedReportedVersionTagState": "not present in Cloudflare version-list response"
+    },
+    "appdeploy": {
+      "existingApplications": 16,
+      "deploymentStatusReady": 16,
+      "latestStatusSnapshotsReportedFrontendErrors": 0,
+      "latestStatusSnapshotsReportedNetworkErrors": 0,
+      "latestStatusSnapshotsReportedBackendErrors": 0,
+      "directHttpHealthChecks": "pending",
+      "monthlyCreditsAvailableAtLastAccountRead": 194.368329855,
+      "deploymentPreflight": "not-rechecked-after-daily-reset"
+    },
+    "githubActions": {
+      "latestCommit": "19efc57be7950a29832c185c7c37d289e9710650",
+      "runs": [
+        {
+          "id": 41548184488,
+          "name": "Lingo Legacy Static CI",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "id": 41548186021,
+          "name": "Crimson Smoke UI — static validation",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "id": 41548187161,
+          "name": "G02 Runner Image Build (no publish)",
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        }
+      ],
+      "g02Execution": "blocked-no-runner-job-evidence",
+      "vercelStatus": "success",
+      "vercelStatusMeaning": "provider deployment status only; not test acceptance or production promotion"
+    }
+  }
+}
