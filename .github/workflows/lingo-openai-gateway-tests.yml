@@ -15,6 +15,9 @@ on:
       - 'feat/lingo-openai-platform-foundation'
     paths:
       - 'src/ai/**'
+      - 'src/auth/**'
+      - 'tests/firebase-id-token.test.mjs'
+      - 'tests/ask-lingo-facade.test.mjs'
       - 'tests/lingo-openai-gateway.test.mjs'
       - 'worker.js'
       - '.github/workflows/lingo-openai-gateway-tests.yml'
