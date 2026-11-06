@@ -6,8 +6,8 @@ Status: implementation scaffold; production integration and acceptance are NOT c
 
 - API spend is **$0 authorized**. Do not buy credits, enable automatic recharge, or issue paid API requests.
 - GPT-6 Astra is a paid API model. The current official model page lists $10 per million input tokens and $50 per million output tokens; API free tier is not supported. This makes the zero-spend gate mandatory, not optional.
-- `LINGO_AI_PAID_API_ENABLED` must remain unset or `false`.
-- A second independent gate, `LINGO_AI_BILLING_APPROVED`, must also remain unset or `false`; both gates are required before any inference can run.
+- `LINGO_AI_PAID_API_ENABLED` is explicitly set to `false` in the proposed Wrangler configuration.
+- A second independent gate, `LINGO_AI_BILLING_APPROVED`, is also explicitly set to `false`; both gates are required before any inference can run.
 - The gateway blocks inference before making a network request unless BOTH the paid-inference flag and separate billing-approval flag are explicitly enabled.
 - Paid requests additionally require a separate trusted server-to-server token in `LINGO_AI_INTERNAL_TOKEN` and the `x-lingo-internal-token` request header. Do not ship this token to public clients; integrate authenticated app backends before activation.
 - Enabling paid inference requires a separate, explicit founder approval and a documented budget. This document does not grant that approval.
@@ -25,7 +25,7 @@ Status: implementation scaffold; production integration and acceptance are NOT c
 - OpenAI: model inference and, later, approved agent workflows.
 - Cloudflare Worker: server-side API boundary, secret isolation, request validation and response shaping.
 - GitHub: source of truth, review and CI evidence.
-- Firebase: identity/data services only after project identity, rules, App Check and consent contracts are verified.
+- Firebase: server-side ID-token verification uses the non-secret `FIREBASE_AUTH_PROJECT_ID` sourced from `.firebaserc`; client app options, App Check, revocation checks and data-service bindings remain incomplete.
 - Web/mobile/desktop/TV/game clients: call the LINGO gateway; never call OpenAI directly with a long-lived secret.
 
 ## Node.js SDK example (reference only; NOT executed)
