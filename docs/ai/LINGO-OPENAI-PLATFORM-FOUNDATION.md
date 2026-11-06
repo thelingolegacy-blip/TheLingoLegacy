@@ -6,7 +6,8 @@ Status: implementation scaffold; production integration and acceptance are NOT c
 
 - API spend is **$0 authorized**. Do not buy credits, enable automatic recharge, or issue paid API requests.
 - `LINGO_AI_PAID_API_ENABLED` must remain unset or `false`.
-- The gateway blocks inference before making a network request unless the paid-inference flag is explicitly enabled.
+- A second independent gate, `LINGO_AI_BILLING_APPROVED`, must also remain unset or `false`; both gates are required before any inference can run.
+- The gateway blocks inference before making a network request unless BOTH the paid-inference flag and separate billing-approval flag are explicitly enabled.
 - Paid requests additionally require a separate trusted server-to-server token in `LINGO_AI_INTERNAL_TOKEN` and the `x-lingo-internal-token` request header. Do not ship this token to public clients; integrate authenticated app backends before activation.
 - Enabling paid inference requires a separate, explicit founder approval and a documented budget. This document does not grant that approval.
 - Never put an API key in Git, client-side JavaScript, mobile applications, Unity/Unreal builds, public Worker variables, logs, issues, or chat messages.
