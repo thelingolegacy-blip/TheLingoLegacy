@@ -9,7 +9,7 @@
 | ID | Work package | Acceptance evidence | Initial disposition |
 |---|---|---|---|
 | AI-001 | Master charter and architecture | reviewed charter, boundaries, dependency map | SPECIFICATION ADDED |
-| AI-002 | Intelligent router | unit tests for classification, delegation, fallback and timeout | NOT RUN |
+| AI-002 | Intelligent router | deterministic routing module and deny-by-default policy; 9/9 local Node tests; CI not run | IMPLEMENTED ON BRANCH; LOCAL TESTS PASS |
 | AI-003 | Agent registry | schema validation, unique IDs, scope review | REGISTRY FILE ADDED; NOT RUNTIME |
 | AI-004 | Model adapters | provider connection tests using server-side secrets; cost/timeout tests | BLOCKED: credentials/config not verified |
 | AI-005 | Permission system | positive/negative authorization tests and audit events | NOT RUN |
