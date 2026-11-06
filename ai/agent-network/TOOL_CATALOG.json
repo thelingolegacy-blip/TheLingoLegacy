@@ -1,0 +1,294 @@
+{
+  "schema_version": "1.0.0",
+  "status": "capability_contract_only",
+  "runtime_connected": false,
+  "policy": "default_deny_server_enforced",
+  "shared_capabilities": [
+    "master_chat.read_scoped_channels",
+    "master_chat.send_internal_message",
+    "master_chat.mention_agent",
+    "master_chat.request_help",
+    "master_chat.accept_handoff",
+    "master_chat.create_handoff",
+    "tasks.read_assigned",
+    "tasks.create_draft",
+    "tasks.update_assigned",
+    "schedule.read",
+    "schedule.propose",
+    "knowledge.search_authorized",
+    "evidence.attach_reference",
+    "audit.append_event",
+    "approval.request"
+  ],
+  "adapters": [
+    {
+      "id": "github",
+      "capabilities": [
+        "repositories.read",
+        "branches.read",
+        "feature_branch.write",
+        "files.read",
+        "files.write_feature_branch",
+        "issues.read",
+        "issues.create_or_update",
+        "pull_requests.read",
+        "pull_requests.create_or_update",
+        "checks.read"
+      ],
+      "connection_state": "must_be_verified",
+      "production_mutations": "denied"
+    },
+    {
+      "id": "cloudflare",
+      "capabilities": [
+        "workers.read",
+        "deployments.read",
+        "logs.read",
+        "dns.read",
+        "configuration.propose"
+      ],
+      "connection_state": "must_be_verified",
+      "production_mutations": "human_approval"
+    },
+    {
+      "id": "firebase",
+      "capabilities": [
+        "auth.read_scoped",
+        "firestore.read_scoped",
+        "firestore.write_scoped",
+        "functions.read",
+        "functions.deploy_preview"
+      ],
+      "connection_state": "must_be_verified",
+      "production_mutations": "human_approval"
+    },
+    {
+      "id": "model_providers",
+      "capabilities": [
+        "model.invoke_approved",
+        "model.route_by_policy",
+        "model.usage_report"
+      ],
+      "providers": [
+        "OpenAI",
+        "Anthropic",
+        "Google"
+      ],
+      "connection_state": "must_be_verified",
+      "secrets": "server_side_only"
+    },
+    {
+      "id": "observability",
+      "capabilities": [
+        "metrics.read",
+        "logs.read_scoped",
+        "alerts.read",
+        "incident.draft"
+      ],
+      "connection_state": "must_be_verified"
+    },
+    {
+      "id": "creative",
+      "capabilities": [
+        "creative.brief",
+        "asset.generate_approved",
+        "asset.review",
+        "asset.catalog"
+      ],
+      "connection_state": "must_be_verified"
+    },
+    {
+      "id": "business",
+      "capabilities": [
+        "business.records.read_scoped",
+        "vendor.research",
+        "budget.report.read",
+        "external_action.prepare"
+      ],
+      "connection_state": "must_be_verified",
+      "financial_execution": "human_approval"
+    },
+    {
+      "id": "calendar_notifications",
+      "capabilities": [
+        "calendar.read_authorized",
+        "schedule.propose",
+        "notification.prepare"
+      ],
+      "connection_state": "must_be_verified",
+      "external_writes": "human_approval"
+    }
+  ],
+  "agent_profiles": {
+    "dusse-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "schedule.read",
+      "knowledge.search_authorized",
+      "approval.request"
+    ],
+    "dusse-2": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.mention_agent",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "schedule.read",
+      "schedule.propose",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "approval.request"
+    ],
+    "zay-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "tasks.read_assigned",
+      "knowledge.search_authorized"
+    ],
+    "zay-2": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "knowledge.search_authorized",
+      "evidence.attach_reference"
+    ],
+    "ava-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "schedule.read",
+      "schedule.propose"
+    ],
+    "ava-2": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "schedule.read",
+      "schedule.propose",
+      "master_chat.create_handoff",
+      "master_chat.accept_handoff"
+    ],
+    "host-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.mention_agent",
+      "master_chat.request_help",
+      "master_chat.create_handoff",
+      "master_chat.accept_handoff",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "schedule.read",
+      "schedule.propose",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "audit.append_event",
+      "approval.request"
+    ],
+    "research-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "knowledge.search_authorized",
+      "evidence.attach_reference"
+    ],
+    "engineering-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "master_chat.create_handoff",
+      "master_chat.accept_handoff",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "approval.request"
+    ],
+    "security-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "audit.append_event",
+      "approval.request"
+    ],
+    "qa-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "audit.append_event"
+    ],
+    "creative-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "knowledge.search_authorized",
+      "evidence.attach_reference"
+    ],
+    "community-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "knowledge.search_authorized"
+    ],
+    "operations-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "tasks.create_draft",
+      "tasks.update_assigned",
+      "schedule.read",
+      "schedule.propose",
+      "knowledge.search_authorized",
+      "evidence.attach_reference"
+    ],
+    "analytics-1": [
+      "master_chat.read_scoped_channels",
+      "master_chat.send_internal_message",
+      "master_chat.request_help",
+      "tasks.read_assigned",
+      "knowledge.search_authorized",
+      "evidence.attach_reference",
+      "audit.append_event"
+    ]
+  },
+  "global_denials": [
+    "secrets.read_raw",
+    "policy.modify",
+    "permission.self_grant",
+    "agent.self_approve",
+    "production.deploy_without_human_approval",
+    "financial.transfer",
+    "destructive.delete_without_human_approval",
+    "cross_tenant.read"
+  ],
+  "notes": [
+    "Capability declarations are not connected credentials or proof of access.",
+    "All external adapters must be implemented behind a server-side authorization gateway.",
+    "Tool grants are scoped by user, agent, project, resource, environment and action."
+  ]
+}
