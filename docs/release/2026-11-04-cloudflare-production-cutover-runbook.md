@@ -21,11 +21,13 @@ Zone ID: `91c3f6315fb3ca132b22744721103f88`
 
 - Catch-all Worker `thelingolegacyv-5`
   - Deployment: `ecd71a70-e476-4318-92a7-35249ced360b`
-  - Version: `2d161fa5-598f-4998-ada8-7ac4c72c3461` at 100%
+  - Active version: `2d161fa5-598f-4998-ada8-7ac4c72c3461` (version number `137`) at 100%.
+  - Newer uploaded versions through `223` are preview versions; they are not the active production deployment.
   - Bindings: `ASSETS` (assets), `CANONICAL_DOMAIN` (plain text), `PUBLIC_SITE_URL` (plain text)
 - Exact-root Worker `lingo-flagship-root`
   - Deployment: `31ccefbb-df4f-4a62-974b-3ee9d0bc81d3`
-  - Version: `658acd1a-997b-45cd-b8fc-e59c59b26b45` at 100%
+  - Active version: `658acd1a-997b-45cd-b8fc-e59c59b26b45` (version number `1`) at 100%.
+  - Version number `2` is preview-only and is not active on the exact-root route.
   - No bindings
 - These IDs are rollback references only. Do not delete or overwrite them.
 
@@ -33,8 +35,10 @@ Zone ID: `91c3f6315fb3ca132b22744721103f88`
 
 - GitHub PR #451: https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/451
 - Branch: `studio-hub/recovery-preview-2026-11-04`
-- Candidate Pages preview: https://0cbf5c4a.lingo-legacy-github-integration-test.pages.dev
-- Candidate Pages project: `lingo-legacy-github-integration-test`; no custom domains configured.
+- Candidate Pages project: `lingo-legacy-github-integration-test`; no custom domains configured and production deployments are disabled.
+- The project was publishing the repository root (516–528 files per preview), including source/configuration files such as `firebase.json`, `worker.js`, and `lib/firebase_options.dart`. The GitHub repository is public and the inspected Firebase values are placeholders; no real secret values were observed in those files.
+- Automatic preview deployments are now disabled (`preview_deployment_setting=none`, `deployments_enabled=false`). The project has 1,798 historical preview deployments whose URLs remain accessible; treat them as historical, unapproved previews only.
+- Do not re-enable this project until a safe allowlisted build-output directory is configured and verified.
 - Isolated API Worker: `lingo-release-candidate-validation-20261104`
   - Workers.dev: https://lingo-release-candidate-validation-20261104.thelingolegacy.workers.dev
   - Deployment: `3d72d425c65e490a9b3bf6f6df6c2bcc`
@@ -100,6 +104,6 @@ At the time of this runbook:
 - `https://thelingolegacy.com/healthz` returns HTTP 200.
 - `https://thelingolegacy.com/api/v1/platform/status` reports `SERVING / RELEASE-LOCKED`, G02 `FAIL / UNVERIFIED`, G03–G11 blocked, promotion authorization false, production mutation frozen, and LKG protected.
 - `https://thelingolegacy.com/studio-hub/` returns a not-found page.
-- The new Hub is available only at the isolated Pages preview URL in Section 2.
+- The new Hub is available in GitHub source and historical Pages previews only. The shared integration-test Pages project is no longer an approved staging target; its automatic preview deployments are disabled pending a safe output-directory rebuild.
 
-**Final decision:** No promotion, production DNS change, route mutation, Worker deployment, or main-branch merge is performed by this runbook. It defines a verifiable cutover path for a later authorized release.
+**Final decision:** No promotion, production DNS change, route mutation, Worker deployment, or production binding/secret change is performed by this runbook. The GitHub source candidate contains disabled-payment pages, but production remains on the legacy active Worker versions above. This runbook defines a verifiable cutover path for a later authorized release.
