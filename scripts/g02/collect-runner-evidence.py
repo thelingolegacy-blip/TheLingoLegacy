@@ -10,6 +10,7 @@ import json
 import os
 import pathlib
 import platform
+import re
 import shutil
 import socket
 import subprocess
@@ -268,14 +269,18 @@ def finalize() -> int:
     for artifact in artifact_payload.get("artifacts", []):
         name = artifact.get("name", "")
         artifact_id = artifact.get("id")
-        if not name.startswith("g02-") or not artifact_id:
+        if not isinstance(name, str) or not name.startswith("g02-"):
             continue
+        if not isinstance(artifact_id, int) or artifact_id <= 0:
+            continue
+        # Artifact names are API metadata; sanitize them before using them in a filesystem path.
+        safe_name = re.sub(r"[^A-Za-z0-9._-]+", "_", name)[:100] or "g02-artifact"
         item = {"artifact_id": artifact_id, "name": name, "expired": artifact.get("expired", False),
                 "size_in_bytes": artifact.get("size_in_bytes"), "created_at": artifact.get("created_at")}
         try:
             status, body = api_request(f"/repos/{REPO}/actions/artifacts/{artifact_id}/zip", timeout=90)
             if status == 200 and body:
-                target = artifacts_dir / f"{artifact_id}-{name}.zip"
+                target = artifacts_dir / f"{artifact_id}-{safe_name}.zip"
                 target.write_bytes(body)
                 item.update({"retrievable": True, "path": str(target), "sha256": hashlib.sha256(body).hexdigest()})
             else:
@@ -291,9 +296,9 @@ def finalize() -> int:
             continue
         try:
             with zipfile.ZipFile(item["path"]) as archive:
-                for name in archive.namelist():
-                    if name.endswith("sentinel.json"):
-                        record = json.loads(archive.read(name).decode("utf-8"))
+                for member in archive.infolist()[:1000]:
+                    if member.filename.endswith("sentinel.json") and member.file_size <= 1024 * 1024:
+                        record = json.loads(archive.read(member).decode("utf-8"))
                         sentinel_records.append(record)
                         if (record.get("sentinel_status") in ("PASS", "FAIL") and
                                 record.get("runner_name") == "lingo-legacy-g02" and
