@@ -292,6 +292,15 @@ def finalize() -> int:
         downloaded_artifacts.append(item)
 
     sentinel_records = []
+    required_labels = {"self-hosted", "linux", "x64", "lingo-g02"}
+    api_canonical_jobs = {
+        j.get("id"): j for j in jobs
+        if isinstance(j.get("id"), int)
+        and j.get("runner_name") == "lingo-legacy-g02"
+        and isinstance(j.get("runner_id"), int) and j["runner_id"] > 0
+        and required_labels.issubset(set(j.get("labels") or []))
+        and j.get("head_sha") == SHA
+    }
     for item in downloaded_artifacts:
         item["contains_canonical_sentinel"] = False
         if not item.get("retrievable"):
@@ -302,21 +311,17 @@ def finalize() -> int:
                     if member.filename.endswith("sentinel.json") and member.file_size <= 1024 * 1024:
                         record = json.loads(archive.read(member).decode("utf-8"))
                         sentinel_records.append(record)
-                        if (record.get("sentinel_status") in ("PASS", "FAIL") and
-                                record.get("runner_name") == "lingo-legacy-g02" and
-                                isinstance(record.get("runner_id"), int) and record["runner_id"] > 0):
+                        api_job = api_canonical_jobs.get(record.get("job_id"))
+                        if (api_job
+                                and record.get("sentinel_status") in ("PASS", "FAIL")
+                                and record.get("run_id") == int(RUN_ID)
+                                and record.get("commit_sha") == SHA
+                                and record.get("runner_name") == api_job.get("runner_name")
+                                and record.get("runner_id") == api_job.get("runner_id")
+                                and required_labels.issubset(set(record.get("runner_labels") or []))):
                             item["contains_canonical_sentinel"] = True
         except (OSError, zipfile.BadZipFile, json.JSONDecodeError):
             continue
-    required_labels = {"self-hosted", "linux", "x64", "lingo-g02"}
-    api_canonical_jobs = {
-        j.get("id"): j for j in jobs
-        if isinstance(j.get("id"), int)
-        and j.get("runner_name") == "lingo-legacy-g02"
-        and isinstance(j.get("runner_id"), int) and j["runner_id"] > 0
-        and required_labels.issubset(set(j.get("labels") or []))
-        and j.get("head_sha") == SHA
-    }
     canonical_pass_records = [
         s for s in sentinel_records
         if s.get("sentinel_status") == "PASS"
