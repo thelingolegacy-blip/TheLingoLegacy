@@ -1,0 +1,9 @@
+{
+  "name": "@lingolegacy/simulation-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Engine-agnostic deterministic gameplay simulation primitives for LINGO games.",
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" }
+}
