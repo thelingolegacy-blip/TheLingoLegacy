@@ -8,6 +8,7 @@ From the repository root:
 
 ```sh
 git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit
 ```
 
 This is a local Git setting and does not modify the user's global Git configuration. The hook runs automatically before each commit after installation.
