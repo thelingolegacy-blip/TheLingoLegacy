@@ -1,0 +1,63 @@
+name: LINGO Creative Media Validation
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "creative/**"
+      - "assets/themes/**"
+      - "assets/lingo-design-tokens.css"
+      - "config/design/**"
+      - "config/icons/**"
+      - "scripts/verify-creative-asset-manifest.mjs"
+      - "scripts/verify-shared-design-system.mjs"
+      - ".github/workflows/creative-media-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: creative-media-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-creative-assets:
+    name: Validate creative metadata and shared design contracts (no deploy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate creative asset manifest
+        run: node scripts/verify-creative-asset-manifest.mjs
+      - name: Validate shared design system
+        run: node scripts/verify-shared-design-system.mjs
+      - name: Record non-authoritative evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p release/evidence
+          {
+            echo "evidence_type=creative-media-validation"
+            echo "utc_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "commit=$GITHUB_SHA"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "production_authorization=NOT_GRANTED"
+            echo "publication_approval=NOT_EVALUATED"
+            echo "g02_acceptance=NOT_EVALUATED"
+          } > release/evidence/creative-media-validation.txt
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: creative-media-validation-${{ github.run_id }}
+          path: release/evidence/creative-media-validation.txt
+          if-no-files-found: error
+          retention-days: 14
