@@ -41,7 +41,7 @@ const localLinks = [...rootHtml.matchAll(/(?:href|src)="([^"]+)"/g)]
 
 for (const link of localLinks) {
   const routePath = new URL(link, 'https://thelingolegacy.com').pathname;
-  const repoPath = routePath.replace(/^\\/|\\/$/g, '');
+  const repoPath = routePath.split('/').filter(Boolean).join('/');
   const candidates = [
     `../../${repoPath}/index.html`,
     `../../${repoPath}.html`,
@@ -57,7 +57,7 @@ for (const link of localLinks) {
   assert.equal(found, true, `homepage link has no matching repository asset: ${link}`);
 }
 
-assert.doesNotMatch(rootHtml, /asklingo-dock|pwa-register\\.js|tv-navigation\\.js/);
+assert.doesNotMatch(rootHtml, /asklingo-dock|pwa-register[.]js|tv-navigation[.]js/);
 
 const deepPathResponse = await rootWorker.fetch(new Request('https://thelingolegacy.com/studio-sites/'));
 assert.equal(deepPathResponse.status, 404, 'the exact-root Worker must not be mistaken for the deep-route Worker');
