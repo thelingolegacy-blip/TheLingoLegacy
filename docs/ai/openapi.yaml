@@ -73,19 +73,6 @@ paths:
         '423': { description: Paid inference disabled by policy }
         '502': { description: Sanitized upstream failure or timeout }
         '503': { description: Server credential or internal auth not configured }
-components:
-  securitySchemes:
-    FirebaseIdToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Firebase Authentication ID token. Verified server-side; client UID values are not trusted.
-    LingoInternalToken:
-      type: apiKey
-      in: header
-      name: x-lingo-internal-token
-      description: Server-only shared secret. Never distribute to end-user clients.
-
   /api/v1/ask-lingo/query:
     post:
       operationId: postAskLingoQuery
@@ -116,3 +103,16 @@ components:
         '423': { description: askLINGO is disabled; no model request was sent }
         '429': { description: Per-isolate rate limit exceeded }
         '503': { description: Firebase project or signing-key service unavailable }
+components:
+  securitySchemes:
+    FirebaseIdToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase Authentication ID token. Verified server-side; client UID values are not trusted.
+    LingoInternalToken:
+      type: apiKey
+      in: header
+      name: x-lingo-internal-token
+      description: Server-only shared secret. Never distribute to end-user clients.
+
