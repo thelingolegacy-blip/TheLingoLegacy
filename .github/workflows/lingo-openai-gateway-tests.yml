@@ -29,8 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
       - name: Verify gateway module syntax
@@ -38,4 +40,27 @@ jobs:
       - name: Verify Worker module syntax
         run: node --check --input-type=module < worker.js
       - name: Run isolated gateway tests
-        run: node --test tests/lingo-openai-gateway.test.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-reporter=tap tests/lingo-openai-gateway.test.mjs | tee lingo-ai-test-results.tap
+      - name: Record non-secret run metadata
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "node=$(node --version)"
+          } > lingo-ai-run-metadata.txt
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lingo-openai-gateway-evidence
+          path: |
+            lingo-ai-test-results.tap
+            lingo-ai-run-metadata.txt
+          if-no-files-found: warn
+          retention-days: 7
