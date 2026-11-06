@@ -38,26 +38,26 @@ A visual preview is not a live agent. A configured adapter is not a connected pr
 
 
 ## Expanded team recommendation
-The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava generations, one central Host, and eight specialist bots. The nine new roles have stable IDs; their public-facing names remain placeholders until the owner chooses them.
+The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava generations, one central Host, and eight specialist bots. The nine new roles have stable IDs and owner-selected public-facing names.
 
 | Stable role ID | Working label | Responsibility |
 |---|---|---|
-| host-1 | Host · 1.0 | Central orchestration, routing, delegation, and approval queue |
-| research-1 | Research Bot | Source discovery, authorized knowledge retrieval, citations |
-| engineering-1 | Engineering Bot | Architecture, code drafts, APIs, integration plans |
-| security-1 | Security Bot | Threat modeling, privacy, access and configuration review |
-| qa-1 | QA Bot | Test plans, regression review, CI evidence, release readiness |
-| creative-1 | Creative Bot | Brand, visual direction, audio and media workflows |
-| community-1 | Community Bot | Member support, help content, moderation triage |
-| operations-1 | Operations Bot | Project coordination, documentation, process design |
-| analytics-1 | Analytics Bot | Metrics, dashboards, measurement, reporting |
+| host-1 | Neveah | Central orchestration, routing, delegation, and approval queue |
+| research-1 | Navine | Source discovery, authorized knowledge retrieval, citations |
+| engineering-1 | Daizhur | Architecture, code drafts, APIs, integration plans |
+| security-1 | Dialoe | Threat modeling, privacy, access and configuration review |
+| qa-1 | Datrell | Test plans, regression review, CI evidence, release readiness |
+| creative-1 | Azora | Brand, visual direction, audio and media workflows |
+| community-1 | Keith | Member support, help content, moderation triage |
+| operations-1 | Noz | Project coordination, documentation, process design |
+| analytics-1 | Derrick | Metrics, dashboards, measurement, reporting |
 
 ### Team operating model
 - Host is the dispatcher and meeting point, not an unrestricted superuser. It cannot approve its own proposed actions or bypass policy.
 - Specialists return structured findings, evidence, risks, and recommended next actions to Host.
 - Dusse and Zay remain the primary conversational identities; Ava focuses on administration and operational assistance.
 - Specialists work in draft/review mode by default. No autonomous financial, credential, destructive, legal-signoff, or production-release authority is granted.
-- The owner can rename the nine new roles without changing stable IDs, audit history, or permissions.
+- The owner can rename any role without changing stable IDs, audit history, or permissions.
 
 ### Additional production gaps to close
 Authentication and account recovery; tenant/project isolation; policy engine; model/provider adapters; context and retrieval evaluation; durable conversation storage and user-controlled retention; voice activity detection and streaming speech; TTS/STT provider failover; avatar/lip-sync pipeline; moderation and abuse controls; cost budgets and rate limits; observability and incident response; accessibility and localization; backup/restore; mobile push notifications; automated security, integration, load, and browser tests; release evidence and rollback.

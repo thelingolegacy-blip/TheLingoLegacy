@@ -90,7 +90,7 @@
     },
     {
       "id": "host-1",
-      "name": "Host · 1.0",
+      "name": "Neveah",
       "family": "Host",
       "generation": "1.0",
       "status": "planned",
@@ -105,7 +105,7 @@
     },
     {
       "id": "research-1",
-      "name": "Research Bot",
+      "name": "Navine",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -120,7 +120,7 @@
     },
     {
       "id": "engineering-1",
-      "name": "Engineering Bot",
+      "name": "Daizhur",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -134,7 +134,7 @@
     },
     {
       "id": "security-1",
-      "name": "Security Bot",
+      "name": "Dialoe",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -149,7 +149,7 @@
     },
     {
       "id": "qa-1",
-      "name": "QA Bot",
+      "name": "Datrell",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -164,7 +164,7 @@
     },
     {
       "id": "creative-1",
-      "name": "Creative Bot",
+      "name": "Azora",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -179,7 +179,7 @@
     },
     {
       "id": "community-1",
-      "name": "Community Bot",
+      "name": "Keith",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -193,7 +193,7 @@
     },
     {
       "id": "operations-1",
-      "name": "Operations Bot",
+      "name": "Noz",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -207,7 +207,7 @@
     },
     {
       "id": "analytics-1",
-      "name": "Analytics Bot",
+      "name": "Derrick",
       "family": "Specialist",
       "generation": "1.0",
       "status": "planned",
@@ -234,7 +234,7 @@
     "core_agents": 6,
     "host_agents": 1,
     "specialist_bots": 8,
-    "additional_names_to_be_chosen": 9,
-    "notes": "The nine new roles have stable IDs and role descriptions. Display names are placeholders pending the user's naming choices."
+    "additional_names_to_be_chosen": 0,
+    "notes": "All nine additional specialist and host roles have owner-provided display names."
   }
 }
