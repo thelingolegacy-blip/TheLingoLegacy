@@ -67,7 +67,7 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Firebase ID-token verifier checks signature, project audience/issuer, subject, expiration, issue time and auth time.
 - [x] Request bodies are streamed with hard byte ceilings before buffering.
 - [x] Automated test suites authored for the gateway, Firebase verifier, and askLINGO facade (full combined suite has not yet executed).
-- [ ] GitHub Actions runs 42292387394 (#34), 42295412586 (#59), and 42295561123 (#64) ended `startup_failure` before job creation; retrieved job lists and artifact lists were empty. None is test execution evidence.
+- [ ] GitHub Actions runs 42292387394 (#34), 42295412586 (#59), 42295561123 (#64), and 42299618546 (#78) ended `startup_failure` before job creation; the latest run has zero jobs and zero artifacts. None is test execution evidence.
 - [ ] New branch CI execution, logs and artifact evidence.
 - [ ] Independent security review, including Firebase token revocation/disabled-account checks, shared-secret rotation, caller identity, and global Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
