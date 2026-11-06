@@ -88,3 +88,14 @@ gateway-router.js
 pubspec.yaml
 _headers
 _redirects
+
+# Defense in depth: never publish nested backend implementation or private build inputs.
+**/firebase-functions/
+**/*.rules
+**/tsconfig.json
+**/catalog-seed.json
+**/.env*
+**/service-account*.json
+**/firebase-adminsdk*.json
+**/credentials*.json
+**/secrets*.json
