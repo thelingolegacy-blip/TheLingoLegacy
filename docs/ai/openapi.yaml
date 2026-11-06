@@ -3,9 +3,9 @@ info:
   title: LINGO AI Internal Gateway
   version: 1.0.0
   description: >
-    Internal server-side adapter for LINGO AI. Paid inference is disabled under
-    the current zero-spend policy. This contract does not describe a public
-    client-facing chat API.
+    LINGO AI server-side adapters and the authenticated askLINGO facade.
+    Paid inference and public chat responses are disabled under the current
+    zero-spend policy.
 servers:
   - url: https://thelingolegacy.com
     description: Canonical origin; production deployment is not implied.
@@ -98,7 +98,9 @@ paths:
                 surface: { type: string, enum: [web, ios, android, desktop, tv, unity, unreal] }
                 locale: { type: string, maxLength: 16 }
       responses:
+        '400': { description: Invalid JSON or request fields }
         '401': { description: Missing or invalid Firebase identity token }
+        '413': { description: Request body exceeds 8 KB }
         '415': { description: JSON content type required }
         '423': { description: askLINGO is disabled; no model request was sent }
         '429': { description: Per-isolate rate limit exceeded }
