@@ -18,6 +18,8 @@ This directory contains a source snapshot recovered from the currently deployed 
 - Compatibility flags: `nodejs_compat`
 - Usage model: `standard`
 - Cloudflare script ETag: `763efc28368aa4585b0e92bcd546918d69acfe10f05e1ed099c66fde6a7005a8`
+- Recovered source SHA-256: `9dab8b015ff50c16f075f5d26866e0ab93ab925e1f3399ebd1312d1211f2287f`
+- Recovered source size: `30,715` bytes
 
 The separate catch-all Worker was independently observed at version `137` (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`) with the `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL` bindings. The exact-root Worker has no bindings. Do not treat these two runtime contracts as interchangeable.
 
