@@ -18,8 +18,10 @@ concurrency:
 
 jobs:
   verify-g02-runner:
-    name: Verify Self-Hosted Runner Dispatch
-    # Keep the canonical label set. Do not remove lingo-g02 to bypass the gate.
+    name: Verify Self-Hosted Runner Dispatch (SECURITY DISABLED)
+    # SECURITY HOLD: public-repository dispatch to persistent G02 is prohibited pending private isolation.
+    if: ${{ false }}
+    # Keep canonical labels for future private-control-plane acceptance; do not substitute hosted runners.
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
