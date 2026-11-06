@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'src/ai/**'
+      - 'src/auth/**'
+      - 'tests/firebase-id-token.test.mjs'
+      - 'tests/ask-lingo-facade.test.mjs'
       - 'tests/lingo-openai-gateway.test.mjs'
       - 'worker.js'
       - '.github/workflows/lingo-openai-gateway-tests.yml'
@@ -37,13 +40,17 @@ jobs:
           node-version: '22'
       - name: Verify gateway module syntax
         run: node --check src/ai/openai-gateway.mjs
+      - name: Verify Firebase identity and askLINGO module syntax
+        run: |
+          node --check src/auth/firebase-id-token.mjs
+          node --check src/ai/ask-lingo-facade.mjs
       - name: Verify Worker module syntax
         run: node --check --input-type=module < worker.js
       - name: Run isolated gateway tests
         shell: bash
         run: |
           set -o pipefail
-          node --test --test-reporter=tap tests/lingo-openai-gateway.test.mjs | tee lingo-ai-test-results.tap
+          node --test --test-reporter=tap tests/lingo-openai-gateway.test.mjs tests/firebase-id-token.test.mjs tests/ask-lingo-facade.test.mjs | tee lingo-ai-test-results.tap
       - name: Record non-secret run metadata
         if: always()
         shell: bash
