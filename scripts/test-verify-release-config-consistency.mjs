@@ -49,7 +49,7 @@ const rootFiles = {
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/g02-self-hosted-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
+  '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
   'docker/README.md': 'application image intentionally not defined; does not publish an image',
@@ -96,3 +96,17 @@ test('configuration consistency fails closed on compatibility-date drift and hea
   assert.ok(report.failures.includes('compatibility-date'));
   assert.ok(report.failures.includes('assets-frame-policy'));
 });
+
+test('read-only and CI policy checks reject writes and deployment commands', () => {
+  const result = run({ mutate(root) {
+    fs.writeFileSync(path.join(root, 'scripts/sanitize-cloudflare-only-surface.mjs'),
+      "const report = { mode: 'read-only' }; fs.writeFileSync('unsafe.txt', 'x');");
+    fs.writeFileSync(path.join(root, '.circleci/config.yml'),
+      "workflows:\n  validate-non-main:\n    jobs:\n      - deploy:\n          command: firebase deploy\n          filters:\n            branches:\n              ignore: main\n");
+  }});
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('surface-gate-read-only'));
+  assert.ok(report.failures.includes('circleci-is-validation-only'));
+});
+
