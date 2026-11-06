@@ -13,7 +13,7 @@
 | AI-003 | Agent registry | schema validation, unique IDs, scope review | REGISTRY FILE ADDED; NOT RUNTIME |
 | AI-004 | Model adapters | provider connection tests using server-side secrets; cost/timeout tests | BLOCKED: credentials/config not verified |
 | AI-005 | Permission system | positive/negative authorization tests and audit events | NOT RUN |
-| AI-006 | Evidence generator | schema validation, artifact hashes, reproducible package | SPECIFICATION PENDING IMPLEMENTATION |
+| AI-006 | Evidence generator | dependency-free structural validator; 9/9 local Node tests; CI and independent review pending | VALIDATOR IMPLEMENTED ON BRANCH; LOCAL TESTS PASS |
 | AI-007 | Control dashboard | working controls, role checks, loading/error states | NOT RUN |
 | AI-008 | GitHub diagnostics | read-only repository/issue/PR/commit inventory with provenance | PARTIAL: connector inspection only |
 | AI-009 | Human approval workflow | deny-by-default tests for all critical actions | NOT RUN |
