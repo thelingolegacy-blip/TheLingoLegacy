@@ -1,0 +1,101 @@
+name: G02 Startup Restoration — Isolated Lanes
+
+on:
+  push:
+    branches:
+      - recovery/g02-startup-restoration-lanes-2026-10-31
+    paths:
+      - .github/workflows/g02-startup-restoration.yml
+      - scripts/g02/**
+      - docs/g02/**
+  workflow_dispatch:
+    inputs:
+      run_g02_assignment_probe:
+        description: "Reserved input; canonical self-hosted execution is disabled pending a trusted private control plane"
+        required: true
+        type: boolean
+        default: false
+      change_reference:
+        description: "Optional incident or recovery reference"
+        required: false
+        type: string
+        default: "G02 startup restoration"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-startup-restoration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hosted-diagnostic:
+    name: Hosted runner allocation diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out evidence collector
+        uses: actions/checkout@v4
+      - name: Capture authoritative assignment and host telemetry
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GITHUB_SHA: ${{ github.sha }}
+          EXPECTED_JOB_NAME: Hosted runner allocation diagnostic
+          G02_EVIDENCE_LANE: github-hosted-diagnostic
+          G02_RUNNER_ROOT: /opt/actions-runner
+          G02_RUNNER_SERVICE: actions.runner.lingo-legacy-g02.service
+          CHANGE_REFERENCE: ${{ inputs.change_reference }}
+        run: python3 scripts/g02/collect-runner-evidence.py
+      - name: Upload hosted diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-hosted-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # SECURITY HOLD: this public-repository workflow must never execute checkout-ref
+  # code on the persistent privileged G02 runner. Keep this job hard-disabled.
+  # Re-enable only after the runner control plane is private and immutable/trusted,
+  # with a separately enforced isolation boundary protecting host credentials.
+  canonical-g02-assignment-probe:
+    name: Canonical G02 runner assignment probe (SECURITY DISABLED)
+    if: ${{ false }}
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 15
+    steps:
+      - name: Refuse untrusted self-hosted execution
+        run: |
+          echo "Canonical G02 execution is disabled pending a trusted private control plane."
+          exit 1
+
+  evidence-collector:
+    name: Correlate jobs, logs, artifacts, and checksums
+    needs: [hosted-diagnostic, canonical-g02-assignment-probe]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out evidence collector
+        uses: actions/checkout@v4
+      - name: Retrieve and correlate execution evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python3 scripts/g02/collect-runner-evidence.py --finalize
+      - name: Upload correlated evidence bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-correlated-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-final-evidence/
+          if-no-files-found: warn
+          retention-days: 30
