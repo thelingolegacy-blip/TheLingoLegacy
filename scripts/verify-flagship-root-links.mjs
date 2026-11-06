@@ -5,7 +5,7 @@ const root = process.cwd();
 const sourcePath = 'cloudflare/flagship-root/worker.candidate.js';
 const source = fs.readFileSync(path.join(root, sourcePath), 'utf8');
 const homeMatch = source.match(/const HOME = ("(?:\\.|[^"\\])*");/);
-if (!homeMatch) throw new Error(\`Could not parse HOME HTML string from \${sourcePath}\`);
+if (!homeMatch) throw new Error('Could not parse HOME HTML string from ' + sourcePath);
 
 const html = JSON.parse(homeMatch[1]);
 const references = [...html.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi)]
