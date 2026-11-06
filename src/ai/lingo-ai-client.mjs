@@ -27,7 +27,10 @@ export function createLingoAIClient({ baseUrl, getIdToken, fetchImpl = fetch, ti
         throw new LingoAIError('Locale is invalid.', { code: 'INVALID_LOCALE' });
       }
 
-      const token = await getIdToken();
+      let token;
+      try { token = await getIdToken(); } catch {
+        throw new LingoAIError('A signed-in Firebase user is required.', { status: 401, code: 'AUTHENTICATION_REQUIRED' });
+      }
       if (typeof token !== 'string' || token.length < 20) {
         throw new LingoAIError('A signed-in Firebase user is required.', { status: 401, code: 'AUTHENTICATION_REQUIRED' });
       }
