@@ -77,6 +77,22 @@ The branch's read-only route/acceptance workflow was triggered, but GitHub did n
 
 Therefore the local Worker contract and live-site smoke script were **not executed**. The run is a CI execution failure, not a pass or a finding that the homepage is healthy. The Flutter workflow on the mobile branch exhibits the same startup/runner-assignment failure. Preserve this as a platform-level CI blocker; do not substitute an unrelated runner or infer test success.
 
+
+### Isolated preview deployment
+
+A new read-only preview version was uploaded to the existing `lingo-flagship-site-preview` Worker:
+- Worker version: `8bac94fc-eb0b-4175-a151-de4050346086`
+- Deployment ID: `50c5d595-4311-4071-8077-61a8355cd14d`
+- Allocation: 100% of that preview Worker
+- Bindings: none
+- `workers.dev`: enabled
+- Custom domains: none
+- Production Worker routes: unchanged
+
+The preview serves the repaired homepage source and proxies only GET/HEAD deep-page and asset requests to the existing canonical site. It does not forward caller cookies or authorization headers, strips upstream Set-Cookie, marks responses noindex, and rejects mutating methods with HTTP 405. It is a preview, not a replacement for the production Worker or a complete staging backend.
+
+The available browser fetcher could not retrieve the `workers.dev` preview URL, so the deployed version is verified through Cloudflare deployment metadata but its browser rendering and route behavior remain **UNVERIFIED**. Do not claim preview acceptance until a real browser/network probe and asset checks pass.
+
 ## Gap register
 
 | ID | Gap | Evidence | Closure requirement |
