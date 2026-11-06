@@ -7,7 +7,7 @@ const pass = (id, detail) => checks.push({ id, status: 'PASS', detail });
 const fail = (id, detail) => { checks.push({ id, status: 'FAIL', detail }); failures.push(id); };
 const read = (file) => fs.readFileSync(file, 'utf8');
 
-for (const file of ['wrangler.jsonc', '.assetsignore', 'firebase.json', 'worker.js']) {
+for (const file of ['wrangler.jsonc', '.assetsignore', 'firebase.json', 'worker.js', 'lib/firebase_options.dart']) {
   if (!fs.existsSync(file)) fail(`required-file:${file}`, 'required file is missing');
   else pass(`required-file:${file}`, 'present');
 }
@@ -46,7 +46,7 @@ for (const pattern of ['**/firebase-functions/**', '**/*.rules', '**/tsconfig.js
 }
 
 const source = fs.existsSync('lib/firebase_options.dart') ? read('lib/firebase_options.dart') : '';
-const firebasePlaceholders = ['YOUR_WEB_API_KEY', 'YOUR_WEB_APP_ID', 'YOUR_ANDROID_API_KEY', 'YOUR_ANDROID_APP_ID', 'YOUR_IOS_API_KEY', 'YOUR_IOS_APP_ID'];
+const firebasePlaceholders = ['YOUR_WEB_API_KEY', 'YOUR_WEB_APP_ID', 'YOUR_MESSAGING_SENDER_ID', 'YOUR_ANDROID_API_KEY', 'YOUR_ANDROID_APP_ID', 'YOUR_IOS_API_KEY', 'YOUR_IOS_APP_ID', 'YOUR_MACOS_API_KEY', 'YOUR_MACOS_APP_ID'];
 const unresolved = firebasePlaceholders.filter((value) => source.includes(value));
 checks.push({
   id: 'firebase-production-credentials',
@@ -77,6 +77,7 @@ const result = {
   status: failures.length ? 'FAIL' : 'PASS',
   checks,
   failures,
+  releaseStatus: unresolved.length ? 'BLOCKED' : 'READY_FOR_SEPARATE_REVIEW',
   releaseNote: unresolved.length ? 'Firebase is still a separate release blocker.' : 'Static preflight does not authorize production deployment.',
   disclaimer: 'Local/static checks only; no cloud account, runner, deployment, live endpoint, or production health is verified.'
 };
