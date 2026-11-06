@@ -1,5 +1,7 @@
 const DEFAULT_MODEL = 'gpt-6-astra';
 const MAX_INPUT_CHARS = 4000;
+const MAX_BODY_BYTES = 16 * 1024;
+const UPSTREAM_TIMEOUT_MS = 15000;
 
 /**
  * LINGO AI API boundary.
@@ -27,7 +29,6 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
       mode: enabled ? 'API_ENABLED' : 'ZERO_SPEND_DISABLED',
       paid_inference_enabled: enabled,
       model: env.LINGO_OPENAI_MODEL || DEFAULT_MODEL,
-      key_configured: Boolean(env.OPENAI_API_KEY),
       note: enabled
         ? 'Paid API requests are enabled by explicit server configuration.'
         : 'No OpenAI API requests can be made while paid inference is disabled.'
@@ -59,9 +60,26 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
     return json({ ok: false, code: 'UNAUTHORIZED_CALLER', error: 'Trusted server-to-server authentication is required.' }, 401);
   }
 
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) {
+    return json({ ok: false, error: 'Content-Type must be application/json.' }, 415);
+  }
+  const declaredLength = Number(request.headers.get('content-length') || 0);
+  if (declaredLength > MAX_BODY_BYTES) {
+    return json({ ok: false, error: 'Request body exceeds the 16 KB limit.' }, 413);
+  }
+  let rawBody;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return json({ ok: false, error: 'Request body could not be read.' }, 400);
+  }
+  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+    return json({ ok: false, error: 'Request body exceeds the 16 KB limit.' }, 413);
+  }
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
     return json({ ok: false, error: 'Request body must be valid JSON.' }, 400);
   }
@@ -71,14 +89,20 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
   }
 
   const model = env.LINGO_OPENAI_MODEL || DEFAULT_MODEL;
-  const upstream = await fetchImpl('https://api.openai.com/v1/responses', {
+  let upstream;
+  try {
+    upstream = await fetchImpl('https://api.openai.com/v1/responses', {
     method: 'POST',
     headers: {
       authorization: `Bearer ${env.OPENAI_API_KEY}`,
       'content-type': 'application/json'
     },
-    body: JSON.stringify({ model, input, max_output_tokens: 512 })
-  });
+    body: JSON.stringify({ model, input, max_output_tokens: 512 }),
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
+    });
+  } catch {
+    return json({ ok: false, code: 'OPENAI_UPSTREAM_UNAVAILABLE', error: 'OpenAI service is unavailable or timed out.' }, 502);
+  }
 
   const payload = await upstream.json().catch(() => ({}));
   if (!upstream.ok) {
