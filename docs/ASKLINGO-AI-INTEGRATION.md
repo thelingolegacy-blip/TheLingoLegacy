@@ -14,6 +14,10 @@ At the current source baseline:
 - Flutter Firebase options still contain placeholder API keys and app IDs. Firebase authentication cannot be treated as configured from those values.
 - No model provider has been selected or verified for production. Do not claim Claude, Gemini, OpenAI, or any other provider is connected until the provider credential, binding, and live request are independently verified.
 
+## Current implementation work (not yet accepted)
+
+An OpenAI Responses API adapter is being prepared on draft PR #490. It is a private server-side integration scaffold, not a production provider connection. Paid inference and billing approval are separately gated and remain disabled under the $0 authorization. The adapter sets `store: false`, applies bounded input/output and timeout controls, and requires a trusted internal caller token. The public askLINGO query facade, Firebase identity verification, global rate limiting, and client integrations are not implemented by that adapter.
+
 ## Intended architecture
 
 Use one provider-neutral askLINGO service behind the Cloudflare Worker. Web pages, subdomains, Flutter, and studio surfaces should call the same first-party API client. Provider credentials must remain in Cloudflare Worker secrets or another approved server-side secret store; never ship them to browser or mobile clients.
