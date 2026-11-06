@@ -205,7 +205,7 @@ Do not claim a backup is usable until a restore test has been completed.
 
 ## 11. Product quality and design system
 
-Design direction: **Industrial Noir / Crimson Shadow** with black/charcoal surfaces, crimson accents, clean white typography, and restrained metallic gold where appropriate. Preserve each product's own established identity and naming.
+Shared platform direction: **obsidian `#050507`, carbon `#15171D`, metallic slate `#273246`, and electric gold `#F7C84B`**, with clean white typography. Preserve each product's own established identity and naming; migrate product-specific surfaces only after visual and accessibility QA.
 
 Required design checks:
 - mobile-first responsive layouts;
@@ -252,6 +252,12 @@ Never convert a target, intention, or old screenshot into a VERIFIED status.
 | PR #458 | Draft | Actual hosted test execution and independent evidence |
 | PR #460 | Draft source snapshot | Review exact deployed-source provenance and staging verification |
 | PR #461 | Draft homepage/identity candidate | Execute route verifier, responsive/accessibility QA, resolve preview-provider conflict |
+| PR #463 | Draft public-repository G02 execution hold | Private control-plane and independently verified runner acceptance; do not enable public runner jobs |
+| PR #464 | Draft shared design-token update | Execute verifier, Flutter analysis, browser/device and accessibility QA |
+| PR #465 | Draft askLINGO runtime truth and API contract | Implement and verify endpoint/provider/auth before enabling any UI |
+| PR #466 | Draft consolidated asset-boundary and local preflight hardening | Execute all verifier/tests in working CI; Firebase placeholders remain a blocker |
+| PR #467 | Draft DUSSE and private edge gateway contracts | Implement in isolated staging; complete security and host/network acceptance |
+| PR #419 | Closed as superseded by PR #466 | Verifier and regression-test changes preserved in #466 |
 | Cloudflare apex/www | Existing routes have distinct root/catch-all behavior | Fresh live route and configuration audit |
 | Identity/login | Disabled | Verified provider/runtime/callback/session/logout tests |
 | Firebase mobile | Not production verified | Real project config, security rules, platform tests |
