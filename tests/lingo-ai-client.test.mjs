@@ -45,3 +45,7 @@ test('maps network failures to a sanitized client error', async () => {
   });
   await assert.rejects(() => client.query({ message: 'hello' }), (error) => error.code === 'NETWORK_UNAVAILABLE' && !error.message.includes('private network details'));
 });
+
+test('rejects HTTPS origins outside the LINGO allowlist', () => {
+  assert.throws(() => createLingoAIClient({ baseUrl: 'https://attacker.example', getIdToken: async () => 'x'.repeat(24) }), TypeError);
+});
