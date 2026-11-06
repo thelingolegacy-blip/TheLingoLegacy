@@ -35,8 +35,8 @@ export async function handleAskLingoRequest(request, env, options = {}) {
   }
 
   let raw;
-  try { raw = await request.text(); } catch { return json({ ok: false, code: 'INVALID_REQUEST' }, 400); }
-  if (new TextEncoder().encode(raw).byteLength > MAX_BODY_BYTES) return json({ ok: false, code: 'REQUEST_TOO_LARGE' }, 413);
+  try { raw = await readBodyLimited(request, MAX_BODY_BYTES); } catch { return json({ ok: false, code: 'INVALID_REQUEST' }, 400); }
+  if (raw === null) return json({ ok: false, code: 'REQUEST_TOO_LARGE' }, 413);
   let body;
   try { body = JSON.parse(raw); } catch { return json({ ok: false, code: 'INVALID_JSON' }, 400); }
 
@@ -93,4 +93,29 @@ function json(body, status) {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
   });
+}
+
+async function readBodyLimited(request, maxBytes) {
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return new TextDecoder().decode(bytes);
 }
