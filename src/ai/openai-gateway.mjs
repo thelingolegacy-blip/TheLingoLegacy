@@ -91,8 +91,19 @@ export async function handleLingoAIRequest(request, env, fetchImpl = fetch) {
     }, 502);
   }
 
-  const outputText = typeof payload.output_text === 'string' ? payload.output_text : '';
+  const outputText = extractOutputText(payload);
   return json({ ok: true, model, output_text: outputText });
+}
+
+function extractOutputText(payload) {
+  if (typeof payload?.output_text === 'string') return payload.output_text;
+  if (!Array.isArray(payload?.output)) return '';
+  return payload.output
+    .filter((item) => item?.type === 'message' && Array.isArray(item.content))
+    .flatMap((item) => item.content)
+    .filter((part) => part?.type === 'output_text' && typeof part.text === 'string')
+    .map((part) => part.text)
+    .join('');
 }
 
 function json(value, status = 200) {
