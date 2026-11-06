@@ -19,11 +19,13 @@ on:
       - "observability/**"
       - "docs/architecture/DEVOPS-FOUNDATION.md"
       - "docs/runbooks/**"
+      - "design-previews/crimson-shadow/**"
       - "creative/**"
       - "assets/themes/**"
       - "assets/lingo-design-tokens.css"
       - "config/design/**"
       - "config/icons/**"
+      - "scripts/verify-crimson-shadow-preview.mjs"
       - "scripts/verify-creative-asset-manifest.mjs"
       - "scripts/verify-shared-design-system.mjs"
       - "CONTRIBUTING.md"
@@ -78,6 +80,9 @@ jobs:
 
       - name: Validate shared design system
         run: node scripts/verify-shared-design-system.mjs
+
+      - name: Validate Crimson Shadow preview contracts
+        run: node scripts/verify-crimson-shadow-preview.mjs
 
       - name: Validate Terraform without a backend or cloud credentials
         shell: bash
