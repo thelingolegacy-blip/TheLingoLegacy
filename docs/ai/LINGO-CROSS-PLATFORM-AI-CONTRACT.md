@@ -91,7 +91,7 @@ During the $0 phase, test UI rendering and client networking against local mocks
 - [x] Paid inference and billing approval are independent gates.
 - [x] Web, mobile, desktop, TV, and game-client boundaries documented.
 - [x] Server-side Firebase ID-token signature and core claim verification implemented in the isolated feature branch.
-- [ ] Genuine Firebase app options and Firebase project configuration independently verified.
+- [ ] Firebase Auth project ID is sourced from `.firebaserc` and set as a non-secret Worker variable; client app options remain placeholders.
 - [x] Authenticated askLINGO facade scaffold validates Firebase bearer identity and request shape; inference remains disabled.
 - [ ] Authenticated facade receives independent security review.
 - [ ] Shared edge rate limiting across Worker isolates, quotas, abuse controls, and request tracing implemented. Current in-memory limit is per isolate only.
