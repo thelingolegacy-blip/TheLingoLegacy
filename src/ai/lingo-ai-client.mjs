@@ -67,8 +67,10 @@ export function createLingoAIClient({ baseUrl, getIdToken, fetchImpl = fetch, ti
 function validateBaseUrl(value) {
   if (typeof value !== 'string' || !value.trim()) throw new TypeError('baseUrl is required.');
   const url = new URL(value);
-  if (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))) {
-    throw new TypeError('LINGO AI baseUrl must use HTTPS.');
+  const local = url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname);
+  const productionHost = ['thelingolegacy.com', 'www.thelingolegacy.com'].includes(url.hostname);
+  if (url.username || url.password || (!local && (url.protocol !== 'https:' || !productionHost || url.port))) {
+    throw new TypeError('LINGO AI baseUrl must use the approved LINGO HTTPS origin.');
   }
   return url.origin;
 }
