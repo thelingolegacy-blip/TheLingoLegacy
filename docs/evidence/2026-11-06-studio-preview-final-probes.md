@@ -49,3 +49,7 @@
 
 - `/apps/kottonscode/` returned the expected `Kotton’s Code — Cartoon Studio` page.
 - Browser Rendering forced lazy images to load and inspected their natural dimensions. All four unique world assets (`KottonsCode-world-1.jpeg` through `KottonsCode-world-4.jpeg`) completed successfully at 1024×1024.
+
+## Complete static page-data allowlist
+
+A same-origin Browser Rendering probe fetched all nine allowlisted static-export data routes. Every request returned HTTP 200, valid JSON, `__N_SSG: true`, and a `pageProps` object: `legacy`, `slots`, `arcade`, `library`, `media`, `world`, `lane`, `legacyxclub`, and `studio`.
