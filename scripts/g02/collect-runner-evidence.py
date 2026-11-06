@@ -313,7 +313,7 @@ def finalize() -> int:
                         sentinel_records.append(record)
                         api_job = api_canonical_jobs.get(record.get("job_id"))
                         if (api_job
-                                and record.get("sentinel_status") in ("PASS", "FAIL")
+                                and record.get("sentinel_status") == "PASS"
                                 and record.get("run_id") == int(RUN_ID)
                                 and record.get("commit_sha") == SHA
                                 and record.get("runner_name") == api_job.get("runner_name")
