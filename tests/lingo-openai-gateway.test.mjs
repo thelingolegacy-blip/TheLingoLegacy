@@ -14,6 +14,7 @@ test('status is explicitly zero-spend disabled by default', async () => {
   assert.equal(response.status, 200);
   assert.equal(body.mode, 'ZERO_SPEND_DISABLED');
   assert.equal(body.paid_inference_enabled, false);
+  assert.equal(body.key_configured, undefined);
 });
 
 test('paid inference is blocked before any upstream request', async () => {
@@ -80,4 +81,69 @@ test('oversized input is rejected without an upstream call', async () => {
   );
   assert.equal(response.status, 400);
   assert.equal(called, false);
+});
+
+test('status does not disclose credential configuration', async () => {
+  const response = await handleLingoAIRequest(
+    request('/api/v1/ai/status'),
+    { OPENAI_API_KEY: 'never-disclose-this' }
+  );
+  const body = await response.json();
+  assert.equal(JSON.stringify(body).includes('never-disclose-this'), false);
+  assert.equal(body.paid_inference_enabled, false);
+});
+
+test('wrong method is rejected', async () => {
+  const response = await handleLingoAIRequest(request('/api/v1/ai/responses', 'GET'), {});
+  assert.equal(response.status, 405);
+});
+
+test('unknown AI route is rejected', async () => {
+  const response = await handleLingoAIRequest(request('/api/v1/ai/unknown'), {});
+  assert.equal(response.status, 404);
+});
+
+test('non-JSON content type is rejected before upstream request', async () => {
+  let called = false;
+  const response = await handleLingoAIRequest(
+    new Request('https://lingo.test/api/v1/ai/responses', {
+      method: 'POST', headers: { 'content-type': 'text/plain', 'x-lingo-internal-token': 'caller-secret' }, body: 'hello'
+    }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' },
+    async () => { called = true; }
+  );
+  assert.equal(response.status, 415);
+  assert.equal(called, false);
+});
+
+test('invalid JSON is rejected before upstream request', async () => {
+  const response = await handleLingoAIRequest(
+    new Request('https://lingo.test/api/v1/ai/responses', {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-lingo-internal-token': 'caller-secret' }, body: '{'
+    }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' }
+  );
+  assert.equal(response.status, 400);
+});
+
+test('oversized declared body is rejected before reading upstream', async () => {
+  const response = await handleLingoAIRequest(
+    new Request('https://lingo.test/api/v1/ai/responses', {
+      method: 'POST', headers: { 'content-type': 'application/json', 'content-length': '17000', 'x-lingo-internal-token': 'caller-secret' }, body: '{}'
+    }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' }
+  );
+  assert.equal(response.status, 413);
+});
+
+test('upstream network failure returns sanitized error', async () => {
+  const response = await handleLingoAIRequest(
+    new Request('https://lingo.test/api/v1/ai/responses', {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-lingo-internal-token': 'caller-secret' }, body: JSON.stringify({ input: 'hello' })
+    }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', LINGO_AI_BILLING_APPROVED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' },
+    async () => { throw new Error('secret upstream details'); }
+  );
+  assert.equal(response.status, 502);
+  assert.equal(JSON.stringify(await response.json()).includes('secret upstream details'), false);
 });
