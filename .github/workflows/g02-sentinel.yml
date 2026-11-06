@@ -20,6 +20,8 @@ jobs:
   verify-g02-runner:
     name: Verify Self-Hosted Runner Dispatch
     # Keep the canonical label set. Do not remove lingo-g02 to bypass the gate.
+    # SECURITY HOLD: public-repository code must not execute on persistent G02.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
