@@ -1,0 +1,13 @@
+{
+  "name": "lingo-ai-master-bootstrap",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated Phase-0 LINGO AI Master router and evidence validation prototype",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
