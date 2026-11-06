@@ -62,3 +62,16 @@ The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava g
 ### Additional production gaps to close
 Authentication and account recovery; tenant/project isolation; policy engine; model/provider adapters; context and retrieval evaluation; durable conversation storage and user-controlled retention; voice activity detection and streaming speech; TTS/STT provider failover; avatar/lip-sync pipeline; moderation and abuse controls; cost budgets and rate limits; observability and incident response; accessibility and localization; backup/restore; mobile push notifications; automated security, integration, load, and browser tests; release evidence and rollback.
 
+
+## Master Chat and collaboration architecture
+
+The team collaboration and operations contracts are documented in:
+- [Master Chat architecture](MASTER_CHAT.md)
+- [Agent-to-agent collaboration and handoffs](COLLABORATION_PROTOCOL.md)
+- [Daily scheduling and portfolio continuity](DAILY_OPERATIONS.md)
+- [Capability-based tool catalog](TOOL_CATALOG.json)
+- [Message schema](schemas/message.schema.json)
+- [Task schema](schemas/task.schema.json)
+- [Runtime acceptance gates](RUNTIME_ACCEPTANCE.md)
+
+These files define the intended capabilities and server-side enforcement requirements. They do not indicate that persistent chat, agent runtimes, integrations, scheduling or tool execution are already connected. The console must remain in PREVIEW / RUNTIME NOT CONNECTED state until the runtime acceptance gates are executed and independently verified.
