@@ -67,3 +67,17 @@ test('rejects non-POST methods', async () => {
   const response = await handleAskLingoRequest(makeRequest({ method: 'GET' }), { FIREBASE_PROJECT_ID: 'lingo-legacy-production' });
   assert.equal(response.status, 405);
 });
+
+test('streaming oversized askLINGO body without content-length is rejected', async () => {
+  const stream = new ReadableStream({ start(controller) { controller.enqueue(new TextEncoder().encode('x'.repeat(9000))); controller.close(); } });
+  const response = await handleAskLingoRequest(
+    new Request('https://lingo.test/api/v1/ask-lingo/query', {
+      method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer test.firebase.token' },
+      body: stream, duplex: 'half'
+    }),
+    { FIREBASE_PROJECT_ID: 'lingo-legacy-production' },
+    { verifyToken: validIdentity }
+  );
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).code, 'REQUEST_TOO_LARGE');
+});
