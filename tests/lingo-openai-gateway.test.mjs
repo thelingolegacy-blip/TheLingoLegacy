@@ -70,6 +70,7 @@ test('enabled requests use Responses API and return output text', async () => {
   assert.equal(captured.options.headers.authorization, 'Bearer test-secret');
   assert.equal(JSON.parse(captured.options.body).model, 'gpt-6-astra');
   assert.equal(JSON.parse(captured.options.body).max_output_tokens, 512);
+  assert.equal(JSON.parse(captured.options.body).store, false);
 });
 
 test('oversized input is rejected without an upstream call', async () => {
