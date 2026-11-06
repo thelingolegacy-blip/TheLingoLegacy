@@ -3,6 +3,7 @@
 **Date:** 2026-11-06  
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
 **Branch:** `recovery/flagship-site-integration-2026-11-06`  
+**Draft PR:** [#488](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/488)  
 **Base:** `3923a08b77c8cc93ec5447e9623045318c825234`  
 **Disposition:** PROTECTED HOLD — recovery work is isolated; production remains unchanged.
 
