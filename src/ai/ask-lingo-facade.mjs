@@ -25,7 +25,7 @@ export async function handleAskLingoRequest(request, env, options = {}) {
   const match = authorization.match(/^Bearer ([A-Za-z0-9._~-]+)$/);
   if (!match) return json({ ok: false, code: 'AUTHENTICATION_REQUIRED' }, 401);
 
-  const projectId = env.FIREBASE_PROJECT_ID;
+  const projectId = env.FIREBASE_AUTH_PROJECT_ID;
   const verifier = options.verifyToken || verifyFirebaseIdToken;
   const identity = await verifier(match[1], projectId, options.verifierOptions || {});
   if (!identity?.ok || !identity.uid) {
