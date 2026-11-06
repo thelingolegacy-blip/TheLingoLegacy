@@ -1,11 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 /// Safe first-party askLINGO client. The caller supplies a Firebase ID-token
 /// provider; OpenAI credentials and the private Worker token never belong here.
 class LingoAiClient {
+  factory LingoAiClient.fromFirebaseAuth({
+    required String baseUrl,
+    FirebaseAuth? auth,
+    http.Client? httpClient,
+    Duration timeout = const Duration(seconds: 15),
+  }) {
+    final firebaseAuth = auth ?? FirebaseAuth.instance;
+    return LingoAiClient(
+      baseUrl: baseUrl,
+      getIdToken: () async => firebaseAuth.currentUser?.getIdToken(),
+      httpClient: httpClient,
+      timeout: timeout,
+    );
+  }
+
   LingoAiClient({
     required String baseUrl,
     required Future<String?> Function() getIdToken,
