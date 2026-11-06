@@ -8,17 +8,15 @@
     "metallicSlate": "#273246",
     "gold": "#f7c84b",
     "goldSoft": "#fff2a8",
-    "royalPurple": "#6b2dff",
-    "royalPurpleSoft": "#9b7bff",
-    "cyan": "#56efff",
-    "neonLime": "#6bff8b",
     "text": "#fff9e8",
     "muted": "#c9b98c",
     "dim": "#8d8064",
     "success": "#6bff8b",
     "warning": "#ffbf5f",
     "danger": "#ff6b7a",
-    "focus": "#56efff"
+    "focus": "#f7c84b",
+    "carbon": "#15171d",
+    "electricGold": "#f7c84b"
   },
   "typography": {
     "headline": "Inter, system-ui, sans-serif",
@@ -76,7 +74,7 @@
   "elevation": {
     "panel": "0 18px 56px rgba(0,0,0,.34)",
     "goldGlow": "0 0 28px rgba(247,200,75,.18)",
-    "purpleGlow": "0 0 34px rgba(107,45,255,.20)"
+    "slateGlow": "0 0 34px rgba(39,50,70,.24)"
   },
   "motion": {
     "fastMs": 140,
