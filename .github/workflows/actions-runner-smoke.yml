@@ -14,6 +14,8 @@ concurrency:
 
 jobs:
   smoke:
+    # SECURITY HOLD: public-repository workflows cannot probe the privileged persistent G02 host.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
