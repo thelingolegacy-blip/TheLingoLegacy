@@ -3,12 +3,238 @@
   "network": "LINGOlegacy AI Agent Network",
   "runtime_state": "not_connected",
   "agents": [
-    {"id":"dusse-1","name":"Dusse 1.0","family":"Dusse","generation":"1.0","status":"planned","role":"Founding conversational assistant, voice interaction, and user support","capabilities":["conversation","voice_interface","user_support"],"permissions_profile":"assistant_read_only"},
-    {"id":"dusse-2","name":"Dusse 2.0","family":"Dusse","generation":"2.0","status":"planned","role":"Advanced reasoning, orchestration, research, and complex task planning","capabilities":["reasoning","orchestration","research","task_planning"],"permissions_profile":"advanced_assistant_reviewed"},
-    {"id":"zay-1","name":"Zay 1.0","family":"Zay","generation":"1.0","status":"planned","role":"Founding companion, knowledge retrieval, conversation, and independent second opinions","capabilities":["conversation","knowledge_retrieval","comparison"],"permissions_profile":"assistant_read_only"},
-    {"id":"zay-2","name":"Zay 2.0","family":"Zay","generation":"2.0","status":"planned","role":"Advanced analysis, technical assistance, and cross-agent collaboration","capabilities":["analysis","technical_assistance","collaboration"],"permissions_profile":"advanced_assistant_reviewed"},
-    {"id":"ava-1","name":"Ava 1.0","family":"Ava","generation":"1.0","status":"planned","role":"Administration, organization, scheduling, and operational assistance","capabilities":["organization","scheduling","administration"],"permissions_profile":"operations_read_only"},
-    {"id":"ava-2","name":"Ava 2.0","family":"Ava","generation":"2.0","status":"planned","role":"Workflow automation, coordination, and specialized operations","capabilities":["workflow_design","coordination","automation"],"permissions_profile":"operations_reviewed"}
+    {
+      "id": "dusse-1",
+      "name": "Dusse 1.0",
+      "family": "Dusse",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Founding conversational assistant, voice interaction, and user support",
+      "capabilities": [
+        "conversation",
+        "voice_interface",
+        "user_support"
+      ],
+      "permissions_profile": "assistant_read_only"
+    },
+    {
+      "id": "dusse-2",
+      "name": "Dusse 2.0",
+      "family": "Dusse",
+      "generation": "2.0",
+      "status": "planned",
+      "role": "Advanced reasoning, orchestration, research, and complex task planning",
+      "capabilities": [
+        "reasoning",
+        "orchestration",
+        "research",
+        "task_planning"
+      ],
+      "permissions_profile": "advanced_assistant_reviewed"
+    },
+    {
+      "id": "zay-1",
+      "name": "Zay 1.0",
+      "family": "Zay",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Founding companion, knowledge retrieval, conversation, and independent second opinions",
+      "capabilities": [
+        "conversation",
+        "knowledge_retrieval",
+        "comparison"
+      ],
+      "permissions_profile": "assistant_read_only"
+    },
+    {
+      "id": "zay-2",
+      "name": "Zay 2.0",
+      "family": "Zay",
+      "generation": "2.0",
+      "status": "planned",
+      "role": "Advanced analysis, technical assistance, and cross-agent collaboration",
+      "capabilities": [
+        "analysis",
+        "technical_assistance",
+        "collaboration"
+      ],
+      "permissions_profile": "advanced_assistant_reviewed"
+    },
+    {
+      "id": "ava-1",
+      "name": "Ava 1.0",
+      "family": "Ava",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Administration, organization, scheduling, and operational assistance",
+      "capabilities": [
+        "organization",
+        "scheduling",
+        "administration"
+      ],
+      "permissions_profile": "operations_read_only"
+    },
+    {
+      "id": "ava-2",
+      "name": "Ava 2.0",
+      "family": "Ava",
+      "generation": "2.0",
+      "status": "planned",
+      "role": "Workflow automation, coordination, and specialized operations",
+      "capabilities": [
+        "workflow_design",
+        "coordination",
+        "automation"
+      ],
+      "permissions_profile": "operations_reviewed"
+    },
+    {
+      "id": "host-1",
+      "name": "Host · 1.0",
+      "family": "Host",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Central network host and orchestrator; routes work, coordinates agents, maintains handoffs and approval queue",
+      "capabilities": [
+        "orchestration",
+        "routing",
+        "delegation",
+        "approval_queue"
+      ],
+      "permissions_profile": "orchestrator_no_self_approval"
+    },
+    {
+      "id": "research-1",
+      "name": "Research Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Research and knowledge librarian; source discovery, authorized retrieval, citations, and knowledge indexing",
+      "capabilities": [
+        "research",
+        "knowledge_retrieval",
+        "source_validation",
+        "citations"
+      ],
+      "permissions_profile": "specialist_read_only"
+    },
+    {
+      "id": "engineering-1",
+      "name": "Engineering Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Engineering and integrations; code drafts, architecture proposals, API integration plans, and implementation support",
+      "capabilities": [
+        "engineering",
+        "code_drafting",
+        "integration_planning"
+      ],
+      "permissions_profile": "engineering_draft_only"
+    },
+    {
+      "id": "security-1",
+      "name": "Security Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Security and privacy; threat modeling, configuration review, access analysis, and privacy risk detection",
+      "capabilities": [
+        "threat_modeling",
+        "security_review",
+        "privacy_review",
+        "access_analysis"
+      ],
+      "permissions_profile": "security_review_only"
+    },
+    {
+      "id": "qa-1",
+      "name": "QA Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Quality and release assurance; test plans, regression review, CI evidence inspection, and release readiness recommendations",
+      "capabilities": [
+        "test_planning",
+        "regression_analysis",
+        "ci_evidence_review",
+        "release_assurance"
+      ],
+      "permissions_profile": "qa_evidence_read_only"
+    },
+    {
+      "id": "creative-1",
+      "name": "Creative Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Creative studio; brand systems, visual direction, image and audio production briefs, and media workflows",
+      "capabilities": [
+        "brand_design",
+        "visual_direction",
+        "audio_workflows",
+        "media_planning"
+      ],
+      "permissions_profile": "creative_draft_only"
+    },
+    {
+      "id": "community-1",
+      "name": "Community Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Community and customer support; member guidance, help content, and moderation triage",
+      "capabilities": [
+        "member_support",
+        "help_content",
+        "moderation_triage"
+      ],
+      "permissions_profile": "community_support_reviewed"
+    },
+    {
+      "id": "operations-1",
+      "name": "Operations Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Business operations; project coordination, process documentation, and workflow design",
+      "capabilities": [
+        "project_coordination",
+        "documentation",
+        "workflow_design"
+      ],
+      "permissions_profile": "operations_read_only"
+    },
+    {
+      "id": "analytics-1",
+      "name": "Analytics Bot",
+      "family": "Specialist",
+      "generation": "1.0",
+      "status": "planned",
+      "role": "Data and analytics; metric definitions, dashboard plans, measurement, and reporting",
+      "capabilities": [
+        "metric_design",
+        "dashboard_planning",
+        "analysis",
+        "reporting"
+      ],
+      "permissions_profile": "analytics_read_only"
+    }
   ],
-  "policy": {"shared_knowledge":"scoped_by_project_and_role","cross_agent_handoffs":"explicitly_routed_and_audited","production_mutations":"human_approval_required","secret_access":"never_exposed_to_agent_prompts_or_logs","agent_self_approval":false}
+  "policy": {
+    "shared_knowledge": "scoped_by_project_and_role",
+    "cross_agent_handoffs": "explicitly_routed_and_audited",
+    "production_mutations": "human_approval_required",
+    "secret_access": "never_exposed_to_agent_prompts_or_logs",
+    "agent_self_approval": false,
+    "host_cannot_approve_own_actions": true
+  },
+  "network_team": {
+    "recommended_total_agents": 15,
+    "core_agents": 6,
+    "host_agents": 1,
+    "specialist_bots": 8,
+    "additional_names_to_be_chosen": 9,
+    "notes": "The nine new roles have stable IDs and role descriptions. Display names are placeholders pending the user's naming choices."
+  }
 }
