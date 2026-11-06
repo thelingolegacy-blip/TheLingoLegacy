@@ -1,4 +1,4 @@
-import { handleLingoAIRequest } from './src/ai/openai-gateway.js';
+import { handleLingoAIRequest } from './src/ai/openai-gateway.mjs';
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
