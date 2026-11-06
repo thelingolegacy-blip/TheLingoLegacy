@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/ai-agent-message.schema.json",
+  "title": "LINGOlegacy Agent Message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message_id",
+    "conversation_id",
+    "channel_id",
+    "sender_agent_id",
+    "message_type",
+    "body",
+    "sensitivity",
+    "created_at",
+    "correlation_id"
+  ],
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conversation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "channel_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sender_agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recipient_agent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "project_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "message_type": {
+      "enum": [
+        "message",
+        "help_request",
+        "handoff",
+        "decision",
+        "progress",
+        "blocker",
+        "evidence",
+        "approval_request",
+        "announcement"
+      ]
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20000
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sensitivity": {
+      "enum": [
+        "public_internal",
+        "project_confidential",
+        "restricted"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_decision_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

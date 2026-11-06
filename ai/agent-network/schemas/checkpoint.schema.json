@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/checkpoint.schema.json",
+  "title": "LINGOlegacy Checkpoint Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "checkpoint_id",
+    "project_id",
+    "work_item_id",
+    "stage_id",
+    "created_at_utc",
+    "created_by_agent_id",
+    "source",
+    "affected_scope",
+    "status",
+    "last_known_good",
+    "integrity"
+  ],
+  "properties": {
+    "checkpoint_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "work_item_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stage_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by_agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner_id": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "branch",
+        "commit_sha",
+        "dirty_worktree"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "commit_sha": {
+          "type": "string"
+        },
+        "dirty_worktree": {
+          "type": "boolean"
+        },
+        "lockfile_digest": {
+          "type": "string"
+        },
+        "build_version": {
+          "type": "string"
+        }
+      }
+    },
+    "affected_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "components",
+        "routes",
+        "services"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "environment_id": {
+      "type": "string"
+    },
+    "backup_reference": {
+      "type": "string"
+    },
+    "configuration_version_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parent_checkpoint_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_known_good": {
+      "type": "boolean"
+    },
+    "restore_instructions_ref": {
+      "type": "string"
+    },
+    "restore_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_tested",
+            "passed",
+            "failed",
+            "not_applicable"
+          ]
+        },
+        "verified_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verified_by": {
+          "type": "string"
+        },
+        "evidence_ref": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "baseline",
+        "pre_mutation",
+        "working",
+        "verified",
+        "accepted",
+        "released",
+        "failed",
+        "superseded"
+      ]
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "manifest_digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "enum": [
+            "sha256"
+          ]
+        },
+        "manifest_digest": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "artifact_digests": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}
