@@ -84,6 +84,9 @@ try {
   const protectedApi = await send('/api/runtime/probe/test');
   assert.equal(protectedApi.status, 403);
 
+  const appPrefixedApi = await send('/apps/runtime/api/runtime/probe/test');
+  assert.equal(appPrefixedApi.status, 403);
+
   const appPrefixedData = await send('/apps/universe/_next/data/build123/studio.json?slug=studio');
   assert.equal(appPrefixedData.status, 403);
 
