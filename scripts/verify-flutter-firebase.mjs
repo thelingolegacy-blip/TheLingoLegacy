@@ -22,7 +22,7 @@ if (clientConfig.storageBucket !== `${EXPECTED_PROJECT_ID}.appspot.com`) {
 }
 
 const source = fs.readFileSync('lib/firebase_options.dart', 'utf8');
-const platformProjectIds = [...source.matchAll(/projectId:\\s*'([^']+)'/g)].map((match) => match[1]);
+const platformProjectIds = [...source.matchAll(/projectId:\s*'([^']+)'/g)].map((match) => match[1]);
 if (platformProjectIds.length !== 4 || platformProjectIds.some((id) => id !== EXPECTED_PROJECT_ID)) {
   throw new Error(`Flutter platform project IDs must all equal ${EXPECTED_PROJECT_ID}; found ${platformProjectIds.join(', ') || 'none'}`);
 }
