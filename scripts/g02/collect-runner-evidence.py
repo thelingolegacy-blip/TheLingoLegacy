@@ -315,6 +315,7 @@ def finalize() -> int:
                         if (api_job
                                 and record.get("sentinel_status") == "PASS"
                                 and record.get("run_id") == int(RUN_ID)
+                                and record.get("correlation_id") == f"g02:{REPO}:{RUN_ID}:{ATTEMPT}:{record.get('job_id')}"
                                 and record.get("commit_sha") == SHA
                                 and record.get("runner_name") == api_job.get("runner_name")
                                 and record.get("runner_id") == api_job.get("runner_id")
@@ -326,6 +327,7 @@ def finalize() -> int:
         s for s in sentinel_records
         if s.get("sentinel_status") == "PASS"
         and s.get("run_id") == int(RUN_ID)
+        and s.get("correlation_id") == f"g02:{REPO}:{RUN_ID}:{ATTEMPT}:{s.get('job_id')}"
         and s.get("commit_sha") == SHA
         and s.get("runner_name") == "lingo-legacy-g02"
         and isinstance(s.get("runner_id"), int) and s["runner_id"] > 0
