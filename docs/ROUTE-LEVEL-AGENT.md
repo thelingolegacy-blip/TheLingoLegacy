@@ -151,3 +151,8 @@ Every route work package reports:
 The route agent starts in **READ-ONLY DISCOVERY**. The Gateway remains **BLOCKED** until the reported asset and route-data failures are reproduced, corrected in an isolated preview, and independently verified. No other product inherits Gateway acceptance. G02 remains **NO-GO / UNVERIFIED**. Production remains **HOLD**.
 
 This contract coordinates safe work; it does not claim that an agent is running continuously or that any provider integration is connected.
+
+
+## Current shared preview-host investigation
+
+The current read-only provenance record is maintained in [`docs/evidence/2026-11-06-studio-preview-host-provenance.md`](evidence/2026-11-06-studio-preview-host-provenance.md). Treat its findings as partial provenance, not a fix or release acceptance. In particular, the Cloudflare Worker Domain environment label and the deployed script's staging guard differ, and the live Worker source is not yet tied to a GitHub commit. Do not mutate the Worker, DNS, Worker Domain, AppDeploy applications, or production until source ownership, intended environment semantics, and reproducible route behavior are established.
