@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "requiredFields": [
+    "assetId",
+    "title",
+    "type",
+    "path",
+    "source",
+    "license",
+    "status",
+    "platforms",
+    "qualityChecks"
+  ],
+  "statuses": [
+    "CONCEPT",
+    "GENERATED_DRAFT",
+    "SOURCE_FOUND",
+    "INTEGRATED",
+    "QA_PASS",
+    "APPROVED_FOR_RELEASE"
+  ],
+  "types": [
+    "character-model",
+    "character-sheet",
+    "environment",
+    "prop",
+    "ui",
+    "texture",
+    "material",
+    "animation",
+    "vfx",
+    "music",
+    "sound-effect",
+    "voice",
+    "font",
+    "video"
+  ],
+  "rules": {
+    "originalIpOnly": true,
+    "licensedReferenceFranchises": "genre/quality reference only; no copied characters, names, maps, music, models, textures, animation or code",
+    "audio": "record composer/source, license, sample rate, loop points, loudness and mute/caption behavior",
+    "images": "record source file, dimensions, format, compression, alpha use and target resolutions",
+    "characters": "record canonical name, silhouette, palette, rig, animation set, expression set and narrative role",
+    "release": "no asset reaches APPROVED_FOR_RELEASE without provenance, license and in-game QA evidence"
+  },
+  "assets": []
+}
