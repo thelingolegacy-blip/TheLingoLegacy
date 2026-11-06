@@ -64,7 +64,7 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 - [x] Responses API adapter and bounded input validation implemented.
 - [x] Automated tests authored for disabled, missing-key, success, and input-limit paths.
 - [x] Local Node verification: gateway syntax check passed and 14/14 isolated tests passed against a local mirror of the branch gateway/test behavior.
-- [ ] Exact GitHub Actions run, logs, and uploaded artifact evidence.
+- [ ] GitHub Actions run 42292387394 (workflow run #34) ended `startup_failure` before job creation; job list and artifact list are empty. This is not test execution evidence. Several unrelated workflows on the same commit also show startup failures, so classify this as runner/platform startup blockage, not an application test result.
 - [ ] GitHub Actions CI execution evidence.
 - [ ] Independent security review, including shared-secret rotation, caller identity, and Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
