@@ -35,7 +35,7 @@ All clients use the first-party LINGO API boundary. No client calls api.openai.c
 5. The Worker enforces the independent paid-inference and billing-approval gates before calling OpenAI.
 6. Provider keys and internal service tokens are never returned to clients or written to logs.
 
-**Important:** The current Worker gateway uses a private server-to-server token and does not yet verify Firebase ID tokens. Do not expose that token to a browser, Flutter app, desktop app, TV, Unity, or Unreal build. Do not point clients directly at the internal inference endpoint.
+**Important:** The public askLINGO facade now verifies Firebase ID-token signatures and core claims before accepting requests. It does not perform token revocation or disabled-account checks yet. The internal inference route remains a separate server-to-server interface; never expose its token to browser, Flutter, desktop, TV, Unity, or Unreal clients.
 
 ## API endpoints
 
@@ -44,9 +44,9 @@ All clients use the first-party LINGO API boundary. No client calls api.openai.c
 
 The status route does not prove that an API key is valid, model access is enabled, or the upstream provider is reachable.
 
-## Client request contract (future authenticated facade)
+## Authenticated askLINGO facade (implemented but disabled)
 
-A future authenticated product facade may accept:
+`POST /api/v1/ask-lingo/query` accepts a Firebase bearer ID token and this bounded request:
 
 ```json
 {
@@ -67,7 +67,7 @@ It must return a stable product envelope, independent of provider-specific respo
 }
 ```
 
-This facade is **not implemented**. It must not forward the private internal token or provider credential to the client.
+The Worker validates the identity token, request fields, and message length, then returns HTTP 423 `ASKLINGO_DISABLED` while the zero-spend policy is active. It does not call a model or persist prompts. The facade's in-memory rate limit is per Worker isolate, not a shared global control. It must not forward the private internal token or provider credential to the client.
 
 ## No-cost development mode
 
