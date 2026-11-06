@@ -25,9 +25,10 @@ The Cloudflare Browser Rendering service successfully retrieved:
 - Universe static bundle `/_next/static/chunks/main-2b9941bf3dc05642.js` through the staging gateway (133,741 characters in browser text rendering).
 - Universe `/_next/static/chunks/pages/_app-ed0c91b30fe5a893.js` through the staging gateway.
 - Kotton's Code image `/resources/KottonsCode-world-1.jpeg` through the staging gateway (browser image document reports 1024×1024).
-- Kotton's Code image also resolves via `/apps/kottonscode/resources/KottonsCode-world-1.jpeg`.
+- Kotton's Code images `/resources/KottonsCode-world-1.jpeg` through `-4.jpeg` all resolve through the root-level alias; each browser image document reports 1024×1024.
+- Protected-path probes for `/_next/data/`, `/_next/image`, and `/api/runtime/...` returned the gateway's explicit denial response.
 
-The initial full-page HTML render for both apps completed successfully. This verifies static resource delivery, not full interactive application acceptance. Follow-up QA must verify the rendered app, all four Kotton assets, API/auth path denial, and GET/HEAD-only behavior.
+The initial full-page HTML render for both apps completed successfully. Static asset delivery and protected-path behavior are verified. Full interactive application acceptance and a live POST/HEAD-method probe remain pending; the Worker source retains the explicit GET/HEAD-only guard.
 
 ## Release disposition
 Staging repair only. Production remains protected. No merge/promotion authorization.
