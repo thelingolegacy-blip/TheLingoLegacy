@@ -36,7 +36,6 @@ The index.html file is an interface preview only. It has local agent selection a
 ## Acceptance standard
 A visual preview is not a live agent. A configured adapter is not a connected provider. A successful build is not production acceptance. Each integration must have executable tests, retrievable evidence, independent verification, and explicit human authorization before production activation.
 
-
 ## Expanded team recommendation
 The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava generations, one central Host, and eight specialist bots. The nine new roles have stable IDs and owner-selected public-facing names.
 
@@ -59,13 +58,7 @@ The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava g
 - Specialists work in draft/review mode by default. No autonomous financial, credential, destructive, legal-signoff, or production-release authority is granted.
 - The owner can rename any role without changing stable IDs, audit history, or permissions.
 
-### Additional production gaps to close
-Authentication and account recovery; tenant/project isolation; policy engine; model/provider adapters; context and retrieval evaluation; durable conversation storage and user-controlled retention; voice activity detection and streaming speech; TTS/STT provider failover; avatar/lip-sync pipeline; moderation and abuse controls; cost budgets and rate limits; observability and incident response; accessibility and localization; backup/restore; mobile push notifications; automated security, integration, load, and browser tests; release evidence and rollback.
-
-
-## Master Chat and collaboration architecture
-
-The team collaboration and operations contracts are documented in:
+### Master Chat and collaboration architecture
 - [Master Chat architecture](MASTER_CHAT.md)
 - [Agent-to-agent collaboration and handoffs](COLLABORATION_PROTOCOL.md)
 - [Daily scheduling and portfolio continuity](DAILY_OPERATIONS.md)
@@ -74,4 +67,9 @@ The team collaboration and operations contracts are documented in:
 - [Task schema](schemas/task.schema.json)
 - [Runtime acceptance gates](RUNTIME_ACCEPTANCE.md)
 
-These files define the intended capabilities and server-side enforcement requirements. They do not indicate that persistent chat, agent runtimes, integrations, scheduling or tool execution are already connected. The console must remain in PREVIEW / RUNTIME NOT CONNECTED state until the runtime acceptance gates are executed and independently verified.
+### One connected ecosystem and recovery architecture
+- [Ecosystem operating model](ECOSYSTEM_OPERATING_MODEL.md) — portfolio, worlds, landing pages, navigation handoffs and end-to-end pipeline.
+- [Distributed checkpoints and recovery](PIPELINE_CHECKPOINTS.md) — stage checkpoints, last-known-good references, restore hierarchy and safe daily reset.
+- [Health, collision detection and design measurements](HEALTH_COLLISION_DESIGN_SYSTEM.md) — health checks, route/dependency collisions, design tokens, colors, responsive sizes and accessibility.
+
+These files define architecture and acceptance contracts. They do not indicate that persistent chat, agent runtimes, integrations, scheduling, health telemetry, checkpoint storage or tool execution are already connected. The console must remain in PREVIEW / RUNTIME NOT CONNECTED state until runtime acceptance gates are executed and independently verified.
