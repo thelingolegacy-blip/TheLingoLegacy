@@ -98,13 +98,45 @@ test('KottonsCode world images proxy to the Kotton’s Code origin', async () =>
   let upstream;
   const response = await withMockFetch(async (request) => {
     upstream = request;
-    return new Response('jpeg-fixture', { status: 200, headers: { 'content-type': 'image/jpeg' } });
+    return new Response('png-fixture', { status: 200, headers: { 'content-type': 'image/png' } });
   }, () => worker.fetch(new Request('https://preview.example/resources/KottonsCode-world-3.jpeg')));
 
   assert.equal(upstream.url, 'https://kotton-s-code-cartoon-studio-509py3.v2.appdeploy.ai/resources/KottonsCode-world-3.jpeg');
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get('content-type'), 'image/jpeg');
-  assert.equal(await response.text(), 'jpeg-fixture');
+  assert.equal(response.headers.get('content-type'), 'image/png');
+  assert.equal(await response.text(), 'png-fixture');
+});
+
+test('healthz reports the proxy process as ready without claiming app-origin health', async () => {
+  let called = false;
+  const response = await withMockFetch(async () => {
+    called = true;
+    return new Response('unexpected');
+  }, () => worker.fetch(new Request('https://preview.example/healthz')));
+
+  assert.equal(response.status, 200);
+  assert.equal(called, false);
+  const body = await response.json();
+  assert.equal(body.status, 'ready');
+  assert.equal(body.mode, 'read-only');
+  assert.equal(body.routeCount, 16);
+});
+
+test('healthz/apps reports aggregate failure when registered app origins return 403', async () => {
+  const requested = [];
+  const response = await withMockFetch(async (request) => {
+    requested.push({ url: request.url, method: request.method, redirect: request.redirect });
+    return new Response(null, { status: 403 });
+  }, () => worker.fetch(new Request('https://preview.example/healthz/apps')));
+
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(requested.length, 16);
+  assert.equal(body.checked, 16);
+  assert.equal(body.ok, false);
+  assert.equal(body.checks.length, 16);
+  assert.ok(body.checks.every(check => check.status === 403 && check.ok === false));
+  assert.ok(requested.every(request => request.method === 'HEAD' && request.redirect === 'manual'));
 });
 
 test('read-only guard rejects mutation methods without calling an origin', async () => {
