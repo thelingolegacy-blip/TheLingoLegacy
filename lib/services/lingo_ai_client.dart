@@ -87,9 +87,11 @@ class LingoAiClient {
 
   static Uri _buildEndpoint(String baseUrl) {
     final uri = Uri.tryParse(baseUrl);
-    if (uri == null || !uri.hasAuthority ||
-        !(uri.scheme == 'https' || (uri.scheme == 'http' && (uri.host == 'localhost' || uri.host == '127.0.0.1')))) {
-      throw ArgumentError('LINGO AI baseUrl must be an HTTPS URL.');
+    final local = uri != null && uri.scheme == 'http' && (uri.host == 'localhost' || uri.host == '127.0.0.1');
+    final productionHost = uri != null && (uri.host == 'thelingolegacy.com' || uri.host == 'www.thelingolegacy.com');
+    if (uri == null || !uri.hasAuthority || uri.userInfo.isNotEmpty ||
+        (!local && (uri.scheme != 'https' || !productionHost || uri.hasPort && uri.port != 443))) {
+      throw ArgumentError('LINGO AI baseUrl must use the approved LINGO HTTPS origin.');
     }
     return uri.replace(path: '/api/v1/ask-lingo/query', query: null, fragment: null);
   }
