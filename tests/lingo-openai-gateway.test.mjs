@@ -74,8 +74,8 @@ test('enabled requests use Responses API and return output text', async () => {
 test('oversized input is rejected without an upstream call', async () => {
   let called = false;
   const response = await handleLingoAIRequest(
-    request('/api/v1/ai/responses', 'POST', { input: 'x'.repeat(4001) }),
-    { LINGO_AI_PAID_API_ENABLED: 'true', OPENAI_API_KEY: 'test-secret' },
+    new Request('https://lingo.test/api/v1/ai/responses', { method: 'POST', headers: { 'content-type': 'application/json', 'x-lingo-internal-token': 'caller-secret' }, body: JSON.stringify({ input: 'x'.repeat(4001) }) }),
+    { LINGO_AI_PAID_API_ENABLED: 'true', OPENAI_API_KEY: 'test-secret', LINGO_AI_INTERNAL_TOKEN: 'caller-secret' },
     async () => { called = true; }
   );
   assert.equal(response.status, 400);
