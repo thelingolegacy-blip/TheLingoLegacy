@@ -7,6 +7,7 @@ Status: implementation scaffold; production integration and acceptance are NOT c
 - API spend is **$0 authorized**. Do not buy credits, enable automatic recharge, or issue paid API requests.
 - `LINGO_AI_PAID_API_ENABLED` must remain unset or `false`.
 - The gateway blocks inference before making a network request unless the paid-inference flag is explicitly enabled.
+- Paid requests additionally require a separate trusted server-to-server token in `LINGO_AI_INTERNAL_TOKEN` and the `x-lingo-internal-token` request header. Do not ship this token to public clients; integrate authenticated app backends before activation.
 - Enabling paid inference requires a separate, explicit founder approval and a documented budget. This document does not grant that approval.
 - Never put an API key in Git, client-side JavaScript, mobile applications, Unity/Unreal builds, public Worker variables, logs, issues, or chat messages.
 - Use a Cloudflare Worker secret for `OPENAI_API_KEY` only after paid use is approved. Do not configure it during the zero-spend phase.
@@ -52,10 +53,12 @@ The OpenAI Developers plugin is a development-tooling workflow for Codex and sup
 
 - [x] Zero-spend default and pre-network inference guard implemented.
 - [x] Server-only credential contract documented.
+- [x] Trusted server-to-server caller authentication required for paid inference.
+- [x] Output token ceiling applied to Responses API requests.
 - [x] Responses API adapter and bounded input validation implemented.
 - [x] Automated tests authored for disabled, missing-key, success, and input-limit paths.
 - [ ] CI execution and passing test evidence.
-- [ ] Independent security review.
+- [ ] Independent security review, including shared-secret rotation, caller identity, and Cloudflare rate limiting before paid activation.
 - [ ] Account-level billing and auto-recharge settings visually verified.
 - [ ] Staging integration and cross-platform client contracts verified.
 - [ ] Founder approval for any paid API activation (not granted).
