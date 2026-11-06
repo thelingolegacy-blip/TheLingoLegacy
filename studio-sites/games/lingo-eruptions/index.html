@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#100b0d">
+  <meta name="description" content="LINGO Lions Eruptions — a free volcanic glyph-chain puzzle prototype.">
+  <title>LINGO Lions Eruptions · Playable Prototype</title>
+  <style>
+    :root{color-scheme:dark;--bg:#100b0d;--panel:#1a1114;--line:#59301f;--gold:#f6bd55;--fire:#ff6b32;--text:#fff2dc;--muted:#bba99a;--green:#8fe0a2}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 110%,#8d2f18 0,#36151a 30%,#100b0d 68%);overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;inset:auto -10vw -18vh;width:120vw;height:55vh;pointer-events:none;z-index:-1;background:radial-gradient(ellipse,#f05a22aa 0,transparent 60%);filter:blur(34px);animation:lavaPulse 7s ease-in-out infinite alternate}
+    body:after{bottom:auto;top:-22vh;background:radial-gradient(ellipse,#54233288 0,transparent 60%);animation-delay:-3s}
+    @keyframes lavaPulse{to{transform:translateY(-18px) scale(1.06);opacity:.55}}
+    .shell{width:min(1120px,100%);margin:auto;padding:clamp(14px,3vw,30px)}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.12em;color:var(--gold)}.crest{width:48px;height:48px;border:1px solid #b97837;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#45221c,#160d11);font-size:26px;box-shadow:0 0 24px #f66a3244}
+    .brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.2em}
+    .pill{border:1px solid #5a412c;border-radius:999px;padding:7px 12px;color:var(--green);font-size:12px}
+    .hero{text-align:center;margin:8px 0 24px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.28em;text-transform:uppercase}.hero h1{font-family:Georgia,serif;font-size:clamp(34px,7vw,66px);line-height:.98;margin:9px 0;color:#ffcc72;text-shadow:0 3px 0 #7a301d,0 0 32px #f45d2d66}.hero p{color:var(--muted);margin:10px auto 0;max-width:620px}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+    .panel{background:linear-gradient(150deg,#21171aee,#130d10f5);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0008,inset 0 1px #ffffff0b}
+    .game-panel{padding:clamp(12px,2.5vw,22px)}.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.stat{padding:10px;border:1px solid #4b3027;border-radius:12px;background:#0f0b0d;text-align:center}.stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.stat strong{font-size:clamp(18px,3vw,25px);color:var(--gold);font-variant-numeric:tabular-nums}.stat .urgent{color:#ff7154}
+    .board-wrap{padding:10px;border-radius:16px;background:linear-gradient(135deg,#32191b,#140e12);border:1px solid #77432c;box-shadow:inset 0 0 28px #0009}
+    .board{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;touch-action:none;user-select:none}
+    .tile{aspect-ratio:1;border:1px solid #94603d;border-radius:11px;background:linear-gradient(145deg,#47302c,#20181c);font-size:clamp(20px,4vw,34px);display:grid;place-items:center;cursor:pointer;box-shadow:inset 0 1px #ffffff20,0 4px 7px #0007;transition:transform .12s,border-color .12s,filter .12s}
+    .tile:hover{filter:brightness(1.2)}.tile.selected{border:2px solid #ffd36b;background:linear-gradient(145deg,#885029,#4b211e);transform:scale(.94);box-shadow:0 0 18px #ffb74d99}
+    .tile:focus-visible,button:focus-visible{outline:3px solid #a9e9b4;outline-offset:2px}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.btn{border:1px solid #7d4c2b;border-radius:999px;background:#28171a;color:var(--text);padding:10px 15px;font-weight:700;cursor:pointer}.btn.primary{background:linear-gradient(110deg,#ff9d35,#c43b21);border-color:#ffc06a;color:#1a0d0a;box-shadow:0 5px 22px #e9572b44}.btn:disabled{opacity:.4;cursor:not-allowed}
+    .side{padding:18px}.side h2{font:700 19px Georgia,serif;color:var(--gold);margin:0 0 10px}.side p,.side li{color:var(--muted);font-size:13px}.side ol{padding-left:18px}.side li{margin:8px 0}.badge{display:inline-block;border:1px solid #72502f;border-radius:8px;padding:4px 7px;color:var(--gold);font-size:11px;margin:3px 4px 3px 0}
+    .status{margin-top:12px;min-height:48px;border-left:3px solid var(--fire);padding:8px 12px;background:#0c090b;border-radius:0 10px 10px 0;color:#f8d9b8;font-size:13px}
+    footer{text-align:center;color:#9b877b;font-size:11px;padding:24px 0 10px}
+    dialog{max-width:min(520px,calc(100% - 28px));background:#1b1216;color:var(--text);border:1px solid #9b6336;border-radius:16px;padding:22px}dialog::backdrop{background:#000b}
+    .reduced-motion *, .reduced-motion *:before,.reduced-motion *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .erupt .tile:not(.selected){animation:pop .22s ease-out}@keyframes pop{50%{transform:translateY(-4px) scale(1.04);filter:brightness(1.5)}}
+    @media(max-width:800px){.layout{grid-template-columns:1fr}.side{order:2}.pill{display:none}}
+    @media(max-width:420px){.shell{padding:12px}.board{gap:4px}.tile{border-radius:8px}.actions .btn{flex:1 1 42%}.hud{gap:5px}.stat{padding:8px 3px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand"><div class="crest" aria-hidden="true">🦁</div><div>LINGO LEGACY<small>LOYALTY • LEARNING • LEGACY</small></div></div>
+      <div class="pill">FREE PLAY · LOCAL PROTOTYPE</div>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">A volcanic glyph-chain adventure</div>
+      <h1>LINGO LIONS<br>ERUPTIONS</h1>
+      <p>Trace matching glyphs, unleash chain reactions, and awaken the Lion Wild. No purchases. No cash value. Just play.</p>
+    </section>
+    <section class="layout">
+      <section class="panel game-panel" aria-label="Game board">
+        <div class="hud">
+          <div class="stat"><span>Score</span><strong id="score">0</strong></div>
+          <div class="stat"><span>Best · This device</span><strong id="best">0</strong></div>
+          <div class="stat"><span>Time</span><strong id="timer">∞</strong></div>
+        </div>
+        <div class="board-wrap"><div id="board" class="board" role="group" aria-label="Seven by seven glyph board"></div></div>
+        <div class="status" id="status" role="status" aria-live="polite">Loading game…</div>
+        <div class="actions">
+          <button class="btn primary" id="detonate" disabled>Unleash Chain</button>
+          <button class="btn" id="clear">Clear Selection</button>
+          <button class="btn" id="restart">New Run</button>
+          <button class="btn" id="pause">Pause</button>
+        </div>
+      </section>
+      <aside class="panel side">
+        <h2>How to Play</h2>
+        <ol>
+          <li>Press and drag across neighboring glyphs of the same type, or tap adjacent matching tiles.</li>
+          <li>Connect at least three glyphs in one continuous path.</li>
+          <li>Unleash the chain to clear tiles and earn points.</li>
+          <li>Falling glyphs may create bonus cascades.</li>
+        </ol>
+        <div><span class="badge">Relaxed mode</span><span class="badge">Timed mode</span><span class="badge">Touch ready</span></div>
+        <h2 style="margin-top:20px">Game Controls</h2>
+        <div class="actions">
+          <button class="btn" id="mode">Relaxed · ∞</button>
+          <button class="btn" id="sound">Sound Off</button>
+          <button class="btn" id="motion">Motion Effects</button>
+          <button class="btn" id="help">Rules & Safety</button>
+        </div>
+        <p style="margin-top:18px">Your best score is stored locally on this device only. Online accounts, leaderboards, cloud saves and rewards are not connected in this prototype.</p>
+      </aside>
+    </section>
+    <footer>LINGOlegacy · Original free-play prototype · No payments, wagers, prizes or cash-out</footer>
+  </main>
+  <dialog id="helpDialog">
+    <h2>Rules & Player Safety</h2>
+    <p>Build a connected path of three or more matching glyphs. Longer chains score more. Falling glyphs can create automatic horizontal or vertical cascades.</p>
+    <p>Timed mode lasts 90 seconds. Relaxed mode has no timer. Sound and motion are optional. Your score is local demo data and has no monetary value.</p>
+    <button class="btn primary" id="closeHelp">Back to Game</button>
+  </dialog>
+  <script type="module" src="./game.mjs"></script>
+</body>
+</html>
