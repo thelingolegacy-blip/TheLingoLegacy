@@ -141,7 +141,9 @@ test('provider credentials are sent only in the provider-specific authorization 
     assert.equal(result.ok, true);
     assert.equal(requestHeaders.get(header), value);
     assert.equal(requestHeaders.get('content-type'), 'application/json');
-    assert.equal(requestHeaders.has('x-api-key'), providerId === 'claude' ? false : false);
+    assert.equal(requestHeaders.has('authorization'), ['openai', 'claude', 'grok'].includes(providerId));
+    assert.equal(requestHeaders.has('x-goog-api-key'), providerId === 'gemini');
+    assert.equal(requestHeaders.has('x-api-key'), false);
   }
 });
 
