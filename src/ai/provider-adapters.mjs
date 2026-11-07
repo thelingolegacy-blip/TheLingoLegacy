@@ -12,7 +12,8 @@ const PROVIDERS = Object.freeze({
     body: (model, message) => ({
       model,
       input: [{ role: 'user', content: [{ type: 'input_text', text: message }] }],
-      max_output_tokens: 1024
+      max_output_tokens: 1024,
+      store: false
     }),
     answer: (payload) => {
       if (typeof payload?.output_text === 'string') return payload.output_text;
@@ -28,7 +29,7 @@ const PROVIDERS = Object.freeze({
     modelEnv: 'ANTHROPIC_MODEL',
     enabledEnv: 'LLG_AI_PROVIDER_CLAUDE_ENABLED',
     endpoint: 'https://api.anthropic.com/v1/messages',
-    headers: (key) => ({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }),
+    headers: (key) => ({ authorization: `Bearer ${key}`, 'anthropic-version': '2023-06-01' }),
     body: (model, message) => ({
       model,
       max_tokens: 1024,
@@ -43,31 +44,42 @@ const PROVIDERS = Object.freeze({
     keyEnv: 'GEMINI_API_KEY',
     modelEnv: 'GEMINI_MODEL',
     enabledEnv: 'LLG_AI_PROVIDER_GEMINI_ENABLED',
-    endpoint: (model) => `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/interactions',
     headers: (key) => ({ 'x-goog-api-key': key }),
     body: (model, message) => ({
-      contents: [{ role: 'user', parts: [{ text: message }] }],
-      generationConfig: { maxOutputTokens: 1024 }
+      model,
+      input: message,
+      store: false
     }),
-    answer: (payload) => (payload?.candidates?.[0]?.content?.parts || [])
-      .filter((item) => typeof item?.text === 'string')
-      .map((item) => item.text)
-      .join('\n')
+    answer: (payload) => {
+      if (typeof payload?.output_text === 'string') return payload.output_text;
+      return (payload?.steps || [])
+        .filter((step) => step?.type === 'model_output')
+        .flatMap((step) => step?.content || [])
+        .filter((item) => item?.type === 'text' && typeof item.text === 'string')
+        .map((item) => item.text)
+        .join('\\n');
+    }
   },
   grok: {
     keyEnv: 'XAI_API_KEY',
     modelEnv: 'XAI_MODEL',
     enabledEnv: 'LLG_AI_PROVIDER_GROK_ENABLED',
-    endpoint: 'https://api.x.ai/v1/chat/completions',
+    endpoint: 'https://api.x.ai/v1/responses',
     headers: (key) => ({ authorization: `Bearer ${key}` }),
     body: (model, message) => ({
       model,
-      messages: [{ role: 'user', content: message }],
-      max_tokens: 1024
+      input: message,
+      max_output_tokens: 1024,
+      store: false
     }),
     answer: (payload) => {
-      const value = payload?.choices?.[0]?.message?.content;
-      return typeof value === 'string' ? value : '';
+      if (typeof payload?.output_text === 'string') return payload.output_text;
+      return (payload?.output || [])
+        .flatMap((item) => item?.content || [])
+        .filter((item) => item?.type === 'output_text' && typeof item.text === 'string')
+        .map((item) => item.text)
+        .join('\\n');
     }
   }
 });
