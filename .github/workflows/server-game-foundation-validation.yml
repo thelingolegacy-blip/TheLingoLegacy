@@ -1,0 +1,53 @@
+name: LINGO Server Game Foundation Validation
+
+on:
+  push:
+    branches:
+      - staging/server-authoritative-game-foundation-2026-11-07
+    paths:
+      - "src/server/**"
+      - "migrations/**"
+      - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/test-slot-wallet-migration.py"
+      - ".github/workflows/server-game-foundation-validation.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/server/**"
+      - "migrations/**"
+      - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/test-slot-wallet-migration.py"
+      - ".github/workflows/server-game-foundation-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-server-game-foundation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Syntax checks
+        run: |
+          node --check src/server/slot-engine.mjs
+          node --check src/server/d1-slot-service.mjs
+      - name: Deterministic engine tests
+        run: node --test scripts/tests/server-slot-engine.test.mjs
+      - name: SQLite migration and ledger tests
+        run: python3 scripts/tests/test-slot-wallet-migration.py
