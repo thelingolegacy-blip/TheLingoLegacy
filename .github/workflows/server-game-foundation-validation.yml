@@ -5,19 +5,27 @@ on:
     branches:
       - staging/server-authoritative-game-foundation-2026-11-07
     paths:
+      - "cloudflare/workers/**"
+      - "src/auth/**"
       - "src/server/**"
       - "migrations/**"
+      - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
+      - "wrangler.game-engine-staging.jsonc"
       - ".github/workflows/server-game-foundation-validation.yml"
   pull_request:
     branches:
       - main
     paths:
+      - "cloudflare/workers/**"
+      - "src/auth/**"
       - "src/server/**"
       - "migrations/**"
+      - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
+      - "wrangler.game-engine-staging.jsonc"
       - ".github/workflows/server-game-foundation-validation.yml"
   workflow_dispatch:
 
@@ -45,8 +53,12 @@ jobs:
           python-version: "3.x"
       - name: Syntax checks
         run: |
+          node --check cloudflare/workers/lingo-game-engine-staging.mjs
           node --check src/server/slot-engine.mjs
           node --check src/server/d1-slot-service.mjs
+          node --check src/auth/firebase-id-token.mjs
+      - name: Worker route and authentication tests
+        run: node --test scripts/tests/lingo-game-worker.test.mjs
       - name: Deterministic engine tests
         run: node --test scripts/tests/server-slot-engine.test.mjs
       - name: SQLite migration and ledger tests
