@@ -98,6 +98,13 @@ jobs:
           node --check scripts/run-static-gates.mjs
           node scripts/run-static-gates.mjs 2>&1 | tee static-gate-stack.log
 
+      - name: Validate staging Worker configuration (dry-run only)
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.staging.jsonc 2>&1 | tee staging-wrangler-dry-run.log
+
       - name: Upload validation evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -113,5 +120,6 @@ jobs:
             static-gate-stack.log
             static-gate-results.json
             static-gate-*.log
+            staging-wrangler-dry-run.log
           if-no-files-found: warn
           retention-days: 14
