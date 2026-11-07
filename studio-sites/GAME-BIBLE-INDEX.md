@@ -17,7 +17,7 @@ Start here: [Master Game Tree & Design Bible](GAME-MASTER-TREE.md)
 - [Lingo Eruptions](games/lingo-eruptions.md)
 - [Cashman Lingo Mania](games/cashman-lingo-mania.md)
 
-## Shared design documents
+## Architecture and execution standards\n- [LINGO MASTER Architecture & Governance Standard](../docs/LLG-MASTER-ARCHITECTURE-STANDARD.md)\n- [LLG Application Architecture Register](../docs/LLG-APPLICATION-ARCHITECTURE-REGISTER.md)\n- [GDeveloper Game Development Execution Standard](GAME-DEVELOPMENT-EXECUTION-STANDARD.md)\n- [LLG Tech Corps AI & Game Development Foundation](../docs/LLG-TECH-CORPS-FOUNDATION.md)\n\n## Shared design documents
 - [Universe storyboard pack](storyboards/UNIVERSE-STORYBOARD-PACK.md)
 - [Economy and promotions specification](ECONOMY-AND-PROMOTIONS-SPEC.md)
 - [Player dashboard prototype](dashboard/index.html)
