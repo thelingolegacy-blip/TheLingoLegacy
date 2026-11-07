@@ -77,7 +77,8 @@ These results verify the D1 schema and ledger-trigger behavior in the dedicated 
 
 - Worker version 2 and its 100% staging deployment are confirmed by Cloudflare control-plane records.
 - The workers.dev subdomain is enabled. An external HTTP probe of `/healthz` was not successfully retrieved through the available browser/network path in this session; runtime endpoint acceptance remains pending.
-- Local Node tests cover the Worker health response, missing-token 401 behavior, and unknown-route 404 behavior.
+- Local Node validation: 13/13 tests passed across Firebase JWT signature/claim validation, Worker health/auth-fail-closed routing, and game-engine primitives.
+- Local Python SQLite migration/ledger validation passed: migration rerun, ledger updates, overdraft rollback, and append-only protections.
 - GitHub Actions for the branch still conclude `startup_failure` with no executed jobs. Local tests are not a substitute for CI evidence.
 - The Cloudflare version is annotated with the exact GitHub source commit. A successful Wrangler CI build and provider-executed test run remain outstanding.
 - Firebase browser client configuration still contains placeholders elsewhere in the repository. No client login flow or authenticated frontend integration is certified by this staging Worker.
