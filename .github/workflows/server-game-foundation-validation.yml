@@ -9,6 +9,7 @@ on:
       - "src/auth/**"
       - "src/server/**"
       - "migrations/**"
+      - "scripts/tests/firebase-id-token.test.mjs"
       - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
@@ -22,6 +23,7 @@ on:
       - "src/auth/**"
       - "src/server/**"
       - "migrations/**"
+      - "scripts/tests/firebase-id-token.test.mjs"
       - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
@@ -57,6 +59,8 @@ jobs:
           node --check src/server/slot-engine.mjs
           node --check src/server/d1-slot-service.mjs
           node --check src/auth/firebase-id-token.mjs
+      - name: Firebase identity verification tests
+        run: node --test scripts/tests/firebase-id-token.test.mjs
       - name: Worker route and authentication tests
         run: node --test scripts/tests/lingo-game-worker.test.mjs
       - name: Deterministic engine tests
