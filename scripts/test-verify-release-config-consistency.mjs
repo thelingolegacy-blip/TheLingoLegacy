@@ -49,7 +49,7 @@ const rootFiles = {
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/g02-self-hosted-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
+  '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
   'docker/README.md': 'application image intentionally not defined; does not publish an image',
