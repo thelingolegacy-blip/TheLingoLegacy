@@ -69,3 +69,7 @@ A title can move from design to implementation only with an approved brief and e
 6. rollback, monitoring and support plan.
 
 **Current release authority:** PROTECTED HOLD; G02 FAIL / UNVERIFIED; downstream gates remain held. This register does not authorize merge, deployment, monetization, prize activation or release.
+
+## Static review evidence
+
+The 13 located individual title specifications passed structural presence checks (6/6 required sections each). See [Game Specification Static Review Evidence](../docs/evidence/2026-11-07-game-spec-static-review.md). This is document validation only; no gameplay/runtime test or independent acceptance is claimed.
