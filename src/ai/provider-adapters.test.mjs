@@ -176,3 +176,14 @@ test('comparison returns partial failure without forwarding provider output', as
   assert.equal(result.results[0].answer, 'OpenAI-only answer');
   assert.equal(result.results[1].code, 'AI_PROVIDER_UPSTREAM_ERROR');
 });
+
+
+test('provider timeout aborts the request and returns a bounded timeout error', async () => {
+  const result = await invokeAiProvider('openai', 'Timeout test', configuredEnv, {
+    timeoutMs: 1000,
+    fetchImpl: async (_url, options) => new Promise((_resolve, reject) => {
+      options.signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+    })
+  });
+  assert.deepEqual(result, { ok: false, status: 504, code: 'AI_PROVIDER_TIMEOUT' });
+});
