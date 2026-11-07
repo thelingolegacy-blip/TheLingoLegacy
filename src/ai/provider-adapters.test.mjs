@@ -30,10 +30,10 @@ const cases = [
     { output_text: 'OpenAI answer' }, 'OpenAI answer'],
   ['claude', 'https://api.anthropic.com/v1/messages',
     { content: [{ type: 'text', text: 'Claude answer' }] }, 'Claude answer'],
-  ['gemini', 'https://generativelanguage.googleapis.com/v1beta/models/test-gemini-model:generateContent',
-    { candidates: [{ content: { parts: [{ text: 'Gemini answer' }] } }] }, 'Gemini answer'],
-  ['grok', 'https://api.x.ai/v1/chat/completions',
-    { choices: [{ message: { content: 'Grok answer' } }] }, 'Grok answer']
+  ['gemini', 'https://generativelanguage.googleapis.com/v1beta/interactions',
+    { steps: [{ type: 'model_output', content: [{ type: 'text', text: 'Gemini answer' }] }] }, 'Gemini answer'],
+  ['grok', 'https://api.x.ai/v1/responses',
+    { output_text: 'Grok answer' }, 'Grok answer']
 ];
 
 for (const [providerId, expectedUrl, payload, expectedAnswer] of cases) {
@@ -55,6 +55,7 @@ for (const [providerId, expectedUrl, payload, expectedAnswer] of cases) {
         : providerId === 'claude' ? 'ANTHROPIC_MODEL'
           : providerId === 'gemini' ? 'GEMINI_MODEL' : 'XAI_MODEL'
     ]);
+    if (['openai', 'gemini', 'grok'].includes(providerId)) assert.equal(JSON.parse(calledOptions.body).store, false);
     assert.equal(result.ok, true);
     assert.equal(result.provider, providerId);
     assert.equal(result.answer, expectedAnswer);
