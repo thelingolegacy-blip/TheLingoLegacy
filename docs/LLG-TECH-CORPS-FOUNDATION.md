@@ -132,3 +132,32 @@ For every code or game release:
 Every gate requires retrievable evidence tied to exact commit, build, environment, and artifact. A draft, proposed change, green status label, provider "ready" state, or successful source fetch is not acceptance.
 
 **Disposition:** foundation ready for technical review; provider activation, Firebase activation, game releases, production deployment, and production promotion remain gated.
+
+## Integrated organizational charter — retained from the original version
+
+The updated architecture extends, rather than replaces, the original LLG Tech Corps departmental charter. The original five departments remain the operating structure:
+
+1. **AI Systems** — LINGOai, askLINGO, provider adapters, model comparison, agent orchestration, retrieval, evaluations, and AI safety.
+2. **Software Engineering** — LINGOdev, web and mobile applications, APIs, platform engineering, developer experience, reliability, and application maintenance.
+3. **Cloud & Infrastructure** — Cloudflare edge, Firebase services, Google Cloud integrations, CI/CD, observability, data infrastructure, backups, and disaster recovery.
+4. **Cybersecurity** — identity and access management, secrets, threat monitoring, secure development, privacy controls, vulnerability management, incident response, and security assurance.
+5. **Research & Innovation** — emerging AI models, game-engine capabilities, prototypes, technical evaluation, performance research, and responsible adoption.
+
+**GDeveloper is the game-development discipline within Software Engineering, with a dedicated production pipeline and shared services.** It is not a Google product, model provider, or synonym for Google Developer Services. It collaborates with AI Systems for optional AI-assisted production while retaining independent game logic, deterministic gameplay, content ownership, and release gates.
+
+## GDeveloper portfolio alignment
+
+GDeveloper serves the LINGO game and interactive-entertainment portfolio, including:
+
+- **LINGOslots:** That's My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Cashman Lingo Mania, and Lingo Lions Eruptions.
+- **LINGOarcade:** Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly, and Jersey Shore: The Undead.
+- **LINGOlibrary interactive experiences:** KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel, and Legacy Legends.
+- Shared game platform capabilities: identity, profiles, save/progression, achievements, content catalog, asset pipeline, telemetry, moderation, accessibility, and support.
+
+Each title keeps its own game bible, source ownership, engine decision, art/audio provenance, test plan, release evidence, and production approval. Shared infrastructure must not collapse separate LINGO brands or intellectual properties into one game.
+
+## Updated version relationship
+
+This integrated charter is the consolidated successor to **LLG Tech Corps — Foundational Charter (Vision established)** and the earlier **LLG Tech Corps — Updated AI & Game Development Architecture**. It retains the five-department organizational model while adding the explicit four-provider AI gateway, independent Google Developer Services infrastructure role, and GDeveloper game-production discipline.
+
+The update does not supersede the LINGO master governance tree, existing product ownership, protected production controls, or title-specific release gates.
