@@ -29,7 +29,8 @@ jobs:
         run: |
           set -euo pipefail
           {
-            printf 'captured_at_utc=%s\n' "${GITHUB_WORKFLOW:-unknown}"
+            printf 'captured_at_utc=%s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            printf 'workflow=%s\n' "${GITHUB_WORKFLOW:-unknown}"
             printf 'event=%s\n' "${GITHUB_EVENT_NAME:-unknown}"
             printf 'ref=%s\n' "${GITHUB_REF:-unknown}"
             printf 'sha=%s\n' "${GITHUB_SHA:-unknown}"
