@@ -1,0 +1,47 @@
+name: LLG AI Provider Adapter Tests
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "src/ai/provider-adapters.mjs"
+      - "src/ai/provider-adapters.test.mjs"
+      - ".github/workflows/ai-provider-adapter-tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-provider-adapter-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  provider-adapter-tests:
+    name: Mocked provider adapter contract tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Execute provider adapter tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test --test-reporter spec src/ai/provider-adapters.test.mjs 2>&1 | tee provider-adapter-test.log
+
+      - name: Upload test execution log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-provider-adapter-tests-${{ github.run_id }}-${{ github.run_attempt }}
+          path: provider-adapter-test.log
+          if-no-files-found: error
+          retention-days: 14
