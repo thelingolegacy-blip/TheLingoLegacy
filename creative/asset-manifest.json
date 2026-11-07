@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "status": "working-draft",
+  "policy": "An empty manifest is not evidence that the asset library is complete. Assets with unknown provenance or rights must remain unapproved.",
+  "assets": []
+}
