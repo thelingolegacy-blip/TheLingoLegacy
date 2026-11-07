@@ -63,3 +63,7 @@ Each product plan must contain these headings or a linked equivalent:
 - `production`: live and independently verified for the stated scope.
 
 Do not upgrade a status based on a mock, screenshot, design document, repository folder or unverified endpoint alone.
+
+## Architecture review
+
+See the [Application-by-Application Architecture Review](LLG-APPLICATION-BY-APPLICATION-ARCHITECTURE-REVIEW.md) for source-based findings, conflicts, blockers and required closure evidence across all eight portfolio families.
