@@ -117,3 +117,60 @@ test('comparison rejects duplicate or oversized provider selections', async () =
   assert.equal(duplicate.code, 'AI_COMPARISON_SELECTION_INVALID');
   assert.equal(tooMany.code, 'AI_COMPARISON_SELECTION_INVALID');
 });
+
+
+test('provider credentials are sent only in the provider-specific authorization header', async () => {
+  const expected = {
+    openai: ['authorization', 'Bearer test-openai-key'],
+    claude: ['authorization', 'Bearer test-claude-key'],
+    gemini: ['x-goog-api-key', 'test-gemini-key'],
+    grok: ['authorization', 'Bearer test-grok-key']
+  };
+  for (const [providerId, [header, value]] of Object.entries(expected)) {
+    let requestHeaders;
+    const result = await invokeAiProvider(providerId, 'Header check', configuredEnv, {
+      fetchImpl: async (_url, options) => {
+        requestHeaders = new Headers(options.headers);
+        return jsonResponse(providerId === 'claude'
+          ? { content: [{ type: 'text', text: 'ok' }] }
+          : providerId === 'gemini'
+            ? { steps: [{ type: 'model_output', content: [{ type: 'text', text: 'ok' }] }] }
+            : { output_text: 'ok' });
+      }
+    });
+    assert.equal(result.ok, true);
+    assert.equal(requestHeaders.get(header), value);
+    assert.equal(requestHeaders.get('content-type'), 'application/json');
+    assert.equal(requestHeaders.has('x-api-key'), providerId === 'claude' ? false : false);
+  }
+});
+
+test('invalid JSON and empty upstream outputs fail closed', async () => {
+  const invalidJson = await invokeAiProvider('openai', 'Test prompt', configuredEnv, {
+    fetchImpl: async () => new Response('{', { status: 200 })
+  });
+  const emptyOutput = await invokeAiProvider('openai', 'Test prompt', configuredEnv, {
+    fetchImpl: async () => jsonResponse({ output: [] })
+  });
+  assert.equal(invalidJson.code, 'AI_PROVIDER_INVALID_RESPONSE');
+  assert.equal(emptyOutput.code, 'AI_PROVIDER_EMPTY_RESPONSE');
+});
+
+test('network exceptions are normalized and do not leak exception details', async () => {
+  const result = await invokeAiProvider('openai', 'Test prompt', configuredEnv, {
+    fetchImpl: async () => { throw new Error('secret-bearing transport detail'); }
+  });
+  assert.deepEqual(result, { ok: false, status: 502, code: 'AI_PROVIDER_UNAVAILABLE' });
+});
+
+test('comparison returns partial failure without forwarding provider output', async () => {
+  const result = await compareAiProviders(['openai', 'claude'], 'Independent prompt', configuredEnv, {
+    fetchImpl: async (url) => url.includes('anthropic')
+      ? jsonResponse({ error: { message: 'private detail' } }, 500)
+      : jsonResponse({ output_text: 'OpenAI-only answer' })
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.status, 207);
+  assert.equal(result.results[0].answer, 'OpenAI-only answer');
+  assert.equal(result.results[1].code, 'AI_PROVIDER_UPSTREAM_ERROR');
+});
