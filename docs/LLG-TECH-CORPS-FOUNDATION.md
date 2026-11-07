@@ -46,7 +46,7 @@ The first-party gateway owns authentication, provider selection, server-side cre
 - Every request has a bounded payload, authenticated identity where required, request correlation ID, provider selection, and server-enforced usage policy.
 - Provider errors are normalized; upstream response bodies, prompts, secrets, and stack traces are not returned to clients.
 - Timeouts and provider outages fail closed. There is no silent provider fallback.
-- Conversation persistence is off until retention, consent, deletion, access control, and applicable privacy review are accepted.
+- The application does not persist conversation content. OpenAI Responses, Gemini Interactions, and xAI Responses requests explicitly set `store: false`; Claude uses the stateless Messages API. Provider-side retention and data-processing terms still require review before activation.
 - Public chat does not grant developer, financial, release, or administrative permissions.
 - Provider spend remains disabled until an explicit budget and provider account authorization are in place.
 
@@ -55,7 +55,7 @@ The first-party gateway owns authentication, provider selection, server-side cre
 Global flag: `LLG_AI_ENABLED=true`  
 Provider flags: `LLG_AI_PROVIDER_OPENAI_ENABLED`, `LLG_AI_PROVIDER_CLAUDE_ENABLED`, `LLG_AI_PROVIDER_GEMINI_ENABLED`, `LLG_AI_PROVIDER_GROK_ENABLED`.
 
-Provider credentials and model names are separate server-side bindings. A provider is unavailable unless both the global and provider-specific flags are explicitly enabled and its key/model configuration is valid. All flags remain off by default.
+Provider credentials and model names are separate server-side bindings. A provider is unavailable unless both the global and provider-specific flags are explicitly enabled and its key/model configuration is valid. All flags remain off by default. The initial adapter uses OpenAI Responses, Anthropic Messages, Gemini Interactions, and xAI Responses APIs; API request/response contracts must be revalidated before each production activation.
 
 ## GDeveloper game-production system
 
