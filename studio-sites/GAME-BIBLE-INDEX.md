@@ -23,3 +23,4 @@ Start here: [Master Game Tree & Design Bible](GAME-MASTER-TREE.md)
 - [Player dashboard prototype](dashboard/index.html)
 
 **Status:** design baseline committed to the isolated development branch. Documents define scope and acceptance criteria; they do not claim every game is implemented or production certified.
+- [GDeveloper Title-Specific Game Validation Register](GAME-TITLE-VALIDATION-REGISTER.md)
