@@ -58,7 +58,7 @@ const PROVIDERS = Object.freeze({
         .flatMap((step) => step?.content || [])
         .filter((item) => item?.type === 'text' && typeof item.text === 'string')
         .map((item) => item.text)
-        .join('\\n');
+        .join('\n');
     }
   },
   grok: {
@@ -79,7 +79,7 @@ const PROVIDERS = Object.freeze({
         .flatMap((item) => item?.content || [])
         .filter((item) => item?.type === 'output_text' && typeof item.text === 'string')
         .map((item) => item.text)
-        .join('\\n');
+        .join('\n');
     }
   }
 });
