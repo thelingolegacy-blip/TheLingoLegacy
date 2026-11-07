@@ -29,8 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           {
-            printf 'captured_at_utc=%s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            printf 'workflow=%s\n' "${GITHUB_WORKFLOW:-unknown}"
+            printf 'captured_at_utc=%s\n' "${GITHUB_WORKFLOW:-unknown}"
             printf 'event=%s\n' "${GITHUB_EVENT_NAME:-unknown}"
             printf 'ref=%s\n' "${GITHUB_REF:-unknown}"
             printf 'sha=%s\n' "${GITHUB_SHA:-unknown}"
@@ -60,7 +59,10 @@ jobs:
           node-version: 22
 
       - name: Run Worker rate-limit regression tests
-        run: node scripts/tests/worker-rate-limit.test.mjs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/tests/worker-rate-limit.test.mjs 2>&1 | tee worker-rate-limit-tests.log
 
       - name: Sanitize retired provider surface
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
