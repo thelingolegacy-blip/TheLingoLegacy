@@ -1,9 +1,10 @@
 # LINGO Game Engine Staging — Live Resource and D1 Transaction Evidence
 
-**Captured:** 2026-11-07 (Cloudflare control-plane timestamps below are UTC)  
+**Captured:** 2026-11-07 (Cloudflare control-plane timestamps are UTC)  
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
 **Branch:** `staging/server-authoritative-game-foundation-2026-11-07`  
 **PR:** #498  
+**Source commit correlated to Worker version 2:** `6227d72d1af65ef83d79e41e18bd89dcc7d329c4`  
 **Environment:** Dedicated staging only  
 **Production mutation:** None
 
@@ -17,12 +18,14 @@
 | D1 jurisdiction | US |
 | D1 created region | ENAM |
 | Worker | `lingo-game-engine-staging` |
-| Worker version | 1 |
-| Worker version ID | `feb80240-f557-483f-b48c-c271a97a1da9` |
-| Deployment ID | `e984368f-45df-4a70-bf92-00683cdd9371` |
-| Traffic allocation | 100% of this isolated staging Worker |
+| Active Worker version | 2 |
+| Active Worker version ID | `feb07379-9517-4b06-9f47-5eb1b50aa309` |
+| Active deployment ID | `2b771227-9c7f-49a1-a935-9806646c7c09` |
+| Deployment traffic allocation | 100% of this isolated staging Worker |
 | workers.dev subdomain | Enabled; previews disabled |
 | Custom production routes | None |
+
+Worker version 2 carries Cloudflare annotations for the repository URL and source commit above. Its upload bundle normalizes relative module import paths for the Cloudflare module upload; the committed source remains the canonical implementation.
 
 Worker bindings observed from Cloudflare settings:
 - D1 binding `DB` → the dedicated staging D1 ID above.
@@ -72,11 +75,11 @@ These results verify the D1 schema and ledger-trigger behavior in the dedicated 
 
 ## Runtime and release limitations
 
-- Worker upload and 100% staging deployment are confirmed by Cloudflare control-plane records.
+- Worker version 2 and its 100% staging deployment are confirmed by Cloudflare control-plane records.
 - The workers.dev subdomain is enabled. An external HTTP probe of `/healthz` was not successfully retrieved through the available browser/network path in this session; runtime endpoint acceptance remains pending.
 - Local Node tests cover the Worker health response, missing-token 401 behavior, and unknown-route 404 behavior.
 - GitHub Actions for the branch still conclude `startup_failure` with no executed jobs. Local tests are not a substitute for CI evidence.
-- The Cloudflare upload preceded the final GitHub Worker wrapper commit; exact immutable source-to-version correlation and a Wrangler-built redeployment remain outstanding.
+- The Cloudflare version is annotated with the exact GitHub source commit. A successful Wrangler CI build and provider-executed test run remain outstanding.
 - Firebase browser client configuration still contains placeholders elsewhere in the repository. No client login flow or authenticated frontend integration is certified by this staging Worker.
 
 ## Safety boundary
