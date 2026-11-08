@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LLG Tech Corps AI Command Center prototype for The Lingo Legacy.">
+  <meta name="theme-color" content="#0b0b10">
+  <title>LLG Tech Corps — AI Command Center</title>
+  <style>
+    :root{color-scheme:dark;--bg:#09090e;--panel:#12121a;--panel2:#181821;--line:#34313d;--text:#f5f2f4;--muted:#aaa4af;--red:#d92e4b;--red2:#8f1e36;--gold:#e3bd70;--purple:#8d72bf;--green:#8bc7a1;--radius:18px}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#3b1422 0,transparent 35rem),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:inherit}.shell{width:min(1240px,calc(100% - 32px));margin:auto}.top{border-bottom:1px solid var(--line);background:#09090eea;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.nav{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 0}.brand{display:flex;gap:12px;align-items:center;font-weight:900;letter-spacing:.02em}.mark{width:38px;height:38px;border:1px solid #70404d;border-radius:12px;background:linear-gradient(145deg,#35111c,#111);display:grid;place-items:center;color:#f0c2ca;font-weight:1000}.nav small{color:var(--muted)}
+    .hero{padding:34px 0 24px;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;font-weight:900}.hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.04;letter-spacing:-.055em;margin:8px 0}.hero p{max-width:690px;color:var(--muted);margin:0}.lock{border:1px solid #7e3545;background:#2b111a;color:#ffdce3;border-radius:999px;padding:9px 13px;font-size:.78rem;font-weight:900;white-space:nowrap}
+    .notice{border:1px solid #735a32;background:#241d12;border-radius:14px;padding:12px 15px;color:#f1dfb9;margin:4px 0 20px}.notice strong{color:#ffdf9b}
+    .layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:18px;align-items:start}.side,.workspace,.card{border:1px solid var(--line);background:linear-gradient(155deg,#171720,#101016);border-radius:var(--radius)}.side{padding:12px;position:sticky;top:82px}.side h2{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;padding:8px 10px;margin:0}.mode{display:flex;align-items:center;gap:10px;width:100%;border:1px solid transparent;background:transparent;color:var(--muted);padding:12px;border-radius:12px;text-align:left;font:inherit;cursor:pointer}.mode:hover,.mode[aria-selected=true]{background:#29151d;border-color:#633041;color:var(--text)}.mode b{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:#292630;color:var(--gold);font-size:.78rem}.side-foot{border-top:1px solid var(--line);margin-top:12px;padding:12px 10px;color:var(--muted);font-size:.78rem}
+    .workspace{padding:clamp(16px,3vw,28px);min-height:570px}.panel-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:22px}.panel-head h2{font-size:1.55rem;letter-spacing:-.04em;margin:0 0 5px}.panel-head p{color:var(--muted);margin:0}.state{font-size:.72rem;color:#e5c98c;border:1px solid #65502e;border-radius:999px;padding:6px 10px;white-space:nowrap}
+    .providers{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 22px}.provider{border:1px solid var(--line);background:#0e0e14;border-radius:13px;padding:12px}.provider strong{display:block;font-size:.88rem}.provider span{display:block;color:var(--muted);font-size:.72rem;margin-top:4px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#bd8a51;margin-right:6px}
+    label{display:block;color:#d7d1da;font-size:.82rem;font-weight:800;margin:14px 0 7px}select,textarea,input{width:100%;border:1px solid #49434f;border-radius:12px;background:#0b0b11;color:var(--text);padding:12px;font:inherit}textarea{min-height:125px;resize:vertical}select:focus,textarea:focus,input:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:220px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{border:1px solid #5a4d51;border-radius:12px;background:#20161c;color:var(--text);padding:11px 15px;font:inherit;font-weight:850;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#e04a60,#92223b);border-color:#e04a60}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .result{margin-top:18px;border:1px dashed #554a55;border-radius:14px;padding:14px;background:#0b0b11;color:var(--muted);min-height:82px}.result strong{display:block;color:var(--gold);margin-bottom:5px}.result pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#ded7e2;font-size:.8rem;margin:8px 0 0}
+    .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{padding:16px}.card h3{font-size:1rem;margin:0 0 6px}.card p{margin:0;color:var(--muted);font-size:.86rem}.tag{display:inline-block;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-bottom:8px}
+    [hidden]{display:none!important}.foot{padding:25px 0 40px;color:var(--muted);font-size:.78rem}.foot a{color:#e9c47d}
+    @media(max-width:800px){.hero{display:block}.lock{display:inline-block;margin-top:14px}.layout{grid-template-columns:1fr}.side{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.side h2,.side-foot{grid-column:1/-1}.providers{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.shell{width:min(100% - 22px,1240px)}.side{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.panel-head{display:block}.state{display:inline-block;margin-top:10px}.providers{gap:7px}.provider{padding:9px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<header class="top"><div class="shell nav"><a class="brand" href="/" aria-label="The Lingo Legacy home"><span class="mark" aria-hidden="true">LLG</span><span>LLG TECH CORPS<br><small>AI Command Center</small></span></a><small>LLG-owned gateway architecture · provider-neutral</small></div></header>
+<main class="shell">
+  <section class="hero"><div><span class="eyebrow">AI Systems Division</span><h1>One command center.<br>Four independent models.</h1><p>LLG provides the control plane for AI Chat, AI Compare, AI Agents, and AI Developer. Provider adapters are isolated behind the LLG-owned server-side gateway.</p></div><span class="lock">PROTOTYPE · PROVIDERS OFF</span></section>
+  <div class="notice" role="status"><strong>Not connected to live AI.</strong> This interface is a source-only prototype. No prompt is sent to OpenAI, Claude, Gemini, or Grok; no credentials are present; no conversation is stored. The authenticated gateway route and runtime controls are not yet implemented.</div>
+  <section class="layout" aria-label="LLG AI workspace">
+    <nav class="side" aria-label="AI workspace modes">
+      <h2>Workspace</h2>
+      <button class="mode" type="button" data-tab="chat" aria-selected="true"><b>01</b> AI Chat</button>
+      <button class="mode" type="button" data-tab="compare" aria-selected="false"><b>02</b> AI Compare</button>
+      <button class="mode" type="button" data-tab="agents" aria-selected="false"><b>03</b> AI Agents</button>
+      <button class="mode" type="button" data-tab="developer" aria-selected="false"><b>04</b> AI Developer</button>
+      <div class="side-foot">LLG Tech Corps<br>AI Systems · Security · Research</div>
+    </nav>
+    <div class="workspace">
+      <div class="providers" aria-label="Provider connection status">
+        <div class="provider"><strong>OpenAI / GPT</strong><span><i class="dot"></i>Adapter source only</span></div>
+        <div class="provider"><strong>Anthropic / Claude</strong><span><i class="dot"></i>Adapter source only</span></div>
+        <div class="provider"><strong>Google / Gemini</strong><span><i class="dot"></i>Adapter source only</span></div>
+        <div class="provider"><strong>xAI / Grok</strong><span><i class="dot"></i>Adapter source only</span></div>
+      </div>
+      <section data-panel="chat">
+        <div class="panel-head"><div><h2>AI Chat</h2><p>Choose one provider. Keep the request inside LLG's server-side boundary.</p></div><span class="state">Gateway unavailable</span></div>
+        <div class="row"><div class="field"><label for="chat-provider">Provider</label><select id="chat-provider"><option>OpenAI / GPT</option><option>Anthropic / Claude</option><option>Google / Gemini</option><option>xAI / Grok</option></select></div><div class="field"><label for="chat-model">Approved model</label><input id="chat-model" placeholder="Configured server-side only" disabled></div></div>
+        <label for="chat-prompt">Message</label><textarea id="chat-prompt" maxlength="2000" placeholder="Compose a message. This prototype will not send it."></textarea>
+        <div class="actions"><button class="btn primary" type="button" disabled>Send to provider — unavailable</button><button class="btn" type="button" data-preview="chat">Preview request contract</button></div>
+        <div class="result" id="chat-result" aria-live="polite">No request sent. Previewing the contract is local-only.</div>
+      </section>
+      <section data-panel="compare" hidden>
+        <div class="panel-head"><div><h2>AI Compare</h2><p>Compare independent provider responses to the same user-authored prompt.</p></div><span class="state">No fan-out</span></div>
+        <div class="grid2">
+          <div class="card"><span class="tag">Provider A</span><label for="compare-a">Select provider</label><select id="compare-a"><option>OpenAI / GPT</option><option>Anthropic / Claude</option><option>Google / Gemini</option><option>xAI / Grok</option></select></div>
+          <div class="card"><span class="tag">Provider B</span><label for="compare-b">Select provider</label><select id="compare-b"><option>Anthropic / Claude</option><option>OpenAI / GPT</option><option>Google / Gemini</option><option>xAI / Grok</option></select></div>
+        </div>
+        <label for="compare-prompt">Shared prompt</label><textarea id="compare-prompt" maxlength="2000" placeholder="Both selected providers would receive the same prompt only after gateway approval."></textarea>
+        <div class="actions"><button class="btn primary" type="button" disabled>Run comparison — unavailable</button><button class="btn" type="button" data-preview="compare">Preview comparison contract</button></div>
+        <div class="result" id="compare-result" aria-live="polite">No provider calls are made by this prototype.</div>
+      </section>
+      <section data-panel="agents" hidden>
+        <div class="panel-head"><div><h2>AI Agents</h2><p>Plan bounded workflows with explicit tool scope, budget, and approval.</p></div><span class="state">Execution disabled</span></div>
+        <div class="grid2">
+          <article class="card"><span class="tag">Observe</span><h3>Read and summarize</h3><p>Read only approved evidence sources. No mutations.</p></article>
+          <article class="card"><span class="tag">Analyze</span><h3>Find gaps and risks</h3><p>Separate verified facts from hypotheses and unknowns.</p></article>
+          <article class="card"><span class="tag">Propose</span><h3>Prepare work</h3><p>Draft changes and test plans for human review.</p></article>
+          <article class="card"><span class="tag">Verify</span><h3>Check evidence</h3><p>Return PASS, FAIL, or UNKNOWN per acceptance predicate.</p></article>
+        </div>
+        <label for="agent-goal">Agent objective</label><textarea id="agent-goal" maxlength="1000" placeholder="Describe one bounded, read-only task."></textarea>
+        <div class="row"><div class="field"><label for="agent-budget">Budget ceiling (prototype)</label><select id="agent-budget"><option value="0">No spend authorized</option><option value="1">Requires owner approval</option></select></div><div class="field"><label for="agent-tools">Tool permission</label><select id="agent-tools"><option>Read-only sources</option><option>Draft-only outputs</option></select></div></div>
+        <div class="actions"><button class="btn primary" type="button" data-preview="agents">Prepare agent plan</button></div>
+        <div class="result" id="agents-result" aria-live="polite">Agent execution and tool access are not connected.</div>
+      </section>
+      <section data-panel="developer" hidden>
+        <div class="panel-head"><div><h2>AI Developer</h2><p>Engineering assistance for code, tests, architecture, and release evidence.</p></div><span class="state">Draft-only</span></div>
+        <div class="grid2">
+          <article class="card"><span class="tag">Code review</span><h3>Inspect a change</h3><p>Identify correctness, security, maintainability, and test gaps.</p></article>
+          <article class="card"><span class="tag">Test design</span><h3>Build acceptance coverage</h3><p>Translate requirements into executable checks and evidence.</p></article>
+          <article class="card"><span class="tag">Architecture</span><h3>Plan an integration</h3><p>Define boundaries, dependencies, rollback, and cost.</p></article>
+          <article class="card"><span class="tag">Release verification</span><h3>Protect the gate</h3><p>Never infer execution or acceptance from source presence.</p></article>
+        </div>
+        <label for="dev-task">Engineering task</label><textarea id="dev-task" maxlength="2000" placeholder="Describe a code, test, or architecture task. No repository is accessed from this page."></textarea>
+        <div class="actions"><button class="btn primary" type="button" data-preview="developer">Prepare developer brief</button></div>
+        <div class="result" id="developer-result" aria-live="polite">No repository tools or model endpoint are connected.</div>
+      </section>
+    </div>
+  </section>
+  <footer class="foot">LLG Tech Corps · AI Systems foundation · <a href="/docs/LLG-TECH-CORPS-FOUNDATION.md">Architecture foundation</a> · Prototype only; no production or provider activation.</footer>
+</main>
+<script>
+  const tabs=[...document.querySelectorAll('[data-tab]')];
+  const panels=[...document.querySelectorAll('[data-panel]')];
+  function selectTab(name){tabs.forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.tab===name)));panels.forEach(panel=>panel.hidden=panel.dataset.panel!==name);}
+  tabs.forEach((tab,index)=>{tab.addEventListener('click',()=>selectTab(tab.dataset.tab));tab.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;event.preventDefault();let next=index;if(event.key==='ArrowDown')next=(index+1)%tabs.length;if(event.key==='ArrowUp')next=(index-1+tabs.length)%tabs.length;if(event.key==='Home')next=0;if(event.key==='End')next=tabs.length-1;tabs[next].focus();selectTab(tabs[next].dataset.tab);});});
+  const value=id=>document.getElementById(id)?.value||'';
+  const show=(id,title,payload)=>{const target=document.getElementById(id);target.replaceChildren();const heading=document.createElement('strong');heading.textContent=title;const note=document.createElement('span');note.textContent=' Local preview only — nothing was transmitted or saved.';const pre=document.createElement('pre');pre.textContent=JSON.stringify(payload,null,2);target.append(heading,note,pre);};
+  document.querySelectorAll('[data-preview]').forEach(button=>button.addEventListener('click',()=>{
+    const mode=button.dataset.preview;
+    if(mode==='chat')show('chat-result','LLG chat request contract',{mode:'chat',provider:value('chat-provider'),message_characters:value('chat-prompt').length,execution:'disabled',credential_source:'server-side only'});
+    if(mode==='compare')show('compare-result','LLG comparison request contract',{mode:'compare',providers:[value('compare-a'),value('compare-b')],same_prompt_characters:value('compare-prompt').length,output_sharing:'not permitted by default',execution:'disabled'});
+    if(mode==='agents')show('agents-result','Bounded agent plan',{objective:value('agent-goal'),tools:value('agent-tools'),budget:value('agent-budget')==='0'?'$0 — no spend authorized':'Owner approval required',approval:'not requested',execution:'not executed'});
+    if(mode==='developer')show('developer-result','Developer work brief',{task:value('dev-task'),mode:'draft-only',repository_access:'not connected',execution:'not executed'});
+  }));
+</script>
+</body>
+</html>
