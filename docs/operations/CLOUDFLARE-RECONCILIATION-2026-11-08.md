@@ -10,10 +10,10 @@ Read-only snapshot for `thelingolegacy.com`, account `16cb6f247cd1b28fca864760c7
 
 | Worker | Latest uploaded | Latest deployment record | Deployment version ID | Disposition |
 |---|---:|---|---|---|
-| `thelingolegacyv-5` | v270 (`d17ceee2-d8ab-4c30-8b8a-b8f87bd5f398`) | `ecd71a70-e476-4318-92a7-35249ced360b`, 2026-10-25 | `2d161fa5-598f-4998-ada8-7ac4c72c3461` | Uploaded version and deployed version differ by ID; resolve deployed version number and source commit |
-| `lingo-flagship-root` | v2 (`1009da37-9128-44c2-9853-f277eb791c31`) | `31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3`, 2026-10-25 | `658acd1a-997b-45cd-b8fc-e59c59b26b45` | Uploaded v2 differs from deployed v1 ID |
+| `thelingolegacyv-5` | v270 (`d17ceee2-d8ab-4c30-8b8a-b8f87bd5f398`) | `ecd71a70-e476-4318-92a7-35249ced360b`, 2026-10-25 | `2d161fa5-598f-4998-ada8-7ac4c72c3461` = **v137** | Confirmed deployed v137; latest upload v270 is not active |
+| `lingo-flagship-root` | v2 (`1009da37-9128-44c2-9853-f277eb791c31`) | `31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3`, 2026-10-25 | `658acd1a-997b-45cd-b8fc-e59c59b26b45` = **v1** | Confirmed deployed v1; latest upload v2 is not active |
 
-Version upload is not deployment. A deployment record is not source provenance. Before candidate promotion, resolve each deployed version ID through Cloudflare's version-detail endpoint and correlate its source, bindings, compatibility date, and Git commit.
+Version upload is not deployment. A deployment record is not source provenance. Read-only version-detail inspection resolved the deployed IDs: primary Worker v137 (Wrangler, compatibility date 2026-09-01, ASSETS/CANONICAL_DOMAIN/PUBLIC_SITE_URL bindings, observability enabled) and root Worker v1 (API source, no bindings, observability not configured). The latest uploaded v270/v2 versions are not the versions referenced by the current deployment records. Source commit provenance for deployed versions remains unverified.
 
 ## Route findings
 
