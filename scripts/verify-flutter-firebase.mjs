@@ -42,7 +42,7 @@ if (!fs.existsSync(androidGradlePath)) {
   throw new Error('Android native project is missing android/app/build.gradle or build.gradle.kts.');
 }
 const androidGradle = fs.readFileSync(androidGradlePath, 'utf8');
-const androidPackage = androidGradle.match(/applicationId\\s+["']([^"']+)["']/)?.[1];
+const androidPackage = androidGradle.match(/applicationId\s+["']([^"']+)["']/)?.[1];
 if (!androidPackage || process.env.FIREBASE_ANDROID_PACKAGE_NAME !== androidPackage) {
   throw new Error('FIREBASE_ANDROID_PACKAGE_NAME must match the Flutter Android applicationId.');
 }
@@ -72,7 +72,7 @@ for (const platform of optionalNativePlatforms) {
     throw new Error(`${platform.name} native project exists but Firebase configuration is incomplete: ${missing.join(', ')}`);
   }
   const project = fs.readFileSync(platform.projectFile, 'utf8');
-  const bundleIds = [...new Set([...project.matchAll(/PRODUCT_BUNDLE_IDENTIFIER\\s*=\\s*([^;]+);/g)]
+  const bundleIds = [...new Set([...project.matchAll(/PRODUCT_BUNDLE_IDENTIFIER\s*=\s*([^;]+);/g)]
     .map((match) => match[1].trim().replace(/^['"]|['"]$/g, '')))];
   if (!bundleIds.length || bundleIds.some((bundleId) => bundleId !== process.env[platform.bundleVariable])) {
     throw new Error(`${platform.bundleVariable} must match every PRODUCT_BUNDLE_IDENTIFIER in ${platform.projectFile}.`);
