@@ -4,7 +4,7 @@ import fs from 'node:fs';
 
 const source = fs.readFileSync('worker.js', 'utf8');
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
-const { BeaconRateLimiter } = await import(moduleUrl);
+const { default: worker, BeaconRateLimiter } = await import(moduleUrl);
 
 function makeState() {
   let bucket;
@@ -81,4 +81,61 @@ test('alarm cleanup is transactionally serialized with a concurrent new request'
   assert.ok(final.bucket, 'the concurrent request must leave a fresh bucket');
   assert.equal(final.bucket.count, 1);
   assert.equal(final.externalGetCalls, 0, 'alarm must not read outside the transaction');
+});
+
+
+async function beaconRequest(env) {
+  return worker.fetch(new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'cf-connecting-ip': '203.0.113.10',
+    },
+    body: JSON.stringify({
+      phone: '+14155552671',
+      zone: 'full-entity-simulcast',
+      consent: true,
+    }),
+  }), env);
+}
+
+test('Beacon endpoint fails closed when the Durable Object binding is missing', async () => {
+  const response = await beaconRequest({ CANONICAL_DOMAIN: 'thelingolegacy.com' });
+  assert.equal(response.status, 429);
+  assert.match((await response.json()).error, /Too many beacon alert requests/);
+});
+
+test('Beacon endpoint fails closed when Durable Object storage is unavailable', async () => {
+  const env = {
+    CANONICAL_DOMAIN: 'thelingolegacy.com',
+    BEACON_RATE_LIMITER: {
+      idFromName() { return 'opaque-id'; },
+      get() {
+        return {
+          async fetch() { throw new Error('simulated storage outage'); },
+        };
+      },
+    },
+  };
+  const response = await beaconRequest(env);
+  assert.equal(response.status, 429);
+});
+
+test('Beacon endpoint uses a SHA-256 object name and stages only after limiter approval', async () => {
+  let objectName;
+  const env = {
+    CANONICAL_DOMAIN: 'thelingolegacy.com',
+    BEACON_RATE_LIMITER: {
+      idFromName(value) { objectName = value; return 'opaque-id'; },
+      get() {
+        return {
+          async fetch() { return Response.json({ limited: false }); },
+        };
+      },
+    },
+  };
+  const response = await beaconRequest(env);
+  assert.equal(response.status, 202);
+  assert.match(objectName, /^[a-f0-9]{64}$/);
+  assert.notEqual(objectName, '203.0.113.10:+14155552671');
 });
