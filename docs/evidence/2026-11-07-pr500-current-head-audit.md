@@ -83,6 +83,8 @@ Added `llg-tech-corps/index.html` (blob `0978b6a7c7b85fed11b4de0f33114326bd3288e
 
 The page is a static front-end prototype only. Browser/device/accessibility QA has not been executed. It does not connect to the provider adapters or implement authentication, an API route, model selection, live agents, repository tools, or persistence. It must not be represented as a live AI product.
 
+The existing `lingo-ai/index.html` navigation on this feature branch now links to `/llg-tech-corps/` (blob `b93d461482455a46bcca7f839ff398a6ba203f40`). This creates a source-level navigation path only; no deployment or public availability is claimed.
+
 ## 8. Governance
 
 PR #500 remains draft and unmerged. No independent PR review is recorded. No production route, Firebase project, secret, billing setting, provider flag, payment path, game economy, or G02 runner was changed by this audit. Do not promote any product status based on this document.
