@@ -13,8 +13,8 @@ The current branch still contains the exact source blobs previously used for the
 
 | File | Git blob SHA-1 |
 |---|---|
-| `src/ai/provider-adapters.mjs` | `5faa534ed55f925f1e182946ff1ea531997e2c46` |
-| `src/ai/provider-adapters.test.mjs` | `9377aee8eddfbf1497a677eedbad346521d950e9` |
+| `src/ai/provider-adapters.mjs` | `b42b7f4eaab1a62a78f1e699181d016cc1cd9b59` |
+| `src/ai/provider-adapters.test.mjs` | `0e6357f6e014c1e9d1c2f98ae89bd96fed003b03` |
 
 These are the current source blob identifiers after the 2026-11-08 hardening commits. The earlier 15/15 local mocked test result applies only to the previous source blobs; it must not be represented as execution evidence for these changed files. Current changes require fresh local or hosted execution.
 
@@ -32,6 +32,7 @@ This evidence establishes a common pre-job startup symptom. It does not identify
 - Prompt input is type-checked, non-empty and limited to 2,000 characters.
 - Requests have a bounded timeout (1–60 seconds; default 20 seconds).
 - Upstream response parsing now enforces a 1 MiB byte ceiling, checking both declared content length and streamed bytes before JSON parsing.
+- Each provider requires an explicit server-side approved-model allowlist; a selected model absent from that allowlist is rejected before network access.
 - Local correlation IDs are distinct from a sanitized upstream request identifier when the provider returns one.
 - Upstream errors are normalized; upstream error bodies and thrown exception messages are not returned.
 - Comparison accepts 2–4 unique providers and independently submits the same prompt; provider outputs are not passed between providers.
@@ -45,8 +46,9 @@ These are limitations of the current adapter foundation, not claims that a produ
 1. **No HTTP route or authentication boundary is included in this module.** The caller must enforce authenticated identity, authorization scopes, CSRF/origin policy where applicable, and tenant isolation.
 2. **No rate limiting, quota enforcement, per-user budget, spend ceiling or concurrency control is implemented here.** Provider enable flags are not a billing guard.
 3. **Request and response limits are partial.** Upstream response bodies are now capped at 1 MiB before JSON parsing. Prompt length is limited to 2,000 characters, but a full route-level request-byte, per-user quota, concurrency and cost budget remains unimplemented.
-4. **Model configuration uses a syntactic allow-pattern, not a maintained approved-model allowlist.** Model access, availability and price must be checked in the deployment environment before activation.
-5. **No moderation, prompt-injection policy, output classification, retention policy or application-specific data minimization is implemented here.** These must be designed at the gateway/application boundary.
+4. **Model access is constrained but operational allowlists are not yet populated/verified.** Each provider requires its own `*_ALLOWED_MODELS` server binding and exact model match; actual approved IDs, availability and prices still need an owner-reviewed configuration.
+5. **Moderation, prompt-injection policy, output classification, retention policy and application-specific data minimization are not implemented here.** These must be designed at the gateway/application boundary.
+
 6. **Provider request correlation is partial.** `request_id` is locally generated; `upstream_request_id` is captured only when a recognized, syntactically safe response header is present. Provider-specific header coverage and operational tracing still need validation.
 7. **No provider-specific integration smoke test or contract test against live official SDK/API responses was executed.** Mocked response fixtures do not validate live credentials, account access, quota, billing, model names or provider terms.
 8. **Claude statelessness and provider-side retention terms require current provider policy review.** A stateless Messages request does not replace a contractual privacy/retention assessment.
@@ -69,6 +71,8 @@ These are limitations of the current adapter foundation, not claims that a produ
 
 - Added bounded upstream response reading with a 1 MiB ceiling. Both an oversized `content-length` and an oversized streamed body are rejected before JSON parsing.
 - Added distinct upstream request-ID capture (when a recognized safe header is supplied) alongside the internally generated correlation ID.
+- Added per-provider server-side model allowlist requirements; missing allowlists fail configuration and unlisted models are rejected before any upstream call.
+- Added a regression case proving an unapproved model cannot reach the provider.
 - Added regression tests for declared-length rejection, streamed-byte rejection and request-ID separation.
 - These are source changes only. The new tests have not been executed because the GitHub Actions startup issue persists; no updated local test result is claimed.
 
