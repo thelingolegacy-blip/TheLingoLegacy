@@ -21,6 +21,8 @@ on:
       - '.assetsignore'
       - 'scripts/verify-flutter-firebase.mjs'
       - 'scripts/test-verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting.mjs'
+      - 'scripts/test-verify-firebase-hosting.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -61,6 +63,9 @@ jobs:
       - name: Firebase contract validator regression tests
         run: node --test scripts/test-verify-flutter-firebase.mjs
 
+      - name: Firebase Hosting boundary regression tests
+        run: node --test scripts/test-verify-firebase-hosting.mjs
+
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
@@ -89,6 +94,9 @@ jobs:
             --dart-define=FIREBASE_WEB_API_KEY="$FIREBASE_WEB_API_KEY" \
             --dart-define=FIREBASE_WEB_APP_ID="$FIREBASE_WEB_APP_ID"
 
+      - name: Verify Firebase Hosting publish boundary
+        run: node scripts/verify-firebase-hosting.mjs
+
       - name: Flutter Android debug build (preview-safe when Firebase variables are absent)
         shell: bash
         run: |
@@ -102,20 +110,17 @@ jobs:
             --dart-define=FIREBASE_ANDROID_API_KEY="$FIREBASE_ANDROID_API_KEY" \
             --dart-define=FIREBASE_ANDROID_APP_ID="$FIREBASE_ANDROID_APP_ID"
 
-      - name: Verify Flutter Hosting artifact scope and Cloudflare canonical route
+      - name: Verify Cloudflare canonical route
         shell: bash
         run: |
           set -euo pipefail
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          const firebase = JSON.parse(fs.readFileSync('firebase.json', 'utf8'));
           const wrangler = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'));
-          if (firebase.hosting?.public !== 'build/web') throw new Error('Firebase Hosting must publish only the Flutter build/web artifact.');
           if (wrangler.workers_dev !== false) throw new Error('Canonical Worker must not expose workers.dev.');
           if (!wrangler.routes?.some((route) => route.pattern === 'thelingolegacy.com/*')) {
             throw new Error('Canonical Cloudflare route is missing.');
           }
-          console.log('FIREBASE_HOSTING_SCOPE=BUILD_WEB_ONLY');
           console.log('CLOUDFLARE_CANONICAL_ROUTE=CONFIGURED');
           NODE
 
