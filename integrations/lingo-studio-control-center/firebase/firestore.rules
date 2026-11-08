@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return signedIn()
+        && request.auth.token.roles is list
+        && role in request.auth.token.roles;
+    }
+
+    function canReadStudio() {
+      return hasRole('studio_viewer')
+        || hasRole('studio_operator')
+        || hasRole('evidence_verifier')
+        || hasRole('independent_reviewer')
+        || hasRole('release_approver')
+        || hasRole('studio_admin');
+    }
+
+    match /studioControlCenter/{document=**} {
+      allow read: if canReadStudio();
+      allow write: if false;
+    }
+
+    match /studioTasks/{taskId} {
+      allow read: if canReadStudio();
+      allow write: if false;
+    }
+
+    match /studioEvidence/{evidenceId} {
+      allow read: if canReadStudio();
+      allow write: if false;
+    }
+
+    match /studioEvidenceReviews/{reviewId} {
+      allow read: if canReadStudio();
+      allow write: if false;
+    }
+
+    match /studioGateDecisions/{decisionId} {
+      allow read: if canReadStudio();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
