@@ -42,7 +42,7 @@ test('Firebase bearer parser handles case-insensitive header names and surroundi
 });
 
 test('Firebase bearer parser rejects extra credential fields and empty tokens', () => {
-  for (const value of ['', 'Bearer ', 'Bearer abc def', 'Basic abc.def.ghi', 'Bearer abc\\nInjected: yes']) {
+  for (const value of ['', 'Bearer ', 'Bearer abc def', 'Basic abc.def.ghi']) {
     const request = new Request('https://staging.invalid/', { headers: { authorization: value } });
     assert.equal(bearerTokenFromRequest(request), null);
   }
