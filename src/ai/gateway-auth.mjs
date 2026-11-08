@@ -6,8 +6,8 @@ const IDENTIFIER_PATTERN = /^[A-Za-z0-9._:@/-]{1,256}$/;
  * Authenticate an HTTP request for the LLG AI gateway.
  *
  * verifyToken MUST perform cryptographic signature verification against a
- * trusted issuer's published keys. This module validates the verified claims
- * and authorization context; it is not itself a JWT signature verifier.
+ * trusted issuer's published keys. This module validates verified claims and
+ * authorization context; it is not itself a JWT signature verifier.
  * Tenant membership is checked separately and fails closed.
  */
 export async function authenticateGatewayRequest(request, options = {}) {
@@ -35,7 +35,7 @@ export async function authenticateGatewayRequest(request, options = {}) {
   }
 
   const token = authorization.slice(BEARER_PREFIX.length);
-  if (!token || token.length > MAX_TOKEN_CHARS || /\\s/.test(token)) {
+  if (!token || token.length > MAX_TOKEN_CHARS || /\s/.test(token)) {
     return denied(401, 'AUTHENTICATION_REQUIRED');
   }
 
@@ -91,7 +91,7 @@ function audienceMatches(value, expected) {
 
 function normalizeStringSet(value) {
   if (Array.isArray(value)) return new Set(value.filter((item) => typeof item === 'string'));
-  if (typeof value === 'string') return new Set(value.split(/\\s+/).filter(Boolean));
+  if (typeof value === 'string') return new Set(value.split(/\s+/).filter(Boolean));
   return new Set();
 }
 
