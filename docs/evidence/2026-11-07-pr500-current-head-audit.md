@@ -85,6 +85,21 @@ The page is a static front-end prototype only. Browser/device/accessibility QA h
 
 The existing `lingo-ai/index.html` navigation on this feature branch now links to `/llg-tech-corps/` (blob `b93d461482455a46bcca7f839ff398a6ba203f40`). This creates a source-level navigation path only; no deployment or public availability is claimed.
 
-## 8. Governance
+## 8. Static command-center safety tests
+
+Added `scripts/test-llg-ai-command-center.mjs` (blob `70ac15a02c908939950917ac099bf7bf6ea12d91`) with seven Node built-in tests covering:
+- presence of all four workspace modes;
+- explicit no-live-provider disclosure;
+- disabled provider execution controls;
+- absence of outbound provider endpoints/network APIs;
+- absence of browser storage for prompt/user data;
+- safe `textContent` rendering for local previews;
+- absence of provider credential-like literals.
+
+Updated `.github/workflows/ai-provider-adapter-tests.yml` (blob `bbf133b8c6f314e7f051fdc1ed280fb00e143b52`) to include the new page and test script in its path filter and execute the static safety suite after adapter tests. Both logs are configured for artifact upload.
+
+The adapter test file contains 17 test cases; the new static page suite contains seven. **Neither current suite has executed on the current source.** The workflow change prepares future validation only and does not cure the repository's hosted-runner startup issue.
+
+## 9. Governance
 
 PR #500 remains draft and unmerged. No independent PR review is recorded. No production route, Firebase project, secret, billing setting, provider flag, payment path, game economy, or G02 runner was changed by this audit. Do not promote any product status based on this document.
