@@ -12,7 +12,7 @@
 ## Cloudflare production and staging
 
 - The active production Worker is `thelingolegacyv-5`, with 18 custom-domain routes. The zone has 21 route records total: 18 for this Worker and three explicit exceptions (`atlas` to `lingo-ecosystem-atlas`, `launch` to `lingo-static-backup-proxy`, and the exact apex `/` route to `lingo-flagship-root`). Its active deployed version is `2d161fa5-598f-4998-ada8-7ac4c72c3461` at 100% on deployment `ecd71a70-e476-4318-92a7-35249ced360b` (2026-10-25).
-- The production Worker currently has only `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL` bindings. It has no D1 binding and no Firebase project binding. The production Worker therefore does not currently provide the intended Firebase/D1 application backend. The PR #504 Wrangler config now declares exactly the 18 live routes owned by this Worker (0 missing, 0 extra), and the route manifest explicitly records the three other-worker exceptions; this is source-only and has not been deployed.
+- The production Worker currently has only `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL` bindings. It has no D1 binding and no Firebase project binding. The production Worker therefore does not currently provide the intended Firebase/D1 application backend. Its active `worker.js` still uses an isolate-local `Map` for Beacon rate limiting; the Durable Object replacement in PR #501 is source-only and not active, leaving a cross-isolate rate-limit consistency/security blocker. The PR #504 Wrangler config now declares exactly the 18 live routes owned by this Worker (0 missing, 0 extra), and the route manifest explicitly records the three other-worker exceptions; this is source-only and has not been deployed.
 - The production D1 database has application tables, but it is not bound to the active production Worker. No production D1 data was read or modified during this inventory.
 - The staging Worker `lingo-game-engine-staging` has only its D1 `DB` binding and `ENVIRONMENT` variable. It has no Firebase project binding. Its current deployed version is the earlier settings-only deployment, not the new PR #503 source.
 - The staging D1 catalog has five original application tables and four ledger triggers. Migration `0002` was applied at `2026-11-08T17:17:11Z`; readback confirmed `lingo_api_rate_limits` and its four expected columns/constraints. The new Worker source remains undeployed pending Firebase staging identity and authenticated route tests.
@@ -83,3 +83,8 @@ The Hobby project's latest deployment attempt is `BLOCKED` after the pause reque
 ## Route and observability parity — 2026-11-08
 
 A read-only Cloudflare zone route query returned 21 route records. Exactly 18 target `thelingolegacyv-5`; the remaining three are assigned to other Workers and are explicitly excluded from that Worker's Wrangler route array. The updated `wrangler.jsonc` and `config/cloudflare/production-worker-routes.json` match the live 18-route set exactly. A static validator now fails on missing/extra/duplicate routes, incorrect zone names, `workers.dev` exposure, or observability settings that do not redact query strings and sample at 10%.
+
+
+## Production Beacon rate-limiter disposition
+
+Read-only source comparison confirms `main` and PR #504 still use an isolate-local `Map` for Beacon rate limits. PR #501 introduces a SQLite-backed Durable Object and a migration, but the binding/migration are not deployed. Do not activate it until exact-head CI, a Wrangler dry-run, and isolated staging tests pass; production currently retains the old limiter.
