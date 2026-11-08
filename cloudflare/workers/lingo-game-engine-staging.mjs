@@ -21,6 +21,7 @@ export function bearerTokenFromRequest(request) {
   return match?.[1] || null;
 }
 
+async function uidFromRequest(request, env) {
   const token = bearerTokenFromRequest(request);
   if (!token) return null;
   const verified = await verifyFirebaseIdToken(token, env.FIREBASE_PROJECT_ID);
