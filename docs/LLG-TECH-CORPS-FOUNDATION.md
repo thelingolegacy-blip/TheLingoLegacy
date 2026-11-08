@@ -43,6 +43,8 @@ The first-party gateway owns authentication, provider selection, server-side cre
 
 ## Provider-neutral service contract
 
+The detailed, design-only HTTP, identity, tenant authorization, budget, safety, audit, and acceptance contract is maintained in [`LLG-AI-GATEWAY-API-CONTRACT.md`](./LLG-AI-GATEWAY-API-CONTRACT.md). It does not authorize implementation or activation.
+
 - The web, mobile, and game clients call first-party LLG endpoints only.
 - Clients never call commercial model endpoints with embedded provider keys.
 - Every request has a bounded payload, authenticated identity where required, request correlation ID, provider selection, and server-enforced usage policy.
