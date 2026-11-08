@@ -4,8 +4,17 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const LingoLegacyApp());
+  var firebaseReady = false;
+  if (DefaultFirebaseOptions.isConfigured) {
+    try {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      firebaseReady = true;
+    } on FirebaseException catch (error) {
+      // Keep the navigation shell usable; account and cloud features remain disabled.
+      debugPrint('Firebase initialization unavailable (${error.code}); preview mode remains active.');
+    }
+  }
+  runApp(LingoLegacyApp(firebaseReady: firebaseReady));
 }
 
 const gold = Color(0xFFE6BD58);
@@ -15,7 +24,8 @@ const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
 class LingoLegacyApp extends StatelessWidget {
-  const LingoLegacyApp({super.key});
+  final bool firebaseReady;
+  const LingoLegacyApp({super.key, required this.firebaseReady});
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'The Lingo Legacy',
@@ -27,7 +37,7 @@ class LingoLegacyApp extends StatelessWidget {
       useMaterial3: true,
       cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
     ),
-    home: const UniverseHome(),
+    home: UniverseHome(firebaseReady: firebaseReady),
   );
 }
 
@@ -48,7 +58,8 @@ const destinations = <Destination>[
 ];
 
 class UniverseHome extends StatefulWidget {
-  const UniverseHome({super.key});
+  final bool firebaseReady;
+  const UniverseHome({super.key, required this.firebaseReady});
   @override
   State<UniverseHome> createState() => _UniverseHomeState();
 }
@@ -89,6 +100,34 @@ class _UniverseHomeState extends State<UniverseHome> {
               ]),
             ),
           )),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFF30384B)),
+                  color: const Color(0xFF111522),
+                ),
+                child: Row(children: [
+                  Icon(
+                    widget.firebaseReady ? Icons.cloud_done_outlined : Icons.cloud_off_outlined,
+                    color: widget.firebaseReady ? cyan : gold,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.firebaseReady
+                          ? 'Firebase client initialized. Authentication, data rules, and backend readiness remain separately gated.'
+                          : 'PREVIEW MODE — Firebase configuration is not supplied. Accounts and cloud sync are unavailable.',
+                      style: const TextStyle(color: muted, fontSize: 12, height: 1.4),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          ),
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
             child: Text('CHOOSE YOUR DESTINATION', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 1.1)),
