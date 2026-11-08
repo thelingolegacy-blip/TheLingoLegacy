@@ -73,7 +73,8 @@ jobs:
             build/app/outputs/flutter-apk/app-debug.apk
 
   ios-simulator:
-    name: iOS simulator compile (unsigned)
+    if: ${{ hashFiles('ios/Runner.xcodeproj/project.pbxproj') != '' }}
+    name: iOS simulator compile (unsigned; only when native project exists)
     runs-on: macos-latest
     timeout-minutes: 40
     steps:
