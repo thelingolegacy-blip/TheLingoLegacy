@@ -301,6 +301,22 @@
               "string",
               "null"
             ]
+          },
+          "computed_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "SHA-256 independently computed from the retrieved artifact bytes; the evaluator requires equality with sha256."
+          },
+          "digest_verification_reference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "Reference to the independent digest calculation/verification record."
           }
         }
       }

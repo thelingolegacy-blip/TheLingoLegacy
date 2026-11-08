@@ -97,7 +97,7 @@ def evaluate(
     add("C2_EXECUTION", [
         (True if job_status == "completed" else None if job_status in (None, "unknown", "queued", "in_progress") else False, "job completion not established"),
         (True if conclusion == "success" else None if conclusion is None else False, "job conclusion is not success"),
-        (executed if isinstance(steps, list) else None, "at least one successful executed step required"),
+        (None if job_status in (None, "unknown", "queued", "in_progress") else executed if isinstance(steps, list) else None, "at least one successful executed step required"),
         (None if sentinel_exit is None else sentinel_exit == 0, "sentinel exit code must be observed as zero")
     ], [str(workflow.get("url") or "")])
 
@@ -123,6 +123,13 @@ def evaluate(
             sha_check = None if artifact_sha is None else (
                 isinstance(artifact_sha, str) and bool(HASH_RE.fullmatch(artifact_sha))
             )
+            computed_sha = artifact.get("computed_sha256")
+            computed_sha_check = None if computed_sha is None else (
+                isinstance(computed_sha, str) and bool(HASH_RE.fullmatch(computed_sha))
+                and isinstance(artifact_sha, str) and computed_sha == artifact_sha
+            )
+            digest_ref = artifact.get("digest_verification_reference")
+            digest_ref_check = None if digest_ref is None else bool(digest_ref)
             artifact_checks.extend([
                 (True if artifact.get("retrieval_status") == "available" else (
                     False if artifact.get("retrieval_status") in {"unavailable", "error", "not_found"} else None
@@ -130,7 +137,9 @@ def evaluate(
                 (correlated, f"artifact {i} run/attempt/commit correlation mismatch"),
                 (artifact_id_check, f"artifact {i} identity required"),
                 (source_ref_check, f"artifact {i} source reference required"),
-                (sha_check, f"artifact {i} SHA-256 missing or invalid")
+                (sha_check, f"artifact {i} SHA-256 missing or invalid"),
+                (computed_sha_check, f"artifact {i} independently computed SHA-256 must match declared SHA-256"),
+                (digest_ref_check, f"artifact {i} digest-verification source reference required")
             ])
     add("C3_EVIDENCE_INTEGRITY", artifact_checks,
         [str(logs.get("source_reference") or "")] + [str(a.get("source_reference") or "") for a in artifacts if isinstance(a, dict)] if isinstance(artifacts, list) else [])
@@ -139,9 +148,46 @@ def evaluate(
     verifier = verification.get("verifier_identity")
     distinct = (None if not producer or not verifier else producer != verifier)
     checks = verification.get("checks")
+    required_artifact_checks = {
+        f"artifact_sha256:{a.get('artifact_id')}"
+        for a in artifacts if isinstance(a, dict) and a.get("artifact_id") is not None
+    } if isinstance(artifacts, list) else set()
+    present_check_ids = {
+        c.get("check_id") for c in checks if isinstance(c, dict)
+    } if isinstance(checks, list) else set()
+    missing_artifact_checks = required_artifact_checks - present_check_ids
+    artifact_check_link_results: list[bool | None] = []
+    if isinstance(artifacts, list):
+        for artifact in artifacts:
+            if not isinstance(artifact, dict) or artifact.get("artifact_id") is None:
+                continue
+            check_id = f"artifact_sha256:{artifact['artifact_id']}"
+            digest_ref = artifact.get("digest_verification_reference")
+            matching = [
+                c for c in checks if isinstance(c, dict) and c.get("check_id") == check_id
+            ] if isinstance(checks, list) else []
+            if not digest_ref or not matching:
+                artifact_check_link_results.append(None)
+            elif any(c.get("status") == "FAIL" for c in matching):
+                artifact_check_link_results.append(False)
+            elif any(c.get("status") == "PASS" and c.get("source_reference") == digest_ref for c in matching):
+                artifact_check_link_results.append(True)
+            elif any(c.get("status") == "BLOCKED" for c in matching):
+                artifact_check_link_results.append(None)
+            else:
+                artifact_check_link_results.append(False)
+    artifact_check_links_ok = (
+        None if not artifact_check_link_results else
+        False if any(value is False for value in artifact_check_link_results) else
+        None if any(value is None for value in artifact_check_link_results) else
+        True
+    )
     checks_ok = (
         None if not isinstance(checks, list) or not checks else
         False if any(isinstance(c, dict) and c.get("status") == "FAIL" for c in checks) else
+        None if missing_artifact_checks else
+        None if artifact_check_links_ok is None else
+        False if artifact_check_links_ok is False else
         None if any(not isinstance(c, dict) or c.get("status") != "PASS" or not c.get("source_reference") for c in checks) else
         True
     )
