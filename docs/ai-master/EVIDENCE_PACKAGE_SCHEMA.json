@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/evidence-package.schema.json",
+  "title": "LINGO Evidence Package",
+  "type": "object",
+  "required": ["package_id", "work_package_id", "disposition", "created_at_utc", "repository", "environment", "authorization", "execution", "verification", "rollback"],
+  "properties": {
+    "package_id": {"type": "string", "minLength": 1},
+    "work_package_id": {"type": "string", "minLength": 1},
+    "owner_agent": {"type": "string"},
+    "disposition": {"enum": ["PASS", "FAIL", "BLOCKED", "NOT_RUN", "UNVERIFIED"]},
+    "created_at_utc": {"type": "string", "format": "date-time"},
+    "repository": {
+      "type": "object",
+      "required": ["full_name", "branch", "commit_sha"],
+      "properties": {
+        "full_name": {"type": "string"},
+        "branch": {"type": "string"},
+        "commit_sha": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "environment": {"type": "string"},
+    "authorization": {
+      "type": "object",
+      "required": ["scope", "actor"],
+      "properties": {
+        "scope": {"type": "string"},
+        "actor": {"type": "string"},
+        "approval_reference": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["actions", "result"],
+      "properties": {
+        "actions": {"type": "array", "items": {"type": "string"}},
+        "result": {"type": "string"},
+        "exit_code": {"type": ["integer", "null"]},
+        "log_references": {"type": "array", "items": {"type": "string"}},
+        "artifact_references": {"type": "array", "items": {"type": "string"}},
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path_or_uri", "sha256"],
+            "properties": {
+              "path_or_uri": {"type": "string"},
+              "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["independent", "result"],
+      "properties": {
+        "independent": {"type": "boolean"},
+        "verifier": {"type": "string"},
+        "result": {"type": "string"},
+        "checks": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "rollback": {
+      "type": "object",
+      "required": ["required", "procedure"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "procedure": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}
