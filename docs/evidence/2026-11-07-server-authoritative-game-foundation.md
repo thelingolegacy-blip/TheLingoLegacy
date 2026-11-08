@@ -1,7 +1,7 @@
 # LINGO Server-Authoritative Game Foundation — Staging Implementation Package
 
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
-**Disposition:** Draft implementation; isolated staging deployed; not production accepted.  
+**Disposition:** Draft implementation; staging-only source changes; no new deployment from this PR; not production accepted.  
 **Production mutation:** None.  
 **Payment / cashout activation:** None.
 
@@ -13,6 +13,12 @@
 - Append-only wallet ledger triggers that atomically apply ledger deltas and reject overdrafts.
 - Staging-only additive schema with account, wallet, session, ledger, and progression tables.
 - Deterministic unit tests using an injected random source.
+- An additional isolated five-column × three-row engine module with weighted symbol selection, five paylines, WILD substitution, and integer payout evaluation.
+- Regression tests for 5×3 shape, weighted selection, all five paylines, WILD matches of 3/4/5, and payout arithmetic.
+
+## 5×3 engine integration status
+
+The new `src/server/slot-engine-5x3.mjs` module is a separate, testable engine implementation. It is not yet wired into the Worker spin route or the D1 settlement service, which still use `evaluateThreeReelSpin`. Do not describe the API as a 5×3 game until that integration is implemented and validated. The staging workflow includes the new module syntax check and test file.
 - A staging Worker wrapper with health, account bootstrap, wallet balance, and slot spin routes.
 
 ## Integration contract
@@ -36,7 +42,7 @@ Run:
 node --check cloudflare/workers/lingo-game-engine-staging.mjs
 node --check src/server/slot-engine.mjs
 node --check src/server/d1-slot-service.mjs
-node --test scripts/tests/lingo-game-worker.test.mjs scripts/tests/server-slot-engine.test.mjs
+node --test scripts/tests/lingo-game-worker.test.mjs scripts/tests/server-slot-engine.test.mjs scripts/tests/server-slot-engine-5x3.test.mjs
 python3 scripts/tests/test-slot-wallet-migration.py
 ```
 
