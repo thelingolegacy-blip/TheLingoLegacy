@@ -242,3 +242,13 @@ These are exact theoretical values for the current five-symbol-position line eva
 - Worker script observability settings are enabled. The read-only script-settings response did not expose secret values; no secrets were requested or changed.
 - The new Worker source calls the rate-limit table before account bootstrap. Do not deploy that source until migration `0002` has been applied and verified, or all authenticated routes will fail closed on the missing table.
 - No Cloudflare resource was mutated in this readback. No Worker deployment, D1 migration, route, DNS, secret, or production change was performed.
+
+
+## Final readback for this continuation
+
+- PR #503 current head: `884f258fa79f9725ae5cb5dce89319c6ff6a3ef0`; open, draft, unmerged. GitHub reports `mergeable=true` but `mergeable_state=unstable`.
+- Original PR #498 remains open, draft, and unmerged. Its head is the staging base used by PR #503; PR #503 is a separate completion proposal targeting that exact head.
+- Latest exact-head validation run #122 / `42502171369` and minimal runner probe #15 / `42502170217` both concluded `startup_failure`. Both have zero jobs and zero artifacts. No test, build, or dry-run ran.
+- Code behavior updates are at `d136182a19e6b7033e08e9c43667596be666634e` (CORS test) and `cac852b3312392f99f0731a25f7f37b5a74eb880` (daily reward replay behavior); latest source regression test commit is `95e138619f8e2af6e8f0ffbd87065debc4deabfc`. The current head's later commits are evidence/runbook/PR metadata updates.
+- The D1 read-only catalog still shows migration `0002` unapplied. Latest Worker deployment remains the settings-only version recorded above. No code deployment or database mutation occurred.
+- Release disposition remains HOLD / NOT ACCEPTED. No merge, production change, or promotion.
