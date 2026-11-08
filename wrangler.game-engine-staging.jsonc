@@ -15,7 +15,7 @@
     }
   ],
   "vars": {
-    "ENVIRONMENT": "staging",
-    // Supply a dedicated non-production Firebase project ID before enabling authenticated staging play.
+    "ENVIRONMENT": "staging"
+    // Add only a verified staging frontend origin to STAGING_ALLOWED_ORIGINS. Do not allowlist production origins.
   }
 }
