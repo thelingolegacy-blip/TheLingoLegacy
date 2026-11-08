@@ -231,3 +231,14 @@ These are exact theoretical values for the current five-symbol-position line eva
 - PR #503 currently remains open and draft; GitHub reports `mergeable=true` with `mergeable_state=unstable`. Mergeability does not establish CI or release acceptance.
 - The latest commit status still includes a Vercel rate-limit failure. Treat this only as an external status check; it is not Cloudflare staging deployment evidence. Vercel remains outside the authorized staging release path.
 - No current-head CI execution, live D1 migration application, Firebase staging identity verification, updated Worker source deployment, browser/device QA, or independent staging acceptance is established. Production remains protected.
+
+
+## 2026-11-08 live Cloudflare read-only verification
+
+- Read-only Cloudflare API inspection confirmed the D1 database `lingo-game-engine-staging-20261107` (UUID `793ab138-7818-47c9-ad01-b319ad34a8c5`), jurisdiction US, region ENAM, with five application tables.
+- Read-only `sqlite_master` query returned the five application tables (`lingo_game_accounts`, `lingo_game_progression`, `lingo_game_sessions`, `lingo_game_wallets`, `lingo_wallet_ledger`), Cloudflare's `_cf_KV` system table, and four ledger triggers. It did **not** return `lingo_api_rate_limits`; migration `0002` is therefore confirmed unapplied at this readback.
+- D1 query metadata: `changed_db=false`, `rows_written=0`. This was a schema/catalog read only; no application data was read or modified.
+- Worker deployment history still shows the latest deployment as `273be68c-1544-4c22-be1f-7733e9e8c669`, version `793ff7ee-6c24-4927-8b27-409d2b732cd1`, created `2026-11-08T15:52:09Z`, with the settings-remediation annotation. It is the settings-only deployment previously recorded, not the new PR #503 Worker source.
+- Worker script observability settings are enabled. The read-only script-settings response did not expose secret values; no secrets were requested or changed.
+- The new Worker source calls the rate-limit table before account bootstrap. Do not deploy that source until migration `0002` has been applied and verified, or all authenticated routes will fail closed on the missing table.
+- No Cloudflare resource was mutated in this readback. No Worker deployment, D1 migration, route, DNS, secret, or production change was performed.
