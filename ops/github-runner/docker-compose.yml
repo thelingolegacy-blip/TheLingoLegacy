@@ -4,7 +4,13 @@ services:
       context: .
       args:
         RUNNER_VERSION: "2.337.0"
+        RUNNER_SHA256: "70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613"
+    init: true
     restart: "no"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     environment:
       GITHUB_URL: "https://github.com/thelingolegacy-blip/TheLingoLegacy"
       RUNNER_TOKEN: "${RUNNER_TOKEN}"
