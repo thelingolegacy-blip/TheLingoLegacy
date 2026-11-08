@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "policyName": "LINGO Legacy Protected Main",
+  "status": "PROPOSED_NOT_APPLIED",
+  "targetBranches": [
+    "main",
+    "production",
+    "release/*"
+  ],
+  "rules": {
+    "deletionRestricted": true,
+    "nonFastForwardRestricted": true,
+    "requirePullRequest": true,
+    "requiredApprovingReviews": 1,
+    "requireCodeOwnerReview": true,
+    "dismissStaleReviews": true,
+    "requireConversationResolution": true,
+    "requireLinearHistory": true,
+    "requireBranchUpToDateBeforeMerge": true,
+    "requireStatusChecks": true,
+    "requiredChecks": [
+      "LINGO Studio Infrastructure CI / validate",
+      "Lingo Legacy Static CI / validate"
+    ],
+    "requiredChecksActivation": "ONLY_AFTER_REAL_RUNS_PASS",
+    "blockForcePush": true,
+    "blockDirectPush": true,
+    "allowBypassActors": [],
+    "requireSignedCommits": "WHEN_SUPPORTED"
+  },
+  "merge": {
+    "autoMerge": false,
+    "mergeQueue": "RECOMMENDED_AFTER_CHECKS_STABLE",
+    "mergeMethods": [
+      "squash"
+    ],
+    "deleteBranchAfterMerge": false
+  },
+  "workflowSecurity": {
+    "defaultTokenPermissions": "read-only",
+    "requirePinnedThirdPartyActions": true,
+    "untrustedPullRequestsOnSelfHostedRunners": false,
+    "productionEnvironmentsRequireReview": true
+  },
+  "notes": [
+    "This is a desired policy document, not an applied GitHub ruleset.",
+    "Do not make a check required until the provider runner executes it and the check identity is confirmed.",
+    "No bypass is authorized during G02 recovery."
+  ]
+}
