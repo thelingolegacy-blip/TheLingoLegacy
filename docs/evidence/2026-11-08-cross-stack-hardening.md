@@ -96,3 +96,5 @@ This is an evidence and remediation plan for the cross-stack recovery request. I
 - PR #503 remains open, draft and unmerged; current head `e31ddc707bbe91244c8711538be2b1a304d8de63`; mergeable state `unstable`.
 - Immediately after PR #506 creation, three workflows (Static CI run `42519423483`, G02 Runner Image Build run `42519422765`, Crimson Smoke UI run `42519421875`) all ended `startup_failure` at commit `f76fc7da30ccaccc88e4540d6ef68280ae5cc838`. The preceding commit `7f74a2ad90da59e6bc9523f4d778fb0e82eaf4e0` also had the same three workflow startup failures.
 - These are new examples of the same pre-job failure across unrelated workflow definitions. No job execution evidence has been produced; treat repository Actions service/settings/runner integration as a shared upstream blocker, not a failing application test.
+
+- Follow-up readback of those three runs confirmed exactly 0 jobs and 0 artifacts for each run.
