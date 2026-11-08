@@ -50,6 +50,22 @@ test('protected wallet and game routes fail closed without a Firebase bearer tok
   assert.equal(DB.calls.length, 0);
 });
 
+
+test('staging protected routes fail closed when Firebase is unset or points at production', async () => {
+  for (const FIREBASE_PROJECT_ID of [undefined, 'lingo-legacy-production']) {
+    const DB = fakeDb();
+    const headers = { authorization: 'Bearer syntactically.valid.but.untrusted' };
+    const env = { DB, ENVIRONMENT: 'staging' };
+    if (FIREBASE_PROJECT_ID) env.FIREBASE_PROJECT_ID = FIREBASE_PROJECT_ID;
+    const response = await worker.fetch(new Request('https://staging.invalid/api/v1/wallet/balance', {
+      method: 'GET', headers,
+    }), env);
+    assert.equal(response.status, 401);
+    assert.deepEqual(await response.json(), { error: 'UNAUTHORIZED' });
+    assert.equal(DB.calls.length, 0);
+  }
+});
+
 test('unknown routes return 404', async () => {
   const response = await worker.fetch(new Request('https://staging.invalid/no-such-route'), { DB: fakeDb(), ENVIRONMENT: 'staging' });
   assert.equal(response.status, 404);
