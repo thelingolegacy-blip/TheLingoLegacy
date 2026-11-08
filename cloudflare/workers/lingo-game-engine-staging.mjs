@@ -14,7 +14,6 @@ function json(body, status = 200) {
   });
 }
 
-async function uidFromRequest(request, env) {
 export function bearerTokenFromRequest(request) {
   const header = request.headers.get('authorization') || '';
   const match = /^Bearer\s+([^\s]+)$/i.exec(header);
@@ -22,6 +21,8 @@ export function bearerTokenFromRequest(request) {
 }
 
 async function uidFromRequest(request, env) {
+  // Staging must never authenticate against the production Firebase tenant.
+  if (env.ENVIRONMENT !== 'staging' || !env.FIREBASE_PROJECT_ID || env.FIREBASE_PROJECT_ID === 'lingo-legacy-production') return null;
   const token = bearerTokenFromRequest(request);
   if (!token) return null;
   const verified = await verifyFirebaseIdToken(token, env.FIREBASE_PROJECT_ID);
