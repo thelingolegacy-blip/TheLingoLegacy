@@ -240,3 +240,19 @@ test('provider models must be present in the explicit per-provider allowlist', a
   assert.deepEqual(result, { ok: false, status: 403, code: 'AI_MODEL_NOT_ALLOWED' });
   assert.equal(called, false);
 });
+
+
+test('malformed provider response shapes fail closed without throwing', async () => {
+  const malformed = {
+    openai: { output: 'not-an-array' },
+    claude: { content: 'not-an-array' },
+    gemini: { steps: 'not-an-array' },
+    grok: { output: 'not-an-array' }
+  };
+  for (const providerId of Object.keys(malformed)) {
+    const result = await invokeAiProvider(providerId, 'Malformed shape', configuredEnv, {
+      fetchImpl: async () => jsonResponse(malformed[providerId])
+    });
+    assert.deepEqual(result, { ok: false, status: 502, code: 'AI_PROVIDER_EMPTY_RESPONSE' });
+  }
+});
