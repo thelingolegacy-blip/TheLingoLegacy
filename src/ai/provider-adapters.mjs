@@ -82,8 +82,9 @@ const PROVIDERS = Object.freeze({
     }),
     answer: (payload) => {
       if (typeof payload?.output_text === 'string') return payload.output_text;
-      return (payload?.output || [])
-        .flatMap((item) => item?.content || [])
+      const output = Array.isArray(payload?.output) ? payload.output : [];
+      return output
+        .flatMap((item) => Array.isArray(item?.content) ? item.content : [])
         .filter((item) => item?.type === 'output_text' && typeof item.text === 'string')
         .map((item) => item.text)
         .join('\n');
