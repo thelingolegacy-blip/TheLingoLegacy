@@ -101,3 +101,11 @@ npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.json
 Do not add `--env staging` to that command unless a named environment is explicitly added to the config. Do not deploy this branch until a dedicated Firebase staging project ID has been created and bound to the staging Worker. The currently deployed dashboard binding remains the production project ID until that separate staging configuration change is made; the new guard exists in source but is not active in the deployed Worker until a reviewed staging deployment.
 
 GitHub Actions runs observed after the earlier commits still failed at workflow startup with zero jobs. Therefore none of the new source checks, Wrangler dry-run, or regression tests has yet been executed by GitHub Actions.
+
+
+### Local follow-up validation — 2026-11-08
+
+- Node.js v22 syntax check of the corrected Worker module: passed.
+- Isolated Worker route regression harness: 6/6 passed. The harness used stubbed downstream Firebase/D1 modules; it verifies bearer parsing, health response behavior, fail-closed handling for absent/production Firebase project IDs, and unknown-route behavior. It is not a full integration test of Firebase signature verification or D1 settlement.
+- Full repository Node/Python suites were not executed in this runtime. A root `package.json` is absent on this branch, so the proposed `npm run check`, `npm run lint`, and `npm run build` commands are not defined here.
+- Wrangler dry-run was not executed locally because this runtime cannot resolve external package hosts to obtain Wrangler. The dry-run is now included in the GitHub Actions workflow, but GitHub has not started any job for the latest run.
