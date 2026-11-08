@@ -25,9 +25,10 @@ else css = fs.readFileSync(cssPath, 'utf8');
 
 const requiredColors = {
   obsidian: '#050507',
-  gold: '#f7c84b',
-  royalPurple: '#6b2dff',
-  cyan: '#56efff',
+  carbon: '#15171d',
+  metallicSlate: '#273246',
+  electricGold: '#f7c84b',
+  focus: '#f7c84b',
 };
 for (const [key, expected] of Object.entries(requiredColors)) {
   const actual = tokens?.colors?.[key];
@@ -40,12 +41,22 @@ if (!tokens?.motion || tokens.motion.reducedMotion !== 'honor-prefers-reduced-mo
   errors.push('design tokens: reduced-motion policy missing');
 }
 for (const variable of [
-  '--lingo-color-obsidian', '--lingo-color-gold', '--lingo-color-royal-purple',
-  '--lingo-color-cyan', '--lingo-touch-target-min', '--lingo-motion-standard',
+  '--lingo-color-obsidian', '--lingo-color-carbon', '--lingo-color-metallic-slate',
+  '--lingo-color-electric-gold', '--lingo-color-focus',
+  '--lingo-touch-target-min', '--lingo-motion-standard',
 ]) {
   if (!css.includes(variable)) errors.push(`shared CSS token missing: ${variable}`);
 }
 if (!css.includes('prefers-reduced-motion: reduce')) errors.push('shared CSS must honor prefers-reduced-motion');
+
+const runtimeCssPath = path.join(root, 'assets/studio-ui-runtime.css');
+let runtimeCss = '';
+if (!fs.existsSync(runtimeCssPath)) errors.push('assets/studio-ui-runtime.css: missing');
+else runtimeCss = fs.readFileSync(runtimeCssPath, 'utf8');
+const retiredAccentColors = [/#6b2dff/i, /#9b7bff/i, /#56efff/i];
+if (retiredAccentColors.some((pattern) => pattern.test(css) || pattern.test(runtimeCss))) {
+  errors.push('shared design surfaces must not use retired purple/cyan accent literals');
+}
 
 if (registry && !Array.isArray(registry.icons)) errors.push('config/icons/icon-registry.json: icons must be an array');
 const icons = Array.isArray(registry?.icons) ? registry.icons : [];
@@ -71,7 +82,7 @@ if (errors.length) {
 console.log(JSON.stringify({
   ok: true,
   gate: 'SHARED_DESIGN_SYSTEM',
-  palette: ['obsidian', 'gold', 'royalPurple', 'cyan'],
+  palette: ['obsidian', 'carbon', 'metallicSlate', 'electricGold'],
   iconCount: ids.size,
   minimumTouchTargetPx: tokens.spacing.minimumTouchTargetPx,
   reducedMotion: 'verified',

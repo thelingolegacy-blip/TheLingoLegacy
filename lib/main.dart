@@ -8,11 +8,10 @@ Future<void> main() async {
   runApp(const LingoLegacyApp());
 }
 
-const gold = Color(0xFFE6BD58);
-const cyan = Color(0xFF54E7F2);
-const violet = Color(0xFF9871FF);
-const ink = Color(0xFF08090E);
-const muted = Color(0xFFAAB3C7);
+const gold = Color(0xFFF7C84B);
+const slate = Color(0xFF273246);
+const ink = Color(0xFF050507);
+const muted = Color(0xFFC9B98C);
 
 class LingoLegacyApp extends StatelessWidget {
   const LingoLegacyApp({super.key});
@@ -23,9 +22,9 @@ class LingoLegacyApp extends StatelessWidget {
     theme: ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: ink,
-      colorScheme: const ColorScheme.dark(primary: gold, secondary: cyan, surface: Color(0xFF111522)),
+      colorScheme: const ColorScheme.dark(primary: gold, secondary: slate, surface: Color(0xFF101016)),
       useMaterial3: true,
-      cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
+      cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF273246)))),
     ),
     home: const UniverseHome(),
   );
@@ -60,7 +59,7 @@ class _UniverseHomeState extends State<UniverseHome> {
     final isWide = MediaQuery.sizeOf(context).width >= 760;
     return Scaffold(
       appBar: AppBar(
-        title: const Row(children: [Icon(Icons.public, color: cyan), SizedBox(width: 10), Flexible(child: Text('THE LINGO LEGACY', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5)))]),
+        title: const Row(children: [Icon(Icons.public, color: gold), SizedBox(width: 10), Flexible(child: Text('THE LINGO LEGACY', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5)))]),
         actions: [IconButton(tooltip: 'About this preview', onPressed: () => _notice('Universe Hub mobile preview'), icon: const Icon(Icons.info_outline))],
       ),
       body: SafeArea(child: Center(child: ConstrainedBox(
@@ -73,10 +72,10 @@ class _UniverseHomeState extends State<UniverseHome> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: const Color(0x44303C55)),
-                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF242044), Color(0xFF101725), ink]),
+                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF273246), Color(0xFF101016), ink]),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('ONE UNIVERSE · MANY DESTINATIONS', style: TextStyle(color: cyan, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.6)),
+                const Text('ONE UNIVERSE · MANY DESTINATIONS', style: TextStyle(color: gold, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.6)),
                 const SizedBox(height: 16),
                 const Text('The Lingo\nUniverse Hub', style: TextStyle(fontSize: 42, height: 0.98, fontWeight: FontWeight.w900, letterSpacing: -2)),
                 const SizedBox(height: 14),
@@ -109,8 +108,8 @@ class _UniverseHomeState extends State<UniverseHome> {
                       padding: const EdgeInsets.all(17),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: active ? cyan.withValues(alpha: .7) : const Color(0xFF30384B)),
-                        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: active ? [const Color(0xFF1C3340), const Color(0xFF17162B)] : [const Color(0xFF151A28), const Color(0xFF0D101A)]),
+                        border: Border.all(color: active ? gold.withValues(alpha: .8) : const Color(0xFF273246)),
+                        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: active ? [const Color(0xFF273246), const Color(0xFF101016)] : [const Color(0xFF15171D), const Color(0xFF0D0E12)]),
                       ),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(d.icon, style: const TextStyle(fontSize: 27)),
@@ -119,7 +118,7 @@ class _UniverseHomeState extends State<UniverseHome> {
                         const SizedBox(height: 6),
                         Text(d.description, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: muted, height: 1.4)),
                         const SizedBox(height: 10),
-                        const Row(children: [Text('EXPLORE', style: TextStyle(color: cyan, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)), Spacer(), Icon(Icons.arrow_forward, color: cyan, size: 17)]),
+                        const Row(children: [Text('EXPLORE', style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)), Spacer(), Icon(Icons.arrow_forward, color: gold, size: 17)]),
                       ]),
                     ),
                   ),
@@ -135,7 +134,7 @@ class _UniverseHomeState extends State<UniverseHome> {
             padding: const EdgeInsets.all(20),
             child: Container(
               padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF30384B))),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF273246))),
               child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('LOYALTY. LEGACY. LANGUAGE.', style: TextStyle(color: gold, fontWeight: FontWeight.w900, letterSpacing: 1.1)),
                 SizedBox(height: 8),
