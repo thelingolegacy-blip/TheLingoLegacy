@@ -14,6 +14,8 @@ on:
       - "scripts/tests/server-slot-engine.test.mjs"
       - "scripts/tests/server-slot-engine-5x3.test.mjs"
       - "src/server/slot-engine-5x3.mjs"
+      - "scripts/tests/server-slot-engine-5x3.test.mjs"
+      - "src/server/slot-engine-5x3.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
       - "wrangler.game-engine-staging.jsonc"
       - ".github/workflows/server-game-foundation-validation.yml"
@@ -28,6 +30,8 @@ on:
       - "scripts/tests/firebase-id-token.test.mjs"
       - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/server-slot-engine-5x3.test.mjs"
+      - "src/server/slot-engine-5x3.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
       - "wrangler.game-engine-staging.jsonc"
       - ".github/workflows/server-game-foundation-validation.yml"
@@ -59,6 +63,7 @@ jobs:
         run: |
           node --check cloudflare/workers/lingo-game-engine-staging.mjs
           node --check src/server/slot-engine.mjs
+          node --check src/server/slot-engine-5x3.mjs
           node --check src/server/d1-slot-service.mjs
           node --check src/auth/firebase-id-token.mjs
       - name: Wrangler staging bundle dry run
