@@ -111,3 +111,18 @@ The Jobs and Artifacts endpoints were queried separately for all five run IDs an
 The current PR #504 is still open, draft, and mergeable according to GitHub PR metadata. Its base is `main`; its head is `hardening/flutter-firebase-cloudflare-2026-11-08`. The repository metadata grants the connected GitHub identity admin, maintain, pull, push, and triage permissions, but the available connector does not expose branch-protection/ruleset mutation or Actions runner/permissions administration. The repository's `.github/CODEOWNERS` and PR template remain policy files, not enforcement.
 
 No workflow retry was attempted because these runs have zero jobs to rerun. No PR merge, branch-protection change, runner registration, Firebase mutation, Cloudflare mutation, secret change, or deployment was performed by this recheck.
+
+
+## Follow-on exact-head CI recheck — 2026-11-08
+
+After the evidence commit, GitHub generated five new PR-triggered workflow attempts against head commit `b9dcb23eaa4ffb433f4ad9359ca50f1f332c9009`:
+
+| Workflow | Run ID | Conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Mobile Native Build Recovery | 42510106936 | startup_failure | 0 | 0 |
+| Lingo Legacy Static CI | 42510106123 | startup_failure | 0 | 0 |
+| G02 Runner Image Build (no publish) | 42510104839 | startup_failure | 0 | 0 |
+| Flutter Firebase Integrity | 42510105468 | startup_failure | 0 | 0 |
+| Crimson Smoke UI — static validation | 42510104187 | startup_failure | 0 | 0 |
+
+Jobs and artifacts were fetched independently for each run; all ten endpoint results returned empty arrays. The evidence commit itself therefore reproduced the same pre-job startup failure. This does not validate or invalidate the application source. No retry was issued because no job exists to retry. Provider-side configuration, runner repair, secrets, branch rules, and production changes remain outside the available connector's capabilities and were not changed.
