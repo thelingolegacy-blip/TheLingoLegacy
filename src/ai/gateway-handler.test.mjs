@@ -153,3 +153,12 @@ test('budget reconciliation failure prevents a success response', async () => {
   assert.equal(response.status, 503);
   assert.equal((await response.json()).error.code, 'AI_BUDGET_RECONCILIATION_UNAVAILABLE');
 });
+
+test('malformed successful budget reservations fail closed before dispatch', async () => {
+  const deps = dependencies({ reserveBudget: async () => ({ ok: true }) });
+  const handler = createAiGatewayHandler(deps);
+  const response = await handler(post());
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error.code, 'AI_BUDGET_RESERVATION_INVALID');
+  assert.equal(deps.calls.some(([name]) => name === 'dispatch'), false);
+});
