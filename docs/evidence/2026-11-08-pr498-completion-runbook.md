@@ -269,3 +269,20 @@ Read-back verification:
 - The catalog and column readbacks reported `changed_db=false` and `rows_written=0`.
 
 This supersedes the earlier runbook statement that migration `0002` was unapplied. The staging Worker source remains undeployed; Firebase staging identity/configuration, authenticated route tests, and browser/device QA remain outstanding. No production database, production Worker, route, DNS, or secret was changed.
+
+
+## 2026-11-08 Cloudflare Worker observability privacy hardening
+
+**Execution timestamp:** 2026-11-08T17:23:35Z  
+**Workers:** `thelingolegacyv-5` (production) and `lingo-game-engine-staging` (staging)
+
+Applied Cloudflare script-settings patches to both Workers and read them back successfully:
+- `observability.enabled=true` remains enabled.
+- `redact_query_string=true` removes query strings from logs/traces.
+- Request sampling and log sampling are set to `0.1` (10%).
+- Invocation logs and log persistence remain enabled.
+- Trace collection remains disabled and trace persistence is disabled.
+
+Both PATCH operations returned `success=true` with no errors. Readback confirmed the exact settings on both Workers. The production and staging Wrangler configs now carry the same observability policy so future source deployments do not revert it.
+
+This was an observability-settings-only change. No Worker source, route, DNS, secret, D1 application row, or production data was changed.
