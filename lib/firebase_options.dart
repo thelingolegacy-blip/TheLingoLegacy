@@ -23,6 +23,10 @@ class DefaultFirebaseOptions {
       String.fromEnvironment('FIREBASE_MACOS_API_KEY');
   static const _macosAppId =
       String.fromEnvironment('FIREBASE_MACOS_APP_ID');
+  static const _iosBundleId =
+      String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID');
+  static const _macosBundleId =
+      String.fromEnvironment('FIREBASE_MACOS_BUNDLE_ID');
 
   static bool get isConfigured {
     if (kIsWeb) {
@@ -47,6 +51,7 @@ class DefaultFirebaseOptions {
           appId: _iosAppId,
           messagingSenderId: _messagingSenderId,
           projectId: _projectId,
+          bundleId: _iosBundleId,
         );
       case TargetPlatform.macOS:
         return hasRequiredValues(
@@ -54,6 +59,7 @@ class DefaultFirebaseOptions {
           appId: _macosAppId,
           messagingSenderId: _messagingSenderId,
           projectId: _projectId,
+          bundleId: _macosBundleId,
         );
       case TargetPlatform.windows:
       case TargetPlatform.linux:
@@ -69,8 +75,9 @@ class DefaultFirebaseOptions {
     required String appId,
     required String messagingSenderId,
     required String projectId,
+    String? bundleId,
   }) {
-    final values = [apiKey, appId, messagingSenderId, projectId];
+    final values = [apiKey, appId, messagingSenderId, projectId, if (bundleId != null) bundleId];
     return values.every((value) {
       final normalized = value.trim();
       return normalized.isNotEmpty &&
@@ -115,7 +122,7 @@ class DefaultFirebaseOptions {
           projectId: _projectId,
           databaseURL: _databaseUrl,
           storageBucket: _storageBucket,
-          iosBundleId: 'com.thelingolegacy.app',
+          iosBundleId: _iosBundleId,
         );
       case TargetPlatform.macOS:
         return FirebaseOptions(
@@ -125,7 +132,7 @@ class DefaultFirebaseOptions {
           projectId: _projectId,
           databaseURL: _databaseUrl,
           storageBucket: _storageBucket,
-          macOsBundleId: 'com.thelingolegacy.app',
+          macOsBundleId: _macosBundleId,
         );
       case TargetPlatform.windows:
       case TargetPlatform.linux:
