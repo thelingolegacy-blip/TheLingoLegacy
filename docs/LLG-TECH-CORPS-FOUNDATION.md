@@ -26,7 +26,7 @@ GDeveloper means **Game Developer**. It is an LLG game-development division, not
 | xAI / Grok | Research and real-time information workflows | `XAI_API_KEY` | Disabled until approved, configured and live-tested |
 | Google Developer Services | Firebase, Google Cloud, developer APIs and infrastructure | Separate service credentials | Infrastructure integration, not a model adapter |
 
-Model identifiers are configured independently per provider; do not hard-code model names into public clients. API credentials are server-side secrets only and must never enter Git, client bundles, source maps, logs, test fixtures, or issue comments.
+Model identifiers are configured independently per provider and must match a server-side, per-provider approved-model allowlist before a request can be sent. The adapter rejects unlisted model IDs before network access. Keep allowlists versioned/reviewed and verify model availability and pricing before activation. Do not hard-code model names into public clients. API credentials are server-side secrets only and must never enter Git, client bundles, source maps, logs, test fixtures, or issue comments.
 
 ## LLG AI Command Center
 
