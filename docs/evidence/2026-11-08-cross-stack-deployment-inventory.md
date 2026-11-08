@@ -26,7 +26,7 @@
 ## Firebase and Flutter
 
 - `.firebaserc` identifies `lingo-legacy-production`, but this session did not verify the Firebase project's existence, ownership, registered apps, Auth providers, App Check, rules, Functions, or billing state because no Firebase project connector is available.
-- The Flutter hardening branch replaces committed placeholder client values with build-time configuration, adds a preview-safe startup path, and adds web/Android/iOS development build workflows. The strict validator requires complete platform configuration and exact native application identifiers. Five Firebase configuration tests and four Hosting-boundary tests passed in an isolated local Node harness; these are not GitHub CI results or Flutter SDK builds.
+- The Flutter hardening branch replaces committed placeholder client values with build-time configuration, adds a preview-safe startup path, and adds web/Android/iOS development build workflows. The strict validator requires complete platform configuration and exact native application identifiers. Five Firebase configuration tests, four Hosting-boundary tests, and four Cloudflare asset-publication tests passed in an isolated local Node harness (13 total); these are not GitHub CI results or Flutter SDK builds.
 - Firebase Hosting is scoped to `build/web` only. Cloudflare remains canonical for apex/www. No Firebase Hosting deployment, Flutter store release, or Firebase project mutation occurred.
 - Required Firebase repository variables must be provisioned by the project owner after verifying the real Web/Android/iOS/macOS app registrations. Never use service-account keys or admin credentials in Flutter builds.
 
@@ -60,3 +60,15 @@
 ## Staging migration update — 2026-11-08T17:17:11Z
 
 The additive `0002_lingo_api_rate_limits_staging.sql` migration was applied to the staging D1 database and schema-verified. The table is present; the schema readback did not modify application rows. This removes the missing-table prerequisite but does not authorize deployment of the new Worker source while Firebase staging identity and authenticated end-to-end tests remain unverified.
+
+## Latest exact-head CI readback — 2026-11-08T17:19:31Z
+
+PR #504 current head at this readback: `e95c02c56bba132e5ad6f86f352297c15944acf8`. The latest five workflow attempts on that exact head all ended `startup_failure` with zero jobs and zero artifacts:
+
+- Flutter Firebase Integrity #119 — `42504385857`
+- Mobile Native Build Recovery #15 — `42504383963`
+- Lingo Legacy Static CI #2435 — `42504386714`
+- G02 Runner Image Build #933 — `42504384924`
+- Crimson Smoke UI static validation #902 — `42504382904`
+
+No workflow command executed. The new Node validator tests were run locally in an isolated harness and passed 13/13. Flutter SDK analysis/builds remain unexecuted.
