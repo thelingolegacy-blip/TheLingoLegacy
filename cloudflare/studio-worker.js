@@ -25,9 +25,9 @@ nav{width:min(1200px,calc(100% - 32px));height:70px;margin:auto;display:flex;ali
 
 const page = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Lingo Legacy — Cloudflare Studio</title><style>${studioCss}</style></head><body>
 <header><nav><div class="brand"><i>LINGO</i> LEGACY</div><div class="nav"><a href="/">Home</a><a href="#worlds">Worlds</a><a href="#studio">Studio</a></div></nav></header>
-<main class="wrap"><section class="hero"><div><div class="live"><span class="dot"></span> Cloudflare Studio Build</div><h1>The Lingo <span>Legacy</span></h1><p>Crimson / White / Shadow Noire studio shell with the askLINGO live interface. Built from the GitHub source lane for Cloudflare Workers.</p><div class="actions"><a class="btn primary" href="#studio">Enter Studio</a><button class="btn" id="openAsk">askLINGO</button></div></div></section>
+<main class="wrap"><section class="hero"><div><div class="live"><span class="dot"></span> STAGING PREVIEW · NOT PRODUCTION</div><h1>The Lingo <span>Legacy</span></h1><p>Crimson / White / Shadow Noire studio preview. askLINGO uses local demo responses only; no AI service, account system, or production backend is connected.</p><div class="actions"><a class="btn primary" href="#studio">Enter Studio</a><button class="btn" id="openAsk">askLINGO</button></div></div></section>
 <section id="studio" class="grid"><article class="card"><h3>LINGOarcade</h3><p>Unified game-world navigation for the Legacy universe.</p></article><article class="card"><h3>Thats My Lingo</h3><p>5×3 reels, 20 paylines, demo-coin entertainment surface.</p></article><article class="card" id="worlds"><h3>Kottons Code</h3><p>Story, family, learning, and world-building lane.</p></article></section></main>
-<div id="ask"><button id="launcher" class="launcher">⌁</button><div id="panel" class="panel"><div class="head"><b>askLINGO · LIVE STUDIO</b><button id="close" class="launcher" style="width:34px;height:34px;font-size:18px">×</button></div><div id="body" class="body"><div class="msg">Welcome to the live studio. Ask where you want to go.</div></div><div class="input"><input id="input" placeholder="Ask askLINGO…"><button id="send">Send</button></div></div></div>
+<div id="ask"><button id="launcher" class="launcher">⌁</button><div id="panel" class="panel"><div class="head"><b>askLINGO · DEMO — NOT CONNECTED</b><button id="close" class="launcher" style="width:34px;height:34px;font-size:18px">×</button></div><div id="body" class="body"><div class="msg">Preview mode: this is a staging interface. askLINGO replies are local demo text, not an AI service.</div></div><div class="input"><input id="input" placeholder="Ask askLINGO…"><button id="send">Send</button></div></div></div>
 <script>
 const panel=document.getElementById("panel"),launcher=document.getElementById("launcher"),close=document.getElementById("close"),body=document.getElementById("body"),input=document.getElementById("input"),send=document.getElementById("send"),openAsk=document.getElementById("openAsk");
 function say(t,u){const d=document.createElement("div");d.className="msg"+(u?" u":"");d.textContent=t;body.appendChild(d);body.scrollTop=body.scrollHeight}
@@ -39,6 +39,6 @@ launcher.onclick=show;openAsk.onclick=show;close.onclick=hide;send.onclick=submi
 
 async function handle(request){
   const url=new URL(request.url);
-  if(url.pathname==="/api/health")return new Response(JSON.stringify({status:"ok",build:"cloudflare-studio",source:"github",production:false}),{headers:{"content-type":"application/json"}});
+  if(url.pathname==="/api/health")return new Response(JSON.stringify({status:"ok",build:"cloudflare-studio-preview",source:"github",production:false,aiConnected:false,mode:"demo"}),{headers:{"content-type":"application/json"}});
   return new Response(page,{headers:{"content-type":"text/html;charset=UTF-8","cache-control":"no-store"}});
 }
