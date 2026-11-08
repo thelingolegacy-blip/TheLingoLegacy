@@ -22,9 +22,9 @@ Firebase client values are injected at build time using `--dart-define`. The exp
 - `FIREBASE_DATABASE_URL`
 - `FIREBASE_STORAGE_BUCKET`
 - `FIREBASE_WEB_API_KEY`, `FIREBASE_WEB_APP_ID`
-- `FIREBASE_ANDROID_API_KEY`, `FIREBASE_ANDROID_APP_ID`
-- `FIREBASE_IOS_API_KEY`, `FIREBASE_IOS_APP_ID`
-- `FIREBASE_MACOS_API_KEY`, `FIREBASE_MACOS_APP_ID`
+- `FIREBASE_ANDROID_API_KEY`, `FIREBASE_ANDROID_APP_ID`, `FIREBASE_ANDROID_PACKAGE_NAME`
+- `FIREBASE_IOS_API_KEY`, `FIREBASE_IOS_APP_ID`, `FIREBASE_IOS_BUNDLE_ID`
+- `FIREBASE_MACOS_API_KEY`, `FIREBASE_MACOS_APP_ID`, `FIREBASE_MACOS_BUNDLE_ID`
 
 The Flutter integrity workflow reads these as GitHub repository variables. Firebase client API keys and app IDs are public client configuration, not service-account secrets. Never place service-account JSON, private keys, admin SDK credentials, or long-lived bearer tokens in these variables or in a client build.
 
