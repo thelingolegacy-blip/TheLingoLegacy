@@ -103,7 +103,15 @@ async function sendBeacon(payload, env) {
   // Outbound paid providers remain off unless separately approved after a cost plan.
   if (env.PAID_SERVICES_ENABLED !== 'true') return null;
   const webhookUrl = env.BEACON_ALERTS_WEBHOOK_URL;
-  if (webhookUrl) { const headers = { 'Content-Type': 'application/json' }; if (env.BEACON_ALERTS_WEBHOOK_SECRET) headers.Authorization = `Bearer ${env.BEACON_ALERTS_WEBHOOK_SECRET}`; const response = await fetch(webhookUrl, { method: 'POST', headers, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Webhook returned ${response.status}`); return { provider: 'webhook' }; }
+  if (webhookUrl) {
+    const secret = String(env.BEACON_ALERTS_WEBHOOK_SECRET || '').trim();
+    // Phone-number data must never be sent to an unauthenticated webhook.
+    if (!secret) throw new Error('BEACON_WEBHOOK_SECRET_REQUIRED');
+    const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${secret}` };
+    const response = await fetch(webhookUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error(`Webhook returned ${response.status}`);
+    return { provider: 'webhook' };
+  }
   const sid = env.TWILIO_ACCOUNT_SID; const token = env.TWILIO_AUTH_TOKEN; const from = env.TWILIO_FROM_NUMBER;
   if (!sid || !token || !from) return null;
   const body = new URLSearchParams({ To: payload.phone, From: from, Body: payload.message });
