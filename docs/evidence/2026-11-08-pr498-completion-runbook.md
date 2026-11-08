@@ -252,3 +252,20 @@ These are exact theoretical values for the current five-symbol-position line eva
 - Code behavior updates are at `d136182a19e6b7033e08e9c43667596be666634e` (CORS test) and `cac852b3312392f99f0731a25f7f37b5a74eb880` (daily reward replay behavior); latest source regression test commit is `95e138619f8e2af6e8f0ffbd87065debc4deabfc`. The current head's later commits are evidence/runbook/PR metadata updates.
 - The D1 read-only catalog still shows migration `0002` unapplied. Latest Worker deployment remains the settings-only version recorded above. No code deployment or database mutation occurred.
 - Release disposition remains HOLD / NOT ACCEPTED. No merge, production change, or promotion.
+
+
+## 2026-11-08 staging D1 migration 0002 — applied and verified
+
+**Execution timestamp:** 2026-11-08T17:17:11Z  
+**Database:** `lingo-game-engine-staging-20261107`  
+**Database UUID:** `793ab138-7818-47c9-ad01-b319ad34a8c5`  
+**Change type:** Additive staging-only schema migration
+
+Applied the exact SQL from `migrations/0002_lingo_api_rate_limits_staging.sql` using `CREATE TABLE IF NOT EXISTS`. Cloudflare D1 returned `success=true`, `changed_db=true`, and no result rows. D1 reported three SQLite catalog writes for the DDL; no application rows were inserted, updated, or deleted.
+
+Read-back verification:
+- `sqlite_master` contains `lingo_api_rate_limits` as a table.
+- `PRAGMA table_info` confirms `firebase_uid TEXT PRIMARY KEY`, `window_epoch INTEGER NOT NULL`, `request_count INTEGER NOT NULL`, and `updated_at TEXT NOT NULL` with the UTC timestamp default.
+- The catalog and column readbacks reported `changed_db=false` and `rows_written=0`.
+
+This supersedes the earlier runbook statement that migration `0002` was unapplied. The staging Worker source remains undeployed; Firebase staging identity/configuration, authenticated route tests, and browser/device QA remain outstanding. No production database, production Worker, route, DNS, or secret was changed.
