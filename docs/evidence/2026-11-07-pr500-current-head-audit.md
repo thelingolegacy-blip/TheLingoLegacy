@@ -1,6 +1,6 @@
 # PR #500 — Current-head execution and adapter boundary audit
 
-**Audit date:** 2026-11-07  
+**Audit date:** 2026-11-08  
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
 **Audited branch:** `feat/llg-tech-corps-ai-gateway-foundation-2026-11-07`  
 **PR:** [#500](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/500)  
@@ -13,10 +13,10 @@ The current branch still contains the exact source blobs previously used for the
 
 | File | Git blob SHA-1 |
 |---|---|
-| `src/ai/provider-adapters.mjs` | `c11a0a076410ae7ff1e50f056cc9417dcd7b5071` |
-| `src/ai/provider-adapters.test.mjs` | `61d4f577296f5801fd17490aa1f82018ad525796` |
+| `src/ai/provider-adapters.mjs` | `5faa534ed55f925f1e182946ff1ea531997e2c46` |
+| `src/ai/provider-adapters.test.mjs` | `9377aee8eddfbf1497a677eedbad346521d950e9` |
 
-This establishes that the adapter and test source files have not changed since the recorded 15/15 local mocked test run. It does not establish that the current PR head executed in GitHub Actions.
+These are the current source blob identifiers after the 2026-11-08 hardening commits. The earlier 15/15 local mocked test result applies only to the previous source blobs; it must not be represented as execution evidence for these changed files. Current changes require fresh local or hosted execution.
 
 ## 2. Actions startup evidence
 
@@ -31,6 +31,8 @@ This evidence establishes a common pre-job startup symptom. It does not identify
 - Credentials and model identifiers are read from server-side environment bindings.
 - Prompt input is type-checked, non-empty and limited to 2,000 characters.
 - Requests have a bounded timeout (1–60 seconds; default 20 seconds).
+- Upstream response parsing now enforces a 1 MiB byte ceiling, checking both declared content length and streamed bytes before JSON parsing.
+- Local correlation IDs are distinct from a sanitized upstream request identifier when the provider returns one.
 - Upstream errors are normalized; upstream error bodies and thrown exception messages are not returned.
 - Comparison accepts 2–4 unique providers and independently submits the same prompt; provider outputs are not passed between providers.
 - OpenAI, Gemini and xAI request bodies explicitly set `store: false`.
@@ -42,10 +44,10 @@ These are limitations of the current adapter foundation, not claims that a produ
 
 1. **No HTTP route or authentication boundary is included in this module.** The caller must enforce authenticated identity, authorization scopes, CSRF/origin policy where applicable, and tenant isolation.
 2. **No rate limiting, quota enforcement, per-user budget, spend ceiling or concurrency control is implemented here.** Provider enable flags are not a billing guard.
-3. **No request/response body byte ceiling is enforced.** The prompt character limit is useful but does not bound upstream response payload size.
+3. **Request and response limits are partial.** Upstream response bodies are now capped at 1 MiB before JSON parsing. Prompt length is limited to 2,000 characters, but a full route-level request-byte, per-user quota, concurrency and cost budget remains unimplemented.
 4. **Model configuration uses a syntactic allow-pattern, not a maintained approved-model allowlist.** Model access, availability and price must be checked in the deployment environment before activation.
 5. **No moderation, prompt-injection policy, output classification, retention policy or application-specific data minimization is implemented here.** These must be designed at the gateway/application boundary.
-6. **No provider request ID is captured.** The returned `request_id` is locally generated and should be treated as an internal correlation token, not an upstream provider request identifier.
+6. **Provider request correlation is partial.** `request_id` is locally generated; `upstream_request_id` is captured only when a recognized, syntactically safe response header is present. Provider-specific header coverage and operational tracing still need validation.
 7. **No provider-specific integration smoke test or contract test against live official SDK/API responses was executed.** Mocked response fixtures do not validate live credentials, account access, quota, billing, model names or provider terms.
 8. **Claude statelessness and provider-side retention terms require current provider policy review.** A stateless Messages request does not replace a contractual privacy/retention assessment.
 
@@ -53,7 +55,8 @@ These are limitations of the current adapter foundation, not claims that a produ
 
 | Gate | Current result | Evidence needed to close |
 |---|---|---|
-| Local mocked adapter tests | PASS — 15/15 on unchanged source blobs | Retain source hashes and test output |
+| Earlier local mocked adapter tests | PASS — 15/15 on prior source blobs only | Do not transfer this result to current changed blobs |
+| Current source mocked adapter tests | NOT EXECUTED / NOT VERIFIED | Run the updated suite on the exact current head and retain output/hash |
 | GitHub-hosted adapter test | NOT VERIFIED | A real job, completed steps, exit code and retrievable artifact on exact head |
 | Adapter security review | PRELIMINARY | Independent reviewer signoff and route-level threat model |
 | Live provider connectivity | NOT RUN / NOT AUTHORIZED | Explicit provider account, secret, privacy and spend authorization |
@@ -62,6 +65,13 @@ These are limitations of the current adapter foundation, not claims that a produ
 | G02 release gate | FAIL / UNVERIFIED | Canonical runner assignment, sentinel execution, logs/artifacts and independent acceptance |
 | Production promotion | PROTECTED HOLD | All required gates accepted and explicit release authorization |
 
-## 6. Governance
+## 6. Current hardening delta — 2026-11-08
+
+- Added bounded upstream response reading with a 1 MiB ceiling. Both an oversized `content-length` and an oversized streamed body are rejected before JSON parsing.
+- Added distinct upstream request-ID capture (when a recognized safe header is supplied) alongside the internally generated correlation ID.
+- Added regression tests for declared-length rejection, streamed-byte rejection and request-ID separation.
+- These are source changes only. The new tests have not been executed because the GitHub Actions startup issue persists; no updated local test result is claimed.
+
+## 7. Governance
 
 PR #500 remains draft and unmerged. No independent PR review is recorded. No production route, Firebase project, secret, billing setting, provider flag, payment path, game economy, or G02 runner was changed by this audit. Do not promote any product status based on this document.
