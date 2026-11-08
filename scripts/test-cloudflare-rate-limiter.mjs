@@ -10,20 +10,22 @@ function makeState() {
   let bucket;
   let alarmAt = null;
   let tail = Promise.resolve();
+  let externalGetCalls = 0;
   return {
     storage: {
       async transaction(callback) {
         const result = tail.then(() => callback({
           get: async (key) => key === 'bucket' ? bucket : undefined,
           put: async (key, value) => { if (key === 'bucket') bucket = value; },
+          delete: async (key) => { if (key === 'bucket') bucket = undefined; },
         }));
         tail = result.then(() => undefined, () => undefined);
         return result;
       },
-      async get(key) { return key === 'bucket' ? bucket : undefined; },
+      async get(key) { externalGetCalls += 1; return key === 'bucket' ? bucket : undefined; },
       async setAlarm(value) { alarmAt = value; },
       async deleteAll() { bucket = undefined; },
-      inspect() { return { bucket, alarmAt }; },
+      inspect() { return { bucket, alarmAt, externalGetCalls }; },
       seed(value) { bucket = value; },
     },
   };
@@ -68,4 +70,15 @@ test('alarm cleanup deletes only expired buckets', async () => {
   await limiter.alarm();
   assert.ok(state.storage.inspect().bucket);
   assert.ok(state.storage.inspect().alarmAt > Date.now());
+});
+
+test('alarm cleanup is transactionally serialized with a concurrent new request', async () => {
+  const state = makeState();
+  const limiter = new BeaconRateLimiter(state);
+  state.storage.seed({ startedAt: Date.now() - (60 * 60 * 1000) - 1, count: 5 });
+  await Promise.all([limiter.alarm(), request(limiter)]);
+  const final = state.storage.inspect();
+  assert.ok(final.bucket, 'the concurrent request must leave a fresh bucket');
+  assert.equal(final.bucket.count, 1);
+  assert.equal(final.externalGetCalls, 0, 'alarm must not read outside the transaction');
 });
