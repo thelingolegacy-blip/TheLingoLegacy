@@ -19,8 +19,9 @@ const PROVIDERS = Object.freeze({
     }),
     answer: (payload) => {
       if (typeof payload?.output_text === 'string') return payload.output_text;
-      return (payload?.output || [])
-        .flatMap((item) => item?.content || [])
+      const output = Array.isArray(payload?.output) ? payload.output : [];
+      return output
+        .flatMap((item) => Array.isArray(item?.content) ? item.content : [])
         .filter((item) => item?.type === 'output_text' && typeof item.text === 'string')
         .map((item) => item.text)
         .join('\n');
@@ -38,7 +39,7 @@ const PROVIDERS = Object.freeze({
       max_tokens: 1024,
       messages: [{ role: 'user', content: message }]
     }),
-    answer: (payload) => (payload?.content || [])
+    answer: (payload) => (Array.isArray(payload?.content) ? payload.content : [])
       .filter((item) => item?.type === 'text' && typeof item.text === 'string')
       .map((item) => item.text)
       .join('\n')
@@ -57,9 +58,10 @@ const PROVIDERS = Object.freeze({
     }),
     answer: (payload) => {
       if (typeof payload?.output_text === 'string') return payload.output_text;
-      return (payload?.steps || [])
+      const steps = Array.isArray(payload?.steps) ? payload.steps : [];
+      return steps
         .filter((step) => step?.type === 'model_output')
-        .flatMap((step) => step?.content || [])
+        .flatMap((step) => Array.isArray(step?.content) ? step.content : [])
         .filter((item) => item?.type === 'text' && typeof item.text === 'string')
         .map((item) => item.text)
         .join('\n');
