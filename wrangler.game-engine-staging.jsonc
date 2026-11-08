@@ -16,6 +16,6 @@
   ],
   "vars": {
     "ENVIRONMENT": "staging",
-    "FIREBASE_PROJECT_ID": "lingo-legacy-production"
+    // Supply a dedicated non-production Firebase project ID before enabling authenticated staging play.
   }
 }
