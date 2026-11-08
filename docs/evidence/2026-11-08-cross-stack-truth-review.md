@@ -17,7 +17,7 @@ GitHub is the source-of-truth system. A README, manifest, dependency, source rou
 
 ## GitHub and CI
 
-- PR #504 current recorded head: d5bb1d8dc7d044550158dfe20ffb430baab2d771.
+- PR #504 code-bearing head reviewed before this documentation-only commit: d5bb1d8dc7d044550158dfe20ffb430baab2d771. This truth-review document is added by commit 7391bc6f5da601f25f9e2f0b428850db31633a60.
 - Latest recorded Flutter Firebase Integrity run #132 (42505053676) ended startup_failure. A live GitHub Jobs readback returned zero jobs and the Artifacts readback returned zero artifacts. No Flutter workflow step ran.
 - The other four latest PR #504 workflows are also recorded as startup failures with zero jobs and zero artifacts.
 - The isolated Node contract harness reports 19 passing tests. These are source-level Node tests, not GitHub CI and not Flutter SDK validation.
