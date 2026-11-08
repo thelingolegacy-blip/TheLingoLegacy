@@ -213,13 +213,21 @@ export class BeaconRateLimiter {
   }
 
   async alarm() {
-    const bucket = await this.state.storage.get('bucket');
-    if (!bucket) return;
-    if (Date.now() - bucket.startedAt >= RATE_WINDOW_MS) {
-      await this.state.storage.deleteAll();
-      return;
-    }
-    await this.state.storage.setAlarm(bucket.startedAt + RATE_WINDOW_MS + 1000);
+    // Read and expire the bucket inside one transaction. A request racing the
+    // alarm is therefore serialized: either it refreshes first and the alarm
+    // keeps it, or the alarm deletes the expired bucket before the request
+    // creates a new one. Never delete storage outside this transaction.
+    const nextAlarm = await this.state.storage.transaction(async (txn) => {
+      const bucket = await txn.get('bucket');
+      if (!bucket) return null;
+      const expiresAt = bucket.startedAt + RATE_WINDOW_MS;
+      if (Date.now() >= expiresAt) {
+        await txn.delete('bucket');
+        return null;
+      }
+      return expiresAt + 1000;
+    });
+    if (nextAlarm !== null) await this.state.storage.setAlarm(nextAlarm);
   }
 }
 
