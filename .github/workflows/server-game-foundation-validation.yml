@@ -1,0 +1,71 @@
+name: LINGO Server Game Foundation Validation
+
+on:
+  push:
+    branches:
+      - staging/server-authoritative-game-foundation-2026-11-07
+    paths:
+      - "cloudflare/workers/**"
+      - "src/auth/**"
+      - "src/server/**"
+      - "migrations/**"
+      - "scripts/tests/firebase-id-token.test.mjs"
+      - "scripts/tests/lingo-game-worker.test.mjs"
+      - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/test-slot-wallet-migration.py"
+      - "wrangler.game-engine-staging.jsonc"
+      - ".github/workflows/server-game-foundation-validation.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "cloudflare/workers/**"
+      - "src/auth/**"
+      - "src/server/**"
+      - "migrations/**"
+      - "scripts/tests/firebase-id-token.test.mjs"
+      - "scripts/tests/lingo-game-worker.test.mjs"
+      - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/test-slot-wallet-migration.py"
+      - "wrangler.game-engine-staging.jsonc"
+      - ".github/workflows/server-game-foundation-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-server-game-foundation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Syntax checks
+        run: |
+          node --check cloudflare/workers/lingo-game-engine-staging.mjs
+          node --check src/server/slot-engine.mjs
+          node --check src/server/d1-slot-service.mjs
+          node --check src/auth/firebase-id-token.mjs
+      - name: Wrangler staging bundle dry run
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.jsonc
+      - name: Firebase identity verification tests
+        run: node --test scripts/tests/firebase-id-token.test.mjs
+      - name: Worker route and authentication tests
+        run: node --test scripts/tests/lingo-game-worker.test.mjs
+      - name: Deterministic engine tests
+        run: node --test scripts/tests/server-slot-engine.test.mjs
+      - name: SQLite migration and ledger tests
+        run: python3 scripts/tests/test-slot-wallet-migration.py

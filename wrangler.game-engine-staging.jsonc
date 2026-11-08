@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lingo-game-engine-staging",
+  "main": "cloudflare/workers/lingo-game-engine-staging.mjs",
+  "compatibility_date": "2026-11-07",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lingo-game-engine-staging-20261107",
+      "database_id": "793ab138-7818-47c9-ad01-b319ad34a8c5"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "staging",
+    // Supply a dedicated non-production Firebase project ID before enabling authenticated staging play.
+  }
+}
