@@ -1,3 +1,7 @@
+> **Governance correction — historical reference only (2026-11-06):** This file preserves an earlier proposed agent-role model. Its ADMIN/WRITE labels, deployment/merge/approval powers, named authority claims, and any instruction to operate Vercel or mutate production are not effective permissions and do not override the repository's current `AGENTS.md`, release policy, G02 contract, GitHub rules, provider controls, or task-specific human authorization. Agents cannot approve their own work or release. The current production posture is HOLD; G02 is BLOCKED / UNVERIFIED; last-known-good is protected. Use [`docs/ROUTE-LEVEL-AGENT.md`](ROUTE-LEVEL-AGENT.md) for route work and the root [`AGENTS.md`](../AGENTS.md) for mandatory repository rules.
+
+---
+
 # The Lingo ⭐️ Legacy — Agent Leadership & Governance Framework
 
 **Effective Date:** October 11, 2026  

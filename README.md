@@ -66,3 +66,14 @@ Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `M
 `RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
 
 The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
+
+
+## Agent and recovery instructions
+
+- Repository-wide agent rules: [`AGENTS.md`](AGENTS.md)
+- Route-level agent and Gateway routing contract: [`docs/ROUTE-LEVEL-AGENT.md`](docs/ROUTE-LEVEL-AGENT.md)
+- Master recovery register: [Issue #480](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/480)
+- Proposed evidence package: [PR #481](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/481) (draft; not merged)
+- Proposed system architecture: [PR #482](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/482) (draft; not merged)
+
+All work remains subject to independent verification and separate release authorization. Documentation does not grant provider permissions or authorize production changes.
