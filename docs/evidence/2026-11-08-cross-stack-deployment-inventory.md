@@ -6,8 +6,8 @@
 ## GitHub
 
 - Repository `thelingolegacy-blip/TheLingoLegacy` reports `main` as unprotected. The connected GitHub tools available in this session do not expose a branch-protection update operation. Require pull requests, at least one independent approval, required CI checks, signed commits where practical, and restrict force-push/deletion through the repository's GitHub settings before production promotion.
-- GitHub Actions continues to fail before job creation. Flutter Firebase Integrity run #113 (`42503491050`) ended `startup_failure`; the run has no instantiated jobs or artifacts. The repeated branch-push trigger was narrowed to `main` pushes plus pull requests and manual dispatch, avoiding a new run for every feature-branch commit.
-- No workflow step has yet executed. The new mobile workflow and Flutter contract tests are source changes only until GitHub Actions can start jobs.
+- GitHub Actions continues to fail before job creation. On PR #504 head `15ebb84426f10a13853a8966198b71c2a610a260`, Flutter Firebase Integrity run #114 (`42503951988`), Mobile Native Build Recovery run #10 (`42503950423`), Lingo Legacy Static CI run #2430 (`42503949675`), G02 Runner Image Build run #928 (`42503951122`), and Crimson Smoke UI static validation run #897 (`42503952950`) all ended `startup_failure`, each with 0 jobs and 0 artifacts. No workflow command executed. The Flutter workflow trigger was narrowed to `main` pushes, pull requests, and manual dispatch, avoiding repeated feature-branch runs.
+- No workflow step has yet executed. The new mobile workflow and Flutter contract tests are source changes only until GitHub Actions can start jobs. The public GitHub status page currently reports all systems operational and no incident on Nov 8; the failures therefore cannot be attributed to a confirmed platform-wide outage. The connected GitHub integration blocks access to repository Actions permissions/runners settings, so the exact repository/account-level cause remains unknown.
 
 ## Cloudflare production and staging
 
@@ -26,7 +26,7 @@
 ## Firebase and Flutter
 
 - `.firebaserc` identifies `lingo-legacy-production`, but this session did not verify the Firebase project's existence, ownership, registered apps, Auth providers, App Check, rules, Functions, or billing state because no Firebase project connector is available.
-- The Flutter hardening branch replaces committed placeholder client values with build-time configuration, adds a preview-safe startup path, and adds web/Android/iOS development build workflows. The strict validator requires complete platform configuration and exact native application identifiers.
+- The Flutter hardening branch replaces committed placeholder client values with build-time configuration, adds a preview-safe startup path, and adds web/Android/iOS development build workflows. The strict validator requires complete platform configuration and exact native application identifiers. Five Firebase configuration tests and four Hosting-boundary tests passed in an isolated local Node harness; these are not GitHub CI results or Flutter SDK builds.
 - Firebase Hosting is scoped to `build/web` only. Cloudflare remains canonical for apex/www. No Firebase Hosting deployment, Flutter store release, or Firebase project mutation occurred.
 - Required Firebase repository variables must be provisioned by the project owner after verifying the real Web/Android/iOS/macOS app registrations. Never use service-account keys or admin credentials in Flutter builds.
 
@@ -50,3 +50,8 @@
 9. Complete browser, mobile-device, accessibility, security, and independent release acceptance.
 
 **No production Worker deployment, Firebase deployment, mobile store release, DNS mutation, or production data mutation was performed.**
+
+
+## Related pull-request consolidation
+
+- PR #434 (mobile startup/build recovery), PR #475 (Firebase Hosting build/web scope), and PR #354 (Firebase static-gate tests) were closed as superseded by draft PR #504. Their useful changes were carried forward or replaced by stricter implementations; their branches remain available for audit. PR #415 contains separate Ask Lingo/Flutter feature work and remains independent.
