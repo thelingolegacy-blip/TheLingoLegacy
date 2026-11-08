@@ -10,7 +10,7 @@
 - Firebase is reserved for authentication and application data services when a real project/app configuration and deployed security rules are verified.
 - Flutter is a client. It must not contain service-account credentials or hard-coded Firebase client identifiers.
 
-Firebase Hosting is scoped only to the generated Flutter web artifact at `build/web`; it no longer publishes the repository root, which could expose internal source, scripts, and documentation. Cloudflare remains the canonical apex/www delivery layer. The Firebase Hosting configuration is source-only here: no Firebase Hosting deployment was performed by this change.
+Firebase Hosting is scoped only to the generated Flutter web artifact at `build/web`; it no longer publishes the repository root, which could expose internal source, scripts, and documentation. The `build/web/` directory is also excluded from Cloudflare Worker static assets, keeping the Flutter app artifact separate from the canonical site bundle. Cloudflare remains the canonical apex/www delivery layer. The Firebase Hosting configuration is source-only here: no Firebase Hosting deployment was performed by this change.
 
 ## Flutter runtime behavior
 
