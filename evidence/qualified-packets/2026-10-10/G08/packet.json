@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G08-SYNCHRONIZATION-2026-10-10",
+  "gate_id": "G08",
+  "gate_name": "SYNCHRONIZATION",
+  "disposition": "BLOCKED",
+  "objective": "Verify repository, artifact, configuration, and deployed revision alignment without mutation.",
+  "required_evidence": ["Repository/ref/commit snapshot", "Artifact digest", "Configuration revision/fingerprint", "Deployment revision where applicable", "Independent comparison output"],
+  "observed_evidence": [],
+  "missing_items": ["Verified source and artifact identities", "Configuration/deployment correlation", "Independent acceptance"],
+  "acceptance_rule": "Remain BLOCKED until all applicable revisions and digests match and an independent reviewer confirms the comparison.",
+  "mutation_policy": "READ_ONLY_VALIDATION_ONLY",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

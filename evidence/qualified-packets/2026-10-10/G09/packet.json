@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G09-ACTIVATION-2026-10-10",
+  "gate_id": "G09",
+  "gate_name": "ACTIVATION",
+  "disposition": "BLOCKED",
+  "objective": "Require explicit activation authorization and complete prior gates; capture before/after state.",
+  "required_evidence": ["All prior gate acceptance records", "Explicit authorization with scope and approver", "Pre-activation snapshot", "Activation event/audit record", "Post-action verification"],
+  "observed_evidence": [],
+  "missing_items": ["Prior gate acceptance", "Explicit activation authorization", "Approved execution and before/after evidence"],
+  "acceptance_rule": "No activation while blocked; packet creation is not authorization.",
+  "mutation_policy": "ACTIVATION_PROHIBITED",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

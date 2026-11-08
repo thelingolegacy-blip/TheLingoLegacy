@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G04-CERTIFICATION-2026-10-10",
+  "gate_id": "G04",
+  "gate_name": "CERTIFICATION",
+  "disposition": "BLOCKED",
+  "objective": "Run required validation, security, and test suites; preserve raw outputs and independent review.",
+  "provenance": {"source_ref": "infra/g02-runner-agents-diagnostics-2026-10-10", "source_commit": "RECORD_EXACT_SHA", "captured_at_utc": "RECORD_ACTUAL_UTC_TIME", "collector": "RECORD_COLLECTOR"},
+  "required_evidence": ["Test/security reports and raw output", "Tool versions and exact commands", "Artifact SHA-256", "Independent reviewer decision and timestamp"],
+  "observed_evidence": [],
+  "missing_items": ["Gate-specific test results", "Integrity and completeness verification", "Independent acceptance"],
+  "acceptance_rule": "Remain BLOCKED until upstream gates pass and all required tests are evidenced and independently verified.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

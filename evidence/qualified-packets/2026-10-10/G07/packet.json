@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G07-LIVE_VALIDATION-2026-10-10",
+  "gate_id": "G07",
+  "gate_name": "LIVE_VALIDATION",
+  "disposition": "BLOCKED",
+  "objective": "Capture independent public/runtime probes and correlated timestamps, response codes, headers, and source identity.",
+  "required_evidence": ["Independent probe source and timestamp", "HTTP/runtime response and sanitized headers", "Correlation to intended deployment/source SHA", "Raw results and SHA-256", "Independent review"],
+  "observed_evidence": [],
+  "missing_items": ["Accepted deployment evidence", "Independent live probe results", "Source/runtime correlation"],
+  "acceptance_rule": "Remain BLOCKED until the approved target is independently probed and results correlate to the accepted artifact.",
+  "mutation_policy": "READ_ONLY_VALIDATION_ONLY",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G00-SOURCE_AUTHORITY-2026-10-10",
+  "gate_id": "G00",
+  "gate_name": "SOURCE_AUTHORITY",
+  "scope": "thelingolegacy-blip/TheLingoLegacy",
+  "disposition": "RECORDED_PASS_NOT_REVERIFIED",
+  "objective": "Confirm authoritative repository, approved source ref, owner, and immutable commit SHA.",
+  "provenance": {
+    "source_ref": "infra/g02-runner-agents-diagnostics-2026-10-10",
+    "source_commit": "RECORD_EXACT_SHA_AT_CAPTURE",
+    "captured_at_utc": "RECORD_ACTUAL_CAPTURE_TIME",
+    "collector": "RECORD_TOOL_OR_OPERATOR",
+    "collection_method": "RECORD_EXACT_METHOD"
+  },
+  "observed_evidence": [],
+  "missing_items": [
+    "Fresh gate-specific raw evidence",
+    "Integrity and scope verification",
+    "Independent reviewer decision and timestamp"
+  ],
+  "acceptance_rule": "PASS only after every gate predicate is supported by immutable source evidence and independently verified.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION; no merge, deploy, activation, promotion, secret changes, or gate bypass.",
+  "reviewer": {
+    "role": "Independent evidence reviewer",
+    "identity": "UNASSIGNED",
+    "status": "PENDING"
+  }
+}

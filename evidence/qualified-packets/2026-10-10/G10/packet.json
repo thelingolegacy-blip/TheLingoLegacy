@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "G10-POST_ACTIVATION-2026-10-10",
+  "gate_id": "G10",
+  "gate_name": "POST_ACTIVATION",
+  "disposition": "BLOCKED",
+  "objective": "Capture post-activation health, telemetry, rollback readiness, and observation window after separately authorized activation.",
+  "required_evidence": ["Authorized activation reference", "Health and telemetry snapshots", "Error rates and service checks", "Rollback readiness and tested procedure", "Observation window and independent review"],
+  "observed_evidence": [],
+  "missing_items": ["Activation authorization/event", "Post-activation telemetry", "Rollback-readiness evidence", "Independent acceptance"],
+  "acceptance_rule": "Not applicable until activation is separately authorized and verified; never infer success from absence of alerts.",
+  "mutation_policy": "NO_PRODUCTION_MUTATION",
+  "reviewer": {"identity": "UNASSIGNED", "status": "PENDING"}
+}
