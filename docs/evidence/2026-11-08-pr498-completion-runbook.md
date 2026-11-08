@@ -33,7 +33,8 @@
 ## Required execution sequence
 
 1. Confirm this branch head and inspect all changes against the PR head.
-2. Apply staging-only migrations `0001` and `0002` in order; verify the rate-limit table exists before deploying the updated Worker.\n3. Run Node syntax checks for Worker, engine, D1 service, and Firebase verifier.
+2. Apply staging-only migrations `0001` and `0002` in order; verify the rate-limit table exists before deploying the updated Worker.
+3. Run Node syntax checks for Worker, engine, D1 service, and Firebase verifier.
 4. Run Firebase ID-token tests.
 5. Run Worker route/authentication and rate-limit tests.
 6. Run five-reel engine and D1 idempotency tests (matrix shape, all five paylines, WILD, 3/4/5 match, integer overflow rejection, volatility).
@@ -181,7 +182,17 @@ These are exact theoretical values for the current five-symbol-position line eva
 - Casino reset action now refuses to mutate the local demo balance when `window.LINGO_GAME_API` is active; authenticated staging wallet balances must come from the server.
 
 - GitHub currently reports draft PR #503 as `mergeable=false` / `mergeable_state=dirty` on the latest metadata read. The compare endpoint reports the base commit is an ancestor (65 commits ahead, zero behind); no merge or base retarget was attempted. Recheck GitHub's mergeability calculation before any review/merge action.
-\n\n## 2026-11-08 security hardening follow-on\n\n- Spin idempotency replay now compares the stored volatility profile as part of request identity; reusing the same key with a different volatility profile is rejected.\n- Added `migrations/0002_lingo_api_rate_limits_staging.sql`, a one-row-per-Firebase-UID fixed-window counter. It stores no IP address, bearer token, or request body.\n- Authenticated API requests are limited to 60 requests per UTC-independent 60-second epoch window. The counter update uses a single D1 UPSERT with `RETURNING`, so concurrent requests share one atomic counter. Requests over the limit return HTTP 429; a missing/unavailable rate-limit table fails closed.\n- The rate-limit table has no foreign key to the account table because the limiter runs before first-time account bootstrap.\n- The migration must be applied to the isolated staging D1 database before deploying the updated Worker. It has not been applied live.\n- Added Node regression coverage for same-key/different-volatility replay and rate-limit threshold/window behavior; added SQLite migration tests for the fixed-window SQL. These tests are wired into the workflow but have not run in GitHub Actions.\n
+
+
+## 2026-11-08 security hardening follow-on
+
+- Spin idempotency replay now compares the stored volatility profile as part of request identity; reusing the same key with a different volatility profile is rejected.
+- Added `migrations/0002_lingo_api_rate_limits_staging.sql`, a one-row-per-Firebase-UID fixed-window counter. It stores no IP address, bearer token, or request body.
+- Authenticated API requests are limited to 60 requests per UTC-independent 60-second epoch window. The counter update uses a single D1 UPSERT with `RETURNING`, so concurrent requests share one atomic counter. Requests over the limit return HTTP 429; a missing/unavailable rate-limit table fails closed.
+- The rate-limit table has no foreign key to the account table because the limiter runs before first-time account bootstrap.
+- The migration must be applied to the isolated staging D1 database before deploying the updated Worker. It has not been applied live.
+- Added Node regression coverage for same-key/different-volatility replay and rate-limit threshold/window behavior; added SQLite migration tests for the fixed-window SQL. These tests are wired into the workflow but have not run in GitHub Actions.
+
 
 ## 2026-11-08 reconciled completion-head evidence
 
@@ -196,3 +207,15 @@ These are exact theoretical values for the current five-symbol-position line eva
 - Local isolated SQLite execution verified the rate-limit UPSERT threshold (requests 1–60 accepted, request 61 rejected, next window reset to 1). This does not substitute for live D1 or GitHub CI.
 - Dedicated Firebase staging project/Web app remains unverified. The Worker must remain fail-closed until the real staging project ID and browser app configuration are confirmed.
 - No staging release acceptance, PR merge, production route/DNS change, or production promotion occurred.
+
+
+## 2026-11-08 latest continuation review
+
+- PR #503 remains open and draft. Latest GitHub PR metadata reports the base/head comparison is 17 commits ahead and 0 behind, and the PR is mergeable. This is mergeability metadata only; it is not test acceptance or release approval.
+- Current reviewed PR head before this runbook update: `d136182a19e6b7033e08e9c43667596be666634e`. The code change at that head updates the CORS regression test to use a staging-only test origin and explicitly reject both production flagship origins (`https://thelingolegacy.com` and `https://www.thelingolegacy.com`) plus an unrelated origin.
+- Exact-head validation run #113 / `42500910538` and independent minimal hosted-runner probe #9 / `42500911306` both concluded `startup_failure`. Each run has zero instantiated jobs and zero artifacts. No tests, build, or Wrangler command ran.
+- The current Actions control-plane failure therefore remains unlocalized below the workflow-startup boundary. No runner ID/name, step log, or artifact is available.
+- The latest PR head status also contains a Vercel check failure: `Deployment rate limited — retry in 24 hours`. This is a third-party Vercel status context, not evidence of Cloudflare deployment failure. Vercel is not an approved release path for this staging work; do not treat this check as staging verification.
+- CORS correction: the Worker returns CORS headers only for an exact origin in `STAGING_ALLOWED_ORIGINS`. The checked-in Wrangler staging config currently defines no such allowlist, so browser cross-origin access remains disabled by default until a real staging frontend origin is independently verified and explicitly configured. The earlier historical statement that the Wrangler file contains a flagship-origin allowlist is superseded and incorrect for the current config. The new regression test uses `https://staging-ui.example.invalid` as a non-production fixture and asserts production origins are rejected.
+- The staging D1 migration `0002_lingo_api_rate_limits_staging.sql` remains unapplied. The new Worker source remains undeployed. Dedicated Firebase staging project/Web app configuration remains unverified.
+- No PR merge, Worker source deployment, production change, DNS/route mutation, or staging acceptance occurred. Continue to hold all release gates until exact-head CI execution, Firebase staging identity, D1 migration, authenticated staging journey, browser/device QA, and independent review are evidenced.
