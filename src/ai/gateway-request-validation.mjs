@@ -1,7 +1,7 @@
 const PROVIDERS = new Set(['openai', 'claude', 'gemini', 'grok']);
 const DEVELOPER_LANGUAGES = new Set(['javascript', 'typescript', 'python', 'html', 'css', 'json']);
 const IDENTIFIER_PATTERN = /^[a-z][a-z0-9_-]{0,63}$/;
-const CONTROL_CHARACTERS = /[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/;
+const CONTROL_CHARACTERS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
 /**
  * Validate untrusted JSON bodies before route handlers perform authorization-
