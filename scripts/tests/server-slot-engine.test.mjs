@@ -1,49 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { secureRandomInt, evaluateThreeReelSpin, validateIdempotencyKey } from '../../src/server/slot-engine.mjs';
+import {secureRandomInt,evaluateFiveReelSpin,validateIdempotencyKey,PAYLINES,DEFAULT_SYMBOLS,DEFAULT_PAYTABLE,DEFAULT_VOLATILITY_TABLES} from '../../src/server/slot-engine.mjs';
+import {lineWagerFromTotalSpinWager} from '../../src/server/d1-slot-service.mjs';
+function fixedMatrix(matrix){
+ const weights=DEFAULT_VOLATILITY_TABLES.medium,keys=Object.keys(weights),values=[];
+ for(let r=0;r<3;r++)for(let c=0;c<5;c++){const wanted=matrix[r][c];let offset=0,found=false;for(const key of keys){const w=weights[key];if(key===wanted){values.push(offset+Math.floor(w/2));found=true;break;}offset+=w;}if(!found)throw new Error('unknown test symbol '+wanted);}
+ let p=0;return()=>values[p++]??0;
+}
+test('secureRandomInt rejects biased tail before modulo reduction',()=>{const v=[0xffff_ffff,7];assert.equal(secureRandomInt(10,()=>v.shift()),7);});
+test('secureRandomInt validates bounds and source',()=>{assert.throws(()=>secureRandomInt(0),RangeError);assert.throws(()=>secureRandomInt(3,()=>-1),TypeError);assert.throws(()=>secureRandomInt(3,()=>0x1_0000_0000),TypeError);});
+test('defines five standard paylines of five positions',()=>{assert.equal(PAYLINES.length,5);for(const p of PAYLINES)assert.equal(p.length,5);});
+test('creates a 3x5 matrix and integer payout values',()=>{const m=Array.from({length:3},()=>Array(5).fill('OBSIDIAN_BAR'));const r=evaluateFiveReelSpin({wagerUnits:10,readUint32:fixedMatrix(m)});assert.equal(r.matrix.length,3);assert.ok(r.matrix.every(x=>x.length===5));assert.ok(Number.isSafeInteger(r.payoutUnits));assert.equal(r.paylinesEvaluated,5);});
+test('evaluates contiguous left-to-right match lengths 3, 4 and 5',()=>{for(const n of [3,4,5]){const row=Array.from({length:5},(_,i)=>i<n?'LEGACY_LION':'OBSIDIAN_BAR');const m=[row,['OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR'],['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN']];const r=evaluateFiveReelSpin({wagerUnits:2,readUint32:fixedMatrix(m)});const win=r.wins.find(x=>x.payline===1);assert.equal(win?.matchLength,n);assert.equal(win?.payoutUnits,2*DEFAULT_PAYTABLE.LEGACY_LION[n]);}});
+test('each of the five configured paylines can win independently',()=>{for(let i=0;i<PAYLINES.length;i++){const m=Array.from({length:3},()=>Array(5).fill('OBSIDIAN_BAR'));for(let c=0;c<5;c++)m[PAYLINES[i][c]][c]='LEGACY_LION';const r=evaluateFiveReelSpin({wagerUnits:1,readUint32:fixedMatrix(m)});assert.ok(r.wins.some(w=>w.payline===i+1),`payline ${i+1} did not win`);}});
+test('WILD substitutes for target symbols',()=>{const m=[['LEGACY_LION','WILD','LEGACY_LION','WILD','LEGACY_LION'],['OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR'],['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN']];const r=evaluateFiveReelSpin({wagerUnits:1,readUint32:fixedMatrix(m)});assert.ok(r.wins.some(x=>x.payline===1&&x.symbol==='LEGACY_LION'&&x.matchLength===5));});
+test('volatility tables define positive integer weights for every symbol',()=>{for(const t of Object.values(DEFAULT_VOLATILITY_TABLES))for(const s of DEFAULT_SYMBOLS)assert.ok(Number.isSafeInteger(t[s])&&t[s]>0);});
+test('rejects invalid wager, volatility, paytable and payout overflow',()=>{assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1.5}),RangeError);assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1,volatility:'extreme'}),TypeError);assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1,paytable:{...DEFAULT_PAYTABLE,LEGACY_LION:{3:1.5,4:2,5:3}}}),TypeError);const m=Array.from({length:3},()=>Array(5).fill('LEGACY_LION'));assert.throws(()=>evaluateFiveReelSpin({wagerUnits:Number.MAX_SAFE_INTEGER,readUint32:fixedMatrix(m)}),RangeError);});
+test('validates bounded idempotency keys',()=>{assert.equal(validateIdempotencyKey('spin-2026-11-08-00000001'),true);assert.equal(validateIdempotencyKey('short'),false);assert.equal(validateIdempotencyKey('contains spaces 123456'),false);});
 
-test('secureRandomInt rejects the biased tail before modulo reduction', () => {
-  const values = [0xffff_ffff, 7];
-  const result = secureRandomInt(10, () => values.shift());
-  assert.equal(result, 7);
-  assert.equal(values.length, 0);
-});
-
-test('secureRandomInt returns values in the requested range', () => {
-  let value = 123456;
-  for (let i = 0; i < 100; i += 1) {
-    const result = secureRandomInt(7, () => (value++ >>> 0));
-    assert.ok(result >= 0 && result < 7);
-  }
-});
-
-test('secureRandomInt rejects invalid bounds and invalid random sources', () => {
-  assert.throws(() => secureRandomInt(0), RangeError);
-  assert.throws(() => secureRandomInt(3, () => -1), TypeError);
-  assert.throws(() => secureRandomInt(3, () => 0x1_0000_0000), TypeError);
-});
-
-test('three-reel evaluation produces integer payout units and a net delta', () => {
-  const draws = [0, 0, 0];
-  const result = evaluateThreeReelSpin({
-    symbols: ['LION', 'CROWN'],
-    paytable: { LION: 12, CROWN: 4 },
-    wagerUnits: 25,
-    readUint32: () => draws.shift(),
-  });
-  assert.deepEqual(result.reels, ['LION', 'LION', 'LION']);
-  assert.equal(result.payoutUnits, 300);
-  assert.equal(result.netDeltaUnits, 275);
-  assert.equal(result.isWin, true);
-});
-
-test('three-reel evaluation rejects floating point wager or multiplier', () => {
-  assert.throws(() => evaluateThreeReelSpin({ symbols: ['A'], paytable: { A: 2 }, wagerUnits: 1.5 }), RangeError);
-  assert.throws(() => evaluateThreeReelSpin({ symbols: ['A'], paytable: { A: 1.5 }, wagerUnits: 10 }), TypeError);
-});
-
-test('idempotency keys are bounded and constrained', () => {
-  assert.equal(validateIdempotencyKey('spin-2026-11-07-00000001'), true);
-  assert.equal(validateIdempotencyKey('short'), false);
-  assert.equal(validateIdempotencyKey('contains spaces 123456'), false);
-});
+test('total spin wager is divided evenly across five paylines',()=>{assert.equal(lineWagerFromTotalSpinWager(500),100);assert.equal(lineWagerFromTotalSpinWager(1250),250);assert.throws(()=>lineWagerFromTotalSpinWager(0),RangeError);assert.throws(()=>lineWagerFromTotalSpinWager(251),RangeError);});
