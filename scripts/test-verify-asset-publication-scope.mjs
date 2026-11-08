@@ -21,7 +21,7 @@ const requiredExclusions = [
   'credentials*.json', 'secrets*.json', '*.pem', '*.key', '*.crt', '*.p12', '*.pfx',
   '*.tfstate', '*.tfstate.*', '*.tfvars', '*.tfvars.json', '*.log', '*.bak',
   '*.orig', '*.swp', '*.swo', '*~', '*.sqlite', '*.db',
-  'firebase.json', 'firebase.client.example.json', 'gateway-router.js',
+  'firebase.json', 'firebase.client.example.json', 'build/web/', 'gateway-router.js',
   'pubspec.yaml', '_headers', '_redirects'
 ];
 const publicFiles = ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest'];
