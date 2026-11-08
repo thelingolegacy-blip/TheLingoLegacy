@@ -92,3 +92,22 @@ The separate frontend repository's Wrangler config is not proof that its OpenNex
 This truth review used GitHub repository, branch, PR, file, and workflow APIs plus the provider readbacks recorded in PR #504. No Cloudflare or Firebase account-management connector was available for a fresh direct provider read in this review. Consequently, Cloudflare live-state details above are attributed to the checked-in PR evidence, and Firebase account readiness remains explicitly unverified.
 
 **Final status: SOURCE WORK EXISTS; END-TO-END PRODUCTION READINESS NOT PROVEN.**
+
+
+## Exact-head CI recheck — 2026-11-08T18:30Z
+
+The GitHub connector was used to query workflow runs associated with the current PR #504 head commit `5234d224b427c5c52689468a16b42078ec568b48`. Five PR workflow attempts were returned:
+
+| Workflow | Run ID | Conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Flutter Firebase Integrity | 42510019917 | startup_failure | 0 | 0 |
+| Mobile Native Build Recovery | 42510020885 | startup_failure | 0 | 0 |
+| Lingo Legacy Static CI | 42510021732 | startup_failure | 0 | 0 |
+| G02 Runner Image Build (no publish) | 42510022834 | startup_failure | 0 | 0 |
+| Crimson Smoke UI — static validation | 42510023696 | startup_failure | 0 | 0 |
+
+The Jobs and Artifacts endpoints were queried separately for all five run IDs and independently returned zero jobs and zero artifacts. No checkout, setup, Node test, Flutter analyze/test/build, or deploy command ran in these attempts. This is a workflow startup/execution-platform blocker, not evidence that application tests passed or failed.
+
+The current PR #504 is still open, draft, and mergeable according to GitHub PR metadata. Its base is `main`; its head is `hardening/flutter-firebase-cloudflare-2026-11-08`. The repository metadata grants the connected GitHub identity admin, maintain, pull, push, and triage permissions, but the available connector does not expose branch-protection/ruleset mutation or Actions runner/permissions administration. The repository's `.github/CODEOWNERS` and PR template remain policy files, not enforcement.
+
+No workflow retry was attempted because these runs have zero jobs to rerun. No PR merge, branch-protection change, runner registration, Firebase mutation, Cloudflare mutation, secret change, or deployment was performed by this recheck.
