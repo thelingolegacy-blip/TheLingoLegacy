@@ -1,41 +1,62 @@
 name: Lingo Legacy Actions Runner Smoke
 
 on:
+  # Manual-only until G02 is qualified; do not enqueue self-hosted jobs on every main push.
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
+    inputs:
+      incident_reference:
+        description: "Required incident or recovery checkpoint reference"
+        required: true
+        type: string
+      confirm_runner:
+        description: "Confirm this run targets lingo-legacy-g02"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
   group: actions-runner-smoke-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   smoke:
+    if: ${{ inputs.confirm_runner == true && inputs.incident_reference != '' }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
-      - name: Runner reached execution stage
+      - name: Record runner identity and incident
         id: assert
         shell: bash
         env:
-          RUNNER_NAME: ${{ runner.name }}
+          INCIDENT_REFERENCE: ${{ inputs.incident_reference }}
+          RUNNER_NAME_VALUE: ${{ runner.name }}
           RUNNER_OS_VALUE: ${{ runner.os }}
           RUNNER_ARCH_VALUE: ${{ runner.arch }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          test "$RUNNER_NAME" = "lingo-legacy-g02"
+          test "$RUNNER_NAME_VALUE" = "lingo-legacy-g02"
           test "$RUNNER_OS_VALUE" = "Linux"
           test "$RUNNER_ARCH_VALUE" = "X64"
           test -n "$GITHUB_SHA_VALUE"
+          mkdir -p g02-evidence
+          {
+            printf 'schema=lingo-g02-smoke-evidence-v1\n'
+            printf 'incident_reference=%s\n' "$INCIDENT_REFERENCE"
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID_VALUE"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT_VALUE"
+            printf 'github_sha=%s\n' "$GITHUB_SHA_VALUE"
+            printf 'runner_name=%s\n' "$RUNNER_NAME_VALUE"
+            printf 'runner_os=%s\n' "$RUNNER_OS_VALUE"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH_VALUE"
+          } > g02-evidence/runner-smoke.txt
           echo "runner_gate=PASS" >> "$GITHUB_OUTPUT"
-          echo "runner_name=$RUNNER_NAME"
-          echo "runner_os=$RUNNER_OS_VALUE"
-          echo "runner_arch=$RUNNER_ARCH_VALUE"
-          echo "github_sha=$GITHUB_SHA_VALUE"
+          cat g02-evidence/runner-smoke.txt
 
       - name: Emit execution sentinel
         shell: bash
@@ -44,4 +65,19 @@ jobs:
         run: |
           set -euo pipefail
           test "$RUNNER_GATE" = "PASS"
-          echo "RUNNER_EXECUTION_SENTINEL=PASS"
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\n' | tee -a g02-evidence/runner-smoke.txt
+
+      - name: Checksum evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum g02-evidence/runner-smoke.txt > g02-evidence/SHA256SUMS
+          cat g02-evidence/SHA256SUMS
+
+      - name: Upload smoke evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-runner-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
