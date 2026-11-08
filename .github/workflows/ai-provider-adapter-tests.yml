@@ -10,6 +10,8 @@ on:
       - "src/ai/gateway-auth.test.mjs"
       - "src/ai/gateway-request-validation.mjs"
       - "src/ai/gateway-request-validation.test.mjs"
+      - "src/ai/gateway-handler.mjs"
+      - "src/ai/gateway-handler.test.mjs"
       - "llg-tech-corps/index.html"
       - "scripts/test-llg-ai-command-center.mjs"
       - ".github/workflows/ai-provider-adapter-tests.yml"
@@ -55,6 +57,12 @@ jobs:
           set -euo pipefail
           node --test --test-reporter spec src/ai/gateway-request-validation.test.mjs 2>&1 | tee gateway-request-validation-test.log
 
+      - name: Execute fail-closed gateway HTTP handler tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test --test-reporter spec src/ai/gateway-handler.test.mjs 2>&1 | tee gateway-handler-test.log
+
       - name: Execute LLG Command Center static safety tests
         shell: bash
         run: |
@@ -70,6 +78,7 @@ jobs:
             provider-adapter-test.log
             gateway-auth-test.log
             gateway-request-validation-test.log
+            gateway-handler-test.log
             command-center-test.log
           if-no-files-found: error
           retention-days: 14
