@@ -12,6 +12,8 @@ const scriptNames = [
   'test-verify-flutter-firebase.mjs',
   'verify-firebase-hosting.mjs',
   'test-verify-firebase-hosting.mjs',
+  'verify-cloudflare-route-inventory.mjs',
+  'test-verify-cloudflare-route-inventory.mjs',
   'verify-asset-publication-scope.mjs',
   'verify-shared-design-system.mjs',
   'verify-platform-registries.mjs',
@@ -63,6 +65,8 @@ function makeWorkspace({ failOne = false } = {}) {
     'test-verify-flutter-firebase.mjs',
     'verify-firebase-hosting.mjs',
     'test-verify-firebase-hosting.mjs',
+    'verify-cloudflare-route-inventory.mjs',
+    'test-verify-cloudflare-route-inventory.mjs',
   ]);
   for (const name of scriptNames) {
     if (realScripts.has(name)) {
@@ -110,7 +114,7 @@ test('all static checks run and evidence is emitted when every fixture check pas
   const result = runStack(root);
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 44, passed: 44, failed: 0 });
+  assert.deepEqual(report.summary, { total: 47, passed: 47, failed: 0 });
   assert.equal(report.commitSha, 'fixture-sha');
   assert.equal(report.workflowRunId, 'fixture-run');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
@@ -120,6 +124,9 @@ test('all static checks run and evidence is emitted when every fixture check pas
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-test-verify-firebase-hosting.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-test-firebase-config-contract.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-test-firebase-hosting-publish-boundary.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-verify-cloudflare-route-inventory.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-test-verify-cloudflare-route-inventory.log')));
+  assert.ok(fs.existsSync(path.join(root, 'static-gate-test-cloudflare-route-inventory.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-sanitize-cloudflare-only-surface.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-verify-cloudflare-bindings.log')));
   assert.ok(fs.existsSync(path.join(root, 'static-gate-syntax-validate-static-site.log')));
@@ -138,7 +145,7 @@ test('a failed validator does not suppress later checks and makes the stack fail
   const result = runStack(root);
   assert.equal(result.status, 1);
   const report = JSON.parse(fs.readFileSync(path.join(root, 'static-gate-results.json'), 'utf8'));
-  assert.deepEqual(report.summary, { total: 44, passed: 43, failed: 1 });
+  assert.deepEqual(report.summary, { total: 47, passed: 46, failed: 1 });
   assert.equal(report.checks.find((check) => check.id === 'verify-platform-registries').conclusion, 'FAIL');
   assert.equal(report.checks.find((check) => check.id === 'validate-static-site').conclusion, 'PASS');
   assert.ok(fs.existsSync(path.join(root, 'static-gate-validate-static-site.log')));
