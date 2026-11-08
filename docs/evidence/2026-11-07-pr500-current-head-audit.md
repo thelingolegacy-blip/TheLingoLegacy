@@ -13,8 +13,8 @@ The current branch still contains the exact source blobs previously used for the
 
 | File | Git blob SHA-1 |
 |---|---|
-| `src/ai/provider-adapters.mjs` | `b42b7f4eaab1a62a78f1e699181d016cc1cd9b59` |
-| `src/ai/provider-adapters.test.mjs` | `0e6357f6e014c1e9d1c2f98ae89bd96fed003b03` |
+| `src/ai/provider-adapters.mjs` | `e40efffd63d3bca9ef48c1afdea3bf7c5cda2115` |
+| `src/ai/provider-adapters.test.mjs` | `640f4eed7d3fcfa019d1eb517e57cad5e1bc30b1` |
 
 These are the current source blob identifiers after the 2026-11-08 hardening commits. The earlier 15/15 local mocked test result applies only to the previous source blobs; it must not be represented as execution evidence for these changed files. Current changes require fresh local or hosted execution.
 
@@ -73,7 +73,8 @@ These are limitations of the current adapter foundation, not claims that a produ
 - Added distinct upstream request-ID capture (when a recognized safe header is supplied) alongside the internally generated correlation ID.
 - Added per-provider server-side model allowlist requirements; missing allowlists fail configuration and unlisted models are rejected before any upstream call.
 - Added a regression case proving an unapproved model cannot reach the provider.
-- Added regression tests for declared-length rejection, streamed-byte rejection and request-ID separation.
+- Hardened response normalization for all four providers so malformed `output`, `content`, or `steps` shapes return a normalized empty-response failure rather than throwing.
+- Added regression tests for declared-length rejection, streamed-byte rejection, request-ID separation, allowlist enforcement and malformed provider payload shapes.
 - These are source changes only. The new tests have not been executed because the GitHub Actions startup issue persists; no updated local test result is claimed.
 
 ## 7. Governance
