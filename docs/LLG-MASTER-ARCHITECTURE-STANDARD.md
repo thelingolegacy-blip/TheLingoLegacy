@@ -39,7 +39,7 @@ This tree is a portfolio and ownership map, not a claim that every named product
 The LLG AI Command Center comprises AI Chat, AI Compare, AI Agents and AI Developer. It can expose OpenAI, Anthropic Claude, Google Gemini and xAI Grok as independently selected providers.
 
 - All clients call LLG-owned server-side endpoints; no provider key in a browser, mobile app, game build, source map or public repository.
-- Provider credentials, model IDs, budgets, flags, rate limits and telemetry are isolated per provider.
+- Provider credentials, model IDs and explicit approved-model allowlists, budgets, flags, rate limits and telemetry are isolated per provider. Adapters reject a model not listed in that provider's server-side allowlist before network access.
 - Modes: individual provider; side-by-side comparison; coordinated workflow with declared task boundaries and explicit approvals.
 - No silent fallback. Provider outages fail closed and are surfaced clearly.
 - A provider response is not forwarded to another provider unless the user explicitly authorizes that workflow.
