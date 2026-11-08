@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "status": "VALIDATING",
+  "mode": "guarded",
+  "constitutional_chain": ["IAM", "SAFETY_GATEWAY", "RULE_ENGINE", "APPROVAL_GATE", "EXECUTE", "VERIFY", "AUDIT"],
+  "allowed_actions": [
+    "RUN_HEALTH_CHECK",
+    "RUN_DIAGNOSTICS",
+    "RUN_TESTS",
+    "GENERATE_REPORT",
+    "UPDATE_DASHBOARD",
+    "CREATE_INCIDENT",
+    "ROUTE_INCIDENT"
+  ],
+  "approval_required_actions": ["DEPLOY", "ROLLBACK", "POLICY_CHANGE", "SECRET_CHANGE"],
+  "forbidden_actions": ["BYPASS_SAFETY", "BYPASS_IAM", "DISABLE_AUDIT", "FORCE_DEPLOY"],
+  "fail_closed": true,
+  "audit_required": true,
+  "environments": ["dev", "staging", "prod"],
+  "rollout": {
+    "phase_1": "SHADOW",
+    "phase_2": "NON_IMPACTING",
+    "phase_3": "INCIDENT_ROUTING",
+    "phase_4": "CONTROLLED_APPROVALS"
+  }
+}
