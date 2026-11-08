@@ -145,3 +145,27 @@ These additional observations are recorded as supplied context and must be refre
 - Record UTC timestamp, environment, actor, change type, authorization, and SHA-256 in the state-change manifest for every approved mutation.
 - A proposed fix, green workflow badge, successful hosted smoke, or self-reported PASS is not G02 acceptance.
 - A hosted `ubuntu-latest` smoke test is useful separate evidence, but it does not substitute for the dedicated self-hosted G02 runner.
+
+
+## 7. Live GitHub refresh — 2026-11-08 23:48 UTC
+
+Read-only refresh against the canonical repository confirmed:
+- Registry PR #511 remains OPEN / DRAFT, base `main`, head `3ab09cfb48c40e9ae818f3d410dcfd2d49753c91`.
+- PR #508 remains OPEN / DRAFT / UNMERGED; its validation section still states automated test execution was NOT RUN.
+- The latest observed registry-branch runs on head `3ab09cfb48c40e9ae818f3d410dcfd2d49753c91` were:
+  - Static CI `42536863874` — `startup_failure`.
+  - Crimson Smoke UI static validation `42536864634` — `startup_failure`.
+  - G02 Runner Image Build (no publish) `42536862999` — `startup_failure`.
+- The separate read-only G02 Control Watch run `42536631210` on `main` also concluded `startup_failure`.
+- The latest Static CI run `42536863874` returned an empty jobs array: zero instantiated jobs, therefore no steps or job artifacts to accept.
+- Main branch API state reports `protected=false`, `protection.enabled=false`, and required status checks enforcement `off`. This is a governance/control gap. No branch-protection setting was changed.
+
+Current refreshed mapping:
+- M04: FAIL / BLOCKED — startup failures; latest inspected run has no jobs.
+- M05: FAIL / UNVERIFIED — no evidence of dedicated runner assignment, registration, health, or completed sentinel steps.
+- M06: OPEN / NOT EXECUTED — PR #508 remains draft and automated tests have not run.
+- G02: FAIL / UNVERIFIED.
+- Main protection: GAP / NOT ENFORCED — read-only API reports protection disabled.
+- Production: HOLD; last-known-good preserved.
+
+This refresh does not authorize reruns, runner activity, policy changes, merge, deployment, or production promotion.
