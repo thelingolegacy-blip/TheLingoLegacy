@@ -46,7 +46,7 @@ if (!source.includes("String.fromEnvironment('FIREBASE_PROJECT_ID')")
   throw new Error('Flutter Firebase options must use explicit build-time configuration.');
 }
 const androidGradle = fs.readFileSync('android/app/build.gradle', 'utf8');
-const androidPackage = androidGradle.match(/applicationId\\s+[\"']([^\"']+)[\"']/)?.[1];
+const androidPackage = androidGradle.match(/applicationId\s+[\"']([^\"']+)[\"']/)?.[1];
 if (!androidPackage || process.env.FIREBASE_ANDROID_PACKAGE_NAME !== androidPackage) {
   throw new Error('FIREBASE_ANDROID_PACKAGE_NAME must match the Flutter Android applicationId.');
 }
