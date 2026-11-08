@@ -15,10 +15,15 @@ function json(body, status = 200) {
 }
 
 async function uidFromRequest(request, env) {
+export function bearerTokenFromRequest(request) {
   const header = request.headers.get('authorization') || '';
-  const match = /^Bearer\\s+([^\\s]+)$/i.exec(header);
-  if (!match) return null;
-  const verified = await verifyFirebaseIdToken(match[1], env.FIREBASE_PROJECT_ID);
+  const match = /^Bearer\s+([^\s]+)$/i.exec(header);
+  return match?.[1] || null;
+}
+
+  const token = bearerTokenFromRequest(request);
+  if (!token) return null;
+  const verified = await verifyFirebaseIdToken(token, env.FIREBASE_PROJECT_ID);
   return verified.ok ? verified.uid : null;
 }
 
