@@ -1,0 +1,135 @@
+{
+  "version": "1.0.0",
+  "roles": [
+    {
+      "id": "runner-agent",
+      "scope": [
+        "runner-health",
+        "job-dispatch-observation",
+        "recovery"
+      ],
+      "can": [
+        "inspect",
+        "repair-branch",
+        "create-evidence"
+      ],
+      "cannot": [
+        "self-authorize-production"
+      ]
+    },
+    {
+      "id": "merge-agent",
+      "scope": [
+        "branch-intake",
+        "diff-review",
+        "merge-preparation"
+      ],
+      "can": [
+        "inspect",
+        "validate",
+        "propose-merge"
+      ],
+      "cannot": [
+        "bypass-required-checks",
+        "self-authorize-production"
+      ]
+    },
+    {
+      "id": "deployment-agent",
+      "scope": [
+        "AppDeploy",
+        "deployment-QA",
+        "version-review"
+      ],
+      "can": [
+        "deploy-non-production",
+        "inspect",
+        "rollback"
+      ],
+      "cannot": [
+        "declare-production-established"
+      ]
+    },
+    {
+      "id": "design-agent",
+      "scope": [
+        "Product Design",
+        "Canva"
+      ],
+      "can": [
+        "research",
+        "prototype",
+        "prepare-assets"
+      ],
+      "cannot": [
+        "authorize-release"
+      ]
+    },
+    {
+      "id": "media-agent",
+      "scope": [
+        "voice",
+        "explainer-video",
+        "image",
+        "animation"
+      ],
+      "can": [
+        "generate",
+        "edit",
+        "prepare-delivery"
+      ],
+      "cannot": [
+        "authorize-release"
+      ]
+    },
+    {
+      "id": "security-agent",
+      "scope": [
+        "dependency",
+        "secret",
+        "SAST",
+        "policy"
+      ],
+      "can": [
+        "scan",
+        "block",
+        "create-evidence"
+      ],
+      "cannot": [
+        "self-authorize-production"
+      ]
+    },
+    {
+      "id": "evidence-agent",
+      "scope": [
+        "evidence-ledger",
+        "provenance",
+        "verification"
+      ],
+      "can": [
+        "collect",
+        "correlate",
+        "flag-invalid"
+      ],
+      "cannot": [
+        "accept-own-evidence"
+      ]
+    },
+    {
+      "id": "release-agent",
+      "scope": [
+        "release-candidate",
+        "post-transition-validation"
+      ],
+      "can": [
+        "assemble",
+        "validate",
+        "recommend"
+      ],
+      "cannot": [
+        "self-authorize-promotion"
+      ]
+    }
+  ],
+  "invariant": "PROPOSAL != EVIDENCE != VERIFICATION != ACCEPTANCE != AUTHORIZATION != PROMOTION"
+}

@@ -1,0 +1,15 @@
+version: 1
+authority: none
+targets:
+  - name: Kubeprod-1
+    enabled: true
+  - name: K35 cluster
+    enabled: true
+  - name: Protected homeland network
+    enabled: true
+  - name: Srv-prod-1
+    enabled: true
+policy:
+  credentials: external
+  production_promotion: blocked
+  hosted_runner_fallback: false
