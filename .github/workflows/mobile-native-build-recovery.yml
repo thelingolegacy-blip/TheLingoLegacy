@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   android-and-web:
-    name: Regenerate native scaffold, analyze, web and Android debug
+    name: Analyze, test, web and Android debug build
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -38,12 +38,14 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Generate clean native platform scaffolds in a disposable directory
+      - name: Verify existing Android project scaffold
+        shell: bash
         run: |
-          flutter create --platforms=android,ios --project-name app --org com.thelingolegacy /tmp/lingo-native-scaffold
-          rm -rf android ios
-          cp -R /tmp/lingo-native-scaffold/android ./android
-          cp -R /tmp/lingo-native-scaffold/ios ./ios
+          set -euo pipefail
+          test -f android/app/build.gradle || test -f android/app/build.gradle.kts
+          test -f android/gradlew
+          echo "ANDROID_NATIVE_PROJECT=PRESENT"
+          echo "Existing Android project files will be preserved."
 
       - name: Resolve dependencies
         run: flutter pub get
@@ -86,11 +88,13 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Generate clean iOS scaffold in a disposable directory
+      - name: Verify existing iOS project scaffold
+        shell: bash
         run: |
-          flutter create --platforms=ios --project-name app --org com.thelingolegacy /tmp/lingo-ios-scaffold
-          rm -rf ios
-          cp -R /tmp/lingo-ios-scaffold/ios ./ios
+          set -euo pipefail
+          test -f ios/Runner.xcodeproj/project.pbxproj
+          echo "IOS_NATIVE_PROJECT=PRESENT"
+          echo "Existing iOS project files will be preserved."
 
       - name: Resolve dependencies
         run: flutter pub get
