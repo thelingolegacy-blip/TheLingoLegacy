@@ -162,3 +162,42 @@ test('malformed successful budget reservations fail closed before dispatch', asy
   assert.equal((await response.json()).error.code, 'AI_BUDGET_RESERVATION_INVALID');
   assert.equal(deps.calls.some(([name]) => name === 'dispatch'), false);
 });
+
+test('chat requires an explicit provider selection', async () => {
+  const deps = dependencies();
+  const handler = createAiGatewayHandler(deps);
+  const response = await handler(post('/api/ai/v1/chat', { message: 'Hello' }));
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, 'AI_CHAT_PROVIDER_REQUIRED');
+  assert.equal(deps.calls.some(([name]) => name === 'dispatch'), false);
+});
+
+test('invalid JSON is rejected without invoking authorization or dispatch', async () => {
+  const deps = dependencies();
+  const handler = createAiGatewayHandler(deps);
+  const response = await handler(new Request('https://gateway.example.test/api/ai/v1/chat', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: '{'
+  }));
+  assert.equal(response.status, 400);
+  assert.equal(deps.calls.some(([name]) => name === 'authorize' || name === 'dispatch'), false);
+});
+
+test('streamed request bodies are bounded even without content-length', async () => {
+  const deps = dependencies();
+  const handler = createAiGatewayHandler(deps);
+  const response = await handler(post('/api/ai/v1/chat', {
+    provider: 'openai', message: 'x'.repeat(17000)
+  }));
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).error.code, 'AI_REQUEST_TOO_LARGE');
+  assert.equal(deps.calls.some(([name]) => name === 'dispatch'), false);
+});
+
+test('output moderation service failure returns unavailable after budget reconciliation', async () => {
+  const deps = dependencies({ moderateOutput: async () => { throw new Error('internal policy failure'); } });
+  const handler = createAiGatewayHandler(deps);
+  const response = await handler(post());
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error.code, 'AI_POLICY_SERVICE_UNAVAILABLE');
+  assert.equal(deps.calls.at(-1)[1].outcome, 'blocked');
+});
