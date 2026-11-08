@@ -42,6 +42,18 @@ const missingBindings = [...storageReferences]
   .filter((binding) => !allStorageBindings.has(binding))
   .sort();
 
+const durableBindings = new Set();
+const durableBlock = configText.match(/"durable_objects"\\s*:\\s*\\{[\\s\\S]*?"bindings"\\s*:\\s*\\[([\\s\\S]*?)\\]/i)?.[1] || '';
+for (const match of durableBlock.matchAll(/"name"\\s*:\\s*"([A-Za-z_][A-Za-z0-9_]*)"/g)) durableBindings.add(match[1]);
+const hasDurableLimiter = durableBindings.has('BEACON_RATE_LIMITER')
+  && configText.includes('"class_name": "BeaconRateLimiter"')
+  && configText.includes('"new_sqlite_classes": [')
+  && configText.includes('"BeaconRateLimiter"')
+  && workerText.includes('export class BeaconRateLimiter')
+  && workerText.includes('env.BEACON_RATE_LIMITER.idFromName')
+  && workerText.includes('env.BEACON_RATE_LIMITER.get');
+if (!hasDurableLimiter) missingBindings.push('BEACON_RATE_LIMITER (Durable Object binding/class/migration contract)');
+
 const result = {
   gate: 'cloudflare-binding-contract',
   status: missingBindings.length ? 'FAIL' : 'PASS',
@@ -52,14 +64,14 @@ const result = {
     kv: [...declared.kv].sort(),
     r2: [...declared.r2].sort(),
     services: [...declared.service].sort(),
+    durableObjects: [...durableBindings].sort(),
   },
   activeStorageReferences: [...storageReferences].sort(),
   missingBindings,
+  durableObjectLimiter: hasDurableLimiter ? 'DECLARED' : 'MISSING',
   note: missingBindings.length
-    ? 'Every active storage/service API reference must have a corresponding Wrangler binding declaration.'
-    : storageReferences.size
-      ? 'All active storage/service references have a corresponding Wrangler declaration.'
-      : 'No active D1/KV/R2/service APIs are referenced by the Worker; no resource IDs are fabricated.'
+    ? 'Every active storage/service reference and durable object contract must have a corresponding Wrangler declaration.'
+    : 'All active storage/service references and the Beacon Durable Object contract are declared.'
 };
 
 console.log(JSON.stringify(result, null, 2));
