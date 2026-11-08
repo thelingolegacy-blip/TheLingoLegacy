@@ -37,9 +37,7 @@ Chat request:
 ```json
 {
   "provider": "openai",
-  "model": "server-approved-model-id",
-  "message": "User-authored prompt",
-  "client_request_id": "optional-client-generated-uuid"
+  "message": "User-authored prompt"
 }
 ```
 
@@ -48,12 +46,7 @@ Compare request:
 ```json
 {
   "providers": ["openai", "claude"],
-  "models": {
-    "openai": "server-approved-openai-model",
-    "claude": "server-approved-claude-model"
-  },
-  "message": "Same user-authored prompt for each provider",
-  "client_request_id": "optional-client-generated-uuid"
+  "message": "Same user-authored prompt for each provider"
 }
 ```
 
@@ -64,8 +57,11 @@ Validation requirements:
 - Reject unknown fields unless a future schema version explicitly permits them.
 - Provider IDs must be from the fixed server registry: `openai`, `claude`, `gemini`, `grok`.
 - Compare must contain 2–4 unique providers. Each selected model is validated against that provider's server-side allowlist.
-- Client-supplied model identifiers are selectors only; they are never trusted as proof of entitlement or availability.
-- Never accept client-supplied role, system prompt, tool permissions, budget, tenant ID, user ID, or provider credential fields as authoritative.
+- The initial source-only validator accepts only `provider` and `message` for chat, and `providers` and `message` for compare. Model selection remains server-configured in provider environment bindings; no client model override is accepted.
+- Never accept client-supplied role, system prompt, tool permissions, budget, tenant ID, user ID, provider credential, or approval fields as authoritative.
+- Agent request bodies are limited to `agent_id` and `task`; tool grants, role claims, tenant IDs, and approval flags are rejected.
+- Developer request bodies are limited to `language`, `task`, and optional `code`; language and text/code lengths are allowlisted and bounded.
+- Route handlers must enforce a byte limit before JSON parsing. The source-only helper validates parsed objects and does not itself impose an HTTP body-byte limit.
 - Enforce request-body size before parsing and before any provider call.
 
 ## 4. Authentication and authorization
@@ -236,7 +232,15 @@ The contract is not accepted merely because it is documented. Before a productio
 9. Browser, mobile, accessibility, and security QA tied to exact source commit and build artifacts.
 10. Independent acceptance and explicit release authorization.
 
-## 12. Current implementation disposition
+## 12. Source-only request validation boundary
+
+Added `src/ai/gateway-request-validation.mjs` and `src/ai/gateway-request-validation.test.mjs`. The helper validates four request classes (`chat`, `compare`, `agents`, and `developer`) against strict allowlisted fields, provider identifiers, compare cardinality and uniqueness, agent identifiers, developer languages, bounded text/code lengths, and control-character rejection. It returns normalized values and rejects unknown identity, tenant, role, budget, tool, and approval fields rather than trusting client-supplied authority.
+
+This helper validates already-parsed JavaScript objects. It is not an HTTP body parser, content-type validator, route, authorization decision, moderation layer, quota service, or production integration. A future route must enforce byte limits before parsing, authenticate and authorize the caller, derive tenant and policy context server-side, and invoke this validation before dispatch.
+
+Ten Node test cases were added for valid and invalid chat/compare/agent/developer requests, unknown fields, identity/policy injection, boundary lengths, malformed bodies, and text control characters. The GitHub Actions workflow includes this suite and uploads `gateway-request-validation-test.log`. The workflow definition is not execution evidence.
+
+## 13. Current implementation disposition
 
 A source-only authentication boundary has been added at `src/ai/gateway-auth.mjs`, with Node test coverage in `src/ai/gateway-auth.test.mjs`. It is deliberately dependency-injected: the caller must supply a cryptographic `verifyToken` implementation, expected issuer/audience, required scopes, and a tenant-membership resolver. It validates verified claims, expiry/not-before, scopes, and tenant membership, and fails closed when required dependencies are absent or unavailable.
 
