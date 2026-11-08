@@ -8,6 +8,8 @@ on:
       - "src/ai/provider-adapters.test.mjs"
       - "src/ai/gateway-auth.mjs"
       - "src/ai/gateway-auth.test.mjs"
+      - "src/ai/gateway-request-validation.mjs"
+      - "src/ai/gateway-request-validation.test.mjs"
       - "llg-tech-corps/index.html"
       - "scripts/test-llg-ai-command-center.mjs"
       - ".github/workflows/ai-provider-adapter-tests.yml"
@@ -47,20 +49,27 @@ jobs:
           set -euo pipefail
           node --test --test-reporter spec src/ai/gateway-auth.test.mjs 2>&1 | tee gateway-auth-test.log
 
+      - name: Execute strict gateway request validation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test --test-reporter spec src/ai/gateway-request-validation.test.mjs 2>&1 | tee gateway-request-validation-test.log
+
       - name: Execute LLG Command Center static safety tests
         shell: bash
         run: |
           set -euo pipefail
           node --test --test-reporter spec scripts/test-llg-ai-command-center.mjs 2>&1 | tee command-center-test.log
 
-      - name: Upload test execution log
+      - name: Upload test execution logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ai-provider-adapter-tests-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             provider-adapter-test.log
-            command-center-test.log
             gateway-auth-test.log
+            gateway-request-validation-test.log
+            command-center-test.log
           if-no-files-found: error
           retention-days: 14
