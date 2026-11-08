@@ -286,3 +286,8 @@ Applied Cloudflare script-settings patches to both Workers and read them back su
 Both PATCH operations returned `success=true` with no errors. Readback confirmed the exact settings on both Workers. The production and staging Wrangler configs now carry the same observability policy so future source deployments do not revert it.
 
 This was an observability-settings-only change. No Worker source, route, DNS, secret, D1 application row, or production data was changed.
+
+## D1 migration-ledger reconciliation note
+
+A follow-up read-only `sqlite_master` query confirms the staging database contains `lingo_api_rate_limits` but does not contain a `d1_migrations` ledger table. Migration `0002` was applied directly through the Cloudflare D1 SQL API, not through Wrangler. The existing `0001` and new `0002` SQL are additive/idempotent (`IF NOT EXISTS`); before introducing later migrations, run the controlled Wrangler migration apply against staging so Wrangler can establish its migration ledger, then verify both migration records and schema. Do not manually fabricate migration-ledger entries.
+
