@@ -59,6 +59,8 @@ jobs:
           node --check src/server/slot-engine.mjs
           node --check src/server/d1-slot-service.mjs
           node --check src/auth/firebase-id-token.mjs
+      - name: Wrangler staging bundle dry run
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.jsonc
       - name: Firebase identity verification tests
         run: node --test scripts/tests/firebase-id-token.test.mjs
       - name: Worker route and authentication tests
