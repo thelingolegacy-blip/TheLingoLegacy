@@ -86,3 +86,18 @@ These results verify the D1 schema and ledger-trigger behavior in the dedicated 
 ## Safety boundary
 
 This is a staging virtual-credit vertical slice. It has no Stripe webhook, no wallet top-up, no redeemable balance, no cashout, and no real-money wagering. The provisional three-reel paytable is not a certified production game configuration. Do not connect it to the flagship production domain or production wallet.
+
+
+## Follow-up branch changes — 2026-11-08
+
+The historical Cloudflare control-plane snapshot above records the deployed Worker version at capture time. It does **not** mean the subsequent PR #498 source edits have been deployed. The PR branch now contains a targeted correction to the Worker module's duplicate/incomplete function declaration and a runtime guard that rejects staging authentication if the Firebase project binding is absent or equals `lingo-legacy-production`. Regression coverage was added for both unsafe binding cases.
+
+The Wrangler configuration is a standalone staging config file (`wrangler.game-engine-staging.jsonc`), not a `wrangler.toml` with a nested `[env.staging]` profile. It already binds the dedicated staging D1 database ID shown above. Validate/build it with:
+
+```bash
+npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.jsonc
+```
+
+Do not add `--env staging` to that command unless a named environment is explicitly added to the config. Do not deploy this branch until a dedicated Firebase staging project ID has been created and bound to the staging Worker. The currently deployed dashboard binding remains the production project ID until that separate staging configuration change is made; the new guard exists in source but is not active in the deployed Worker until a reviewed staging deployment.
+
+GitHub Actions runs observed after the earlier commits still failed at workflow startup with zero jobs. Therefore none of the new source checks, Wrangler dry-run, or regression tests has yet been executed by GitHub Actions.
