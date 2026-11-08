@@ -1,6 +1,6 @@
 const BEARER_PREFIX = 'Bearer ';
 const MAX_TOKEN_CHARS = 8192;
-const IDENTIFIER_PATTERN = /^[A-Za-z0-9._:@/-]{1,256}$/;
+const IDENTIFIER_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:@_-]{0,255}$/;
 
 /**
  * Authenticate an HTTP request for the LLG AI gateway.
