@@ -182,3 +182,17 @@ These are exact theoretical values for the current five-symbol-position line eva
 
 - GitHub currently reports draft PR #503 as `mergeable=false` / `mergeable_state=dirty` on the latest metadata read. The compare endpoint reports the base commit is an ancestor (65 commits ahead, zero behind); no merge or base retarget was attempted. Recheck GitHub's mergeability calculation before any review/merge action.
 \n\n## 2026-11-08 security hardening follow-on\n\n- Spin idempotency replay now compares the stored volatility profile as part of request identity; reusing the same key with a different volatility profile is rejected.\n- Added `migrations/0002_lingo_api_rate_limits_staging.sql`, a one-row-per-Firebase-UID fixed-window counter. It stores no IP address, bearer token, or request body.\n- Authenticated API requests are limited to 60 requests per UTC-independent 60-second epoch window. The counter update uses a single D1 UPSERT with `RETURNING`, so concurrent requests share one atomic counter. Requests over the limit return HTTP 429; a missing/unavailable rate-limit table fails closed.\n- The rate-limit table has no foreign key to the account table because the limiter runs before first-time account bootstrap.\n- The migration must be applied to the isolated staging D1 database before deploying the updated Worker. It has not been applied live.\n- Added Node regression coverage for same-key/different-volatility replay and rate-limit threshold/window behavior; added SQLite migration tests for the fixed-window SQL. These tests are wired into the workflow but have not run in GitHub Actions.\n
+
+## 2026-11-08 reconciled completion-head evidence
+
+- Completion branch was reconciled onto staging base `5c4d120597fa27eddbf8c80b1a543a814a023837`.
+- Current completion head: `3fb169201c0ebdfb0dd54430b8f22a2dab42ffdd`.
+- GitHub compare: 16 commits ahead, 0 behind; PR #503 metadata reports `mergeable=true`. PR remains draft.
+- Exact-head server validation run #112: `42500762934`, conclusion `startup_failure`; jobs endpoint returned 0 jobs and artifacts endpoint returned 0 artifacts.
+- Exact-head independent hosted-runner probe #8: `42500763952`, conclusion `startup_failure`; jobs endpoint returned 0 jobs and artifacts endpoint returned 0 artifacts.
+- Both workflows fail before job instantiation. No Node, Python, or Wrangler command executed in these runs.
+- Additional source hardening: per-Firebase-UID D1 rate limit (60 authenticated API requests per 60-second fixed window), staging migration `0002`, volatility-bound idempotency replay, production-origin removal from staging CORS allowlist, and spatial TV D-pad focus with directional boundary wrapping.
+- New D1 rate-limit migration is source-only and has not been applied to the live staging database. The updated Worker source has not been deployed.
+- Local isolated SQLite execution verified the rate-limit UPSERT threshold (requests 1–60 accepted, request 61 rejected, next window reset to 1). This does not substitute for live D1 or GitHub CI.
+- Dedicated Firebase staging project/Web app remains unverified. The Worker must remain fail-closed until the real staging project ID and browser app configuration are confirmed.
+- No staging release acceptance, PR merge, production route/DNS change, or production promotion occurred.
