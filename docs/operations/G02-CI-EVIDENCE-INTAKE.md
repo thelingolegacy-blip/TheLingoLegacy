@@ -169,3 +169,20 @@ Current refreshed mapping:
 - Production: HOLD; last-known-good preserved.
 
 This refresh does not authorize reruns, runner activity, policy changes, merge, deployment, or production promotion.
+
+
+## 8. Cross-stack refresh — Cloudflare and Firebase
+
+Read-only Cloudflare version-detail inspection resolved the currently deployed versions:
+- `thelingolegacyv-5`: deployed version **137**, ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`; latest uploaded version is 270 and is not the deployed version.
+- `lingo-flagship-root`: deployed version **1**, ID `658acd1a-997b-45cd-b8fc-e59c59b26b45`; latest uploaded version is 2 and is not the deployed version.
+- The exact-root apex route overlaps `thelingolegacy.com/*`; precedence remains to be proven through isolated route probes.
+- The apex A record points to `192.0.2.0` (TEST-NET-1). This is a critical origin/fallback validation blocker; no DNS change was made.
+
+Read-only repository inspection found:
+- `.firebaserc` defaults to `lingo-legacy-production`, but provider-side project identity is unverified.
+- `firebase.client.json` and `lib/firebase_options.dart` contain placeholder API keys and app IDs.
+- Root `firebase.json` publishes directory `.`; scope requires review before any deploy.
+- No root `firestore.rules` exists; the discovered rules file is Oasis-specific under `studio-sites/games/oasis-platform/firebase-functions/`.
+
+The new non-production API contract and Wave 0–4 checklist record these as blockers. No workflow dispatch, runner activity, Cloudflare deployment, route/DNS change, Firebase mutation, or production promotion occurred.
