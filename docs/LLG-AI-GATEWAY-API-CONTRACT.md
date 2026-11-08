@@ -240,7 +240,15 @@ This helper validates already-parsed JavaScript objects. It is not an HTTP body 
 
 Ten Node test cases were added for valid and invalid chat/compare/agent/developer requests, unknown fields, identity/policy injection, boundary lengths, malformed bodies, and text control characters. The GitHub Actions workflow includes this suite and uploads `gateway-request-validation-test.log`. The workflow definition is not execution evidence.
 
-## 13. Current implementation disposition
+## 13. Source-only HTTP handler boundary
+
+Added `src/ai/gateway-handler.mjs` and `src/ai/gateway-handler.test.mjs`. The handler factory defines POST routes for Chat, Compare, Agents Plan, and Developer Analyze. It authenticates before reading the body, enforces JSON content type and a 16 KiB streamed-body ceiling, validates the route-specific schema, then requires injected authorization, input moderation, budget reservation, dispatch, output moderation, and budget reconciliation services. It returns normalized errors and keeps `/agents/run` explicitly disabled.
+
+The handler refuses to initialize without every required dependency. The dependencies are interfaces only; this module does not implement or bind a cryptographic identity verifier, tenant/role policy service, moderation service, budget ledger, provider dispatcher, audit store, or production HTTP runtime. It is not connected to the Command Center or deployed to Cloudflare/Firebase. A source-level route factory is not evidence that any endpoint is reachable.
+
+Fourteen Node test cases cover missing dependencies, route/method handling, disabled agent execution, authentication-before-body parsing, content-type and body limits, invalid fields, authorization and moderation denials, budget denial/malformed reservation, success ordering, compare provider selection, execution failure, output moderation, and failed budget reconciliation. The CI workflow includes this suite and uploads `gateway-handler-test.log`; execution remains subject to exact-head hosted-runner evidence.
+
+## 14. Current implementation disposition
 
 A source-only authentication boundary has been added at `src/ai/gateway-auth.mjs`, with Node test coverage in `src/ai/gateway-auth.test.mjs`. It is deliberately dependency-injected: the caller must supply a cryptographic `verifyToken` implementation, expected issuer/audience, required scopes, and a tenant-membership resolver. It validates verified claims, expiry/not-before, scopes, and tenant membership, and fails closed when required dependencies are absent or unavailable.
 
