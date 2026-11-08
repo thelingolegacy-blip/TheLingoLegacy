@@ -48,5 +48,5 @@ export async function claimDailyDemoReward(db,{firebaseUid,claimDate,ruleVersion
  }
  const wallet=await db.prepare('SELECT credits_units,xp_units FROM lingo_game_wallets WHERE firebase_uid=?').bind(firebaseUid).first();
  if(!wallet||!Number.isSafeInteger(wallet.credits_units)||!Number.isSafeInteger(wallet.xp_units))throw new Error('DAILY_REWARD_WALLET_NOT_VERIFIED');
- return {session_id:result.session_id,claimDate,rewardUnits,xpAwardUnits,newBalanceUnits:wallet.credits_units,xpUnits:wallet.xp_units,replayed};
+ return {session_id:result.session_id,claimDate,rewardUnits:replayed?0:rewardUnits,xpAwardUnits:replayed?0:xpAwardUnits,newBalanceUnits:wallet.credits_units,xpUnits:wallet.xp_units,replayed};
 }
