@@ -1,6 +1,7 @@
 const MAX_MESSAGE_CHARS = 2000;
 const DEFAULT_TIMEOUT_MS = 20000;
 const MAX_TIMEOUT_MS = 60000;
+const MAX_RESPONSE_BYTES = 1024 * 1024;
 
 const PROVIDERS = Object.freeze({
   openai: {
@@ -131,10 +132,11 @@ export async function invokeAiProvider(providerId, message, env = {}, options = 
 
     if (!response?.ok) return failure('AI_PROVIDER_UPSTREAM_ERROR', 502);
 
-    let payload;
-    try { payload = await response.json(); } catch { return failure('AI_PROVIDER_INVALID_RESPONSE', 502); }
+    const parsed = await readJsonBounded(response, MAX_RESPONSE_BYTES);
+    if (parsed.tooLarge) return failure('AI_PROVIDER_RESPONSE_TOO_LARGE', 502);
+    if (!parsed.ok) return failure('AI_PROVIDER_INVALID_RESPONSE', 502);
 
-    const answer = provider.answer(payload).trim();
+    const answer = provider.answer(parsed.payload).trim();
     if (!answer) return failure('AI_PROVIDER_EMPTY_RESPONSE', 502);
 
     return {
@@ -143,7 +145,8 @@ export async function invokeAiProvider(providerId, message, env = {}, options = 
       provider: providerId,
       model,
       answer,
-      request_id: crypto.randomUUID()
+      request_id: crypto.randomUUID(),
+      upstream_request_id: readUpstreamRequestId(response.headers)
     };
   } catch {
     return failure(controller.signal.aborted ? 'AI_PROVIDER_TIMEOUT' : 'AI_PROVIDER_UNAVAILABLE',
@@ -173,6 +176,60 @@ export async function compareAiProviders(providerIds, message, env = {}, options
     status: results.every((result) => result.ok) ? 200 : 207,
     results
   };
+}
+
+async function readJsonBounded(response, maxBytes) {
+  const declaredLength = Number(response.headers?.get('content-length'));
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    try { await response.body?.cancel(); } catch {}
+    return { ok: false, tooLarge: true };
+  }
+
+  if (!response.body?.getReader) {
+    try {
+      const text = await response.text();
+      if (new TextEncoder().encode(text).byteLength > maxBytes) return { ok: false, tooLarge: true };
+      return { ok: true, payload: JSON.parse(text) };
+    } catch {
+      return { ok: false, tooLarge: false };
+    }
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > maxBytes) {
+        try { await reader.cancel(); } catch {}
+        return { ok: false, tooLarge: true };
+      }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    return { ok: true, payload: JSON.parse(new TextDecoder().decode(bytes)) };
+  } catch {
+    try { await reader.cancel(); } catch {}
+    return { ok: false, tooLarge: false };
+  } finally {
+    try { reader.releaseLock(); } catch {}
+  }
+}
+
+function readUpstreamRequestId(headers) {
+  for (const name of ['x-request-id', 'request-id', 'anthropic-request-id', 'x-goog-request-id']) {
+    const value = headers?.get(name);
+    if (typeof value === 'string' && /^[A-Za-z0-9._:-]{1,128}$/.test(value)) return value;
+  }
+  return null;
 }
 
 function clampTimeout(value) {
