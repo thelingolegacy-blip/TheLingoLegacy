@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090d">
+<meta name="description" content="LINGO Asset Registry — governed creative assets, version history, rights evidence and independent approvals.">
+<title>LINGO Asset Registry | Studio Control</title>
+<link rel="stylesheet" href="./registry.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <a class="brand" href="../"><span class="brand-mark">L</span><span>LINGO<span class="brand-soft">legacy</span><small>STUDIO CONTROL</small></span></a>
+  <div class="side-label">WORKSPACE</div>
+  <nav class="side-nav" aria-label="Registry navigation">
+    <a class="active" href="#registry" aria-current="page"><span>◈</span> Asset registry</a>
+    <a href="#audit" id="auditNav"><span>≋</span> Audit trail</a>
+    <a href="#governance"><span>⬡</span> Governance</a>
+  </nav>
+  <div class="sidebar-foot"><span class="status-dot"></span> STAGING INTERFACE <small>Production publishing is separately gated.</small></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div><div class="eyebrow">LINGOlegacy / CREATIVE OPERATIONS</div><h1>Asset Registry</h1><p class="subhead">Every asset accounted for. Every version traceable. Every release reviewed.</p></div>
+    <div class="user-panel"><span class="user-avatar">LL</span><span><strong id="userEmail">Checking identity…</strong><small id="userRole">Verifying access</small></span></div>
+  </header>
+  <section class="hero">
+    <div><span class="eyebrow red">CONTROLLED CREATIVE PIPELINE</span><h2>Own the source.<br><em>Prove the rights.</em><br>Preserve the legacy.</h2><p>One governed record from intake to approved publication—with immutable version and decision history.</p></div>
+    <div class="hero-seal"><div class="seal-ring"><span>LINGO</span><strong>ASSET<br>CONTROL</strong><small>VERIFIED RECORDS ONLY</small></div></div>
+  </section>
+  <section class="metrics" aria-label="Registry summary">
+    <article class="metric"><span>REGISTERED ASSETS</span><strong id="metricAssets">—</strong><small>Tracked records</small></article>
+    <article class="metric"><span>IN REVIEW</span><strong id="metricReview">—</strong><small>Awaiting independent checks</small></article>
+    <article class="metric"><span>PUBLISHED ASSETS</span><strong id="metricPublished">—</strong><small>Release history retained</small></article>
+    <article class="metric"><span>OPEN DRAFTS</span><strong id="metricDrafts">—</strong><small>Not approved for use</small></article>
+  </section>
+  <section class="workspace" id="registry">
+    <div class="section-head"><div><div class="eyebrow">MASTER INVENTORY</div><h2>Creative assets</h2><p>Search, inspect, version and govern each registered asset.</p></div><button class="button primary" id="newAsset" disabled>＋ Register asset</button></div>
+    <div class="filters"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search name, ID or category" autocomplete="off"></label><select id="statusFilter" aria-label="Filter by status"><option value="">All statuses</option><option>DRAFT</option><option>IN_REVIEW</option><option>PUBLISHED</option><option>ARCHIVED</option></select><span class="result-count" id="resultCount">Connecting to registry…</span></div>
+    <div class="registry-layout"><div class="asset-list" id="assetList" aria-live="polite"><div class="empty-state">Connecting securely to the registry API…</div></div><aside class="detail-panel" id="detailPanel"><div class="detail-empty"><span class="detail-icon">◈</span><h3>Select an asset</h3><p>Choose a record to inspect its source versions, rights evidence, approvals and audit history.</p></div></aside></div>
+  </section>
+  <section class="governance" id="governance"><div class="section-head"><div><div class="eyebrow">RELEASE INTEGRITY</div><h2>Governance gates</h2><p>Publication is deliberately separate from asset creation.</p></div></div><div class="gate-grid"><article><span class="gate-number">01</span><h3>Source integrity</h3><p>Versioned source reference, media type, byte size and SHA-256 checksum.</p></article><article><span class="gate-number">02</span><h3>Rights evidence</h3><p>Retrievable license, ownership or permission evidence attached to the exact version.</p></article><article><span class="gate-number">03</span><h3>Independent review</h3><p>Rights, quality and brand decisions. Asset owners cannot approve their own work.</p></article><article><span class="gate-number">04</span><h3>Controlled release</h3><p>Administrator publication gate, immutable history and non-destructive rollback.</p></article></div></section>
+  <section class="audit-section" id="audit"><div class="section-head"><div><div class="eyebrow">TRACEABILITY</div><h2>Recent audit events</h2><p>Append-only activity history. Reviewers and administrators only.</p></div><button class="button secondary" id="refreshAudit">Refresh trail</button></div><div class="audit-table-wrap"><table><thead><tr><th>TIME</th><th>ACTOR</th><th>EVENT</th><th>ASSET</th><th>REQUEST</th></tr></thead><tbody id="auditRows"><tr><td colspan="5" class="muted-cell">Audit history loads for authorized reviewers.</td></tr></tbody></table></div></section>
+  <footer><span>LINGOlegacy · Studio Control</span><span>Fail-closed · Versioned · Auditable · Mobile-ready</span></footer>
+</main>
+</div>
+<dialog id="assetDialog"><form id="assetForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">NEW RECORD</span><h2>Register an asset</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div><label>Asset name<input name="name" required minlength="2" maxlength="160" placeholder="e.g. LINGOarcade hero artwork"></label><label>Category<input name="category" required pattern="[A-Za-z0-9_-]{2,64}" placeholder="logos, characters, game_assets"></label><label>Description<textarea name="description" maxlength="2000" rows="3" placeholder="Purpose, context and intended usage"></textarea></label><p class="form-note">Your verified Access identity becomes the immutable owner of this record.</p><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" id="createAssetSubmit" type="submit">Create record</button></div></form></dialog>
+<dialog id="versionDialog"><form id="versionForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">SOURCE CONTROL</span><h2>Add immutable version</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div><label>Source URI<input name="sourceUri" type="text" inputmode="url" required placeholder="https://…"></label><label>SHA-256 checksum<input name="sha256" required pattern="[A-Fa-f0-9]{64}" minlength="64" maxlength="64" placeholder="64 hexadecimal characters"></label><div class="form-grid"><label>Media type<input name="mediaType" required placeholder="image/png"></label><label>Byte size<input name="byteSize" type="number" min="0" max="1073741824" required></label></div><label>Change note<textarea name="changeNote" rows="2" maxlength="1000"></textarea></label><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" type="submit">Save version</button></div></form></dialog>
+<dialog id="rightsDialog"><form id="rightsForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">RIGHTS & LICENSING</span><h2>Attach rights evidence</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div><label>Rights basis<select name="rightsType" required><option value="owned">Owned / created in-house</option><option value="licensed">Licensed</option><option value="public-domain">Public domain</option><option value="permission-pending">Permission pending</option></select></label><label>License / rights description<input name="licenseName" maxlength="160" placeholder="License name or ownership basis"></label><label>Evidence URL<input name="evidenceUri" type="url" required placeholder="https://…"></label><label>Evidence SHA-256 (optional)<input name="evidenceSha256" pattern="[A-Fa-f0-9]{64}" maxlength="64"></label><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" type="submit">Attach evidence</button></div></form></dialog>
+<dialog id="reviewDialog"><form id="reviewForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">INDEPENDENT REVIEW</span><h2>Record a decision</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div><label>Review control<select name="reviewType"><option value="integrity">Source integrity review</option><option value="rights">Rights review</option><option value="quality">Quality review</option><option value="brand">Brand review</option></select></label><label>Decision<select name="decision"><option value="APPROVED">Approve</option><option value="REJECTED">Reject</option></select></label><label>Reviewer notes<textarea name="notes" rows="3" maxlength="1000" placeholder="Evidence reviewed and rationale"></textarea></label><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" type="submit">Record decision</button></div></form></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="./registry.js"></script>
+</body></html>
