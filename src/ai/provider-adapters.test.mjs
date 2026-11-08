@@ -10,12 +10,16 @@ const configuredEnv = {
   LLG_AI_PROVIDER_GROK_ENABLED: 'true',
   OPENAI_API_KEY: 'test-openai-key',
   OPENAI_MODEL: 'test-openai-model',
+  OPENAI_ALLOWED_MODELS: 'test-openai-model',
   ANTHROPIC_API_KEY: 'test-claude-key',
   ANTHROPIC_MODEL: 'test-claude-model',
+  ANTHROPIC_ALLOWED_MODELS: 'test-claude-model',
   GEMINI_API_KEY: 'test-gemini-key',
   GEMINI_MODEL: 'test-gemini-model',
+  GEMINI_ALLOWED_MODELS: 'test-gemini-model',
   XAI_API_KEY: 'test-grok-key',
-  XAI_MODEL: 'test-grok-model'
+  XAI_MODEL: 'test-grok-model',
+  XAI_ALLOWED_MODELS: 'test-grok-model'
 };
 
 function jsonResponse(payload, status = 200) {
@@ -222,4 +226,17 @@ test('provider response identifiers are returned separately from the local corre
   assert.equal(result.ok, true);
   assert.match(result.request_id, /^[0-9a-f-]{36}$/i);
   assert.equal(result.upstream_request_id, 'req_provider_123');
+});
+
+
+test('provider models must be present in the explicit per-provider allowlist', async () => {
+  let called = false;
+  const result = await invokeAiProvider('openai', 'Model policy', {
+    ...configuredEnv,
+    OPENAI_MODEL: 'unapproved-model'
+  }, {
+    fetchImpl: async () => { called = true; return jsonResponse({ output_text: 'unexpected' }); }
+  });
+  assert.deepEqual(result, { ok: false, status: 403, code: 'AI_MODEL_NOT_ALLOWED' });
+  assert.equal(called, false);
 });
