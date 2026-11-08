@@ -16,6 +16,28 @@ This directory provides a controlled recovery bridge for CI/runner diagnostics, 
 
 A missing field, API error, queued job, zero runner ID, empty steps, missing log, missing artifact, SHA mismatch, or unknown state is **BLOCKED**, never PASS.
 
+## Read-only incident collector
+
+`incident_collector.py` gathers a specific Actions run, attempt, job, runner assignment, step summary, job logs, and run-associated artifact metadata using GitHub GET requests only. Supply a least-privilege read-only `GITHUB_TOKEN`; never use a deployment-capable credential for this task.
+
+Example:
+
+```bash
+GITHUB_TOKEN=<read-only-token> python3 ops/recovery/incident_collector.py \
+  --repository thelingolegacy-blip/TheLingoLegacy \
+  --run-id <run-id> --attempt <attempt> --job-id <job-id> \
+  --commit-sha <full-40-character-sha> --output incident-report.json
+```
+
+Collector outcomes are diagnostic classifications, not gate acceptance:
+- `BLOCKED`: request invalid, run/job missing, metadata inaccessible, or identity/attempt/SHA inconsistent.
+- `RUNNER_UNASSIGNED`: job is queued without a runner assignment.
+- `EXECUTION_UNVERIFIED`: runner assigned but no executed step is evidenced.
+- `EVIDENCE_INCOMPLETE`: execution exists but logs or run-associated artifact metadata are missing/inaccessible.
+- `EVIDENCE_VERIFIED`: run/job identity correlates and non-empty logs plus run-associated artifact metadata are available.
+
+The report always leaves G02, promotion, and activation blocked; LKG protected; independent verification false; and repair authorization false. Artifact metadata alone is not artifact-content verification. This collector does not change production routing, trigger workflows, repair source, or authorize a patch. Use `checkpoint_gate.py` and the existing independent acceptance process separately.
+
 ## Trigger behavior
 
 `.github/workflows/recovery-foundation.yml` is a diagnostic pipeline. It can validate the evidence-gate code and archive a diagnostic report. It has no deployment credentials, does not mutate DNS/Cloudflare/Firebase/AWS, does not merge pull requests, and does not install/register a runner. A successful diagnostic workflow is not evidence that G02 has passed.
