@@ -77,6 +77,12 @@ These are limitations of the current adapter foundation, not claims that a produ
 - Added regression tests for declared-length rejection, streamed-byte rejection, request-ID separation, allowlist enforcement and malformed provider payload shapes.
 - These are source changes only. The new tests have not been executed because the GitHub Actions startup issue persists; no updated local test result is claimed.
 
-## 7. Governance
+## 7. LLG Command Center interface prototype
+
+Added `llg-tech-corps/index.html` (blob `0978b6a7c7b85fed11b4de0f33114326bd3288e5`) to the branch. It presents four distinct modes: AI Chat, AI Compare, AI Agents, and AI Developer. Provider status is explicitly labeled as adapter source only; the UI displays a persistent prototype/no-live-AI notice. Provider-send controls are disabled. Local preview actions only construct and display request/plan shapes in the page; source inspection confirms the page contains no `fetch()`, `localStorage`, `sessionStorage`, or IndexedDB use.
+
+The page is a static front-end prototype only. Browser/device/accessibility QA has not been executed. It does not connect to the provider adapters or implement authentication, an API route, model selection, live agents, repository tools, or persistence. It must not be represented as a live AI product.
+
+## 8. Governance
 
 PR #500 remains draft and unmerged. No independent PR review is recorded. No production route, Firebase project, secret, billing setting, provider flag, payment path, game economy, or G02 runner was changed by this audit. Do not promote any product status based on this document.
