@@ -72,41 +72,5 @@ jobs:
             build/web/
             build/app/outputs/flutter-apk/app-debug.apk
 
-  ios-simulator:
-    if: ${{ hashFiles('ios/Runner.xcodeproj/project.pbxproj') != '' }}
-    name: iOS simulator compile (unsigned; only when native project exists)
-    runs-on: macos-latest
-    timeout-minutes: 40
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Verify existing iOS project scaffold
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f ios/Runner.xcodeproj/project.pbxproj
-          echo "IOS_NATIVE_PROJECT=PRESENT"
-          echo "Existing iOS project files will be preserved."
-
-      - name: Resolve dependencies
-        run: flutter pub get
-
-      - name: Compile iOS simulator app without signing
-        run: flutter build ios --simulator --no-codesign
-
-      - name: Upload iOS simulator development artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: lingo-ios-simulator-development-build
-          if-no-files-found: error
-          retention-days: 7
-          path: build/ios/iphonesimulator/Runner.app
+# iOS CI is intentionally not declared until ios/Runner.xcodeproj is committed.
+# Do not generate or overwrite a native project as part of CI.
