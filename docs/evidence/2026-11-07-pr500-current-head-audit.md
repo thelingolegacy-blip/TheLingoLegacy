@@ -103,3 +103,19 @@ The adapter test file contains 17 test cases; the new static page suite contains
 ## 9. Governance
 
 PR #500 remains draft and unmerged. No independent PR review is recorded. No production route, Firebase project, secret, billing setting, provider flag, payment path, game economy, or G02 runner was changed by this audit. Do not promote any product status based on this document.
+
+## 10. Authenticated gateway boundary — source-only progress (2026-11-08)
+
+Added `src/ai/gateway-auth.mjs` (blob `237dbd98c09eecf65645b776c66acf8c56698ac3`) and `src/ai/gateway-auth.test.mjs` (blob `c24dc5ce8649715626321d6e7dca8513227c36d3`). The helper is dependency-injected and fails closed unless supplied with a cryptographic token-verification function, expected issuer/audience, required scopes, and a tenant-membership resolver. It validates issuer/audience, expiration/not-before, user and tenant identifiers, required scopes, and tenant membership. Identity identifiers reject path separators. Membership-service failures return an unavailable result rather than granting access.
+
+This is **not** a production identity integration or complete gateway. The helper does not verify JWT signatures itself, discover or pin an issuer's keys, implement session revocation, resolve entitlements, apply billing budgets, expose HTTP routes, or connect to provider adapters. The caller-supplied verifier and membership service have not been bound to a verified LINGO ID deployment. No provider execution is enabled.
+
+Eight Node test cases were added for successful principal construction, malformed/missing bearer headers, verifier failure, issuer/audience/time/identity rejection, missing scopes, tenant mismatch, membership-service failure, and missing auth configuration. The workflow now includes this suite and uploads `gateway-auth-test.log`. Workflow blob: `192552503a6c89fc5d4fa1000b8fbe6d61890749`.
+
+The gateway contract now documents the helper's limits (blob `0bca3b815662905e99461f6c3660ff364e22a488`). The API contract itself is design-only and does not authorize implementation or activation.
+
+### Exact-head execution check
+
+Latest PR #500 head checked: `cd8d7f7bc866317b962b035ae44e76df08e4d6e4`. GitHub returned six workflow runs associated with this commit; all six have conclusion `startup_failure`, including **LLG AI Provider Adapter Tests** (run `42471237270`). The combined commit status contains a Vercel success context, which is not evidence that the Node test job ran. No job-level test logs or passing artifacts were established. Therefore the current 17 adapter tests, 8 gateway-auth tests, and 7 static Command Center tests (32 test cases total) remain **NOT EXECUTED / NOT VERIFIED** on this head.
+
+PR #500 remains draft/open/unmerged with 21 changed files. No identity provider, secrets, provider flags, provider calls, billing, Firebase, Cloudflare production, merge, or deployment changes were made. G02 remains FAIL / UNVERIFIED; production remains protected.
