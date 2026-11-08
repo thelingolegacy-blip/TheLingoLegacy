@@ -76,12 +76,6 @@ async function createCheckout(request, env) {
 
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
 function normalizeSource(value = '') { return String(value || 'beacon-alert-form').replace(/[^a-z0-9 _.-]/gi, '').slice(0, 80) || 'beacon-alert-form'; }
-function clientKey(request, phone) {
-  // Cloudflare supplies this edge-derived address. Do not trust X-Forwarded-For:
-  // clients can spoof it to rotate rate-limit keys.
-  const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
-  return `${ip}:${phone}`;
-}
 async function rateLimiterIdKey(key) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(key));
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -218,7 +212,15 @@ export class BeaconRateLimiter {
     return Response.json({ limited });
   }
 
-  async alarm() { await this.state.storage.deleteAll(); }
+  async alarm() {
+    const bucket = await this.state.storage.get('bucket');
+    if (!bucket) return;
+    if (Date.now() - bucket.startedAt >= RATE_WINDOW_MS) {
+      await this.state.storage.deleteAll();
+      return;
+    }
+    await this.state.storage.setAlarm(bucket.startedAt + RATE_WINDOW_MS + 1000);
+  }
 }
 
 export default {
