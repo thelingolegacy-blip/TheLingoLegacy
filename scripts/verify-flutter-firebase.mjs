@@ -21,10 +21,13 @@ const requiredVariables = [
   'FIREBASE_WEB_APP_ID',
   'FIREBASE_ANDROID_API_KEY',
   'FIREBASE_ANDROID_APP_ID',
+  'FIREBASE_ANDROID_PACKAGE_NAME',
   'FIREBASE_IOS_API_KEY',
   'FIREBASE_IOS_APP_ID',
+  'FIREBASE_IOS_BUNDLE_ID',
   'FIREBASE_MACOS_API_KEY',
   'FIREBASE_MACOS_APP_ID',
+  'FIREBASE_MACOS_BUNDLE_ID',
 ];
 const isConfigured = (value) => typeof value === 'string'
   && value.trim().length > 0
@@ -41,6 +44,15 @@ const source = fs.readFileSync('lib/firebase_options.dart', 'utf8');
 if (!source.includes("String.fromEnvironment('FIREBASE_PROJECT_ID')")
   || !source.includes("String.fromEnvironment('FIREBASE_WEB_API_KEY')")) {
   throw new Error('Flutter Firebase options must use explicit build-time configuration.');
+}
+const androidGradle = fs.readFileSync('android/app/build.gradle', 'utf8');
+const androidPackage = androidGradle.match(/applicationId\\s+[\"']([^\"']+)[\"']/)?.[1];
+if (!androidPackage || process.env.FIREBASE_ANDROID_PACKAGE_NAME !== androidPackage) {
+  throw new Error('FIREBASE_ANDROID_PACKAGE_NAME must match the Flutter Android applicationId.');
+}
+if (process.env.FIREBASE_IOS_BUNDLE_ID !== 'com.thelingolegacy.app'
+  || process.env.FIREBASE_MACOS_BUNDLE_ID !== 'com.thelingolegacy.app') {
+  throw new Error('Firebase iOS/macOS bundle IDs must match the generated native application identifier com.thelingolegacy.app.');
 }
 if (fs.existsSync('firebase.client.json')) {
   throw new Error('Remove firebase.client.json; use build-time variables and the example template instead.');
