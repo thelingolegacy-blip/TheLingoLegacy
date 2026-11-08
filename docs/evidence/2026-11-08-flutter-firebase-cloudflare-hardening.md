@@ -10,7 +10,7 @@
 - Firebase is reserved for authentication and application data services when a real project/app configuration and deployed security rules are verified.
 - Flutter is a client. It must not contain service-account credentials or hard-coded Firebase client identifiers.
 
-Firebase Hosting is intentionally not configured at the repository root. The former configuration published the repository root as the Hosting public directory, which could expose internal source, scripts, and documentation if someone ran a Firebase Hosting deploy. The canonical public site is already routed through Cloudflare. No Firebase Hosting deployment was performed by this change.
+Firebase Hosting is scoped only to the generated Flutter web artifact at `build/web`; it no longer publishes the repository root, which could expose internal source, scripts, and documentation. Cloudflare remains the canonical apex/www delivery layer. The Firebase Hosting configuration is source-only here: no Firebase Hosting deployment was performed by this change.
 
 ## Flutter runtime behavior
 
@@ -34,7 +34,7 @@ Without complete values, the app remains in preview mode and does not initialize
 
 The Flutter workflow runs dependency resolution, static analysis, tests, web build, and Android debug build before the strict Firebase configuration gate. This keeps code-quality evidence available even when Firebase configuration is not yet provisioned. The final Firebase gate remains fail-closed and requires all platform variables to be present and the project ID to match `.firebaserc`.
 
-The workflow also asserts that Firebase Hosting remains disabled and that the canonical Cloudflare route remains configured. It does not deploy Firebase, Cloudflare, Android, or iOS artifacts.
+The workflow also asserts that Firebase Hosting publishes only `build/web` and that the canonical Cloudflare route remains configured. It does not deploy Firebase, Cloudflare, Android, or iOS artifacts.
 
 ## Retired legacy surface
 
