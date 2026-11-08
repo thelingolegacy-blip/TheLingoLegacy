@@ -2,10 +2,6 @@ const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
-// Bound per-isolate memory use. This is defense in depth, not a substitute for
-// a shared Cloudflare rate-limit rule across Worker isolates.
-const RATE_BUCKET_MAX = 10000;
-const rateBuckets = new Map();
 const RUNTIME_VERSION = '5.0.0-studio-platform';
 const RELEASE_GATES = Object.freeze({
   G00_SOURCE_AUTHORITY: 'PASS', G01_REPOSITORY: 'PASS', G02_RUNNER: 'FAIL / UNVERIFIED',
@@ -86,26 +82,26 @@ function clientKey(request, phone) {
   const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
   return `${ip}:${phone}`;
 }
-function isRateLimited(key) {
-  const now = Date.now();
-  const bucket = rateBuckets.get(key);
-  if (bucket && now - bucket.startedAt <= RATE_WINDOW_MS) {
-    bucket.count += 1;
-    return bucket.count > RATE_LIMIT;
-  }
+async function rateLimiterIdKey(key) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(key));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
 
-  // Expired keys are pruned only when needed. Never let attacker-controlled
-  // unique keys grow this in-memory map without bound.
-  if (rateBuckets.size >= RATE_BUCKET_MAX) {
-    for (const [existingKey, existingBucket] of rateBuckets) {
-      if (now - existingBucket.startedAt > RATE_WINDOW_MS) rateBuckets.delete(existingKey);
-      if (rateBuckets.size < RATE_BUCKET_MAX) break;
-    }
+async function isRateLimited(request, phone, env) {
+  // Durable Object storage provides a shared, atomic fixed-window counter.
+  // Fail closed when the required binding is missing or unavailable.
+  if (!env.BEACON_RATE_LIMITER) return true;
+  try {
+    const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
+    const id = env.BEACON_RATE_LIMITER.idFromName(await rateLimiterIdKey(`${ip}:${phone}`));
+    const stub = env.BEACON_RATE_LIMITER.get(id);
+    const response = await stub.fetch('https://rate-limiter.internal/check', { method: 'POST' });
+    if (!response.ok) return true;
+    const result = await response.json();
+    return result.limited !== false;
+  } catch {
+    return true;
   }
-  // Fail closed if the bounded local bucket is saturated.
-  if (rateBuckets.size >= RATE_BUCKET_MAX) return true;
-  rateBuckets.set(key, { startedAt: now, count: 1 });
-  return false;
 }
 function alertMessage(zone, source) { const zoneLabel = zone.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '); return `Lingo Legacy Beacon Alerts active for ${zoneLabel}. Source: ${source || 'web'}. Reply STOP to opt out.`; }
 
@@ -128,7 +124,7 @@ async function beaconAlerts(request, env) {
   if (!PHONE_RE.test(phone)) return json({ ok: false, error: 'Enter a phone number in E.164 format.' }, 400, request, env);
   if (!BEACON_ZONES.has(zone)) return json({ ok: false, error: 'Unknown beacon alert zone.' }, 400, request, env);
   if (!consent) return json({ ok: false, error: 'Consent is required before starting text alerts.' }, 400, request, env);
-  if (isRateLimited(clientKey(request, phone))) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
+  if (await isRateLimited(request, phone, env)) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
   const payload = { phone, zone, source, message: alertMessage(zone, source), consent: true, createdAt: new Date().toISOString() };
   const result = await sendBeacon(payload, env);
   if (!result) return json({ ok: true, staged: true, message: 'Beacon alert validated but no delivery provider is configured.' }, 202, request, env);
@@ -195,6 +191,34 @@ async function renderDynamicHtml(request, env, response) {
   headers.set('content-type', 'text/html; charset=utf-8');
   headers.set('cache-control', 'no-store, must-revalidate');
   return new Response(rendered, { status: response.status, statusText: response.statusText, headers });
+}
+
+
+
+// Durable, atomic rate limiting for Beacon Alerts. One Durable Object instance
+// is deterministically selected per SHA-256(IP + phone) key. Raw phone/IP values
+// are never written to Durable Object storage or used as the object name.
+export class BeaconRateLimiter {
+  constructor(state) { this.state = state; }
+
+  async fetch(request) {
+    if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+    const now = Date.now();
+    const limited = await this.state.storage.transaction(async (txn) => {
+      const bucket = await txn.get('bucket');
+      if (!bucket || now - bucket.startedAt >= RATE_WINDOW_MS) {
+        await txn.put('bucket', { startedAt: now, count: 1 });
+        return false;
+      }
+      if (bucket.count >= RATE_LIMIT) return true;
+      await txn.put('bucket', { startedAt: bucket.startedAt, count: bucket.count + 1 });
+      return false;
+    });
+    if (!limited) await this.state.storage.setAlarm(now + RATE_WINDOW_MS + 1000);
+    return Response.json({ limited });
+  }
+
+  async alarm() { await this.state.storage.deleteAll(); }
 }
 
 export default {
