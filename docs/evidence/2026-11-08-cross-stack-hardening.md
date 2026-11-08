@@ -88,3 +88,11 @@ This is an evidence and remediation plan for the cross-stack recovery request. I
 - AppDeploy reports 18 apps as deployed under one linked account handle; the same 18 appeared under a second linked handle, while a third handle had no apps. No apps were changed or deleted.
 - Read-only AppDeploy QA snapshots for `LINGO Enterprise Control Center`, `LINGO Studio Hub`, `Hello The Lingo Legacy`, and `That's My Lingo` showed no frontend or network errors at their recorded QA timestamps; Studio Hub and That's My Lingo also reported valid source snapshots. These are provider QA snapshots, not a current authenticated end-to-end production certification.
 - AppDeploy account reports an exhausted credit balance. The `Hello The Lingo Legacy` `media-health-monitor` cron is disabled with reason `credits_exhausted`; it has no failures recorded at its last successful run. Do not re-enable it until the account is funded and the job is verified not to incur unexpected cost. No app redeploy or resource mutation was attempted.
+
+
+## Latest GitHub control-plane readback
+
+- PR #506 current head: `66c01e221d83bc900f06562ae2067cfb79825c9a`; open, draft, unmerged; GitHub reports mergeable with state `unstable`.
+- PR #503 remains open, draft and unmerged; current head `e31ddc707bbe91244c8711538be2b1a304d8de63`; mergeable state `unstable`.
+- Immediately after PR #506 creation, three workflows (Static CI run `42519423483`, G02 Runner Image Build run `42519422765`, Crimson Smoke UI run `42519421875`) all ended `startup_failure` at commit `f76fc7da30ccaccc88e4540d6ef68280ae5cc838`. The preceding commit `7f74a2ad90da59e6bc9523f4d778fb0e82eaf4e0` also had the same three workflow startup failures.
+- These are new examples of the same pre-job failure across unrelated workflow definitions. No job execution evidence has been produced; treat repository Actions service/settings/runner integration as a shared upstream blocker, not a failing application test.
