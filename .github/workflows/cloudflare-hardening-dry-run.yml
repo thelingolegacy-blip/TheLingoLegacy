@@ -7,6 +7,7 @@ on:
       - "worker.js"
       - "wrangler.jsonc"
       - "scripts/verify-cloudflare-bindings.mjs"
+      - "scripts/test-cloudflare-rate-limiter.mjs"
       - "docs/operations/cloudflare-worker-hardening.md"
       - ".github/workflows/cloudflare-hardening-dry-run.yml"
   push:
