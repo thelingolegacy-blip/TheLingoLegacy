@@ -1,0 +1,85 @@
+name: G02 Startup Probe (Isolated Recovery)
+
+on:
+  push:
+    branches:
+      - 'recovery/**'
+      - 'hardening/**'
+      - 'probe/**'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this probe is being run'
+        required: false
+        default: 'manual recovery check'
+
+permissions:
+  contents: read
+  actions: read
+  checks: write          # allows summary / check run if needed later
+  pull-requests: read
+
+concurrency:
+  group: g02-startup-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    name: Hosted Startup Probe
+    runs-on: ubuntu-latest          # forced hosted; never self-hosted until evidence
+    timeout-minutes: 8
+    env:
+      PROBE_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Checkout (shallow)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Runner & environment identity
+        run: |
+          {
+            echo "## G02 Startup Probe Evidence"
+            echo ""
+            echo "| Key | Value |"
+            echo "|-----|-------|"
+            echo "| Probe ID | \`${PROBE_ID}\` |"
+            echo "| Run URL | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |"
+            echo "| Ref | \`${{ github.ref }}\` |"
+            echo "| SHA | \`${{ github.sha }}\` |"
+            echo "| Event | \`${{ github.event_name }}\` |"
+            echo "| Runner Name | \`$RUNNER_NAME\` |"
+            echo "| Runner OS | \`$RUNNER_OS\` |"
+            echo "| Runner Arch | \`$RUNNER_ARCH\` |"
+            echo "| Runner Environment | \`$RUNNER_ENVIRONMENT\` |"
+            echo "| Workspace | \`$GITHUB_WORKSPACE\` |"
+            echo "| Timestamp (UTC) | $(date -u +%Y-%m-%dT%H:%M:%SZ) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "PROBE_PASS=true" >> "$GITHUB_ENV"
+          uname -a || true
+          cat /etc/os-release || true
+
+      - name: Minimal filesystem & permissions check
+        run: |
+          echo "PWD=$(pwd)"
+          ls -la
+          touch probe-artifact.txt
+          echo "Probe ID: $PROBE_ID" > probe-artifact.txt
+          echo "SHA: ${{ github.sha }}" >> probe-artifact.txt
+          echo "Ref: ${{ github.ref }}" >> probe-artifact.txt
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> probe-artifact.txt
+          cat probe-artifact.txt
+
+      - name: Upload retrievable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-startup-probe-${{ github.run_id }}
+          path: probe-artifact.txt
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Final evidence marker
+        run: |
+          echo "PROBE_STATUS=PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "First real job + artifact produced. Control plane is now capable of execution."
