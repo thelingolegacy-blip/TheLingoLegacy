@@ -187,3 +187,39 @@ test('provider timeout aborts the request and returns a bounded timeout error', 
   });
   assert.deepEqual(result, { ok: false, status: 504, code: 'AI_PROVIDER_TIMEOUT' });
 });
+
+
+test('upstream response bodies are rejected above the configured byte ceiling', async () => {
+  const result = await invokeAiProvider('openai', 'Bound response', configuredEnv, {
+    fetchImpl: async () => new Response(JSON.stringify({ output_text: 'x' }), {
+      status: 200,
+      headers: { 'content-length': String(1024 * 1024 + 1) }
+    })
+  });
+  assert.deepEqual(result, { ok: false, status: 502, code: 'AI_PROVIDER_RESPONSE_TOO_LARGE' });
+});
+
+test('streamed response bodies are bounded even when content-length is absent', async () => {
+  const oversized = new Uint8Array(1024 * 1024 + 1);
+  const result = await invokeAiProvider('openai', 'Bound streamed response', configuredEnv, {
+    fetchImpl: async () => new Response(new ReadableStream({
+      start(controller) {
+        controller.enqueue(oversized);
+        controller.close();
+      }
+    }), { status: 200 })
+  });
+  assert.deepEqual(result, { ok: false, status: 502, code: 'AI_PROVIDER_RESPONSE_TOO_LARGE' });
+});
+
+test('provider response identifiers are returned separately from the local correlation ID', async () => {
+  const result = await invokeAiProvider('openai', 'Trace provider request', configuredEnv, {
+    fetchImpl: async () => new Response(JSON.stringify({ output_text: 'ok' }), {
+      status: 200,
+      headers: { 'content-type': 'application/json', 'x-request-id': 'req_provider_123' }
+    })
+  });
+  assert.equal(result.ok, true);
+  assert.match(result.request_id, /^[0-9a-f-]{36}$/i);
+  assert.equal(result.upstream_request_id, 'req_provider_123');
+});
