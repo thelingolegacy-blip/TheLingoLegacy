@@ -44,7 +44,7 @@
 2. Enable main branch protection and required independent review.
 3. Verify Firebase project ownership and all platform app registrations; provision required repository variables.
 4. Verify Firebase Auth, App Check, database/storage rules, Functions, and authenticated end-to-end journeys.
-5. Verify the existing staging `0001` base schema and run authenticated rate-limit tests against the newly applied `0002` table before any new staging Worker deployment.
+5. Reconcile Wrangler's migration ledger by running idempotent `0001` and `0002` through the controlled migration mechanism; then run authenticated rate-limit tests against the staging table before any new staging Worker deployment.
 6. Reconcile production Worker routes and the 18-route inventory with the canonical Wrangler configuration before any production upload.
 7. Design and verify production backend bindings and authorization; do not bind the existing production D1 or Firebase project to the Worker by assumption.
 8. Review the eight remaining per-worker Access bypass exceptions and the separate Pro Vercel project.
@@ -60,7 +60,7 @@
 
 ## Staging migration update — 2026-11-08T17:17:11Z
 
-The additive `0002_lingo_api_rate_limits_staging.sql` migration was applied to the staging D1 database and schema-verified. The table is present; the schema readback did not modify application rows. This removes the missing-table prerequisite but does not authorize deployment of the new Worker source while Firebase staging identity and authenticated end-to-end tests remain unverified.
+The additive `0002_lingo_api_rate_limits_staging.sql` migration was applied to the staging D1 database and schema-verified. The table is present; the schema readback did not modify application rows. The database does not contain a `d1_migrations` ledger table because the DDL was applied directly through the D1 SQL API. Before adding future migrations, run the idempotent `0001` and `0002` migrations through the controlled Wrangler migration mechanism to establish its ledger, then read back both records. This removes the missing-table prerequisite but does not authorize deployment of the new Worker source while Firebase staging identity and authenticated end-to-end tests remain unverified.
 
 ## Latest exact-head CI readback — 2026-11-08T17:19:31Z
 
@@ -88,3 +88,8 @@ A read-only Cloudflare zone route query returned 21 route records. Exactly 18 ta
 ## Production Beacon rate-limiter disposition
 
 Read-only source comparison confirms `main` and PR #504 still use an isolate-local `Map` for Beacon rate limits. PR #501 introduces a SQLite-backed Durable Object and a migration, but the binding/migration are not deployed. Do not activate it until exact-head CI, a Wrangler dry-run, and isolated staging tests pass; production currently retains the old limiter.
+
+
+## D1 migration-ledger follow-up
+
+The D1 catalog readback confirms `lingo_api_rate_limits` exists and `d1_migrations` does not. The schema DDL was applied directly through the Cloudflare API. Both migrations use idempotent `IF NOT EXISTS` operations, so a controlled Wrangler migration apply can establish migration tracking without duplicating tables or triggers. Do not manually insert migration-ledger rows.
