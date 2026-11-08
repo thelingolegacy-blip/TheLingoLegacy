@@ -34,7 +34,7 @@ test('rejects publishing the repository root', () => {
 });
 
 test('rejects path traversal outside the repository', () => {
-  const result = runVerifier('../outside');
+  const result = runVerifier('../outside', false);
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /only build\/web/);
 });
