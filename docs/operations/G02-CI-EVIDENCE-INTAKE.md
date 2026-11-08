@@ -186,3 +186,15 @@ Read-only repository inspection found:
 - No root `firestore.rules` exists; the discovered rules file is Oasis-specific under `studio-sites/games/oasis-platform/firebase-functions/`.
 
 The new non-production API contract and Wave 0–4 checklist record these as blockers. No workflow dispatch, runner activity, Cloudflare deployment, route/DNS change, Firebase mutation, or production promotion occurred.
+
+
+## 9. Latest branch-push CI result — 2026-11-08 23:58 UTC
+
+The latest commits on the registry branch automatically generated new pull-request workflow runs. All three observed workflows again failed before job creation:
+- Static CI `42537701303` — `startup_failure`, zero jobs.
+- Crimson Smoke UI `42537702034` — `startup_failure`, zero jobs.
+- G02 Runner Image Build (no publish) `42537700591` — `startup_failure`, zero jobs.
+
+A read-only GitHub branch API refresh still reports `main.protected=false`, required-check enforcement `off`. The connected GitHub read interface rejects the repository runner-inventory endpoint as unsupported; therefore runner registration and service health cannot be independently inspected through this connection. No runner reset, registration, service activation, workflow dispatch, or branch-protection mutation was performed.
+
+M04 remains FAIL/BLOCKED; M05 remains FAIL/UNVERIFIED; M06 remains OPEN/NOT EXECUTED; G02 remains FAIL/UNVERIFIED; production remains HOLD.
