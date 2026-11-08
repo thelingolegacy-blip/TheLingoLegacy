@@ -15,7 +15,7 @@
 - The production Worker currently has only `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL` bindings. It has no D1 binding and no Firebase project binding. The production Worker therefore does not currently provide the intended Firebase/D1 application backend.
 - The production D1 database has application tables, but it is not bound to the active production Worker. No production D1 data was read or modified during this inventory.
 - The staging Worker `lingo-game-engine-staging` has only its D1 `DB` binding and `ENVIRONMENT` variable. It has no Firebase project binding. Its current deployed version is the earlier settings-only deployment, not the new PR #503 source.
-- The staging D1 catalog has five application tables and four ledger triggers. It does not contain `lingo_api_rate_limits`; migration `0002` is unapplied. The new Worker source must not be deployed before the migration is applied and verified.
+- The staging D1 catalog has five original application tables and four ledger triggers. Migration `0002` was applied at `2026-11-08T17:17:11Z`; readback confirmed `lingo_api_rate_limits` and its four expected columns/constraints. The new Worker source remains undeployed pending Firebase staging identity and authenticated route tests.
 - The apex `/healthz` and homepage continued responding after the Access policy change. No Worker source, route, DNS, D1 row, or secret was changed during this inventory.
 
 ## Cloudflare Access
@@ -43,7 +43,7 @@
 2. Enable main branch protection and required independent review.
 3. Verify Firebase project ownership and all platform app registrations; provision required repository variables.
 4. Verify Firebase Auth, App Check, database/storage rules, Functions, and authenticated end-to-end journeys.
-5. Apply and verify staging D1 migration `0002` before any new staging Worker deployment.
+5. Verify the existing staging `0001` base schema and run authenticated rate-limit tests against the newly applied `0002` table before any new staging Worker deployment.
 6. Reconcile production Worker routes and the 18-route inventory with the canonical Wrangler configuration before any production upload.
 7. Design and verify production backend bindings and authorization; do not bind the existing production D1 or Firebase project to the Worker by assumption.
 8. Review the eight remaining per-worker Access bypass exceptions and the separate Pro Vercel project.
@@ -55,3 +55,8 @@
 ## Related pull-request consolidation
 
 - PR #434 (mobile startup/build recovery), PR #475 (Firebase Hosting build/web scope), and PR #354 (Firebase static-gate tests) were closed as superseded by draft PR #504. Their useful changes were carried forward or replaced by stricter implementations; their branches remain available for audit. PR #415 contains separate Ask Lingo/Flutter feature work and remains independent.
+
+
+## Staging migration update — 2026-11-08T17:17:11Z
+
+The additive `0002_lingo_api_rate_limits_staging.sql` migration was applied to the staging D1 database and schema-verified. The table is present; the schema readback did not modify application rows. This removes the missing-table prerequisite but does not authorize deployment of the new Worker source while Firebase staging identity and authenticated end-to-end tests remain unverified.
