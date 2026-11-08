@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#100d18">
+<meta name="description" content="Read-only, phone-first G02 evidence review for LINGO Legacy.">
+<title>G02 Evidence Review | LINGO Legacy</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0a12;--panel:#171321;--panel2:#211a30;--ink:#f8f5ff;--muted:#b8b0c9;--gold:#f5c451;--purple:#9b83ff;--green:#67e6a1;--red:#ff8585;--amber:#ffca70;--line:#393047;--blue:#9ddcff;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 100% 0,rgba(117,77,201,.2),transparent 26rem),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--blue);text-underline-offset:3px}.wrap{width:min(980px,100% - 28px);margin:auto}.top{padding:22px 0 14px;border-bottom:1px solid var(--line)}.brand{font-weight:900;letter-spacing:.02em;color:var(--gold);font-size:.78rem;text-transform:uppercase}.top h1{font-size:clamp(2rem,9vw,3.4rem);line-height:1.02;letter-spacing:-.05em;margin:8px 0}.top p{color:var(--muted);margin:0;max-width:58ch}.banner{margin:18px 0;padding:16px;border:1px solid rgba(255,133,133,.5);border-radius:var(--radius);background:rgba(255,133,133,.08)}.banner strong{display:block;font-size:1.12rem;color:var(--red)}.banner p{margin:5px 0 0;color:var(--muted)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.btn{min-height:46px;display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:13px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-weight:800;text-decoration:none;cursor:pointer}.btn.primary{background:var(--gold);color:#17100a;border-color:var(--gold)}.btn:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}.meta{color:var(--muted);font-size:.86rem}.section-title{margin:28px 0 10px;font-size:1.18rem}.cards{display:grid;grid-template-columns:1fr;gap:12px}.card{min-width:0;background:linear-gradient(155deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);padding:16px}.card-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}.card h3{font-size:1.08rem;margin:0 0 5px;overflow-wrap:anywhere}.status{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:.75rem;font-weight:900;text-transform:uppercase;white-space:nowrap}.status:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.status.bad{color:var(--red)}.status.warn{color:var(--amber)}.status.good{color:var(--green)}.status.neutral{color:var(--muted)}.facts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}.fact{min-width:0;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.14)}.fact span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.fact b{display:block;margin-top:4px;font-size:.92rem;overflow-wrap:anywhere}.fact .mono{font: .8rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}.labels{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.label{border:1px solid #4a405f;border-radius:8px;padding:3px 7px;font-size:.75rem;color:#e1d7ff}.row{padding:10px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row span{color:var(--muted);font-size:.9rem}.row b{font-size:.9rem;text-align:right;overflow-wrap:anywhere}.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;font-weight:800;font-size:.9rem}.gates{display:grid;grid-template-columns:1fr;gap:9px}.gate{display:flex;gap:11px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}.gate-icon{flex:0 0 27px;height:27px;border-radius:8px;display:grid;place-items:center;background:rgba(255,202,112,.12);color:var(--amber);font-weight:1000}.gate strong{display:block;font-size:.94rem}.gate p{margin:3px 0 0;color:var(--muted);font-size:.86rem}.callout{padding:15px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}.callout h3{margin:0 0 5px;font-size:1rem}.callout p{margin:0;color:var(--muted);font-size:.9rem}.foot{padding:30px 0 55px;color:var(--muted);font-size:.82rem}.loading{color:var(--amber)}.error{color:var(--red)}.small{font-size:.82rem;color:var(--muted);overflow-wrap:anywhere}details{margin-top:10px}summary{cursor:pointer;color:var(--blue);font-weight:800;padding:8px 0}code{overflow-wrap:anywhere;white-space:normal;font-size:.82rem}
+@media(min-width:720px){.top{padding:32px 0 20px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.gates{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{width:min(980px,100% - 40px)}.banner{display:flex;justify-content:space-between;align-items:center;gap:20px}.banner p{max-width:54ch}}
+@media(max-width:360px){.wrap{width:calc(100% - 20px)}.card{padding:12px}.facts{grid-template-columns:1fr}.btn{width:100%}.card-head{display:block}.card-head .status{margin-top:8px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="brand">LINGO LEGACY · CONTROLLED REVIEW</div>
+<h1>G02 Evidence Review</h1>
+<p>A phone-first, read-only view of GitHub runner assignment, sentinel execution, artifacts, and proof gaps. Plain language first; technical IDs remain available for audit.</p>
+</div></header>
+<main class="wrap">
+<section class="banner" aria-live="polite">
+<div><strong id="gateState">G02 · BLOCKED</strong><p id="gateReason">This review page never authorizes production. Every acceptance condition must be backed by real, correlated evidence.</p></div>
+<div class="meta" id="updatedAt">Live check not yet run.</div>
+</section>
+<div class="actions">
+<button class="btn primary" id="refresh" type="button">Refresh GitHub evidence</button>
+<a class="btn" href="https://github.com/thelingolegacy-blip/TheLingoLegacy/actions" target="_blank" rel="noopener">Open all workflows ↗</a>
+</div>
+<p class="meta" id="apiStatus" role="status">Tap “Refresh GitHub evidence” to read the public GitHub API. No credentials are requested or stored.</p>
+
+<h2 class="section-title">Latest workflow observations</h2>
+<div id="workflowCards" class="cards" aria-live="polite"><article class="card"><p class="loading">Waiting for refresh…</p></article></div>
+
+<h2 class="section-title">Acceptance checklist</h2>
+<div class="gates" id="gates">
+<div class="gate"><span class="gate-icon">1</span><div><strong>Real runner assignment</strong><p>Needs runner ID greater than zero and exact name lingo-legacy-g02.</p></div></div>
+<div class="gate"><span class="gate-icon">2</span><div><strong>Required labels</strong><p>self-hosted, linux, x64, and lingo-g02 must all match.</p></div></div>
+<div class="gate"><span class="gate-icon">3</span><div><strong>Sentinel succeeds</strong><p>Steps must exist and the sentinel must complete with exit status 0.</p></div></div>
+<div class="gate"><span class="gate-icon">4</span><div><strong>Logs retrievable</strong><p>Open the original GitHub job and verify real execution logs.</p></div></div>
+<div class="gate"><span class="gate-icon">5</span><div><strong>Artifact integrity</strong><p>Download the original artifact and verify its SHA-256 sidecar.</p></div></div>
+<div class="gate"><span class="gate-icon">6</span><div><strong>Host telemetry correlated</strong><p>Host-side service/process/listener output must match the run, job, and commit.</p></div></div>
+<div class="gate"><span class="gate-icon">7</span><div><strong>Independent review</strong><p>A reviewer must validate the source, hashes, correlation, and every predicate.</p></div></div>
+</div>
+
+<h2 class="section-title">What is still missing?</h2>
+<div class="callout">
+<h3>Host telemetry is not available through the public Actions record</h3>
+<p>This page cannot inspect /opt/actions-runner, start the daemon, retrieve private host logs, or prove the machine is polling. It will not guess those values. The host report must be collected on the actual Linux machine and then reviewed alongside the GitHub run.</p>
+</div>
+<div class="callout" style="margin-top:10px">
+<h3>Why the gate stays blocked</h3>
+<p>A queued or cancelled job with runner_id 0, an empty runner name, no steps, or no verified artifact is not a successful sentinel. A green-looking page or static checklist is not acceptance evidence.</p>
+</div>
+<footer class="foot">
+<strong>Safety boundary:</strong> read-only public GitHub API requests only. This page does not dispatch or rerun workflows, change repository files, alter runner settings, deploy, or promote production. API rate limits or unavailable endpoints are shown as unknown—not as PASS.
+<p>Repository: <a href="https://github.com/thelingolegacy-blip/TheLingoLegacy" target="_blank" rel="noopener">thelingolegacy-blip/TheLingoLegacy ↗</a></p>
+</footer>
+</main>
+<script>
+(() => {
+  const owner = "thelingolegacy-blip";
+  const repo = "TheLingoLegacy";
+  const required = ["self-hosted", "linux", "x64", "lingo-g02"];
+  const workflows = [
+    { name: "Fresh Assignment Probe", file: "g02-fresh-assignment-probe.yml" },
+    { name: "Qualified Evidence Probe", file: "g02-qualified-evidence-probe.yml" },
+    { name: "Runner Smoke Probe", file: "actions-runner-smoke.yml" }
+  ];
+  const el = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const fmt = value => value ? new Date(value).toLocaleString() : "Not available";
+  const shortSha = sha => sha ? sha.slice(0,12) + "…" : "Not available";
+  const api = async path => {
+    const response = await fetch("https://api.github.com/repos/" + owner + "/" + repo + path, {headers:{"Accept":"application/vnd.github+json"}});
+    if (!response.ok) throw new Error("GitHub API returned HTTP " + response.status);
+    return response.json();
+  };
+  const pill = (label, kind) => '<span class="status ' + kind + '">' + esc(label) + '</span>';
+  const fact = (label, value, mono=false) => '<div class="fact"><span>' + esc(label) + '</span><b class="' + (mono?'mono':'') + '">' + esc(value) + '</b></div>';
+  const statusKind = run => {
+    if (run.status === "completed" && run.conclusion === "success") return ["Completed · success","good"];
+    if (run.status === "queued" || run.status === "in_progress") return [run.status.replace("_"," "),"warn"];
+    if (run.conclusion === "cancelled" || run.conclusion === "failure" || run.conclusion === "timed_out") return [run.conclusion,"bad"];
+    return [run.status || "unknown","neutral"];
+  };
+  function cardError(workflow, message) {
+    return '<article class="card"><div class="card-head"><div><h3>' + esc(workflow.name) + '</h3><p class="small">' + esc(workflow.file) + '</p></div>' + pill("Unknown","neutral") + '</div><p class="error">' + esc(message) + '</p><p class="small">No status was inferred from this error.</p></article>';
+  }
+  async function loadWorkflow(workflow) {
+    const data = await api("/actions/workflows/" + encodeURIComponent(workflow.file) + "/runs?per_page=1");
+    const run = data.workflow_runs && data.workflow_runs[0];
+    if (!run) return '<article class="card"><h3>' + esc(workflow.name) + '</h3><p class="meta">No workflow runs returned.</p></article>';
+    let jobsData = {jobs:[]}, artifactsData = {artifacts:[]}, jobsError = "", artifactsError = "";
+    try { jobsData = await api("/actions/runs/" + run.id + "/jobs?per_page=100"); } catch (e) { jobsError = e.message; }
+    try { artifactsData = await api("/actions/runs/" + run.id + "/artifacts?per_page=100"); } catch (e) { artifactsError = e.message; }
+    const jobs = jobsData.jobs || [];
+    const artifacts = artifactsData.artifacts || [];
+    const sha = run.head_sha || "";
+    const state = statusKind(run);
+    const runLink = run.html_url || "https://github.com/" + owner + "/" + repo + "/actions/runs/" + run.id;
+    let jobBlocks = "";
+    if (jobs.length) {
+      jobBlocks = jobs.map(job => {
+        const labels = job.labels || [];
+        const missing = required.filter(label => !labels.map(x=>String(x).toLowerCase()).includes(label));
+        const steps = job.steps || [];
+        const completedSteps = steps.filter(s => s.status === "completed" && s.conclusion);
+        const shaMatch = !!(sha && job.head_sha && sha === job.head_sha);
+        const assigned = Number(job.runner_id || 0) > 0 && job.runner_name === "lingo-legacy-g02" && missing.length === 0;
+        const jobLink = job.html_url || runLink;
+        return '<div class="row"><span>Job / assignment</span><b>' + esc(job.name || "Unnamed job") + '<br>' + pill(assigned ? "Assigned" : "Not assigned", assigned ? "good" : "bad") + '</b></div>' +
+          '<div class="facts">' + fact("Job ID",job.id,true) + fact("Runner ID",job.runner_id ?? 0,true) + fact("Runner name",job.runner_name || "Empty") + fact("Steps",steps.length + " total · " + completedSteps.length + " completed") + fact("Commit correlation",shaMatch ? "MATCH" : "Not verified") + fact("Job result",job.conclusion || job.status || "Unknown") + '</div>' +
+          '<div class="labels">' + (labels.length ? labels.map(label=>'<span class="label">' + esc(label) + '</span>').join("") : '<span class="small">No labels reported</span>') + '</div>' +
+          '<div class="links"><a href="' + esc(jobLink) + '" target="_blank" rel="noopener">Open job & logs ↗</a></div>';
+      }).join("");
+    } else {
+      jobBlocks = '<p class="small">' + esc(jobsError || "No job records returned; assignment and steps are not proven.") + '</p>';
+    }
+    const artifactLine = artifactsError ? "Unknown · " + artifactsError : String(artifacts.length) + " found";
+    return '<article class="card"><div class="card-head"><div><h3>' + esc(workflow.name) + '</h3><p class="small">Run #' + esc(run.run_number) + ' · ID ' + esc(run.id) + '</p></div>' + pill(state[0],state[1]) + '</div>' +
+      '<div class="facts">' + fact("Run status",run.status + (run.conclusion ? " · " + run.conclusion : "")) + fact("Artifacts",artifactLine) + fact("Branch",run.head_branch || "Not available") + fact("Updated",fmt(run.updated_at)) + fact("Commit SHA",shortSha(sha),true) + fact("Trigger",run.event || "Not available") + '</div>' +
+      '<div class="links"><a href="' + esc(runLink) + '" target="_blank" rel="noopener">Open run ↗</a><a href="https://github.com/' + owner + '/' + repo + '/actions/runs/' + esc(run.id) + '#artifacts" target="_blank" rel="noopener">View artifacts ↗</a></div>' +
+      '<details><summary>Job-level evidence</summary>' + jobBlocks + '</details>' +
+      '<p class="small">Artifact listed: ' + esc(artifactLine) + '. Listing an artifact is not the same as downloading it or verifying its checksum.</p></article>';
+  }
+  async function refresh() {
+    const button = el("refresh");
+    button.disabled = true;
+    button.textContent = "Checking…";
+    el("apiStatus").textContent = "Reading public GitHub Actions records. Missing data will remain unknown.";
+    el("workflowCards").innerHTML = '<article class="card"><p class="loading">Loading latest workflow observations…</p></article>';
+    const results = await Promise.all(workflows.map(async workflow => {
+      try { return await loadWorkflow(workflow); }
+      catch (e) { return cardError(workflow, e.message + ". Check network access or GitHub API rate limits."); }
+    }));
+    el("workflowCards").innerHTML = results.join("");
+    const now = new Date();
+    el("updatedAt").textContent = "Checked " + now.toLocaleTimeString();
+    el("apiStatus").textContent = "Refresh complete. Review each run/job link; this page does not access the runner host or verify artifact hashes.";
+    el("gateState").textContent = "G02 · BLOCKED";
+    el("gateReason").textContent = "Production remains protected. This page is an evidence reader, not a gate authority.";
+    button.disabled = false;
+    button.textContent = "Refresh GitHub evidence";
+  }
+  el("refresh").addEventListener("click", refresh);
+  refresh();
+})();
+</script>
+</body>
+</html>
