@@ -1,0 +1,198 @@
+name: G02 Host Preflight and Isolated Container Diagnostic
+
+on:
+  workflow_dispatch:
+    inputs:
+      evidence_ticket:
+        description: Incident or evidence reference
+        required: true
+        default: "#242"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: g02-isolated-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  host-preflight-and-container:
+    name: g02-host-preflight-container
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      actions: read
+    env:
+      EVIDENCE_TICKET: ${{ inputs.evidence_ticket }}
+      EXPECTED_RUNNER_NAME: lingo-legacy-g02
+
+    steps:
+      - name: G02 host preflight — verify provider assignment before container startup
+        id: host_preflight
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p g02-evidence
+          signal() {
+            printf '%s stage=%s timestamp_utc=%s repo=%s commit=%s run_id=%s attempt=%s reason=%s\n' \
+              "$1" "$2" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_REPOSITORY" \
+              "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$3"
+          }
+
+          signal "🟡 WAITING" "G02_HOST_PREFLIGHT" "provider_assignment_check"
+          printf 'schema=lingo-g02-host-preflight-v1\n' > g02-evidence/host-preflight.txt
+          {
+            printf 'captured_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'workflow=%s\n' "$GITHUB_WORKFLOW"
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
+            printf 'job_key=%s\n' "$GITHUB_JOB"
+            printf 'commit_sha=%s\n' "$GITHUB_SHA"
+            printf 'ref=%s\n' "$GITHUB_REF"
+            printf 'runner_name=%s\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT"
+            printf 'evidence_ticket=%s\n' "$EVIDENCE_TICKET"
+          } | tee -a g02-evidence/host-preflight.txt
+
+          test "$RUNNER_NAME" = "$EXPECTED_RUNNER_NAME"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          command -v docker >/dev/null
+          docker version --format '{{.Server.Version}}' > g02-evidence/docker-server-version.txt
+
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" \
+            -o g02-evidence/provider-jobs.json
+
+          python3 - <<'PY'
+          import json, os, pathlib
+          data = json.loads(pathlib.Path("g02-evidence/provider-jobs.json").read_text())
+          run_id = int(os.environ["GITHUB_RUN_ID"])
+          matches = [
+              j for j in data.get("jobs", [])
+              if int(j.get("run_id", -1)) == run_id
+              and j.get("name") == "g02-host-preflight-container"
+          ]
+          if len(matches) != 1:
+              raise SystemExit(f"Expected exactly one provider job record; found {len(matches)}")
+          job = matches[0]
+          record = {
+              "schema": "lingo-g02-provider-job-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "run_id": run_id,
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "job_id": job.get("id"),
+              "job_name": job.get("name"),
+              "status": job.get("status"),
+              "conclusion": job.get("conclusion"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "runner_group_id": job.get("runner_group_id"),
+              "labels": job.get("labels", []),
+              "steps": job.get("steps", []),
+              "logs_url_present": bool(job.get("logs_url")),
+          }
+          pathlib.Path("g02-evidence/provider-job-record.json").write_text(json.dumps(record, indent=2) + "\n")
+          print(json.dumps({
+              "job_id": record["job_id"],
+              "runner_id": record["runner_id"],
+              "runner_name": record["runner_name"],
+              "step_count": len(record["steps"]) if isinstance(record["steps"], list) else 0,
+              "logs_url_present": record["logs_url_present"],
+          }, indent=2))
+          if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
+              raise SystemExit("Provider job ID is not positive")
+          if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
+              raise SystemExit("Provider did not establish a real runner assignment")
+          if record["runner_name"] != os.environ["EXPECTED_RUNNER_NAME"]:
+              raise SystemExit("Provider runner name does not match the required G02 runner")
+          if not isinstance(record["steps"], list) or not record["steps"]:
+              raise SystemExit("Provider did not return instantiated steps")
+          PY
+
+          signal "🟢 PASS" "G02_HOST_PREFLIGHT" "provider_assignment_identity_and_docker_daemon_verified"
+
+      - name: G03 isolated container diagnostic — only after host preflight passes
+        id: container_diagnostic
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          signal() {
+            printf '%s stage=%s timestamp_utc=%s repo=%s commit=%s run_id=%s attempt=%s reason=%s\n' \
+              "$1" "$2" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_REPOSITORY" \
+              "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$3"
+          }
+
+          signal "🔵 RUNNING" "G03_CONTAINER_STARTUP" "host_preflight_passed"
+          docker pull node:22-alpine
+          IMAGE_DIGEST="$(docker image inspect node:22-alpine --format '{{index .RepoDigests 0}}')"
+          test -n "$IMAGE_DIGEST"
+          printf 'image_digest=%s\n' "$IMAGE_DIGEST" | tee g02-evidence/container-image.txt
+
+          # No bind mounts, host mounts, secrets, Docker socket, or deployment permissions.
+          # Container networking is disabled; root filesystem is read-only.
+          set +e
+          timeout --foreground --signal=TERM --kill-after=5s 45s \
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges:true \
+              --pids-limit 64 \
+              --memory 256m \
+              --cpus 1 \
+              --user 65534:65534 \
+              --tmpfs /tmp:rw,noexec,nosuid,size=16m \
+              --entrypoint node \
+              "$IMAGE_DIGEST" \
+              -e 'console.log(JSON.stringify({signal:"🟢 PASS",stage:"G03_CONTAINER_STARTUP",timestamp_utc:new Date().toISOString(),node:process.version,network:"disabled",rootfs:"read-only",privileges:"dropped",run_id:process.env.GITHUB_RUN_ID||null,commit_sha:process.env.GITHUB_SHA||null}))' \
+              2>&1 | tee g02-evidence/container-output.txt
+          CONTAINER_RC=${PIPESTATUS[0]}
+          set -e
+          printf 'container_exit_code=%s\n' "$CONTAINER_RC" | tee g02-evidence/container-exit.txt
+          test "$CONTAINER_RC" -eq 0
+          signal "🟢 PASS" "G03_CONTAINER_STARTUP" "bounded_isolated_container_completed"
+
+      - name: Create strict evidence manifest and checksums
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p g02-evidence
+          {
+            printf 'schema=lingo-g02-evidence-manifest-v1\n'
+            printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'commit_sha=%s\n' "$GITHUB_SHA"
+            printf 'run_id=%s\n' "$GITHUB_RUN_ID"
+            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
+            printf 'ticket=%s\n' "$EVIDENCE_TICKET"
+            printf 'scope=NON_PRODUCTION_DIAGNOSTIC_ONLY\n'
+            printf 'g02_acceptance=NOT_GRANTED_BY_THIS_WORKFLOW\n'
+            printf 'production_promotion=NOT_AUTHORIZED_BY_THIS_WORKFLOW\n'
+          } > g02-evidence/manifest.txt
+          find g02-evidence -maxdepth 1 -type f ! -name SHA256SUMS -print0 \
+            | sort -z \
+            | xargs -0 -r sha256sum > g02-evidence/SHA256SUMS
+          test -s g02-evidence/SHA256SUMS
+          sha256sum --check g02-evidence/SHA256SUMS
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-isolated-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
