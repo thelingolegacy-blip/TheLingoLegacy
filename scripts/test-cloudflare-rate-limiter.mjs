@@ -139,3 +139,51 @@ test('Beacon endpoint uses a SHA-256 object name and stages only after limiter a
   assert.match(objectName, /^[a-f0-9]{64}$/);
   assert.notEqual(objectName, '203.0.113.10:+14155552671');
 });
+
+test('Beacon webhook refuses to transmit phone data without an authentication secret', async () => {
+  let fetchCalls = 0;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => { fetchCalls += 1; return Response.json({ ok: true }); };
+  try {
+    const env = {
+      CANONICAL_DOMAIN: 'thelingolegacy.com',
+      PAID_SERVICES_ENABLED: 'true',
+      BEACON_ALERTS_WEBHOOK_URL: 'https://alerts.example.test/hook',
+      BEACON_RATE_LIMITER: {
+        idFromName() { return 'opaque-id'; },
+        get() { return { async fetch() { return Response.json({ limited: false }); } }; },
+      },
+    };
+    const response = await beaconRequest(env);
+    assert.equal(response.status, 500);
+    assert.equal(fetchCalls, 0, 'unauthenticated webhook must never receive the phone number');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Beacon webhook sends its configured bearer secret when delivery is enabled', async () => {
+  const originalFetch = globalThis.fetch;
+  let authorization = null;
+  globalThis.fetch = async (_url, options) => {
+    authorization = options.headers.Authorization;
+    return Response.json({ ok: true });
+  };
+  try {
+    const env = {
+      CANONICAL_DOMAIN: 'thelingolegacy.com',
+      PAID_SERVICES_ENABLED: 'true',
+      BEACON_ALERTS_WEBHOOK_URL: 'https://alerts.example.test/hook',
+      BEACON_ALERTS_WEBHOOK_SECRET: 'test-only-secret',
+      BEACON_RATE_LIMITER: {
+        idFromName() { return 'opaque-id'; },
+        get() { return { async fetch() { return Response.json({ limited: false }); } }; },
+      },
+    };
+    const response = await beaconRequest(env);
+    assert.equal(response.status, 200);
+    assert.equal(authorization, 'Bearer test-only-secret');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
