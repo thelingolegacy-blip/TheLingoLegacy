@@ -119,3 +119,18 @@ The gateway contract now documents the helper's limits (blob `0bca3b815662905e99
 Latest PR #500 head checked: `cd8d7f7bc866317b962b035ae44e76df08e4d6e4`. GitHub returned six workflow runs associated with this commit; all six have conclusion `startup_failure`, including **LLG AI Provider Adapter Tests** (run `42471237270`). The combined commit status contains a Vercel success context, which is not evidence that the Node test job ran. No job-level test logs or passing artifacts were established. Therefore the current 17 adapter tests, 8 gateway-auth tests, and 7 static Command Center tests (32 test cases total) remain **NOT EXECUTED / NOT VERIFIED** on this head.
 
 PR #500 remains draft/open/unmerged with 21 changed files. No identity provider, secrets, provider flags, provider calls, billing, Firebase, Cloudflare production, merge, or deployment changes were made. G02 remains FAIL / UNVERIFIED; production remains protected.
+
+
+## 11. Strict request validation — source-only progress (2026-11-08)
+
+Added `src/ai/gateway-request-validation.mjs` and `src/ai/gateway-request-validation.test.mjs`. The validator defines strict request shapes for Chat, Compare, Agents, and Developer. It rejects unknown keys (including client-supplied identity, tenant, role, budget, tool, and approval fields), limits Compare to 2–4 unique known providers, bounds prompt/task/code lengths, constrains agent identifiers and developer languages, and rejects control characters in ordinary text. It validates already-parsed objects only; it is not an HTTP parser, byte limiter, route, authentication/authorization system, moderation layer, quota service, or production integration.
+
+Ten Node test cases were added. The workflow path filter and execution steps now include this suite and upload `gateway-request-validation-test.log`. Workflow blob after this change: `1bd36b528d458bba20cd15d8331c916e458f2f73`. The API contract was updated to match the actual source-only request shapes and document the helper's limits (latest contract commit `a98bc2b4d15105e95107b35f6a40f8927fe70694`).
+
+### Exact-head recheck after request-validation changes
+
+Latest PR #500 head: `a98bc2b4d15105e95107b35f6a40f8927fe70694`. PR remains OPEN / DRAFT / UNMERGED with 23 changed files. Six workflow runs associated with this exact head completed with `startup_failure`, including **LLG AI Provider Adapter Tests** (run `42475970691`). Each is a pre-job startup failure; no Node test step, exit code, or retrievable test artifact was established.
+
+Current planned suites contain 17 provider-adapter tests, 8 gateway-auth tests, 10 gateway-request-validation tests, and 7 static Command Center tests (**42 total test cases**). All 42 remain **NOT EXECUTED / NOT VERIFIED** on the current head. The workflow definition is not test evidence. No retry was initiated.
+
+PR #500 remains draft and unmerged. No live provider credentials, provider flags, provider calls, billing, Firebase activation, Cloudflare production changes, merge, or deployment were performed. G02 remains FAIL / UNVERIFIED and production remains protected.
