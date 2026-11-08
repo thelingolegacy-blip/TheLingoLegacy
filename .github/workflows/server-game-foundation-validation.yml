@@ -12,6 +12,8 @@ on:
       - "scripts/tests/firebase-id-token.test.mjs"
       - "scripts/tests/lingo-game-worker.test.mjs"
       - "scripts/tests/server-slot-engine.test.mjs"
+      - "scripts/tests/server-slot-engine-5x3.test.mjs"
+      - "src/server/slot-engine-5x3.mjs"
       - "scripts/tests/test-slot-wallet-migration.py"
       - "wrangler.game-engine-staging.jsonc"
       - ".github/workflows/server-game-foundation-validation.yml"
@@ -66,6 +68,6 @@ jobs:
       - name: Worker route and authentication tests
         run: node --test scripts/tests/lingo-game-worker.test.mjs
       - name: Deterministic engine tests
-        run: node --test scripts/tests/server-slot-engine.test.mjs
+        run: node --test scripts/tests/server-slot-engine.test.mjs scripts/tests/server-slot-engine-5x3.test.mjs
       - name: SQLite migration and ledger tests
         run: python3 scripts/tests/test-slot-wallet-migration.py
