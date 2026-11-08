@@ -50,6 +50,9 @@ jobs:
       - name: Run configuration consistency regression tests
         run: node --test scripts/test-verify-release-config-consistency.mjs scripts/test-verify-dynamic-runtime.mjs
 
+      - name: Test Durable Object rate limiter
+        run: node --test scripts/test-cloudflare-rate-limiter.mjs
+
       - name: Wrangler v4 production Worker dry-run (no deployment)
         run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
 
