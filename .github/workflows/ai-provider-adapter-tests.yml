@@ -6,6 +6,8 @@ on:
     paths:
       - "src/ai/provider-adapters.mjs"
       - "src/ai/provider-adapters.test.mjs"
+      - "src/ai/gateway-auth.mjs"
+      - "src/ai/gateway-auth.test.mjs"
       - "llg-tech-corps/index.html"
       - "scripts/test-llg-ai-command-center.mjs"
       - ".github/workflows/ai-provider-adapter-tests.yml"
@@ -39,6 +41,12 @@ jobs:
           set -euo pipefail
           node --test --test-reporter spec src/ai/provider-adapters.test.mjs 2>&1 | tee provider-adapter-test.log
 
+      - name: Execute gateway authentication and tenant isolation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test --test-reporter spec src/ai/gateway-auth.test.mjs 2>&1 | tee gateway-auth-test.log
+
       - name: Execute LLG Command Center static safety tests
         shell: bash
         run: |
@@ -53,5 +61,6 @@ jobs:
           path: |
             provider-adapter-test.log
             command-center-test.log
+            gateway-auth-test.log
           if-no-files-found: error
           retention-days: 14
