@@ -126,3 +126,18 @@ After the evidence commit, GitHub generated five new PR-triggered workflow attem
 | Crimson Smoke UI — static validation | 42510104187 | startup_failure | 0 | 0 |
 
 Jobs and artifacts were fetched independently for each run; all ten endpoint results returned empty arrays. The evidence commit itself therefore reproduced the same pre-job startup failure. This does not validate or invalidate the application source. No retry was issued because no job exists to retry. Provider-side configuration, runner repair, secrets, branch rules, and production changes remain outside the available connector's capabilities and were not changed.
+
+
+## Post-evidence-commit CI verification — 2026-11-08
+
+The follow-on evidence commit `d028cdcfd4003394e3853e4f51a7bf65c04c4619` also triggered five PR workflow attempts. All again terminated before job creation:
+
+| Workflow | Run ID | Conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Crimson Smoke UI — static validation | 42510448692 | startup_failure | 0 | 0 |
+| Flutter Firebase Integrity | 42510449674 | startup_failure | 0 | 0 |
+| Mobile Native Build Recovery | 42510447744 | startup_failure | 0 | 0 |
+| G02 Runner Image Build (no publish) | 42510446680 | startup_failure | 0 | 0 |
+| Lingo Legacy Static CI | 42510445653 | startup_failure | 0 | 0 |
+
+The Jobs and Artifacts endpoints were queried separately for all five runs; all returned empty arrays. This is the third consecutive exact-head batch in this review with no jobs or artifacts. The workflow execution platform remains the immediate release blocker; application-level CI has still not executed.
