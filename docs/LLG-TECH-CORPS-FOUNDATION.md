@@ -30,6 +30,8 @@ Model identifiers are configured independently per provider and must match a ser
 
 ## LLG AI Command Center
 
+A first-party static interface prototype is available at [`/llg-tech-corps/`](../llg-tech-corps/index.html). It presents AI Chat, AI Compare, AI Agents, and AI Developer modes with provider status labels and local-only request previews. It deliberately sends no network requests, stores no prompts, exposes no credentials, and disables provider execution until the authenticated gateway route, identity/authorization controls, budgets, and runtime verification are implemented.
+
 The shared product surface is intended to provide:
 
 - **AI Chat:** a unified conversation interface with an explicit provider selector.
