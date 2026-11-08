@@ -24,6 +24,19 @@ void main() {
       );
     });
 
+    test('rejects a placeholder native bundle identifier', () {
+      expect(
+        DefaultFirebaseOptions.hasRequiredValues(
+          apiKey: 'test-api-key',
+          appId: '1:123456789:ios:abcdef',
+          messagingSenderId: '123456789',
+          projectId: 'lingo-legacy-test',
+          bundleId: '<FIREBASE_IOS_BUNDLE_ID>',
+        ),
+        isFalse,
+      );
+    });
+
     test('accepts complete non-placeholder client configuration', () {
       expect(
         DefaultFirebaseOptions.hasRequiredValues(
