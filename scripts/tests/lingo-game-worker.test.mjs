@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import worker from '../../cloudflare/workers/lingo-game-engine-staging.mjs';
+import worker, { bearerTokenFromRequest } from '../../cloudflare/workers/lingo-game-engine-staging.mjs';
 
 function fakeDb() {
   const calls = [];
@@ -16,6 +16,20 @@ function fakeDb() {
     },
   };
 }
+
+
+test('Firebase bearer parser accepts standard and case-insensitive Authorization headers', () => {
+  const standard = new Request('https://staging.invalid/', { headers: { authorization: 'Bearer abc.def.ghi' } });
+  const lowerCase = new Request('https://staging.invalid/', { headers: { authorization: 'bearer   abc.def.ghi' } });
+  assert.equal(bearerTokenFromRequest(standard), 'abc.def.ghi');
+  assert.equal(bearerTokenFromRequest(lowerCase), 'abc.def.ghi');
+});
+
+test('Firebase bearer parser rejects absent or malformed credentials', () => {
+  assert.equal(bearerTokenFromRequest(new Request('https://staging.invalid/')), null);
+  assert.equal(bearerTokenFromRequest(new Request('https://staging.invalid/', { headers: { authorization: 'Bearer' } })), null);
+  assert.equal(bearerTokenFromRequest(new Request('https://staging.invalid/', { headers: { authorization: 'Basic abc' } })), null);
+});
 
 test('health endpoint confirms staging D1 reachability without authentication', async () => {
   const DB = fakeDb();
