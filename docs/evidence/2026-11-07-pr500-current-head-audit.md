@@ -134,3 +134,14 @@ Latest PR #500 head: `a98bc2b4d15105e95107b35f6a40f8927fe70694`. PR remains OPEN
 Current planned suites contain 17 provider-adapter tests, 8 gateway-auth tests, 10 gateway-request-validation tests, and 7 static Command Center tests (**42 total test cases**). All 42 remain **NOT EXECUTED / NOT VERIFIED** on the current head. The workflow definition is not test evidence. No retry was initiated.
 
 PR #500 remains draft and unmerged. No live provider credentials, provider flags, provider calls, billing, Firebase activation, Cloudflare production changes, merge, or deployment were performed. G02 remains FAIL / UNVERIFIED and production remains protected.
+
+
+## 12. Fail-closed HTTP gateway handler — source-only progress (2026-11-08)
+
+Added `src/ai/gateway-handler.mjs` and `src/ai/gateway-handler.test.mjs`. The handler factory defines POST routes for Chat, Compare, Agents Plan, and Developer Analyze. It authenticates before reading request bodies, enforces JSON content type and a 16 KiB streamed-body ceiling, validates strict route schemas, then requires injected authorization, input moderation, budget reservation, provider dispatch, output moderation, and budget reconciliation. The agent execution route remains explicitly disabled. Missing dependencies fail closed; normalized errors do not expose internal exception or upstream error details.
+
+The handler is **not production-integrated**. Its identity verifier, tenant/role policy, moderation, budget ledger, provider dispatcher, audit store, and runtime route bindings are injected interfaces, not implemented services. It is not connected to the Command Center, Cloudflare, Firebase, or provider credentials. A route factory in source does not establish a reachable endpoint.
+
+Nineteen handler test cases cover missing dependencies, route/method handling, disabled agent execution, authentication-before-body parsing, content type, declared and streamed body limits, invalid fields/JSON, missing chat provider, authorization and moderation denials, budget denial/malformed reservation, successful gate ordering, compare provider selection, dispatch failure, output moderation, and budget reconciliation. The workflow now includes `gateway-handler.test.mjs` and uploads `gateway-handler-test.log`. The API contract records the handler's source-only status and limits.
+
+The four planned test suites now total **61 test cases**: 17 provider adapter + 8 gateway authentication + 10 request validation + 19 gateway handler + 7 static Command Center. All remain **NOT EXECUTED / NOT VERIFIED** on the latest PR head until an actual Node job completes with retrievable output/artifacts. Workflow startup failures persist; no retries were initiated.
