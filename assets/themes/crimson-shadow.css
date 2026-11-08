@@ -1,0 +1,40 @@
+/*
+ * LINGOlegacy Crimson Shadow — provisional, opt-in theme.
+ * Not an approved Brand Kit. Do not import globally or inject from the production Worker.
+ * Apply only to an isolated preview surface with data-lingo-theme="crimson-shadow".
+ */
+[data-lingo-theme="crimson-shadow"] {
+  --lingo-theme-bg: #08080b;
+  --lingo-theme-surface: #141319;
+  --lingo-theme-surface-raised: #201d25;
+  --lingo-theme-crimson: #b5122b;
+  --lingo-theme-crimson-bright: #e32643;
+  --lingo-theme-white: #fffaf7;
+  --lingo-theme-gold: #f7c84b;
+  --lingo-theme-muted: #c7bdc0;
+  --lingo-theme-border: rgba(227, 38, 67, .34);
+  color: var(--lingo-theme-white);
+  background: var(--lingo-theme-bg);
+  font-family: var(--lingo-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+}
+
+[data-lingo-theme="crimson-shadow"] :where(.panel, .card, .surface) {
+  color: var(--lingo-theme-white);
+  background: linear-gradient(155deg, var(--lingo-theme-surface-raised), var(--lingo-theme-surface));
+  border: 1px solid var(--lingo-theme-border);
+  border-radius: var(--lingo-radius-lg, 24px);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .32);
+}
+
+[data-lingo-theme="crimson-shadow"] :where(h1, h2, h3, .display-title) { color: var(--lingo-theme-white); letter-spacing: -.025em; line-height: 1.08; }
+[data-lingo-theme="crimson-shadow"] :where(.accent, .eyebrow, .kicker) { color: var(--lingo-theme-gold); }
+[data-lingo-theme="crimson-shadow"] :where(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 2px solid var(--lingo-theme-gold); outline-offset: 3px; }
+[data-lingo-theme="crimson-shadow"] :where(button, .button, a.button) { min-height: var(--lingo-touch-target-min, 48px); border-radius: var(--lingo-radius-pill, 999px); }
+[data-lingo-theme="crimson-shadow"] .button--primary { color: #fff; background: linear-gradient(120deg, var(--lingo-theme-crimson), var(--lingo-theme-crimson-bright)); border: 1px solid rgba(255, 250, 247, .18); }
+[data-lingo-theme="crimson-shadow"] .button--secondary { color: var(--lingo-theme-white); background: transparent; border: 1px solid var(--lingo-theme-border); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-lingo-theme="crimson-shadow"] *,
+  [data-lingo-theme="crimson-shadow"] *::before,
+  [data-lingo-theme="crimson-shadow"] *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
