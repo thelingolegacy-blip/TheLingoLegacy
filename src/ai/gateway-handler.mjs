@@ -183,7 +183,9 @@ async function settleAndRespond(dependencies, reservation, outcome, execution, r
   } catch {
     return respond(503, requestId, 'AI_BUDGET_RECONCILIATION_UNAVAILABLE');
   }
-  return respond(code === 'AI_EXECUTION_FAILED' ? 502 : 403, requestId, code);
+  const status = code === 'AI_EXECUTION_FAILED' ? 502
+    : code === 'AI_POLICY_SERVICE_UNAVAILABLE' ? 503 : 403;
+  return respond(status, requestId, code);
 }
 
 async function readBoundedJson(request) {
