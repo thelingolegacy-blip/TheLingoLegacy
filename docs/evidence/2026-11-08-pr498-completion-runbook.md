@@ -219,3 +219,15 @@ These are exact theoretical values for the current five-symbol-position line eva
 - CORS correction: the Worker returns CORS headers only for an exact origin in `STAGING_ALLOWED_ORIGINS`. The checked-in Wrangler staging config currently defines no such allowlist, so browser cross-origin access remains disabled by default until a real staging frontend origin is independently verified and explicitly configured. The earlier historical statement that the Wrangler file contains a flagship-origin allowlist is superseded and incorrect for the current config. The new regression test uses `https://staging-ui.example.invalid` as a non-production fixture and asserts production origins are rejected.
 - The staging D1 migration `0002_lingo_api_rate_limits_staging.sql` remains unapplied. The new Worker source remains undeployed. Dedicated Firebase staging project/Web app configuration remains unverified.
 - No PR merge, Worker source deployment, production change, DNS/route mutation, or staging acceptance occurred. Continue to hold all release gates until exact-head CI execution, Firebase staging identity, D1 migration, authenticated staging journey, browser/device QA, and independent review are evidenced.
+
+
+## 2026-11-08 daily-reward replay correction and latest CI readback
+
+- Reviewed the authenticated daily-reward replay path. Previously, a replay returned the configured 500 Demo Coin and 150 XP award amounts even though the idempotency path did not grant them again. The service now reports `rewardUnits: 0` and `xpAwardUnits: 0` on replay while returning the current wallet and XP totals. First-time claims continue to return the configured grant amounts.
+- Added a regression test for replay response semantics, including current wallet/XP values. Added a CORS regression assertion that the production apex and www origins are rejected when only a staging test origin is configured.
+- Latest code head: `95e138619f8e2af6e8f0ffbd87065debc4deabfc`.
+- Exact-head validation run #119 / `42501964415`: `startup_failure`; jobs endpoint returned 0 jobs and artifacts endpoint returned 0 artifacts. No Node, Python, or Wrangler step ran.
+- Independent minimal runner probe #12 / `42501957284` at code head `cac852b3312392f99f0731a25f7f37b5a74eb880`: `startup_failure`; 0 jobs and 0 artifacts. This probe predates the test-only follow-up commit but independently reproduces the same startup failure.
+- PR #503 currently remains open and draft; GitHub reports `mergeable=true` with `mergeable_state=unstable`. Mergeability does not establish CI or release acceptance.
+- The latest commit status still includes a Vercel rate-limit failure. Treat this only as an external status check; it is not Cloudflare staging deployment evidence. Vercel remains outside the authorized staging release path.
+- No current-head CI execution, live D1 migration application, Firebase staging identity verification, updated Worker source deployment, browser/device QA, or independent staging acceptance is established. Production remains protected.
