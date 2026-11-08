@@ -246,7 +246,7 @@ Added `src/ai/gateway-handler.mjs` and `src/ai/gateway-handler.test.mjs`. The ha
 
 The handler refuses to initialize without every required dependency. The dependencies are interfaces only; this module does not implement or bind a cryptographic identity verifier, tenant/role policy service, moderation service, budget ledger, provider dispatcher, audit store, or production HTTP runtime. It is not connected to the Command Center or deployed to Cloudflare/Firebase. A source-level route factory is not evidence that any endpoint is reachable.
 
-Fourteen Node test cases cover missing dependencies, route/method handling, disabled agent execution, authentication-before-body parsing, content-type and body limits, invalid fields, authorization and moderation denials, budget denial/malformed reservation, success ordering, compare provider selection, execution failure, output moderation, and failed budget reconciliation. The CI workflow includes this suite and uploads `gateway-handler-test.log`; execution remains subject to exact-head hosted-runner evidence.
+Nineteen Node test cases cover missing dependencies, route/method handling, disabled agent execution, authentication-before-body parsing, content-type and body limits, invalid fields, authorization and moderation denials, budget denial/malformed reservation, success ordering, compare provider selection, execution failure, output moderation, and failed budget reconciliation. The CI workflow includes this suite and uploads `gateway-handler-test.log`; execution remains subject to exact-head hosted-runner evidence.
 
 ## 14. Current implementation disposition
 
