@@ -7,6 +7,7 @@ const PROVIDERS = Object.freeze({
   openai: {
     keyEnv: 'OPENAI_API_KEY',
     modelEnv: 'OPENAI_MODEL',
+    allowedModelsEnv: 'OPENAI_ALLOWED_MODELS',
     enabledEnv: 'LLG_AI_PROVIDER_OPENAI_ENABLED',
     endpoint: 'https://api.openai.com/v1/responses',
     headers: (key) => ({ authorization: `Bearer ${key}` }),
@@ -28,6 +29,7 @@ const PROVIDERS = Object.freeze({
   claude: {
     keyEnv: 'ANTHROPIC_API_KEY',
     modelEnv: 'ANTHROPIC_MODEL',
+    allowedModelsEnv: 'ANTHROPIC_ALLOWED_MODELS',
     enabledEnv: 'LLG_AI_PROVIDER_CLAUDE_ENABLED',
     endpoint: 'https://api.anthropic.com/v1/messages',
     headers: (key) => ({ authorization: `Bearer ${key}`, 'anthropic-version': '2023-06-01' }),
@@ -44,6 +46,7 @@ const PROVIDERS = Object.freeze({
   gemini: {
     keyEnv: 'GEMINI_API_KEY',
     modelEnv: 'GEMINI_MODEL',
+    allowedModelsEnv: 'GEMINI_ALLOWED_MODELS',
     enabledEnv: 'LLG_AI_PROVIDER_GEMINI_ENABLED',
     endpoint: 'https://generativelanguage.googleapis.com/v1beta/interactions',
     headers: (key) => ({ 'x-goog-api-key': key }),
@@ -65,6 +68,7 @@ const PROVIDERS = Object.freeze({
   grok: {
     keyEnv: 'XAI_API_KEY',
     modelEnv: 'XAI_MODEL',
+    allowedModelsEnv: 'XAI_ALLOWED_MODELS',
     enabledEnv: 'LLG_AI_PROVIDER_GROK_ENABLED',
     endpoint: 'https://api.x.ai/v1/responses',
     headers: (key) => ({ authorization: `Bearer ${key}` }),
@@ -106,10 +110,15 @@ export async function invokeAiProvider(providerId, message, env = {}, options = 
 
   const apiKey = env[provider.keyEnv];
   const model = env[provider.modelEnv];
+  const allowedModels = typeof env[provider.allowedModelsEnv] === 'string'
+    ? env[provider.allowedModelsEnv].split(',').map((value) => value.trim()).filter(Boolean)
+    : [];
   if (typeof apiKey !== 'string' || !apiKey.trim()
-    || typeof model !== 'string' || !/^[A-Za-z0-9._:-]{1,128}$/.test(model)) {
+    || typeof model !== 'string' || !/^[A-Za-z0-9._:-]{1,128}$/.test(model)
+    || allowedModels.length === 0) {
     return failure('AI_PROVIDER_NOT_CONFIGURED', 503);
   }
+  if (!allowedModels.includes(model)) return failure('AI_MODEL_NOT_ALLOWED', 403);
 
   const fetchImpl = options.fetchImpl || fetch;
   const timeoutMs = clampTimeout(options.timeoutMs);
