@@ -238,6 +238,10 @@ The contract is not accepted merely because it is documented. Before a productio
 
 ## 12. Current implementation disposition
 
+A source-only authentication boundary has been added at `src/ai/gateway-auth.mjs`, with Node test coverage in `src/ai/gateway-auth.test.mjs`. It is deliberately dependency-injected: the caller must supply a cryptographic `verifyToken` implementation, expected issuer/audience, required scopes, and a tenant-membership resolver. It validates verified claims, expiry/not-before, scopes, and tenant membership, and fails closed when required dependencies are absent or unavailable.
+
+This helper is not a JWT verifier, identity-provider integration, HTTP route, session revocation service, entitlement lookup, or production authorization system. It is not wired to the Command Center or provider adapters. Its tests are included in the adapter workflow definition, but test execution on the current commit is not yet evidenced.
+
 - The existing provider adapter module is a source-level component, not an authenticated public gateway.
 - The Command Center remains a local-only prototype; provider execution controls remain disabled.
 - No verified production identity issuer, tenant model, billing ledger, budget service, or audit store is established by this contract.
