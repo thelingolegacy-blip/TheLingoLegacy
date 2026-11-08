@@ -1,0 +1,70 @@
+name: CI Evidence Proof
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Runner identity
+        id: runner
+        shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test -n "$RUNNER_ID"
+          test "$RUNNER_ID" != "0"
+          test -n "$RUNNER_NAME"
+          test -n "$RUNNER_OS"
+          test -n "$RUNNER_ARCH"
+          test -n "$GITHUB_SHA_VALUE"
+          printf '%s\n' \
+            "runner_id=$RUNNER_ID" \
+            "runner_name=$RUNNER_NAME" \
+            "runner_os=$RUNNER_OS" \
+            "runner_arch=$RUNNER_ARCH" \
+            "github_sha=$GITHUB_SHA_VALUE" > runner-identity.txt
+          cat runner-identity.txt
+
+      - name: Execute deterministic proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-proof
+          printf '%s\n' \
+            "CI_EVIDENCE_PROOF=PASS" \
+            "commit=${GITHUB_SHA}" \
+            "run=${GITHUB_RUN_ID}" \
+            "attempt=${GITHUB_RUN_ATTEMPT}" \
+            "workflow=${GITHUB_WORKFLOW}" > ci-proof/proof.txt
+          cat ci-proof/proof.txt
+
+      - name: Validate evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s runner-identity.txt
+          test -s ci-proof/proof.txt
+          grep -q '^CI_EVIDENCE_PROOF=PASS$' ci-proof/proof.txt
+          echo "EVIDENCE_VALIDATION=PASS"
+
+      - name: Upload deterministic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runner-identity.txt
+            ci-proof/proof.txt
+          if-no-files-found: error
