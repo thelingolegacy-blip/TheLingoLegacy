@@ -52,7 +52,7 @@ const requiredExclusions = [
   '*~',
   '*.sqlite',
   '*.db',
-  'firebase.json', 'firebase.client.example.json', 'gateway-router.js',
+  'firebase.json', 'firebase.client.example.json', 'build/web/', 'gateway-router.js',
   'pubspec.yaml', '_headers', '_redirects',
 ];
 const requiredPublicFiles = [
