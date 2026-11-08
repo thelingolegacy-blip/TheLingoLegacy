@@ -1,0 +1,467 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "lingo-legacy-master-registry",
+  "generatedAt": "2026-11-08",
+  "status": "inventory-baseline",
+  "authority": {
+    "sourceOfTruth": "GitHub",
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "branch": "main",
+    "workingBranch": "feat/lingo-master-registry-wave0-2026-11-08",
+    "productionState": "protected-hold",
+    "releasePromotion": "not-authorized"
+  },
+  "principles": [
+    "Observed deployment is not proof of production readiness",
+    "Unknown or unverified fields remain explicit",
+    "No production mutation without change-specific authorization and evidence",
+    "Free-tier-first; no new paid services without cost approval"
+  ],
+  "architectureChain": [
+    "product",
+    "surface",
+    "repository",
+    "runtime",
+    "route",
+    "api",
+    "identity",
+    "database",
+    "assets",
+    "tests",
+    "releaseGate",
+    "operations"
+  ],
+  "technologyStack": [
+    {
+      "id": "source-control",
+      "provider": "GitHub",
+      "role": "canonical-source-and-change-history",
+      "status": "connected",
+      "evidence": "Repository accessible; 768-entry main tree inspected"
+    },
+    {
+      "id": "edge-runtime",
+      "provider": "Cloudflare Workers",
+      "role": "edge-routing-and-web-runtime",
+      "status": "connected-inventory-read",
+      "evidence": "Active zone and Worker inventory read"
+    },
+    {
+      "id": "identity-data",
+      "provider": "Firebase",
+      "role": "authentication-firestore-storage-functions",
+      "status": "configured-in-repository-unverified-at-runtime",
+      "evidence": "firebase.json and .firebaserc present; runtime security and service health not certified"
+    },
+    {
+      "id": "mobile",
+      "provider": "Flutter",
+      "role": "ios-android-client",
+      "status": "source-present-build-unverified",
+      "evidence": "pubspec.yaml, android and ios project paths present"
+    },
+    {
+      "id": "game-engine",
+      "provider": "Unity",
+      "role": "game-runtime-target",
+      "status": "planned-or-project-specific",
+      "evidence": "No live engine build certification established"
+    },
+    {
+      "id": "staging-apps",
+      "provider": "AppDeploy",
+      "role": "isolated-staging-builds",
+      "status": "connected-credit-exhausted",
+      "evidence": "18 existing app records; further build credit unavailable"
+    },
+    {
+      "id": "commerce",
+      "provider": "Shopify-and-Stripe",
+      "role": "commerce-and-payment-processing",
+      "status": "gated-unverified",
+      "evidence": "No live payment or commerce activation authorized"
+    },
+    {
+      "id": "ai",
+      "provider": "LLG AI gateway",
+      "role": "multi-provider-ai-orchestration",
+      "status": "architecture-defined-integration-unverified",
+      "evidence": "Provider adapters and gateway require independent endpoint and secret validation"
+    }
+  ],
+  "productGroups": [
+    {
+      "id": "LINGOlegacy_MASTER",
+      "role": "governance-brand-legal-creative-engineering-operations",
+      "products": [
+        "master-registry",
+        "master-control-center",
+        "release-governance",
+        "operations-runbooks"
+      ]
+    },
+    {
+      "id": "LINGOlegacy",
+      "role": "flagship-identity-account-wallet-community",
+      "products": [
+        "flagship-website",
+        "LINGO-ID",
+        "universal-legacy-wallet",
+        "community"
+      ]
+    },
+    {
+      "id": "LINGOlane",
+      "role": "designs-promotions-apparel-laundry-cycle",
+      "products": [
+        "Loyalty Lane Designs & Promotions",
+        "Loyalty Lane Apparel",
+        "Loyalty Lane Cycles"
+      ]
+    },
+    {
+      "id": "LINGOslots",
+      "role": "casino-and-card-games",
+      "products": [
+        "That’s My Lingo",
+        "Spades Is My Lingo",
+        "Uhno Lingo U-No",
+        "Lingo Lions Eruptions",
+        "Cashman Lingo Mania"
+      ]
+    },
+    {
+      "id": "LINGOarcade",
+      "role": "arcade-games",
+      "products": [
+        "Tricias Escape",
+        "Doughboys Oasis",
+        "Crazy Weasols",
+        "Silly in Philly",
+        "Jersey Shore: The Undead"
+      ]
+    },
+    {
+      "id": "LINGOlibrary",
+      "role": "books-and-learning-ip",
+      "products": [
+        "KottonsCode",
+        "The Block I Grew Up On",
+        "Say It Again",
+        "Dice Shift Hotel",
+        "Legacy Legends"
+      ]
+    },
+    {
+      "id": "LINGOmedia",
+      "role": "film-and-media",
+      "products": [
+        "Rise of Zavione P1",
+        "Rise of Zavione P2"
+      ]
+    },
+    {
+      "id": "LINGOworld",
+      "role": "shared-digital-services",
+      "products": [
+        "LINGOai",
+        "askLINGO",
+        "LINGOboom",
+        "LINGOtravel",
+        "LINGOcampus",
+        "LINGOsupport",
+        "LINGOwifi",
+        "LINGOvoice",
+        "LINGOshield",
+        "LINGOlounge",
+        "LINGOdonations"
+      ]
+    },
+    {
+      "id": "LegacyXclub",
+      "role": "community-and-membership",
+      "products": [
+        "LegacyXclub"
+      ]
+    }
+  ],
+  "observedCloudflare": {
+    "zone": "thelingolegacy.com",
+    "zoneId": "91c3f6315fb3ca132b22744721103f88",
+    "zoneStatus": "active",
+    "workerAccountId": "16cb6f247cd1b28fca864760c7269606",
+    "workers": [
+      {
+        "name": "thelingolegacyv-5",
+        "role": "wildcard-and-subdomain-routing",
+        "latestUploadedVersion": 269,
+        "versionDeployedStatus": "unverified"
+      },
+      {
+        "name": "lingo-flagship-root",
+        "role": "exact-apex-root-route",
+        "latestUploadedVersion": 2,
+        "versionDeployedStatus": "unverified"
+      },
+      {
+        "name": "lingo-ecosystem-atlas",
+        "role": "atlas-subdomain",
+        "versionDeployedStatus": "route-observed"
+      },
+      {
+        "name": "lingo-static-backup-proxy",
+        "role": "launch-subdomain",
+        "versionDeployedStatus": "route-observed"
+      },
+      {
+        "name": "lingo-legacy-studio-build",
+        "role": "isolated-studio-build",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-flagship-site-preview",
+        "role": "flagship-preview",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-game-engine-staging",
+        "role": "game-engine-staging",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-studio-control-center-staging",
+        "role": "read-only-studio-control-center",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-world-engine-staging",
+        "role": "read-only-world-engine",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-release-candidate-validation-20261104",
+        "role": "release-candidate-validation",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "thelingolegacy-web-recovery-preview",
+        "role": "web-recovery-preview",
+        "versionDeployedStatus": "no-production-route-observed"
+      }
+    ],
+    "routingFindings": [
+      {
+        "pattern": "thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "status": "observed"
+      },
+      {
+        "pattern": "thelingolegacy.com/",
+        "script": "lingo-flagship-root",
+        "status": "overlap-requires-precedence-validation"
+      },
+      {
+        "pattern": "www.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "status": "observed"
+      },
+      {
+        "pattern": "atlas.thelingolegacy.com/*",
+        "script": "lingo-ecosystem-atlas",
+        "status": "observed"
+      },
+      {
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy",
+        "status": "observed"
+      }
+    ],
+    "dnsFindings": [
+      {
+        "name": "thelingolegacy.com",
+        "type": "A",
+        "content": "192.0.2.0",
+        "proxied": true,
+        "status": "observed-placeholder-address-requires-review"
+      },
+      {
+        "name": "www.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "thelingolegacy.com",
+        "proxied": true,
+        "status": "observed"
+      },
+      {
+        "name": "studio-preview.thelingolegacy.com",
+        "type": "AAAA",
+        "content": "100::",
+        "proxied": true,
+        "status": "observed"
+      },
+      {
+        "name": "admin.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "admin-thelingolegacy.firebaseapp.com",
+        "proxied": false,
+        "status": "observed"
+      },
+      {
+        "name": "app.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "my-flutter-app.pages.dev",
+        "proxied": false,
+        "status": "observed"
+      }
+    ]
+  },
+  "observedAppDeployApps": [
+    {
+      "id": "lingo-legacy-studio-hub-nhda3b",
+      "name": "LINGO Studio Hub",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "jersey-shore-the-undead-l4h5ea",
+      "name": "Jersey Shore: The Undead",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "crazy-weasels-0j3ujc",
+      "name": "Crazy Weasols",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-enterprise-control-center-qos4ix",
+      "name": "LINGO Enterprise Control Center",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingolegacy-universe-gateway-h6kqu4",
+      "name": "LINGOlegacy Universe Gateway",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingoloyalty-staging-preview-x4ld0h",
+      "name": "LINGOloyalty | Staging Preview",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "name": "LINGO AI Sonic Boom",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-master-project-plan-rkh6r6",
+      "name": "LINGO Legacy Master Project Plan",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "hello-the-lingo-legacy-ois1rj",
+      "name": "Hello The Lingo Legacy",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "that-s-my-lingo-casino-studio-2xntye",
+      "name": "That’s My Lingo",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-universe-rpekc0",
+      "name": "LINGO Legacy Universe",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "the-lingo-legacy-y67ewl",
+      "name": "The Lingo Legacy Flagship",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "obsidian-closet-design-studio-zk6va7",
+      "name": "Obsidian Closet & Design Studio",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "the-lingo-legacy-hq-vhjt6i",
+      "name": "The Lingo Legacy HQ",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "kotton-s-code-cartoon-studio-509py3",
+      "name": "Kotton’s Code Cartoon Studio",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "loyalty-lane-community-hub-zb39n2",
+      "name": "Loyalty Lane Community Hub",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-verification-bridge-wwagn2",
+      "name": "Lingo Legacy Verification Bridge",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-traveltm-uyd57n",
+      "name": "Lingo Travel",
+      "status": "deployed-staging"
+    }
+  ],
+  "releaseControls": {
+    "criticalGatePolicy": "ALL_CRITICAL_GATES_PASS",
+    "criticalGates": [
+      "source",
+      "build",
+      "tests",
+      "security",
+      "secrets",
+      "routes",
+      "interactions",
+      "apis",
+      "identity",
+      "games",
+      "commerce",
+      "assets",
+      "audio",
+      "motion",
+      "accessibility",
+      "performance",
+      "cloudflare",
+      "live-probes",
+      "rollback"
+    ],
+    "notRunCriticalBlocksPromotion": true,
+    "productionPromotionAuthorized": false
+  },
+  "knownBlockers": [
+    {
+      "id": "G02-CI-STARTUP",
+      "status": "fail",
+      "evidence": "PR #508 workflow runs 42530658034 and 42530658880 concluded startup_failure; first inspected run instantiated zero jobs"
+    },
+    {
+      "id": "APPDEPLOY-CREDITS",
+      "status": "blocked",
+      "evidence": "AppDeploy reported exhausted credit balance"
+    },
+    {
+      "id": "CLOUDFLARE-ROUTE-PRECEDENCE",
+      "status": "unverified",
+      "evidence": "Apex wildcard and exact-root routes target different Workers"
+    },
+    {
+      "id": "CLOUDFLARE-VERSION-RECONCILIATION",
+      "status": "unverified",
+      "evidence": "Worker latest uploaded version 269; active deployed version not established"
+    },
+    {
+      "id": "GATEWAY-APP-QA",
+      "status": "fail",
+      "evidence": "Universe Gateway staging QA reported missing Next.js chunks and 404 route-not-registered responses"
+    }
+  ],
+  "acceptance": {
+    "registryReviewRequired": true,
+    "independentVerificationRequired": true,
+    "allUnknownsRemainUnverified": true
+  }
+}
