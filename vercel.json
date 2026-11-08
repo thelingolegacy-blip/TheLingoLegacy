@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/game",
+      "destination": "/thats-my-lingo/",
+      "permanent": true
+    },
+    {
+      "source": "/arcade",
+      "destination": "/lingoarcade/",
+      "permanent": true
+    }
+  ]
+}

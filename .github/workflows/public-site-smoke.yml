@@ -1,0 +1,54 @@
+name: Public Site Smoke Verification
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-site-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Verify public website and game routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      LIVE_BASE_URL: https://thelingolegacy.com
+      LIVE_PROBE_PATHS: /|/healthz|/api/v1/runtime|/thats-my-lingo/|/contact/|/manifest.webmanifest
+      LIVE_PROBE_TIMEOUT_MS: "12000"
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate required static site files and runtime contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public-smoke-evidence
+          node scripts/smoke-static-site.mjs | tee public-smoke-evidence/static-site.json
+          node scripts/test-preview-contracts.cjs | tee public-smoke-evidence/preview-contract-tests.txt
+
+      - name: Probe public website, runtime, and game routes
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/live-probes.mjs | tee public-smoke-evidence/live-probes.json
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-site-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: public-smoke-evidence/
+          if-no-files-found: warn
+          retention-days: 14
