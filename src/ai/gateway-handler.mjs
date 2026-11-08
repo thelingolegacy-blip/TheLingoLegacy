@@ -106,8 +106,12 @@ export function createAiGatewayHandler(dependencies = {}) {
     } catch {
       return respond(503, requestId, 'AI_BUDGET_SERVICE_UNAVAILABLE');
     }
-    if (budget?.ok !== true || !Object.hasOwn(budget, 'reservation')) {
+    if (budget?.ok !== true) {
       return respond(429, requestId, 'AI_BUDGET_EXCEEDED');
+    }
+    if (!Object.hasOwn(budget, 'reservation')
+      || budget.reservation === undefined || budget.reservation === null) {
+      return respond(503, requestId, 'AI_BUDGET_RESERVATION_INVALID');
     }
 
     let execution;
