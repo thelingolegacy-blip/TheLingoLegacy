@@ -72,3 +72,16 @@ test('rejects the retired generated client config file', () => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /Remove firebase.client.json/);
 });
+test('does not require iOS or macOS Firebase app IDs before those native projects exist', () => {
+  const result = runVerifier({
+    FIREBASE_IOS_API_KEY: '',
+    FIREBASE_IOS_APP_ID: '',
+    FIREBASE_IOS_BUNDLE_ID: '',
+    FIREBASE_MACOS_API_KEY: '',
+    FIREBASE_MACOS_APP_ID: '',
+    FIREBASE_MACOS_BUNDLE_ID: '',
+  });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /IOS_NATIVE_PROJECT=NOT_PRESENT/);
+  assert.match(result.stdout, /MACOS_NATIVE_PROJECT=NOT_PRESENT/);
+});
