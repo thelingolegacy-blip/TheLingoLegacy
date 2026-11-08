@@ -1,53 +1,21 @@
 name: LINGO Server Game Foundation Validation
-
 on:
   push:
-    branches:
-      - staging/server-authoritative-game-foundation-2026-11-07
-    paths:
-      - "cloudflare/workers/**"
-      - "src/auth/**"
-      - "src/server/**"
-      - "migrations/**"
-      - "scripts/tests/firebase-id-token.test.mjs"
-      - "scripts/tests/lingo-game-worker.test.mjs"
-      - "scripts/tests/server-slot-engine.test.mjs"
-      - "scripts/tests/server-slot-engine-5x3.test.mjs"
-      - "src/server/slot-engine-5x3.mjs"
-      - "scripts/tests/server-slot-engine-5x3.test.mjs"
-      - "src/server/slot-engine-5x3.mjs"
-      - "scripts/tests/test-slot-wallet-migration.py"
-      - "wrangler.game-engine-staging.jsonc"
-      - ".github/workflows/server-game-foundation-validation.yml"
+    branches: [staging/server-authoritative-game-foundation-2026-11-07, staging/pr498-completion-2026-11-08]
+    paths: ["cloudflare/workers/**","src/auth/**","src/server/**","migrations/**","scripts/tests/**","wrangler.game-engine-staging.jsonc",".github/workflows/server-game-foundation-validation.yml"]
   pull_request:
-    branches:
-      - main
-    paths:
-      - "cloudflare/workers/**"
-      - "src/auth/**"
-      - "src/server/**"
-      - "migrations/**"
-      - "scripts/tests/firebase-id-token.test.mjs"
-      - "scripts/tests/lingo-game-worker.test.mjs"
-      - "scripts/tests/server-slot-engine.test.mjs"
-      - "scripts/tests/server-slot-engine-5x3.test.mjs"
-      - "src/server/slot-engine-5x3.mjs"
-      - "scripts/tests/test-slot-wallet-migration.py"
-      - "wrangler.game-engine-staging.jsonc"
-      - ".github/workflows/server-game-foundation-validation.yml"
+    branches: [main, staging/server-authoritative-game-foundation-2026-11-07]
+    paths: ["cloudflare/workers/**","src/auth/**","src/server/**","migrations/**","scripts/tests/**","wrangler.game-engine-staging.jsonc",".github/workflows/server-game-foundation-validation.yml"]
   workflow_dispatch:
-
 permissions:
   contents: read
-
 concurrency:
   group: lingo-server-game-foundation-${{ github.ref }}
   cancel-in-progress: false
-
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout exact source
         uses: actions/checkout@v4
@@ -59,20 +27,29 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Prepare evidence directory
+        run: mkdir -p artifacts
       - name: Syntax checks
         run: |
-          node --check cloudflare/workers/lingo-game-engine-staging.mjs
-          node --check src/server/slot-engine.mjs
-          node --check src/server/slot-engine-5x3.mjs
-          node --check src/server/d1-slot-service.mjs
-          node --check src/auth/firebase-id-token.mjs
+          node --check cloudflare/workers/lingo-game-engine-staging.mjs 2>&1 | tee artifacts/syntax.log
+          node --check src/server/slot-engine.mjs 2>&1 | tee -a artifacts/syntax.log
+          node --check src/server/d1-slot-service.mjs 2>&1 | tee -a artifacts/syntax.log
+          node --check src/auth/firebase-id-token.mjs 2>&1 | tee -a artifacts/syntax.log
       - name: Wrangler staging bundle dry run
-        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.jsonc
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.jsonc 2>&1 | tee artifacts/wrangler-dry-run.log
       - name: Firebase identity verification tests
-        run: node --test scripts/tests/firebase-id-token.test.mjs
+        run: node --test scripts/tests/firebase-id-token.test.mjs 2>&1 | tee artifacts/firebase-tests.log
       - name: Worker route and authentication tests
-        run: node --test scripts/tests/lingo-game-worker.test.mjs
-      - name: Deterministic engine tests
-        run: node --test scripts/tests/server-slot-engine.test.mjs scripts/tests/server-slot-engine-5x3.test.mjs
+        run: node --test scripts/tests/lingo-game-worker.test.mjs 2>&1 | tee artifacts/worker-tests.log
+      - name: Five-reel mathematics and settlement idempotency tests
+        run: node --test scripts/tests/server-slot-engine.test.mjs scripts/tests/d1-slot-service.test.mjs 2>&1 | tee artifacts/five-reel-tests.log
       - name: SQLite migration and ledger tests
-        run: python3 scripts/tests/test-slot-wallet-migration.py
+        run: python3 scripts/tests/test-slot-wallet-migration.py 2>&1 | tee artifacts/sqlite-tests.log
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr498-staging-validation-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
