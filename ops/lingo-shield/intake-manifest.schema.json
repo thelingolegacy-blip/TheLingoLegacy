@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "required": [
+    "provider",
+    "project",
+    "sourceBranch",
+    "sourceCommit",
+    "targetBranch",
+    "requestedAction",
+    "provenance"
+  ],
+  "provider": ["github", "gitlab"],
+  "requestedAction": ["review", "fix", "integrate", "merge"],
+  "provenance": {
+    "required": ["agent", "createdAt"],
+    "agentTypes": ["human", "claude", "repair-bot", "security-bot", "evidence-bot", "integration-bot"]
+  },
+  "safety": {
+    "productionPromotion": "separate-authority-transition",
+    "missingEvidence": "BLOCK",
+    "unknownProvider": "BLOCK",
+    "unknownProject": "BLOCK"
+  }
+}
