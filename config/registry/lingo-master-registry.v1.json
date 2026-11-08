@@ -469,14 +469,14 @@
       "evidence": "firebase.json hosting.public is repository root '.'; confirm intended static publish scope and explicit excludes before any deployment"
     },
     {
-      "id": "CLOUDFLARE-UPLOADED-VS-DEPLOYED",
-      "status": "unverified",
-      "evidence": "thelingolegacyv-5 latest upload v270 differs from version ID in latest deployment record; root Worker upload v2 differs from deployment record version ID"
-    },
-    {
       "id": "MAIN-BRANCH-PROTECTION",
       "status": "gap",
       "evidence": "read-only GitHub branch API reports protected=false and required status checks enforcement off"
+    },
+    {
+      "id": "CLOUDFLARE-DEPLOYED-VERSION-137",
+      "status": "confirmed-old-deployed-version",
+      "evidence": "Read-only version-detail endpoint resolves active deployment version ID to thelingolegacyv-5 v137 while v270 is latest uploaded; root Worker deployment resolves to v1 while v2 is latest uploaded"
     }
   ],
   "acceptance": {
@@ -899,7 +899,20 @@
         "latestDeploymentId": "ecd71a70-e476-4318-92a7-35249ced360b",
         "deploymentVersionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
         "deploymentCreatedAt": "2026-10-25T16:21:58.131638Z",
-        "status": "deployed-version-id-does-not-match-latest-upload; deployed-version-number-not-yet-resolved"
+        "status": "confirmed-deployed-v137; latest-upload-v270-not-active",
+        "deployedVersionNumber": 137,
+        "deployedVersionMetadata": {
+          "createdOn": "2026-10-25T14:04:26.30168Z",
+          "source": "wrangler",
+          "etag": "702fa998403473b1536e7a43abc58ac16a77d16821915b71ea66a0221e73e85c",
+          "bindings": [
+            "ASSETS",
+            "CANONICAL_DOMAIN",
+            "PUBLIC_SITE_URL"
+          ],
+          "compatibilityDate": "2026-09-01",
+          "observabilityEnabled": true
+        }
       },
       "rootWorker": {
         "name": "lingo-flagship-root",
@@ -907,7 +920,16 @@
         "latestUploadedVersionId": "1009da37-9128-44c2-9853-f277eb791c31",
         "latestDeploymentId": "31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3",
         "deploymentVersionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
-        "status": "deployed-version-id-does-not-match-latest-upload"
+        "status": "confirmed-deployed-v1; latest-upload-v2-not-active",
+        "deployedVersionNumber": 1,
+        "deployedVersionMetadata": {
+          "createdOn": "2026-10-25T16:38:23.673538Z",
+          "source": "api",
+          "etag": "763efc28368aa4585b0e92bcd546918d69acfe10f05e1ed099c66fde6a7005a8",
+          "bindings": [],
+          "compatibilityDate": "2026-09-01",
+          "observability": "not-configured"
+        }
       },
       "dnsCriticalFindings": [
         {
