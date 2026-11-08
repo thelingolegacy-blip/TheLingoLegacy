@@ -78,3 +78,13 @@ This is an evidence and remediation plan for the cross-stack recovery request. I
 - Authorization basis: user requested enabling safe security hardening and updating live production.
 - Verification: immediate GET of the phase entrypoint confirmed ruleset ID `0ea606cf0280453cb0a89e871ab520ce`, phase `http_request_firewall_managed`, version `1`, enabled execute rule `ed6f7d52a9b54d4081a8b90bbbe42e5e` targeting managed free ruleset `77454fe2d30c4220b5701f6fdfb893ba`.
 - No Worker source, DNS, route, Firebase, D1, GitHub Actions, or production application code was changed by this hardening operation.
+
+
+## Additional live endpoint and AppDeploy readback
+
+- Public production homepage `https://thelingolegacy.com/` responds and renders the current flagship candidate experience. Its page text explicitly labels the destination catalog as a navigation-ready design candidate, says destinations must be connected to verified routes before production activation, and says account/wallet actions should only be enabled after secure services are verified. This is consistent with the fail-closed release posture; it is not evidence that all ecosystem products are production-active.
+- Public `https://thelingolegacy.com/healthz` returned plain-text `ok` after the managed-WAF ruleset was attached. This is a basic edge health probe only; it does not validate authenticated application APIs or downstream services.
+- The `/api/v1/runtime` endpoint could not be retrieved through the available public web reader. Treat runtime health as unverified rather than failed.
+- AppDeploy reports 18 apps as deployed under one linked account handle; the same 18 appeared under a second linked handle, while a third handle had no apps. No apps were changed or deleted.
+- Read-only AppDeploy QA snapshots for `LINGO Enterprise Control Center`, `LINGO Studio Hub`, `Hello The Lingo Legacy`, and `That's My Lingo` showed no frontend or network errors at their recorded QA timestamps; Studio Hub and That's My Lingo also reported valid source snapshots. These are provider QA snapshots, not a current authenticated end-to-end production certification.
+- AppDeploy account reports an exhausted credit balance. The `Hello The Lingo Legacy` `media-health-monitor` cron is disabled with reason `credits_exhausted`; it has no failures recorded at its last successful run. Do not re-enable it until the account is funded and the job is verified not to incur unexpected cost. No app redeploy or resource mutation was attempted.
