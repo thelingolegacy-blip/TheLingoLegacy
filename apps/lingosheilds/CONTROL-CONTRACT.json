@@ -1,0 +1,15 @@
+{
+  "product": "LINGOsheilds",
+  "version": "0.1.0",
+  "mode": "platform",
+  "providerStrategy": "federated",
+  "nativeAuthorityTarget": true,
+  "externalProviders": ["github", "gitlab"],
+  "agentWorkers": ["claude", "repair", "test", "security", "dependency", "evidence", "integration", "release"],
+  "productionAuthority": {
+    "agents": false,
+    "providers": false,
+    "requires": ["verified-evidence", "acceptance", "authorization"]
+  },
+  "failClosed": true
+}

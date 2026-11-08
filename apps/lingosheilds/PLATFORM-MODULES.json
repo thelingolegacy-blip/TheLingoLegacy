@@ -1,0 +1,29 @@
+{
+  "product": "LINGOsheilds",
+  "edition": "Studio",
+  "version": "0.1.0",
+  "modules": {
+    "identity": "LINGO Identity",
+    "repositories": "LINGO Repositories",
+    "projects": "LINGO Forge",
+    "git": "LINGO Git",
+    "ci": "LINGO Flow",
+    "runners": "LINGO Runner Grid",
+    "agents": "LINGO Agent Fabric",
+    "ai": "Claude + Model Gateway",
+    "security": "LINGO Shield",
+    "evidence": "LINGO Evidence",
+    "artifacts": "LINGO Artifact Registry",
+    "environments": "LINGO Environments",
+    "releases": "LINGO Release",
+    "observability": "LINGO Telemetry",
+    "federation": "GitHub/GitLab Bridge",
+    "governance": "LINGO Gates"
+  },
+  "defaultPolicy": {
+    "productionPromotion": "fail-closed",
+    "agentProductionAuthority": false,
+    "providerProductionAuthority": false,
+    "unsignedEvidence": "BLOCK"
+  }
+}
