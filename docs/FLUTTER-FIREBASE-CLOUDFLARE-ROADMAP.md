@@ -1,6 +1,6 @@
 # LINGOlegacy — Flutter + Firebase + Cloudflare Roadmap
 
-> **Architecture correction — 2026-11-08:** GitHub is the source of truth; Cloudflare owns canonical public web delivery; Firebase is reserved for authenticated identity and data services after project configuration and security rules are verified. Root Firebase Hosting is intentionally disabled to prevent accidental publication of repository contents. Flutter Firebase client values are supplied at build time with `--dart-define`. See [the configuration boundary](evidence/2026-11-08-flutter-firebase-cloudflare-hardening.md).
+> **Architecture correction — 2026-11-08:** GitHub is the source of truth; Cloudflare owns canonical public web delivery; Firebase is reserved for authenticated identity and data services after project configuration and security rules are verified. Firebase Hosting is scoped only to the Flutter `build/web` artifact; Cloudflare remains canonical for the apex/www website. Flutter Firebase client values are supplied at build time with `--dart-define`. See [the configuration boundary](evidence/2026-11-08-flutter-firebase-cloudflare-hardening.md).
 
 ## Goal
 Create a connected ecosystem where:
