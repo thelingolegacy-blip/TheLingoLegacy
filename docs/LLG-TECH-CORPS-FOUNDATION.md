@@ -55,7 +55,7 @@ The first-party gateway owns authentication, provider selection, server-side cre
 Global flag: `LLG_AI_ENABLED=true`  
 Provider flags: `LLG_AI_PROVIDER_OPENAI_ENABLED`, `LLG_AI_PROVIDER_CLAUDE_ENABLED`, `LLG_AI_PROVIDER_GEMINI_ENABLED`, `LLG_AI_PROVIDER_GROK_ENABLED`.
 
-Provider credentials and model names are separate server-side bindings. A provider is unavailable unless both the global and provider-specific flags are explicitly enabled and its key/model configuration is valid. All flags remain off by default. The initial adapter uses OpenAI Responses, Anthropic Messages, Gemini Interactions, and xAI Responses APIs; API request/response contracts must be revalidated before each production activation.
+Provider credentials, selected model IDs, and approved-model allowlists are separate server-side bindings: `OPENAI_ALLOWED_MODELS`, `ANTHROPIC_ALLOWED_MODELS`, `GEMINI_ALLOWED_MODELS`, and `XAI_ALLOWED_MODELS`. A provider is unavailable unless the global and provider-specific flags are explicitly enabled, its key/model configuration is valid, and the selected model exactly matches its provider allowlist. All flags remain off by default. The initial adapter uses OpenAI Responses, Anthropic Messages, Gemini Interactions, and xAI Responses APIs; API request/response contracts must be revalidated before each production activation.
 
 ## GDeveloper game-production system
 
