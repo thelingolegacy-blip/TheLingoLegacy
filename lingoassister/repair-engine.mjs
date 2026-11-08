@@ -6,6 +6,8 @@
  * Integrations must supply authenticated evidence and enforce authorization.
  */
 
+import { canReuseLesson } from "./learning-loop.mjs";
+
 export const INCIDENT_STATES = Object.freeze([
   "investigating", "diagnosed", "planned", "awaiting_authorization",
   "executing", "testing", "verifying", "verified", "blocked", "failed"
@@ -294,7 +296,7 @@ export function evaluateG02(signals = {}) {
 }
 
 /** Choose a next action without repeating a diagnostic in unchanged context. */
-export function recommendNextAction(incident, candidates) {
+export function recommendNextAction(incident, candidates, { learningRecords = [], now = new Date().toISOString() } = {}) {
   const eligible = candidates.filter(candidate => {
     if (candidate.requiresExternalAccess && !candidate.accessAvailable) return false;
     if (candidate.kind === "diagnostic" && !shouldRepeatDiagnostic(incident, {
@@ -311,5 +313,22 @@ export function recommendNextAction(incident, candidates) {
     };
   }
   eligible.sort((a, b) => (a.priority ?? 100) - (b.priority ?? 100));
-  return { status: "ACTION_AVAILABLE", action: eligible[0], reason: "Selected the highest-priority eligible action." };
+  const action = eligible[0];
+  const advisoryLessons = learningRecords
+    .filter(lesson => canReuseLesson(lesson, { contextFingerprint: action.contextFingerprint, now }).reusable)
+    .map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      statement: lesson.statement,
+      evidenceIds: [...lesson.evidenceIds],
+      outcome: lesson.outcome
+    }));
+  return {
+    status: "ACTION_AVAILABLE",
+    action,
+    reason: "Selected the highest-priority eligible action.",
+    advisoryLessons,
+    learningInfluencedRanking: false,
+    actionAuthority: false
+  };
 }
