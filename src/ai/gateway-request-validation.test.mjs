@@ -87,9 +87,9 @@ test('all request kinds reject arrays, null, primitives, and unsupported kinds',
 });
 
 test('text fields reject control characters while code preserves normal line breaks', () => {
-  assert.equal(validateGatewayRequest('chat', { message: 'hello\\u0000world' }).ok, false);
+  assert.equal(validateGatewayRequest('chat', { message: 'hello' + String.fromCharCode(0) + 'world' }).ok, false);
   const code = validateGatewayRequest('developer', {
-    language: 'python', task: 'Review code', code: 'def f():\\n\\treturn 1'
+    language: 'python', task: 'Review code', code: ['def f():', '  return 1'].join('\n')
   });
   assert.equal(code.ok, true);
 });
