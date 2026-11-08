@@ -1,0 +1,40 @@
+name: PR498 Actions Control Plane Probe
+on:
+  push:
+    branches: [staging/pr498-completion-2026-11-08]
+    paths: [".github/workflows/pr498-actions-control-plane-probe.yml"]
+  pull_request:
+    branches: [staging/server-authoritative-game-foundation-2026-11-07]
+    paths: [".github/workflows/pr498-actions-control-plane-probe.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pr498-actions-control-plane-probe
+  cancel-in-progress: false
+jobs:
+  hosted-runner-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Record hosted runner identity
+        run: |
+          mkdir -p artifacts
+          {
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "commit=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            date -u +"utc=%Y-%m-%dT%H:%M:%SZ"
+          } | tee artifacts/runner-probe.txt
+      - name: Upload runner probe evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr498-actions-probe-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 7
