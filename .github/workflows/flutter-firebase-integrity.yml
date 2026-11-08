@@ -90,7 +90,7 @@ jobs:
             --dart-define=FIREBASE_ANDROID_API_KEY="$FIREBASE_ANDROID_API_KEY" \
             --dart-define=FIREBASE_ANDROID_APP_ID="$FIREBASE_ANDROID_APP_ID"
 
-      - name: Verify Cloudflare owns public web delivery
+      - name: Verify Flutter Hosting artifact scope and Cloudflare canonical route
         shell: bash
         run: |
           set -euo pipefail
@@ -98,12 +98,12 @@ jobs:
           import fs from 'node:fs';
           const firebase = JSON.parse(fs.readFileSync('firebase.json', 'utf8'));
           const wrangler = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'));
-          if (firebase.hosting) throw new Error('Firebase Hosting must remain disabled; Cloudflare is canonical.');
+          if (firebase.hosting?.public !== 'build/web') throw new Error('Firebase Hosting must publish only the Flutter build/web artifact.');
           if (wrangler.workers_dev !== false) throw new Error('Canonical Worker must not expose workers.dev.');
           if (!wrangler.routes?.some((route) => route.pattern === 'thelingolegacy.com/*')) {
             throw new Error('Canonical Cloudflare route is missing.');
           }
-          console.log('FIREBASE_HOSTING=INTENTIONALLY_DISABLED');
+          console.log('FIREBASE_HOSTING_SCOPE=BUILD_WEB_ONLY');
           console.log('CLOUDFLARE_CANONICAL_ROUTE=CONFIGURED');
           NODE
 
