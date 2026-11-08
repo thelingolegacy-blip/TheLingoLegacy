@@ -32,10 +32,10 @@
 
 ## Vercel deployment-path retirement
 
-- The Hobby Vercel project linked to this repository automatically created preview deployments for feature-branch pushes. The pause operation was accepted. Its API readback still reports `live: false` and the latest deployment target is not production; the API does not expose a separate paused flag, so the pause state cannot be independently confirmed from the readback.
+- The Hobby Vercel project linked to this repository automatically created preview deployments for feature-branch pushes. Its pause operation is confirmed by the latest attempted deployment for PR #504 head `e95c02c56bba132e5ad6f86f352297c15944acf8` being `BLOCKED` with no production target. Older preview deployments remain in history and were not deleted; the project uses SSO protection for non-custom preview deployments.
 - The former `launch` and `studio-preview` hostnames remain in Vercel project metadata, but Cloudflare DNS now routes `launch` to the Cloudflare static backup and `studio-preview` through Cloudflare. Apex and `www` DNS are also Cloudflare-routed.
-- A separate Pro Vercel project remains linked to the same repository. Its API metadata still lists historical apex/www aliases and a previous production-target deployment, while the project-domain listing returned zero current domain records and `live: false`. It was deliberately not paused until its historical domain ownership is reconciled.
-- The Vercel rate-limit status check is not Cloudflare deployment evidence. The Hobby project pause request is intended to stop duplicate preview deployments; the Pro project remains an unresolved legacy deployment path.
+- A separate Pro Vercel project remains linked to the same repository. Its pause request returned `invalid_deployment: Active production deployment does not exist`; the project reports `live: false`, its project-domain listing returned zero current domain records, and its metadata still lists historical apex/www aliases plus an old production-target deployment. It was left unchanged because its domain metadata is inconsistent and the pause endpoint found no active production deployment.
+- The Vercel rate-limit status check is not Cloudflare deployment evidence. The Hobby project preview path is blocked; the Pro project remains a legacy Git link but has no active production deployment. Its Git disconnection still requires owner/admin action or a verified project-settings path.
 
 ## Remaining release blockers
 
@@ -72,3 +72,8 @@ PR #504 current head at this readback: `e95c02c56bba132e5ad6f86f352297c15944acf8
 - Crimson Smoke UI static validation #902 — `42504382904`
 
 No workflow command executed. The new Node validator tests were run locally in an isolated harness and passed 13/13. Flutter SDK analysis/builds remain unexecuted.
+
+
+## Vercel retirement readback — 2026-11-08
+
+The Hobby project's latest deployment attempt is `BLOCKED` after the pause request, confirming new preview deployment creation is stopped. Historical READY preview builds were preserved. The separate Pro project's pause request could not be applied because Vercel reports no active production deployment; no deletion or Git disconnect was attempted.
