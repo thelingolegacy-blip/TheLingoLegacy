@@ -31,6 +31,23 @@ test('Firebase bearer parser rejects absent or malformed credentials', () => {
   assert.equal(bearerTokenFromRequest(new Request('https://staging.invalid/', { headers: { authorization: 'Basic abc' } })), null);
 });
 
+
+test('Firebase bearer parser handles case-insensitive header names and surrounding whitespace', () => {
+  for (const headerName of ['Authorization', 'authorization', 'AUTHORIZATION', 'aUtHoRiZaTiOn']) {
+    const request = new Request('https://staging.invalid/', {
+      headers: { [headerName]: '  Bearer   abc.def.ghi  ' },
+    });
+    assert.equal(bearerTokenFromRequest(request), 'abc.def.ghi');
+  }
+});
+
+test('Firebase bearer parser rejects extra credential fields and empty tokens', () => {
+  for (const value of ['', 'Bearer ', 'Bearer abc def', 'Basic abc.def.ghi', 'Bearer abc\\nInjected: yes']) {
+    const request = new Request('https://staging.invalid/', { headers: { authorization: value } });
+    assert.equal(bearerTokenFromRequest(request), null);
+  }
+});
+
 test('health endpoint confirms staging D1 reachability without authentication', async () => {
   const DB = fakeDb();
   const response = await worker.fetch(new Request('https://staging.invalid/healthz'), { DB, ENVIRONMENT: 'staging' });
