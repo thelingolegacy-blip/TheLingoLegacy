@@ -23,7 +23,7 @@ Apply a repository ruleset targeting the default branch `main`:
     - Mobile Native Build Recovery
     - G02 Runner Image Build (no publish), only for runner/build-image changes
 
-Do not make Vercel checks required. Cloudflare is the canonical web delivery platform; Vercel is a retired/legacy deployment path.
+Do not make Vercel checks required. Cloudflare is the canonical web delivery platform; Vercel is not an approved deployment path, while the remaining legacy Vercel projects are still under retirement review.
 
 ## Current limitation
 
