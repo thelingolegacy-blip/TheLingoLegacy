@@ -152,3 +152,20 @@ The machine-readable matrix enumerates all nine canonical divisions and 36 produ
 
 Every product record carries `catalogued_target_not_certified` until its actual source, platform build, runtime integration, tests and release evidence are independently recorded. Platform targets are declared per product in `config/platform-surface-os-matrix.json`.
 
+
+
+## Connected Cloudflare inventory (read-only)
+
+A read-only inventory of the connected Cloudflare account on 2026-11-09 verified the `thelingolegacy.com` zone as active and not paused. It returned the following routing snapshot:
+
+- `thelingolegacy.com/*` and `www.thelingolegacy.com/*` route to `thelingolegacyv-5`.
+- `thelingolegacy.com/` has a separate exact-root route to `lingo-flagship-root`.
+- Additional named subdomain routes point to the flagship Worker, and an Atlas route points to `lingo-ecosystem-atlas`.
+- `studio-preview.thelingolegacy.com` is attached to `lingo-studio-control-center-staging`; `resilience.thelingolegacy.com` is attached to `lingo-resilience-gateway`.
+
+The deployment/version records show a critical distinction: `thelingolegacyv-5` has uploaded preview version 286 (alias `platform-surface-os-installation-2026-11-09`), but its current 100% deployment still references version 137. The separate `lingo-flagship-root` Worker has version 2 uploaded, while its current 100% deployment references version 1. Uploaded preview versions are not production releases.
+
+Worker settings report observability enabled for `thelingolegacyv-5` with 10% head sampling and query-string redaction; traces are disabled. The root Worker settings response did not include observability configuration.
+
+**No Cloudflare resources were changed.** Do not deploy version 286, change the exact-root route, rename Workers, edit DNS, or modify production settings as part of routine setup. First compare the canonical GitHub source, inspect the deployed code and route precedence, perform safe public probes, and obtain explicit release authorization.
+
