@@ -232,3 +232,21 @@ The canonical Worker uses the `ASSETS` binding and falls through to `env.ASSETS.
 The route contract also declares `/arcade → /lingoarcade/` and `/game → /thats-my-lingo/` as `SOURCE_ALIAS` entries. They are not proven live redirects by the route contract alone. The repository `_redirects` file declares `/apparel/ → /loyalty-lane-apparel/` and a root redirect, but the active version-137 deployment's redirect metadata only showed the apparel redirect; the root hostname is separately assigned to `lingo-flagship-root`. Do not assume source redirect declarations are active at the edge without a live response check.
 
 **Source-of-truth gap:** several product surfaces are declared as owned by separate product repositories while a page copy exists in `TheLingoLegacy`. The canonical registry must compare content/build provenance and declare whether the child repository or canonical copy is the maintained source. No silent overwrite or automatic mirroring is authorized by this crosswalk.
+
+
+## Browser acceptance sample — 2026-11-09
+
+A current public-browser retrieval sample was performed against the canonical host. This is a limited spot-check, not a full browser/device matrix.
+
+| Route | Browser result | Acceptance interpretation |
+|---|---|---|
+| `/thats-my-lingo/` | Retrieved current page | Page explicitly labels itself virtual-currency entertainment only, with no cash betting, wagering or cash-out. Backend section still says Firebase services await keys/billing approval; global leaderboard remains hidden pending auth, moderation, anti-cheat and privacy work. |
+| `/kottons-code/` | Retrieved page | Static Cloudflare experience. Social links still lead to platform search until official channel URLs are verified. Page includes child-directed content and family/character narrative details; privacy review must reconcile public copy with the AppDeploy source scan before acceptance. |
+| `/lane/` | Retrieved page | Shared Studio shell; page says source implementation only and production promotion remains gated. Not a verified checkout/commerce runtime. |
+| `/ai/` | Retrieved page | askLINGO shell; page explicitly says availability is runtime-dependent and does not claim a live model provider. |
+| `/lingoarcade/` | Browser retrieval returned cache miss | NOT VERIFIED; not proof of an HTTP 404. |
+| `/media/`, `/assets/`, `/store/` | Browser retrieval returned cache miss | NOT VERIFIED; no launch acceptance. |
+| `/studio-hub/` | Browser retrieval inaccessible | NOT VERIFIED; exact-root route is a separate Worker and staging/preview boundary needs testing. |
+| `/game` | Search/browser cache returned an older page crawled two weeks earlier with legacy star-marked naming | Treat as a stale legacy alias, not current product acceptance. Source contract marks `/game → /thats-my-lingo/` as `SOURCE_ALIAS`; the redirect is not proven live. |
+
+The successful sample pages confirm only their accessible static content. They do not prove account creation, Firebase writes, commerce, global leaderboards, AI inference, native app builds, or current device accessibility. The browser tool's cache misses are recorded as inconclusive rather than failures.
