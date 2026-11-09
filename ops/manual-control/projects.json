@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "system": "LINGO Legacy Manual Advancement",
+  "control_mode": "human_approved",
+  "g02_dependency": false,
+  "default_initial_stage": "NOT_ASSESSED",
+  "state_source": "GitHub manual-transition issue records; this inventory is the project catalog, not an assertion of completion.",
+  "projects": [
+    {
+      "project_key": "LINGOlegacy_MASTER",
+      "description": "Enterprise governance and master control",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOlegacy",
+      "description": "Flagship identity, account, wallet and community",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOlane",
+      "description": "Designs, promotions, apparel and laundry-cycle",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOslots",
+      "description": "That’s My Lingo, Spades, Uhno and related slot products",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOarcade",
+      "description": "Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOlibrary",
+      "description": "KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOmedia",
+      "description": "Rise of Zavione film and media workstreams",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LINGOworld",
+      "description": "LINGOai, askLINGO, LINGOboom, travel, campus and world services",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    },
+    {
+      "project_key": "LegacyXclub",
+      "description": "LegacyXclub membership and community",
+      "current_stage": "NOT_ASSESSED",
+      "owner": null,
+      "depends_on": [],
+      "g02_dependency": false,
+      "assessment_required": true,
+      "last_transition_record": null
+    }
+  ]
+}
