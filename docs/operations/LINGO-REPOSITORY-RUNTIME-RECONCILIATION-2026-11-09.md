@@ -272,3 +272,6 @@ The apex DNS record currently reports a proxied A target of `192.0.2.0`, which i
 ## GitHub Actions dispatch evidence — 2026-11-09
 
 A new PR event on PR #535 created run `42708341664` for the repository's `Lingo Legacy Static CI` workflow at commit `a2a5fbe92747febb120857dd36d404485765f7ae`. The run completed with `startup_failure`; the GitHub Jobs API returned an empty `jobs` array and the artifacts API returned an empty `artifacts` array. This is direct provider-side evidence that no job was instantiated and no retrievable test evidence exists for that run. The new Flutter workflow's evidence-upload steps are therefore not yet executed. Keep the job-creation gate blocked until GitHub dispatch is restored.
+
+
+The new Flutter workflow itself was triggered on both push and pull-request events: run `42708322871` (push) and `42708339698` (pull_request), both at commit `a2a5fbe92747febb120857dd36d404485765f7ae`. Both runs ended `startup_failure`; each Jobs API response was empty and each Artifacts API response was empty. The evidence-bundle implementation is present in source, but no evidence bundle was produced because GitHub never instantiated its matrix jobs.
