@@ -120,6 +120,18 @@ The dependency graph has 13 nodes and 33 declared dependency relationships. It i
 
 ## 4. CI startup evidence
 
+### Latest PR #511 refresh — 2026-11-09 17:45 UTC
+
+The two latest PR-triggered runs inspected for the Wave 0 head at that moment (`a3181ae7cae3dd24506c2964e5ba28799493db62`) both ended before job instantiation:
+
+| Run | Workflow | Workflow path | Conclusion | Jobs | Artifacts | Billable timing |
+|---:|---|---|---|---:|---:|---|
+| [42667635135](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42667635135) | Crimson Smoke UI — static validation | `.github/workflows/crimson-smoke-ui-validation.yml` | `startup_failure` | 0 | 0 | empty |
+| [42667632260](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42667632260) | Lingo Legacy Static CI | `.github/workflows/jekyll-docker.yml` | `startup_failure` | 0 | 0 | empty |
+
+Both run records identify the expected PR #511 and actual workflow paths. The timing endpoint returns an empty billable map, consistent with no runner job execution. This proves only the pre-job failure boundary; it does not establish the underlying provider or repository cause. No rerun was attempted because there was no failed job to rerun.
+
+
 | Repository | Evidence inspected | Observed result | Interpretation |
 |---|---|---|---|
 | `TheLingoLegacy` | PR #512 lists runs 42546146795, 42546147646, 42546148685; Jobs API queried for all three | 0 jobs for each | Pre-job failure boundary; no test or build result |
