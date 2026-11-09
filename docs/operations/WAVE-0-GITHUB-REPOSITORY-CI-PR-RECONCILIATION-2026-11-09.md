@@ -80,9 +80,9 @@ Classification is provisional and based on repository names, the connected searc
 PR #511 in `TheLingoLegacy` is the current Wave 0 implementation vehicle:
 - Base: `main`
 - Head: `feat/lingo-master-registry-wave0-2026-11-08`
-- Head SHA observed: `b171c3a534eeee61cc648c42111b2ab4a73de309`
-- 17 commits ahead; 0 behind at inspection
-- 11 changed files; 2,124 additions; 0 deletions
+- Head SHA observed after the 2026-11-09 documentation and AppDeploy evidence refresh: `c540d3b9e562b566197be762a504fdc826768dec`
+- 34 commits ahead; 1 commit behind `main` at the latest comparison
+- 19 changed files; 3,925 additions; 0 deletions
 - Open, draft, unmerged
 
 The branch contains:
