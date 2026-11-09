@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "llg-plugin-integration-registry",
+  "status": "proposal",
+  "authority": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "sourceOfTruth": "GitHub",
+    "productionState": "protected-hold"
+  },
+  "lifecycle": [
+    "discovered",
+    "evaluating",
+    "approved_for_staging",
+    "staging_verified",
+    "approved_for_production",
+    "production",
+    "degraded",
+    "suspended",
+    "retired"
+  ],
+  "requiredRecordFields": [
+    "id",
+    "provider",
+    "service",
+    "purpose",
+    "products",
+    "owner",
+    "officialDocs",
+    "termsUrl",
+    "dataClasses",
+    "dataFields",
+    "dataDirection",
+    "dataResidency",
+    "retention",
+    "deletionMethod",
+    "authMethod",
+    "oauthScopes",
+    "credentialOwner",
+    "rotationPlan",
+    "revocationPlan",
+    "threatModel",
+    "securityReview",
+    "legalReview",
+    "pricingPlan",
+    "freeQuota",
+    "usageCeiling",
+    "budgetOwner",
+    "rateLimits",
+    "retryPolicy",
+    "idempotency",
+    "fallback",
+    "status",
+    "evidence",
+    "reviewedAt",
+    "approvedBy",
+    "changeHistory"
+  ],
+  "policy": {
+    "secretsStored": false,
+    "thirdPartyPasswordsCollected": false,
+    "productionByDefault": false,
+    "leastPrivilege": true,
+    "explicitUserAuthorization": true,
+    "stagingBeforeProduction": true,
+    "costApprovalRequired": true,
+    "legalReviewRequired": true
+  },
+  "entries": [
+    {
+      "id": "github-source",
+      "provider": "GitHub",
+      "service": "GitHub repository and review workflows",
+      "purpose": "Canonical source control and change evidence",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-read-surface",
+      "approval": "Existing connection; specific scopes and protections require verification"
+    },
+    {
+      "id": "cloudflare-edge",
+      "provider": "Cloudflare",
+      "service": "Workers and DNS",
+      "purpose": "Authoritative edge and public routing",
+      "products": [
+        "LINGOlegacy",
+        "LINGOworld"
+      ],
+      "status": "connected-inventory-read",
+      "approval": "Production mutation not authorized"
+    },
+    {
+      "id": "firebase-identity-candidate",
+      "provider": "Google Firebase",
+      "service": "Firebase Authentication and data services",
+      "purpose": "Candidate identity/data provider",
+      "products": [
+        "LINGOlegacy"
+      ],
+      "status": "blocked-project-identity",
+      "approval": "Do not enable until project ownership and backend ADR resolve #469 and #515"
+    },
+    {
+      "id": "supabase-backend-candidate",
+      "provider": "Supabase",
+      "service": "Supabase Postgres and Edge Functions",
+      "purpose": "Candidate transactional backend",
+      "products": [
+        "LINGOlegacy"
+      ],
+      "status": "architecture-proposal",
+      "approval": "PR #515 is a proposal; project purpose and identity authority must be reconciled"
+    },
+    {
+      "id": "amplitude-analytics",
+      "provider": "Amplitude",
+      "service": "Product analytics",
+      "purpose": "Governed analytics and measurement",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-discovered-not-approved",
+      "projectId": "902649",
+      "projectName": "default",
+      "observedEvents": 0,
+      "approval": "Owner mapping, privacy review, event taxonomy, retention and cost ceiling required before instrumentation"
+    },
+    {
+      "id": "appdeploy-staging",
+      "provider": "AppDeploy",
+      "service": "App staging and previews",
+      "purpose": "Isolated prototype/staging runtime",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-credit-constrained",
+      "approval": "Resolve account identity and available capacity before writes"
+    },
+    {
+      "id": "shopify-commerce",
+      "provider": "Shopify",
+      "service": "Loyalty Lane storefront",
+      "purpose": "Apparel commerce",
+      "products": [
+        "LINGOlane"
+      ],
+      "status": "connected-review-required",
+      "approval": "Catalog, public copy, fulfillment, tax and commerce approvals required"
+    },
+    {
+      "id": "stripe-payments",
+      "provider": "Stripe",
+      "service": "Payment processing",
+      "purpose": "Approved founder/support/commerce payments",
+      "products": [
+        "LINGOlane"
+      ],
+      "status": "test-mode-only",
+      "approval": "No live payment activation authorized"
+    }
+  ],
+  "note": "Provider records are initial inventory observations, not legal/security certification. Populate full required fields and attach evidence before lifecycle promotion."
+}
