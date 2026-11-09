@@ -195,3 +195,14 @@ The inspected Android folder contains an app-level Gradle file and manifest, but
 
 The current Flutter home screen is an ecosystem navigation preview. Its account action explicitly reports that account and signup services are not connected in the preview. It should not be described as an operational identity, wallet, or game client. A valid Android build requires completing the entire Android runner structure and resolving the actual Firebase configuration first.
 
+
+## Representative public-surface probes
+
+Three representative public routes were retrieved:
+
+- **Flagship homepage:** reachable, but the page self-identifies as a candidate experience, reports no matching destinations, and says account/wallet actions must wait for secure services. This is not launch acceptance.
+- **That’s My Lingo:** reachable as an entertainment-only game demo. The page describes virtual-only balances and no cash-out or live wagering. It explicitly says Firebase backend services await real service keys and billing approval, and global multiplayer remains hidden until backend authentication, moderation, anti-cheat and privacy checks are ready.
+- **Kotton’s Code:** reachable as a static Cloudflare experience with a mini-quest. The page says its social links remain platform searches until official channel URLs are verified. The page does not establish a connected account or published video channel.
+
+These are content-level retrievals, not proof that every button, animation, audio asset, backend call, browser size, device or accessibility path works. The remaining 22 catalogued routes still require route-by-route probes and functional tests.
+
