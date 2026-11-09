@@ -163,6 +163,11 @@
       "id": "apex-worker-origin-fallback-source-review",
       "status": "main-worker-source-uses-assets-binding-no-generic-origin-fetch",
       "detail": "Read-only review of main worker.js at main commit f3916fe6658845d08c3727da1caecdf4b24387ca confirms non-API requests on thelingolegacyv-5 path are served through env.ASSETS.fetch(request); no generic origin fetch fallback is present in that source. The apex exact-root route is assigned to a separate lingo-flagship-root Worker and its source was not verified in this check. The proxied apex A record remains TEST-NET-1 192.0.2.0. Do not change it or assume it is harmless: verify exact-root Worker behavior, route coverage, error/fallback behavior, and a real origin decision before any DNS change."
+    },
+    {
+      "id": "cloudflare-access-bypass-audit-2026-11-09",
+      "status": "14-app-inventory-8-shared-bypass-3-explicit-public-1-all-workers-restricted",
+      "detail": "Read-only account query on 2026-11-09 found 14 Access applications. All Workers has allow-only policies (account members and explicit operator email). Eight legacy/preview per-worker applications still share the reusable bypass-everyone policy; three new non-reusable public apps cover the resilience fallback, public website routes, and public root. Four legacy apps also contain email_domain matchers whose domain field is a full email address. No policy was changed; owners must classify each destination before any access mutation."
     }
   ],
   "totals": {
@@ -344,5 +349,48 @@
       "studio-preview.thelingolegacy.com"
     ],
     "noDnsMutation": true
+  },
+  "accessPolicyAudit": {
+    "observedAt": "2026-11-09",
+    "accessApplicationCount": 14,
+    "allWorkersApplication": {
+      "policyDisposition": "allow-only",
+      "allowedPrincipals": [
+        "Cloudflare account members",
+        "explicit operator email"
+      ],
+      "bypassEveryonePolicy": false
+    },
+    "reusablePublicBypassApplications": [
+      "thats-my-lingo - Cloudflare Workers",
+      "sparkling-rain-29a3 - Cloudflare Workers",
+      "thelingolegacyv5 - Cloudflare Workers",
+      "thelingolegacy - Cloudflare Workers",
+      "legacyweb1 - Cloudflare Workers",
+      "nextjs-lingolegacy - Cloudflare Workers",
+      "thelingolegacy-v2 - Cloudflare Workers",
+      "thelingolegacy-v3 - Cloudflare Workers"
+    ],
+    "nonReusablePublicBypassApplications": [
+      "LINGO Resilience Gateway — Public Static Fallback",
+      "LINGO Public Website Routes — thelingolegacyv-5",
+      "LINGO Public Website Root — lingo-flagship-root"
+    ],
+    "additionalAccountMemberOnlyApplications": [
+      "thelingolegacyv4 - Cloudflare Workers",
+      "astro-blog-starter-template - Cloudflare Workers"
+    ],
+    "malformedEmailDomainMatchers": {
+      "affectedApplications": [
+        "thelingolegacy - Cloudflare Workers",
+        "legacyweb1 - Cloudflare Workers",
+        "nextjs-lingolegacy - Cloudflare Workers",
+        "thelingolegacy-v2 - Cloudflare Workers"
+      ],
+      "observedValueType": "email_domain matcher whose domain value is a full email address",
+      "disposition": "review and replace with exact-email matcher only after app owner confirms intended access; no mutation made"
+    },
+    "riskDisposition": "The public website and resilience fallback apps are explicitly named public; eight legacy/preview apps still share a reusable bypass-everyone policy and require destination-by-destination owner classification. Do not remove the shared policy globally because it affects multiple applications.",
+    "noPolicyMutation": true
   }
 }
