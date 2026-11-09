@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${PROJECT_KEY:?PROJECT_KEY is required}"
+: "${COMMAND:?COMMAND is required}"
+: "${FROM_STAGE:?FROM_STAGE is required}"
+: "${TO_STAGE:?TO_STAGE is required}"
+: "${EVIDENCE_URL:?EVIDENCE_URL is required}"
+
+fail() { echo "::error::$1" >&2; exit 1; }
+valid_stage() {
+  case "$1" in
+    PLANNED|READY|IN_PROGRESS|REPAIR|VERIFICATION|REVIEW|APPROVED|COMPLETED|RELEASE_READY|RELEASED|BLOCKED|PAUSED|REJECTED|ROLLBACK) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+[[ "$PROJECT_KEY" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$ ]] || fail "PROJECT_KEY must be 2-64 safe characters."
+valid_stage "$FROM_STAGE" || fail "Unknown FROM_STAGE: $FROM_STAGE"
+valid_stage "$TO_STAGE" || fail "Unknown TO_STAGE: $TO_STAGE"
+[[ "$EVIDENCE_URL" =~ ^https://[^[:space:]]+$ ]] || fail "EVIDENCE_URL must be an HTTPS URL."
+[[ -n "${RATIONALE:-}" ]] || fail "RATIONALE is required."
+
+case "$COMMAND:$FROM_STAGE:$TO_STAGE" in
+  advance:PLANNED:READY|advance:READY:IN_PROGRESS|advance:IN_PROGRESS:REPAIR|advance:IN_PROGRESS:VERIFICATION|advance:REPAIR:VERIFICATION|advance:VERIFICATION:REVIEW|advance:APPROVED:COMPLETED|advance:COMPLETED:RELEASE_READY) ;;
+  request-review:VERIFICATION:REVIEW) ;;
+  approve:REVIEW:APPROVED) ;;
+  hold:PLANNED:PAUSED|hold:READY:PAUSED|hold:IN_PROGRESS:PAUSED|hold:REPAIR:PAUSED|hold:VERIFICATION:PAUSED|hold:REVIEW:PAUSED|hold:APPROVED:PAUSED|hold:COMPLETED:PAUSED|hold:RELEASE_READY:PAUSED|hold:BLOCKED:PAUSED) ;;
+  resume:PAUSED:READY|resume:PAUSED:IN_PROGRESS|resume:PAUSED:REPAIR|resume:PAUSED:VERIFICATION|resume:PAUSED:REVIEW|resume:PAUSED:APPROVED|resume:PAUSED:COMPLETED|resume:PAUSED:RELEASE_READY) ;;
+  request-release:COMPLETED:RELEASE_READY) ;;
+  record-release:RELEASE_READY:RELEASED) ;;
+  reject:REVIEW:REJECTED) ;;
+  rollback:RELEASED:ROLLBACK|rollback:RELEASE_READY:ROLLBACK) ;;
+  *) fail "Unsupported transition: $COMMAND $FROM_STAGE -> $TO_STAGE." ;;
+esac
+
+if [[ "$COMMAND" == "approve" ]]; then
+  [[ "${CONFIRMATION:-}" == "APPROVE $PROJECT_KEY" ]] || fail "Confirmation must exactly equal: APPROVE $PROJECT_KEY"
+  [[ "${GITHUB_ACTOR:-}" == "${GITHUB_REPOSITORY_OWNER:-}" ]] || fail "Only the repository owner may approve."
+fi
+
+if [[ "$COMMAND" == "record-release" ]]; then
+  [[ "${CONFIRMATION:-}" == "RELEASE $PROJECT_KEY" ]] || fail "Confirmation must exactly equal: RELEASE $PROJECT_KEY"
+  [[ "${GITHUB_ACTOR:-}" == "${GITHUB_REPOSITORY_OWNER:-}" ]] || fail "Only the repository owner may record a release."
+  [[ "${DEPLOYMENT_EVIDENCE_URL:-}" =~ ^https://[^[:space:]]+$ ]] || fail "DEPLOYMENT_EVIDENCE_URL must point to deployed/live verification evidence."
+fi
+
+echo "VALID: $PROJECT_KEY $COMMAND $FROM_STAGE -> $TO_STAGE"
+echo "G02/Fallgate dependency: NONE"
+echo "This validator records a requested transition; it does not deploy or modify production."
