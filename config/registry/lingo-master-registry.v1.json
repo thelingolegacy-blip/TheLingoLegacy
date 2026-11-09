@@ -445,13 +445,13 @@
     },
     {
       "id": "CLOUDFLARE-ROUTE-PRECEDENCE",
-      "status": "unverified",
-      "evidence": "Apex wildcard and exact-root routes target different Workers"
+      "status": "specificity-documented-smoke-required",
+      "evidence": "Live routes show thelingolegacy.com/ and thelingolegacy.com/* assigned to different Workers; Cloudflare documents most-specific matching route wins, but root/nested HTTP smoke remains required."
     },
     {
       "id": "CLOUDFLARE-VERSION-RECONCILIATION",
-      "status": "unverified",
-      "evidence": "Worker latest uploaded version 269; active deployed version not established"
+      "status": "verified-active-version-drift",
+      "evidence": "Active deployments are verified at 100% traffic; primary Worker serves v137 while uploaded v270 is newer; root Worker serves v1 while uploaded v2 is newer."
     },
     {
       "id": "GATEWAY-APP-QA",
@@ -477,6 +477,16 @@
       "id": "CLOUDFLARE-DEPLOYED-VERSION-137",
       "status": "confirmed-old-deployed-version",
       "evidence": "Read-only version-detail endpoint resolves active deployment version ID to thelingolegacyv-5 v137 while v270 is latest uploaded; root Worker deployment resolves to v1 while v2 is latest uploaded"
+    },
+    {
+      "id": "CLOUDFLARE-APEX-TEST-NET-ORIGIN",
+      "status": "critical",
+      "evidence": "Live proxied apex A record is 192.0.2.0, within RFC 5737 TEST-NET-1 documentation block; any origin fallback requires verified origin mapping."
+    },
+    {
+      "id": "CLOUDFLARE-WRANGLER-ROUTE-DRIFT",
+      "status": "verified-drift",
+      "evidence": "wrangler.jsonc declares 2 routes while 18 live routes are assigned to thelingolegacyv-5; 16 live subdomain routes are not declared. Preserve live route set pending reviewed reconciliation."
     }
   ],
   "acceptance": {
@@ -999,7 +1009,51 @@
         "42536631210"
       ],
       "g02Disposition": "FAIL_UNVERIFIED",
-      "latestStaticCiJobs": 0
+      "latestStaticCiJobs": 0,
+      "latestObservedStartupFailureRuns": [
+        {
+          "workflow": "Lingo Legacy Static CI",
+          "runId": 42556911824,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Crimson Smoke UI — static validation",
+          "runId": 42556913021,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "G02 Runner Image Build (no publish)",
+          "runId": 42556910880,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Lingo Legacy Static CI",
+          "runId": 42556974712,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Crimson Smoke UI — static validation",
+          "runId": 42556973743,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "G02 Runner Image Build (no publish)",
+          "runId": 42556972870,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        }
+      ]
     }
   }
 }
