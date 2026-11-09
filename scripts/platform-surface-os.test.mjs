@@ -39,3 +39,15 @@ test('unverified Firebase activation cannot be silently removed from evidence', 
   delete firebase.blockers;
   assert.ok(validateMatrix(matrix).some((failure) => failure.includes('Firebase must carry evidence')));
 });
+
+test('all 25 catalogued web routes are required', () => {
+  const matrix = structuredClone(fixture);
+  matrix.web_pages.pop();
+  assert.ok(validateMatrix(matrix).some((failure) => failure.includes('web_pages must contain all 25')));
+});
+
+test('all 7 AppDeploy catalog entries are required', () => {
+  const matrix = structuredClone(fixture);
+  matrix.appdeploy_surfaces = [];
+  assert.ok(validateMatrix(matrix).some((failure) => failure.includes('appdeploy_surfaces must contain all 7')));
+});
