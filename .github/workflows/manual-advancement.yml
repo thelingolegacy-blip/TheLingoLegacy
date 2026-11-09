@@ -88,14 +88,16 @@ concurrency:
 
 jobs:
   validate-and-record:
+    if: github.ref == 'refs/heads/main'
     name: Validate and record manual transition
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Check out requested ref
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          ref: main
 
       - name: Validate transition
         id: validate
