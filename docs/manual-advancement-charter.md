@@ -74,7 +74,7 @@ Run **Actions → LINGO Manual Advancement → Run workflow** or execute the loc
 
 The workflow validates the requested transition and creates a GitHub issue as an immutable-by-convention transition record. The issue includes actor, run URL, timestamp, project, source/target stages, evidence, and rationale. The workflow does not silently update application state: the project owner must reconcile the latest accepted transition records into the project board/registry.
 
-Privileged commands `approve` and `record-release` are restricted to the repository owner account. `record-release` additionally requires the exact confirmation `RELEASE <PROJECT_KEY>`.
+Privileged commands `approve` and `record-release` require the actor login to appear in the comma-separated GitHub repository variable `LINGO_APPROVER_LOGINS` (wired into the workflow as `AUTHORIZED_APPROVERS`). The allowlist must be explicitly configured; an unset or non-matching allowlist fails closed. The local operator script requires the same `AUTHORIZED_APPROVERS` environment variable. Both commands also require their exact confirmation phrase; `record-release` additionally requires deployed/live evidence. Do not use the organization login as a substitute for an individual approver account.
 
 ## 5. Evidence contract
 
