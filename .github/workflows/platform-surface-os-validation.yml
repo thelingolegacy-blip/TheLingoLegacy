@@ -5,7 +5,9 @@ on:
     paths:
       - "config/platform-surface-os-matrix.json"
       - "docs/platform-surface-os-installation-matrix.md"
+      - "scripts/platform-surface-os-validator-lib.mjs"
       - "scripts/validate-platform-surface-os.mjs"
+      - "scripts/platform-surface-os.test.mjs"
       - ".github/workflows/platform-surface-os-validation.yml"
   push:
     branches:
@@ -13,7 +15,9 @@ on:
     paths:
       - "config/platform-surface-os-matrix.json"
       - "docs/platform-surface-os-installation-matrix.md"
+      - "scripts/platform-surface-os-validator-lib.mjs"
       - "scripts/validate-platform-surface-os.mjs"
+      - "scripts/platform-surface-os.test.mjs"
       - ".github/workflows/platform-surface-os-validation.yml"
   workflow_dispatch:
 
@@ -31,5 +35,7 @@ jobs:
           persist-credentials: false
       - name: Validate matrix JSON
         run: python3 -m json.tool config/platform-surface-os-matrix.json > /dev/null
-      - name: Validate platform coverage and G02 independence
+      - name: Run positive and negative contract tests
+        run: node --test scripts/platform-surface-os.test.mjs
+      - name: Validate platform and surface coverage
         run: node scripts/validate-platform-surface-os.mjs
