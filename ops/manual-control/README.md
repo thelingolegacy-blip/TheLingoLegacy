@@ -27,7 +27,7 @@ This runbook operates the G02/Fallgate-independent manual advancement workflow i
 - `reject`
 - `rollback`
 
-See [the charter](../../docs/manual-advancement-charter.md) for the transition matrix and governance rules.
+The project catalog is `projects.json`; only registered keys are accepted.\n\nSee [the charter](../../docs/manual-advancement-charter.md) for the transition matrix and governance rules.
 
 ## Important limits
 
