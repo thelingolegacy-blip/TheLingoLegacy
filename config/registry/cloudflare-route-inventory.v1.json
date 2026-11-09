@@ -158,6 +158,11 @@
       "id": "candidate-worker-versions-not-promoted",
       "status": "verified-protected-candidate",
       "detail": "Primary Worker v270 alias feat-lingo-master-registry-wave0-2026-11-08 and root Worker v2 alias lingo-root-asklingo-preview are uploaded but not active. Root v2 is explicitly annotated Preview only. Keep active v137/v1 serving until candidate source, assets, bindings, route smoke and rollback are independently accepted."
+    },
+    {
+      "id": "apex-worker-origin-fallback-source-review",
+      "status": "main-worker-source-uses-assets-binding-no-generic-origin-fetch",
+      "detail": "Read-only review of main worker.js at main commit f3916fe6658845d08c3727da1caecdf4b24387ca confirms non-API requests on thelingolegacyv-5 path are served through env.ASSETS.fetch(request); no generic origin fetch fallback is present in that source. The apex exact-root route is assigned to a separate lingo-flagship-root Worker and its source was not verified in this check. The proxied apex A record remains TEST-NET-1 192.0.2.0. Do not change it or assume it is harmless: verify exact-root Worker behavior, route coverage, error/fallback behavior, and a real origin decision before any DNS change."
     }
   ],
   "totals": {
@@ -308,6 +313,14 @@
         "source": "api",
         "bindings": []
       }
+    }
+  },
+  "sourceReview": {
+    "mainWorkerSource": {
+      "path": "worker.js",
+      "commit": "f3916fe6658845d08c3727da1caecdf4b24387ca",
+      "observedBehavior": "ASSETS binding serves non-API paths; no generic origin fetch in inspected source",
+      "scope": "main Worker only; exact-root Worker not source-verified"
     }
   }
 }
