@@ -9,12 +9,14 @@ on:
       - "docs/manual-advancement-charter.md"
   push:
     branches:
+      - "main"
       - "manual-control/**"
     paths:
       - "ops/manual-control/**"
       - ".github/workflows/manual-advancement.yml"
       - ".github/workflows/manual-advancement-validation.yml"
       - "docs/manual-advancement-charter.md"
+  workflow_dispatch:
 
 permissions:
   contents: read
