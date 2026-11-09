@@ -188,3 +188,10 @@ The apex homepage `https://thelingolegacy.com/` was retrieved on 2026-11-09. It 
 
 The canonical master-control matrix contains 25 website routes and 7 AppDeploy app identifiers. These have been copied into the machine-readable platform matrix with their original source status retained and certification explicitly set to unverified. The AppDeploy source matrix lists the seven apps as deployed but unverified; this task did not re-check those live app records because the connected AppDeploy account selection is ambiguous. Do not treat those source labels as current operational proof.
 
+
+## Flutter platform-runner completeness
+
+The inspected Android folder contains an app-level Gradle file and manifest, but the root `android/settings.gradle`, `android/build.gradle`, `android/gradle.properties`, and manifest-referenced `MainActivity.kt` were not found. The Flutter web runner files `web/index.html` and `web/manifest.json` were not found. The inspected iOS, macOS, Windows and Linux runner entry files were also absent. Therefore, the presence of `pubspec.yaml` and `lib/main.dart` does not make the Flutter client buildable on those targets.
+
+The current Flutter home screen is an ecosystem navigation preview. Its account action explicitly reports that account and signup services are not connected in the preview. It should not be described as an operational identity, wallet, or game client. A valid Android build requires completing the entire Android runner structure and resolving the actual Firebase configuration first.
+
