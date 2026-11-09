@@ -19,8 +19,8 @@ This runbook operates the G02/Fallgate-independent manual advancement workflow i
 
 - `assess` (NOT_ASSESSED → PLANNED)
 - `advance`
-- `advance`
 - `hold`
+- `block`
 - `resume`
 - `request-review`
 - `approve` (repository owner only)
