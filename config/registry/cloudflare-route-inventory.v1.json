@@ -153,6 +153,11 @@
       "id": "wrangler-live-route-drift",
       "status": "verified-drift-requires-review",
       "detail": "wrangler.jsonc declares 2 routes, while the live zone assigns 18 routes to thelingolegacyv-5. 16 live primary Worker routes are not represented in wrangler.jsonc. A Wrangler deploy or route reconciliation must not be run until ownership and intended preservation of these additional subdomain routes are established."
+    },
+    {
+      "id": "candidate-worker-versions-not-promoted",
+      "status": "verified-protected-candidate",
+      "detail": "Primary Worker v270 alias feat-lingo-master-registry-wave0-2026-11-08 and root Worker v2 alias lingo-root-asklingo-preview are uploaded but not active. Root v2 is explicitly annotated Preview only. Keep active v137/v1 serving until candidate source, assets, bindings, route smoke and rollback are independently accepted."
     }
   ],
   "totals": {
@@ -239,5 +244,70 @@
     ],
     "configuredRoutesNotObservedOnPrimaryWorker": [],
     "status": "drift-requires-review"
+  },
+  "versionEvidence": {
+    "thelingolegacyv-5": {
+      "active": {
+        "version": 137,
+        "versionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "createdOn": "2026-10-25T14:04:26.30168Z",
+        "source": "wrangler",
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "alias": "security-lingo-shield-agent-access-control"
+      },
+      "latestUploaded": {
+        "version": 270,
+        "versionId": "d17ceee2-d8ab-4c30-8b8a-b8f87bd5f398",
+        "createdOn": "2026-11-08T23:43:25.726089Z",
+        "source": "wrangler",
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "alias": "feat-lingo-master-registry-wave0-2026-11-08"
+      },
+      "disposition": "latest upload is not active; preserve active v137 until candidate source and route smoke tests are accepted"
+    },
+    "lingo-flagship-root": {
+      "active": {
+        "version": 1,
+        "versionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "createdOn": "2026-10-25T16:38:23.673538Z",
+        "source": "api",
+        "bindings": [],
+        "alias": "lingo-flagship-root-2026-10-25"
+      },
+      "latestUploaded": {
+        "version": 2,
+        "versionId": "1009da37-9128-44c2-9853-f277eb791c31",
+        "createdOn": "2026-10-30T10:04:45.91884Z",
+        "source": "api",
+        "bindings": [],
+        "alias": "lingo-root-asklingo-preview",
+        "message": "Preview only: crimson flagship theme, dedicated studio links, universal askLINGO and root PWA."
+      },
+      "disposition": "latest upload is preview-only and not active; preserve active v1 until candidate acceptance"
+    },
+    "lingo-static-backup-proxy": {
+      "active": {
+        "version": 2,
+        "versionId": "a60ca6d2-fc20-4bf8-8e42-cb4a4b3b9708",
+        "source": "api",
+        "bindings": []
+      }
+    },
+    "lingo-ecosystem-atlas": {
+      "active": {
+        "version": 2,
+        "versionId": "367586a9-f3c9-4fa4-838e-38c3014575d2",
+        "source": "api",
+        "bindings": []
+      }
+    }
   }
 }
