@@ -142,9 +142,9 @@ async function refresh() {
  const gates=runtime.gates || {}; const gatesPass=Object.values(gates).length>0 && Object.values(gates).every(x=>String(x)==='PASS');
  const ciPass=github.latest && github.latest.conclusion==='success';
  const allRoutes=runtime.routeResults && runtime.routeResults.every(x=>x.ok);
- const sampledPass=gatesPass && ciPass && allRoutes && runtime.h && runtime.rok && runtime.sok;
- $('overall-label').textContent=sampledPass?'Sampled probes passed — release still needs independent certification':'Live checks returned; release remains locked / not certified';
- setDot('overall-dot',sampledPass?'info':'warn');
+ const sampledPass=false; // Public probes and workflow summaries are not independent release certification.
+ $('overall-label').textContent='Live checks returned; release remains locked / not certified';
+ setDot('overall-dot','warn');
  $('refresh').disabled=false; $('refresh').textContent='↻ Refresh all checks';
 }
 $('refresh').addEventListener('click',refresh);
