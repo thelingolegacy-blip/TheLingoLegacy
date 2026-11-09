@@ -1,11 +1,11 @@
 {
   "schemaVersion": "1.0.0",
   "inventoryId": "cloudflare-thelingolegacy-com-routes",
-  "observedAt": "2026-11-08",
+  "observedAt": "2026-11-08T23:00:00Z",
   "zone": "thelingolegacy.com",
   "zoneId": "91c3f6315fb3ca132b22744721103f88",
   "accountId": "16cb6f247cd1b28fca864760c7269606",
-  "source": "Cloudflare API read-only inventory",
+  "source": "Cloudflare API read-only inventory; live route, DNS, Worker script and deployment queries",
   "routes": [
     {
       "id": "e478916a164849768adecb4634c4f24d",
@@ -133,10 +133,52 @@
       "id": "no-route-mutation",
       "status": "preserved",
       "detail": "No route or DNS records were changed during this inventory"
+    },
+    {
+      "id": "apex-test-net-origin",
+      "status": "critical-origin-fallback-blocker",
+      "detail": "Live DNS API returned proxied apex A record thelingolegacy.com -> 192.0.2.0. 192.0.2.0 belongs to TEST-NET-1 documentation address space, not a routable production origin. Worker routes may serve matching traffic, but any origin fallback path requires an independently validated real origin before this record can be replaced."
+    },
+    {
+      "id": "active-worker-deployments",
+      "status": "verified",
+      "detail": "Cloudflare List Worker Deployments contract states first deployment is latest actively serving traffic. Active deployment and 100% version split IDs captured for the four routed Workers in this inventory."
     }
   ],
   "totals": {
     "routes": 21,
-    "workersWithRoutes": 4
+    "workersWithRoutes": 4,
+    "dnsRecordsObserved": 33,
+    "workerScriptsObserved": 11
+  },
+  "activeDeployments": {
+    "thelingolegacyv-5": {
+      "deploymentId": "ecd71a70-e476-4318-92a7-35249ced360b",
+      "versionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T16:21:58.131638Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-flagship-root": {
+      "deploymentId": "31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3",
+      "versionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T16:38:23.673538Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-static-backup-proxy": {
+      "deploymentId": "738c80e8-f535-4712-9339-e8b495152c89",
+      "versionId": "a60ca6d2-fc20-4bf8-8e42-cb4a4b3b9708",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T07:27:06.441272Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-ecosystem-atlas": {
+      "deploymentId": "6dfd9de7-c594-4cce-8b24-4cb6c2868bc7",
+      "versionId": "367586a9-f3c9-4fa4-838e-38c3014575d2",
+      "trafficPercent": 100,
+      "createdOn": "2026-11-02T19:00:22.900269Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    }
   }
 }
