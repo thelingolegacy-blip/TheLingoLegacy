@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
+// This app is a preview-safe navigation shell. Firebase packages remain
+// available for the later authenticated integration, but startup must not
+// initialize Firebase with placeholder project credentials.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const LingoLegacyApp());
 }
 
@@ -61,7 +61,7 @@ class _UniverseHomeState extends State<UniverseHome> {
     return Scaffold(
       appBar: AppBar(
         title: const Row(children: [Icon(Icons.public, color: cyan), SizedBox(width: 10), Flexible(child: Text('THE LINGO LEGACY', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5)))]),
-        actions: [IconButton(tooltip: 'About this preview', onPressed: () => _notice('Universe Hub mobile preview'), icon: const Icon(Icons.info_outline))],
+        actions: [IconButton(tooltip: 'About this preview', onPressed: () => _notice('Universe Hub mobile preview. Backend, account and payment services are not connected.'), icon: const Icon(Icons.info_outline))],
       ),
       body: SafeArea(child: Center(child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1100),
@@ -126,7 +126,7 @@ class _UniverseHomeState extends State<UniverseHome> {
                 );
               }, childCount: destinations.length),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWide ? 4 : (MediaQuery.sizeOf(context).width < 390 ? 2 : 2),
+                crossAxisCount: isWide ? 4 : 2,
                 mainAxisSpacing: 12, crossAxisSpacing: 12, mainAxisExtent: 205,
               ),
             ),
