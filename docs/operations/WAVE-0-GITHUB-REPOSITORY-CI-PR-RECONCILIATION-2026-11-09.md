@@ -80,14 +80,15 @@ Classification is provisional and based on repository names, the connected searc
 PR #511 in `TheLingoLegacy` is the current Wave 0 implementation vehicle:
 - Base: `main`
 - Head: `feat/lingo-master-registry-wave0-2026-11-08`
-- Head SHA observed after the 2026-11-09 AppDeploy and catalog reconciliation refresh: `a3181ae7cae3dd24506c2964e5ba28799493db62`
-- 38 commits ahead; 1 commit behind `main` at the latest comparison
-- 19 changed files; 3,953 additions; 0 deletions
+- Head SHA observed after the 2026-11-09 catalog crosswalk update: `f258599369dc0ec9d403bb041670971896243873`
+- 40 commits ahead; 1 commit behind `main` at the latest comparison
+- 20 changed files; 4,044 additions; 0 deletions
 - Open, draft, unmerged
 
 The branch contains:
 - `config/registry/lingo-master-registry.v1.json`
 - `config/registry/lingo-dependency-graph.v1.json`
+- `docs/operations/WAVE0-CANONICAL-CATALOG-CROSSWALK-2026-11-09.md` (45-property comparison; 6 proposed aliases; 5 platform capabilities; 10 catalog-only properties)
 - `config/registry/cloudflare-route-inventory.v1.json`
 - Identity/wallet and integration network contracts
 - Cloudflare reconciliation and G02 evidence intake
