@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "product": "The Lingo Legacy",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "source_of_truth": "GitHub main",
+  "advancement_mode": "manual_g02_independent",
+  "production_activation": "protected_until_live_verification_and_explicit_authorization",
+  "platforms": [
+    {"id":"web","surfaces":["public_hq","worlds","community","commerce_catalog","studio_os","admin_command_center","trust_compliance","game_previews","kottons_code"],"operating_systems":["Windows","macOS","Linux","ChromeOS","iOS_iPadOS","Android"],"runtime":"Cloudflare Worker static assets and browser runtime","source_evidence":["worker.js","wrangler.jsonc","assets/"],"status":"source_present_deployment_not_certified","installation":"Browser access; no native install required","blockers":["production route and live probes must be independently verified"]},
+    {"id":"android","surfaces":["lingo_universe_hub","account_preview","worlds","games","library","apparel","media","creator_studio"],"operating_systems":["Android"],"runtime":"Flutter","source_evidence":["pubspec.yaml","lib/main.dart","android/app/build.gradle"],"status":"flutter_source_present_firebase_credentials_placeholder","installation":"Flutter SDK, Android SDK, emulator or device, FlutterFire configuration, debug build and device QA","blockers":["Firebase API/app identifiers are placeholders","Android release signing is not configured or verified","no successful device build evidence recorded"]},
+    {"id":"ios","surfaces":["lingo_universe_hub","account_preview","worlds","games","library","apparel","media","creator_studio"],"operating_systems":["iOS","iPadOS"],"runtime":"Flutter","source_evidence":["pubspec.yaml","lib/main.dart","lib/firebase_options.dart"],"status":"incomplete_platform_runner","installation":"macOS host with Xcode, iOS simulator/device, CocoaPods, FlutterFire configuration, signing and device QA","blockers":["ios/Runner project was not found in the inspected main tree","Firebase app identifiers are placeholders","Apple signing and provisioning are not configured or verified"]},
+    {"id":"macos","surfaces":["lingo_universe_hub"],"operating_systems":["macOS"],"runtime":"Flutter desktop","source_evidence":["pubspec.yaml","lib/main.dart","lib/firebase_options.dart"],"status":"incomplete_platform_runner","installation":"macOS host with Xcode and Flutter desktop toolchain","blockers":["macos/Runner project was not found in the inspected main tree","Firebase app identifiers are placeholders"]},
+    {"id":"windows","surfaces":["lingo_universe_hub"],"operating_systems":["Windows"],"runtime":"Flutter desktop","source_evidence":["pubspec.yaml","lib/main.dart","lib/firebase_options.dart"],"status":"unsupported_firebase_platform","installation":"Windows host with Visual Studio C++ desktop workload and Flutter Windows toolchain","blockers":["windows/ runner project was not found in the inspected main tree","DefaultFirebaseOptions explicitly throws for Windows"]},
+    {"id":"linux","surfaces":["lingo_universe_hub"],"operating_systems":["Linux"],"runtime":"Flutter desktop","source_evidence":["pubspec.yaml","lib/main.dart","lib/firebase_options.dart"],"status":"unsupported_firebase_platform","installation":"Linux host with Flutter Linux desktop dependencies and toolchain","blockers":["linux/ runner project was not found in the inspected main tree","DefaultFirebaseOptions explicitly throws for Linux"]},
+    {"id":"smart_tv_web","surfaces":["public_hq","worlds","studio_os","game_previews","media"],"operating_systems":["Android TV browser","Google TV browser","Apple TV browser where supported","Samsung Tizen browser where supported","LG webOS browser where supported"],"runtime":"Responsive web experience","source_evidence":["index.html","studio-os/index.html","assets/"],"status":"responsive_web_only_not_tv_certified","installation":"Open public web surface in supported TV browser; remote-control navigation and 10-foot UI QA required","blockers":["no native TV application packages or TV-device QA evidence recorded"]},
+    {"id":"unity_games","surfaces":["LINGOslots","LINGOarcade","LINGOlibrary_interactive_games"],"operating_systems":["Windows","macOS","Linux","Android","iOS"],"runtime":"Unity target; project-specific engine choice required","source_evidence":["studio-sites/games/"],"status":"design_target_no_unity_project_certified","installation":"Unity project, licensed assets, platform build modules, input/accessibility QA and store signing required","blockers":["no canonical Unity project/build artifacts were verified in this repository snapshot"]}
+  ],
+  "shared_services": [
+    {"id":"github","role":"source control, pull requests, manual advancement and evidence","status":"active_source"},
+    {"id":"cloudflare","role":"canonical edge, Worker and web asset delivery","status":"source_configured_live_certification_pending"},
+    {"id":"firebase","role":"optional app identity and data services","status":"contract_only_credentials_and_live_rules_unverified"},
+    {"id":"observability","role":"logs, errors, uptime, crash and performance signals","status":"partial_contract_no_end_to_end_certification"},
+    {"id":"commerce","role":"catalog and approved checkout integrations","status":"separate_provider_and_product_gates"}
+  ],
+  "global_rules": [
+    "G02/Fallgate is not a prerequisite for project assessment, source changes, local builds, or manual advancement.",
+    "Manual advancement does not bypass security, privacy, licensing, platform signing, live verification, or explicit production authorization.",
+    "Never commit API keys, service-account files, signing keys, provisioning profiles, or other secrets.",
+    "A source file or configuration placeholder is not an installed, built, deployed, or certified runtime.",
+    "Mark each platform operational only after a real build, install, smoke test, and evidence record on that target."
+  ]
+}
