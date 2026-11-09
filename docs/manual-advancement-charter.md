@@ -63,7 +63,7 @@ The initial catalog is `ops/manual-control/projects.json`. All nine top-level di
 
 ## 4. Manual control workflow
 
-Run **Actions → LINGO Manual Advancement → Run workflow** and supply:
+Run **Actions → LINGO Manual Advancement → Run workflow** or execute the local `ops/manual-control/record-transition.sh` operator script with GitHub CLI authentication. The local path does not require GitHub Actions, a hosted runner, G02, or Fallgate. Both paths validate the same registry and transition rules, then create a GitHub issue record. Supply:
 
 - Project key (for example, `LINGOlegacy`, `LINGOslots`, or a repository workstream key).
 - Command.
