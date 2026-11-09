@@ -33,10 +33,11 @@
         "wrangler.jsonc",
         "assets/"
       ],
-      "status": "source_present_deployment_not_certified",
+      "status": "cloudflare_zone_and_routes_verified_worker_runtime_not_live_probed",
       "installation": "Browser access; no native install required",
       "blockers": [
-        "production route and live probes must be independently verified"
+        "production route and live probes must be independently verified",
+        "The active wildcard production routes target thelingolegacyv-5; a separate exact-root route targets lingo-flagship-root; route precedence and browser behavior require non-mutating live probes."
       ]
     },
     {
@@ -223,7 +224,7 @@
     {
       "id": "cloudflare",
       "role": "canonical edge, Worker and web asset delivery",
-      "status": "source_configured_live_certification_pending"
+      "status": "active_zone_routes_verified_worker_deployment_snapshot_verified_runtime_probe_pending"
     },
     {
       "id": "firebase",
@@ -728,5 +729,81 @@
       "status": "catalogued_target_not_certified",
       "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
     }
-  ]
+  ],
+  "observed_infrastructure": {
+    "observed_at_utc": "2026-11-09",
+    "source": "Connected Cloudflare API read-only inventory",
+    "account_scope": "The Lingo Legacy Cloudflare account",
+    "read_only": true,
+    "zone": {
+      "name": "thelingolegacy.com",
+      "status": "active",
+      "paused": false,
+      "zone_id": "91c3f6315fb3ca132b22744721103f88"
+    },
+    "production_routing": {
+      "apex_wildcard": {
+        "pattern": "thelingolegacy.com/*",
+        "worker": "thelingolegacyv-5"
+      },
+      "www_wildcard": {
+        "pattern": "www.thelingolegacy.com/*",
+        "worker": "thelingolegacyv-5"
+      },
+      "exact_root": {
+        "pattern": "thelingolegacy.com/",
+        "worker": "lingo-flagship-root"
+      },
+      "additional_routes_count": 18,
+      "note": "Exact-root and wildcard route coexist; do not alter without evaluating route matching and live probes."
+    },
+    "worker_versions": {
+      "thelingolegacyv-5": {
+        "latest_uploaded_version": 286,
+        "latest_uploaded_version_id": "cc76832e-b87d-4e42-9752-da78009d6838",
+        "latest_uploaded_at": "2026-11-09T06:34:03Z",
+        "latest_uploaded_alias": "platform-surface-os-installation-2026-11-09",
+        "currently_deployed_version": 137,
+        "currently_deployed_version_id": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "currently_deployed_at": "2026-10-25T16:21:58Z",
+        "deployment_percentage": 100
+      },
+      "lingo-flagship-root": {
+        "latest_uploaded_version": 2,
+        "latest_uploaded_version_id": "1009da37-9128-44c2-9853-f277eb791c31",
+        "currently_deployed_version": 1,
+        "currently_deployed_version_id": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "currently_deployed_at": "2026-10-25T16:38:23Z",
+        "deployment_percentage": 100
+      }
+    },
+    "other_worker_scripts": [
+      "lingo-ecosystem-atlas",
+      "lingo-game-engine-staging",
+      "lingo-legacy-studio-build",
+      "lingo-release-candidate-validation-20261104",
+      "lingo-resilience-gateway",
+      "lingo-static-backup-proxy",
+      "lingo-studio-control-center-staging",
+      "lingo-world-engine-staging",
+      "thelingolegacy-web-recovery-preview"
+    ],
+    "enabled_custom_domains": [
+      {
+        "hostname": "studio-preview.thelingolegacy.com",
+        "worker": "lingo-studio-control-center-staging"
+      },
+      {
+        "hostname": "resilience.thelingolegacy.com",
+        "worker": "lingo-resilience-gateway"
+      }
+    ],
+    "observations": [
+      "The latest uploaded main Worker version is a preview upload and is not the currently deployed version.",
+      "Production deployment still points to version 137 at 100 percent.",
+      "Cloudflare Worker inventory and route configuration were read only; no routes, versions, secrets or deployments were changed.",
+      "Worker observability is enabled for thelingolegacyv-5 with 10 percent head sampling and query-string redaction; traces are disabled.",
+      "The separate lingo-flagship-root Worker has no observability settings in its current settings response."
+    ]
+  }
 }
