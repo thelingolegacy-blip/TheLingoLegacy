@@ -186,3 +186,27 @@ Prior read-only policy inspection identified legacy applications sharing a bypas
 - No native device build, penetration test, privacy specialist review, legal review, rollback exercise or production acceptance was performed by this inventory.
 
 **Disposition:** IN PROGRESS — portfolio and edge inventory substantially reconciled; product owner/source-path mapping and backend/runtime acceptance remain BLOCKED. Production remains PROTECTED HOLD.
+
+
+## Access-policy and preview-version refresh — 2026-11-09 21:56 UTC
+
+### Access policies — exact read-only policy inspection
+
+- Three explicitly named public surfaces use `bypass` for `everyone`: the public resilience fallback, the public apex/www route app, and the exact-root public app. These are intentional public surfaces only if their content remains non-sensitive and the app-to-domain mapping is verified.
+- Eight legacy/preview Worker Access apps also contain a reusable `bypass everyone` policy: That’s My Lingo, sparkling-rain, thelingolegacyv5, thelingolegacy, legacyweb1, nextjs-lingolegacy, thelingolegacy-v2 and thelingolegacy-v3. Treat these as publicly reachable preview surfaces until proven otherwise; they are not acceptable for admin/studio/private preview content.
+- Four of those legacy policies use an `email_domain` matcher whose configured value is a full email address rather than a domain. The exact value is intentionally not reproduced here. This is malformed/redundant policy configuration and must be corrected after identifying the intended operator identity and preview ownership.
+- The `All Workers` application has allow-only policies for Cloudflare account members and a specified operator email. Other legacy apps have account-member allow policies, but an `everyone` bypass in the same app overrides the intended protection.
+- The app details expose Worker destination IDs but did not return a domain field. Route-to-Access-app-to-Worker destination mapping is therefore not yet fully resolved.
+
+**No Access policies were modified.** First identify the preview/admin surface for each Worker destination and confirm which previews must remain public. Then stage a least-privilege policy correction and verify no public production hostname is unintentionally gated.
+
+### Cloudflare preview uploads triggered by GitHub branch updates
+
+Read-only Worker version inventory now shows the GitHub branches produced automatic **preview-only** Worker version uploads on `thelingolegacyv-5`:
+- Version 290 — Firebase Hosting remediation branch; uploaded 2026-11-09 21:39 UTC; `has_preview=true`.
+- Version 291 — portfolio reconciliation branch; uploaded 2026-11-09 21:52 UTC; `has_preview=true`.
+- Version 292 — Flutter preview/bootstrap branch; uploaded 2026-11-09 21:55 UTC; `has_preview=true`.
+
+These uploads are preview artifacts, not production deployments. The latest deployment record remains 100% on the existing production version 137 (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`); no deployment record assigns versions 290–292 traffic. The branch-to-preview upload integration is operating separately from the GitHub Actions workflow jobs that still fail before job creation.
+
+**Operational correction:** GitHub branch pushes can cause Cloudflare preview-version uploads as a side effect. Future source branches should be treated as potentially creating preview artifacts. This audit did not promote a preview version or change production routes.
