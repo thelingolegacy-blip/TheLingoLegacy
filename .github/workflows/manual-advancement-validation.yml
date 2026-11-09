@@ -28,5 +28,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Validate shell syntax and project registry JSON
+        run: |
+          bash -n ops/manual-control/validate-transition.sh
+          bash -n ops/manual-control/test-validator.sh
+          bash -n ops/manual-control/record-transition.sh
+          python3 -m json.tool ops/manual-control/projects.json > /dev/null
       - name: Run transition validator tests
         run: bash ops/manual-control/test-validator.sh
