@@ -29,9 +29,9 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 
    This is the correct first check for the repository's Docker Compose / ephemeral runner package. It records Docker daemon and container state, redacted container logs, and unauthenticated DNS/HTTPS probes, then writes a SHA-256 sidecar. Use `ops/g02/diagnose-runner.sh` only if a separate bare-metal runner installation with a real systemd unit is present.
 
-4. Inspect runner service state and recent `_diag` logs. Redact tokens and credential material. Do not paste runner credential files, registration tokens, PATs, or environment dumps.
-5. If no matching runner exists, register it using the current official GitHub runner instructions and a short-lived repository-scoped registration token obtained by an authorized repository administrator. Do not store the token in this repository or this Worker. Do not place a token in chat.
-6. Install and start the runner service on the host. Confirm it is Online and actively polling; a UI badge alone is not sufficient.
+4. Review the Compose container state and redacted log tail produced by the diagnostic. If the package has not yet been started, an empty container list is expected; do not treat that alone as proof of a broken runner. Redact tokens and credential material. Never paste runner credential files, registration tokens, PATs, or environment dumps.
+5. If no matching runner exists and the host passes preflight, run the reviewed `ops/github-runner/bootstrap.sh` from `ops/github-runner`. It requests a short-lived repository registration token, starts the ephemeral container, and removes its local `.env` on exit. Do not store the token in this repository or place it in chat.
+6. Confirm the runner is Online in repository Settings → Actions → Runners with the exact labels and repository scope. The container is expected to exit/unregister after its one job; do not confuse that expected ephemeral lifecycle with a persistent systemd service.
 
 ## Acceptance gate
 
