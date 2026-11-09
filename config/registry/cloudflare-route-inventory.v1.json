@@ -116,8 +116,8 @@
   "findings": [
     {
       "id": "apex-overlap",
-      "status": "needs-validation",
-      "detail": "thelingolegacy.com/* and thelingolegacy.com/ are assigned to different Workers; confirm Cloudflare route precedence and intended root behavior before any change"
+      "status": "specificity-documented-smoke-test-required",
+      "detail": "Cloudflare route matching documentation states the most specific matching route wins. The exact thelingolegacy.com/ route is more specific than thelingolegacy.com/* for the apex root request, so the root Worker should win for /. Verify with live HTTP smoke tests for /, /index.html, and nested paths before relying on the behavior."
     },
     {
       "id": "www-route",
@@ -126,8 +126,8 @@
     },
     {
       "id": "wildcard-worker-version",
-      "status": "unverified",
-      "detail": "Latest uploaded version 269 observed for thelingolegacyv-5; active deployed version is not yet independently established"
+      "status": "verified-active-deployment-version-drift",
+      "detail": "Live deployment API identifies active version 2d161fa5-598f-4998-ada8-7ac4c72c3461 for thelingolegacyv-5 (100% traffic); registry version-detail evidence resolves this to v137 while latest uploaded version is v270. Root Worker active version is v1 while latest uploaded is v2. Keep active versions protected pending source/build provenance and smoke validation."
     },
     {
       "id": "no-route-mutation",
@@ -136,13 +136,18 @@
     },
     {
       "id": "apex-test-net-origin",
-      "status": "critical-origin-fallback-blocker",
-      "detail": "Live DNS API returned proxied apex A record thelingolegacy.com -> 192.0.2.0. 192.0.2.0 belongs to TEST-NET-1 documentation address space, not a routable production origin. Worker routes may serve matching traffic, but any origin fallback path requires an independently validated real origin before this record can be replaced."
+      "status": "verified-critical-origin-fallback-blocker",
+      "detail": "Live DNS API returned proxied apex A record thelingolegacy.com -> 192.0.2.0. RFC 5737 reserves 192.0.2.0/24 as TEST-NET-1 documentation space and says it should not appear on the public Internet. Worker routes may serve matched requests, but any origin fallback requires an independently verified real origin before this record is changed."
     },
     {
       "id": "active-worker-deployments",
       "status": "verified",
       "detail": "Cloudflare List Worker Deployments contract states first deployment is latest actively serving traffic. Active deployment and 100% version split IDs captured for the four routed Workers in this inventory."
+    },
+    {
+      "id": "dns-record-inventory",
+      "status": "verified",
+      "detail": "Live Cloudflare DNS list returned 33 records for the zone; no DNS writes performed."
     }
   ],
   "totals": {
