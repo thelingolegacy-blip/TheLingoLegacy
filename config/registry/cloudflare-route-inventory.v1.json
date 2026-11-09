@@ -148,6 +148,11 @@
       "id": "dns-record-inventory",
       "status": "verified",
       "detail": "Live Cloudflare DNS list returned 33 records for the zone; no DNS writes performed."
+    },
+    {
+      "id": "wrangler-live-route-drift",
+      "status": "verified-drift-requires-review",
+      "detail": "wrangler.jsonc declares 2 routes, while the live zone assigns 18 routes to thelingolegacyv-5. 16 live primary Worker routes are not represented in wrangler.jsonc. A Wrangler deploy or route reconciliation must not be run until ownership and intended preservation of these additional subdomain routes are established."
     }
   ],
   "totals": {
@@ -185,5 +190,54 @@
       "createdOn": "2026-11-02T19:00:22.900269Z",
       "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
     }
+  },
+  "wranglerReconciliation": {
+    "configPath": "wrangler.jsonc",
+    "configuredRouteCount": 2,
+    "configuredRoutes": [
+      "thelingolegacy.com/*",
+      "www.thelingolegacy.com/*"
+    ],
+    "livePrimaryWorkerRouteCount": 18,
+    "livePrimaryWorkerRoutes": [
+      "thelingolegacy.com/*",
+      "theriseofzavione.thelingolegacy.com/*",
+      "thats-my-lingo.thelingolegacy.com/*",
+      "sparkling-rain.thelingolegacy.com/*",
+      "therealzavione.thelingolegacy.com/*",
+      "lingo.thelingolegacy.com/*",
+      "cyber.thelingolegacy.com/*",
+      "solar.thelingolegacy.com/*",
+      "drip.thelingolegacy.com/*",
+      "site.thelingolegacy.com/*",
+      "luxe.thelingolegacy.com/*",
+      "web.thelingolegacy.com/*",
+      "hub.thelingolegacy.com/*",
+      "www.thelingolegacy.com/*",
+      "v4.thelingolegacy.com/*",
+      "v3.thelingolegacy.com/*",
+      "ai.thelingolegacy.com/*",
+      "blog.thelingolegacy.com/*"
+    ],
+    "liveRoutesNotDeclaredInWrangler": [
+      "theriseofzavione.thelingolegacy.com/*",
+      "thats-my-lingo.thelingolegacy.com/*",
+      "sparkling-rain.thelingolegacy.com/*",
+      "therealzavione.thelingolegacy.com/*",
+      "lingo.thelingolegacy.com/*",
+      "cyber.thelingolegacy.com/*",
+      "solar.thelingolegacy.com/*",
+      "drip.thelingolegacy.com/*",
+      "site.thelingolegacy.com/*",
+      "luxe.thelingolegacy.com/*",
+      "web.thelingolegacy.com/*",
+      "hub.thelingolegacy.com/*",
+      "v4.thelingolegacy.com/*",
+      "v3.thelingolegacy.com/*",
+      "ai.thelingolegacy.com/*",
+      "blog.thelingolegacy.com/*"
+    ],
+    "configuredRoutesNotObservedOnPrimaryWorker": [],
+    "status": "drift-requires-review"
   }
 }
