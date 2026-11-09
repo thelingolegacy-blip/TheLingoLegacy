@@ -58,7 +58,7 @@ const setTag = (text, kind='') => '<span class="tag '+kind+'">'+text+'</span>';
 const timeText = (v) => { try { return new Date(v).toLocaleString(); } catch { return String(v || '—'); } };
 async function get(url, timeout=10000) {
  const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeout);
- try { const r = await fetch(url, {cache:'no-store', headers:{'Accept':'application/json'}, signal:controller.signal}); const body = await r.text(); let data=body; try { data=JSON.parse(body); } catch {} return {ok:r.ok,status:r.status,data,headers:r.headers}; }
+ try { const r = await fetch(url, {cache:'no-store', headers:{'Accept':'application/json'}, signal:controller.signal}); const body = await r.text(); let data=body; try { data=JSON.parse(body); } catch {} return {ok:r.ok,status:r.status,data,headers:r.headers}; } catch(error) { return {ok:false,status:0,data:null,error:String(error)}; }
  finally { clearTimeout(timer); }
 }
 async function probe(path) { const r=await get(path,8000); return {ok:r.ok,status:r.status,data:r.data}; }
@@ -142,9 +142,9 @@ async function refresh() {
  const gates=runtime.gates || {}; const gatesPass=Object.values(gates).length>0 && Object.values(gates).every(x=>String(x)==='PASS');
  const ciPass=github.latest && github.latest.conclusion==='success';
  const allRoutes=runtime.routeResults && runtime.routeResults.every(x=>x.ok);
- const certified=gatesPass && ciPass && allRoutes && runtime.h && runtime.rok && runtime.sok;
- $('overall-label').textContent=certified?'All sampled gates passed — release still needs independent certification':'Live checks returned; release remains locked / not certified';
- setDot('overall-dot',certified?'ok':'warn');
+ const sampledPass=gatesPass && ciPass && allRoutes && runtime.h && runtime.rok && runtime.sok;
+ $('overall-label').textContent=sampledPass?'Sampled probes passed — release still needs independent certification':'Live checks returned; release remains locked / not certified';
+ setDot('overall-dot',sampledPass?'info':'warn');
  $('refresh').disabled=false; $('refresh').textContent='↻ Refresh all checks';
 }
 $('refresh').addEventListener('click',refresh);
