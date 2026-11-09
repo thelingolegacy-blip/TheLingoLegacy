@@ -14,6 +14,7 @@ on:
         options:
           - advance
           - hold
+          - block
           - resume
           - request-review
           - approve
