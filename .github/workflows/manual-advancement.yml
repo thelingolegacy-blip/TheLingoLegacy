@@ -1,0 +1,170 @@
+name: LINGO Manual Advancement
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_key:
+        description: "Project/workstream key (2-64 safe characters)"
+        required: true
+        type: string
+      command:
+        description: "Manual control command"
+        required: true
+        type: choice
+        options:
+          - advance
+          - hold
+          - resume
+          - request-review
+          - approve
+          - request-release
+          - record-release
+          - reject
+          - rollback
+      from_stage:
+        description: "Current recorded stage"
+        required: true
+        type: choice
+        options:
+          - PLANNED
+          - READY
+          - IN_PROGRESS
+          - REPAIR
+          - VERIFICATION
+          - REVIEW
+          - APPROVED
+          - COMPLETED
+          - RELEASE_READY
+          - RELEASED
+          - BLOCKED
+          - PAUSED
+      to_stage:
+        description: "Requested target stage"
+        required: true
+        type: choice
+        options:
+          - PLANNED
+          - READY
+          - IN_PROGRESS
+          - REPAIR
+          - VERIFICATION
+          - REVIEW
+          - APPROVED
+          - COMPLETED
+          - RELEASE_READY
+          - RELEASED
+          - BLOCKED
+          - PAUSED
+          - REJECTED
+          - ROLLBACK
+      evidence_url:
+        description: "HTTPS URL supporting this transition"
+        required: true
+        type: string
+      deployment_evidence_url:
+        description: "Required for record-release: deployed/live verification evidence URL"
+        required: false
+        type: string
+      rationale:
+        description: "Why this transition is requested"
+        required: true
+        type: string
+      confirmation:
+        description: "For privileged actions, enter the exact confirmation phrase"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: lingo-manual-advancement-${{ inputs.project_key }}
+  cancel-in-progress: false
+
+jobs:
+  validate-and-record:
+    name: Validate and record manual transition
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out requested ref
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate transition
+        id: validate
+        env:
+          PROJECT_KEY: ${{ inputs.project_key }}
+          COMMAND: ${{ inputs.command }}
+          FROM_STAGE: ${{ inputs.from_stage }}
+          TO_STAGE: ${{ inputs.to_stage }}
+          EVIDENCE_URL: ${{ inputs.evidence_url }}
+          DEPLOYMENT_EVIDENCE_URL: ${{ inputs.deployment_evidence_url }}
+          RATIONALE: ${{ inputs.rationale }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        run: bash ops/manual-control/validate-transition.sh
+
+      - name: Create transition record
+        id: record
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROJECT_KEY: ${{ inputs.project_key }}
+          COMMAND: ${{ inputs.command }}
+          FROM_STAGE: ${{ inputs.from_stage }}
+          TO_STAGE: ${{ inputs.to_stage }}
+          EVIDENCE_URL: ${{ inputs.evidence_url }}
+          DEPLOYMENT_EVIDENCE_URL: ${{ inputs.deployment_evidence_url }}
+          RATIONALE: ${{ inputs.rationale }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EVENT_TIME: ${{ github.event.head_commit.timestamp }}
+        run: |
+          set -euo pipefail
+          title="Manual transition: ${PROJECT_KEY} ${FROM_STAGE} -> ${TO_STAGE}"
+          body=$(cat <<EOF
+          ## Manual advancement record
+
+          - Project: ${PROJECT_KEY}
+          - Command: ${COMMAND}
+          - Previous stage: ${FROM_STAGE}
+          - Requested stage: ${TO_STAGE}
+          - Actor: @${ACTOR}
+          - Workflow run: ${RUN_URL}
+          - Evidence: ${EVIDENCE_URL}
+          - Deployment/live evidence: ${DEPLOYMENT_EVIDENCE_URL:-Not applicable}
+          - Rationale: ${RATIONALE}
+
+          **G02/Fallgate dependency:** None.
+
+          **Execution boundary:** This record documents the validated manual transition request. It does not deploy, merge code, change runtime state, or independently certify product completion. The project owner must review this record and reconcile the accepted state in the project registry.
+
+          Created by the LINGO Manual Advancement workflow.
+          EOF
+          )
+          issue_url=$(gh issue create --repo "${GITHUB_REPOSITORY}" --title "${title}" --body "${body}")
+          echo "issue_url=${issue_url}" >> "$GITHUB_OUTPUT"
+          echo "Transition record created: ${issue_url}"
+
+      - name: Publish run summary
+        env:
+          RECORD_URL: ${{ steps.record.outputs.issue_url }}
+          PROJECT_KEY: ${{ inputs.project_key }}
+          COMMAND: ${{ inputs.command }}
+          FROM_STAGE: ${{ inputs.from_stage }}
+          TO_STAGE: ${{ inputs.to_stage }}
+        run: |
+          {
+            echo "## LINGO Manual Advancement"
+            echo ""
+            echo "- Project: ${PROJECT_KEY}"
+            echo "- Command: ${COMMAND}"
+            echo "- Transition: ${FROM_STAGE} → ${TO_STAGE}"
+            echo "- Record: ${RECORD_URL}"
+            echo "- G02/Fallgate dependency: **None**"
+            echo ""
+            echo "This run records a manually requested transition. It does not deploy or certify production."
+          } >> "$GITHUB_STEP_SUMMARY"
