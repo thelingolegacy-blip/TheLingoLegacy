@@ -10,7 +10,6 @@ Future<void> main() async {
 
 const gold = Color(0xFFE6BD58);
 const cyan = Color(0xFF54E7F2);
-const violet = Color(0xFF9871FF);
 const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
