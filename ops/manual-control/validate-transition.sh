@@ -10,7 +10,7 @@ set -euo pipefail
 fail() { echo "::error::$1" >&2; exit 1; }
 valid_stage() {
   case "$1" in
-    PLANNED|READY|IN_PROGRESS|REPAIR|VERIFICATION|REVIEW|APPROVED|COMPLETED|RELEASE_READY|RELEASED|BLOCKED|PAUSED|REJECTED|ROLLBACK) return 0 ;;
+    NOT_ASSESSED|PLANNED|READY|IN_PROGRESS|REPAIR|VERIFICATION|REVIEW|APPROVED|COMPLETED|RELEASE_READY|RELEASED|BLOCKED|PAUSED|REJECTED|ROLLBACK) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -20,6 +20,20 @@ valid_stage "$FROM_STAGE" || fail "Unknown FROM_STAGE: $FROM_STAGE"
 valid_stage "$TO_STAGE" || fail "Unknown TO_STAGE: $TO_STAGE"
 [[ "$EVIDENCE_URL" =~ ^https://[^[:space:]]+$ ]] || fail "EVIDENCE_URL must be an HTTPS URL."
 [[ -n "${RATIONALE:-}" ]] || fail "RATIONALE is required."
+PROJECT_REGISTRY="${PROJECT_REGISTRY:-ops/manual-control/projects.json}"
+python3 - "$PROJECT_KEY" "$PROJECT_REGISTRY" <<'PY'
+import json, sys
+project_key, registry_path = sys.argv[1], sys.argv[2]
+try:
+    with open(registry_path, encoding="utf-8") as registry_file:
+        registry = json.load(registry_file)
+except Exception as error:
+    print(f"::error::Cannot read project registry: {error}", file=sys.stderr)
+    raise SystemExit(1)
+if not any(item.get("project_key") == project_key for item in registry.get("projects", [])):
+    print(f"::error::Unregistered project key: {project_key}", file=sys.stderr)
+    raise SystemExit(1)
+PY
 
 case "$COMMAND:$FROM_STAGE:$TO_STAGE" in
   advance:PLANNED:READY|advance:READY:IN_PROGRESS|advance:IN_PROGRESS:REPAIR|advance:IN_PROGRESS:VERIFICATION|advance:REPAIR:VERIFICATION|advance:VERIFICATION:REVIEW|advance:APPROVED:COMPLETED|advance:COMPLETED:RELEASE_READY) ;;
