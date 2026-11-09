@@ -15,6 +15,11 @@ A read-only account overview and per-app status pass were completed on 2026-11-0
 - Per-app status responses for all 18 apps still append an "exhausted credit balance" alert. This contradicts the account overview's positive monthly balance. The account overview and per-app alert must remain a documented conflict; do not claim the balance is exhausted or spend credits until independently reconciled.
 - Stored frontend error records are present for three apps: Universe Gateway (10), Kotton's Code (5), and Lingo Travel (2). The Gateway and Kotton's Code errors reference the shared `studio-preview.thelingolegacy.com` host and are dated 2026-11-06T03:34:38Z and 2026-11-06T03:07:30Z respectively. Lingo Travel's two script errors are older; its app status remains ready.
 
+A second independent browser-fetch attempt on 2026-11-09 could not retrieve the AppDeploy preview URLs for Kotton's Code, Universe Gateway, Lingo Travel, or Studio Hub from that browser vantage. This is an **inaccessible-from-this-browser** result, not evidence that the deployments are down.
+
+A resource-only inventory confirms Kotton's Code has four uploaded paths:
+`public/resources/KottonsCode-world-1.jpeg` through `public/resources/KottonsCode-world-4.jpeg`. The Gateway and Travel resource-only responses list no resource paths. This supports keeping the four Kotton assets intact and investigating the shared preview-host/runtime mapping rather than deleting or regenerating the source images.
+
 This refresh does not change the disposition of the six critical apps above: AppDeploy `ready` is a deployment-state label, not product acceptance, functional QA, security acceptance, or production authorization. No upload, build, retry, deployment, billing, subscription, route, DNS, or production change was made.
 
 ## Account inventory
