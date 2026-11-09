@@ -38,7 +38,9 @@
       "blockers": [
         "production route and live probes must be independently verified",
         "The active wildcard production routes target thelingolegacyv-5; a separate exact-root route targets lingo-flagship-root; route precedence and browser behavior require non-mutating live probes.",
-        "Flutter Firebase web options are placeholders; no Firebase web runtime is certified."
+        "Flutter Firebase web options are placeholders; no Firebase web runtime is certified.",
+        "The master surface catalog contains 25 routes; each route still requires a current browser response, destination resolution and responsive/accessibility test.",
+        "Flutter web runner files web/index.html and web/manifest.json were not found; the separate Cloudflare web surface is present."
       ]
     },
     {
@@ -62,13 +64,14 @@
         "lib/main.dart",
         "android/app/build.gradle"
       ],
-      "status": "flutter_source_present_firebase_credentials_placeholder",
+      "status": "flutter_app_shell_present_android_project_incomplete_not_buildable",
       "installation": "Flutter SDK, Android SDK, emulator or device, FlutterFire configuration, debug build and device QA",
       "blockers": [
         "Firebase API/app identifiers are placeholders",
         "Android release signing is not configured or verified",
         "no successful device build evidence recorded",
-        "Flutter main() initializes Firebase before rendering; placeholder Android FirebaseOptions prevent a verified initialized runtime."
+        "Flutter main() initializes Firebase before rendering; placeholder Android FirebaseOptions prevent a verified initialized runtime.",
+        "Android settings.gradle, root build.gradle, gradle.properties and the referenced MainActivity.kt were not found in the inspected tree."
       ]
     },
     {
@@ -98,7 +101,8 @@
       "blockers": [
         "ios/Runner project was not found in the inspected main tree",
         "Firebase app identifiers are placeholders",
-        "Apple signing and provisioning are not configured or verified"
+        "Apple signing and provisioning are not configured or verified",
+        "iOS Runner/Info.plist was not found in the inspected tree."
       ]
     },
     {
@@ -119,7 +123,8 @@
       "installation": "macOS host with Xcode and Flutter desktop toolchain",
       "blockers": [
         "macos/Runner project was not found in the inspected main tree",
-        "Firebase app identifiers are placeholders"
+        "Firebase app identifiers are placeholders",
+        "macOS Runner configuration was not found in the inspected tree."
       ]
     },
     {
@@ -140,7 +145,8 @@
       "installation": "Windows host with Visual Studio C++ desktop workload and Flutter Windows toolchain",
       "blockers": [
         "windows/ runner project was not found in the inspected main tree",
-        "DefaultFirebaseOptions explicitly throws for Windows"
+        "DefaultFirebaseOptions explicitly throws for Windows",
+        "Windows runner source was not found in the inspected tree."
       ]
     },
     {
@@ -161,7 +167,8 @@
       "installation": "Linux host with Flutter Linux desktop dependencies and toolchain",
       "blockers": [
         "linux/ runner project was not found in the inspected main tree",
-        "DefaultFirebaseOptions explicitly throws for Linux"
+        "DefaultFirebaseOptions explicitly throws for Linux",
+        "Linux runner source was not found in the inspected tree."
       ]
     },
     {
@@ -803,7 +810,8 @@
       "lingo-static-backup-proxy",
       "lingo-studio-control-center-staging",
       "lingo-world-engine-staging",
-      "thelingolegacy-web-recovery-preview"
+      "thelingolegacy-web-recovery-preview",
+      "lingo-flagship-site-preview"
     ],
     "enabled_custom_domains": [
       {
@@ -822,5 +830,308 @@
       "Worker observability is enabled for thelingolegacyv-5 with 10 percent head sampling and query-string redaction; traces are disabled.",
       "The separate lingo-flagship-root Worker has no observability settings in its current settings response."
     ]
-  }
+  },
+  "web_pages": [
+    {
+      "id": "home",
+      "route": "/",
+      "entity": "The Lingo Legacy",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "thats-my-lingo",
+      "route": "/thats-my-lingo/",
+      "entity": "That’s My Lingo",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "loading",
+      "route": "/loading/",
+      "entity": "Lingo Loading",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-assets",
+      "route": "/studio-assets/",
+      "entity": "Studio Assets",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "master-interface",
+      "route": "/master-interface/",
+      "entity": "Master Interface",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "lingo-legacy-master-project-plan-rkh6r6",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "landing",
+      "route": "/landing/",
+      "entity": "Legacy Landing",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "drop",
+      "route": "/drop/",
+      "entity": "Legacy Drop",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "kottons-code",
+      "route": "/kottons-code/",
+      "entity": "Kotton’s Code",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "kotton-s-code-cartoon-studio-509py3",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "tapstich",
+      "route": "/tapstich/",
+      "entity": "Tap Stitch",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "app",
+      "route": "/app/",
+      "entity": "Lingo App Surface",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "social-play",
+      "route": "/social-play/",
+      "entity": "Social Play",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "lingo-ai",
+      "route": "/lingo-ai/",
+      "entity": "Lingo AI / Sonic Boom",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "admin-command-center",
+      "route": "/admin-command-center/",
+      "entity": "Admin Command Center",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "casino",
+      "route": "/casino/",
+      "entity": "Casino",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "visual-showcase",
+      "route": "/visual-showcase/",
+      "entity": "Visual Showcase",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "visual-expansion",
+      "route": "/visual-expansion/",
+      "entity": "Visual Expansion",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "multiplayer-rap-arena",
+      "route": "/multiplayer-rap-arena/",
+      "entity": "Multiplayer Rap Arena",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "auto-racing-universe",
+      "route": "/auto-racing-universe/",
+      "entity": "Auto Racing Universe",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "live-casino-studio",
+      "route": "/live-casino-studio/",
+      "entity": "Live Casino Studio",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "integration-os",
+      "route": "/integration-os/",
+      "entity": "Integration OS",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-production",
+      "route": "/studio-production/",
+      "entity": "Studio Production",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-world-os",
+      "route": "/studio-world-os/",
+      "entity": "Studio World OS",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "universe",
+      "route": "/universe/",
+      "entity": "Lingo Universe",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "crazy-weasels-0j3ujc",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "trust-compliance",
+      "route": "/trust-compliance/",
+      "entity": "Trust & Compliance",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "economy-command-center",
+      "route": "/economy-command-center/",
+      "entity": "Economy Command Center",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    }
+  ],
+  "appdeploy_surfaces": [
+    {
+      "app_id": "hello-the-lingo-legacy-ois1rj",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "crazy-weasels-0j3ujc",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-traveltm-uyd57n",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "kotton-s-code-cartoon-studio-509py3",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-legacy-master-project-plan-rkh6r6",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    }
+  ]
 }
