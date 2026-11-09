@@ -37,7 +37,8 @@
       "installation": "Browser access; no native install required",
       "blockers": [
         "production route and live probes must be independently verified",
-        "The active wildcard production routes target thelingolegacyv-5; a separate exact-root route targets lingo-flagship-root; route precedence and browser behavior require non-mutating live probes."
+        "The active wildcard production routes target thelingolegacyv-5; a separate exact-root route targets lingo-flagship-root; route precedence and browser behavior require non-mutating live probes.",
+        "Flutter Firebase web options are placeholders; no Firebase web runtime is certified."
       ]
     },
     {
@@ -66,7 +67,8 @@
       "blockers": [
         "Firebase API/app identifiers are placeholders",
         "Android release signing is not configured or verified",
-        "no successful device build evidence recorded"
+        "no successful device build evidence recorded",
+        "Flutter main() initializes Firebase before rendering; placeholder Android FirebaseOptions prevent a verified initialized runtime."
       ]
     },
     {
@@ -229,7 +231,21 @@
     {
       "id": "firebase",
       "role": "optional app identity and data services",
-      "status": "contract_only_credentials_and_live_rules_unverified"
+      "status": "repository_contract_only_no_project_connection_or_security_rules_verified",
+      "evidence": [
+        "pubspec.yaml includes firebase_core, firebase_auth, firebase_database, firebase_storage, firebase_analytics",
+        "lib/firebase_options.dart contains YOUR_* placeholders for web/android/ios/macos",
+        "firebase.json contains Hosting config only",
+        "firestore.rules and firestore.indexes.json were not found in inspected repository snapshot",
+        "no Firebase project credentials or authenticated Firebase connector available in this session"
+      ],
+      "blockers": [
+        "actual Firebase project and app registration must be confirmed",
+        "FlutterFire options must be generated from the actual Firebase project",
+        "Firestore/Realtime Database rules and indexes need reviewed least-privilege definitions",
+        "Auth, App Check, storage rules, audit events, backup and restore must be tested",
+        "Firebase Hosting must not be confused with canonical Cloudflare production delivery"
+      ]
     },
     {
       "id": "observability",
@@ -247,7 +263,8 @@
     "Manual advancement does not bypass security, privacy, licensing, platform signing, live verification, or explicit production authorization.",
     "Never commit API keys, service-account files, signing keys, provisioning profiles, or other secrets.",
     "A source file or configuration placeholder is not an installed, built, deployed, or certified runtime.",
-    "Mark each platform operational only after a real build, install, smoke test, and evidence record on that target."
+    "Mark each platform operational only after a real build, install, smoke test, and evidence record on that target.",
+    "Firebase Hosting configuration is not proof that Firebase Hosting is the canonical public delivery path; Cloudflare remains the current production edge."
   ],
   "enterprise_divisions": [
     {
