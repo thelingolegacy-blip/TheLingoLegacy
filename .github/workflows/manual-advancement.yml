@@ -108,6 +108,9 @@ jobs:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: bash ops/manual-control/validate-transition.sh
 
+      - name: Test transition validator
+        run: bash ops/manual-control/test-validator.sh
+
       - name: Create transition record
         id: record
         env:
