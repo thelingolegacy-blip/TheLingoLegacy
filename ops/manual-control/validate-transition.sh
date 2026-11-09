@@ -36,6 +36,7 @@ if not any(item.get("project_key") == project_key for item in registry.get("proj
 PY
 
 case "$COMMAND:$FROM_STAGE:$TO_STAGE" in
+  assess:NOT_ASSESSED:PLANNED) ;;
   advance:PLANNED:READY|advance:READY:IN_PROGRESS|advance:IN_PROGRESS:REPAIR|advance:IN_PROGRESS:VERIFICATION|advance:REPAIR:VERIFICATION|advance:VERIFICATION:REVIEW|advance:APPROVED:COMPLETED|advance:COMPLETED:RELEASE_READY) ;;
   request-review:VERIFICATION:REVIEW) ;;
   approve:REVIEW:APPROVED) ;;
