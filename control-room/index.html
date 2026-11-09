@@ -117,7 +117,9 @@ async function githubChecks() {
   return '<div class="item"><div><strong>'+esc(run.name)+'</strong><small>#'+esc(run.run_number)+' · '+esc(timeText(run.updated_at))+' · '+esc(String(run.head_sha || '').slice(0,10))+'</small><small><a href="https://github.com/'+repo+'/actions/runs/'+Number(run.id)+'" target="_blank" rel="noopener">Open run ↗</a></small></div>'+setTag(esc(conclusion),kind)+'</div>';
  }).join(''):'<p class="muted">No public workflow runs returned, or GitHub API rate limit/network prevented retrieval.</p>';
  const latest=list[0]; const runText=latest?latest.name+' · '+(latest.conclusion || latest.status):'No run evidence';
- const jobsCount=latest && latest.jobs_url ? 'Job details require run-level query' : 'No run detail';
+ const g02Run=list.find(x=>/g02/i.test(x.name||''));
+ let g02Evidence='No G02 run in latest 12';
+ if(g02Run && g02Run.jobs_url){try{const jr=await get(g02Run.jobs_url);const jobs=jr.ok&&jr.data&&Array.isArray(jr.data.jobs)?jr.data.jobs:[];g02Evidence=(g02Run.conclusion||g02Run.status)+' · '+jobs.length+' job(s) instantiated'+(jobs.length===0?' · pre-job failure signature':'');}catch(e){g02Evidence='G02 job query unavailable';}}
  const prCount=pulls.ok && Array.isArray(pulls.data)?pulls.data.length:'unknown';
  const issueCount=issues.ok && Array.isArray(issues.data)?issues.data.filter(x=>!x.pull_request).length:'unknown';
  const prEl=document.createElement('div'); prEl.className='item'; prEl.innerHTML='<div><strong>Open pull requests</strong><small>Draft changes are not production releases</small></div>'+setTag(String(prCount),'info');
@@ -125,7 +127,7 @@ async function githubChecks() {
  const stageHtml=[
  ['Source authority',commit.ok?'Commit '+String(commit.data.sha).slice(0,12):'GitHub API unavailable',commit.ok?'ok':'bad'],
  ['CI execution',runText,latest && latest.conclusion==='success'?'ok':latest?'bad':'warn'],
- ['G02 runner','No successful G02 sentinel proof recorded in this page', 'warn'],
+ ['G02 runner',g02Evidence, g02Run && g02Run.conclusion==='success'?'ok':'warn'],
  ['Build & artifact','No verified artifact digest exposed by this page','warn'],
  ['Deployment provenance','No active Worker-to-commit attestation exposed by this page','warn'],
  ['Post-deploy acceptance','Requires independent release acceptance evidence','warn']
