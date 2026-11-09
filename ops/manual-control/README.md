@@ -17,6 +17,8 @@ This runbook operates the G02/Fallgate-independent manual advancement workflow i
 
 ## Supported commands
 
+- `assess` (NOT_ASSESSED → PLANNED)
+- `advance`
 - `advance`
 - `hold`
 - `resume`
@@ -27,7 +29,9 @@ This runbook operates the G02/Fallgate-independent manual advancement workflow i
 - `reject`
 - `rollback`
 
-The project catalog is `projects.json`; only registered keys are accepted.\n\nSee [the charter](../../docs/manual-advancement-charter.md) for the transition matrix and governance rules.
+The project catalog is `projects.json`; only registered keys are accepted.
+
+See [the charter](../../docs/manual-advancement-charter.md) for the transition matrix and governance rules.
 
 ## Important limits
 
