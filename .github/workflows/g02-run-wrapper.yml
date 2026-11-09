@@ -2,12 +2,6 @@ name: G02 Run Wrapper — Trigger → Allocations → Execution
 
 on:
   workflow_dispatch:
-    inputs:
-      ref:
-        description: "Git ref to dispatch the G02 qualified evidence probe from"
-        required: true
-        default: "main"
-        type: string
 
 permissions:
   actions: write
@@ -30,8 +24,8 @@ jobs:
         id: dispatch
         env:
           GH_TOKEN: ${{ github.token }}
-          TARGET_REF: ${{ inputs.ref }}
-          TARGET_WORKFLOW: ".github/workflows/g02-qualified-evidence-probe.yml"
+          TARGET_REF: "main"
+          TARGET_WORKFLOW: ".github/workflows/g02-aws-sentinel.yml"
           WRAPPER_STARTED_AT: ${{ github.run_started_at }}
         shell: bash
         run: |
@@ -87,7 +81,7 @@ jobs:
           target_job_id=""
 
           for attempt in {1..60}; do
-            job_json="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/jobs?per_page=100" --jq '.jobs | map(select(.name == "qualified-evidence")) | .[0] // empty')"
+            job_json="$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID/jobs?per_page=100" --jq '.jobs | map(select(.name == "g02-aws-runner-sentinel")) | .[0] // empty')"
 
             if [ -n "$job_json" ]; then
               target_job_id="$(jq -r '.id // empty' <<<"$job_json")"
