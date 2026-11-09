@@ -45,7 +45,7 @@ A project can move independently of other projects when its own dependencies and
 | `advance` | IN_PROGRESS | REPAIR or VERIFICATION | Work evidence or repair scope |
 | `advance` | REPAIR | VERIFICATION | Repair evidence |
 | `advance` | VERIFICATION | REVIEW | Test/evidence summary |
-| `approve` | REVIEW | APPROVED | Repository owner approval and evidence |
+| `approve` | REVIEW | APPROVED | Explicitly allowlisted approver and evidence |
 | `advance` | APPROVED | COMPLETED | Acceptance criteria satisfied |
 | `advance` | COMPLETED | RELEASE_READY | Release checklist and risk review |
 | `request-review` | VERIFICATION | REVIEW | Verification evidence |
@@ -53,7 +53,7 @@ A project can move independently of other projects when its own dependencies and
 | `block` | Any active stage | BLOCKED | Exact blocker and owner |
 | `resume` | PAUSED or BLOCKED | A valid active stage | Rationale and evidence |
 | `request-release` | COMPLETED | RELEASE_READY | Release candidate evidence |
-| `record-release` | RELEASE_READY | RELEASED | Repository owner confirmation plus deployed/live evidence URL |
+| `record-release` | RELEASE_READY | RELEASED | Explicitly allowlisted approver confirmation plus deployed/live evidence URL |
 | `reject` | REVIEW | REJECTED | Review findings |
 | `rollback` | RELEASED or RELEASE_READY | ROLLBACK | Incident/change record and recovery evidence |
 
@@ -100,7 +100,7 @@ The manual advancement system is operational when:
 1. The workflow is visible and manually dispatchable.
 2. Invalid transitions are rejected.
 3. Valid transitions create traceable GitHub issue records.
-4. Privileged actions enforce the owner check and confirmation phrase.
+4. Privileged actions enforce the configured approver allowlist, exact confirmation phrase, and deployed/live evidence for release records.
 5. No G02/Fallgate dependency is present in this workflow.
 6. The workflow has been executed and its result inspected.
 
