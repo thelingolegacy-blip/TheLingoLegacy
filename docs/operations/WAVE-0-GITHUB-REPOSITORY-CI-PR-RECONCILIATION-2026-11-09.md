@@ -96,6 +96,25 @@ The branch contains:
 
 The registry's product groups contain 40 product entries across nine groups. This is a product-to-repository many-to-many portfolio; the number of repositories is not expected to equal the number of products.
 
+### Canonical catalog reconciliation (new comparison)
+
+Compared the Wave 0 registry with the 45-property catalog candidate in PR #456 (still draft/unmerged). Names were normalized only for case and punctuation; this is a naming comparison, not a semantic identity approval.
+
+- Canonical catalog candidate: 45 properties.
+- Wave 0 registry: 40 product entries and 40 flat inventory records.
+- Normalized name matches: 29.
+- Catalog-only names: 16.
+- Wave 0-only labels: 11.
+- Current Wave 0 flat inventory: all 40 records still have `repositoryPath: not-mapped`.
+
+Catalog-only names:
+`LINGOlegacy`, `LINGOlane Apparel`, `LINGOlane Laundry-Cycle`, `Rise of Zavione — Part 1`, `Rise of Zavione — Part 2`, `LINGOslots`, `LINGOarcade`, `LINGOlibrary`, `LINGOmedia`, `LINGOworld`, `LINGO Nexus`, `Lingo Coins`, `LINGOlane Designs & Promotions`, `LINGOstudios`, `LINGO Towers`, and `Bridged Gap`.
+
+Wave 0-only labels:
+`master-registry`, `master-control-center`, `release-governance`, `operations-runbooks`, `flagship-website`, `community`, `Loyalty Lane Designs & Promotions`, `Loyalty Lane Apparel`, `Loyalty Lane Cycles`, `Rise of Zavione P1`, and `Rise of Zavione P2`.
+
+Some Wave 0-only labels may be internal platform capabilities or aliases of catalog properties; do not delete or silently rename them. Required next step is an owner-reviewed mapping that preserves internal capabilities, maps aliases to canonical property IDs, adds missing catalog properties, and distinguishes parent platforms from child products. PR #456 remains an unmerged candidate, so this comparison must be rechecked against the accepted catalog before Wave 0 acceptance.
+
 The dependency graph has 13 nodes and 33 declared dependency relationships. It is a useful baseline, not yet an accepted complete enterprise graph. Acceptance still requires owner-approved product-to-repository-to-runtime mappings, explicit API/data/asset/test dependencies, cycle and dangling-reference checks, and independent review.
 
 ## 4. CI startup evidence
