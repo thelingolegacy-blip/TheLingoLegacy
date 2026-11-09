@@ -179,3 +179,12 @@ The repository contains a `firebase.json` Hosting configuration, but the inspect
 
 Required next steps: confirm the actual Firebase project and registered app IDs, generate platform options through FlutterFire, design and review least-privilege database/storage rules, configure App Check, validate Auth and data access, and test backup/restore. Keep Firebase Hosting distinct from the currently observed Cloudflare public delivery path.
 
+
+## Public homepage probe
+
+The apex homepage `https://thelingolegacy.com/` was retrieved on 2026-11-09. It is reachable, but its own page labels the experience as a candidate rather than a production-status statement. The destination catalog returned “No matching destinations,” and the page states that destination routes must be verified before production activation. It also says account and wallet actions should remain disabled until secure services are verified. The `www` URL was not independently retrieved in this browser check. This is a public-page content probe, not a complete browser/device or route test.
+
+## Route and AppDeploy catalog reconciliation
+
+The canonical master-control matrix contains 25 website routes and 7 AppDeploy app identifiers. These have been copied into the machine-readable platform matrix with their original source status retained and certification explicitly set to unverified. The AppDeploy source matrix lists the seven apps as deployed but unverified; this task did not re-check those live app records because the connected AppDeploy account selection is ambiguous. Do not treat those source labels as current operational proof.
+
