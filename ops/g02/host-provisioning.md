@@ -21,21 +21,13 @@ Do not claim host provisioning is complete until a dedicated Linux x64 VM or mac
 
 1. In GitHub Settings → Actions → Runners, inspect the real runner inventory. If `lingo-legacy-g02` exists, repair the existing service instead of creating a duplicate.
 2. Confirm Actions policy and repository scope.
-3. On the approved host, run from the repository root:
+3. On the approved host, run the Compose-specific read-only diagnostic from the repository root:
 
    ```bash
-   set +e
-   hostname
-   uname -a
-   id
-   command -v systemctl
-   command -v docker
-   docker --version
-   docker compose version
-   bash ops/g02/diagnose-runner.sh
-   rc=$?
-   echo "G02_DIAGNOSTIC_EXIT_CODE=$rc"
+   bash ops/g02/diagnose-runner-compose.sh
    ```
+
+   This is the correct first check for the repository's Docker Compose / ephemeral runner package. It records Docker daemon and container state, redacted container logs, and unauthenticated DNS/HTTPS probes, then writes a SHA-256 sidecar. Use `ops/g02/diagnose-runner.sh` only if a separate bare-metal runner installation with a real systemd unit is present.
 
 4. Inspect runner service state and recent `_diag` logs. Redact tokens and credential material. Do not paste runner credential files, registration tokens, PATs, or environment dumps.
 5. If no matching runner exists, register it using the current official GitHub runner instructions and a short-lived repository-scoped registration token obtained by an authorized repository administrator. Do not store the token in this repository or this Worker. Do not place a token in chat.
