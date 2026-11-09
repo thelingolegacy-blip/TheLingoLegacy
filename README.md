@@ -92,3 +92,21 @@ Current release authority: `G02 = FAIL / UNVERIFIED`, hosted CI execution = `BLO
 `RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
 
 No production sign-off is valid without successful live verification, independent review and a rehearsed rollback path.
+
+### Product paths and source crosswalk
+
+The canonical Worker uses its `ASSETS` binding for non-API paths. These entrypoint files exist in the canonical repository; their presence does not by itself prove a live browser pass. The source contracts currently map:
+
+| Path | Canonical entrypoint | Declared product source | Acceptance note |
+|---|---|---|---|
+| `/lingoarcade/` | `lingoarcade/index.html` | `TheLingoLegacy` | Product/game runtime acceptance separate. |
+| `/thats-my-lingo/` | `thats-my-lingo/index.html` | `THATS-MY-LINGO` | Compare child repo and canonical copy before sync. |
+| `/kottons-code/` | `kottons-code/index.html` | `kottens-code-engine` | Privacy and asset acceptance remain open. |
+| `/lane/` | `lane/index.html` | `Loyaltylaneapparel` | Browse-only until commerce backend/legal acceptance. |
+| `/media/` | `media/index.html` | `Theriseofzavione` | Media rights and publishing acceptance remain open. |
+| `/assets/` | `assets/index.html` | `lingo_assets` | Asset provenance and sync review required. |
+| `/store/` | `store/index.html` | `nextjs-lingolegacy` | Framework build required; static entrypoint is not runtime acceptance. |
+| `/ai/` | `ai/index.html` | `TheLingoLegacy` | askLINGO shell exists; provider execution is not production-enabled. |
+| `/studio-hub/` | `studio-hub/index.html` | `TheLingoLegacy` | Route/preview boundary requires live verification. |
+
+The source registry lists `/arcade` and `/game` as aliases, not verified live redirects. The active production root is a separate Worker; do not assume the main Worker's static root redirect is active. External product repositories and canonical page copies require explicit synchronization ownership.
