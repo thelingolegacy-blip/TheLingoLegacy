@@ -169,3 +169,13 @@ Worker settings report observability enabled for `thelingolegacyv-5` with 10% he
 
 **No Cloudflare resources were changed.** Do not deploy version 286, change the exact-root route, rename Workers, edit DNS, or modify production settings as part of routine setup. First compare the canonical GitHub source, inspect the deployed code and route precedence, perform safe public probes, and obtain explicit release authorization.
 
+
+
+## Firebase configuration audit (repository read)
+
+The Flutter dependency manifest includes Firebase Core, Auth, Realtime Database, Storage and Analytics packages. However, `lib/firebase_options.dart` still contains `YOUR_*_API_KEY` and `YOUR_*_APP_ID` placeholders for web, Android, iOS and macOS. The Flutter app initializes Firebase before rendering, so the placeholder Android configuration is a runtime blocker, not merely a release-only concern. Windows and Linux explicitly throw unsupported-platform errors in the options selector.
+
+The repository contains a `firebase.json` Hosting configuration, but the inspected snapshot did not contain `firestore.rules` or `firestore.indexes.json`. The Firebase project identity string in the source is not proof that the project is connected or that its security rules are deployed. No Firebase project resources or credentials were changed in this task.
+
+Required next steps: confirm the actual Firebase project and registered app IDs, generate platform options through FlutterFire, design and review least-privilege database/storage rules, configure App Check, validate Auth and data access, and test backup/restore. Keep Firebase Hosting distinct from the currently observed Cloudflare public delivery path.
+
