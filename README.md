@@ -109,4 +109,4 @@ The canonical Worker uses its `ASSETS` binding for non-API paths. These entrypoi
 | `/ai/` | `ai/index.html` | `TheLingoLegacy` | askLINGO shell exists; provider execution is not production-enabled. |
 | `/studio-hub/` | `studio-hub/index.html` | `TheLingoLegacy` | Route/preview boundary requires live verification. |
 
-The source registry lists `/arcade` and `/game` as aliases, not verified live redirects. The active production root is a separate Worker; do not assume the main Worker's static root redirect is active. External product repositories and canonical page copies require explicit synchronization ownership.
+The `_redirects` source now configures `/arcade` → `/lingoarcade/` and `/game` → `/thats-my-lingo/` as 301 compatibility redirects. These source changes are not yet deployed or live-verified. The active production root is a separate Worker; do not assume the main Worker's static root redirect is active. External product repositories and canonical page copies require explicit synchronization ownership.
