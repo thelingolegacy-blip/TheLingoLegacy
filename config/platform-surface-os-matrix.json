@@ -854,7 +854,7 @@
       "source_path": "README.md",
       "appdeploy_app_id": null,
       "certification": "unverified",
-      "runtime_probe": "not_independently_verified"
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
     },
     {
       "id": "thats-my-lingo",
@@ -864,7 +864,7 @@
       "source_path": "README.md",
       "appdeploy_app_id": "that-s-my-lingo-casino-studio-2xntye",
       "certification": "unverified",
-      "runtime_probe": "not_independently_verified"
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
     },
     {
       "id": "loading",
@@ -924,7 +924,7 @@
       "source_path": "README.md",
       "appdeploy_app_id": "kotton-s-code-cartoon-studio-509py3",
       "certification": "unverified",
-      "runtime_probe": "not_independently_verified"
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
     },
     {
       "id": "tapstich",
@@ -1146,6 +1146,41 @@
       "source_certification": "unverified",
       "live_status": "not_rechecked_in_this_task",
       "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    }
+  ],
+  "public_surface_probes": [
+    {
+      "id": "home",
+      "url": "https://thelingolegacy.com/",
+      "result": "reachable_candidate_homepage",
+      "limitations": [
+        "candidate experience disclaimer",
+        "destination catalog reports no matching destinations",
+        "account and wallet activation held pending secure services"
+      ],
+      "source_url": "https://thelingolegacy.com/"
+    },
+    {
+      "id": "thats-my-lingo",
+      "url": "https://thelingolegacy.com/thats-my-lingo/",
+      "result": "reachable_interactive_demo_content",
+      "limitations": [
+        "virtual currency only; no cash wagering or cash-out",
+        "Firebase backend is described as awaiting service keys and billing approval",
+        "global multiplayer ranking remains hidden pending auth, moderation, anti-cheat and privacy review"
+      ],
+      "source_url": "https://thelingolegacy.com/thats-my-lingo/"
+    },
+    {
+      "id": "kottons-code",
+      "url": "https://thelingolegacy.com/kottons-code/",
+      "result": "reachable_static_interactive_content",
+      "limitations": [
+        "page identifies itself as static Cloudflare build",
+        "social links lead to platform search until official channel URLs are verified",
+        "page does not establish a connected account or published video channel"
+      ],
+      "source_url": "https://thelingolegacy.com/kottons-code/"
     }
   ]
 }
