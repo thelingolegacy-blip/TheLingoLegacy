@@ -250,3 +250,25 @@ A current public-browser retrieval sample was performed against the canonical ho
 | `/game` | Search/browser cache returned an older page crawled two weeks earlier with legacy star-marked naming | Treat as a stale legacy alias, not current product acceptance. Source contract marks `/game → /thats-my-lingo/` as `SOURCE_ALIAS`; the redirect is not proven live. |
 
 The successful sample pages confirm only their accessible static content. They do not prove account creation, Firebase writes, commerce, global leaderboards, AI inference, native app builds, or current device accessibility. The browser tool's cache misses are recorded as inconclusive rather than failures.
+
+
+## Access policy and DNS risk review — 2026-11-09
+
+A second read-only Cloudflare API pass inspected policy records for all 14 Access applications. The returned policy set shows:
+
+- **11 of 14 applications have a `bypass` policy whose include selector is `everyone`.** This may be intentional for public website content and public Workers, but the same pattern on preview, staging, operational or administrative endpoints would expose those applications without an Access identity challenge.
+- The three named public-facing applications are `LINGO Resilience Gateway — Public Static Fallback`, `LINGO Public Website Routes — thelingolegacyv-5`, and `LINGO Public Website Root — lingo-flagship-root`. Their bypass policy is consistent with the names, but the content served behind each route still needs a sensitivity review.
+- The `All Workers` application has allow policies for Cloudflare account members and a specified operator email.
+- Several legacy/preview-named Worker applications combine public bypass with account-member allow or email-domain allow policies. Because a bypass decision is broader than an allow identity selector, the actual policy precedence/evaluation and hostname coverage must be validated against the intended access boundary. Do not assume the presence of an allow policy makes an app private when a bypass-everyone policy also exists.
+- Four application instances use an `email_domain` selector. The policy response was inspected in redacted form; do not infer or publish the underlying identity values from this inventory.
+- The remaining account-member-only applications include `thelingolegacyv4` and `astro-blog-starter-template`.
+
+**Required remediation:** create a route-by-route sensitivity classification (public content, preview, admin, API, health/ops), map every Access application to its actual hostnames and Worker routes, and compare policy evaluation to the desired audience. For any preview/admin/API route that must be private, stage a least-privilege policy correction, verify a denied unauthenticated request and an allowed authorized request, then review logs. No policy was modified in this audit.
+
+### DNS placeholder / origin observations
+
+The apex DNS record currently reports a proxied A target of `192.0.2.0`, which is in RFC 5737 TEST-NET-1 documentation space, not a routable production origin. This can be an intentional placeholder when Cloudflare Worker routing owns the request path; it must not be mistaken for a verified origin. The `app` and `admin` hostnames point to Pages/Firebase destinations and are DNS-only, so their deployment ownership, TLS, project binding and access controls require separate live verification. No DNS record was changed.
+
+## GitHub Actions dispatch evidence — 2026-11-09
+
+A new PR event on PR #535 created run `42708341664` for the repository's `Lingo Legacy Static CI` workflow at commit `a2a5fbe92747febb120857dd36d404485765f7ae`. The run completed with `startup_failure`; the GitHub Jobs API returned an empty `jobs` array and the artifacts API returned an empty `artifacts` array. This is direct provider-side evidence that no job was instantiated and no retrievable test evidence exists for that run. The new Flutter workflow's evidence-upload steps are therefore not yet executed. Keep the job-creation gate blocked until GitHub dispatch is restored.
