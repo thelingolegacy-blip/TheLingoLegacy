@@ -4,12 +4,12 @@
 set -uo pipefail
 umask 077
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "\${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="\${REPO_ROOT:-$(cd -- "$SCRIPT_DIR/../.." && pwd)}"
-COMPOSE_DIR="\${RUNNER_COMPOSE_DIR:-$REPO_ROOT/ops/github-runner}"
-COMPOSE_FILE="\${RUNNER_COMPOSE_FILE:-$COMPOSE_DIR/docker-compose.yml}"
-COMPOSE_SERVICE="\${RUNNER_COMPOSE_SERVICE:-github-runner}"
-OUT_DIR="\${OUT_DIR:-$REPO_ROOT/g02-host-diagnostics}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="${REPO_ROOT:-$(cd -- "$SCRIPT_DIR/../.." && pwd)}"
+COMPOSE_DIR="${RUNNER_COMPOSE_DIR:-$REPO_ROOT/ops/github-runner}"
+COMPOSE_FILE="${RUNNER_COMPOSE_FILE:-$COMPOSE_DIR/docker-compose.yml}"
+COMPOSE_SERVICE="${RUNNER_COMPOSE_SERVICE:-github-runner}"
+OUT_DIR="${OUT_DIR:-$REPO_ROOT/g02-host-diagnostics}"
 REPORT="$OUT_DIR/g02-compose-diagnostic.txt"
 
 mkdir -p "$OUT_DIR" || exit 2
