@@ -71,8 +71,8 @@
       "id": "staging-apps",
       "provider": "AppDeploy",
       "role": "isolated-staging-builds",
-      "status": "connected-credit-exhausted",
-      "evidence": "18 existing app records; further build credit unavailable"
+      "status": "connected-free-plan-credit-state-conflict",
+      "evidence": "2026-11-09 account overview: Free plan, 20.892937682 monthly credits available (reset 2026-11-17T00:00:00Z), zero top-up credits; all 18 apps returned ready. Per-app status responses still append an exhausted-credit alert. Treat build capacity as unreconciled; no build or deployment was attempted."
     },
     {
       "id": "commerce",
@@ -1055,5 +1055,41 @@
         }
       ]
     }
+  },
+  "observedAppDeployAudit": {
+    "observedAt": "2026-11-09",
+    "accountPlan": "free",
+    "monthlyCreditsAvailable": "20.892937682",
+    "monthlyCreditsResetAt": "2026-11-17T00:00:00Z",
+    "topUpCreditsAvailable": "0",
+    "accountOverviewAppCount": 18,
+    "appStatusReadyCount": 18,
+    "storedQaSnapshotFrontendErrors": 0,
+    "storedQaSnapshotNetworkErrors": 0,
+    "qaSnapshotWindowUtc": {
+      "earliest": "2026-09-03T04:15:28Z",
+      "latest": "2026-11-05T00:10:05Z"
+    },
+    "latestCompleteDayUtc": "2026-11-08",
+    "pageViewsByApp": 0,
+    "perAppStatusCreditAlert": "exhausted-credit-alert-conflicts-with-positive-account-overview-balance",
+    "storedFrontendErrorApps": [
+      {
+        "appId": "lingolegacy-universe-gateway-h6kqu4",
+        "count": 10,
+        "latestObservedUtc": "2026-11-06T03:34:38Z"
+      },
+      {
+        "appId": "kotton-s-code-cartoon-studio-509py3",
+        "count": 5,
+        "latestObservedUtc": "2026-11-06T03:07:30Z"
+      },
+      {
+        "appId": "lingo-traveltm-uyd57n",
+        "count": 2,
+        "latestObservedUtc": "older-than-2026-11-06"
+      }
+    ],
+    "disposition": "read-only; app ready status and stored QA snapshot do not certify product acceptance; credit-state conflict must be reconciled before additional build/deploy attempts"
   }
 }
