@@ -132,3 +132,23 @@ Run only the build commands for a platform whose SDK and host OS are available. 
 ## Truth and next work
 
 The machine-readable matrix records current source evidence and blockers. It is intentionally conservative. This change does not install SDKs on the user's devices, create cloud credentials, configure signing certificates, deploy Workers, activate Firebase writes, or release apps. Those actions require access to the target machines/provider accounts and target-specific verification. The next execution wave should resolve Android Firebase configuration and device QA first, generate missing platform runners on their required host OSs, then validate web/TV and Unity clients independently.
+
+
+## Enterprise division and product-surface coverage
+
+The machine-readable matrix enumerates all nine canonical divisions and 36 product surfaces. This is a portfolio coverage map, not an assertion that every listed product has been built or installed on every target.
+
+| Division | Catalogued product surfaces |
+|---|---|
+| LINGOlegacy_MASTER | Master Control / Governance OS |
+| LINGOlegacy | Flagship identity/profile, Universal Legacy Wallet and Lingo Coins display, community |
+| LINGOlane | Designs & Promotions, Loyalty Lane Apparel, Laundry-Cycle |
+| LINGOslots | That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions, Cashman Lingo Mania |
+| LINGOarcade | Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly, Jersey Shore: The Undead |
+| LINGOlibrary | Kotton’s Code, The Block I Grew Up On, Say It Again, Dice Shift Hotel, Legacy Legends |
+| LINGOmedia | Rise of Zavione — Part 1 and Part 2 |
+| LINGOworld | LINGOai, askLINGO, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge, LINGOdonations |
+| LegacyXclub | LegacyXclub |
+
+Every product record carries `catalogued_target_not_certified` until its actual source, platform build, runtime integration, tests and release evidence are independently recorded. Platform targets are declared per product in `config/platform-surface-os-matrix.json`.
+
