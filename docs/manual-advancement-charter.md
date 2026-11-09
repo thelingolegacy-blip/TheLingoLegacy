@@ -37,19 +37,21 @@ A project can move independently of other projects when its own dependencies and
 
 ## 3. Permitted transitions
 
-| Command | Required source | Target | Authority / evidence |\n| `assess` | NOT_ASSESSED | PLANNED | Inventory, scope, owner, and dependencies reviewed |
+| Command | Required source | Target | Authority / evidence |
 |---|---|---|---|
+| `assess` | NOT_ASSESSED | PLANNED | Inventory, scope, owner, and dependencies reviewed |
 | `advance` | PLANNED | READY | Project scope and dependencies recorded |
 | `advance` | READY | IN_PROGRESS | Work owner and plan identified |
 | `advance` | IN_PROGRESS | REPAIR or VERIFICATION | Work evidence or repair scope |
 | `advance` | REPAIR | VERIFICATION | Repair evidence |
 | `advance` | VERIFICATION | REVIEW | Test/evidence summary |
+| `approve` | REVIEW | APPROVED | Repository owner approval and evidence |
 | `advance` | APPROVED | COMPLETED | Acceptance criteria satisfied |
 | `advance` | COMPLETED | RELEASE_READY | Release checklist and risk review |
 | `request-review` | VERIFICATION | REVIEW | Verification evidence |
-| `approve` | REVIEW | APPROVED | Repository owner approval and evidence |
-| `hold` | Any non-terminal state | PAUSED | Rationale |
-| `resume` | PAUSED | A valid active stage | Rationale and evidence |
+| `hold` | Any active state | PAUSED | Rationale |
+| `block` | Any active stage | BLOCKED | Exact blocker and owner |
+| `resume` | PAUSED or BLOCKED | A valid active stage | Rationale and evidence |
 | `request-release` | COMPLETED | RELEASE_READY | Release candidate evidence |
 | `record-release` | RELEASE_READY | RELEASED | Repository owner confirmation plus deployed/live evidence URL |
 | `reject` | REVIEW | REJECTED | Review findings |
@@ -57,7 +59,9 @@ A project can move independently of other projects when its own dependencies and
 
 The validator rejects unsupported transitions. A hold is not an approval. A request for review or release is not approval. A release record documents an already completed, independently verified release; it does not perform a deployment.
 
-The initial catalog is `ops/manual-control/projects.json`. All nine top-level divisions begin at `NOT_ASSESSED`; this is an honest inventory baseline, not a claim that any product is incomplete or complete. Assess actual status, ownership, and dependencies before advancing each project to `PLANNED`. Only registered project keys are accepted by the validator.\n\n## 4. Manual control workflow
+The initial catalog is `ops/manual-control/projects.json`. All nine top-level divisions begin at `NOT_ASSESSED`; this is an honest inventory baseline, not a claim that any product is incomplete or complete. Assess actual status, ownership, and dependencies before advancing each project to `PLANNED`. Only registered project keys are accepted by the validator.
+
+## 4. Manual control workflow
 
 Run **Actions → LINGO Manual Advancement → Run workflow** and supply:
 
