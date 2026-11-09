@@ -52,6 +52,7 @@
 const $ = (id) => document.getElementById(id);
 const repo = 'thelingolegacy-blip/TheLingoLegacy';
 const api = 'https://api.github.com/repos/' + repo;
+const esc = (v) => String(v ?? '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));
 const setDot = (id, kind) => { const el=$(id); if(el) el.className='dot ' + (kind || ''); };
 const setTag = (text, kind='') => '<span class="tag '+kind+'">'+text+'</span>';
 const timeText = (v) => { try { return new Date(v).toLocaleString(); } catch { return String(v || '—'); } };
@@ -66,7 +67,7 @@ function renderGates(gates={}) {
  const entries=Object.entries(gates);
  $('gate-list').innerHTML=entries.length ? entries.map(([k,v]) => {
   const s=String(v); const kind=/^PASS$/i.test(s)?'ok':/FAIL/i.test(s)?'bad':'warn';
-  return '<div class="item"><div><strong>'+k.replaceAll('_',' ')+'</strong><small>Runtime release contract</small></div>'+setTag(s,kind)+'</div>';
+  return '<div class="item"><div><strong>'+esc(k.replaceAll('_',' '))+'</strong><small>Runtime release contract</small></div>'+setTag(esc(s),kind)+'</div>';
  }).join('') : '<p class="muted">No authoritative gate response.</p>';
 }
 async function runtimeChecks() {
@@ -113,7 +114,7 @@ async function githubChecks() {
  const list=runs.ok && runs.data.workflow_runs ? runs.data.workflow_runs : [];
  $('runs').innerHTML=list.length?list.slice(0,9).map(run=>{
   const conclusion=run.conclusion || run.status || 'unknown'; const kind=conclusion==='success'?'ok':(['failure','startup_failure','cancelled','timed_out'].includes(conclusion)?'bad':'warn');
-  return '<div class="item"><div><strong>'+run.name+'</strong><small>#'+run.run_number+' · '+timeText(run.updated_at)+' · '+String(run.head_sha || '').slice(0,10)+'</small><small><a href="'+run.html_url+'" target="_blank" rel="noopener">Open run ↗</a></small></div>'+setTag(conclusion,kind)+'</div>';
+  return '<div class="item"><div><strong>'+esc(run.name)+'</strong><small>#'+esc(run.run_number)+' · '+esc(timeText(run.updated_at))+' · '+esc(String(run.head_sha || '').slice(0,10))+'</small><small><a href="https://github.com/'+repo+'/actions/runs/'+Number(run.id)+'" target="_blank" rel="noopener">Open run ↗</a></small></div>'+setTag(esc(conclusion),kind)+'</div>';
  }).join(''):'<p class="muted">No public workflow runs returned, or GitHub API rate limit/network prevented retrieval.</p>';
  const latest=list[0]; const runText=latest?latest.name+' · '+(latest.conclusion || latest.status):'No run evidence';
  const jobsCount=latest && latest.jobs_url ? 'Job details require run-level query' : 'No run detail';
@@ -129,7 +130,7 @@ async function githubChecks() {
  ['Deployment provenance','No active Worker-to-commit attestation exposed by this page','warn'],
  ['Post-deploy acceptance','Requires independent release acceptance evidence','warn']
  ];
- $('stages').innerHTML=stageHtml.map(x=>'<div class="item"><div><strong>'+x[0]+'</strong><small>'+x[1]+'</small></div>'+setTag(x[2]==='ok'?'Observed':x[2]==='bad'?'Failing':'Unverified',x[2])+'</div>').join('')+prEl.outerHTML+isEl.outerHTML;
+ $('stages').innerHTML=stageHtml.map(x=>'<div class="item"><div><strong>'+esc(x[0])+'</strong><small>'+esc(x[1])+'</small></div>'+setTag(x[2]==='ok'?'Observed':x[2]==='bad'?'Failing':'Unverified',x[2])+'</div>').join('')+prEl.outerHTML+isEl.outerHTML;
  return {commitOk:commit.ok,runsOk:runs.ok,latest,prCount,issueCount};
 }
 async function refresh() {
