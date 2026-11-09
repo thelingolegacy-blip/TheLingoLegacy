@@ -210,3 +210,25 @@ Read-only Worker version inventory now shows the GitHub branches produced automa
 These uploads are preview artifacts, not production deployments. The latest deployment record remains 100% on the existing production version 137 (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`); no deployment record assigns versions 290–292 traffic. The branch-to-preview upload integration is operating separately from the GitHub Actions workflow jobs that still fail before job creation.
 
 **Operational correction:** GitHub branch pushes can cause Cloudflare preview-version uploads as a side effect. Future source branches should be treated as potentially creating preview artifacts. This audit did not promote a preview version or change production routes.
+
+
+## Product path and canonical-entrypoint crosswalk — 2026-11-09
+
+The canonical Worker uses the `ASSETS` binding and falls through to `env.ASSETS.fetch(request)` for non-API requests. Wrangler config sets the asset directory to the repository root (`.`). The following entrypoint files were individually confirmed to exist in `TheLingoLegacy/main`; their existence is source evidence, not proof of current browser acceptance.
+
+| Product path | Entrypoint in canonical repository | Declared source repository in `studio/surface-contracts.json` | Current interpretation |
+|---|---|---|---|
+| `/` | `index.html` | `TheLingoLegacy` | Exact-root route is separately assigned to `lingo-flagship-root`; do not assume main Worker handles root. |
+| `/lingoarcade/` | `lingoarcade/index.html` | `TheLingoLegacy` | Canonical arcade shell; game-specific runtime acceptance remains separate. |
+| `/thats-my-lingo/` | `thats-my-lingo/index.html` | `THATS-MY-LINGO` | Canonical repo contains a copy; compare with product repo before assigning sync authority. |
+| `/kottons-code/` | `kottons-code/index.html` | `kottens-code-engine` | Canonical repo contains a copy; external repo/source asset sync and privacy review remain open. |
+| `/lane/` | `lane/index.html` | `Loyaltylaneapparel` | Canonical repo contains a copy; commerce remains preview/browse-only until backend/legal acceptance. |
+| `/media/` | `media/index.html` | `Theriseofzavione` | Canonical repo contains a copy; media rights and creator publishing acceptance remain open. |
+| `/assets/` | `assets/index.html` | `lingo_assets` | Canonical repo contains an asset-library page; source asset provenance/sync still needs review. |
+| `/store/` | `store/index.html` | `nextjs-lingolegacy` | Contract marks framework build required; do not treat static entrypoint presence as an accepted Next.js runtime. |
+| `/ai/` | `ai/index.html` | `TheLingoLegacy` | Shell exists; askLINGO provider/backend execution is not production-enabled. |
+| `/studio-hub/` | `studio-hub/index.html` | `TheLingoLegacy` | Entry point exists, but its current production route/preview boundary needs live acceptance. |
+
+The route contract also declares `/arcade → /lingoarcade/` and `/game → /thats-my-lingo/` as `SOURCE_ALIAS` entries. They are not proven live redirects by the route contract alone. The repository `_redirects` file declares `/apparel/ → /loyalty-lane-apparel/` and a root redirect, but the active version-137 deployment's redirect metadata only showed the apparel redirect; the root hostname is separately assigned to `lingo-flagship-root`. Do not assume source redirect declarations are active at the edge without a live response check.
+
+**Source-of-truth gap:** several product surfaces are declared as owned by separate product repositories while a page copy exists in `TheLingoLegacy`. The canonical registry must compare content/build provenance and declare whether the child repository or canonical copy is the maintained source. No silent overwrite or automatic mirroring is authorized by this crosswalk.
