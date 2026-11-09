@@ -1090,6 +1090,29 @@
         "latestObservedUtc": "older-than-2026-11-06"
       }
     ],
-    "disposition": "read-only; app ready status and stored QA snapshot do not certify product acceptance; credit-state conflict must be reconciled before additional build/deploy attempts"
+    "disposition": "read-only; app ready status and stored QA snapshot do not certify product acceptance; credit-state conflict must be reconciled before additional build/deploy attempts",
+    "independentBrowserProbe": {
+      "observedAt": "2026-11-09",
+      "urlsAttempted": 4,
+      "urls": [
+        "Kotton's Code Cartoon Studio",
+        "LINGOlegacy Universe Gateway",
+        "Lingo Travel",
+        "LINGO Studio Hub"
+      ],
+      "result": "inaccessible-from-browser-tool-vantage",
+      "outageConclusion": "not-established",
+      "resourceOnlyInventory": {
+        "kottonsCode": [
+          "public/resources/KottonsCode-world-1.jpeg",
+          "public/resources/KottonsCode-world-2.jpeg",
+          "public/resources/KottonsCode-world-3.jpeg",
+          "public/resources/KottonsCode-world-4.jpeg"
+        ],
+        "universeGateway": [],
+        "lingoTravel": []
+      },
+      "disposition": "do not delete or regenerate Kotton assets; investigate preview host/runtime mapping; no deployment or route mutation"
+    }
   }
 }
