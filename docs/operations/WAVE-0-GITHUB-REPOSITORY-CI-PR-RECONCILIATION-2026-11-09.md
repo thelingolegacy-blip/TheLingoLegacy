@@ -131,6 +131,11 @@ The two latest PR-triggered runs inspected for the Wave 0 head at that moment (`
 
 Both run records identify the expected PR #511 and actual workflow paths. The timing endpoint returns an empty billable map, consistent with no runner job execution. This proves only the pre-job failure boundary; it does not establish the underlying provider or repository cause. No rerun was attempted because there was no failed job to rerun.
 
+### GitHub platform-status correlation
+
+GitHub Status recorded an "Incident with Webhooks and Actions" on 2026-11-09: investigation began at 10:00 UTC; delayed Actions run starts and webhook deliveries were reported at 10:28 UTC; a mitigation was applied at 10:47 UTC; GitHub stated the Actions degradation was mitigated at 11:06 UTC while monitoring continued. The Wave 0 startup failures above were created at 17:44:59–17:45:01 UTC, several hours after that mitigation. The timing is relevant context, but no causal link between the earlier platform incident and these later `startup_failure` runs is established. The same status update still reported Webhooks degraded at 11:17 UTC. See the [official GitHub Status incident timeline](https://www.githubstatus.com/).
+
+
 
 | Repository | Evidence inspected | Observed result | Interpretation |
 |---|---|---|---|
