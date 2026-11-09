@@ -9,7 +9,7 @@ This runbook operates the G02/Fallgate-independent manual advancement workflow i
 The local operator path uses GitHub CLI and does not require GitHub Actions or any runner. From a checkout of this branch, run:
 
 ```bash
-PROJECT_KEY=LINGOslots COMMAND=assess FROM_STAGE=NOT_ASSESSED TO_STAGE=PLANNED EVIDENCE_URL=https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/529 RATIONALE='Initial project inventory assessment' bash ops/manual-control/record-transition.sh
+PROJECT_KEY=LINGOslots COMMAND=assess FROM_STAGE=NOT_ASSESSED TO_STAGE=PLANNED EVIDENCE_URL=https://example.com/your-assessment-evidence RATIONALE='Initial project inventory assessment' bash ops/manual-control/record-transition.sh
 ```
 
 For `approve`, set `CONFIRMATION='APPROVE PROJECT_KEY'`. For `record-release`, also set `CONFIRMATION='RELEASE PROJECT_KEY'` and `DEPLOYMENT_EVIDENCE_URL` to the deployed/live verification evidence. The script reads the authenticated GitHub actor and repository owner through `gh`, validates the transition and registry, then creates the GitHub issue record.
