@@ -96,3 +96,24 @@ test('configuration consistency fails closed on compatibility-date drift and hea
   assert.ok(report.failures.includes('compatibility-date'));
   assert.ok(report.failures.includes('assets-frame-policy'));
 });
+
+
+test('read-only surface gate rejects file-writing APIs', () => {
+  const result = run({ mutate(root) {
+    const gatePath = path.join(root, 'scripts/sanitize-cloudflare-only-surface.mjs');
+    fs.writeFileSync(gatePath, "const report = { mode: 'read-only' }; fs.writeFileSync('source.html', 'changed');");
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('surface-gate-read-only'));
+});
+
+test('CircleCI contract rejects deploy commands and requires main-branch exclusion', () => {
+  const result = run({ mutate(root) {
+    const circleciPath = path.join(root, '.circleci/config.yml');
+    fs.writeFileSync(circleciPath, 'workflows:\\n  deploy:\\n    jobs:\\n      - run: wrangler deploy\\n          filters:\\n            branches:\\n              include: main');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('circleci-is-validation-only'));
+});
