@@ -12,6 +12,7 @@ on:
         required: true
         type: choice
         options:
+          - assess
           - advance
           - hold
           - block
@@ -27,6 +28,7 @@ on:
         required: true
         type: choice
         options:
+          - NOT_ASSESSED
           - PLANNED
           - READY
           - IN_PROGRESS
@@ -44,6 +46,7 @@ on:
         required: true
         type: choice
         options:
+          - NOT_ASSESSED
           - PLANNED
           - READY
           - IN_PROGRESS
@@ -125,7 +128,7 @@ jobs:
           RATIONALE: ${{ inputs.rationale }}
           ACTOR: ${{ github.actor }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          EVENT_TIME: ${{ github.event.head_commit.timestamp }}
+          CREATED_AT: ${{ github.run_started_at }}
         run: |
           set -euo pipefail
           title="Manual transition: ${PROJECT_KEY} ${FROM_STAGE} -> ${TO_STAGE}"
@@ -137,6 +140,7 @@ jobs:
           - Previous stage: ${FROM_STAGE}
           - Requested stage: ${TO_STAGE}
           - Actor: @${ACTOR}
+          - Timestamp: ${CREATED_AT}
           - Workflow run: ${RUN_URL}
           - Evidence: ${EVIDENCE_URL}
           - Deployment/live evidence: ${DEPLOYMENT_EVIDENCE_URL:-Not applicable}
