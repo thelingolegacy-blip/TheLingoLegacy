@@ -136,8 +136,8 @@
     },
     {
       "id": "apex-test-net-origin",
-      "status": "verified-critical-origin-fallback-blocker",
-      "detail": "Live DNS API returned proxied apex A record thelingolegacy.com -> 192.0.2.0. RFC 5737 reserves 192.0.2.0/24 as TEST-NET-1 documentation space and says it should not appear on the public Internet. Worker routes may serve matched requests, but any origin fallback requires an independently verified real origin before this record is changed."
+      "status": "verified-proxied-test-net-origin-target",
+      "detail": "Current read-only Cloudflare DNS inventory (2026-11-09) confirms the apex A record is configured as proxied with origin target 192.0.2.0, within RFC 5737 TEST-NET-1. This is the Cloudflare zone's configured origin target, not a claim about the public DNS answer. The main Worker source uses its ASSETS binding for non-API requests and has no generic origin fetch; the exact-root Worker is a separate route and its active source/version still needs verification. Keep DNS unchanged until the exact-root Worker, route fallback behavior, and a real origin decision are independently verified."
     },
     {
       "id": "active-worker-deployments",
@@ -168,7 +168,7 @@
   "totals": {
     "routes": 21,
     "workersWithRoutes": 4,
-    "dnsRecordsObserved": 33,
+    "dnsRecordsObserved": 34,
     "workerScriptsObserved": 11
   },
   "activeDeployments": {
@@ -322,5 +322,27 @@
       "observedBehavior": "ASSETS binding serves non-API paths; no generic origin fetch in inspected source",
       "scope": "main Worker only; exact-root Worker not source-verified"
     }
+  },
+  "dnsRefresh": {
+    "observedAt": "2026-11-09",
+    "count": 34,
+    "apexA": {
+      "name": "thelingolegacy.com",
+      "content": "192.0.2.0",
+      "proxied": true,
+      "modifiedOn": "2026-10-11T15:19:03.719523Z",
+      "interpretation": "configured proxied origin target; not a verified public DNS answer or verified real origin"
+    },
+    "wwwCname": {
+      "name": "www.thelingolegacy.com",
+      "content": "thelingolegacy.com",
+      "proxied": true,
+      "modifiedOn": "2026-10-11T15:15:23.571094Z"
+    },
+    "additionalProxiedAAAA": [
+      "resilience.thelingolegacy.com",
+      "studio-preview.thelingolegacy.com"
+    ],
+    "noDnsMutation": true
   }
 }
