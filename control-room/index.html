@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090d">
+<meta name="description" content="The Lingo Legacy unified operations control room: live website, runtime, pipeline, integration and release evidence.">
+<title>Lingo Legacy | Unified Control Room</title>
+<style>
+:root{color-scheme:dark;--bg:#08090d;--panel:#11141b;--panel2:#171b24;--ink:#f6f4ef;--muted:#a7adbb;--line:#303746;--gold:#e7c27b;--red:#cb4057;--green:#55c79a;--amber:#e4b45d;--blue:#80b8ed;font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 12% -8%,#4a1a2a66,transparent 38rem),radial-gradient(ellipse at 95% 8%,#1c385533,transparent 32rem),var(--bg);color:var(--ink);min-height:100vh}a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}.wrap{width:min(1440px,calc(100% - 36px));margin:auto}.top{border-bottom:1px solid var(--line);background:#090b10eF;position:sticky;top:0;z-index:5;backdrop-filter:blur(16px)}.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:.12em}.mark{width:42px;height:42px;border:1px solid var(--gold);border-radius:13px;display:grid;place-items:center;color:var(--gold);font:900 1.4rem Georgia}.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}.hero{padding:44px 0 26px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}.eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:900;color:var(--gold)}h1{font-size:clamp(2.2rem,5vw,4.5rem);letter-spacing:-.065em;line-height:.98;margin:12px 0}.lead{color:var(--muted);max-width:760px;margin:0}.hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:12px;padding:11px 15px;font-weight:800;cursor:pointer}.btn.primary{border-color:#9a7440;background:linear-gradient(135deg,#8e612d,#49351e);color:#fff3d8}.stamp{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0 24px}.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.75rem;font-weight:850}.dot{width:8px;height:8px;border-radius:50%;background:#778090}.dot.ok{background:var(--green);box-shadow:0 0 12px #55c79a88}.dot.warn{background:var(--amber)}.dot.bad{background:var(--red)}.dot.info{background:var(--blue)}.section{padding:22px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:14px}.sectionhead h2{font-size:1.2rem;margin:0;letter-spacing:-.02em}.sectionhead p{color:var(--muted);font-size:.82rem;margin:0}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,#171b24,#0f1218);padding:17px;min-width:0}.card h3{font-size:.98rem;margin:0 0 7px}.card p{font-size:.82rem;color:var(--muted);margin:0}.value{font-size:1.12rem;font-weight:900;margin:10px 0 4px;overflow-wrap:anywhere}.sub{font-size:.72rem;color:var(--muted);overflow-wrap:anywhere}.statusline{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:850;margin:12px 0 4px}.two{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.list{display:grid;gap:8px}.item{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;border-bottom:1px solid #ffffff10;padding:10px 0}.item:last-child{border:0}.item strong{display:block;font-size:.83rem}.item small{display:block;color:var(--muted);font-size:.72rem;overflow-wrap:anywhere}.tag{font-size:.7rem;border:1px solid var(--line);padding:4px 8px;border-radius:999px;white-space:nowrap;color:var(--muted)}.tag.ok{color:var(--green);border-color:#28684f}.tag.warn{color:var(--amber);border-color:#735a2d}.tag.bad{color:#ff8a9a;border-color:#7b3442}.tag.info{color:var(--blue);border-color:#345778}.table{width:100%;border-collapse:collapse;font-size:.78rem}.table th,.table td{text-align:left;padding:10px 8px;border-bottom:1px solid #ffffff12;vertical-align:top}.table th{color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em}.table td:last-child{white-space:nowrap}.callout{border:1px solid #72582c;background:#251e13;border-radius:14px;padding:14px 16px;color:#e9d6ae;font-size:.82rem}.muted{color:var(--muted)}.footer{padding:32px 0 54px;border-top:1px solid var(--line);margin-top:28px;color:var(--muted);font-size:.76rem;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;overflow-wrap:anywhere}.hidden{display:none}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}}@media(max-width:620px){.wrap{width:calc(100% - 24px)}.nav{padding:10px 0;align-items:flex-start;flex-direction:column}.navlinks{gap:12px}.hero{grid-template-columns:1fr;padding-top:32px}.hero-actions{justify-content:flex-start}.grid{grid-template-columns:1fr}.sectionhead{align-items:flex-start;flex-direction:column}.table{font-size:.7rem}.table th:nth-child(3),.table td:nth-child(3){display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><a class="brand" href="/"><span class="mark">L</span><span>LINGO LEGACY <span class="muted">/ OPERATIONS</span></span></a><nav class="navlinks"><a href="#runtime">Runtime</a><a href="#pipelines">Pipelines</a><a href="#integrations">Integrations</a><a href="#gates">Release gates</a><a href="#evidence">Evidence</a><a href="/studio-hub/">Studio Hub ↗</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div><div class="eyebrow">Unified operations · read-only control surface</div><h1>One platform.<br>One evidence ledger.</h1><p class="lead">A single live view of the public website, Cloudflare runtime, GitHub delivery pipeline, integrations and release gates. Green means a check actually answered; unknown means no authoritative evidence is available.</p></div><div class="hero-actions"><button class="btn primary" id="refresh">↻ Refresh all checks</button><a class="btn" href="https://github.com/thelingolegacy-blip/TheLingoLegacy" target="_blank" rel="noopener">Repository ↗</a></div></section>
+<div class="stamp"><span class="pill"><span class="dot" id="overall-dot"></span><span id="overall-label">Collecting live evidence…</span></span><span class="pill">Read-only · no secrets</span><span class="pill">Last checked <time id="checked">—</time></span><span class="pill">Auto-refresh 60s</span></div>
+<div class="callout">Release safety is fail-closed. A reachable page or API does not certify authentication, data integrity, payment processing, app-store readiness, security, or production release. Billing and cash-out remain disabled.</div>
+<section class="section" id="runtime"><div class="sectionhead"><h2>01 / Live runtime & website</h2><p>Direct same-origin HTTP checks · no cached status assumptions</p></div><div class="grid" id="runtime-cards">
+<div class="card"><h3>Cloudflare Worker</h3><div class="value" id="worker-state">Checking…</div><p id="worker-detail">/healthz</p><div class="statusline"><span class="dot" id="worker-dot"></span><span id="worker-status">Waiting for probe</span></div></div>
+<div class="card"><h3>Runtime API</h3><div class="value" id="api-state">Checking…</div><p>/api/v1/runtime</p><div class="statusline"><span class="dot" id="api-dot"></span><span id="api-status">Waiting for probe</span></div></div>
+<div class="card"><h3>Platform control API</h3><div class="value" id="platform-state">Checking…</div><p>/api/v1/platform/status</p><div class="statusline"><span class="dot" id="platform-dot"></span><span id="platform-status">Waiting for probe</span></div></div>
+<div class="card"><h3>Public routes</h3><div class="value" id="routes-state">Checking…</div><p id="routes-detail">Homepage · Studio Hub · App · Universe</p><div class="statusline"><span class="dot" id="routes-dot"></span><span id="routes-status">Waiting for probes</span></div></div>
+</div></section>
+<section class="section" id="pipelines"><div class="sectionhead"><h2>02 / Delivery pipeline</h2><p>GitHub public API · latest workflow evidence and job instantiation</p></div><div class="two"><div class="card"><h3>Recent workflow runs</h3><div class="list" id="runs"><div class="muted">Loading GitHub Actions evidence…</div></div></div><div class="card"><h3>Pipeline stage gates</h3><div class="list" id="stages">
+<div class="item"><div><strong>Source authority</strong><small>GitHub main branch</small></div><span class="tag">Checking</span></div>
+<div class="item"><div><strong>CI execution</strong><small>Actual workflow jobs and test steps</small></div><span class="tag">Checking</span></div>
+<div class="item"><div><strong>G02 runner</strong><small>Named self-hosted runner allocation and host evidence</small></div><span class="tag">Checking</span></div>
+<div class="item"><div><strong>Build & artifact</strong><small>Reproducible build, artifact manifest and digest</small></div><span class="tag">Not certified</span></div>
+<div class="item"><div><strong>Deployment provenance</strong><small>Active Worker version mapped to reviewed commit</small></div><span class="tag">Not certified</span></div>
+<div class="item"><div><strong>Post-deploy acceptance</strong><small>Independent live route/API/security checks</small></div><span class="tag">Not certified</span></div>
+</div></div></div></section>
+<section class="section" id="integrations"><div class="sectionhead"><h2>03 / Connected ecosystem</h2><p>Presence, health and acceptance are different states</p></div><div class="grid" id="integration-cards">
+<div class="card"><h3>GitHub</h3><div class="value">Checking…</div><p>Source control and Actions</p></div>
+<div class="card"><h3>Cloudflare</h3><div class="value">Checking…</div><p>Edge Worker, routes, assets and DNS</p></div>
+<div class="card"><h3>Firebase</h3><div class="value">Unverified</div><p>Auth, Firestore, Functions, Storage, backups</p></div>
+<div class="card"><h3>Supabase</h3><div class="value">Unverified</div><p>Project ownership, schema, RLS and runtime use</p></div>
+<div class="card"><h3>Stripe</h3><div class="value">Disabled</div><p>Live billing, products, webhooks, tax, refunds</p></div>
+<div class="card"><h3>Amplitude</h3><div class="value">Unverified</div><p>Project mapping, consent and event telemetry</p></div>
+<div class="card"><h3>Flutter / mobile</h3><div class="value">Unverified</div><p>Builds, signing, store tracks and release health</p></div>
+<div class="card"><h3>Commerce / Shopify</h3><div class="value">Unverified</div><p>Catalog, inventory, fulfillment and customer flow</p></div>
+</div></section>
+<section class="section" id="gates"><div class="sectionhead"><h2>04 / Release gates</h2><p>Runtime-reported release contract · not a dashboard override</p></div><div class="card"><div class="list" id="gate-list"><div class="muted">Waiting for platform gate response…</div></div></div></section>
+<section class="section" id="evidence"><div class="sectionhead"><h2>05 / Evidence ledger</h2><p>Timestamped source references and live response details</p></div><div class="two"><div class="card"><h3>Latest source revision</h3><div class="value mono" id="sha">Waiting for GitHub…</div><p id="commit-detail">Main branch commit metadata</p><p><a id="commit-link" href="https://github.com/thelingolegacy-blip/TheLingoLegacy/commits/main" target="_blank" rel="noopener">Open commit history ↗</a></p></div><div class="card"><h3>Evidence limitations</h3><p>Browser-side probes prove only the HTTP responses and public GitHub metadata they retrieve. They do not inspect provider dashboards, secret values, private app builds, database contents, account permissions, or host security. Those require authorized provider-side verification and independent acceptance.</p><p style="margin-top:12px"><a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/517" target="_blank" rel="noopener">Completion tracker ↗</a> · <a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/499" target="_blank" rel="noopener">Release hold ↗</a> · <a href="https://github.com/thelingolegacy-blip/TheLingoLegacy/pulls" target="_blank" rel="noopener">Open PRs ↗</a></p></div></div></section>
+<footer class="footer"><span>THE LINGO LEGACY · UNIFIED CONTROL ROOM · READ-ONLY</span><span id="footer-version">Runtime and pipeline evidence loading…</span><span><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/contact/">Contact</a></span></footer>
+</main>
+<script>
+(() => {
+const $ = (id) => document.getElementById(id);
+const repo = 'thelingolegacy-blip/TheLingoLegacy';
+const api = 'https://api.github.com/repos/' + repo;
+const setDot = (id, kind) => { const el=$(id); if(el) el.className='dot ' + (kind || ''); };
+const setTag = (text, kind='') => '<span class="tag '+kind+'">'+text+'</span>';
+const timeText = (v) => { try { return new Date(v).toLocaleString(); } catch { return String(v || '—'); } };
+async function get(url, timeout=10000) {
+ const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeout);
+ try { const r = await fetch(url, {cache:'no-store', headers:{'Accept':'application/json'}, signal:controller.signal}); const body = await r.text(); let data=body; try { data=JSON.parse(body); } catch {} return {ok:r.ok,status:r.status,data,headers:r.headers}; }
+ finally { clearTimeout(timer); }
+}
+async function probe(path) { const r=await get(path,8000); return {ok:r.ok,status:r.status,data:r.data}; }
+function show(id, value) { $(id).textContent = value; }
+function renderGates(gates={}) {
+ const entries=Object.entries(gates);
+ $('gate-list').innerHTML=entries.length ? entries.map(([k,v]) => {
+  const s=String(v); const kind=/^PASS$/i.test(s)?'ok':/FAIL/i.test(s)?'bad':'warn';
+  return '<div class="item"><div><strong>'+k.replaceAll('_',' ')+'</strong><small>Runtime release contract</small></div>'+setTag(s,kind)+'</div>';
+ }).join('') : '<p class="muted">No authoritative gate response.</p>';
+}
+async function runtimeChecks() {
+ const [health,runtime,status,gates,modules,context]=await Promise.all([
+  probe('/healthz'),probe('/api/v1/runtime'),probe('/api/v1/platform/status'),probe('/api/v1/platform/gates'),probe('/api/v1/platform/modules'),probe('/api/v1/site/context')
+ ]);
+ const h=health.ok && health.data.trim()==='ok';
+ show('worker-state',h?'HTTP '+health.status:'Unavailable'); show('worker-status',h?'Health endpoint answered':'Health probe failed'); setDot('worker-dot',h?'ok':'bad');
+ const r=runtime.data || {};
+ const rok=runtime.ok && r.ok===true;
+ show('api-state',rok?'HTTP '+runtime.status:'Unavailable'); show('api-status',rok?'Runtime manifest received':'Runtime API failed'); setDot('api-dot',rok?'ok':'bad');
+ const s=status.data || {};
+ const sok=status.ok && s.ok===true;
+ show('platform-state',sok?(s.status || 'Responding'):'Unavailable'); show('platform-status',sok?'Release '+(s.release_policy || 'state')+' · mutation '+(s.production_mutation || 'unknown'):'Platform API failed'); setDot('platform-dot',sok?'warn':'bad');
+ if(gates.ok && gates.data && gates.data.gates) renderGates(gates.data.gates);
+ const modulesOk=modules.ok && Array.isArray(modules.data.modules);
+ const contextOk=context.ok && context.data.ok===true;
+ const rt=[{name:'Homepage',path:'/'},{name:'Studio Hub',path:'/studio-hub/'},{name:'App',path:'/app/'},{name:'Universe',path:'/universe/'}];
+ const routeResults=await Promise.all(rt.map(async x=>{try{const q=await fetch(x.path,{method:'HEAD',cache:'no-store'});return {...x,ok:q.ok,status:q.status};}catch(e){return {...x,ok:false,status:'ERR'};}}));
+ const good=routeResults.filter(x=>x.ok).length;
+ show('routes-state',good+'/'+rt.length+' responding'); show('routes-detail',routeResults.map(x=>x.name+': '+x.status).join(' · ')); show('routes-status',good===rt.length?'All sampled routes answered':'One or more route checks failed'); setDot('routes-dot',good===rt.length?'ok':'warn');
+ const int=r.integrations || {};
+ const cards=[
+ ['GitHub','Connected API','Public repository API responding; source and workflow metadata visible.','ok'],
+ ['Cloudflare',h?'Worker responding':'Unreachable','Public Worker health and runtime endpoints are probed; active deployment provenance is not certified.',h?'ok':'bad'],
+ ['Firebase',int.firebase?'Environment binding present':'Not configured in runtime','A binding flag is not proof of Auth, rules, Functions, Storage or backups.',int.firebase?'warn':'bad'],
+ ['Supabase','Not verified','No authenticated provider-side health or project mapping is exposed by this public runtime.','warn'],
+ ['Stripe',r.billing && r.billing.mode==='DISABLED'?'Disabled':'Not verified','Checkout, live products, webhooks, tax and refunds remain outside this runtime check.',r.billing && r.billing.mode==='DISABLED'?'warn':'warn'],
+ ['Amplitude','Not verified','No mapped production project or consent-aware event stream is exposed here.','warn'],
+ ['Flutter / mobile','Not verified','No signed mobile build, store-track or device acceptance evidence is exposed here.','warn'],
+ ['Commerce / Shopify','Not verified','Catalog, inventory, fulfillment and customer purchase flow need provider-side evidence.','warn'],
+ ['D1 / KV / R2',[(int.d1?'D1':'—'),(int.kv?'KV':'—'),(int.r2?'R2':'—')].join(' · '),'Runtime binding presence only; data reads, writes, backups and access policy are not tested.',(int.d1||int.kv||int.r2)?'warn':'warn']
+ ];
+ $('integration-cards').innerHTML=cards.map(c=>'<div class="card"><h3>'+c[0]+'</h3><div class="value">'+c[1]+'</div><p>'+c[2]+'</p><div class="statusline"><span class="dot '+c[3]+'"></span><span>'+ (c[3]==='ok'?'Responding':c[3]==='bad'?'Unavailable':'Needs verification')+'</span></div></div>').join('');
+ $('footer-version').textContent='Runtime '+(r.version || 'unknown')+' · Modules '+(modulesOk?modules.data.modules.length:'unknown')+' · Site context '+(contextOk?'responding':'unavailable');
+ return {h,rok,sok,r,s,gates:gates.data && gates.data.gates,routeResults};
+}
+async function githubChecks() {
+ const [commit,runs,pulls,issues]=await Promise.all([
+  get(api+'/commits/main'),get(api+'/actions/runs?per_page=12'),get(api+'/pulls?state=open&per_page=50'),get(api+'/issues?state=open&per_page=100')
+ ]);
+ if(commit.ok && commit.data.sha){show('sha',commit.data.sha);show('commit-detail',(commit.data.commit && commit.data.commit.message || '').split('\n')[0]+' · '+timeText(commit.data.commit && commit.data.commit.committer && commit.data.commit.committer.date));$('commit-link').href=commit.data.html_url;}
+ else show('sha','Source metadata unavailable');
+ const list=runs.ok && runs.data.workflow_runs ? runs.data.workflow_runs : [];
+ $('runs').innerHTML=list.length?list.slice(0,9).map(run=>{
+  const conclusion=run.conclusion || run.status || 'unknown'; const kind=conclusion==='success'?'ok':(['failure','startup_failure','cancelled','timed_out'].includes(conclusion)?'bad':'warn');
+  return '<div class="item"><div><strong>'+run.name+'</strong><small>#'+run.run_number+' · '+timeText(run.updated_at)+' · '+String(run.head_sha || '').slice(0,10)+'</small><small><a href="'+run.html_url+'" target="_blank" rel="noopener">Open run ↗</a></small></div>'+setTag(conclusion,kind)+'</div>';
+ }).join(''):'<p class="muted">No public workflow runs returned, or GitHub API rate limit/network prevented retrieval.</p>';
+ const latest=list[0]; const runText=latest?latest.name+' · '+(latest.conclusion || latest.status):'No run evidence';
+ const jobsCount=latest && latest.jobs_url ? 'Job details require run-level query' : 'No run detail';
+ const prCount=pulls.ok && Array.isArray(pulls.data)?pulls.data.length:'unknown';
+ const issueCount=issues.ok && Array.isArray(issues.data)?issues.data.filter(x=>!x.pull_request).length:'unknown';
+ const prEl=document.createElement('div'); prEl.className='item'; prEl.innerHTML='<div><strong>Open pull requests</strong><small>Draft changes are not production releases</small></div>'+setTag(String(prCount),'info');
+ const isEl=document.createElement('div'); isEl.className='item'; isEl.innerHTML='<div><strong>Open issues</strong><small>Unresolved work and release blockers</small></div>'+setTag(String(issueCount),'warn');
+ const stageHtml=[
+ ['Source authority',commit.ok?'Commit '+String(commit.data.sha).slice(0,12):'GitHub API unavailable',commit.ok?'ok':'bad'],
+ ['CI execution',runText,latest && latest.conclusion==='success'?'ok':latest?'bad':'warn'],
+ ['G02 runner','No successful G02 sentinel proof recorded in this page', 'warn'],
+ ['Build & artifact','No verified artifact digest exposed by this page','warn'],
+ ['Deployment provenance','No active Worker-to-commit attestation exposed by this page','warn'],
+ ['Post-deploy acceptance','Requires independent release acceptance evidence','warn']
+ ];
+ $('stages').innerHTML=stageHtml.map(x=>'<div class="item"><div><strong>'+x[0]+'</strong><small>'+x[1]+'</small></div>'+setTag(x[2]==='ok'?'Observed':x[2]==='bad'?'Failing':'Unverified',x[2])+'</div>').join('')+prEl.outerHTML+isEl.outerHTML;
+ return {commitOk:commit.ok,runsOk:runs.ok,latest,prCount,issueCount};
+}
+async function refresh() {
+ $('refresh').disabled=true; $('refresh').textContent='Checking…';
+ const [runtime,github]=await Promise.all([runtimeChecks(),githubChecks()]);
+ const now=new Date(); show('checked',now.toLocaleTimeString()); $('checked').dateTime=now.toISOString();
+ const gates=runtime.gates || {}; const gatesPass=Object.values(gates).length>0 && Object.values(gates).every(x=>String(x)==='PASS');
+ const ciPass=github.latest && github.latest.conclusion==='success';
+ const allRoutes=runtime.routeResults && runtime.routeResults.every(x=>x.ok);
+ const certified=gatesPass && ciPass && allRoutes && runtime.h && runtime.rok && runtime.sok;
+ $('overall-label').textContent=certified?'All sampled gates passed — release still needs independent certification':'Live checks returned; release remains locked / not certified';
+ setDot('overall-dot',certified?'ok':'warn');
+ $('refresh').disabled=false; $('refresh').textContent='↻ Refresh all checks';
+}
+$('refresh').addEventListener('click',refresh);
+refresh(); setInterval(refresh,60000);
+})();
+</script>
+</body>
+</html>
