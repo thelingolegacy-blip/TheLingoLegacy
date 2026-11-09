@@ -33,7 +33,7 @@
         "wrangler.jsonc",
         "assets/"
       ],
-      "status": "cloudflare_zone_and_routes_verified_worker_runtime_not_live_probed",
+      "status": "apex_public_homepage_reachable_candidate_experience_routes_not_certified",
       "installation": "Browser access; no native install required",
       "blockers": [
         "production route and live probes must be independently verified",
