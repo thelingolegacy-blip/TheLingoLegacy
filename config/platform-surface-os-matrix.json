@@ -829,7 +829,21 @@
       "Cloudflare Worker inventory and route configuration were read only; no routes, versions, secrets or deployments were changed.",
       "Worker observability is enabled for thelingolegacyv-5 with 10 percent head sampling and query-string redaction; traces are disabled.",
       "The separate lingo-flagship-root Worker has no observability settings in its current settings response."
-    ]
+    ],
+    "public_web_probe": {
+      "apex_url": "https://thelingolegacy.com/",
+      "retrieved": "2026-11-09",
+      "result": "reachable",
+      "page_title": "The Lingo Legacy — One Legacy. Many Worlds.",
+      "visible_status": "Candidate experience — not a production status statement.",
+      "findings": [
+        "The homepage says destination links must be connected to verified routes before production activation.",
+        "The destination catalog returned 'No matching destinations' in the retrieved page.",
+        "The page states account creation and wallet actions should remain disabled until secure services are verified."
+      ],
+      "www_url": "https://www.thelingolegacy.com/",
+      "www_probe": "not_retrieved_by_available_browser_source"
+    }
   },
   "web_pages": [
     {
