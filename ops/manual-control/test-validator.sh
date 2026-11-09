@@ -22,11 +22,13 @@ expect_fail() {
 }
 BASE=(PROJECT_KEY=LINGOlegacy EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip)
 
-expect_pass "initial assessment" "${BASE[@]}" COMMAND=assess FROM_STAGE=NOT_ASSESSED TO_STAGE=PLANNED\nexpect_pass "planned to ready" "${BASE[@]}" COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
+expect_pass "initial assessment" "${BASE[@]}" COMMAND=assess FROM_STAGE=NOT_ASSESSED TO_STAGE=PLANNED
+expect_pass "planned to ready" "${BASE[@]}" COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
 expect_pass "owner approval" "${BASE[@]}" COMMAND=approve FROM_STAGE=REVIEW TO_STAGE=APPROVED CONFIRMATION="APPROVE LINGOlegacy"
 expect_fail "skipped lifecycle stage" "${BASE[@]}" COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=RELEASED
 expect_fail "unauthorized approval" PROJECT_KEY=LINGOlegacy EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=other-user GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=approve FROM_STAGE=REVIEW TO_STAGE=APPROVED CONFIRMATION="APPROVE LINGOlegacy"
 expect_fail "missing evidence" PROJECT_KEY=LINGOlegacy RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
-expect_fail "unregistered project" PROJECT_KEY=UnknownProject EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY\nexpect_fail "invalid project key" PROJECT_KEY="../bad" EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
+expect_fail "unregistered project" PROJECT_KEY=UnknownProject EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
+expect_fail "invalid project key" PROJECT_KEY="../bad" EVIDENCE_URL=https://example.com/evidence RATIONALE=Test GITHUB_ACTOR=thelingolegacy-blip GITHUB_REPOSITORY_OWNER=thelingolegacy-blip COMMAND=advance FROM_STAGE=PLANNED TO_STAGE=READY
 
 echo "All $pass manual-transition validator tests passed."
