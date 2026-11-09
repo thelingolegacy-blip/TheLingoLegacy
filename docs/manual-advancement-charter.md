@@ -19,16 +19,17 @@ No workflow in this manual-control path deploys to production, changes Cloudflar
 
 Canonical stages:
 
-1. `PLANNED`
-2. `READY`
-3. `IN_PROGRESS`
-4. `REPAIR`
-5. `VERIFICATION`
-6. `REVIEW`
-7. `APPROVED`
-8. `COMPLETED`
-9. `RELEASE_READY`
-10. `RELEASED`
+1. `NOT_ASSESSED` — inventory baseline; not a claim of completion or failure.
+2. `PLANNED`
+3. `READY`
+4. `IN_PROGRESS`
+5. `REPAIR`
+6. `VERIFICATION`
+7. `REVIEW`
+8. `APPROVED`
+9. `COMPLETED`
+10. `RELEASE_READY`
+11. `RELEASED`
 
 Exceptional states: `BLOCKED`, `PAUSED`, `REJECTED`, and `ROLLBACK`.
 
@@ -36,7 +37,7 @@ A project can move independently of other projects when its own dependencies and
 
 ## 3. Permitted transitions
 
-| Command | Required source | Target | Authority / evidence |
+| Command | Required source | Target | Authority / evidence |\n| `assess` | NOT_ASSESSED | PLANNED | Inventory, scope, owner, and dependencies reviewed |
 |---|---|---|---|
 | `advance` | PLANNED | READY | Project scope and dependencies recorded |
 | `advance` | READY | IN_PROGRESS | Work owner and plan identified |
@@ -56,7 +57,7 @@ A project can move independently of other projects when its own dependencies and
 
 The validator rejects unsupported transitions. A hold is not an approval. A request for review or release is not approval. A release record documents an already completed, independently verified release; it does not perform a deployment.
 
-## 4. Manual control workflow
+The initial catalog is `ops/manual-control/projects.json`. All nine top-level divisions begin at `NOT_ASSESSED`; this is an honest inventory baseline, not a claim that any product is incomplete or complete. Assess actual status, ownership, and dependencies before advancing each project to `PLANNED`. Only registered project keys are accepted by the validator.\n\n## 4. Manual control workflow
 
 Run **Actions → LINGO Manual Advancement → Run workflow** and supply:
 
