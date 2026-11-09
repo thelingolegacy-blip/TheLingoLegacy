@@ -4,6 +4,19 @@
 **Production changes:** None.  
 **Account selection:** Two connected AppDeploy links resolve to the same account identity and identical app inventory; the third link resolves to a different identity with no apps and was not used for project changes.
 
+## 2026-11-09 refresh — all 18 existing apps
+
+A read-only account overview and per-app status pass were completed on 2026-11-09.
+
+- Account overview: Free plan; 20.892937682 monthly credits available; reset 2026-11-17T00:00:00Z; zero top-up credits.
+- All 18 listed apps returned deployment status `deployed` in the account overview and `ready` from the per-app status endpoint.
+- All 18 stored QA snapshots report zero frontend and network errors, but snapshot timestamps range from 2026-09-03T04:15:28Z to 2026-11-05T00:10:05Z; these are not current live-browser acceptance.
+- The account overview reports 0 page views for each of the 18 apps on 2026-11-08 compared with 0 on 2026-11-07.
+- Per-app status responses for all 18 apps still append an "exhausted credit balance" alert. This contradicts the account overview's positive monthly balance. The account overview and per-app alert must remain a documented conflict; do not claim the balance is exhausted or spend credits until independently reconciled.
+- Stored frontend error records are present for three apps: Universe Gateway (10), Kotton's Code (5), and Lingo Travel (2). The Gateway and Kotton's Code errors reference the shared `studio-preview.thelingolegacy.com` host and are dated 2026-11-06T03:34:38Z and 2026-11-06T03:07:30Z respectively. Lingo Travel's two script errors are older; its app status remains ready.
+
+This refresh does not change the disposition of the six critical apps above: AppDeploy `ready` is a deployment-state label, not product acceptance, functional QA, security acceptance, or production authorization. No upload, build, retry, deployment, billing, subscription, route, DNS, or production change was made.
+
 ## Account inventory
 
 - The intended AppDeploy account returned 18 apps, all listed as deployed in the account overview.
