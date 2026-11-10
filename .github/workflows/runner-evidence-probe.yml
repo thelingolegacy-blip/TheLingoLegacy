@@ -33,6 +33,9 @@ jobs:
           GH_ACTOR: ${{ github.actor }}
         run: |
           set -euo pipefail
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
           mkdir -p evidence
           node --version
           npm --version
