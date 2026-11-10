@@ -7,7 +7,6 @@
 import {
   createSign,
   generateKeyPairSync,
-  type KeyObject,
 } from "node:crypto";
 
 export interface TestTokenClaims {
@@ -21,8 +20,8 @@ export interface TestTokenClaims {
 }
 
 export interface TestKeyMaterial {
-  privateKey: KeyObject;
-  publicKey: KeyObject;
+  privateKeyPem: string;
+  publicKeyPem: string;
   kid: string;
 }
 
@@ -33,8 +32,8 @@ export function createTestKeys(kid = "test-kid-001"): TestKeyMaterial {
     privateKeyEncoding: { type: "pkcs8", format: "pem" },
   });
   return {
-    privateKey: privateKey as unknown as KeyObject,
-    publicKey: publicKey as unknown as KeyObject,
+    privateKeyPem: privateKey,
+    publicKeyPem: publicKey,
     kid,
   };
 }
@@ -59,7 +58,7 @@ export function createMockSignedJwt(
   signer.update(signingInput);
   signer.end();
 
-  const signature = signer.sign(keys.privateKey).toString("base64url");
+  const signature = signer.sign(keys.privateKeyPem).toString("base64url");
   return `${signingInput}.${signature}`;
 }
 
