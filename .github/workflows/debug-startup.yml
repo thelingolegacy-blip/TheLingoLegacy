@@ -1,0 +1,72 @@
+name: Debug Startup Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this diagnostic is being run"
+        required: true
+        type: string
+
+permissions:
+  contents: none
+
+jobs:
+  diagnose-hosted-runner:
+    name: Capture hosted-runner environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Record runner identity
+        shell: bash
+        run: |
+          echo "=== Diagnostic reason ==="
+          echo "$DIAGNOSTIC_REASON"
+          echo "=== Runner metadata ==="
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_OS=$RUNNER_OS"
+          echo "RUNNER_ARCH=$RUNNER_ARCH"
+          echo "ImageOS=${ImageOS:-unavailable}"
+          echo "ImageVersion=${ImageVersion:-unavailable}"
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+          echo "GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
+          echo "GITHUB_JOB=$GITHUB_JOB"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          echo "GITHUB_REF=$GITHUB_REF"
+        env:
+          DIAGNOSTIC_REASON: ${{ inputs.reason }}
+
+      - name: Capture operating system and toolchain
+        shell: bash
+        run: |
+          echo "=== OS ==="
+          uname -a
+          cat /etc/os-release || true
+          echo "=== Toolchain ==="
+          for tool in node npm java flutter dart git docker; do
+            if command -v "$tool" >/dev/null 2>&1; then
+              echo "--- $tool ---"
+              case "$tool" in
+                node) node --version ;;
+                npm) npm --version ;;
+                java) java -version 2>&1 ;;
+                flutter) flutter --version ;;
+                dart) dart --version ;;
+                git) git --version ;;
+                docker) docker --version; docker info 2>&1 | head -n 40 || true ;;
+              esac
+            else
+              echo "$tool: not installed"
+            fi
+          done
+
+      - name: Capture resource baseline
+        shell: bash
+        run: |
+          echo "=== Disk ==="
+          df -h
+          echo "=== Memory ==="
+          free -h || true
+          echo "DIAGNOSTIC_COMPLETED=true"
+          echo "Diagnostic only: no self-hosted runner, production, secrets, or deployment path was changed."
