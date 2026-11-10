@@ -1,6 +1,11 @@
 name: Debug Startup Environment
 
 on:
+  push:
+    branches:
+      - ops/437-536-537-isolated-package-2026-11-10
+    paths:
+      - ".github/workflows/debug-startup.yml"
   workflow_dispatch:
     inputs:
       reason:
@@ -11,19 +16,27 @@ on:
 permissions:
   contents: none
 
+concurrency:
+  group: lingo-hosted-startup-probe-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   diagnose-hosted-runner:
     name: Capture hosted-runner environment
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Record runner identity
         shell: bash
+        env:
+          DIAGNOSTIC_REASON: ${{ github.event_name == 'workflow_dispatch' && inputs.reason || 'push-triggered isolated startup probe' }}
         run: |
-          echo "=== Diagnostic reason ==="
-          echo "$DIAGNOSTIC_REASON"
-          echo "=== Runner metadata ==="
+          set -euo pipefail
+          test -n "$RUNNER_NAME"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          echo "DIAGNOSTIC_REASON=$DIAGNOSTIC_REASON"
           echo "RUNNER_NAME=$RUNNER_NAME"
           echo "RUNNER_OS=$RUNNER_OS"
           echo "RUNNER_ARCH=$RUNNER_ARCH"
@@ -34,39 +47,32 @@ jobs:
           echo "GITHUB_JOB=$GITHUB_JOB"
           echo "GITHUB_SHA=$GITHUB_SHA"
           echo "GITHUB_REF=$GITHUB_REF"
-        env:
-          DIAGNOSTIC_REASON: ${{ inputs.reason }}
+          echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
 
-      - name: Capture operating system and toolchain
+      - name: Capture minimal toolchain and host baseline
         shell: bash
         run: |
+          set -euo pipefail
+          echo "=== UTC ==="
+          date -u +%FT%TZ
           echo "=== OS ==="
           uname -a
-          cat /etc/os-release || true
+          cat /etc/os-release
           echo "=== Toolchain ==="
-          for tool in node npm java flutter dart git docker; do
-            if command -v "$tool" >/dev/null 2>&1; then
-              echo "--- $tool ---"
-              case "$tool" in
-                node) node --version ;;
-                npm) npm --version ;;
-                java) java -version 2>&1 ;;
-                flutter) flutter --version ;;
-                dart) dart --version ;;
-                git) git --version ;;
-                docker) docker --version; docker info 2>&1 | head -n 40 || true ;;
-              esac
-            else
-              echo "$tool: not installed"
-            fi
-          done
-
-      - name: Capture resource baseline
-        shell: bash
-        run: |
+          node --version
+          npm --version
+          git --version
           echo "=== Disk ==="
           df -h
           echo "=== Memory ==="
-          free -h || true
-          echo "DIAGNOSTIC_COMPLETED=true"
-          echo "Diagnostic only: no self-hosted runner, production, secrets, or deployment path was changed."
+          free -h
+          {
+            echo "## Hosted startup probe"
+            echo "- Runner: ${RUNNER_NAME}"
+            echo "- OS/architecture: ${RUNNER_OS}/${RUNNER_ARCH}"
+            echo "- Run: ${GITHUB_RUN_ID}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Result: **HOSTED_RUNNER_JOB_EXECUTED**"
+            echo "- Scope: no checkout, external actions, secrets, network calls, artifacts, or production access."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "HOSTED_RUNNER_JOB_EXECUTED=true"
