@@ -67,11 +67,3 @@ jobs:
           console.log(JSON.stringify(evidence, null, 2));
           NODE
 
-      - name: Upload retrievable evidence artifact
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: lingo-actions-runner-evidence-${{ github.run_id }}
-          path: evidence/runner-evidence.json
-          if-no-files-found: error
-          retention-days: 14
