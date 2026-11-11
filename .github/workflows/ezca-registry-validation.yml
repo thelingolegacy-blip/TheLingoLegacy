@@ -1,0 +1,26 @@
+name: EZCA Registry Validation
+
+on:
+  pull_request:
+    paths:
+      - 'infrastructure/registry/**'
+      - 'scripts/validate-ezca-registry.mjs'
+      - '.github/workflows/ezca-registry-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate registry JSON and invariants
+        run: node scripts/validate-ezca-registry.mjs
