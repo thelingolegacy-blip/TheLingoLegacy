@@ -40,9 +40,18 @@ The apex has two different handlers depending on the query string: a bare root r
 
 ## Recommended normalization path
 
-The canonical repository and production release contract designate `thelingolegacyv-5` as the flagship runtime. The preferred target is one consistent apex entry point on that Worker, after verifying that its root asset matches the intended flagship homepage and that rollback evidence is captured. The exact-root route should then be removed through a reviewed, reversible Cloudflare change. Do not perform that production change as part of this investigation.
+The canonical `wrangler.jsonc` declares only the apex wildcard and www wildcard routes to `thelingolegacyv-5`; the exact-root route is an out-of-band Cloudflare route not represented in the canonical deployment config. The source-controlled root `index.html` served by the flagship Worker's ASSETS binding redirects to `/studio-hub/`, while the isolated root Worker's HOME serves a distinct crimson/white flagship homepage. This suggests the exact-root route may be intentional, but it creates query-string-dependent homepage behavior.
 
-Alternative: if the isolated root homepage must remain, it needs an explicit, tested service-binding/delegation design and a query-string-safe routing plan. The current deployed root Worker has no such binding or delegation.
+Two valid normalization paths remain:
+
+1. **Single flagship Worker:** move/align the standalone root homepage into the flagship Worker assets, verify root and Studio Hub navigation, then remove the out-of-band exact-root route through a reviewed reversible Cloudflare change.
+2. **Root gateway Worker:** preserve the standalone root homepage, add a tested service binding from `lingo-flagship-root` to `thelingolegacyv-5`, change the apex wildcard to the root gateway, and have the gateway delegate all non-root paths to the flagship Worker. The current root Worker has no binding or delegation, so this requires a code/settings change.
+
+Do not perform either production change as part of this investigation. The intended homepage and preferred normalization path require review before route mutation.
+
+## Source-of-truth drift
+
+The main-branch `wrangler.jsonc` currently declares `thelingolegacy.com/*` and `www.thelingolegacy.com/*` only. The Cloudflare zone also has the exact apex-root route to `lingo-flagship-root`, which is not represented in that Wrangler file. The root Worker's source exists at `cloudflare/flagship-root/worker.js`; its deployed settings currently show no regular bindings. The canonical `index.html` is a redirect stub to `/studio-hub/`, not a copy of the standalone root homepage.
 
 ## Acceptance criteria
 
