@@ -33,13 +33,14 @@
         "thelingolegacyv-5 regular bindings identified: ASSETS, CANONICAL_DOMAIN, PUBLIC_SITE_URL",
         "zero secret binding names returned across seven scripts; no secret values requested",
         "worker-bindings.json added to machine-readable registry",
-        "query-bearing apex root is shown by Cloudflare route semantics to match wildcard Worker rather than exact-root Worker"
+        "query-bearing apex root is shown by Cloudflare route semantics to match wildcard Worker rather than exact-root Worker",
+        "all nine registry JSON files parsed successfully through the connected GitHub read path",
+        "repository, engine, Worker, 21-route, seven-binding-catalog and fail-closed release invariants passed an independent structural check"
       ],
       "remaining": [
-        "runtime response-marker/cf-ray attribution of bare-root and query-root requests",
+        "obtain a hosted GitHub Actions run with actual steps, logs and artifacts",
         "inspect account-level secret stores, service bindings and external provider credentials",
-        "verify Firebase project/database IDs against deployed Firebase resources",
-        "decide and review route normalization; no live route changes made"
+        "verify Firebase project/database IDs against deployed Firebase resources"
       ]
     },
     {
@@ -50,13 +51,15 @@
         "P0 direct client mutation of chips, tickets and progression confirmed in existing Firestore rules and app sync code",
         "isolated security branch created in Spades-is-my_Lingo",
         "draft PR #1 opened with Firestore client-write lockdown, local-only progression sync, emulator test suite and wallet-ledger rollout contract",
-        "cloud progression writes are disabled in the proposed branch until trusted ledger service is deployed"
+        "cloud progression writes are disabled in the proposed branch until trusted ledger service is deployed",
+        "deployed root Worker source inspected: standalone GET/HEAD / handler; non-root paths return 404; no delegation binding",
+        "canonical flagship Worker source inspected: runtime/API handlers plus ASSETS fetch",
+        "route split determined: bare root selects isolated root Worker; query-bearing root selects apex wildcard Worker"
       ],
       "remaining": [
-        "execute Firestore Emulator tests and application typecheck/build",
-        "implement server-authoritative idempotent wallet ledger endpoint",
-        "test atomicity, replay, concurrency, insufficient balance, forged reward and cross-user rejection",
-        "review and separately approve any production Firestore rules deployment"
+        "capture live response markers and cf-ray headers for bare-root and query-root probes",
+        "review and separately approve the recommended apex route normalization",
+        "run Spades emulator suite and application typecheck/build"
       ]
     }
   ],
@@ -96,14 +99,14 @@
       "number": 549,
       "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/549",
       "status": "OPEN_UNMERGED",
-      "purpose": "EZCA registry and P0 remediation specifications"
+      "purpose": "EZCA registry, 21-route catalog, duplicate dispositions and P0 specifications"
     },
     {
       "repository": "thelingolegacy-blip/Spades-is-my_Lingo",
       "number": 1,
       "url": "https://github.com/thelingolegacy-blip/Spades-is-my_Lingo/pull/1",
       "status": "OPEN_DRAFT_UNMERGED",
-      "purpose": "P0 client wallet write lockdown and emulator tests"
+      "purpose": "P0 client wallet write lockdown and Firestore Emulator tests"
     }
   ]
 }
