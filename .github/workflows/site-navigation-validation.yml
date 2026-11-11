@@ -1,0 +1,31 @@
+name: LINGO Flagship Navigation Validation
+
+on:
+  pull_request:
+    paths:
+      - "cloudflare/flagship-root/worker.js"
+      - "studio-sites/**"
+      - ".github/workflows/site-navigation-validation.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "cloudflare/flagship-root/worker.js"
+      - "studio-sites/**"
+
+permissions:
+  contents: read
+
+jobs:
+  navigation-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout canonical source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate flagship and universe routes
+        run: node --test studio-sites/tests/navigation.test.mjs
