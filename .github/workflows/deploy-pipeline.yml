@@ -1,26 +1,26 @@
 name: CI/CD Deployment Pipeline & Staging Isolation Audit
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
       - staging
-  pull_request:
-    branches:
-      - main
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-pipeline-${{ github.workflow }}-${{ github.ref }}
+  group: staging-audit-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify-and-dry-run:
-    name: Check → Lint → Build → Isolation Audit → Wrangler Dry-Run
+    name: Static Gates → Isolation Audit → Staging Dry-Run
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout Repository
@@ -29,27 +29,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Record Execution Context
+        run: |
+          node --version
+          git rev-parse HEAD
+          git status --short
 
-      - name: Check
-        run: npm run check
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Build
-        run: npm run build
+      - name: Run Repository Static Gate Stack
+        run: node scripts/run-static-gates.mjs
 
       - name: Verify Staging Resource Isolation
         run: node scripts/verify-staging-isolation.mjs
 
       - name: Wrangler Staging Deployment Dry-Run
-        run: npx wrangler deploy --env staging --dry-run
+        run: npx --yes wrangler deploy --config wrangler.staging.jsonc --dry-run
 
-      - name: Wrangler Production Deployment Dry-Run
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npx wrangler deploy --dry-run
+      - name: Upload Static Gate Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-audit-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            static-gate-results.json
+            static-gate-*.log
+          if-no-files-found: warn
+          retention-days: 14
