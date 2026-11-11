@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.1.0",
+  "owner": "thelingolegacy-blip/TheLingoLegacy",
+  "packages": [
+    {
+      "id": "identity",
+      "package": "@lingo/identity-engine",
+      "path": "packages/engines/identity-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "sync",
+      "package": "@lingo/sync-engine",
+      "path": "packages/engines/sync-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "notify",
+      "package": "@lingo/notify-engine",
+      "path": "packages/engines/notify-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "ai",
+      "package": "@lingo/ai-engine",
+      "path": "packages/engines/ai-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "media",
+      "package": "@lingo/media-engine",
+      "path": "packages/engines/media-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "discovery",
+      "package": "@lingo/discovery-engine",
+      "path": "packages/engines/discovery-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "security",
+      "package": "@lingo/security-engine",
+      "path": "packages/engines/security-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "wallet",
+      "package": "@lingo/wallet-engine",
+      "path": "packages/engines/wallet-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "asset",
+      "package": "@lingo/asset-engine",
+      "path": "packages/engines/asset-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "analytics",
+      "package": "@lingo/analytics-engine",
+      "path": "packages/engines/analytics-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "event",
+      "package": "@lingo/event-engine",
+      "path": "packages/engines/event-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    },
+    {
+      "id": "growth",
+      "package": "@lingo/growth-engine",
+      "path": "packages/engines/growth-engine",
+      "target_owner": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "NOT_VERIFIED",
+      "rule": "Shared engine target; consumers must not independently reimplement authoritative shared logic."
+    }
+  ]
+}
