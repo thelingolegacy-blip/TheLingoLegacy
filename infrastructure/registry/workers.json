@@ -9,11 +9,26 @@
       "role": "flagship",
       "routes": [
         "thelingolegacy.com/*",
+        "theriseofzavione.thelingolegacy.com/*",
+        "thats-my-lingo.thelingolegacy.com/*",
+        "sparkling-rain.thelingolegacy.com/*",
+        "therealzavione.thelingolegacy.com/*",
+        "lingo.thelingolegacy.com/*",
+        "cyber.thelingolegacy.com/*",
+        "solar.thelingolegacy.com/*",
+        "drip.thelingolegacy.com/*",
+        "site.thelingolegacy.com/*",
+        "luxe.thelingolegacy.com/*",
+        "web.thelingolegacy.com/*",
+        "hub.thelingolegacy.com/*",
         "www.thelingolegacy.com/*",
-        "multiple product subdomains"
+        "v4.thelingolegacy.com/*",
+        "v3.thelingolegacy.com/*",
+        "ai.thelingolegacy.com/*",
+        "blog.thelingolegacy.com/*"
       ],
-      "status": "LIVE_OBSERVED",
-      "notes": "Canonical production worker; preserve."
+      "status": "LIVE_OBSERVED_ROUTE_MATCH_CONFIRMED",
+      "notes": "Cloudflare API confirms apex wildcard, www wildcard and 16 product/utility subdomain wildcard routes. Bare apex root is intercepted by the exact-root route; query-bearing apex-root URLs match this wildcard."
     },
     {
       "name": "lingo-flagship-root",
@@ -22,8 +37,8 @@
       "routes": [
         "thelingolegacy.com/"
       ],
-      "status": "LIVE_OBSERVED_SPECIFIC_ROUTE_EXPECTED_OWNER",
-      "notes": "Exact root route is more specific than apex wildcard under Cloudflare Workers route matching docs; expected to own path /. Query-bearing root URL requires separate probe because no-wildcard patterns do not match URLs with query parameters. Live response marker probe remains pending."
+      "status": "LIVE_OBSERVED_ROUTE_MATCH_CONFIRMED",
+      "notes": "Cloudflare API confirms exact route thelingolegacy.com/. Cloudflare route matching includes the query string, but route patterns cannot contain query parameters; therefore the exact route matches the bare root only, while a query-bearing root request falls through to the apex wildcard Worker. Runtime cf-ray/response-marker attribution remains unverified."
     },
     {
       "name": "lingo-flagship-site-preview",
@@ -76,10 +91,39 @@
     "ai-gateway"
   ],
   "secret_binding_audit": {
-    "method": "Cloudflare Worker secrets binding-name listing",
+    "method": "Cloudflare Worker secrets binding-name list plus Worker settings bindings",
     "workers_checked": 7,
-    "names_returned": 0,
+    "secret_names_returned": 0,
     "raw_values_requested": false,
-    "interpretation": "No secret binding names were returned by this endpoint for the inspected Workers; verify regular environment bindings and service bindings separately. This does not prove no secrets exist in other stores or external systems."
+    "regular_bindings": {
+      "thelingolegacyv-5": [
+        {
+          "type": "assets",
+          "name": "ASSETS"
+        },
+        {
+          "type": "plain_text",
+          "name": "CANONICAL_DOMAIN"
+        },
+        {
+          "type": "plain_text",
+          "name": "PUBLIC_SITE_URL"
+        }
+      ],
+      "lingo-flagship-root": [],
+      "lingo-ecosystem-atlas": [],
+      "lingo-flagship-site-preview": [],
+      "lingo-resilience-gateway": [],
+      "lingo-static-backup-proxy": [],
+      "lingo-studio-control-center-staging": []
+    },
+    "interpretation": "No secret names were returned for the seven scripts. The settings endpoint exposes three non-secret bindings on thelingolegacyv-5 and no regular bindings on the other six. This is not a complete audit of account-level secret stores, service bindings, or external provider credentials."
+  },
+  "route_inventory": {
+    "observed_routes": 21,
+    "source": "Cloudflare zone Workers Routes API read-only snapshot",
+    "query_string_behavior": "Route matching considers the entire request URL; patterns cannot include query parameters. Therefore the exact apex-root route does not match a root URL carrying a query string; the apex wildcard catches it.",
+    "runtime_attribution": "NOT_VERIFIED",
+    "no_routes_changed": true
   }
 }
