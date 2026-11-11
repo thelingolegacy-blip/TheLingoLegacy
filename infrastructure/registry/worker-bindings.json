@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-11-11",
+  "account_id": "16cb6f247cd1b28fca864760c7269606",
+  "workers_checked": 7,
+  "raw_secret_values_requested": false,
+  "workers": [
+    {
+      "name": "thelingolegacyv-5",
+      "regular_bindings": [
+        {
+          "type": "assets",
+          "name": "ASSETS"
+        },
+        {
+          "type": "plain_text",
+          "name": "CANONICAL_DOMAIN",
+          "value_visibility": "metadata_only"
+        },
+        {
+          "type": "plain_text",
+          "name": "PUBLIC_SITE_URL",
+          "value_visibility": "metadata_only"
+        }
+      ],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-flagship-root",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-ecosystem-atlas",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-flagship-site-preview",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-resilience-gateway",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-static-backup-proxy",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-studio-control-center-staging",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    }
+  ],
+  "limitations": [
+    "Secret values were never requested.",
+    "Zero names returned from the per-script secret listing does not establish absence of account-level secrets, service bindings, environment variables outside the settings response, or external provider credentials.",
+    "No Worker route or deployment was modified."
+  ]
+}
