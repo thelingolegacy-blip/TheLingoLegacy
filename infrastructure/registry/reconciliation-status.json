@@ -34,7 +34,8 @@
       "remaining": [
         "validate all JSON against schema",
         "inspect regular Worker bindings and external secret stores",
-        "verify project IDs and deployed Firebase targets"
+        "verify project IDs and deployed Firebase targets",
+        "Resolve GitHub Actions startup failure and obtain a real hosted-runner execution with step logs/artifacts"
       ]
     },
     {
@@ -57,5 +58,23 @@
   "branch": "feature/wave-00-2-ezca-registry",
   "base_branch": "main",
   "base_sha": "aaa9cd8462ced19ea86cb4d8bfd21672409c8b6e",
-  "no_production_mutations": true
+  "no_production_mutations": true,
+  "validation": {
+    "workflow": "EZCA Registry Validation",
+    "workflow_path": ".github/workflows/ezca-registry-validation.yml",
+    "observed_runs": [
+      43018520930,
+      43018403930
+    ],
+    "status": "STARTUP_FAILURE",
+    "jobs_observed": 0,
+    "interpretation": "GitHub Actions created pull_request workflow runs but failed before job creation; no registry test steps executed. Treat hosted runner/Actions startup as blocked, not as test failure or pass.",
+    "combined_status": [
+      {
+        "context": "Vercel – the-lingo-legacy",
+        "state": "failure",
+        "interpretation": "Legacy Vercel status check; Vercel is not the approved deployment target. Must be reconciled/retired through governance, not bypassed."
+      }
+    ]
+  }
 }
