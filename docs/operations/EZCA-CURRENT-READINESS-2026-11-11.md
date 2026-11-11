@@ -82,3 +82,21 @@ The jobs endpoint returned zero jobs for all four runs. No instantiated steps, r
 **Do not merge or promote on the strength of registry validation.** The registry checks pass, but operational evidence is incomplete. Keep PR #549 in review, G02 at `FAIL_UNVERIFIED`, and production promotion at `BLOCKED`.
 
 No runner activation, production deployment, route/DNS mutation, Firebase deployment, database migration, payment activation, or incremental paid resource creation occurred during this snapshot.
+
+
+## 7. Public HTTP smoke checks
+
+A same-day external web fetch returned:
+- `https://thelingolegacy.com/`: homepage responds and renders the legacy flagship catalog.
+- `https://thelingolegacy.com/healthz`: plain-text response `ok`.
+
+The fetched public homepage still displays the older candidate-status footer and the statement that destinations must be connected to verified routes before production activation. Therefore the PR #548 navigation repair and revised portal copy have not reached the active public homepage. The active root Worker remains version 1, consistent with the Cloudflare deployment API.
+
+The following endpoints could not be fetched by the available browser inspection surface:
+- `https://www.thelingolegacy.com/`
+- `/api/v1/platform/gates`
+- `/api/v1/platform/modules`
+- The exact-root Worker preview URL
+- The main Worker preview URL
+
+An inspection-surface fetch failure is not sufficient evidence that these routes are down. They remain **NOT VERIFIED** and require independent browser/device and HTTP probe evidence. The root `/healthz` response confirms only that endpoint, not all application services or integrations.
