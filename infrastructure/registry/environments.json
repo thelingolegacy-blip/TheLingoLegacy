@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.1.0",
+  "environments": [
+    {
+      "id": "development",
+      "purpose": "local and developer validation",
+      "production_access": false,
+      "paid_providers": false,
+      "sms_auth": false
+    },
+    {
+      "id": "staging",
+      "purpose": "isolated integration and acceptance testing",
+      "production_access": false,
+      "paid_providers": false,
+      "sms_auth": false
+    },
+    {
+      "id": "production",
+      "purpose": "approved live workloads only",
+      "production_access": "RELEASE_GATE_ONLY",
+      "paid_providers": "EXPLICIT_FLAG_AND_APPROVAL",
+      "sms_auth": false
+    },
+    {
+      "id": "recovery",
+      "purpose": "last-known-good and recovery paths",
+      "production_access": "BREAK_GLASS_CONTROLLED",
+      "mutation": "APPROVAL_REQUIRED"
+    }
+  ],
+  "secret_policy": {
+    "secret_values_in_git": false,
+    "wrangler_plaintext_secrets": false,
+    "secret_names_may_be_declared": true,
+    "rotation": "documented and owner-assigned"
+  }
+}
