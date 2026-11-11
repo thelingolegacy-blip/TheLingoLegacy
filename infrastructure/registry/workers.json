@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.1.0",
+  "observed_at": "2026-11-11",
+  "account_id": "16cb6f247cd1b28fca864760c7269606",
+  "workers": [
+    {
+      "name": "thelingolegacyv-5",
+      "environment": "production",
+      "role": "flagship",
+      "routes": [
+        "thelingolegacy.com/*",
+        "www.thelingolegacy.com/*",
+        "multiple product subdomains"
+      ],
+      "status": "LIVE_OBSERVED",
+      "notes": "Canonical production worker; preserve."
+    },
+    {
+      "name": "lingo-flagship-root",
+      "environment": "production",
+      "role": "flagship",
+      "routes": [
+        "thelingolegacy.com/"
+      ],
+      "status": "LIVE_OBSERVED_CONFLICT_REVIEW",
+      "notes": "Exact apex root route overlaps apex wildcard route; do not mutate until precedence validated."
+    },
+    {
+      "name": "lingo-flagship-site-preview",
+      "environment": "staging-preview",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED"
+    },
+    {
+      "name": "lingo-studio-control-center-staging",
+      "environment": "staging-control",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED",
+      "tags": [
+        "staging",
+        "read-only",
+        "studio-control-center"
+      ]
+    },
+    {
+      "name": "lingo-ecosystem-atlas",
+      "environment": "production",
+      "role": "discovery",
+      "routes": [
+        "atlas.thelingolegacy.com/*"
+      ],
+      "status": "LIVE_OBSERVED"
+    },
+    {
+      "name": "lingo-static-backup-proxy",
+      "environment": "recovery",
+      "role": "flagship",
+      "routes": [
+        "launch.thelingolegacy.com/*"
+      ],
+      "status": "LIVE_OBSERVED"
+    },
+    {
+      "name": "lingo-resilience-gateway",
+      "environment": "recovery-control",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED"
+    }
+  ],
+  "target_workers_not_observed": [
+    "sync",
+    "notify",
+    "ai-gateway"
+  ],
+  "secret_binding_audit": {
+    "method": "Cloudflare Worker secrets binding-name listing",
+    "workers_checked": 7,
+    "names_returned": 0,
+    "raw_values_requested": false,
+    "interpretation": "No secret binding names were returned by this endpoint for the inspected Workers; verify regular environment bindings and service bindings separately. This does not prove no secrets exist in other stores or external systems."
+  }
+}
