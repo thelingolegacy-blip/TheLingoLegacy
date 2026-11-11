@@ -35,12 +35,17 @@
         "worker-bindings.json added to machine-readable registry",
         "query-bearing apex root is shown by Cloudflare route semantics to match wildcard Worker rather than exact-root Worker",
         "all nine registry JSON files parsed successfully through the connected GitHub read path",
-        "repository, engine, Worker, 21-route, seven-binding-catalog and fail-closed release invariants passed an independent structural check"
+        "repository, engine, Worker, 21-route, seven-binding-catalog and fail-closed release invariants passed an independent structural check",
+        "canonical .firebaserc and firebase.client.json declare lingo-legacy-production; client API/app credentials remain placeholders",
+        "canonical firebase.json configures Hosting only and no root Firestore rules source; Kotton's Code has a nested global-default-deny rules file",
+        "Spades declares a separate project ID and named Firestore database; no deployed Firebase target was verified",
+        "firebase-projects.json added to inventory and validator; all ten registry JSON files parse and structural invariants pass"
       ],
       "remaining": [
         "obtain a hosted GitHub Actions run with actual steps, logs and artifacts",
         "inspect account-level secret stores, service bindings and external provider credentials",
-        "verify Firebase project/database IDs against deployed Firebase resources"
+        "verify Firebase project/database IDs against deployed Firebase resources",
+        "verify actual Firebase project and named database resources through authorized Firebase/GCP access; no Firebase project connector is available in this workspace"
       ]
     },
     {
@@ -86,7 +91,23 @@
         "state": "failure",
         "interpretation": "Legacy Vercel status check; Vercel is not the approved deployment target. Reconcile through governance, do not bypass."
       }
-    ]
+    ],
+    "public_status": {
+      "source": "GitHub official status page",
+      "checked_date": "2026-11-11",
+      "actions_component": "OPERATIONAL",
+      "incident_today": "NONE_REPORTED",
+      "interpretation": "Public status does not explain the repository-specific workflow failures. Spades retries still fail with zero steps and no downloadable logs; canonical workflows still show startup_failure and zero jobs."
+    },
+    "spades_retry": {
+      "run_id": 43020812018,
+      "attempt": 2,
+      "status": "FAILURE",
+      "jobs": 1,
+      "steps": 0,
+      "logs": "NOT_AVAILABLE_BLOB_NOT_FOUND",
+      "artifacts": 0
+    }
   },
   "last_updated": "2026-11-11",
   "branches": {
