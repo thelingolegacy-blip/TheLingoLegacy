@@ -16,6 +16,20 @@
 - The repository's `.firebaserc` default points to `lingo-legacy-production`; no separate staging Firebase project mapping is currently checked in.
 - Observability destinations and issue automations currently return empty lists.
 
+## Additional live-account reconciliation (2026-11-11)
+
+A fresh read-only Cloudflare account inventory returned:
+
+- Seven Workers: `lingo-ecosystem-atlas`, `lingo-flagship-root`, `lingo-flagship-site-preview`, `lingo-resilience-gateway`, `lingo-static-backup-proxy`, `lingo-studio-control-center-staging`, and `thelingolegacyv-5`.
+- Five KV namespaces: `LEADERBOARD_KV`, `STUDIO_KV`, `G03_EVIDENCE`, `SUBMISSIONS`, and `JACKPOT_KV`. Their names do not establish environment ownership or whether they are attached to any Worker.
+- Four D1 databases: `lingo-game-engine-staging-20261107` and `lingo-loyalty-staging` (both zero tables), `world-engine-db` (zero tables), and `lingo-production` (zero tables).
+- Zero Durable Object namespaces.
+- Zero Observability destinations and zero issue automations.
+
+**Critical route/config drift:** the deployed `thelingolegacyv-5` Worker currently reports 18 routes, including the apex, www, and multiple product subdomains. The checked-in root `wrangler.jsonc` declares only the apex and www routes. This discrepancy must be reconciled before any deployment or route mutation. Do not assume the source config fully represents the deployed route state.
+
+The two staging-named D1 databases are not proven to be attached to the staging Worker. Their zero-table state is not evidence that they are safe, unused, or production-isolated. Verify binding references from each deployed Worker's settings before assigning ownership or reusing them.
+
 ## Required environment contract
 
 Staging must be a separately named Worker and must use independently provisioned resource identifiers for every stateful binding:
