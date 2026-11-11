@@ -11,9 +11,11 @@ Cloudflare route inventory returned both:
 
 The apex wildcard also routes `www.thelingolegacy.com/*` and multiple product subdomains to `thelingolegacyv-5`.
 
-## Required determination
+## Matching-rule determination
 
-Do not infer production request precedence from route names or API listing order. Determine actual matching behavior from Cloudflare's documented route matching rules and controlled live probes. The exact root route may be more specific than the wildcard, but that must be established with evidence before any action.
+Cloudflare's current Workers Routes documentation states that when multiple route patterns match a request, the most specific pattern wins. Therefore, for the path `/`, `thelingolegacy.com/` is more specific than `thelingolegacy.com/*`; the expected route owner is `lingo-flagship-root`. For non-root paths, the wildcard route is expected to select `thelingolegacyv-5`.
+
+This is a documentation-based prediction, not a completed live route probe. The route without a trailing wildcard may not match a URL carrying a query string; Cloudflare's route documentation says patterns without a wildcard cannot match URLs with query parameters. Query-bearing homepage requests must therefore be tested separately. See https://developers.cloudflare.com/workers/configuration/routing/routes/.
 
 ## Safe probe plan
 
