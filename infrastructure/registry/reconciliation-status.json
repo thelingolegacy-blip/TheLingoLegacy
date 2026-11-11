@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.1.0",
+  "wave": "00.2",
+  "status": "IN_PROGRESS",
+  "last_known_good": "PROTECTED",
+  "production_promotion": "BLOCKED",
+  "g02": "FAIL_UNVERIFIED",
+  "phases": [
+    {
+      "id": 1,
+      "name": "deep-verification-and-duplicate-audit",
+      "status": "PARTIAL",
+      "completed": [
+        "38 repository names inventoried",
+        "five ambiguous repositories inspected",
+        "empty Backend repository confirmed",
+        "duplicate stubs identified"
+      ],
+      "remaining": [
+        "history and commit ancestry comparison",
+        "all active candidate source audits",
+        "formal repository disposition review"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "registry-generation-and-secret-schema-cataloging",
+      "status": "PARTIAL",
+      "completed": [
+        "registry schemas drafted",
+        "7 Workers inventoried",
+        "Worker secret-binding names queried without values"
+      ],
+      "remaining": [
+        "validate all JSON against schema",
+        "inspect regular Worker bindings and external secret stores",
+        "verify project IDs and deployed Firebase targets"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "p0-remediation-and-architecture-branching",
+      "status": "PARTIAL",
+      "completed": [
+        "non-production branch created",
+        "Spades client wallet mutation risk confirmed",
+        "apex Worker route overlap confirmed"
+      ],
+      "remaining": [
+        "wallet ledger implementation and tests",
+        "route precedence probes and documented owner decision",
+        "rules emulator tests",
+        "CI validation and draft PR review"
+      ]
+    }
+  ],
+  "branch": "feature/wave-00-2-ezca-registry",
+  "base_branch": "main",
+  "base_sha": "aaa9cd8462ced19ea86cb4d8bfd21672409c8b6e",
+  "no_production_mutations": true
+}
