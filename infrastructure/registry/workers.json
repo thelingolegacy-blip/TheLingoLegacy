@@ -247,6 +247,22 @@
         "behavior": "Implements /healthz and /api/v1/* runtime endpoints; non-API paths are served through ASSETS.fetch(request)"
       }
     },
-    "recommended_normalization": "Consolidate apex traffic onto canonical thelingolegacyv-5 after validating root asset parity and capturing rollback evidence; remove exact-root route only in separately approved change."
+    "recommended_normalization": "DECISION_REQUIRED; do not mutate production until intended apex homepage and delegation model are approved.",
+    "canonical_wrangler_routes": [
+      "thelingolegacy.com/*",
+      "www.thelingolegacy.com/*"
+    ],
+    "out_of_band_routes": [
+      "thelingolegacy.com/"
+    ],
+    "source_of_truth_drift": "The exact-root route is present in the live Cloudflare zone but absent from main-branch wrangler.jsonc.",
+    "homepage_behavior": {
+      "lingo-flagship-root": "Standalone crimson/white HOME document; GET/HEAD / only; non-root path returns 404; no regular/service bindings.",
+      "thelingolegacyv-5": "ASSETS binding serves canonical index.html; current index.html is a redirect stub to /studio-hub/."
+    },
+    "normalization_options": [
+      "Move/align standalone homepage into the canonical flagship assets and remove the out-of-band exact-root route after approval.",
+      "Keep root gateway, add a tested service binding to the flagship Worker, delegate all non-root paths, and route apex wildcard to the gateway."
+    ]
   }
 }
