@@ -22,8 +22,8 @@
       "routes": [
         "thelingolegacy.com/"
       ],
-      "status": "LIVE_OBSERVED_CONFLICT_REVIEW",
-      "notes": "Exact apex root route overlaps apex wildcard route; do not mutate until precedence validated."
+      "status": "LIVE_OBSERVED_SPECIFIC_ROUTE_EXPECTED_OWNER",
+      "notes": "Exact root route is more specific than apex wildcard under Cloudflare Workers route matching docs; expected to own path /. Query-bearing root URL requires separate probe because no-wildcard patterns do not match URLs with query parameters. Live response marker probe remains pending."
     },
     {
       "name": "lingo-flagship-site-preview",
