@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "wave": "00.2",
+  "wave": "00.3",
   "status": "IN_PROGRESS",
   "last_known_good": "PROTECTED",
   "production_promotion": "BLOCKED",
@@ -8,50 +8,55 @@
   "phases": [
     {
       "id": 1,
-      "name": "deep-verification-and-duplicate-audit",
+      "name": "ci-restoration-and-duplicate-reconciliation",
       "status": "PARTIAL",
       "completed": [
-        "38 repository names inventoried",
-        "five ambiguous repositories inspected",
-        "empty Backend repository confirmed",
-        "duplicate stubs identified"
+        "Spades-is-my_Lingo confirmed as populated product implementation; Spades_is_my-lingo confirmed README-only single-commit stub",
+        "THATS-MY-LINGO confirmed as active game implementation with game-math engine, tests, assets and quality-gate workflows; thats_my_lingo_app confirmed empty",
+        "Kotton-code-engine confirmed as active Next.js product candidate with canon, Firebase rules and CI; kottens-code-engine confirmed docs-only companion",
+        "lingo_backend confirmed README-only empty stub",
+        "Repository registry updated with evidence-based active/reference/archive-candidate classifications; no repositories deleted or archived"
       ],
       "remaining": [
-        "history and commit ancestry comparison",
-        "all active candidate source audits",
-        "formal repository disposition review"
+        "restore GitHub Actions hosted runner startup; six observed workflows currently fail before job creation",
+        "complete source-level and commit-ancestry audit for remaining active candidate repositories",
+        "formal owner review before archiving deprecated stubs"
       ]
     },
     {
       "id": 2,
-      "name": "registry-generation-and-secret-schema-cataloging",
+      "name": "cloudflare-route-and-binding-catalog",
       "status": "PARTIAL",
       "completed": [
-        "registry schemas drafted",
-        "7 Workers inventoried",
-        "Worker secret-binding names queried without values"
+        "21 live Worker routes read directly from Cloudflare zone API",
+        "all seven deployed Worker settings inspected",
+        "thelingolegacyv-5 regular bindings identified: ASSETS, CANONICAL_DOMAIN, PUBLIC_SITE_URL",
+        "zero secret binding names returned across seven scripts; no secret values requested",
+        "worker-bindings.json added to machine-readable registry",
+        "query-bearing apex root is shown by Cloudflare route semantics to match wildcard Worker rather than exact-root Worker"
       ],
       "remaining": [
-        "validate all JSON against schema",
-        "inspect regular Worker bindings and external secret stores",
-        "verify project IDs and deployed Firebase targets",
-        "Resolve GitHub Actions startup failure and obtain a real hosted-runner execution with step logs/artifacts"
+        "runtime response-marker/cf-ray attribution of bare-root and query-root requests",
+        "inspect account-level secret stores, service bindings and external provider credentials",
+        "verify Firebase project/database IDs against deployed Firebase resources",
+        "decide and review route normalization; no live route changes made"
       ]
     },
     {
       "id": 3,
-      "name": "p0-remediation-and-architecture-branching",
+      "name": "spades-wallet-p0-containment",
       "status": "PARTIAL",
       "completed": [
-        "non-production branch created",
-        "Spades client wallet mutation risk confirmed",
-        "apex Worker route overlap confirmed"
+        "P0 direct client mutation of chips, tickets and progression confirmed in existing Firestore rules and app sync code",
+        "isolated security branch created in Spades-is-my_Lingo",
+        "draft PR #1 opened with Firestore client-write lockdown, local-only progression sync, emulator test suite and wallet-ledger rollout contract",
+        "cloud progression writes are disabled in the proposed branch until trusted ledger service is deployed"
       ],
       "remaining": [
-        "wallet ledger implementation and tests",
-        "route precedence probes and documented owner decision",
-        "rules emulator tests",
-        "CI validation and draft PR review"
+        "execute Firestore Emulator tests and application typecheck/build",
+        "implement server-authoritative idempotent wallet ledger endpoint",
+        "test atomicity, replay, concurrency, insufficient balance, forged reward and cross-user rejection",
+        "review and separately approve any production Firestore rules deployment"
       ]
     }
   ],
@@ -60,21 +65,45 @@
   "base_sha": "aaa9cd8462ced19ea86cb4d8bfd21672409c8b6e",
   "no_production_mutations": true,
   "validation": {
-    "workflow": "EZCA Registry Validation",
-    "workflow_path": ".github/workflows/ezca-registry-validation.yml",
+    "workflow": "GitHub Actions hosted workflows",
     "observed_runs": [
+      43018567468,
+      43018565585,
+      43018563694,
+      43018562030,
       43018520930,
-      43018403930
+      43018519316
     ],
     "status": "STARTUP_FAILURE",
     "jobs_observed": 0,
-    "interpretation": "GitHub Actions created pull_request workflow runs but failed before job creation; no registry test steps executed. Treat hosted runner/Actions startup as blocked, not as test failure or pass.",
+    "interpretation": "Six existing and new pull_request workflows, including the registry validator, ended in startup_failure before job creation. No workflow test steps or artifacts exist. This is not a pass or a code-level test failure; hosted Actions execution remains blocked.",
     "combined_status": [
       {
         "context": "Vercel – the-lingo-legacy",
         "state": "failure",
-        "interpretation": "Legacy Vercel status check; Vercel is not the approved deployment target. Must be reconciled/retired through governance, not bypassed."
+        "interpretation": "Legacy Vercel status check; Vercel is not the approved deployment target. Reconcile through governance, do not bypass."
       }
     ]
-  }
+  },
+  "last_updated": "2026-11-11",
+  "branches": {
+    "canonical_registry": "feature/wave-00-2-ezca-registry",
+    "spades_security": "security/wallet-ledger-client-write-lockdown"
+  },
+  "pull_requests": [
+    {
+      "repository": "thelingolegacy-blip/TheLingoLegacy",
+      "number": 549,
+      "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/549",
+      "status": "OPEN_UNMERGED",
+      "purpose": "EZCA registry and P0 remediation specifications"
+    },
+    {
+      "repository": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "number": 1,
+      "url": "https://github.com/thelingolegacy-blip/Spades-is-my_Lingo/pull/1",
+      "status": "OPEN_DRAFT_UNMERGED",
+      "purpose": "P0 client wallet write lockdown and emulator tests"
+    }
+  ]
 }
