@@ -47,3 +47,8 @@ This is a source/route reconciliation issue. It is not proof that those paths cu
 ## Release constraint
 
 No production route, Worker version, DNS record, Firebase Hosting target, payment service, identity service, or wallet service is changed by this audit. The root Worker preview remains unpromoted pending functional QA and release evidence.
+
+
+## Preview candidate uploaded
+
+The route corrections are now implemented in the source-tracked exact-root Worker candidate at `cloudflare/flagship-root/worker.js` on PR #548. Cloudflare accepted it as preview version 3 (`fa6ca7f6-7431-4d22-885d-782c5c9e3631`) with alias `flagship-nav-repair-2026-11-11`. It is not deployed to production. The active root deployment remains version 1 at 100% traffic. Independent browser QA of the preview URL is still required.
