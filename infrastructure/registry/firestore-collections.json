@@ -13,7 +13,7 @@
       "collection": "users/{userId}",
       "risk": "HIGH",
       "finding": "Owner update predicates permit changes to chips, sweepstakesTickets, level, xp and streakDays; client can affect authoritative state.",
-      "required_action": "Deny client mutation of wallet/progression/ticket fields; route through trusted ledger service; keep cosmetics/profile updates separate."
+      "required_action": "Draft PR #1 contains client-write lockdown and emulator tests; keep unmerged until tests execute, then implement trusted wallet ledger before restoring cloud progression."
     },
     {
       "repository": "Spades-is-my_Lingo",
@@ -33,8 +33,8 @@
       "repository": "TheLingoLegacy",
       "collection": "root",
       "risk": "UNKNOWN",
-      "finding": "No root Firestore rules file verified in inspected paths.",
-      "required_action": "Identify authoritative Firebase project and rules deployment source before enabling client data paths."
+      "finding": "Root firebase.json configures Firebase Hosting only; .firebaserc and firebase.client.json declare lingo-legacy-production, but client API/app credentials remain placeholders and no root Firestore rules file was found. Deployed project/database target is not verified.",
+      "required_action": "Resolve canonical project credentials and verify deployed project/database; establish a versioned root Firestore rules source and emulator suite before enabling client data paths."
     }
   ],
   "write_burst_protection": {
@@ -48,5 +48,13 @@
       "bounded-retry"
     ],
     "note": "Firestore rules cannot prove client batching."
+  },
+  "project_reconciliation": {
+    "canonical_project": "lingo-legacy-production",
+    "observed_separate_projects": [
+      "project-ba7da5c2-a534-47f9-9b8"
+    ],
+    "status": "MULTI_PROJECT_CONFIGURATION_OBSERVED_DEPLOYED_TARGETS_UNVERIFIED",
+    "policy": "Do not consolidate, migrate, or change production Firebase projects without an explicit data migration, Auth identity, Firestore database, rules and rollback plan."
   }
 }
