@@ -9,6 +9,7 @@ const files = [
   'infrastructure/registry/firestore-collections.json',
   'infrastructure/registry/dependencies.json',
   'infrastructure/registry/reconciliation-status.json',
+  'infrastructure/registry/worker-bindings.json',
 ];
 
 const parsed = {};
@@ -20,11 +21,20 @@ for (const file of files) {
 const repositories = parsed[files[0]];
 const engines = parsed[files[1]];
 const workers = parsed[files[2]];
+const reconciliation = parsed['infrastructure/registry/reconciliation-status.json'];
+const workerBindings = parsed['infrastructure/registry/worker-bindings.json'];
 if (repositories.inventory_count !== 38 || repositories.repositories.length !== 38) {
   throw new Error('Repository inventory count mismatch');
 }
 if (engines.packages.length !== 12) throw new Error('Expected exactly 12 shared engines');
 if (workers.workers.length !== 7) throw new Error('Expected exactly 7 observed Workers');
+if (workers.route_inventory?.observed_routes !== 21 || workers.route_inventory?.route_ids_and_assignments?.length !== 21) {
+  throw new Error('Expected 21 observed Worker routes with complete route ID mapping');
+}
+if (workerBindings.workers?.length !== 7) throw new Error('Expected binding observations for all 7 Workers');
+if (reconciliation.production_promotion !== 'BLOCKED' || reconciliation.g02 !== 'FAIL_UNVERIFIED') {
+  throw new Error('Release safety gates must remain fail-closed');
+}
 if (!repositories.repositories.some((r) => r.status === 'CANONICAL' && r.full_name.endsWith('/TheLingoLegacy'))) {
   throw new Error('Canonical repository declaration missing');
 }
