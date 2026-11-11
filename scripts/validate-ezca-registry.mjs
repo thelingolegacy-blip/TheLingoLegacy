@@ -10,6 +10,7 @@ const files = [
   'infrastructure/registry/dependencies.json',
   'infrastructure/registry/reconciliation-status.json',
   'infrastructure/registry/worker-bindings.json',
+  'infrastructure/registry/firebase-projects.json',
 ];
 
 const parsed = {};
@@ -23,6 +24,7 @@ const engines = parsed[files[1]];
 const workers = parsed[files[2]];
 const reconciliation = parsed['infrastructure/registry/reconciliation-status.json'];
 const workerBindings = parsed['infrastructure/registry/worker-bindings.json'];
+const firebaseProjects = parsed['infrastructure/registry/firebase-projects.json'];
 if (repositories.inventory_count !== 38 || repositories.repositories.length !== 38) {
   throw new Error('Repository inventory count mismatch');
 }
@@ -32,6 +34,9 @@ if (workers.route_inventory?.observed_routes !== 21 || workers.route_inventory?.
   throw new Error('Expected 21 observed Worker routes with complete route ID mapping');
 }
 if (workerBindings.workers?.length !== 7) throw new Error('Expected binding observations for all 7 Workers');
+if (firebaseProjects.projects?.length !== 3 || firebaseProjects.deployment_verification !== 'NOT_VERIFIED') {
+  throw new Error('Firebase project inventory must remain explicit and unverified until live target verification');
+}
 if (reconciliation.production_promotion !== 'BLOCKED' || reconciliation.g02 !== 'FAIL_UNVERIFIED') {
   throw new Error('Release safety gates must remain fail-closed');
 }
