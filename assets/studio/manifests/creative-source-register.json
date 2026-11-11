@@ -1,0 +1,49 @@
+{
+  "schema": "lingo-creative-source-register",
+  "version": "1.0.0",
+  "policy": {
+    "freeFirst": true,
+    "originalWorkPreferred": true,
+    "paidPurchasesAllowed": false,
+    "unverifiedRightsAllowed": false,
+    "productionActivationRequiresG02": true
+  },
+  "statuses": [
+    "CONCEPT",
+    "SOURCE_CREATED",
+    "RIGHTS_REVIEW",
+    "ART_REVIEW",
+    "ACCESSIBILITY_REVIEW",
+    "QC",
+    "APPROVED",
+    "PUBLISHED",
+    "ACTIVE",
+    "REJECTED",
+    "RETIRED"
+  ],
+  "assets": [
+    {
+      "asset_id": "lingo-legacy-monogram-primary",
+      "version_id": "1.0.0",
+      "source": "assets/brand/lingo-legacy-monogram.svg",
+      "owner": "The Lingo Legacy",
+      "creator": "The Lingo Legacy Studio",
+      "media_type": "image/svg+xml",
+      "intended_surfaces": [
+        "web",
+        "mobile",
+        "studio",
+        "game-universe"
+      ],
+      "rights_status": "ORIGINAL_INTERNAL_SOURCE",
+      "license_evidence": "Original SVG authored in this repository; review ownership and trademark clearance before public commercial release.",
+      "quality_status": "PENDING_VISUAL_QA",
+      "brand_status": "CONCEPT_REVIEW",
+      "pipeline_status": "STAGED",
+      "runtimeReferenced": false,
+      "sha256": "PENDING_HASH",
+      "alt": "Lingo Legacy monogram: a gold outlined geometric L within a circular graphite crest.",
+      "notes": "Initial editable concept only; not an approved final logo."
+    }
+  ]
+}
