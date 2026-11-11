@@ -75,12 +75,14 @@
   "validation": {
     "workflow": "GitHub Actions hosted workflows",
     "observed_runs": [
-      43018567468,
-      43018565585,
-      43018563694,
-      43018562030,
-      43018520930,
-      43018519316
+      43021247905,
+      43021246061,
+      43021244081,
+      43021122408,
+      43021120668,
+      43021111870,
+      43021110188,
+      43020812018
     ],
     "status": "STARTUP_FAILURE",
     "jobs_observed": 0,
@@ -106,13 +108,16 @@
       "jobs": 1,
       "steps": 0,
       "logs": "NOT_AVAILABLE_BLOB_NOT_FOUND",
-      "artifacts": 0
+      "artifacts": 0,
+      "rerun_attempted_once": true
     }
   },
   "last_updated": "2026-11-11",
   "branches": {
     "canonical_registry": "feature/wave-00-2-ezca-registry",
-    "spades_security": "security/wallet-ledger-client-write-lockdown"
+    "spades_security": "security/wallet-ledger-client-write-lockdown",
+    "spades_security_head": "a692f00e858e5cf85bdba9cd76251eee0c83746c",
+    "canonical_registry_head": "1577aaa4a357533d6b874b3fdd6573a3fc32e685"
   },
   "pull_requests": [
     {
@@ -120,14 +125,18 @@
       "number": 549,
       "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/549",
       "status": "OPEN_UNMERGED",
-      "purpose": "EZCA registry, 21-route catalog, duplicate dispositions and P0 specifications"
+      "purpose": "EZCA registry, 21-route catalog, duplicate dispositions and P0 specifications",
+      "head_sha": "1577aaa4a357533d6b874b3fdd6573a3fc32e685",
+      "mergeable": true
     },
     {
       "repository": "thelingolegacy-blip/Spades-is-my_Lingo",
       "number": 1,
       "url": "https://github.com/thelingolegacy-blip/Spades-is-my_Lingo/pull/1",
       "status": "OPEN_DRAFT_UNMERGED",
-      "purpose": "P0 client wallet write lockdown and Firestore Emulator tests"
+      "purpose": "P0 client wallet write lockdown and Firestore Emulator tests",
+      "head_sha": "a692f00e858e5cf85bdba9cd76251eee0c83746c",
+      "mergeable": true
     }
   ]
 }
