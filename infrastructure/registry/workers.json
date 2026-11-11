@@ -123,7 +123,130 @@
     "observed_routes": 21,
     "source": "Cloudflare zone Workers Routes API read-only snapshot",
     "query_string_behavior": "Route matching considers the entire request URL; patterns cannot include query parameters. Therefore the exact apex-root route does not match a root URL carrying a query string; the apex wildcard catches it.",
-    "runtime_attribution": "NOT_VERIFIED",
-    "no_routes_changed": true
+    "runtime_attribution": "ROUTE_SELECTION_CONFIRMED_FROM_LIVE_ROUTE_API_AND_DEPLOYED_SOURCE; HTTP response marker capture PARTIAL",
+    "no_routes_changed": true,
+    "route_ids_and_assignments": [
+      {
+        "id": "e478916a164849768adecb4634c4f24d",
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy"
+      },
+      {
+        "id": "41e8d027e8cd4cb19d21df7143a2c25e",
+        "pattern": "thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "64ce4e50bdfa4484beb4f2f820d266f1",
+        "pattern": "theriseofzavione.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "1f4d8394e69043fba5c3bcb2dc04e2d6",
+        "pattern": "thats-my-lingo.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "a3c33421f6694bd0a04e4180e0c9888f",
+        "pattern": "sparkling-rain.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "414c106665e04dfc89600fedbd34c59b",
+        "pattern": "therealzavione.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "7c9fe938bbd24aa3bdac93dbccf1162b",
+        "pattern": "lingo.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "0e0c499429d44d78b2b4dba4769c3cca",
+        "pattern": "cyber.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "8a39eba626494e4fb2799158c9f071a3",
+        "pattern": "solar.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "6ff510d5bf494906bf2fdaff85e960aa",
+        "pattern": "drip.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "ad97c3bfddd94fc1b9aff2416690d1b6",
+        "pattern": "site.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "937726206e724ae99a6ef0361d81c79e",
+        "pattern": "luxe.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "2b89bfd2136e49e096b2982c073ac93d",
+        "pattern": "web.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "342481f6b45f4c3eaa71de9c0864e88f",
+        "pattern": "hub.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "c861b5b2158745f2bcfbfdca9778c325",
+        "pattern": "www.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "758a6e7cb6df484dba125cb00d07178a",
+        "pattern": "v4.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "6dc5c03089044fbeaa155f962228d8cf",
+        "pattern": "v3.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "1867af4757344eb2b41a24ccffbbbc2a",
+        "pattern": "ai.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "04e6903aedf14510b58b34b57df699e1",
+        "pattern": "thelingolegacy.com/",
+        "script": "lingo-flagship-root"
+      },
+      {
+        "id": "0369657937f34d16bc5d529407ad2783",
+        "pattern": "blog.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "cc917f80e69d470281cc6347ee8c0195",
+        "pattern": "atlas.thelingolegacy.com/*",
+        "script": "lingo-ecosystem-atlas"
+      }
+    ],
+    "root_worker_source_inspection": {
+      "lingo-flagship-root": {
+        "regular_bindings": [],
+        "behavior": "GET/HEAD / serves standalone homepage; all other paths return 404",
+        "delegates_to_flagship_worker": false
+      },
+      "thelingolegacyv-5": {
+        "regular_bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "behavior": "Implements /healthz and /api/v1/* runtime endpoints; non-API paths are served through ASSETS.fetch(request)"
+      }
+    },
+    "recommended_normalization": "Consolidate apex traffic onto canonical thelingolegacyv-5 after validating root asset parity and capturing rollback evidence; remove exact-root route only in separately approved change."
   }
 }
