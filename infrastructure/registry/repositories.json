@@ -1,0 +1,282 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-11-11",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "canonical_branch": "main",
+  "inventory_count": 38,
+  "classification_legend": [
+    "CANONICAL",
+    "ACTIVE_CANDIDATE",
+    "MERGED_CANDIDATE",
+    "REFERENCE_ONLY",
+    "DEPRECATED_STUB"
+  ],
+  "repositories": [
+    {
+      "full_name": "thelingolegacy-blip/-the-lingo-legacy-master",
+      "status": "REFERENCE_ONLY",
+      "notes": "master blueprint candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-hub",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "hub surface; inspect deployment and source",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LingoLegacy-MasterBlueprint",
+      "status": "REFERENCE_ONLY",
+      "notes": "blueprint and G02 workflow references",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-hub-",
+      "status": "DEPRECATED_STUB",
+      "notes": "empty repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/-the-lingo-legacy-hub",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only hub reference",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/ZavioneLingo",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "artist/media surface",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/kottens-code-engine",
+      "status": "MERGED_CANDIDATE",
+      "notes": "three-path stub; compare with Kotton-code-engine",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LINGO_LEGACY_HQ",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "subordinate control-plane candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-blip-REPO-",
+      "status": "REFERENCE_ONLY",
+      "notes": "repository/architecture reference candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "CANONICAL",
+      "notes": "authoritative source and release authority",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Kotton-code-engine",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Kotton's Code product; default-deny Firestore rules",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Loyaltylaneapparel",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "apparel and commerce surface",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Lingolegends",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Legacy Legends content candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Devontray",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only content candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Theriseofzavione",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Rise of Zavione media project",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Github",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only tooling reference",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Tricia-escape-",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "LINGOarcade game candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LingoLegacy-",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only placeholder candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thats_my_lingo_app",
+      "status": "DEPRECATED_STUB",
+      "notes": "README-only; compare with THATS-MY-LINGO",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_backend",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only backend candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_admin_console",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "admin console candidate; implementation requires review",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_website",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "website candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_documentation",
+      "status": "REFERENCE_ONLY",
+      "notes": "documentation repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_assets",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "asset library candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/codemagic-docs",
+      "status": "REFERENCE_ONLY",
+      "notes": "build tooling documentation",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/THATS-MY-LINGO",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "That’s My Lingo game; test scripts present",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/nextjs-boilerplate",
+      "status": "REFERENCE_ONLY",
+      "notes": "web starter template",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/chatbot",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "AI/chatbot surface; provider policy requires review",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/angular",
+      "status": "REFERENCE_ONLY",
+      "notes": "framework/template candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/django",
+      "status": "REFERENCE_ONLY",
+      "notes": "backend starter candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/TheLingoLegacy-Web",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "web/Studio surface; Cloudflare/Firebase config",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/nextjs",
+      "status": "REFERENCE_ONLY",
+      "notes": "web starter/template candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo-legacy-",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only reference candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Spades_is_my-lingo",
+      "status": "MERGED_CANDIDATE",
+      "notes": "README-only; compare with Spades-is-my_Lingo",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Spades product; Firestore client mutation risk found",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Tv-os",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "TV app candidate; implementation unverified",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Backend",
+      "status": "DEPRECATED_STUB",
+      "notes": "empty repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Games",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "game collection candidate; runtime unverified",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    }
+  ]
+}
