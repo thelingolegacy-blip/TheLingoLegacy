@@ -139,7 +139,7 @@
         "@lingo/asset-engine"
       ],
       "role": "PRODUCT_CONSUMER_CANDIDATE",
-      "repository_status": "MERGED_CANDIDATE",
+      "repository_status": "REFERENCE_ONLY",
       "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
       "evidence_level": "NAME_OR_README_ONLY"
     },
@@ -310,7 +310,7 @@
         "@lingo/event-engine"
       ],
       "role": "REFERENCE_OR_TEMPLATE",
-      "repository_status": "REFERENCE_ONLY",
+      "repository_status": "DEPRECATED_STUB",
       "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
       "evidence_level": "NAME_OR_README_ONLY"
     },
@@ -490,7 +490,7 @@
         "@lingo/event-engine"
       ],
       "role": "PRODUCT_CONSUMER_CANDIDATE",
-      "repository_status": "MERGED_CANDIDATE",
+      "repository_status": "DEPRECATED_STUB",
       "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
       "evidence_level": "NAME_OR_README_ONLY"
     },
