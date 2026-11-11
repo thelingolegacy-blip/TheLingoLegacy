@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.1.0",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "dependency_edges": [
+    {
+      "from": "TheLingoLegacy-Web",
+      "to": "identity-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "TheLingoLegacy-Web",
+      "to": "sync-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Kotton-code-engine",
+      "to": "identity-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Kotton-code-engine",
+      "to": "sync-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "THATS-MY-LINGO",
+      "to": "wallet-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Spades-is-my_Lingo",
+      "to": "wallet-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL_HIGH_RISK"
+    },
+    {
+      "from": "chatbot",
+      "to": "ai-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "lingo_assets",
+      "to": "asset-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "lingo_website",
+      "to": "discovery-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    }
+  ],
+  "policy": "No engine is considered implemented until package code, tests, dependency declarations and CI evidence are linked."
+}
