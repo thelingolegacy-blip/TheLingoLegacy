@@ -1,42 +1,57 @@
-# Wave 00.2 — Apex Worker Route Investigation
+# Wave 00.3 — Apex Worker Route Investigation
 
-Status: INVESTIGATION REQUIRED — NO ROUTE MUTATION AUTHORIZED
+Status: ROUTE MATCHING DETERMINED — NO ROUTE MUTATION AUTHORIZED
 
-## Observed state
+## Live Cloudflare route inventory
 
-Cloudflare route inventory returned both:
+Read-only Cloudflare zone API inspection confirms these two overlapping apex routes:
 
-- `thelingolegacy.com/*` → `thelingolegacyv-5`
-- `thelingolegacy.com/` → `lingo-flagship-root`
+- Route ID `04e6903aedf14510b58b34b57df699e1`: `thelingolegacy.com/` → `lingo-flagship-root`
+- Route ID `41e8d027e8cd4cb19d21df7143a2c25e`: `thelingolegacy.com/*` → `thelingolegacyv-5`
 
-The apex wildcard also routes `www.thelingolegacy.com/*` and multiple product subdomains to `thelingolegacyv-5`.
+The zone currently has 21 Worker routes. The apex wildcard also covers `www.thelingolegacy.com/*` and product/utility subdomains. Full patterns and route IDs are recorded in `infrastructure/registry/workers.json`.
 
-## Matching-rule determination
+## Deterministic route-selection result
 
-Cloudflare's current Workers Routes documentation states that when multiple route patterns match a request, the most specific pattern wins. Therefore, for the path `/`, `thelingolegacy.com/` is more specific than `thelingolegacy.com/*`; the expected route owner is `lingo-flagship-root`. For non-root paths, the wildcard route is expected to select `thelingolegacyv-5`.
+Cloudflare's Workers Routes documentation says matching considers the entire request URL, including its query string. Route patterns cannot contain query parameters. More-specific patterns win when they match. Therefore:
 
-This is a documentation-based prediction, not a completed live route probe. The route without a trailing wildcard may not match a URL carrying a query string; Cloudflare's route documentation says patterns without a wildcard cannot match URLs with query parameters. Query-bearing homepage requests must therefore be tested separately. See https://developers.cloudflare.com/workers/configuration/routing/routes/.
+| Request | Selected route | Worker |
+|---|---|---|
+| `https://thelingolegacy.com/` | Exact apex-root route | `lingo-flagship-root` |
+| `https://thelingolegacy.com/?probe=1` | Apex wildcard route | `thelingolegacyv-5` |
+| `https://thelingolegacy.com/healthz` | Apex wildcard route | `thelingolegacyv-5` |
+| `https://thelingolegacy.com/api/v1/runtime` | Apex wildcard route | `thelingolegacyv-5` |
+| `https://thelingolegacy.com/app` | Apex wildcard route | `thelingolegacyv-5` |
+| `https://www.thelingolegacy.com/` | www wildcard route | `thelingolegacyv-5` |
 
-## Safe probe plan
+This is a route-selection determination from the live route inventory plus Cloudflare's documented matching semantics. It is not a claim that response headers were captured for every URL.
 
-1. Capture route IDs, patterns, script names, Worker deployment/version identifiers and current timestamps.
-2. Inspect both deployed script versions and request handlers without changing them.
-3. Probe:
-   - `https://thelingolegacy.com/`
-   - `https://thelingolegacy.com/healthz`
-   - `https://thelingolegacy.com/api/v1/runtime`
-   - `https://www.thelingolegacy.com/`
-4. Record response status, `x-lingo-runtime`, `x-lingo-dynamic`, cache headers, request IDs and any script-specific response marker.
-5. Compare observed behavior with the Cloudflare route-matching specification.
-6. If evidence conflicts or is ambiguous, keep both routes unchanged and request an approved maintenance plan.
+## Deployed Worker source inspection
+
+The Cloudflare Worker Script API was used read-only to inspect both deployed scripts:
+
+- `lingo-flagship-root` has no regular bindings. Its fetch handler serves a standalone HTML homepage only for GET/HEAD requests to `/`; every other pathname returns 404. It does not delegate non-root paths to `thelingolegacyv-5`.
+- `thelingolegacyv-5` has the `ASSETS` binding plus plain-text `CANONICAL_DOMAIN` and `PUBLIC_SITE_URL` bindings. Its handler implements `/healthz`, `/api/v1/runtime`, platform status/gates/modules and site-context endpoints, then delegates non-API paths to `ASSETS.fetch(request)`.
+- A live GET of `/healthz` returned `ok`. Web inspection could not retrieve query-bearing root or runtime endpoint responses, and a local direct HTTP header probe was unavailable in this execution environment.
+
+## Impact
+
+The apex has two different handlers depending on the query string: a bare root request receives the isolated homepage Worker, while a query-bearing root request reaches the dynamic flagship Worker. This is a real split-entry-point condition, not merely an unresolved documentation question. The exact root Worker also cannot serve `/app`, `/healthz`, or API paths.
+
+## Recommended normalization path
+
+The canonical repository and production release contract designate `thelingolegacyv-5` as the flagship runtime. The preferred target is one consistent apex entry point on that Worker, after verifying that its root asset matches the intended flagship homepage and that rollback evidence is captured. The exact-root route should then be removed through a reviewed, reversible Cloudflare change. Do not perform that production change as part of this investigation.
+
+Alternative: if the isolated root homepage must remain, it needs an explicit, tested service-binding/delegation design and a query-string-safe routing plan. The current deployed root Worker has no such binding or delegation.
 
 ## Acceptance criteria
 
-- One documented intended apex-root owner.
-- No unexplained route overlap.
-- No regression in apex wildcard, www or API paths.
-- Reversible change plan with captured pre-change route IDs.
-- Post-change live probes and rollback evidence.
+- One documented apex-root owner for both bare and query-bearing URLs.
+- No unexplained route overlap or split behavior.
+- No regression in apex wildcard, www, API, or product subdomain paths.
+- Reversible change plan with all pre-change route IDs and Worker versions.
+- Post-change live probes for bare root, query root, /healthz, /api/v1/runtime, /app and www.
+- Confirmed response markers, request IDs and cache headers after the change.
 
 ## Protection
 
