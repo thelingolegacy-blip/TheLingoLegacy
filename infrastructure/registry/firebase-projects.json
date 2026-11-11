@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-11-11",
+  "deployment_verification": "NOT_VERIFIED",
+  "projects": [
+    {
+      "source_repository": "thelingolegacy-blip/TheLingoLegacy",
+      "source_files": [
+        ".firebaserc",
+        "firebase.client.json",
+        "firebase.json"
+      ],
+      "declared_default_project_id": "lingo-legacy-production",
+      "client_config_project_id": "lingo-legacy-production",
+      "client_credentials": "PLACEHOLDER_API_KEY_AND_APP_ID",
+      "hosting_public_directory": ".",
+      "firestore_rules_source": null,
+      "deployment_target": "NOT_VERIFIED",
+      "notes": "Firebase Hosting config is present, but no root Firestore rules source is configured. This repository does not prove the deployed Firebase project is currently the same target."
+    },
+    {
+      "source_repository": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "source_files": [
+        "firebase-applet-config.json",
+        "firestore.rules"
+      ],
+      "declared_project_id": "project-ba7da5c2-a534-47f9-9b8",
+      "declared_firestore_database_id": "ai-studio-remixspadesismyl-b8b92d21-b34e-4ef9-8bc7-e87ec5687bbe",
+      "deployment_target": "NOT_VERIFIED",
+      "notes": "Distinct Firebase project and named Firestore database observed in applet config; no deployed-project verification performed. Draft PR #1 contains a safer Firestore rules file and emulator tests."
+    },
+    {
+      "source_repository": "thelingolegacy-blip/Kotton-code-engine",
+      "source_files": [
+        "firebase/firebase.json",
+        "firebase/firestore.rules"
+      ],
+      "declared_project_id": null,
+      "firestore_rules_source": "firebase/firestore.rules",
+      "rules_state": "GLOBAL_DEFAULT_DENY",
+      "deployment_target": "NOT_VERIFIED",
+      "notes": "Firebase CLI config points to a nested default-deny rules file; no .firebaserc or client project config found in inspected root paths."
+    }
+  ],
+  "risks": [
+    "Multiple declared Firebase project IDs can fragment Auth identities and user state.",
+    "The canonical repo has no root Firestore rules source in firebase.json.",
+    "Client API/app credentials in the canonical Firebase client config are placeholders.",
+    "No Firebase deployment or project migration was performed."
+  ],
+  "next_gates": [
+    "Verify the actual Firebase projects and named databases through authorized Firebase/GCP project access.",
+    "Choose canonical project ownership and map each product's Auth and Firestore data before migration.",
+    "Add root Firestore rules source and emulator tests.",
+    "Complete COPPA and child-data review before enabling Kotton's Code data access."
+  ]
+}
