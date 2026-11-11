@@ -76,3 +76,39 @@ A green systemd status or GitHub Online/Idle indicator alone is not G02 acceptan
 `SOURCE → EVIDENCE → VERIFICATION → ACCEPTANCE → AUTHORIZATION → PROMOTION`
 
 This runbook does not authorize merge to the default branch, production deployment, payment activation, downstream gate advancement, or replacement of the protected last-known-good release.
+
+## systemd restart policy and drop-in override
+
+After the exact generated unit has been identified, add a service drop-in to that unit. Do not assume a wildcard edit targets the intended service: use the literal unit name returned by systemd.
+
+```bash
+sudo systemctl edit <exact-generated-unit-name>
+```
+
+Add:
+
+```ini
+[Service]
+Restart=always
+RestartSec=10s
+```
+
+Then reload systemd and restart only that exact runner unit:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart <exact-generated-unit-name>
+```
+
+Verify the effective configuration and process state:
+
+```bash
+sudo systemctl show <exact-generated-unit-name> \
+  -p ActiveState -p SubState -p Restart -p RestartUSec -p MainPID
+sudo systemctl is-enabled <exact-generated-unit-name>
+sudo systemctl status <exact-generated-unit-name> --no-pager
+```
+
+Acceptance requires `Restart=always`, `RestartUSec=10s`, `ActiveState=active`, `SubState=running`, a nonzero `MainPID`, and boot enablement reported as `enabled`. Also confirm the PID belongs to the dedicated unprivileged runner account. If the service is not already installed, complete the native runner installation and `svc.sh install` steps first; do not create a hand-written systemd unit as a parallel runner lifecycle.
+
+A systemd restart policy only restarts the local process after exit. It does not prove network recovery, GitHub reconnection, runner registration health, or successful job execution. Recheck GitHub Online/Idle and complete the actual G02 sentinel evidence sequence after the service is stable.
