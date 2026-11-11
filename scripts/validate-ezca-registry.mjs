@@ -49,4 +49,17 @@ if (!workers.workers.some((w) => w.name === 'thelingolegacyv-5' && w.environment
 if (parsed[files[7]].production_promotion !== 'BLOCKED') {
   throw new Error('Production promotion must remain blocked in this registry state');
 }
+
+const repositoryStatusByName = new Map(
+  repositories.repositories.map((repository) => [repository.full_name.toLowerCase(), repository.status]),
+);
+for (const assignment of parsed[files[6]].repository_assignments) {
+  const expectedStatus = repositoryStatusByName.get(assignment.repository.toLowerCase());
+  if (!expectedStatus) {
+    throw new Error(`Dependency assignment references an unmapped repository: ${assignment.repository}`);
+  }
+  if (assignment.repository_status !== expectedStatus) {
+    throw new Error(`Repository disposition mismatch for ${assignment.repository}: expected ${expectedStatus}, got ${assignment.repository_status}`);
+  }
+}
 console.log('PASS EZCA registry invariants');
