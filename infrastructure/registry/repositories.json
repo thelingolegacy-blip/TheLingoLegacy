@@ -56,9 +56,9 @@
     },
     {
       "full_name": "thelingolegacy-blip/kottens-code-engine",
-      "status": "MERGED_CANDIDATE",
-      "notes": "three-path stub; compare with Kotton-code-engine",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "status": "REFERENCE_ONLY",
+      "notes": "Documentation-only companion/reference; product implementation candidate is Kotton-code-engine. Do not mark merged until code ancestry is proven.",
+      "evidence": "Main tree contains README.md and docs/STUDIO_STACK.md only; counterpart Kotton-code-engine has a Next.js web app, canon, Firebase rules and CI workflow.",
       "assignment_status": "PROVISIONAL"
     },
     {
@@ -85,8 +85,8 @@
     {
       "full_name": "thelingolegacy-blip/Kotton-code-engine",
       "status": "ACTIVE_CANDIDATE",
-      "notes": "Kotton's Code product; default-deny Firestore rules",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "notes": "Kotton's Code implementation candidate with Next.js web app, canon/story documents, Firestore rules and CI workflow; release/runtime verification still pending.",
+      "evidence": "Main tree includes apps/web/app/page.tsx, package.json, firebase/firestore.rules, canon/* and .github/workflows/ci.yml; latest commits include merged Studio OS/dashboard work dated 2026-10-03.",
       "assignment_status": "PROVISIONAL"
     },
     {
@@ -141,15 +141,15 @@
     {
       "full_name": "thelingolegacy-blip/thats_my_lingo_app",
       "status": "DEPRECATED_STUB",
-      "notes": "README-only; compare with THATS-MY-LINGO",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "notes": "Empty repository; THATS-MY-LINGO contains the active game implementation. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; repository size 0; active counterpart has game assets, source, tests and CI workflow.",
       "assignment_status": "PROVISIONAL"
     },
     {
       "full_name": "thelingolegacy-blip/lingo_backend",
-      "status": "REFERENCE_ONLY",
-      "notes": "README-only backend candidate",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "status": "DEPRECATED_STUB",
+      "notes": "Empty initial-commit repository; no independent backend implementation found. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; repository size 0; one initial commit dated 2026-07-09.",
       "assignment_status": "PROVISIONAL"
     },
     {
@@ -190,8 +190,8 @@
     {
       "full_name": "thelingolegacy-blip/THATS-MY-LINGO",
       "status": "ACTIVE_CANDIDATE",
-      "notes": "That’s My Lingo game; test scripts present",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "notes": "Primary That’s My Lingo game implementation; mini-games, casino pack, game-math engine, tests and quality-gate workflows present.",
+      "evidence": "Main tree contains index.html, casino-pack, mini-games, game-math/preview25-engine.mjs, tests/game-math.test.mjs and quality-gate workflows; latest commit history includes merged PRs #29 and #30 dated 2026-10-21.",
       "assignment_status": "PROVISIONAL"
     },
     {
@@ -245,16 +245,16 @@
     },
     {
       "full_name": "thelingolegacy-blip/Spades_is_my-lingo",
-      "status": "MERGED_CANDIDATE",
-      "notes": "README-only; compare with Spades-is-my_Lingo",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "status": "DEPRECATED_STUB",
+      "notes": "README-only single-commit stub; populated Spades-is-my_Lingo is the active implementation candidate. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; one initial commit dated 2026-07-16; active counterpart has application source, Firestore rules and server.ts.",
       "assignment_status": "PROVISIONAL"
     },
     {
       "full_name": "thelingolegacy-blip/Spades-is-my_Lingo",
       "status": "ACTIVE_CANDIDATE",
-      "notes": "Spades product; Firestore client mutation risk found",
-      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "notes": "Primary Spades implementation candidate; wallet/progression client-write risk confirmed and isolated draft remediation PR #1 opened.",
+      "evidence": "Main tree includes src/App.tsx, src/utils/firebase.ts, firestore.rules, server.ts and security_spec.md; separate same-name variant is README-only.",
       "assignment_status": "PROVISIONAL"
     },
     {
@@ -278,5 +278,7 @@
       "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
       "assignment_status": "PROVISIONAL"
     }
-  ]
+  ],
+  "audit_status": "PARTIAL_FILE_AND_HISTORY_VERIFIED",
+  "disposition_policy": "DEPRECATED_STUB means archive candidate only; no repository has been archived or deleted. MERGED is not assigned without commit ancestry or merged PR evidence."
 }
