@@ -108,7 +108,8 @@
             "tool",
             "license",
             "budget",
-            "documentation"
+            "documentation",
+            "worker"
           ]
         },
         "purpose": {
