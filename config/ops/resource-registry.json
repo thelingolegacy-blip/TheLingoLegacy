@@ -355,12 +355,83 @@
         "Backup inventory and restore proof remain required; no successful restore evidence asserted"
       ],
       "secretReferences": []
+    },
+    {
+      "id": "center.sonic-boom-nexus",
+      "name": "Sonic Boom Nexus",
+      "category": "control_center",
+      "purpose": "Cross-cutting orchestration for engines, analytics, diagnostics/recovery, triggers, dispatch, permissions, release gates, dependencies and audit history",
+      "provider": "LINGO-owned control plane",
+      "authoritativeReference": "docs/ops/FOUNDATION-CENTERS-INTEGRATION-ARCHITECTURE.md",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions",
+        "center.release",
+        "obs.platform"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Architecture concept identified in prior LINGO platform planning; runtime implementation not yet located and verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "app.loyaltylane.cycles.hubs",
+      "name": "Loyalty Lane Cycles hub network",
+      "category": "application",
+      "purpose": "Three service hubs covering Philadelphia sections and Cumberland County",
+      "provider": "LINGO-owned service network",
+      "authoritativeReference": "To be assigned after official hub identities are approved",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "center.main.admin",
+        "center.trust"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Three hubs required across Philadelphia sections and Cumberland County; official names, addresses, hours and service boundaries remain unconfirmed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "api.loyaltylane.beacon",
+      "name": "Loyalty Lane Beacon Alerts",
+      "category": "api",
+      "purpose": "Location-routed contact intake, staff notification, acknowledgment, assignment, escalation and resolution",
+      "provider": "LINGO-owned integration",
+      "authoritativeReference": "To be assigned after approved hub registry and service contract",
+      "environment": "development",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "app.loyaltylane.cycles.hubs",
+        "center.trust",
+        "obs.platform"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "blocked",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Feature-flagged and not live; requires official hub names/addresses/hours/boundaries, privacy controls, retries, duplicate detection, audit and fallback routing"
+      ],
+      "secretReferences": []
     }
   ],
   "notes": [
     "This is an initial evidence-qualified registry, not a complete inventory of all 38 previously observed repositories or every provider resource.",
     "Timestamps indicate the registry snapshot date, not proof of live verification unless the evidence explicitly says so.",
     "Never store secret values in this registry.",
-    "Refresh stale/unknown provider state before operational decisions."
+    "Refresh stale/unknown provider state before operational decisions.",
+    "Sonic Boom Nexus is the intended cross-cutting orchestration layer; do not imply an operational runtime until its implementation and telemetry are verified.",
+    "Loyalty Lane Cycles requires three hubs across Philadelphia sections and Cumberland County. Beacon remains feature-flagged until official hub locations, hours and boundaries are approved."
   ]
 }
