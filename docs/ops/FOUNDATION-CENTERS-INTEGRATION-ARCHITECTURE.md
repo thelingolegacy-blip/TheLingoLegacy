@@ -33,6 +33,24 @@ The lifecycle is CREATE → CONNECT → TEST → VALIDATE → DEPLOY → OBSERVE
 4. Flutter is the mobile application framework; Unity remains project-specific for games. A source folder or manifest does not establish a shipped application.
 5. External services are integrations, not sources of truth for GitHub source or release authority.
 
+## Cross-cutting orchestration and field operations
+
+### Sonic Boom Nexus
+Sonic Boom Nexus is the planned orchestration layer across engines, analytics, diagnostics/recovery, triggers/automation, dispatch, permissions, release gates, dependency mapping and audit history. It coordinates services without collapsing their data boundaries or bypassing product ownership. Its runtime state is currently unknown; this architecture must not be represented as an already deployed control plane.
+
+### Loyalty Lane Cycles and Beacon
+Loyalty Lane Cycles requires three service hubs covering Philadelphia sections and Cumberland County. Each hub needs an approved identity, street address, operating hours, service boundary, contact method, staffing/coverage owner, safety procedures and escalation route before public routing is enabled.
+
+The Beacon alert workflow is planned to support:
+- Location-aware intake and assignment to the correct hub.
+- Staff notification, acknowledgment, assignment, escalation and resolution.
+- Central operational dashboard and case timeline.
+- Retry with bounded backoff, duplicate detection/idempotency and delivery receipts.
+- Audit events, privacy/data minimization and retention controls.
+- Fallback routing when a hub or notification provider is unavailable.
+
+Beacon remains feature-flagged and not live until the official hub registry and boundaries are approved, notification provider and consent model are verified, privacy review passes, and an end-to-end test proves primary and fallback routing. Do not invent hub names, addresses, hours or service boundaries.
+
 ## Shared service catalog
 
 Each resource is recorded with:
