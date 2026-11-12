@@ -1,6 +1,6 @@
 import { BigQuery } from "@google-cloud/bigquery";
 import { defineString } from "firebase-functions/params";
-import { onInit } from "firebase-functions/v2";
+import { onInit } from "firebase-functions/v2/core";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 
 const datasetIdParam = defineString("BIGQUERY_DATASET_ID");
