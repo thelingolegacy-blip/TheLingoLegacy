@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T22:53:55.308Z",
+  "generatedAt": "2026-11-12T22:54:37.599Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -122,11 +122,13 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
+      "lastVerifiedAt": "2026-11-12T22:54:37.599Z",
       "evidence": [
         "Live homepage URL https://thelingolegacy.com/ was successfully fetched on 2026-11-12; page title is The Lingo Legacy — One Legacy. Many Worlds.",
         "Homepage content explicitly describes the destination catalog as navigation-ready and says destinations must be connected to verified routes before production activation; footer labels the experience as a candidate, not a production status statement",
-        "This confirms public HTTP page delivery only; it does not certify all routes, account flows, mobile apps, APIs, or production launch readiness"
+        "This confirms public HTTP page delivery only; it does not certify all routes, account flows, mobile apps, APIs, or production launch readiness",
+        "Canonical main index.html redirects to /studio-hub/; the studio-hub/index.html source references 13 local destination links and 7 local image assets, all resolved against the main Git tree (778 entries).",
+        "The public homepage crawl returned an older/different candidate experience rather than the exact LINGO Studio Hub source currently present on main; source-to-runtime content alignment is not yet established. Do not infer the route is broken; require a direct origin/runtime comparison."
       ],
       "secretReferences": []
     },
