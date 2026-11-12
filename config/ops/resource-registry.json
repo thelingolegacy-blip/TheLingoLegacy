@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "1.0.0",
+  "authority": {
+    "sourceRepository": "thelingolegacy-blip/TheLingoLegacy",
+    "sourceBranch": "main",
+    "productionMutationPolicy": "frozen"
+  },
+  "generatedAt": "2026-11-12T00:00:00Z",
+  "resources": [
+    {
+      "id": "src.github.thelingolegacy",
+      "name": "TheLingoLegacy canonical repository",
+      "category": "source_repository",
+      "purpose": "Canonical source and change history for the flagship infrastructure",
+      "provider": "GitHub",
+      "authoritativeReference": "https://github.com/thelingolegacy-blip/TheLingoLegacy",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [],
+      "lifecycleState": "active",
+      "integrationState": "verified",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "README.md declares this repository and main as source authority",
+        "EMS issue #550"
+      ],
+      "secretReferences": [],
+      "recovery": {
+        "primaryRoute": "GitHub main with protected review",
+        "restoreRunbook": "docs/ems/FOUNDATION-OPERATIONS-CENTERS.md"
+      }
+    },
+    {
+      "id": "ci.github.actions",
+      "name": "GitHub Actions workflows",
+      "category": "ci_pipeline",
+      "purpose": "Build, test, security checks and evidence generation",
+      "provider": "GitHub Actions",
+      "authoritativeReference": "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Sampled workflow runs reported startup_failure with no job steps; current run evidence must be refreshed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "runner.g02",
+      "name": "LINGO G02 self-hosted runner",
+      "category": "runner",
+      "purpose": "Canonical self-hosted release evidence execution",
+      "provider": "GitHub Actions",
+      "authoritativeReference": "docs/ems/FOUNDATION-OPERATIONS-CENTERS.md",
+      "environment": "unknown",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "ci.github.actions"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Standing disposition G02 FAIL / UNVERIFIED; no runner activation authorized"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "edge.cloudflare",
+      "name": "Cloudflare edge and Worker runtime",
+      "category": "edge",
+      "purpose": "Intended DNS, routing, Worker runtime and public asset delivery",
+      "provider": "Cloudflare",
+      "authoritativeReference": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "stale",
+      "lastVerifiedAt": "2026-11-04T00:00:00Z",
+      "evidence": [
+        "Historical cutover runbook records route precedence and rollback references; refresh live provider state before changes"
+      ],
+      "secretReferences": [],
+      "recovery": {
+        "restoreRunbook": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md"
+      }
+    },
+    {
+      "id": "domain.thelingolegacy",
+      "name": "thelingolegacy.com and www",
+      "category": "domain",
+      "purpose": "Canonical public domain and flagship routes",
+      "provider": "Cloudflare",
+      "authoritativeReference": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "stale",
+      "lastVerifiedAt": "2026-11-04T00:00:00Z",
+      "evidence": [
+        "Historical route snapshot only; live DNS and Worker bindings require re-verification"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "hosting.firebase",
+      "name": "Firebase Hosting",
+      "category": "hosting",
+      "purpose": "Firebase hosting and assigned application delivery",
+      "provider": "Firebase",
+      "authoritativeReference": "firebase.json",
+      "environment": "production",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "main firebase.json uses public directory '.'; must be corrected and verified before deployment",
+        "Competing repair PRs require reconciliation"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "firebase.project",
+      "name": "Firebase project identity",
+      "category": "identity",
+      "purpose": "Backend identity and application services for assigned LINGO capabilities",
+      "provider": "Firebase",
+      "authoritativeReference": ".firebaserc and Firebase app configuration",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "hosting.firebase"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Repository references lingo-legacy-production; Flutter Firebase option placeholders remain; live project and rules not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "app.flutter",
+      "name": "Flutter mobile application",
+      "category": "application",
+      "purpose": "Cross-platform LINGO mobile application",
+      "provider": "Flutter",
+      "authoritativeReference": "pubspec.yaml and lib/",
+      "environment": "development",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "firebase.project"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Flutter manifest exists; platform build and Firebase app configuration require validation"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.main.admin",
+      "name": "Admin Command Center",
+      "category": "control_center",
+      "purpose": "Portfolio command navigation and studio work lanes",
+      "provider": "Repository static application",
+      "authoritativeReference": "admin-command-center/index.html",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing UI scaffold found; provider-backed status not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.studio.os",
+      "name": "Studio OS Control Center",
+      "category": "control_center",
+      "purpose": "Creative operations and studio controls",
+      "provider": "Repository static application",
+      "authoritativeReference": "studio-os/index.html",
+      "environment": "portfolio",
+      "criticality": "medium",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing UI scaffold found; automation and provider integration not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.trust",
+      "name": "Trust and Compliance Center",
+      "category": "control_center",
+      "purpose": "Safety policy, moderation, reports, privacy and release safeguards",
+      "provider": "Repository static application",
+      "authoritativeReference": "trust-compliance/index.html",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Safety blueprint and UI found; live report queue and moderation integrations not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.economy",
+      "name": "Economy Command Center",
+      "category": "control_center",
+      "purpose": "Recommendation-only demo economy and abuse monitoring",
+      "provider": "Repository static application",
+      "authoritativeReference": "economy-command-center/index.html",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing shell describes recommendation-only operation; no live wallet writes authorized"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.integration",
+      "name": "Integration OS",
+      "category": "control_center",
+      "purpose": "Integration inventory and provider connection workflows",
+      "provider": "Repository static application",
+      "authoritativeReference": "integration-os/",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Repository search found Integration OS surface; runtime behavior requires direct verification"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.release",
+      "name": "Release Center",
+      "category": "release_system",
+      "purpose": "Release evidence, gates, staging, rollback and acceptance",
+      "provider": "GitHub plus deployment providers",
+      "authoritativeReference": "ops/recovery/ and docs/release/",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "ci.github.actions",
+        "edge.cloudflare",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Release evidence and runbooks exist; unified provider-backed release console not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "obs.platform",
+      "name": "Platform observability",
+      "category": "observability",
+      "purpose": "Logs, metrics, traces, alerts, SLOs and incident signals",
+      "provider": "Not yet confirmed",
+      "authoritativeReference": "To be assigned",
+      "environment": "unknown",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "No authoritative observability integration confirmed in this inventory"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "backup.platform",
+      "name": "Platform backup and restore",
+      "category": "backup",
+      "purpose": "Recover source, configuration, artifacts and data",
+      "provider": "Not yet confirmed",
+      "authoritativeReference": "To be assigned",
+      "environment": "disaster_recovery",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "firebase.project"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Backup inventory and restore proof remain required; no successful restore evidence asserted"
+      ],
+      "secretReferences": []
+    }
+  ],
+  "notes": [
+    "This is an initial evidence-qualified registry, not a complete inventory of all 38 previously observed repositories or every provider resource.",
+    "Timestamps indicate the registry snapshot date, not proof of live verification unless the evidence explicitly says so.",
+    "Never store secret values in this registry.",
+    "Refresh stale/unknown provider state before operational decisions."
+  ]
+}
