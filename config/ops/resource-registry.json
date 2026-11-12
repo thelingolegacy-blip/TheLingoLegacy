@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T00:00:00Z",
+  "generatedAt": "2026-11-12T22:53:26.673Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -46,9 +46,11 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
       "evidence": [
-        "Sampled workflow runs reported startup_failure with no job steps; current run evidence must be refreshed"
+        "PR #553 head bfaf6a0be981752413f2a1b1fb7801092710e955: runs 43323316498 (docker-image.yml), 43323315074 (jekyll-docker.yml), and 43323313308 (crimson-smoke-ui-validation.yml) all completed with startup_failure at 2026-11-12T22:48:39Z–22:48:41Z",
+        "GitHub Actions jobs endpoint returned total_count 0 and jobs []; no steps, runner assignment, logs, or artifacts exist for these attempts; classify as provider/job-startup failure, not code test failure",
+        "Static CI and Crimson UI workflows request ubuntu-latest; Docker image build also requests ubuntu-latest; dedicated G02 workflows separately require self-hosted, linux, x64, lingo-g02"
       ],
       "secretReferences": []
     },
@@ -67,9 +69,11 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
       "evidence": [
-        "Standing disposition G02 FAIL / UNVERIFIED; no runner activation authorized"
+        "Standing disposition G02 FAIL / UNVERIFIED; no runner activation or registration performed",
+        "Workflow source inspection confirms dedicated G02 jobs require self-hosted, linux, x64, lingo-g02 and assert runner identity lingo-legacy-g02",
+        "Latest PR #553 checks contain no G02 execution evidence; G02 remains blocked pending credential-exposure remediation, unique runner identity and actual runner_id/job/step/log/artifact evidence"
       ],
       "secretReferences": []
     },
@@ -88,10 +92,13 @@
         "ci.github.actions"
       ],
       "lifecycleState": "active",
-      "integrationState": "stale",
-      "lastVerifiedAt": "2026-11-04T00:00:00Z",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
       "evidence": [
-        "Historical cutover runbook records route precedence and rollback references; refresh live provider state before changes"
+        "Cloudflare provider API readback on 2026-11-12 confirmed the account Workers subdomain and script subdomain state for staging and production Workers",
+        "Cloudflare Workers observability usage query returned 301 events across the queried window: 101 for thelingolegacyv-5 and 200 for lingo-resilience-gateway; no staging control-center event row was returned",
+        "Cloudflare observability issue summary for lingo-studio-control-center-staging returned zero active issues and zero active occurrences; this is not proof of endpoint health",
+        "Production main Worker deployment remains version 137 at 100%; latest uploaded version 305 is not promoted"
       ],
       "secretReferences": [],
       "recovery": {
@@ -547,11 +554,12 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:48:23Z",
+      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
       "evidence": [
-        "Cloudflare deployment e7f61ccd-9b3f-44e3-879b-9b2b11a864a2 confirmed version 8d05879b-db31-43d3-ae10-7f2abc91246a at 100% on the isolated staging Worker",
-        "No custom route was added or changed; no production routing changed",
-        "External HTTP health probe could not be completed through the available web fetch path; runtime health remains unverified"
+        "Cloudflare deployment e7f61ccd-9b3f-44e3-879b-9b2b11a864a2 confirms version 8d05879b-db31-43d3-ae10-7f2abc91246a at 100% on the isolated staging Worker",
+        "Worker subdomain is enabled; no custom route or production routing change was made; script settings show no bindings and observability enabled with persistent invocation logs",
+        "Cloudflare usage query returned no staging-service event row in the queried window; this is not a successful runtime health check",
+        "External HTTP GET probes to the workers.dev root and /healthz could not be completed by the available fetch path; runtime HTTP health remains unverified"
       ],
       "secretReferences": []
     },
@@ -587,6 +595,8 @@
     "Sonic Boom Nexus is the intended cross-cutting orchestration layer; do not imply an operational runtime until its implementation and telemetry are verified.",
     "Loyalty Lane Cycles requires three hubs across Philadelphia sections and Cumberland County. Beacon remains feature-flagged until official hub locations, hours and boundaries are approved.",
     "Cloudflare account inventory on 2026-11-12 identified seven Worker scripts. Deployment percentages and routes are provider metadata; no HTTP health probe was performed.",
-    "Do not promote the newest uploaded version by default: the flagship root version 3 is PR #548 preview-only; the studio staging version 7 is explicitly staged without deployment; the main production Worker version 305 is an unpromoted preview candidate. Current production deployment version 137 remains protected."
+    "Cloudflare Workers readback on 2026-11-12: isolated Studio Control Center staging version 7 is deployed at 100%, workers.dev subdomain enabled, bindings empty, observability enabled; external HTTP health remains unverified and the queried usage window returned no staging event row.",
+    "GitHub Actions readback on PR #553 head: three ubuntu-latest workflow runs ended startup_failure with zero instantiated jobs. This is not a code-test failure; no workflow steps or artifacts were produced.",
+    "Firebase Hosting PR #539 and PR #545 propose the same one-line public-directory change to build/web. PR #545 is based on the current main SHA and carries the clearer Firebase-placeholder and staging safeguards; treat it as the preferred review candidate, not as approved or merged. Both remain open pending exact-head CI and Firebase configuration."
   ]
 }
