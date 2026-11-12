@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T22:53:26.673Z",
+  "generatedAt": "2026-11-12T22:53:55.308Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -46,11 +46,12 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
+      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
       "evidence": [
         "PR #553 head bfaf6a0be981752413f2a1b1fb7801092710e955: runs 43323316498 (docker-image.yml), 43323315074 (jekyll-docker.yml), and 43323313308 (crimson-smoke-ui-validation.yml) all completed with startup_failure at 2026-11-12T22:48:39Z–22:48:41Z",
         "GitHub Actions jobs endpoint returned total_count 0 and jobs []; no steps, runner assignment, logs, or artifacts exist for these attempts; classify as provider/job-startup failure, not code test failure",
-        "Static CI and Crimson UI workflows request ubuntu-latest; Docker image build also requests ubuntu-latest; dedicated G02 workflows separately require self-hosted, linux, x64, lingo-g02"
+        "Static CI and Crimson UI workflows request ubuntu-latest; Docker image build also requests ubuntu-latest; dedicated G02 workflows separately require self-hosted, linux, x64, lingo-g02",
+        "After registry refresh commit 3e024586306cacb82a063dc88c8fe0197c1fbfbf, follow-on runs 43324046457 (Static CI) and 43324044559 (Docker/G02 runner image build) again ended startup_failure; both jobs and artifacts endpoints returned empty arrays. Combined commit status also shows a failing Vercel context, separate from GitHub Actions; Vercel remains retired/non-authoritative and must not be treated as a passing build."
       ],
       "secretReferences": []
     },
@@ -93,12 +94,13 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
+      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
       "evidence": [
         "Cloudflare provider API readback on 2026-11-12 confirmed the account Workers subdomain and script subdomain state for staging and production Workers",
         "Cloudflare Workers observability usage query returned 301 events across the queried window: 101 for thelingolegacyv-5 and 200 for lingo-resilience-gateway; no staging control-center event row was returned",
         "Cloudflare observability issue summary for lingo-studio-control-center-staging returned zero active issues and zero active occurrences; this is not proof of endpoint health",
-        "Production main Worker deployment remains version 137 at 100%; latest uploaded version 305 is not promoted"
+        "Production main Worker deployment remains version 137 at 100%; latest uploaded version 305 is not promoted",
+        "Independent public homepage fetch to https://thelingolegacy.com/ succeeded on 2026-11-12; visible content still labels the experience as a candidate and says destination routes require verification."
       ],
       "secretReferences": [],
       "recovery": {
@@ -119,10 +121,12 @@
         "edge.cloudflare"
       ],
       "lifecycleState": "active",
-      "integrationState": "stale",
-      "lastVerifiedAt": "2026-11-04T00:00:00Z",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
       "evidence": [
-        "Historical route snapshot only; live DNS and Worker bindings require re-verification"
+        "Live homepage URL https://thelingolegacy.com/ was successfully fetched on 2026-11-12; page title is The Lingo Legacy — One Legacy. Many Worlds.",
+        "Homepage content explicitly describes the destination catalog as navigation-ready and says destinations must be connected to verified routes before production activation; footer labels the experience as a candidate, not a production status statement",
+        "This confirms public HTTP page delivery only; it does not certify all routes, account flows, mobile apps, APIs, or production launch readiness"
       ],
       "secretReferences": []
     },
