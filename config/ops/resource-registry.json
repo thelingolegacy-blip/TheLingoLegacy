@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T22:54:37.599Z",
+  "generatedAt": "2026-11-12T23:24:29.935Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -46,12 +46,12 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "PR #553 head bfaf6a0be981752413f2a1b1fb7801092710e955: runs 43323316498 (docker-image.yml), 43323315074 (jekyll-docker.yml), and 43323313308 (crimson-smoke-ui-validation.yml) all completed with startup_failure at 2026-11-12T22:48:39Z–22:48:41Z",
-        "GitHub Actions jobs endpoint returned total_count 0 and jobs []; no steps, runner assignment, logs, or artifacts exist for these attempts; classify as provider/job-startup failure, not code test failure",
-        "Static CI and Crimson UI workflows request ubuntu-latest; Docker image build also requests ubuntu-latest; dedicated G02 workflows separately require self-hosted, linux, x64, lingo-g02",
-        "After registry refresh commit 3e024586306cacb82a063dc88c8fe0197c1fbfbf, follow-on runs 43324046457 (Static CI) and 43324044559 (Docker/G02 runner image build) again ended startup_failure; both jobs and artifacts endpoints returned empty arrays. Combined commit status also shows a failing Vercel context, separate from GitHub Actions; Vercel remains retired/non-authoritative and must not be treated as a passing build."
+        "Latest PR #553 head 2dfe07d520a4ed3339b7d7276697826aa2c9d625: runs 43324222049 (Static CI, ubuntu-24.04), 43324220094 (G02 image build, ubuntu-latest), and 43324218182 (Crimson UI, ubuntu-latest) all ended startup_failure; jobs and artifacts endpoints each returned empty arrays.",
+        "Repeated startup_failure with zero jobs across three different PR heads and both ubuntu-latest and ubuntu-24.04; no steps executed, so no source tests or build results exist.",
+        "GitHub official status page currently reports Actions operational and no incidents on Nov 12; Nov 11 multi-product Actions incident was resolved at 21:21 UTC. No provider-wide incident is currently confirmed as root cause; repo/account Actions policy, quota, billing, or service-side job provisioning remain to be isolated.",
+        "Workflow file .github/workflows/isolated-hosted-runner-probe.yml provides a minimal no-checkout, no-secret, no-network workflow_dispatch diagnostic, but the available GitHub connection exposes no workflow-dispatch action."
       ],
       "secretReferences": []
     },
@@ -70,11 +70,11 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Standing disposition G02 FAIL / UNVERIFIED; no runner activation or registration performed",
-        "Workflow source inspection confirms dedicated G02 jobs require self-hosted, linux, x64, lingo-g02 and assert runner identity lingo-legacy-g02",
-        "Latest PR #553 checks contain no G02 execution evidence; G02 remains blocked pending credential-exposure remediation, unique runner identity and actual runner_id/job/step/log/artifact evidence"
+        "Dedicated G02 jobs require [self-hosted, linux, x64, lingo-g02] and assert runner name lingo-legacy-g02, Linux/X64, runner_id>0, job correlation, commit correlation, and evidence artifact.",
+        "No runner registration or activation performed; credential-exposure remediation and uniqueness check remain prerequisites.",
+        "The latest Actions startup failures occurred before any jobs existed, so they provide no evidence about G02 runner health. G02 remains FAIL / UNVERIFIED."
       ],
       "secretReferences": []
     },
@@ -94,13 +94,14 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:53:55.308Z",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Cloudflare provider API readback on 2026-11-12 confirmed the account Workers subdomain and script subdomain state for staging and production Workers",
-        "Cloudflare Workers observability usage query returned 301 events across the queried window: 101 for thelingolegacyv-5 and 200 for lingo-resilience-gateway; no staging control-center event row was returned",
-        "Cloudflare observability issue summary for lingo-studio-control-center-staging returned zero active issues and zero active occurrences; this is not proof of endpoint health",
-        "Production main Worker deployment remains version 137 at 100%; latest uploaded version 305 is not promoted",
-        "Independent public homepage fetch to https://thelingolegacy.com/ succeeded on 2026-11-12; visible content still labels the experience as a candidate and says destination routes require verification."
+        "Cloudflare account subdomain is thelingolegacy; workers.dev is enabled for both staging control-center and flagship Worker.",
+        "Production main Worker deployment is version 137 (100%) under deployment ecd71a70-e476-4318-92a7-35249ced360b; latest uploaded version 305 is preview-only and unpromoted.",
+        "The current uploaded flagship Worker source-map sourcesContent matches canonical GitHub main worker.js byte-for-byte under an FNV-1a comparison (8b8ff92d); this proves uploaded-source parity only, not active deployment version 137 parity.",
+        "Active version 137 metadata confirms fetch handler, ASSETS binding, CANONICAL_DOMAIN and PUBLIC_SITE_URL bindings, and edge security-header configuration.",
+        "Cloudflare telemetry on 2026-11-12 returned zero invocation events for lingo-studio-control-center-staging; staging source code statically contains /healthz, GET/HEAD-only handling, noindex, security headers and productionMutation:false, but live HTTP runtime is unverified.",
+        "A production Worker telemetry aggregation for 2026-11-12 returned a 404 response bucket with count 640 (sample interval 10); inspected samples were scanner probes for common secrets, config, admin and framework paths and returned 404. No successful end-user route check was established from those samples."
       ],
       "secretReferences": [],
       "recovery": {
@@ -122,13 +123,11 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:54:37.599Z",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Live homepage URL https://thelingolegacy.com/ was successfully fetched on 2026-11-12; page title is The Lingo Legacy — One Legacy. Many Worlds.",
-        "Homepage content explicitly describes the destination catalog as navigation-ready and says destinations must be connected to verified routes before production activation; footer labels the experience as a candidate, not a production status statement",
-        "This confirms public HTTP page delivery only; it does not certify all routes, account flows, mobile apps, APIs, or production launch readiness",
-        "Canonical main index.html redirects to /studio-hub/; the studio-hub/index.html source references 13 local destination links and 7 local image assets, all resolved against the main Git tree (778 entries).",
-        "The public homepage crawl returned an older/different candidate experience rather than the exact LINGO Studio Hub source currently present on main; source-to-runtime content alignment is not yet established. Do not infer the route is broken; require a direct origin/runtime comparison."
+        "Canonical main index.html redirects to /studio-hub/; all 13 local destination links and 7 local image assets referenced by studio-hub/index.html resolve against the 778-entry main Git tree.",
+        "The public homepage was fetched previously, but a direct HTTP probe of /studio-hub/ from the current runtime-check path was inaccessible; runtime parity remains unverified.",
+        "Cloudflare production telemetry samples for 2026-11-12 contained 404 responses for common scanner probes; this is not evidence that normal user routes return 200. A route-by-route external probe matrix remains required."
       ],
       "secretReferences": []
     },
@@ -148,10 +147,11 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "main firebase.json uses public directory '.'; must be corrected and verified before deployment",
-        "Competing repair PRs require reconciliation"
+        "main firebase.json parses but Hosting public is '.', with ignores limited to firebase.json, firebase.client.json, hidden files and node_modules. This leaves repository paths such as config/, docs/, scripts/, ops/, lib/, worker.js and wrangler.jsonc outside the declared ignore set if a root deploy is run.",
+        "PRs #539 and #545 both change public to build/web; #545 is based on current main and remains a draft review candidate, not approved or merged.",
+        "No Firebase Hosting build, emulator test, deploy or live HTTP parity check was executed. Keep Firebase deploy blocked until Flutter web output and artifact boundary are verified."
       ],
       "secretReferences": []
     },
@@ -169,10 +169,13 @@
         "hosting.firebase"
       ],
       "lifecycleState": "blocked",
-      "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Repository references lingo-legacy-production; Flutter Firebase option placeholders remain; live project and rules not verified"
+        "Repository .firebaserc selects lingo-legacy-production.",
+        "lib/firebase_options.dart contains nine distinct placeholder types across web, Android, iOS and macOS API key/app ID fields plus messaging sender ID placeholders; scripts/verify-flutter-firebase.mjs will fail closed.",
+        "Firebase project existence, app registrations, Auth providers, App Check, Firestore/Storage rules, indexes, FCM, backups and project IAM were not verified because no connected Firebase provider session is available.",
+        "Firebase connector is available for user connection; no credentials were invented and no Firebase writes or deploys occurred."
       ],
       "secretReferences": []
     },
@@ -189,11 +192,13 @@
       "dependencies": [
         "firebase.project"
       ],
-      "lifecycleState": "planned",
-      "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Flutter manifest exists; platform build and Firebase app configuration require validation"
+        "Flutter/Firebase workflow exists and defines flutter pub get, flutter analyze, flutter test, Flutter web release build, Android debug build and Firebase hosting configuration check.",
+        "The workflow has not produced a job or step result in the current diagnostic window; no Flutter test/build pass is claimed.",
+        "Firebase option placeholders block the repository integrity verifier; actual Firebase app config and project registration are prerequisites."
       ],
       "secretReferences": []
     },
@@ -295,10 +300,14 @@
         "src.github.thelingolegacy"
       ],
       "lifecycleState": "active",
-      "integrationState": "scaffold_only",
-      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
       "evidence": [
-        "Repository search found Integration OS surface; runtime behavior requires direct verification"
+        "config/integration/front-back-stack.json explicitly sets liveBackendWrites=false, livePayments=false, liveExternalServiceCalls=false; Firebase app backend status is contract_only.",
+        "config/integrations/external-services.json keeps external services gated and sets runnerGate FAIL, productionDeployment BLOCKED and activation BLOCKED.",
+        "Studio production feature manifest has production=false; identity, telemetry, commerce and other capabilities are shared/boundary/contract-only rather than certified live integrations.",
+        "Doughboys Oasis has source-level Firebase callable functions for a demo wallet and idempotent catalog purchases plus Firestore rules denying client writes, but functions lack visible enforceAppCheck:true configuration and are not wired into root firebase.json; no deploy or emulator evidence exists.",
+        "Live product integration remains deliberately disabled pending Firebase project access, App Check, rules, API contract, environment isolation, idempotency and end-to-end acceptance."
       ],
       "secretReferences": []
     },
