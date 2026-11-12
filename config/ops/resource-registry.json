@@ -547,9 +547,11 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "lastVerifiedAt": "2026-11-12T22:48:23Z",
       "evidence": [
-        "Version 6 deployed at 100%; version 7 is staged catalog candidate with explicit no-deployment/no-route annotation; no custom route or live request probe"
+        "Cloudflare deployment e7f61ccd-9b3f-44e3-879b-9b2b11a864a2 confirmed version 8d05879b-db31-43d3-ae10-7f2abc91246a at 100% on the isolated staging Worker",
+        "No custom route was added or changed; no production routing changed",
+        "External HTTP health probe could not be completed through the available web fetch path; runtime health remains unverified"
       ],
       "secretReferences": []
     },
