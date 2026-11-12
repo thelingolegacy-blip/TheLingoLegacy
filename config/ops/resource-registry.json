@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T23:24:29.935Z",
+  "generatedAt": "2026-11-12T23:25:03.021Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -46,12 +46,13 @@
       ],
       "lifecycleState": "blocked",
       "integrationState": "blocked",
-      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
       "evidence": [
         "Latest PR #553 head 2dfe07d520a4ed3339b7d7276697826aa2c9d625: runs 43324222049 (Static CI, ubuntu-24.04), 43324220094 (G02 image build, ubuntu-latest), and 43324218182 (Crimson UI, ubuntu-latest) all ended startup_failure; jobs and artifacts endpoints each returned empty arrays.",
         "Repeated startup_failure with zero jobs across three different PR heads and both ubuntu-latest and ubuntu-24.04; no steps executed, so no source tests or build results exist.",
         "GitHub official status page currently reports Actions operational and no incidents on Nov 12; Nov 11 multi-product Actions incident was resolved at 21:21 UTC. No provider-wide incident is currently confirmed as root cause; repo/account Actions policy, quota, billing, or service-side job provisioning remain to be isolated.",
-        "Workflow file .github/workflows/isolated-hosted-runner-probe.yml provides a minimal no-checkout, no-secret, no-network workflow_dispatch diagnostic, but the available GitHub connection exposes no workflow-dispatch action."
+        "Workflow file .github/workflows/isolated-hosted-runner-probe.yml provides a minimal no-checkout, no-secret, no-network workflow_dispatch diagnostic, but the available GitHub connection exposes no workflow-dispatch action.",
+        "Registry commit b8db9dfb4e226fa8dfa80f32afa23b7621827804 triggered latest PR checks 43328616393 (Crimson UI), 43328614503 (Static CI) and 43328612532 (G02 image build); all again ended startup_failure with zero jobs and zero artifacts."
       ],
       "secretReferences": []
     },
@@ -94,14 +95,15 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
       "evidence": [
         "Cloudflare account subdomain is thelingolegacy; workers.dev is enabled for both staging control-center and flagship Worker.",
         "Production main Worker deployment is version 137 (100%) under deployment ecd71a70-e476-4318-92a7-35249ced360b; latest uploaded version 305 is preview-only and unpromoted.",
         "The current uploaded flagship Worker source-map sourcesContent matches canonical GitHub main worker.js byte-for-byte under an FNV-1a comparison (8b8ff92d); this proves uploaded-source parity only, not active deployment version 137 parity.",
         "Active version 137 metadata confirms fetch handler, ASSETS binding, CANONICAL_DOMAIN and PUBLIC_SITE_URL bindings, and edge security-header configuration.",
         "Cloudflare telemetry on 2026-11-12 returned zero invocation events for lingo-studio-control-center-staging; staging source code statically contains /healthz, GET/HEAD-only handling, noindex, security headers and productionMutation:false, but live HTTP runtime is unverified.",
-        "A production Worker telemetry aggregation for 2026-11-12 returned a 404 response bucket with count 640 (sample interval 10); inspected samples were scanner probes for common secrets, config, admin and framework paths and returned 404. No successful end-user route check was established from those samples."
+        "A production Worker telemetry aggregation for 2026-11-12 returned a 404 response bucket with count 640 (sample interval 10); inspected samples were scanner probes for common secrets, config, admin and framework paths and returned 404. No successful end-user route check was established from those samples.",
+        "Runtime probe attempt through the available Cloudflare execution sandbox was blocked before reaching origin by sandbox outbound-network policy; production/staging origin HTTP response remains unobserved through this path."
       ],
       "secretReferences": [],
       "recovery": {
@@ -569,12 +571,13 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T22:53:26.673Z",
+      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
       "evidence": [
         "Cloudflare deployment e7f61ccd-9b3f-44e3-879b-9b2b11a864a2 confirms version 8d05879b-db31-43d3-ae10-7f2abc91246a at 100% on the isolated staging Worker",
         "Worker subdomain is enabled; no custom route or production routing change was made; script settings show no bindings and observability enabled with persistent invocation logs",
         "Cloudflare usage query returned no staging-service event row in the queried window; this is not a successful runtime health check",
-        "External HTTP GET probes to the workers.dev root and /healthz could not be completed by the available fetch path; runtime HTTP health remains unverified"
+        "External HTTP GET probes to the workers.dev root and /healthz could not be completed by the available fetch path; runtime HTTP health remains unverified",
+        "Outbound HTTPS probes from the Cloudflare connector execution sandbox to staging workers.dev and the production domain were explicitly blocked by the tool network policy (sandbox-generated 403 'requests ... are not allowed'); these are not origin HTTP responses and do not establish Worker health."
       ],
       "secretReferences": []
     },
