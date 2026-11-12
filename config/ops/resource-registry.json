@@ -424,6 +424,157 @@
         "Feature-flagged and not live; requires official hub names/addresses/hours/boundaries, privacy controls, retries, duplicate detection, audit and fallback routing"
       ],
       "secretReferences": []
+    },
+    {
+      "id": "worker.atlas",
+      "name": "LINGO Ecosystem Atlas Worker",
+      "category": "worker",
+      "purpose": "Atlas subdomain request handling",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "atlas.thelingolegacy.com/*",
+      "environment": "production",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Cloudflare reports deployed version 2 at 100% traffic; route atlas.thelingolegacy.com/*; live request probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-root",
+      "name": "LINGO Flagship Root Worker",
+      "category": "worker",
+      "purpose": "Exact-root homepage routing",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "thelingolegacy.com/",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 1 has a 100% deployment; version 3 is a PR #548 preview-only navigation repair and is not promoted; root route only; live request probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-site-preview",
+      "name": "LINGO Flagship Site Preview Worker",
+      "category": "worker",
+      "purpose": "Isolated noindex flagship preview",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-flagship-site-preview",
+      "environment": "staging",
+      "criticality": "medium",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 2 deployed at 100%; no custom route; live preview probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.resilience-gateway",
+      "name": "LINGO Resilience Gateway Worker",
+      "category": "worker",
+      "purpose": "Isolated resilience gateway",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-resilience-gateway",
+      "environment": "staging",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 1 deployed at 100%; no custom route; no live failover exercise performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.static-backup-proxy",
+      "name": "LINGO Static Backup Proxy Worker",
+      "category": "worker",
+      "purpose": "Static recovery backup on launch subdomain",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "launch.thelingolegacy.com/*",
+      "environment": "disaster_recovery",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 2 deployed at 100% on launch subdomain; restoration and content-integrity drill not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.studio-control-center-staging",
+      "name": "LINGO Studio Control Center Staging Worker",
+      "category": "worker",
+      "purpose": "Staging control-center route and catalog validation",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-studio-control-center-staging",
+      "environment": "staging",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "center.studio.os"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 6 deployed at 100%; version 7 is staged catalog candidate with explicit no-deployment/no-route annotation; no custom route or live request probe"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-production",
+      "name": "LINGO Legacy Multi-route Production Worker",
+      "category": "worker",
+      "purpose": "Main flagship website and product subdomain routes",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "thelingolegacy.com/* and configured product subdomains",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "ci.github.actions",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 137 is the currently recorded 100% deployment; latest uploaded version 305 is an unpromoted preview candidate from operations work; 18 route patterns recorded; no live health probe or release acceptance"
+      ],
+      "secretReferences": []
     }
   ],
   "notes": [
@@ -432,6 +583,8 @@
     "Never store secret values in this registry.",
     "Refresh stale/unknown provider state before operational decisions.",
     "Sonic Boom Nexus is the intended cross-cutting orchestration layer; do not imply an operational runtime until its implementation and telemetry are verified.",
-    "Loyalty Lane Cycles requires three hubs across Philadelphia sections and Cumberland County. Beacon remains feature-flagged until official hub locations, hours and boundaries are approved."
+    "Loyalty Lane Cycles requires three hubs across Philadelphia sections and Cumberland County. Beacon remains feature-flagged until official hub locations, hours and boundaries are approved.",
+    "Cloudflare account inventory on 2026-11-12 identified seven Worker scripts. Deployment percentages and routes are provider metadata; no HTTP health probe was performed.",
+    "Do not promote the newest uploaded version by default: the flagship root version 3 is PR #548 preview-only; the studio staging version 7 is explicitly staged without deployment; the main production Worker version 305 is an unpromoted preview candidate. Current production deployment version 137 remains protected."
   ]
 }
