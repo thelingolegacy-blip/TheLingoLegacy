@@ -218,7 +218,7 @@ export default {
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
       // Read-only does not mean public. Keep the EMS preview unreachable until
       // a verified Cloudflare Access identity and authorization policy exist.
-      if (url.pathname === '/ops/ems-console' || url.pathname.startsWith('/ops/ems-console/')) {
+      if (url.pathname.toLowerCase().startsWith('/ops/ems-console')) {
         return withSecurityHeaders(new Response('EMS_CONSOLE_PREVIEW_DISABLED\\n', {
           status: 404,
           headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
