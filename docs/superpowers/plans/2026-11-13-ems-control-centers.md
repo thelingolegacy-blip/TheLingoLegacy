@@ -10,6 +10,10 @@
 
 **Spec:** `docs/superpowers/specs/2026-11-13-ems-control-centers-design.md`
 
+## Execution status — 2026-11-13
+
+Implementation is committed on draft PR #556. Six committed EMS test bodies were executed against freshly fetched branch source in an in-memory V8 compatibility harness; the Worker route guard also returned 404 before static asset fallback in a mocked runtime. This is not a native `node --test` run, browser test or live provider integration. The console remains inaccessible on the public Worker until verified Cloudflare Access is implemented. Keep the plan open pending native tests, browser QA, Access policy and parent registry review.
+
 ## Global Constraints
 - GitHub remains source authority; extend PR #553 rather than duplicate its registry.
 - Read-only mode only; no secrets, provider writes, production deploys, DNS changes, runner registration, payment or Firebase mutation.
