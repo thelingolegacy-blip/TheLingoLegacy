@@ -5,7 +5,7 @@
     "sourceBranch": "main",
     "productionMutationPolicy": "frozen"
   },
-  "generatedAt": "2026-11-12T23:25:03.021Z",
+  "generatedAt": "2026-11-13T13:05:00Z",
   "resources": [
     {
       "id": "src.github.thelingolegacy",
@@ -95,7 +95,7 @@
       ],
       "lifecycleState": "active",
       "integrationState": "configured_unverified",
-      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
+      "lastVerifiedAt": "2026-11-13T13:05:00Z",
       "evidence": [
         "Cloudflare account subdomain is thelingolegacy; workers.dev is enabled for both staging control-center and flagship Worker.",
         "Production main Worker deployment is version 137 (100%) under deployment ecd71a70-e476-4318-92a7-35249ced360b; latest uploaded version 305 is preview-only and unpromoted.",
@@ -103,7 +103,10 @@
         "Active version 137 metadata confirms fetch handler, ASSETS binding, CANONICAL_DOMAIN and PUBLIC_SITE_URL bindings, and edge security-header configuration.",
         "Cloudflare telemetry on 2026-11-12 returned zero invocation events for lingo-studio-control-center-staging; staging source code statically contains /healthz, GET/HEAD-only handling, noindex, security headers and productionMutation:false, but live HTTP runtime is unverified.",
         "A production Worker telemetry aggregation for 2026-11-12 returned a 404 response bucket with count 640 (sample interval 10); inspected samples were scanner probes for common secrets, config, admin and framework paths and returned 404. No successful end-user route check was established from those samples.",
-        "Runtime probe attempt through the available Cloudflare execution sandbox was blocked before reaching origin by sandbox outbound-network policy; production/staging origin HTTP response remains unobserved through this path."
+        "Runtime probe attempt through the available Cloudflare execution sandbox was blocked before reaching origin by sandbox outbound-network policy; production/staging origin HTTP response remains unobserved through this path.",
+        "Read-only Cloudflare API inventory on 2026-11-13: thelingolegacyv-5 has 308 uploaded versions; latest versions 308 (EMS control-center wave) and 307 (Doughboys Oasis wave) are preview candidates with has_preview=true. They are not the active production deployment.",
+        "Read-only deployment inventory confirms production deployment ecd71a70-e476-4318-92a7-35249ced360b still assigns 100% traffic to version ID 2d161fa5-598f-4998-ada8-7ac4c72c3461 (version 137). No production promotion or route mutation was performed.",
+        "Read-only route inventory confirms thelingolegacyv-5 serves thelingolegacy.com/* and multiple subdomain routes; lingo-flagship-root separately serves the exact apex path thelingolegacy.com/. Preserve this route split pending full route precedence and browser QA."
       ],
       "secretReferences": [],
       "recovery": {
