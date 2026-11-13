@@ -171,3 +171,53 @@ The largest concentration is `main` (178 PRs). The remaining PRs target 15 non-m
 ## Scope and evidence limits
 
 This snapshot covers all 38 repositories returned by the connected owner-scoped repository listing and all 539 branches plus 201 open PRs returned by the paginated canonical-repository endpoints. It does not inspect every file in every repository, every closed PR, all releases, every ruleset, every connected app, all secrets metadata or live provider health. Those remain explicit follow-up work rather than inferred completion.
+
+## Mobile, website and builder readiness
+
+The Flutter and website surfaces have substantial source foundations, but the current main branch is not a release-ready mobile app or safe Firebase Hosting configuration.
+
+### Current source facts (canonical `main` snapshot)
+
+- `pubspec.yaml` defines a Flutter application with Firebase Core, Auth, Realtime Database, Storage and Analytics packages, plus Provider and shared preferences.
+- `lib/main.dart` initializes Firebase on startup.
+- `lib/firebase_options.dart` still contains `YOUR_*` placeholders for Web, Android, iOS and macOS app configuration. The project ID is a source reference, not proof that platform apps or credentials are correctly provisioned.
+- `firebase.json` currently sets Hosting `public: "."`, which can expose repository-root files if a Firebase Hosting deployment is invoked.
+- `android/app/build.gradle` currently signs release builds with the debug signing configuration.
+- The iOS tree contains project stubs; native iOS build readiness is not established by the existence of the directory.
+- `.github/workflows/flutter-firebase-integrity.yml` defines dependency, analyze, widget-test, web-build and Android debug-build steps, but Actions startup failures prevent current exact-head CI evidence.
+- The current Flutter UI is a navigation-only universe preview with eight destinations; it is not yet an authenticated identity, wallet, commerce, or game runtime.
+
+### Existing change proposals — do not duplicate or merge blindly
+
+| PR | Scope | Inventory disposition |
+|---|---|---|
+| #535 | Preview-safe Flutter startup, asset-directory fixes, widget test and native bootstrap workflow | Retain for review; it removes unconditional Firebase initialization while placeholder app credentials remain |
+| #541 | Disable Firebase Hosting publication; preserve Cloudflare as canonical web edge | Preferred Hosting boundary to review because it removes the unsafe Hosting target entirely |
+| #533 | Earlier Firebase Hosting disablement proposal | Overlaps #541; compare exact commits before superseding |
+| #539 | Change Firebase Hosting public directory to `build/web` | Conflicts with the no-Firebase-Hosting direction; do not combine with #541 without an explicit architecture decision |
+| #545 | Duplicate `build/web` Hosting scope correction | Overlaps #539 and conflicts with #541; reconcile, do not stack blindly |
+| #532 | Android release signing policy | Retain for review; release signing must remain unsigned unless protected keystore inputs are present |
+| #554 | Isolated Firebase Functions v2 / BigQuery analytics foundation | Source-only and not wired to production; no dataset, IAM or deployment is created |
+| #515 | Supabase-primary backend architecture proposal | Architecture decision remains unresolved against the Firebase-first identity/data baseline; no migration is authorized |
+| #500 | LLG Tech Corps AI provider gateway and command-center foundation | Source-only prototype; provider execution is disabled and no live provider credentials are configured |
+
+### Selected architecture guardrails
+
+- GitHub remains the source of truth.
+- Cloudflare remains the public website edge and routing layer.
+- Flutter remains the cross-platform mobile application target.
+- Firebase may provide explicitly approved identity and application services; Firebase Hosting must not publish repository-root content.
+- A backend migration proposal is not a production migration. Reconcile Firebase and Supabase responsibilities before creating competing identity, wallet or data systems.
+- AI provider adapters remain disabled until server-side secrets, identity, tenant authorization, budgets, moderation and release evidence are configured.
+
+### Remaining prerequisites
+
+1. Resolve real Firebase platform app registration and project ownership through the authorized project owner; never replace `YOUR_*` placeholders with guessed values.
+2. Verify Firebase Auth, App Check, database and storage security rules before any user-data activation.
+3. Complete the native Android/iOS project scaffolding and device build matrix; do not treat stub files as native readiness.
+4. Keep Android release artifacts unsigned until the protected keystore path and credentials are provisioned through a secure CI environment.
+5. Restore GitHub Actions job startup and run Flutter dependency resolution, analysis, tests, web build and Android debug build on the exact reviewed commit.
+6. Review the overlapping Firebase Hosting PRs as one architecture decision; do not merge both the disable-Hosting and build/web approaches.
+7. Keep analytics and AI provider execution disabled until their independent privacy, security and operational gates pass.
+
+No Firebase project setting, app registration, secret, signing key, database, Cloudflare route or deployment was changed during this inventory.
