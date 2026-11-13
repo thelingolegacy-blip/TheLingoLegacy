@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090d">
+<meta name="description" content="LINGO Operations Center — read-only, evidence-qualified portfolio resource inventory.">
+<title>LINGO Operations Center</title>
+<style>
+:root{color-scheme:dark;--bg:#09090d;--panel:#14141b;--panel2:#1b1a22;--ink:#f8f5f0;--muted:#bcb6bc;--red:#c51e3a;--gold:#e8bd75;--line:#40323a;--green:#7bd8a0;--amber:#f0c77e;--blue:#8bc9ee;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 8% 0%,#50132266,transparent 35rem),var(--bg);color:var(--ink);min-height:100vh}a{color:var(--gold)}button,input,select{font:inherit}.wrap{width:min(1240px,calc(100% - 32px));margin:auto}.top{border-bottom:1px solid var(--line);background:#09090de8}.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:950;letter-spacing:.1em}.tag{color:var(--gold);font-size:.72rem;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.hero{padding:46px 0 26px}.hero h1{font-size:clamp(2.4rem,6vw,4.6rem);letter-spacing:-.065em;margin:12px 0}.hero p{color:var(--muted);line-height:1.6;max-width:780px}.lock{display:inline-flex;border:1px solid #b54b5a;border-radius:999px;padding:8px 12px;color:#ffb6bf;font-size:.75rem;font-weight:900;letter-spacing:.1em}.notice{border:1px solid #805d35;background:#33261466;border-radius:14px;padding:14px 16px;color:#f1d8aa;line-height:1.55;margin:18px 0 24px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric,.panel,.resource{border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--panel2),var(--panel));padding:18px}.metric small{display:block;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.1em}.metric strong{display:block;font-size:2rem;margin-top:8px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 14px}.toolbar input,.toolbar select{background:#101016;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:44px}.toolbar input{flex:1;min-width:220px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.resource h3{font-size:1.03rem;margin:8px 0}.resource p{color:var(--muted);line-height:1.5;font-size:.9rem;margin:8px 0}.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.state{border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.verified{color:var(--green);border-color:#37694b}.blocked{color:#ffadb8;border-color:#8c3947}.stale,.configured_unverified{color:var(--amber);border-color:#80643b}.unknown,.scaffold_only{color:var(--blue);border-color:#3c6074}.muted{color:var(--muted)}.resource details{margin-top:10px;color:var(--muted);font-size:.86rem}.resource summary{cursor:pointer;color:var(--gold);font-weight:800}.empty,.error{border:1px dashed var(--line);border-radius:14px;padding:24px;color:var(--muted)}footer{padding:38px 0 55px;color:var(--muted);font-size:.85rem}.small{font-size:.78rem;color:var(--muted)}:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media(max-width:760px){.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.hero{padding-top:32px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><a class="brand" href="/">LINGO LEGACY / OPERATIONS</a><span class="tag">Read-only control surface</span></div></header>
+<main class="wrap">
+<section class="hero"><span class="tag">Enterprise Management System</span><h1>Operations Center</h1><p>One evidence-qualified view of LINGO resources, dependencies, ownership and operational state. This surface reads the canonical resource registry; it does not execute provider mutations or imply live health where evidence is missing.</p><span class="lock">PRODUCTION MUTATIONS FROZEN</span></section>
+<div class="notice" role="status"><strong>Release protection:</strong> production promotion remains unauthorized. G02 remains FAIL / UNVERIFIED. Registry states are evidence labels, not live probes; confirm the source timestamp and evidence before making operational decisions.</div>
+<section class="metrics" aria-label="Resource summary">
+<div class="metric"><small>Total resources</small><strong id="total">—</strong></div><div class="metric"><small>Verified</small><strong id="verified">—</strong></div><div class="metric"><small>Blocked</small><strong id="blocked">—</strong></div><div class="metric"><small>Needs verification</small><strong id="unverified">—</strong></div>
+</section>
+<section class="panel" style="margin-top:22px">
+<div class="meta"><span class="tag">Resource inventory</span><span id="source" class="small">Loading canonical registry…</span></div>
+<div class="toolbar"><input id="search" type="search" placeholder="Search resources, providers, purpose, evidence…" aria-label="Search resources"><select id="status" aria-label="Filter by integration state"><option value="">All states</option><option value="verified">Verified</option><option value="configured_unverified">Configured · unverified</option><option value="scaffold_only">Scaffold only</option><option value="blocked">Blocked</option><option value="stale">Stale</option><option value="unknown">Unknown</option><option value="retired">Retired</option></select><select id="category" aria-label="Filter by category"><option value="">All categories</option></select></div>
+<div id="resources" class="grid" aria-live="polite"><div class="empty">Loading resource inventory…</div></div>
+</section>
+<footer><strong>LINGO Operations Center</strong><br>Read-only registry view · No secrets displayed · No deployment, billing, DNS, runner or data mutations available from this page.<p id="freshness" class="small"></p></footer>
+</main>
+<script>
+(() => {
+  "use strict";
+  const registryUrl = new URL("../config/ops/resource-registry.json", document.currentScript.src);
+  const $ = (id) => document.getElementById(id);
+  let resources = [];
+  const safe = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const stateClass = (state) => ["verified","blocked","stale","configured_unverified","unknown","scaffold_only"].includes(state) ? state : "";
+  const render = () => {
+    const query = $("search").value.trim().toLowerCase();
+    const status = $("status").value;
+    const category = $("category").value;
+    const filtered = resources.filter((r) => {
+      const haystack = [r.id,r.name,r.category,r.provider,r.purpose,r.environment,r.owner,...(r.evidence||[]),...(r.dependencies||[])].join(" ").toLowerCase();
+      return (!query || haystack.includes(query)) && (!status || r.integrationState === status) && (!category || r.category === category);
+    });
+    $("resources").innerHTML = filtered.length ? filtered.map((r) => `
+      <article class="resource">
+        <div class="meta"><span class="state ${stateClass(r.integrationState)}">${safe(r.integrationState || "unknown")}</span><span class="small">${safe(r.criticality || "criticality unknown")} · ${safe(r.environment || "environment unknown")}</span></div>
+        <h3>${safe(r.name)}</h3><div class="small">${safe(r.provider)} / ${safe(r.category)} · ${safe(r.id)}</div>
+        <p>${safe(r.purpose)}</p>
+        <div class="small">Owner: ${safe(r.owner || "unassigned")} · Last observation: ${safe(r.lastVerifiedAt || "not recorded")}</div>
+        <details><summary>Evidence & dependencies (${(r.evidence||[]).length} / ${(r.dependencies||[]).length})</summary>
+          <p><strong>Evidence</strong></p><ul>${(r.evidence||[]).map(e=>`<li>${safe(e)}</li>`).join("") || "<li>No evidence recorded</li>"}</ul>
+          <p><strong>Dependencies</strong></p><ul>${(r.dependencies||[]).map(d=>`<li>${safe(d)}</li>`).join("") || "<li>No dependencies listed</li>"}</ul>
+          ${r.authoritativeReference ? `<p><a href="${safe(r.authoritativeReference)}" target="_blank" rel="noopener noreferrer">Open authoritative reference</a></p>` : ""}
+        </details>
+      </article>`).join("") : '<div class="empty">No resources match these filters.</div>';
+  };
+  const fail = (message) => { $("resources").innerHTML = '<div class="error" role="alert">'+safe(message)+'</div>'; $("source").textContent = "Registry unavailable"; };
+  fetch(registryUrl, {headers: {"Accept":"application/json"}}).then((response) => {
+    if (!response.ok) throw new Error("Registry request failed (HTTP " + response.status + ").");
+    return response.json();
+  }).then((data) => {
+    if (!data || !Array.isArray(data.resources)) throw new Error("Registry shape is invalid; expected a resources array.");
+    resources = data.resources;
+    const counts = resources.reduce((acc,r) => {const s=r.integrationState || "unknown";acc[s]=(acc[s]||0)+1;return acc;},{});
+    $("total").textContent = resources.length;
+    $("verified").textContent = counts.verified || 0;
+    $("blocked").textContent = counts.blocked || 0;
+    $("unverified").textContent = (counts.configured_unverified||0)+(counts.stale||0)+(counts.unknown||0)+(counts.scaffold_only||0);
+    $("source").textContent = "Source: " + (data.authority?.sourceRepository || "repository registry") + " / " + (data.authority?.sourceBranch || "branch unknown");
+    $("freshness").textContent = "Registry generated at: " + (data.generatedAt || "timestamp not supplied") + ". Displayed data is a committed snapshot, not a real-time provider health check.";
+    [...new Set(resources.map(r=>r.category).filter(Boolean))].sort().forEach((category) => {const option=document.createElement("option");option.value=category;option.textContent=category.replaceAll("_"," ");$("category").append(option);});
+    render();
+  }).catch((error) => fail(error.message || "Unable to load the resource registry."));
+  ["search","status","category"].forEach((id) => $(id).addEventListener("input", render));
+})();
+</script>
+</body>
+</html>
