@@ -45,9 +45,17 @@ test('resource records are keyboard-operable from the table', () => {
 });
 
 test('public Worker blocks the EMS preview route before static asset fallback', () => {
-  const guard = worker.indexOf("if (url.pathname.toLowerCase().startsWith('/ops/ems-console'))");
+  const guard = worker.indexOf("if (pathname.startsWith('/ops/ems-console'))");
   const assetFallback = worker.indexOf('const assetResponse = await env.ASSETS.fetch(request);');
   assert.ok(guard >= 0, 'EMS console route must fail closed until Cloudflare Access is implemented');
   assert.ok(assetFallback > guard, 'EMS console guard must run before public static asset fallback');
   assert.match(worker.slice(guard, assetFallback), /EMS_CONSOLE_PREVIEW_DISABLED/);
+});
+
+test('public Worker denies internal operations and planning assets before static fallback', () => {
+  assert.match(worker, /pathname\.startsWith\(['"]\/ops\/['"]\)/);
+  assert.match(worker, /pathname\.startsWith\(['"]\/config\/ops\/['"]\)/);
+  assert.match(worker, /pathname\.startsWith\(['"]\/docs\/ops\/['"]\)/);
+  assert.match(worker, /pathname\.startsWith\(['"]\/docs\/superpowers\/['"]\)/);
+  assert.match(worker, /INTERNAL_ASSET_PATH_DISABLED/);
 });
