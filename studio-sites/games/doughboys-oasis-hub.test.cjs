@@ -28,3 +28,16 @@ test('game floor labels the economy as fictional local demo currency', () => {
   assert.match(html, /no cash value/i);
   assert.match(html, /no real payments/i);
 });
+
+test('every mode page links back to the unified game floor', () => {
+  const pages = [
+    'doughboys-oasis-vertical-slice.html',
+    'doughboys-oasis-racing/index.html',
+    'doughboys-oasis-store.html',
+    'doughboys-oasis-856-region.html'
+  ];
+  for (const page of pages) {
+    const source = readFileSync(join(__dirname, page), 'utf8');
+    assert.match(source, /href=["'][^"']*doughboys-oasis\.html["']/i, `Missing Game Floor return link in ${page}`);
+  }
+});
