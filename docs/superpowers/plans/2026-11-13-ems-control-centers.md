@@ -58,7 +58,8 @@
 - [ ] **Step 4:** Add search/filter by category, provider, environment, lifecycle state and integration state.
 - [ ] **Step 5:** Add detail view for dependencies, authoritative reference, evidence and secret-reference metadata only.
 - [ ] **Step 6:** Add responsive layout, keyboard focus, status text and reduced-motion behavior.
-- [ ] **Step 7:** Run RED/GREEN tests and source checks.
+- [ ] **Step 7:** Add a fail-closed Worker path guard before static asset fallback; keep the console unavailable until Cloudflare Access is verified.
+- [ ] **Step 8:** Run RED/GREEN tests and source checks.
 
 ### Task 3: Verify evidence semantics and handoff
 
