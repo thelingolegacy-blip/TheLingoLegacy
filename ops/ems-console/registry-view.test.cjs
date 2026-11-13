@@ -7,6 +7,7 @@ const { join } = require('node:path');
 const root = join(__dirname, '..', '..');
 const registry = JSON.parse(readFileSync(join(root, 'config', 'ops', 'resource-registry.json'), 'utf8'));
 const html = readFileSync(join(__dirname, 'index.html'), 'utf8');
+const worker = readFileSync(join(root, 'worker.js'), 'utf8');
 
 test('registry has unique IDs and all dependency references resolve', () => {
   const ids = registry.resources.map(resource => resource.id);
@@ -41,4 +42,12 @@ test('resource records are keyboard-operable from the table', () => {
   assert.match(html, /tabindex=["']0["']/i);
   assert.match(html, /addEventListener\(['"]keydown['"]/i);
   assert.match(html, /event\.key\s*===\s*['"]Enter['"]/);
+});
+
+test('public Worker blocks the EMS preview route before static asset fallback', () => {
+  const guard = worker.indexOf("if (url.pathname === '/ops/ems-console' || url.pathname.startsWith('/ops/ems-console/'))");
+  const assetFallback = worker.indexOf('const assetResponse = await env.ASSETS.fetch(request);');
+  assert.ok(guard >= 0, 'EMS console route must fail closed until Cloudflare Access is implemented');
+  assert.ok(assetFallback > guard, 'EMS console guard must run before public static asset fallback');
+  assert.match(worker.slice(guard, assetFallback), /EMS_CONSOLE_PREVIEW_DISABLED/);
 });
