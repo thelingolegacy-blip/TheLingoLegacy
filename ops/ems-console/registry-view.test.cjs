@@ -1,0 +1,38 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
+
+const root = join(__dirname, '..', '..');
+const registry = JSON.parse(readFileSync(join(root, 'config', 'ops', 'resource-registry.json'), 'utf8'));
+const html = readFileSync(join(__dirname, 'index.html'), 'utf8');
+
+test('registry has unique IDs and all dependency references resolve', () => {
+  const ids = registry.resources.map(resource => resource.id);
+  assert.equal(new Set(ids).size, ids.length, 'Resource IDs must be unique');
+  const known = new Set(ids);
+  for (const resource of registry.resources) {
+    for (const dependency of resource.dependencies || []) {
+      assert.equal(known.has(dependency), true, `${resource.id} references missing dependency ${dependency}`);
+    }
+  }
+});
+
+test('console explicitly identifies the registry as a dated snapshot', () => {
+  assert.match(html, /snapshot/i);
+  assert.match(html, /provider sync not connected/i);
+  assert.match(html, /generatedAt/);
+});
+
+test('console is read-only and never requests external provider APIs', () => {
+  assert.doesNotMatch(html, /method\s*=\s*["']post/i);
+  assert.doesNotMatch(html, /https?:\/\//i);
+  assert.doesNotMatch(html, /secretValue|secret_value|credentialValue|credential_value/i);
+});
+
+test('console contains all three operating centers', () => {
+  for (const center of ['Main Hub', 'Resource Center', 'Release Center']) {
+    assert.match(html, new RegExp(center, 'i'));
+  }
+});
