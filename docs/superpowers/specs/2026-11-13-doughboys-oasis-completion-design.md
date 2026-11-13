@@ -14,6 +14,8 @@ Turn the existing Doughboy’s Oasis browser prototypes into one coherent, playa
 - `studio-sites/games/doughboys-oasis-racing/campaign-state.js` and tests: a guest-local, idempotent story progression model.
 - `studio-sites/games/doughboys-oasis-store.html`: an Oasis Exchange prototype using earned demo currency only.
 - `studio-sites/games/doughboys-oasis-856-region.html`: a fictional district atlas.
+- `studio-sites/games/doughboys-oasis-mode-platform-hub.html`: the original mode-selection and platform demo hub.
+- `studio-sites/games/doughboys-oasis-life-legacy-lab.html`: the existing local life/legacy building sandbox.
 
 The racing page currently references five DOM IDs that are not present in its HTML (`jobState`, `inviteState`, `qualState`, `qualProgress`, `finalState`). Its initial UI render can therefore fail before gameplay begins.
 
@@ -44,7 +46,7 @@ The existing campaign-state module remains the authoritative client-side prototy
 - Every DOM selector used by the racing page resolves to exactly one element.
 - The initial racing UI renders without null-reference failure.
 - Story prerequisites prevent out-of-order mission, race and Nexus completion.
-- The game launcher links only to existing, verified source paths.
+- The game launcher links only to six existing source paths, and every mode provides a return link to the game floor.
 - Mobile and desktop layouts remain usable; keyboard and touch controls are discoverable.
 - Tests are added and executed where the available runtime permits; unavailable CI execution is recorded as blocked, never passed.
 - All release status remains prototype / staging until browser playtest, asset-rights review, accessibility review and backend/security acceptance are complete.
