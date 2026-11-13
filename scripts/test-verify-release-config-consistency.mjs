@@ -49,7 +49,7 @@ const rootFiles = {
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
   '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/g02-self-hosted-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
+  '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
   'docker/README.md': 'application image intentionally not defined; does not publish an image',
@@ -95,4 +95,25 @@ test('configuration consistency fails closed on compatibility-date drift and hea
   assert.equal(report.status, 'FAIL');
   assert.ok(report.failures.includes('compatibility-date'));
   assert.ok(report.failures.includes('assets-frame-policy'));
+});
+
+
+test('read-only surface gate rejects file-writing APIs', () => {
+  const result = run({ mutate(root) {
+    const gatePath = path.join(root, 'scripts/sanitize-cloudflare-only-surface.mjs');
+    fs.writeFileSync(gatePath, "const report = { mode: 'read-only' }; fs.writeFileSync('source.html', 'changed');");
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('surface-gate-read-only'));
+});
+
+test('CircleCI contract rejects deploy commands and requires main-branch exclusion', () => {
+  const result = run({ mutate(root) {
+    const circleciPath = path.join(root, '.circleci/config.yml');
+    fs.writeFileSync(circleciPath, 'workflows:\\n  deploy:\\n    jobs:\\n      - run: wrangler deploy\\n          filters:\\n            branches:\\n              include: main');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('circleci-is-validation-only'));
 });
