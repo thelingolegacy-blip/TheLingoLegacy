@@ -52,7 +52,7 @@ Implementation is committed on draft PR #556. Six committed EMS test bodies were
 - Test: `ops/ems-console/registry-view.test.cjs`
 
 **Interfaces:**
-- Fetches: `/config/ops/resource-registry.json`.
+- Reads locally: `/config/ops/resource-registry.json` in isolated preview only; production path is blocked by the Worker guard.
 - Displays: overview counts, resource table/cards, filters, evidence detail, source metadata and freshness.
 - Produces: no write controls and no external provider calls.
 
@@ -62,7 +62,7 @@ Implementation is committed on draft PR #556. Six committed EMS test bodies were
 - [ ] **Step 4:** Add search/filter by category, provider, environment, lifecycle state and integration state.
 - [ ] **Step 5:** Add detail view for dependencies, authoritative reference, evidence and secret-reference metadata only.
 - [ ] **Step 6:** Add responsive layout, keyboard focus, status text and reduced-motion behavior.
-- [ ] **Step 7:** Add a fail-closed Worker path guard before static asset fallback; keep the console unavailable until Cloudflare Access is verified.
+- [ ] **Step 7:** Add a fail-closed Worker path guard for `/ops/*`, `/config/ops/*`, `/docs/ops/*` and `/docs/superpowers/*` before static asset fallback; keep these internal paths unavailable until Cloudflare Access and an authenticated API are verified.
 - [ ] **Step 8:** Run RED/GREEN tests and source checks.
 
 ### Task 3: Verify evidence semantics and handoff
