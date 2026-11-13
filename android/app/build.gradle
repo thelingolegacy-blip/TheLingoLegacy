@@ -1,3 +1,15 @@
+def releaseStoreFile = System.getenv("LINGO_ANDROID_KEYSTORE_PATH")
+def releaseStorePassword = System.getenv("LINGO_ANDROID_KEYSTORE_PASSWORD")
+def releaseKeyAlias = System.getenv("LINGO_ANDROID_KEY_ALIAS")
+def releaseKeyPassword = System.getenv("LINGO_ANDROID_KEY_PASSWORD")
+
+def hasReleaseSigning = [
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+].every { value -> value != null && !value.trim().isEmpty() }
+
 android {
     compileSdk 34
 
@@ -9,9 +21,45 @@ android {
         versionName "1.0.0"
     }
 
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Never sign a production artifact with the debug keystore.
+            // Without protected credentials, release remains unsigned.
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig null
+            }
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    def releasePackagingTask =
+        task.name.startsWith("assemble") ||
+        task.name.startsWith("bundle") ||
+        task.name.startsWith("package")
+
+    if (task.name.toLowerCase().contains("release") && releasePackagingTask) {
+        task.doFirst {
+            if (!hasReleaseSigning) {
+                throw new GradleException(
+                    "Release signing is not configured. Set LINGO_ANDROID_KEYSTORE_PATH, " +
+                    "LINGO_ANDROID_KEYSTORE_PASSWORD, LINGO_ANDROID_KEY_ALIAS, and " +
+                    "LINGO_ANDROID_KEY_PASSWORD in the protected build environment."
+                )
+            }
         }
     }
 }
