@@ -7,14 +7,16 @@ const { join } = require('node:path');
 const root = join(__dirname, '..', '..', '..');
 const hubPath = join(__dirname, 'doughboys-oasis.html');
 
-test('game floor exposes all four existing destinations', () => {
+test('game floor exposes all six existing destinations', () => {
   assert.equal(existsSync(hubPath), true, 'Missing Doughboy’s Oasis game floor');
   const html = readFileSync(hubPath, 'utf8');
   const routes = [
     'doughboys-oasis-vertical-slice.html',
     'doughboys-oasis-racing/index.html',
     'doughboys-oasis-store.html',
-    'doughboys-oasis-856-region.html'
+    'doughboys-oasis-856-region.html',
+    'doughboys-oasis-mode-platform-hub.html',
+    'doughboys-oasis-life-legacy-lab.html'
   ];
   for (const route of routes) {
     assert.match(html, new RegExp(`href=["'][^"']*${route}["']`), `Missing launcher route ${route}`);
@@ -34,7 +36,9 @@ test('every mode page links back to the unified game floor', () => {
     'doughboys-oasis-vertical-slice.html',
     'doughboys-oasis-racing/index.html',
     'doughboys-oasis-store.html',
-    'doughboys-oasis-856-region.html'
+    'doughboys-oasis-856-region.html',
+    'doughboys-oasis-mode-platform-hub.html',
+    'doughboys-oasis-life-legacy-lab.html'
   ];
   for (const page of pages) {
     const source = readFileSync(join(__dirname, page), 'utf8');
