@@ -36,3 +36,9 @@ test('console contains all three operating centers', () => {
     assert.match(html, new RegExp(center, 'i'));
   }
 });
+
+test('resource records are keyboard-operable from the table', () => {
+  assert.match(html, /tabindex=["']0["']/i);
+  assert.match(html, /addEventListener\(['"]keydown['"]/i);
+  assert.match(html, /event\.key\s*===\s*['"]Enter['"]/);
+});
