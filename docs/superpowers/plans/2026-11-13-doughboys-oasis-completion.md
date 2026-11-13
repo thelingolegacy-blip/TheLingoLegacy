@@ -67,7 +67,7 @@
 - Links to: `doughboys-oasis-vertical-slice.html`, `doughboys-oasis-racing/index.html`, `doughboys-oasis-store.html`, `doughboys-oasis-856-region.html`.
 - Produces: one responsive, accessible entry page with explicit prototype labels and no payment claims.
 
-- [ ] **Step 1: Write failing route assertions** named `game floor exposes all four existing destinations`; verify each href and ensure the linked source file exists.
+- [ ] **Step 1: Write failing route assertions** named `game floor exposes all six existing destinations`; verify all six hrefs and ensure each linked source file exists.
 - [ ] **Step 2: Run RED** using `node --test studio-sites/games/doughboys-oasis-hub.test.cjs`.
 - [ ] **Step 3: Implement the static game floor** with accessible cards, clear Story / Race / Exchange / Atlas entry points, mobile layout and reduced-motion handling.
 - [ ] **Step 4: Run GREEN** and inspect all destination paths against the canonical tree.
