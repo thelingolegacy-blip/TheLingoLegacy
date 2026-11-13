@@ -1,0 +1,41 @@
+name: LINGO Platform Surface OS Matrix Validation
+
+on:
+  pull_request:
+    paths:
+      - "config/platform-surface-os-matrix.json"
+      - "docs/platform-surface-os-installation-matrix.md"
+      - "scripts/platform-surface-os-validator-lib.mjs"
+      - "scripts/validate-platform-surface-os.mjs"
+      - "scripts/platform-surface-os.test.mjs"
+      - ".github/workflows/platform-surface-os-validation.yml"
+  push:
+    branches:
+      - "platform-surface-os-installation-**"
+    paths:
+      - "config/platform-surface-os-matrix.json"
+      - "docs/platform-surface-os-installation-matrix.md"
+      - "scripts/platform-surface-os-validator-lib.mjs"
+      - "scripts/validate-platform-surface-os.mjs"
+      - "scripts/platform-surface-os.test.mjs"
+      - ".github/workflows/platform-surface-os-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Validate matrix JSON
+        run: python3 -m json.tool config/platform-surface-os-matrix.json > /dev/null
+      - name: Run positive and negative contract tests
+        run: node --test scripts/platform-surface-os.test.mjs
+      - name: Validate platform and surface coverage
+        run: node scripts/validate-platform-surface-os.mjs

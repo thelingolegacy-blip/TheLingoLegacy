@@ -1,0 +1,1186 @@
+{
+  "schema_version": 1,
+  "product": "The Lingo Legacy",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "source_of_truth": "GitHub main",
+  "advancement_mode": "manual_g02_independent",
+  "production_activation": "protected_until_live_verification_and_explicit_authorization",
+  "platforms": [
+    {
+      "id": "web",
+      "surfaces": [
+        "public_hq",
+        "worlds",
+        "community",
+        "commerce_catalog",
+        "studio_os",
+        "admin_command_center",
+        "trust_compliance",
+        "game_previews",
+        "kottons_code"
+      ],
+      "operating_systems": [
+        "Windows",
+        "macOS",
+        "Linux",
+        "ChromeOS",
+        "iOS_iPadOS",
+        "Android"
+      ],
+      "runtime": "Cloudflare Worker static assets and browser runtime",
+      "source_evidence": [
+        "worker.js",
+        "wrangler.jsonc",
+        "assets/"
+      ],
+      "status": "apex_public_homepage_reachable_candidate_experience_routes_not_certified",
+      "installation": "Browser access; no native install required",
+      "blockers": [
+        "production route and live probes must be independently verified",
+        "The active wildcard production routes target thelingolegacyv-5; a separate exact-root route targets lingo-flagship-root; route precedence and browser behavior require non-mutating live probes.",
+        "Flutter Firebase web options are placeholders; no Firebase web runtime is certified.",
+        "The master surface catalog contains 25 routes; each route still requires a current browser response, destination resolution and responsive/accessibility test.",
+        "Flutter web runner files web/index.html and web/manifest.json were not found; the separate Cloudflare web surface is present."
+      ]
+    },
+    {
+      "id": "android",
+      "surfaces": [
+        "lingo_universe_hub",
+        "account_preview",
+        "worlds",
+        "games",
+        "library",
+        "apparel",
+        "media",
+        "creator_studio"
+      ],
+      "operating_systems": [
+        "Android"
+      ],
+      "runtime": "Flutter",
+      "source_evidence": [
+        "pubspec.yaml",
+        "lib/main.dart",
+        "android/app/build.gradle"
+      ],
+      "status": "flutter_app_shell_present_android_project_incomplete_not_buildable",
+      "installation": "Flutter SDK, Android SDK, emulator or device, FlutterFire configuration, debug build and device QA",
+      "blockers": [
+        "Firebase API/app identifiers are placeholders",
+        "Android release signing is not configured or verified",
+        "no successful device build evidence recorded",
+        "Flutter main() initializes Firebase before rendering; placeholder Android FirebaseOptions prevent a verified initialized runtime.",
+        "Android settings.gradle, root build.gradle, gradle.properties and the referenced MainActivity.kt were not found in the inspected tree."
+      ]
+    },
+    {
+      "id": "ios",
+      "surfaces": [
+        "lingo_universe_hub",
+        "account_preview",
+        "worlds",
+        "games",
+        "library",
+        "apparel",
+        "media",
+        "creator_studio"
+      ],
+      "operating_systems": [
+        "iOS",
+        "iPadOS"
+      ],
+      "runtime": "Flutter",
+      "source_evidence": [
+        "pubspec.yaml",
+        "lib/main.dart",
+        "lib/firebase_options.dart"
+      ],
+      "status": "incomplete_platform_runner",
+      "installation": "macOS host with Xcode, iOS simulator/device, CocoaPods, FlutterFire configuration, signing and device QA",
+      "blockers": [
+        "ios/Runner project was not found in the inspected main tree",
+        "Firebase app identifiers are placeholders",
+        "Apple signing and provisioning are not configured or verified",
+        "iOS Runner/Info.plist was not found in the inspected tree."
+      ]
+    },
+    {
+      "id": "macos",
+      "surfaces": [
+        "lingo_universe_hub"
+      ],
+      "operating_systems": [
+        "macOS"
+      ],
+      "runtime": "Flutter desktop",
+      "source_evidence": [
+        "pubspec.yaml",
+        "lib/main.dart",
+        "lib/firebase_options.dart"
+      ],
+      "status": "incomplete_platform_runner",
+      "installation": "macOS host with Xcode and Flutter desktop toolchain",
+      "blockers": [
+        "macos/Runner project was not found in the inspected main tree",
+        "Firebase app identifiers are placeholders",
+        "macOS Runner configuration was not found in the inspected tree."
+      ]
+    },
+    {
+      "id": "windows",
+      "surfaces": [
+        "lingo_universe_hub"
+      ],
+      "operating_systems": [
+        "Windows"
+      ],
+      "runtime": "Flutter desktop",
+      "source_evidence": [
+        "pubspec.yaml",
+        "lib/main.dart",
+        "lib/firebase_options.dart"
+      ],
+      "status": "unsupported_firebase_platform",
+      "installation": "Windows host with Visual Studio C++ desktop workload and Flutter Windows toolchain",
+      "blockers": [
+        "windows/ runner project was not found in the inspected main tree",
+        "DefaultFirebaseOptions explicitly throws for Windows",
+        "Windows runner source was not found in the inspected tree."
+      ]
+    },
+    {
+      "id": "linux",
+      "surfaces": [
+        "lingo_universe_hub"
+      ],
+      "operating_systems": [
+        "Linux"
+      ],
+      "runtime": "Flutter desktop",
+      "source_evidence": [
+        "pubspec.yaml",
+        "lib/main.dart",
+        "lib/firebase_options.dart"
+      ],
+      "status": "unsupported_firebase_platform",
+      "installation": "Linux host with Flutter Linux desktop dependencies and toolchain",
+      "blockers": [
+        "linux/ runner project was not found in the inspected main tree",
+        "DefaultFirebaseOptions explicitly throws for Linux",
+        "Linux runner source was not found in the inspected tree."
+      ]
+    },
+    {
+      "id": "smart_tv_web",
+      "surfaces": [
+        "public_hq",
+        "worlds",
+        "studio_os",
+        "game_previews",
+        "media"
+      ],
+      "operating_systems": [
+        "Android TV browser",
+        "Google TV browser",
+        "Apple TV browser where supported",
+        "Samsung Tizen browser where supported",
+        "LG webOS browser where supported"
+      ],
+      "runtime": "Responsive web experience",
+      "source_evidence": [
+        "index.html",
+        "studio-os/index.html",
+        "assets/"
+      ],
+      "status": "responsive_web_only_not_tv_certified",
+      "installation": "Open public web surface in supported TV browser; remote-control navigation and 10-foot UI QA required",
+      "blockers": [
+        "no native TV application packages or TV-device QA evidence recorded"
+      ]
+    },
+    {
+      "id": "unity_games",
+      "surfaces": [
+        "LINGOslots",
+        "LINGOarcade",
+        "LINGOlibrary_interactive_games"
+      ],
+      "operating_systems": [
+        "Windows",
+        "macOS",
+        "Linux",
+        "Android",
+        "iOS"
+      ],
+      "runtime": "Unity target; project-specific engine choice required",
+      "source_evidence": [
+        "studio-sites/games/"
+      ],
+      "status": "design_target_no_unity_project_certified",
+      "installation": "Unity project, licensed assets, platform build modules, input/accessibility QA and store signing required",
+      "blockers": [
+        "no canonical Unity project/build artifacts were verified in this repository snapshot"
+      ]
+    }
+  ],
+  "shared_services": [
+    {
+      "id": "github",
+      "role": "source control, pull requests, manual advancement and evidence",
+      "status": "active_source"
+    },
+    {
+      "id": "cloudflare",
+      "role": "canonical edge, Worker and web asset delivery",
+      "status": "active_zone_routes_verified_worker_deployment_snapshot_verified_runtime_probe_pending"
+    },
+    {
+      "id": "firebase",
+      "role": "optional app identity and data services",
+      "status": "repository_contract_only_no_project_connection_or_security_rules_verified",
+      "evidence": [
+        "pubspec.yaml includes firebase_core, firebase_auth, firebase_database, firebase_storage, firebase_analytics",
+        "lib/firebase_options.dart contains YOUR_* placeholders for web/android/ios/macos",
+        "firebase.json contains Hosting config only",
+        "firestore.rules and firestore.indexes.json were not found in inspected repository snapshot",
+        "no Firebase project credentials or authenticated Firebase connector available in this session"
+      ],
+      "blockers": [
+        "actual Firebase project and app registration must be confirmed",
+        "FlutterFire options must be generated from the actual Firebase project",
+        "Firestore/Realtime Database rules and indexes need reviewed least-privilege definitions",
+        "Auth, App Check, storage rules, audit events, backup and restore must be tested",
+        "Firebase Hosting must not be confused with canonical Cloudflare production delivery"
+      ]
+    },
+    {
+      "id": "observability",
+      "role": "logs, errors, uptime, crash and performance signals",
+      "status": "partial_contract_no_end_to_end_certification"
+    },
+    {
+      "id": "commerce",
+      "role": "catalog and approved checkout integrations",
+      "status": "separate_provider_and_product_gates"
+    }
+  ],
+  "global_rules": [
+    "G02/Fallgate is not a prerequisite for project assessment, source changes, local builds, or manual advancement.",
+    "Manual advancement does not bypass security, privacy, licensing, platform signing, live verification, or explicit production authorization.",
+    "Never commit API keys, service-account files, signing keys, provisioning profiles, or other secrets.",
+    "A source file or configuration placeholder is not an installed, built, deployed, or certified runtime.",
+    "Mark each platform operational only after a real build, install, smoke test, and evidence record on that target.",
+    "Firebase Hosting configuration is not proof that Firebase Hosting is the canonical public delivery path; Cloudflare remains the current production edge."
+  ],
+  "enterprise_divisions": [
+    {
+      "id": "LINGOlegacy_MASTER",
+      "purpose": "Governance, legal, brand, creative, product, website, engineering, business, releases and archive."
+    },
+    {
+      "id": "LINGOlegacy",
+      "purpose": "Flagship identity, account, wallet and community."
+    },
+    {
+      "id": "LINGOlane",
+      "purpose": "Designs and promotions, apparel and Laundry-Cycle."
+    },
+    {
+      "id": "LINGOslots",
+      "purpose": "That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions and Cashman Lingo Mania."
+    },
+    {
+      "id": "LINGOarcade",
+      "purpose": "Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead."
+    },
+    {
+      "id": "LINGOlibrary",
+      "purpose": "KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends."
+    },
+    {
+      "id": "LINGOmedia",
+      "purpose": "Rise of Zavione Part 1 and Part 2."
+    },
+    {
+      "id": "LINGOworld",
+      "purpose": "LINGOai, askLINGO, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge and LINGOdonations."
+    },
+    {
+      "id": "LegacyXclub",
+      "purpose": "Member and community club experience."
+    }
+  ],
+  "product_surfaces": [
+    {
+      "id": "master_control",
+      "division": "LINGOlegacy_MASTER",
+      "name": "Master Control / Governance OS",
+      "platform_targets": [
+        "web"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "flagship_identity",
+      "division": "LINGOlegacy",
+      "name": "LINGOlegacy identity and profile",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "universal_wallet",
+      "division": "LINGOlegacy",
+      "name": "Universal Legacy Wallet and Lingo Coins display",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "community",
+      "division": "LINGOlegacy",
+      "name": "LINGOlegacy community",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "designs_promotions",
+      "division": "LINGOlane",
+      "name": "LINGOlane Designs & Promotions",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "loyalty_lane_apparel",
+      "division": "LINGOlane",
+      "name": "Loyalty Lane Apparel",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "laundry_cycle",
+      "division": "LINGOlane",
+      "name": "Laundry-Cycle",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "thats_my_lingo",
+      "division": "LINGOslots",
+      "name": "That’s My Lingo",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "spades_is_my_lingo",
+      "division": "LINGOslots",
+      "name": "Spades Is My Lingo",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "uhno_lingo_u_no",
+      "division": "LINGOslots",
+      "name": "Uhno Lingo U-No",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingo_lions_eruptions",
+      "division": "LINGOslots",
+      "name": "Lingo Lions Eruptions",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "cashman_lingo_mania",
+      "division": "LINGOslots",
+      "name": "Cashman Lingo Mania",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "tricias_escape",
+      "division": "LINGOarcade",
+      "name": "Tricias Escape",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "doughboys_oasis",
+      "division": "LINGOarcade",
+      "name": "Doughboys Oasis",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "crazy_weasols",
+      "division": "LINGOarcade",
+      "name": "Crazy Weasols",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "silly_in_philly",
+      "division": "LINGOarcade",
+      "name": "Silly in Philly",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "jersey_shore_the_undead",
+      "division": "LINGOarcade",
+      "name": "Jersey Shore: The Undead",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "kottonscode",
+      "division": "LINGOlibrary",
+      "name": "Kotton’s Code",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "the_block_i_grew_up_on",
+      "division": "LINGOlibrary",
+      "name": "The Block I Grew Up On",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "say_it_again",
+      "division": "LINGOlibrary",
+      "name": "Say It Again",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "dice_shift_hotel",
+      "division": "LINGOlibrary",
+      "name": "Dice Shift Hotel",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios",
+        "unity_games"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "legacy_legends",
+      "division": "LINGOlibrary",
+      "name": "Legacy Legends",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "rise_of_zavione_part_1",
+      "division": "LINGOmedia",
+      "name": "Rise of Zavione — Part 1",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "rise_of_zavione_part_2",
+      "division": "LINGOmedia",
+      "name": "Rise of Zavione — Part 2",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingoai",
+      "division": "LINGOworld",
+      "name": "LINGOai",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "asklingo",
+      "division": "LINGOworld",
+      "name": "askLINGO",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingoboom",
+      "division": "LINGOworld",
+      "name": "LINGOboom",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingotravel",
+      "division": "LINGOworld",
+      "name": "LINGOtravel",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingocampus",
+      "division": "LINGOworld",
+      "name": "LINGOcampus",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingosupport",
+      "division": "LINGOworld",
+      "name": "LINGOsupport",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingowifi",
+      "division": "LINGOworld",
+      "name": "LINGOwifi",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingovoice",
+      "division": "LINGOworld",
+      "name": "LINGOvoice",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingoshield",
+      "division": "LINGOworld",
+      "name": "LINGOshield",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingolounge",
+      "division": "LINGOworld",
+      "name": "LINGOlounge",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "lingodonations",
+      "division": "LINGOworld",
+      "name": "LINGOdonations",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    },
+    {
+      "id": "legacyxclub",
+      "division": "LegacyXclub",
+      "name": "LegacyXclub",
+      "platform_targets": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "catalogued_target_not_certified",
+      "note": "Platform target mapping only; does not assert a built, installed, connected, or released product."
+    }
+  ],
+  "observed_infrastructure": {
+    "observed_at_utc": "2026-11-09",
+    "source": "Connected Cloudflare API read-only inventory",
+    "account_scope": "The Lingo Legacy Cloudflare account",
+    "read_only": true,
+    "zone": {
+      "name": "thelingolegacy.com",
+      "status": "active",
+      "paused": false,
+      "zone_id": "91c3f6315fb3ca132b22744721103f88"
+    },
+    "production_routing": {
+      "apex_wildcard": {
+        "pattern": "thelingolegacy.com/*",
+        "worker": "thelingolegacyv-5"
+      },
+      "www_wildcard": {
+        "pattern": "www.thelingolegacy.com/*",
+        "worker": "thelingolegacyv-5"
+      },
+      "exact_root": {
+        "pattern": "thelingolegacy.com/",
+        "worker": "lingo-flagship-root"
+      },
+      "additional_routes_count": 18,
+      "note": "Exact-root and wildcard route coexist; do not alter without evaluating route matching and live probes."
+    },
+    "worker_versions": {
+      "thelingolegacyv-5": {
+        "latest_uploaded_version": 286,
+        "latest_uploaded_version_id": "cc76832e-b87d-4e42-9752-da78009d6838",
+        "latest_uploaded_at": "2026-11-09T06:34:03Z",
+        "latest_uploaded_alias": "platform-surface-os-installation-2026-11-09",
+        "currently_deployed_version": 137,
+        "currently_deployed_version_id": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "currently_deployed_at": "2026-10-25T16:21:58Z",
+        "deployment_percentage": 100
+      },
+      "lingo-flagship-root": {
+        "latest_uploaded_version": 2,
+        "latest_uploaded_version_id": "1009da37-9128-44c2-9853-f277eb791c31",
+        "currently_deployed_version": 1,
+        "currently_deployed_version_id": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "currently_deployed_at": "2026-10-25T16:38:23Z",
+        "deployment_percentage": 100
+      }
+    },
+    "other_worker_scripts": [
+      "lingo-ecosystem-atlas",
+      "lingo-game-engine-staging",
+      "lingo-legacy-studio-build",
+      "lingo-release-candidate-validation-20261104",
+      "lingo-resilience-gateway",
+      "lingo-static-backup-proxy",
+      "lingo-studio-control-center-staging",
+      "lingo-world-engine-staging",
+      "thelingolegacy-web-recovery-preview",
+      "lingo-flagship-site-preview"
+    ],
+    "enabled_custom_domains": [
+      {
+        "hostname": "studio-preview.thelingolegacy.com",
+        "worker": "lingo-studio-control-center-staging"
+      },
+      {
+        "hostname": "resilience.thelingolegacy.com",
+        "worker": "lingo-resilience-gateway"
+      }
+    ],
+    "observations": [
+      "The latest uploaded main Worker version is a preview upload and is not the currently deployed version.",
+      "Production deployment still points to version 137 at 100 percent.",
+      "Cloudflare Worker inventory and route configuration were read only; no routes, versions, secrets or deployments were changed.",
+      "Worker observability is enabled for thelingolegacyv-5 with 10 percent head sampling and query-string redaction; traces are disabled.",
+      "The separate lingo-flagship-root Worker has no observability settings in its current settings response."
+    ],
+    "public_web_probe": {
+      "apex_url": "https://thelingolegacy.com/",
+      "retrieved": "2026-11-09",
+      "result": "reachable",
+      "page_title": "The Lingo Legacy — One Legacy. Many Worlds.",
+      "visible_status": "Candidate experience — not a production status statement.",
+      "findings": [
+        "The homepage says destination links must be connected to verified routes before production activation.",
+        "The destination catalog returned 'No matching destinations' in the retrieved page.",
+        "The page states account creation and wallet actions should remain disabled until secure services are verified."
+      ],
+      "www_url": "https://www.thelingolegacy.com/",
+      "www_probe": "not_retrieved_by_available_browser_source"
+    }
+  },
+  "web_pages": [
+    {
+      "id": "home",
+      "route": "/",
+      "entity": "The Lingo Legacy",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
+    },
+    {
+      "id": "thats-my-lingo",
+      "route": "/thats-my-lingo/",
+      "entity": "That’s My Lingo",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "certification": "unverified",
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
+    },
+    {
+      "id": "loading",
+      "route": "/loading/",
+      "entity": "Lingo Loading",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-assets",
+      "route": "/studio-assets/",
+      "entity": "Studio Assets",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "master-interface",
+      "route": "/master-interface/",
+      "entity": "Master Interface",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "lingo-legacy-master-project-plan-rkh6r6",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "landing",
+      "route": "/landing/",
+      "entity": "Legacy Landing",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "drop",
+      "route": "/drop/",
+      "entity": "Legacy Drop",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "kottons-code",
+      "route": "/kottons-code/",
+      "entity": "Kotton’s Code",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "kotton-s-code-cartoon-studio-509py3",
+      "certification": "unverified",
+      "runtime_probe": "retrieved_2026-11-09_content_probe_only"
+    },
+    {
+      "id": "tapstich",
+      "route": "/tapstich/",
+      "entity": "Tap Stitch",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "app",
+      "route": "/app/",
+      "entity": "Lingo App Surface",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "social-play",
+      "route": "/social-play/",
+      "entity": "Social Play",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "lingo-ai",
+      "route": "/lingo-ai/",
+      "entity": "Lingo AI / Sonic Boom",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "admin-command-center",
+      "route": "/admin-command-center/",
+      "entity": "Admin Command Center",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "casino",
+      "route": "/casino/",
+      "entity": "Casino",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "visual-showcase",
+      "route": "/visual-showcase/",
+      "entity": "Visual Showcase",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "visual-expansion",
+      "route": "/visual-expansion/",
+      "entity": "Visual Expansion",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "multiplayer-rap-arena",
+      "route": "/multiplayer-rap-arena/",
+      "entity": "Multiplayer Rap Arena",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "auto-racing-universe",
+      "route": "/auto-racing-universe/",
+      "entity": "Auto Racing Universe",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "live-casino-studio",
+      "route": "/live-casino-studio/",
+      "entity": "Live Casino Studio",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "integration-os",
+      "route": "/integration-os/",
+      "entity": "Integration OS",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-production",
+      "route": "/studio-production/",
+      "entity": "Studio Production",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "studio-world-os",
+      "route": "/studio-world-os/",
+      "entity": "Studio World OS",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "universe",
+      "route": "/universe/",
+      "entity": "Lingo Universe",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": "crazy-weasels-0j3ujc",
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "trust-compliance",
+      "route": "/trust-compliance/",
+      "entity": "Trust & Compliance",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    },
+    {
+      "id": "economy-command-center",
+      "route": "/economy-command-center/",
+      "entity": "Economy Command Center",
+      "source_status": "implemented",
+      "source_path": "README.md",
+      "appdeploy_app_id": null,
+      "certification": "unverified",
+      "runtime_probe": "not_independently_verified"
+    }
+  ],
+  "appdeploy_surfaces": [
+    {
+      "app_id": "hello-the-lingo-legacy-ois1rj",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "crazy-weasels-0j3ujc",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-traveltm-uyd57n",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "kotton-s-code-cartoon-studio-509py3",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "lingo-legacy-master-project-plan-rkh6r6",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    },
+    {
+      "app_id": "that-s-my-lingo-casino-studio-2xntye",
+      "source_status": "deployed",
+      "source_certification": "unverified",
+      "live_status": "not_rechecked_in_this_task",
+      "note": "Master matrix lists this app as deployed; current AppDeploy account and live status have not been independently selected or verified."
+    }
+  ],
+  "public_surface_probes": [
+    {
+      "id": "home",
+      "url": "https://thelingolegacy.com/",
+      "result": "reachable_candidate_homepage",
+      "limitations": [
+        "candidate experience disclaimer",
+        "destination catalog reports no matching destinations",
+        "account and wallet activation held pending secure services"
+      ],
+      "source_url": "https://thelingolegacy.com/"
+    },
+    {
+      "id": "thats-my-lingo",
+      "url": "https://thelingolegacy.com/thats-my-lingo/",
+      "result": "reachable_interactive_demo_content",
+      "limitations": [
+        "virtual currency only; no cash wagering or cash-out",
+        "Firebase backend is described as awaiting service keys and billing approval",
+        "global multiplayer ranking remains hidden pending auth, moderation, anti-cheat and privacy review"
+      ],
+      "source_url": "https://thelingolegacy.com/thats-my-lingo/"
+    },
+    {
+      "id": "kottons-code",
+      "url": "https://thelingolegacy.com/kottons-code/",
+      "result": "reachable_static_interactive_content",
+      "limitations": [
+        "page identifies itself as static Cloudflare build",
+        "social links lead to platform search until official channel URLs are verified",
+        "page does not establish a connected account or published video channel"
+      ],
+      "source_url": "https://thelingolegacy.com/kottons-code/"
+    }
+  ]
+}
