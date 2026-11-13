@@ -78,7 +78,7 @@ test('invalid race IDs and duplicate race victories cannot mint rewards', () => 
 });
 
 test('territory influence is capped and story completion checks prerequisites', () => {
-  let state = event(createCampaignState(), 'fragment:1', 'waterline_fragment_found', { fragmentId: 'fragment-a' }).state;
+  let state = event(createCampaignState(), 'fragment:1', 'waterline_fragment_found', { fragmentId: 'waterline-marker }).state;
   const blocked = event(state, 'nexus:blocked', 'nexus_revealed');
   assert.equal(blocked.reason, 'story-prerequisites-missing');
   state = event(state, 'repair:1', 'irrigation_repaired', { mechanismId: 'irrigation-gate' }).state;
