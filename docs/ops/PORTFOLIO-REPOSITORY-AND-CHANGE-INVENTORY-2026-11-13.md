@@ -29,12 +29,12 @@
 |---|---|---|---:|---|
 | `-the-lingo-legacy-hub` | public | `main` | 4 KB | Content present |
 | `-the-lingo-legacy-master` | public | `main` | 5 KB | Content present |
-| `angular` | private | `main` | 197 KB | Content present |
+| `Private repository 03` | private | redacted | redacted | Content present (details redacted) |
 | `Backend` | public | `main` | 0 KB | Empty at snapshot |
-| `chatbot` | private | `main` | 428 KB | Content present |
+| `Private repository 02` | private | redacted | redacted | Content present (details redacted) |
 | `codemagic-docs` | public | `master` | 25754 KB | Content present |
 | `Devontray` | public | `main` | 0 KB | Empty at snapshot |
-| `django` | private | `main` | 5 KB | Content present |
+| `Private repository 04` | private | redacted | redacted | Content present (details redacted) |
 | `Games` | public | `main` | 0 KB | Empty at snapshot |
 | `Github` | public | `main` | 0 KB | Empty at snapshot |
 | `kottens-code-engine` | public | `main` | 34 KB | Content present |
@@ -50,8 +50,8 @@
 | `LingoLegacy-MasterBlueprint` | public | `main` | 62 KB | Content present |
 | `Lingolegends` | public | `main` | 1 KB | Content present |
 | `Loyaltylaneapparel` | public | `main` | 36 KB | Content present |
-| `nextjs` | private | `main` | 69 KB | Content present |
-| `nextjs-boilerplate` | private | `main` | 69 KB | Content present |
+| `Private repository 06` | private | redacted | redacted | Content present (details redacted) |
+| `Private repository 01` | private | redacted | redacted | Content present (details redacted) |
 | `Spades_is_my-lingo` | public | `main` | 0 KB | Empty at snapshot |
 | `Spades-is-my_Lingo` | public | `main` | 181 KB | Content present |
 | `thats_my_lingo_app` | public | `main` | 0 KB | Empty at snapshot |
@@ -60,7 +60,7 @@
 | `thelingolegacy-blip-REPO-` | public | `main` | 28 KB | Content present |
 | `thelingolegacy-hub` | public | `main-/-root⁠` | 95 KB | Content present |
 | `thelingolegacy-hub-` | public | `main` | 0 KB | Empty at snapshot |
-| `TheLingoLegacy-Web` | private | `main` | 5857 KB | Content present |
+| `Private repository 05` | private | redacted | redacted | Content present (details redacted) |
 | `Theriseofzavione` | public | `main` | 59 KB | Content present |
 | `Tricia-escape-` | public | `main` | 0 KB | Empty at snapshot |
 | `Tv-os` | public | `main` | 0 KB | Empty at snapshot |
@@ -170,7 +170,7 @@ The largest concentration is `main` (178 PRs). The remaining PRs target 15 non-m
 
 ## Scope and evidence limits
 
-This snapshot covers all 38 repositories returned by the connected owner-scoped repository listing and all 539 branches plus 201 open PRs returned by the paginated canonical-repository endpoints. It does not inspect every file in every repository, every closed PR, all releases, every ruleset, every connected app, all secrets metadata or live provider health. Those remain explicit follow-up work rather than inferred completion.
+This snapshot covers all 38 repositories returned by the connected owner-scoped repository listing, with private repository identifiers redacted from this public record and all 539 branches plus 201 open PRs returned by the paginated canonical-repository endpoints. It does not inspect every file in every repository, every closed PR, all releases, every ruleset, every connected app, all secrets metadata or live provider health. Those remain explicit follow-up work rather than inferred completion.
 
 ## Mobile, website and builder readiness
 
