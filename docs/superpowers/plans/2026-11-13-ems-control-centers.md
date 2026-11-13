@@ -71,3 +71,18 @@
 - [ ] **Step 3:** Confirm missing provider sync, security scan and release approval evidence are visibly unknown/blocked.
 - [ ] **Step 4:** Run the test suite and inspect the complete diff.
 - [ ] **Step 5:** Request review; keep the stacked PR draft and production HOLD until parent registry PR and CI evidence are accepted.
+
+### Task 4: Record the non-destructive portfolio inventory
+
+**Files:**
+- Create: `docs/ops/PORTFOLIO-REPOSITORY-AND-CHANGE-INVENTORY-2026-11-13.md`
+
+**Interfaces:**
+- Consumes: owner-scoped repository listing and paginated canonical-repository branches/open pull requests.
+- Produces: dated Markdown inventory with repository visibility/default branch/size, branch and PR counts, pagination scope, and safe reconciliation order.
+
+- [ ] **Step 1:** Retrieve all repository pages until the next page is empty.
+- [ ] **Step 2:** Retrieve all canonical branch and open-PR pages until the next page is empty; record page counts and totals.
+- [ ] **Step 3:** Separate observed facts from heuristic duplicate candidates; treat zero-size repositories and branches with a false legacy protection flag as review-only.
+- [ ] **Step 4:** Write the inventory and state that no repository, branch or PR was deleted, archived, renamed or merged.
+- [ ] **Step 5:** Reconcile totals against the pagination results and review the document for overclaims.
