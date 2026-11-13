@@ -22,7 +22,7 @@ PR #553 adds `config/ops/resource-registry.json`, its JSON Schema, the foundatio
 ## Non-goals
 - No claim of live GitHub/Cloudflare/Firebase synchronization.
 - No write endpoints, role escalation, approvals, secret storage, or release authorization.
-- No production Worker route or deployment changes.
+- No production Worker deployment changes. The source Worker must fail closed for `/ops/ems-console/*` before static asset fallback until Cloudflare Access authentication and authorization are implemented and independently verified.
 - No fake staff roster, fabricated resource owner, health state, security scan, artifact or approval.
 
 ## Approaches considered
@@ -31,10 +31,11 @@ PR #553 adds `config/ops/resource-registry.json`, its JSON Schema, the foundatio
 3. **Firebase-backed operations database.** Deferred because Firebase project identity, data ownership and production boundaries are unresolved; adding a second source of truth would violate current governance.
 
 ## Architecture
-The UI fetches `/config/ops/resource-registry.json` from the same origin. The registry schema remains the contract. UI-derived counts are calculated from actual resource records. The screen shows generation time, source repository/branch and a persistent “snapshot / provider sync not connected” notice. Unknown, stale, scaffold-only, blocked and configured-unverified values are distinct states.
+The UI fetches `/config/ops/resource-registry.json` from the same origin. Because the current Worker serves static assets from the repository root, the `/ops/ems-console/*` path is explicitly blocked with a 404 before asset fallback; no client-side-only access control is treated as security. Future access requires verified Cloudflare Access identity and authorization. The registry schema remains the contract. UI-derived counts are calculated from actual resource records. The screen shows generation time, source repository/branch and a persistent “snapshot / provider sync not connected” notice. Unknown, stale, scaffold-only, blocked and configured-unverified values are distinct states.
 
 ## Acceptance
 - The console loads the canonical registry JSON and fails visibly if unavailable or invalid.
+- The public Worker returns 404 for `/ops/ems-console/*` before static asset fallback until verified Access authentication is available.
 - Every displayed resource is sourced from a registry record.
 - Summary counts reconcile exactly to the registry.
 - Search and filters operate on actual fields.
