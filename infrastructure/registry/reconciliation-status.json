@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.1.0",
+  "wave": "00.3",
+  "status": "IN_PROGRESS",
+  "last_known_good": "PROTECTED",
+  "production_promotion": "BLOCKED",
+  "g02": "FAIL_UNVERIFIED",
+  "phases": [
+    {
+      "id": 1,
+      "name": "ci-restoration-and-duplicate-reconciliation",
+      "status": "PARTIAL",
+      "completed": [
+        "Spades-is-my_Lingo confirmed as populated product implementation; Spades_is_my-lingo confirmed README-only single-commit stub",
+        "THATS-MY-LINGO confirmed as active game implementation with game-math engine, tests, assets and quality-gate workflows; thats_my_lingo_app confirmed empty",
+        "Kotton-code-engine confirmed as active Next.js product candidate with canon, Firebase rules and CI; kottens-code-engine confirmed docs-only companion",
+        "lingo_backend confirmed README-only empty stub",
+        "Repository registry updated with evidence-based active/reference/archive-candidate classifications; no repositories deleted or archived"
+      ],
+      "remaining": [
+        "restore GitHub Actions hosted runner startup; six observed workflows currently fail before job creation",
+        "complete source-level and commit-ancestry audit for remaining active candidate repositories",
+        "formal owner review before archiving deprecated stubs"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "cloudflare-route-and-binding-catalog",
+      "status": "PARTIAL",
+      "completed": [
+        "21 live Worker routes read directly from Cloudflare zone API",
+        "all seven deployed Worker settings inspected",
+        "thelingolegacyv-5 regular bindings identified: ASSETS, CANONICAL_DOMAIN, PUBLIC_SITE_URL",
+        "zero secret binding names returned across seven scripts; no secret values requested",
+        "worker-bindings.json added to machine-readable registry",
+        "query-bearing apex root is shown by Cloudflare route semantics to match wildcard Worker rather than exact-root Worker",
+        "all nine registry JSON files parsed successfully through the connected GitHub read path",
+        "repository, engine, Worker, 21-route, seven-binding-catalog and fail-closed release invariants passed an independent structural check",
+        "canonical .firebaserc and firebase.client.json declare lingo-legacy-production; client API/app credentials remain placeholders",
+        "canonical firebase.json configures Hosting only and no root Firestore rules source; Kotton's Code has a nested global-default-deny rules file",
+        "Spades declares a separate project ID and named Firestore database; no deployed Firebase target was verified",
+        "firebase-projects.json added to inventory and validator; all ten registry JSON files parse and structural invariants pass"
+      ],
+      "remaining": [
+        "obtain a hosted GitHub Actions run with actual steps, logs and artifacts",
+        "inspect account-level secret stores, service bindings and external provider credentials",
+        "verify Firebase project/database IDs against deployed Firebase resources",
+        "verify actual Firebase project and named database resources through authorized Firebase/GCP access; no Firebase project connector is available in this workspace"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "spades-wallet-p0-containment",
+      "status": "PARTIAL",
+      "completed": [
+        "P0 direct client mutation of chips, tickets and progression confirmed in existing Firestore rules and app sync code",
+        "isolated security branch created in Spades-is-my_Lingo",
+        "draft PR #1 opened with Firestore client-write lockdown, local-only progression sync, emulator test suite and wallet-ledger rollout contract",
+        "cloud progression writes are disabled in the proposed branch until trusted ledger service is deployed",
+        "deployed root Worker source inspected: standalone GET/HEAD / handler; non-root paths return 404; no delegation binding",
+        "canonical flagship Worker source inspected: runtime/API handlers plus ASSETS fetch",
+        "route split determined: bare root selects isolated root Worker; query-bearing root selects apex wildcard Worker"
+      ],
+      "remaining": [
+        "capture live response markers and cf-ray headers for bare-root and query-root probes",
+        "review and separately approve the recommended apex route normalization",
+        "run Spades emulator suite and application typecheck/build"
+      ]
+    }
+  ],
+  "branch": "feature/wave-00-2-ezca-registry",
+  "base_branch": "main",
+  "base_sha": "aaa9cd8462ced19ea86cb4d8bfd21672409c8b6e",
+  "no_production_mutations": true,
+  "validation": {
+    "workflow": "GitHub Actions hosted workflows",
+    "observed_runs": [
+      43021247905,
+      43021246061,
+      43021244081,
+      43021122408,
+      43021120668,
+      43021111870,
+      43021110188,
+      43020812018
+    ],
+    "status": "STARTUP_FAILURE",
+    "jobs_observed": 0,
+    "interpretation": "Six existing and new pull_request workflows, including the registry validator, ended in startup_failure before job creation. No workflow test steps or artifacts exist. This is not a pass or a code-level test failure; hosted Actions execution remains blocked.",
+    "combined_status": [
+      {
+        "context": "Vercel – the-lingo-legacy",
+        "state": "failure",
+        "interpretation": "Legacy Vercel status check; Vercel is not the approved deployment target. Reconcile through governance, do not bypass."
+      }
+    ],
+    "public_status": {
+      "source": "GitHub official status page",
+      "checked_date": "2026-11-11",
+      "actions_component": "OPERATIONAL",
+      "incident_today": "NONE_REPORTED",
+      "interpretation": "Public status does not explain the repository-specific workflow failures. Spades retries still fail with zero steps and no downloadable logs; canonical workflows still show startup_failure and zero jobs."
+    },
+    "spades_retry": {
+      "run_id": 43020812018,
+      "attempt": 2,
+      "status": "FAILURE",
+      "jobs": 1,
+      "steps": 0,
+      "logs": "NOT_AVAILABLE_BLOB_NOT_FOUND",
+      "artifacts": 0,
+      "rerun_attempted_once": true
+    }
+  },
+  "last_updated": "2026-11-11",
+  "branches": {
+    "canonical_registry": "feature/wave-00-2-ezca-registry",
+    "spades_security": "security/wallet-ledger-client-write-lockdown",
+    "spades_security_head": "a692f00e858e5cf85bdba9cd76251eee0c83746c",
+    "canonical_registry_head": "1577aaa4a357533d6b874b3fdd6573a3fc32e685"
+  },
+  "pull_requests": [
+    {
+      "repository": "thelingolegacy-blip/TheLingoLegacy",
+      "number": 549,
+      "url": "https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/549",
+      "status": "OPEN_UNMERGED",
+      "purpose": "EZCA registry, 21-route catalog, duplicate dispositions and P0 specifications",
+      "head_sha": "1577aaa4a357533d6b874b3fdd6573a3fc32e685",
+      "mergeable": true
+    },
+    {
+      "repository": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "number": 1,
+      "url": "https://github.com/thelingolegacy-blip/Spades-is-my_Lingo/pull/1",
+      "status": "OPEN_DRAFT_UNMERGED",
+      "purpose": "P0 client wallet write lockdown and Firestore Emulator tests",
+      "head_sha": "a692f00e858e5cf85bdba9cd76251eee0c83746c",
+      "mergeable": true
+    }
+  ]
+}

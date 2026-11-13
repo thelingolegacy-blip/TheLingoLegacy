@@ -1,0 +1,552 @@
+{
+  "schema_version": "1.1.0",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "dependency_edges": [
+    {
+      "from": "TheLingoLegacy-Web",
+      "to": "identity-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "TheLingoLegacy-Web",
+      "to": "sync-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Kotton-code-engine",
+      "to": "identity-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Kotton-code-engine",
+      "to": "sync-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "THATS-MY-LINGO",
+      "to": "wallet-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "Spades-is-my_Lingo",
+      "to": "wallet-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL_HIGH_RISK"
+    },
+    {
+      "from": "chatbot",
+      "to": "ai-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "lingo_assets",
+      "to": "asset-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    },
+    {
+      "from": "lingo_website",
+      "to": "discovery-engine",
+      "role": "consumer",
+      "status": "PROVISIONAL"
+    }
+  ],
+  "policy": "No engine is considered implemented until package code, tests, dependency declarations and CI evidence are linked.",
+  "repository_assignments": [
+    {
+      "repository": "thelingolegacy-blip/-the-lingo-legacy-master",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/thelingolegacy-hub",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine",
+        "@lingo/identity-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/LingoLegacy-MasterBlueprint",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/event-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/thelingolegacy-hub-",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "DEPRECATED_STUB",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/-the-lingo-legacy-hub",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/ZavioneLingo",
+      "engine_packages": [
+        "@lingo/media-engine",
+        "@lingo/asset-engine",
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/kottens-code-engine",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/media-engine",
+        "@lingo/asset-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/LINGO_LEGACY_HQ",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/event-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/thelingolegacy-blip-REPO-",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/TheLingoLegacy",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/notify-engine",
+        "@lingo/ai-engine",
+        "@lingo/media-engine",
+        "@lingo/discovery-engine",
+        "@lingo/security-engine",
+        "@lingo/wallet-engine",
+        "@lingo/asset-engine",
+        "@lingo/analytics-engine",
+        "@lingo/event-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "CANONICAL_INTEGRATION_AND_ENGINE_PACKAGE_OWNER",
+      "repository_status": "CANONICAL",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/Kotton-code-engine",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/media-engine",
+        "@lingo/asset-engine",
+        "@lingo/security-engine",
+        "@lingo/analytics-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/Loyaltylaneapparel",
+      "engine_packages": [
+        "@lingo/asset-engine",
+        "@lingo/identity-engine",
+        "@lingo/event-engine",
+        "@lingo/growth-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Lingolegends",
+      "engine_packages": [
+        "@lingo/media-engine",
+        "@lingo/asset-engine",
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Devontray",
+      "engine_packages": [
+        "@lingo/media-engine",
+        "@lingo/asset-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Theriseofzavione",
+      "engine_packages": [
+        "@lingo/media-engine",
+        "@lingo/asset-engine",
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Github",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Tricia-escape-",
+      "engine_packages": [
+        "@lingo/event-engine",
+        "@lingo/asset-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/LingoLegacy-",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/thats_my_lingo_app",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/wallet-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "DEPRECATED_STUB",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo_backend",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "DEPRECATED_STUB",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo_admin_console",
+      "engine_packages": [
+        "@lingo/security-engine",
+        "@lingo/identity-engine",
+        "@lingo/analytics-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo_website",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine",
+        "@lingo/asset-engine",
+        "@lingo/analytics-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo_documentation",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo_assets",
+      "engine_packages": [
+        "@lingo/asset-engine",
+        "@lingo/media-engine",
+        "@lingo/discovery-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/codemagic-docs",
+      "engine_packages": [
+        "@lingo/event-engine",
+        "@lingo/security-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/THATS-MY-LINGO",
+      "engine_packages": [
+        "@lingo/wallet-engine",
+        "@lingo/event-engine",
+        "@lingo/analytics-engine",
+        "@lingo/security-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/nextjs-boilerplate",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/asset-engine",
+        "@lingo/security-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/chatbot",
+      "engine_packages": [
+        "@lingo/ai-engine",
+        "@lingo/identity-engine",
+        "@lingo/security-engine",
+        "@lingo/analytics-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/angular",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/asset-engine",
+        "@lingo/security-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/django",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/TheLingoLegacy-Web",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/notify-engine",
+        "@lingo/discovery-engine",
+        "@lingo/ai-engine",
+        "@lingo/media-engine",
+        "@lingo/asset-engine",
+        "@lingo/analytics-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/nextjs",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/asset-engine",
+        "@lingo/security-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/lingo-legacy-",
+      "engine_packages": [
+        "@lingo/discovery-engine",
+        "@lingo/growth-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "REFERENCE_ONLY",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Spades_is_my-lingo",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/wallet-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "DEPRECATED_STUB",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/wallet-engine",
+        "@lingo/event-engine",
+        "@lingo/analytics-engine",
+        "@lingo/security-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "PARTIAL_SOURCE_INSPECTED"
+    },
+    {
+      "repository": "thelingolegacy-blip/Tv-os",
+      "engine_packages": [
+        "@lingo/asset-engine",
+        "@lingo/media-engine",
+        "@lingo/identity-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Backend",
+      "engine_packages": [
+        "@lingo/identity-engine",
+        "@lingo/sync-engine",
+        "@lingo/security-engine",
+        "@lingo/event-engine"
+      ],
+      "role": "REFERENCE_OR_TEMPLATE",
+      "repository_status": "DEPRECATED_STUB",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    },
+    {
+      "repository": "thelingolegacy-blip/Games",
+      "engine_packages": [
+        "@lingo/event-engine",
+        "@lingo/asset-engine",
+        "@lingo/analytics-engine",
+        "@lingo/wallet-engine"
+      ],
+      "role": "PRODUCT_CONSUMER_CANDIDATE",
+      "repository_status": "ACTIVE_CANDIDATE",
+      "assignment_status": "PROVISIONAL_PENDING_FULL_SOURCE_AUDIT",
+      "evidence_level": "NAME_OR_README_ONLY"
+    }
+  ],
+  "repository_assignment_count": 38
+}

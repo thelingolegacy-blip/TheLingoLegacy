@@ -1,0 +1,284 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-11-11",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "canonical_branch": "main",
+  "inventory_count": 38,
+  "classification_legend": [
+    "CANONICAL",
+    "ACTIVE_CANDIDATE",
+    "MERGED_CANDIDATE",
+    "REFERENCE_ONLY",
+    "DEPRECATED_STUB"
+  ],
+  "repositories": [
+    {
+      "full_name": "thelingolegacy-blip/-the-lingo-legacy-master",
+      "status": "REFERENCE_ONLY",
+      "notes": "master blueprint candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-hub",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "hub surface; inspect deployment and source",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LingoLegacy-MasterBlueprint",
+      "status": "REFERENCE_ONLY",
+      "notes": "blueprint and G02 workflow references",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-hub-",
+      "status": "DEPRECATED_STUB",
+      "notes": "empty repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/-the-lingo-legacy-hub",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only hub reference",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/ZavioneLingo",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "artist/media surface",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/kottens-code-engine",
+      "status": "REFERENCE_ONLY",
+      "notes": "Documentation-only companion/reference; product implementation candidate is Kotton-code-engine. Do not mark merged until code ancestry is proven.",
+      "evidence": "Main tree contains README.md and docs/STUDIO_STACK.md only; counterpart Kotton-code-engine has a Next.js web app, canon, Firebase rules and CI workflow.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LINGO_LEGACY_HQ",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "subordinate control-plane candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thelingolegacy-blip-REPO-",
+      "status": "REFERENCE_ONLY",
+      "notes": "repository/architecture reference candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/TheLingoLegacy",
+      "status": "CANONICAL",
+      "notes": "authoritative source and release authority",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Kotton-code-engine",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Kotton's Code implementation candidate with Next.js web app, canon/story documents, Firestore rules and CI workflow; release/runtime verification still pending.",
+      "evidence": "Main tree includes apps/web/app/page.tsx, package.json, firebase/firestore.rules, canon/* and .github/workflows/ci.yml; latest commits include merged Studio OS/dashboard work dated 2026-10-03.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Loyaltylaneapparel",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "apparel and commerce surface",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Lingolegends",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Legacy Legends content candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Devontray",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only content candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Theriseofzavione",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Rise of Zavione media project",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Github",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only tooling reference",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Tricia-escape-",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "LINGOarcade game candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/LingoLegacy-",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only placeholder candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/thats_my_lingo_app",
+      "status": "DEPRECATED_STUB",
+      "notes": "Empty repository; THATS-MY-LINGO contains the active game implementation. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; repository size 0; active counterpart has game assets, source, tests and CI workflow.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_backend",
+      "status": "DEPRECATED_STUB",
+      "notes": "Empty initial-commit repository; no independent backend implementation found. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; repository size 0; one initial commit dated 2026-07-09.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_admin_console",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "admin console candidate; implementation requires review",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_website",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "website candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_documentation",
+      "status": "REFERENCE_ONLY",
+      "notes": "documentation repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo_assets",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "asset library candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/codemagic-docs",
+      "status": "REFERENCE_ONLY",
+      "notes": "build tooling documentation",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/THATS-MY-LINGO",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Primary That’s My Lingo game implementation; mini-games, casino pack, game-math engine, tests and quality-gate workflows present.",
+      "evidence": "Main tree contains index.html, casino-pack, mini-games, game-math/preview25-engine.mjs, tests/game-math.test.mjs and quality-gate workflows; latest commit history includes merged PRs #29 and #30 dated 2026-10-21.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/nextjs-boilerplate",
+      "status": "REFERENCE_ONLY",
+      "notes": "web starter template",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/chatbot",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "AI/chatbot surface; provider policy requires review",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/angular",
+      "status": "REFERENCE_ONLY",
+      "notes": "framework/template candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/django",
+      "status": "REFERENCE_ONLY",
+      "notes": "backend starter candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/TheLingoLegacy-Web",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "web/Studio surface; Cloudflare/Firebase config",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/nextjs",
+      "status": "REFERENCE_ONLY",
+      "notes": "web starter/template candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/lingo-legacy-",
+      "status": "REFERENCE_ONLY",
+      "notes": "README-only reference candidate",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Spades_is_my-lingo",
+      "status": "DEPRECATED_STUB",
+      "notes": "README-only single-commit stub; populated Spades-is-my_Lingo is the active implementation candidate. Archive candidate only; not archived.",
+      "evidence": "GitHub main tree contains README.md only; one initial commit dated 2026-07-16; active counterpart has application source, Firestore rules and server.ts.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Spades-is-my_Lingo",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "Primary Spades implementation candidate; wallet/progression client-write risk confirmed and isolated draft remediation PR #1 opened.",
+      "evidence": "Main tree includes src/App.tsx, src/utils/firebase.ts, firestore.rules, server.ts and security_spec.md; separate same-name variant is README-only.",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Tv-os",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "TV app candidate; implementation unverified",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Backend",
+      "status": "DEPRECATED_STUB",
+      "notes": "empty repository",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Games",
+      "status": "ACTIVE_CANDIDATE",
+      "notes": "game collection candidate; runtime unverified",
+      "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    }
+  ],
+  "audit_status": "PARTIAL_FILE_AND_HISTORY_VERIFIED",
+  "disposition_policy": "DEPRECATED_STUB means archive candidate only; no repository has been archived or deleted. MERGED is not assigned without commit ancestry or merged PR evidence."
+}

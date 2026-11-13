@@ -1,0 +1,268 @@
+{
+  "schema_version": "1.1.0",
+  "observed_at": "2026-11-11",
+  "account_id": "16cb6f247cd1b28fca864760c7269606",
+  "workers": [
+    {
+      "name": "thelingolegacyv-5",
+      "environment": "production",
+      "role": "flagship",
+      "routes": [
+        "thelingolegacy.com/*",
+        "theriseofzavione.thelingolegacy.com/*",
+        "thats-my-lingo.thelingolegacy.com/*",
+        "sparkling-rain.thelingolegacy.com/*",
+        "therealzavione.thelingolegacy.com/*",
+        "lingo.thelingolegacy.com/*",
+        "cyber.thelingolegacy.com/*",
+        "solar.thelingolegacy.com/*",
+        "drip.thelingolegacy.com/*",
+        "site.thelingolegacy.com/*",
+        "luxe.thelingolegacy.com/*",
+        "web.thelingolegacy.com/*",
+        "hub.thelingolegacy.com/*",
+        "www.thelingolegacy.com/*",
+        "v4.thelingolegacy.com/*",
+        "v3.thelingolegacy.com/*",
+        "ai.thelingolegacy.com/*",
+        "blog.thelingolegacy.com/*"
+      ],
+      "status": "LIVE_OBSERVED_ROUTE_MATCH_CONFIRMED",
+      "notes": "Cloudflare API confirms apex wildcard, www wildcard and 16 product/utility subdomain wildcard routes. Bare apex root is intercepted by the exact-root route; query-bearing apex-root URLs match this wildcard."
+    },
+    {
+      "name": "lingo-flagship-root",
+      "environment": "production",
+      "role": "flagship",
+      "routes": [
+        "thelingolegacy.com/"
+      ],
+      "status": "LIVE_OBSERVED_ROUTE_MATCH_CONFIRMED",
+      "notes": "Cloudflare API confirms exact route thelingolegacy.com/. Cloudflare route matching includes the query string, but route patterns cannot contain query parameters; therefore the exact route matches the bare root only, while a query-bearing root request falls through to the apex wildcard Worker. Runtime cf-ray/response-marker attribution remains unverified."
+    },
+    {
+      "name": "lingo-flagship-site-preview",
+      "environment": "staging-preview",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED"
+    },
+    {
+      "name": "lingo-studio-control-center-staging",
+      "environment": "staging-control",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED",
+      "tags": [
+        "staging",
+        "read-only",
+        "studio-control-center"
+      ]
+    },
+    {
+      "name": "lingo-ecosystem-atlas",
+      "environment": "production",
+      "role": "discovery",
+      "routes": [
+        "atlas.thelingolegacy.com/*"
+      ],
+      "status": "LIVE_OBSERVED"
+    },
+    {
+      "name": "lingo-static-backup-proxy",
+      "environment": "recovery",
+      "role": "flagship",
+      "routes": [
+        "launch.thelingolegacy.com/*"
+      ],
+      "status": "LIVE_OBSERVED"
+    },
+    {
+      "name": "lingo-resilience-gateway",
+      "environment": "recovery-control",
+      "role": "flagship",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED"
+    }
+  ],
+  "target_workers_not_observed": [
+    "sync",
+    "notify",
+    "ai-gateway"
+  ],
+  "secret_binding_audit": {
+    "method": "Cloudflare Worker secrets binding-name list plus Worker settings bindings",
+    "workers_checked": 7,
+    "secret_names_returned": 0,
+    "raw_values_requested": false,
+    "regular_bindings": {
+      "thelingolegacyv-5": [
+        {
+          "type": "assets",
+          "name": "ASSETS"
+        },
+        {
+          "type": "plain_text",
+          "name": "CANONICAL_DOMAIN"
+        },
+        {
+          "type": "plain_text",
+          "name": "PUBLIC_SITE_URL"
+        }
+      ],
+      "lingo-flagship-root": [],
+      "lingo-ecosystem-atlas": [],
+      "lingo-flagship-site-preview": [],
+      "lingo-resilience-gateway": [],
+      "lingo-static-backup-proxy": [],
+      "lingo-studio-control-center-staging": []
+    },
+    "interpretation": "No secret names were returned for the seven scripts. The settings endpoint exposes three non-secret bindings on thelingolegacyv-5 and no regular bindings on the other six. This is not a complete audit of account-level secret stores, service bindings, or external provider credentials."
+  },
+  "route_inventory": {
+    "observed_routes": 21,
+    "source": "Cloudflare zone Workers Routes API read-only snapshot",
+    "query_string_behavior": "Route matching considers the entire request URL; patterns cannot include query parameters. Therefore the exact apex-root route does not match a root URL carrying a query string; the apex wildcard catches it.",
+    "runtime_attribution": "ROUTE_SELECTION_CONFIRMED_FROM_LIVE_ROUTE_API_AND_DEPLOYED_SOURCE; HTTP response marker capture PARTIAL",
+    "no_routes_changed": true,
+    "route_ids_and_assignments": [
+      {
+        "id": "e478916a164849768adecb4634c4f24d",
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy"
+      },
+      {
+        "id": "41e8d027e8cd4cb19d21df7143a2c25e",
+        "pattern": "thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "64ce4e50bdfa4484beb4f2f820d266f1",
+        "pattern": "theriseofzavione.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "1f4d8394e69043fba5c3bcb2dc04e2d6",
+        "pattern": "thats-my-lingo.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "a3c33421f6694bd0a04e4180e0c9888f",
+        "pattern": "sparkling-rain.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "414c106665e04dfc89600fedbd34c59b",
+        "pattern": "therealzavione.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "7c9fe938bbd24aa3bdac93dbccf1162b",
+        "pattern": "lingo.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "0e0c499429d44d78b2b4dba4769c3cca",
+        "pattern": "cyber.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "8a39eba626494e4fb2799158c9f071a3",
+        "pattern": "solar.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "6ff510d5bf494906bf2fdaff85e960aa",
+        "pattern": "drip.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "ad97c3bfddd94fc1b9aff2416690d1b6",
+        "pattern": "site.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "937726206e724ae99a6ef0361d81c79e",
+        "pattern": "luxe.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "2b89bfd2136e49e096b2982c073ac93d",
+        "pattern": "web.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "342481f6b45f4c3eaa71de9c0864e88f",
+        "pattern": "hub.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "c861b5b2158745f2bcfbfdca9778c325",
+        "pattern": "www.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "758a6e7cb6df484dba125cb00d07178a",
+        "pattern": "v4.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "6dc5c03089044fbeaa155f962228d8cf",
+        "pattern": "v3.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "1867af4757344eb2b41a24ccffbbbc2a",
+        "pattern": "ai.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "04e6903aedf14510b58b34b57df699e1",
+        "pattern": "thelingolegacy.com/",
+        "script": "lingo-flagship-root"
+      },
+      {
+        "id": "0369657937f34d16bc5d529407ad2783",
+        "pattern": "blog.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5"
+      },
+      {
+        "id": "cc917f80e69d470281cc6347ee8c0195",
+        "pattern": "atlas.thelingolegacy.com/*",
+        "script": "lingo-ecosystem-atlas"
+      }
+    ],
+    "root_worker_source_inspection": {
+      "lingo-flagship-root": {
+        "regular_bindings": [],
+        "behavior": "GET/HEAD / serves standalone homepage; all other paths return 404",
+        "delegates_to_flagship_worker": false
+      },
+      "thelingolegacyv-5": {
+        "regular_bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "behavior": "Implements /healthz and /api/v1/* runtime endpoints; non-API paths are served through ASSETS.fetch(request)"
+      }
+    },
+    "recommended_normalization": "DECISION_REQUIRED; do not mutate production until intended apex homepage and delegation model are approved.",
+    "canonical_wrangler_routes": [
+      "thelingolegacy.com/*",
+      "www.thelingolegacy.com/*"
+    ],
+    "out_of_band_routes": [
+      "thelingolegacy.com/"
+    ],
+    "source_of_truth_drift": "The exact-root route is present in the live Cloudflare zone but absent from main-branch wrangler.jsonc.",
+    "homepage_behavior": {
+      "lingo-flagship-root": "Standalone crimson/white HOME document; GET/HEAD / only; non-root path returns 404; no regular/service bindings.",
+      "thelingolegacyv-5": "ASSETS binding serves canonical index.html; current index.html is a redirect stub to /studio-hub/."
+    },
+    "normalization_options": [
+      "Move/align standalone homepage into the canonical flagship assets and remove the out-of-band exact-root route after approval.",
+      "Keep root gateway, add a tested service binding to the flagship Worker, delegate all non-root paths, and route apex wildcard to the gateway."
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.1.0",
+  "policy_status": "APPROVED_GUARDRAILS_PENDING_RUNTIME_ENFORCEMENT",
+  "limits": [
+    {
+      "provider": "firebase-auth-spark",
+      "metric": "DAU",
+      "ceiling": 3000,
+      "policy": "Approved cap; confirm applicable Identity Platform configuration before enforcing."
+    },
+    {
+      "provider": "firebase-auth",
+      "metric": "phone_sms",
+      "enabled": false,
+      "policy": "Disabled; no SMS provider activation or billing enablement."
+    },
+    {
+      "provider": "fcm",
+      "metric": "downstream_messages_per_minute",
+      "provider_ceiling": 600000,
+      "internal_target": "SET_BELOW_PROVIDER_CEILING",
+      "retry": "exponential_backoff_with_jitter",
+      "honor_retry_after": true
+    },
+    {
+      "provider": "cloudflare-workers-kv",
+      "metric": "reads_per_day",
+      "limit": 100000
+    },
+    {
+      "provider": "cloudflare-workers-kv",
+      "metric": "writes_per_day",
+      "limit": 1000
+    },
+    {
+      "provider": "huggingface-inference",
+      "metric": "free_credit",
+      "policy": "Check available credits before request; unknown/exhausted means fail closed; no paid fallback."
+    },
+    {
+      "provider": "ai-provider-registry",
+      "metric": "paid_fallback",
+      "enabled": false,
+      "policy": "Explicit approval and feature flag required."
+    }
+  ],
+  "feed_policy": {
+    "sitemap_rss_release_catalog": "static_CI_artifacts_plus_Cloudflare_Cache_API",
+    "kv_reads": false
+  }
+}

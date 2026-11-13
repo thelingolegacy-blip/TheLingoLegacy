@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.1.0",
+  "policy": {
+    "client_business_logic_direct_firestore_calls": "PROHIBITED",
+    "adapter": "@lingo/sync-engine",
+    "security_rules": "least_privilege_and_schema_validation",
+    "batching": "enforced_in_sync_engine_not_security_rules",
+    "client_authoritative_wallet_mutations": false
+  },
+  "observed_collections": [
+    {
+      "repository": "Spades-is-my_Lingo",
+      "collection": "users/{userId}",
+      "risk": "HIGH",
+      "finding": "Owner update predicates permit changes to chips, sweepstakesTickets, level, xp and streakDays; client can affect authoritative state.",
+      "required_action": "Draft PR #1 contains client-write lockdown and emulator tests; keep unmerged until tests execute, then implement trusted wallet ledger before restoring cloud progression."
+    },
+    {
+      "repository": "Spades-is-my_Lingo",
+      "collection": "users/{userId}/sessions/{sessionId}",
+      "risk": "MEDIUM",
+      "finding": "Owner-scoped scorekeeper session CRUD with payload validation observed.",
+      "required_action": "Test schema bounds, ownership and abuse limits."
+    },
+    {
+      "repository": "Kotton-code-engine",
+      "collection": "all",
+      "risk": "FUNCTIONAL_BLOCKER",
+      "finding": "Global default deny; firebase.json points to firebase/firestore.rules.",
+      "required_action": "Keep default deny until collection-by-collection least-privilege schema and COPPA review pass."
+    },
+    {
+      "repository": "TheLingoLegacy",
+      "collection": "root",
+      "risk": "UNKNOWN",
+      "finding": "Root firebase.json configures Firebase Hosting only; .firebaserc and firebase.client.json declare lingo-legacy-production, but client API/app credentials remain placeholders and no root Firestore rules file was found. Deployed project/database target is not verified.",
+      "required_action": "Resolve canonical project credentials and verify deployed project/database; establish a versioned root Firestore rules source and emulator suite before enabling client data paths."
+    }
+  ],
+  "write_burst_protection": {
+    "enforcement_layer": "sync-engine",
+    "mechanisms": [
+      "queue",
+      "coalesce",
+      "idempotency",
+      "per-user-budget",
+      "backpressure",
+      "bounded-retry"
+    ],
+    "note": "Firestore rules cannot prove client batching."
+  },
+  "project_reconciliation": {
+    "canonical_project": "lingo-legacy-production",
+    "observed_separate_projects": [
+      "project-ba7da5c2-a534-47f9-9b8"
+    ],
+    "status": "MULTI_PROJECT_CONFIGURATION_OBSERVED_DEPLOYED_TARGETS_UNVERIFIED",
+    "policy": "Do not consolidate, migrate, or change production Firebase projects without an explicit data migration, Auth identity, Firestore database, rules and rollback plan."
+  }
+}
