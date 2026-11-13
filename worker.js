@@ -216,6 +216,30 @@ export default {
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
+      // The repository root is the static asset directory. Keep internal
+      // operations, inventory and planning files off the public website until
+      // verified Cloudflare Access identity and authorization are implemented.
+      let pathname;
+      try { pathname = decodeURIComponent(url.pathname).toLowerCase(); }
+      catch {
+        return withSecurityHeaders(new Response('INTERNAL_ASSET_PATH_DISABLED\\n', {
+          status: 404,
+          headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
+        }), request, env);
+      }
+      const isEmsConsolePath = pathname.startsWith('/ops/ems-console');
+      const isInternalAssetPath =
+        pathname === '/ops' || pathname.startsWith('/ops/') ||
+        pathname === '/config/ops' || pathname.startsWith('/config/ops/') ||
+        pathname === '/docs/ops' || pathname.startsWith('/docs/ops/') ||
+        pathname === '/docs/superpowers' || pathname.startsWith('/docs/superpowers/');
+      if (isInternalAssetPath) {
+        const code = isEmsConsolePath ? 'EMS_CONSOLE_PREVIEW_DISABLED' : 'INTERNAL_ASSET_PATH_DISABLED';
+        return withSecurityHeaders(new Response(code + '\\n', {
+          status: 404,
+          headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
+        }), request, env);
+      }
       const assetResponse = await env.ASSETS.fetch(request);
       return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
     } catch { return json({ ok: false, error: 'Request could not be completed right now.' }, 500, request, env); }
