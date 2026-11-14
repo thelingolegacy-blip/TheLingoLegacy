@@ -69,3 +69,24 @@ test("serves the local console with a restrictive content security policy", asyn
   assert.match(await response.text(), /Knowledge Intelligence Console/);
   assert.equal((await fetch(base + "/app.js")).status, 200);
 });
+
+test("expired verified records become stale and are excluded from assistant context", async () => {
+  const expired = { ...record(), id: "lkis.api.expired-001", review_after: "2020-01-01T00:00:00Z" };
+  const created = await fetch(base + "/api/v1/records", { method: "POST", headers: headers("admin-test-token"), body: JSON.stringify(expired) });
+  assert.equal(created.status, 201);
+  const verified = await fetch(base + "/api/v1/records/lkis.api.expired-001/verify", { method: "POST", headers: headers("review-test-token") });
+  assert.equal(verified.status, 200);
+  const search = await fetch(base + "/api/v1/records?status=stale", { headers: headers("reader-test-token") });
+  const results = await search.json();
+  assert.ok(results.records.some(row => row.record.id === "lkis.api.expired-001"));
+  const context = await fetch(base + "/api/v1/assistant/context?q=independently%20reviewed", { headers: headers("reader-test-token") });
+  const payload = await context.json();
+  assert.ok(!payload.records.some(row => row.id === "lkis.api.expired-001"));
+});
+test("metrics are authenticated and scoped to the caller's visible records", async () => {
+  const response = await fetch(base + "/api/v1/metrics", { headers: headers("reader-test-token") });
+  const metrics = await response.json();
+  assert.equal(response.status, 200);
+  assert.ok(metrics.total_visible_records >= 1);
+  assert.ok(metrics.by_domain.KNOW >= 1);
+});
