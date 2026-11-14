@@ -6,6 +6,15 @@
 **Target:** `main` through a draft PR only  
 **Design authority:** `docs/superpowers/specs/2026-11-14-two-layer-public-surface-security-design.md`
 
+## Execution status — 2026-11-14
+
+- The implementation plan is committed on the working branch.
+- The shared route-policy module, Worker gate, static exclusions, release-manifest cleanup, focused tests, and two independent PR workflow files have been added.
+- Draft PR #574 is open against `main`; it remains unmerged and in draft state.
+- Local test execution is unavailable in this environment because the GitHub host cannot be reached from the local shell.
+- The PR's existing Actions runs ended in `startup_failure` before job creation; no job steps or test evidence were produced. The newly added workflow files have not yet produced run evidence.
+- Therefore implementation is present but verification remains **BLOCKED / UNVERIFIED**. No production changes or release promotion have occurred.
+
 ## 1. Current branch and baseline inspection
 
 The canonical repository is confirmed and the working branch exists. The branch currently points to commit `65fffeed24dc33c91a292905ec79b1cd7abc0fcd`. The repository default branch is `main`. No merge or production mutation is part of this plan.
@@ -35,7 +44,7 @@ The following implementation-relevant facts were confirmed on the working branch
 
 ### Step 1 — Implement the shared restricted-path policy
 
-Add a small Worker-compatible policy module (proposed path: `cloudflare/security/restricted-public-paths.js`) or an equivalently isolated module if repository conventions require a different location.
+Add a small Worker-compatible policy module (proposed path: `cloudflare/security/restricted-public-paths.mjs`) or an equivalently isolated module if repository conventions require a different location.
 
 The policy must:
 
