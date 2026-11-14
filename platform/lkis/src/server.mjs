@@ -56,6 +56,8 @@ export function createLkisServer() {
       if(req.method==="POST"&&verifyMatch){
         if(actor.role!=="reviewer") return send(res,403,{error:"independent_reviewer_token_required"});
         if(!process.env.LKIS_REVIEWER_ID) return send(res,503,{error:"reviewer_identity_not_configured"});
+        const existing=(await store.list()).find(row=>row.record.id===verifyMatch[1]);
+        if(!existing || !visible(existing,actor)) return send(res,404,{error:"record_not_found"});
         const result=await store.verify(verifyMatch[1],process.env.LKIS_REVIEWER_ID);
         if(result.missing) return send(res,404,{error:"record_not_found"});
         if(result.missingEvidence) return send(res,422,{error:"evidence_refs_required"});
