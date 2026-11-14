@@ -20,7 +20,7 @@ This is an isolated Node.js 20+ pilot runtime for the LINGO Knowledge & Intellig
 
 The server binds to loopback (127.0.0.1) by default. Set PORT to change the local port and LKIS_DATA_FILE to select the data file. Do not use production credentials. Keep the data directory private and back it up before maintenance.
 
-## API
+## Local console\n\nOpen http://127.0.0.1:8787/ after starting the service. The console keeps reader, admin, and reviewer tokens only in page memory; it does not persist them in browser storage. The console is intentionally served only by the loopback-bound pilot.\n\n## API
 
 - GET /healthz — unauthenticated liveness only.
 - GET /readyz — storage-readiness check.
@@ -28,7 +28,7 @@ The server binds to loopback (127.0.0.1) by default. Set PORT to change the loca
 - GET /api/v1/assistant/context?q=... — retrieval-only context from verified records, with source/evidence references. It does not call an LLM or generate answers.
 - POST /api/v1/records — admin-only creation; record must conform to schema and have status proposed.
 
-Use Authorization: Bearer token. The reader token sees public/internal records; confidential-reader sees through confidential; admin sees all classifications and can create proposed records. A separate reviewer token can verify a proposed record only when the record contains evidence references. Set LKIS_REVIEW_TOKEN and LKIS_REVIEWER_ID to distinct reviewer credentials/identity. Verification appends a review-history entry and increments the revision; it is a knowledge-record decision, not release authorization.
+Use Authorization: Bearer token. The reader token sees public/internal records; confidential-reader sees through confidential; admin sees all classifications and can create proposed records. A separate reviewer token can verify a proposed record only when the record contains evidence references. Set LKIS_REVIEW_TOKEN and LKIS_REVIEWER_ID to distinct reviewer credentials/identity. The reviewer can verify only records within their classification ceiling. Verification appends a review-history entry and increments the revision; it is a knowledge-record decision, not release authorization.
 
 ## Explicit limitations
 
