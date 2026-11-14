@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { filterMedia, formatCount, starterMedia, type MediaItem, type MediaKind } from "./lib/media";
+import { loadWorkspace, saveWorkspace } from "./lib/workspace";
 
 type Section = "Overview" | "Library" | "Playlists" | "Presentations" | "Creators" | "Analytics";
 const nav: { label: Section; icon: string }[] = [
@@ -10,7 +11,7 @@ const nav: { label: Section; icon: string }[] = [
 
 function App() {
   const [section, setSection] = useState<Section>("Overview");
-  const [media, setMedia] = useState<MediaItem[]>(starterMedia);
+  const [media, setMedia] = useState<MediaItem[]>(() => loadWorkspace().media);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<MediaItem>(starterMedia[0]);
   const [showUpload, setShowUpload] = useState(false);
@@ -18,10 +19,14 @@ function App() {
   const [kind, setKind] = useState<MediaKind>("Video");
   const [notice, setNotice] = useState("Your creative workspace is ready.");
   const [playlistName, setPlaylistName] = useState("");
-  const [playlists, setPlaylists] = useState<string[]>(["Legacy Stories", "Behind the Brand", "The Creator Cut"]);
+  const [playlists, setPlaylists] = useState<string[]>(() => loadWorkspace().playlists);
 
   const filtered = useMemo(() => filterMedia(media, query), [media, query]);
   const published = media.filter((item) => item.status === "Published").length;
+
+  useEffect(() => {
+    saveWorkspace({ media, playlists });
+  }, [media, playlists]);
 
   function addMedia(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +40,7 @@ function App() {
     setTitle("");
     setShowUpload(false);
     setSection("Library");
-    setNotice("Draft added to your local workspace. Connect storage to persist media.");
+    setNotice("Draft saved on this device. Cloud storage is not connected.");
   }
 
   function createPlaylist(event: React.FormEvent<HTMLFormElement>) {
@@ -43,7 +48,7 @@ function App() {
     if (!playlistName.trim()) return;
     setPlaylists((current) => [...current, playlistName.trim()]);
     setPlaylistName("");
-    setNotice("Playlist created in this session.");
+    setNotice("Playlist saved on this device. Cloud sync is not connected.");
   }
 
   return (
