@@ -9,6 +9,8 @@ This branch contains a non-production readiness and build configuration starter.
 - `release/publisher-connection-register.json` — portal connection and approval tracking.
 - `release/signing-policy.json` — protected signing controls.
 - `release/release-manifest-template.json` — release evidence and approval manifest.
+- `release/observed-infrastructure-state-2026-11-14.json` — read-only GitHub, Firebase, Cloudflare and release status snapshot.
+- `android/app/build.gradle` and `android/RELEASE-SIGNING-SETUP.md` — release signing now fails closed unless the protected upload-key environment is provisioned.
 - `docs/operations/UNIFIED-BUILD-ACCELERATION-AND-RELEASE-READINESS-2026-11-14.md` — full implementation plan and observed blockers.
 
 ## Import
