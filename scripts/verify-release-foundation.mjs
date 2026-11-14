@@ -19,11 +19,16 @@ for (const publisher of publishers.publishers) if (publisher.status !== 'OUTSTAN
 const firebaseOptions = fs.readFileSync('lib/firebase_options.dart', 'utf8');
 if (/YOUR_[A-Z0-9_]+/.test(firebaseOptions)) blockers.push('Firebase client configuration still contains placeholder values');
 const firebaseConfig = readJson('firebase.json');
-if (firebaseConfig.hosting?.public === '.') blockers.push('Firebase Hosting public directory is the repository root; confirm and restrict the build output before any Hosting deploy');
-if (!fs.existsSync('firestore.rules')) blockers.push('Root Firestore security rules file is missing');
+if (firebaseConfig.hosting?.public !== 'build/web') blockers.push('Firebase Hosting must serve only the generated Flutter web output');
+if (!fs.existsSync('firestore.rules')) errors.push('explicit Firestore rules file is missing');
+else if (!/allow read, write: if false/.test(fs.readFileSync('firestore.rules', 'utf8'))) errors.push('Firestore rules must remain default-deny until reviewed');
+
 const androidGradle = fs.readFileSync('android/app/build.gradle', 'utf8');
-if (/signingConfig\s+signingConfigs\.debug/.test(androidGradle)) blockers.push('Android release build still uses debug signing');
-if (fs.existsSync('ios/Runner.xcodeproj/project.pbxproj.stub')) blockers.push('iOS Xcode project is still a stub');
+if (/signingConfig\s+signingConfigs\.debug/.test(androidGradle)) errors.push('Android release must not use debug signing');
+if (!/signingConfig\s+signingConfigs\.release/.test(androidGradle)) errors.push('Android release must use the protected release signing config');
+const androidSigningEnv = ['ANDROID_UPLOAD_KEYSTORE_PATH', 'ANDROID_UPLOAD_STORE_PASSWORD', 'ANDROID_UPLOAD_KEY_ALIAS', 'ANDROID_UPLOAD_KEY_PASSWORD'];
+if (androidSigningEnv.some((name) => !process.env[name])) blockers.push('Android protected upload-signing environment is not provisioned in this workflow');
+if (fs.existsSync('ios/Runner.xcodeproj/project.pbxproj.stub')) blockers.push('iOS Xcode project is still a stub; hosted macOS scaffold/build check is required');
 
 const report = {
   schemaVersion: '1.0',
