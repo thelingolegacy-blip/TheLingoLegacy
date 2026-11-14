@@ -4,6 +4,8 @@ This is an isolated Node.js 20+ pilot runtime for the LINGO Knowledge & Intellig
 
 ## Capabilities
 
+The isolated LKIS Runtime Tests workflow runs syntax checks and the Node test suite for changes to this package and its schema. Workflow execution remains evidence-gated; a queued or startup-failed run is not a passing test.
+
 - Validates incoming records against the repository-owned JSON Schema contract (the structural keywords used by the current schema).
 - Stores records in a local JSON file with atomic replacement, restrictive file permissions, an initial revision number, and SHA-256 content digest.
 - Exposes authenticated record search and a retrieval-only assistant context endpoint.
