@@ -14,18 +14,18 @@ This work package adds a parallel hosted build/readiness workflow, a machine-rea
 | Area | Observed state | Gate |
 |---|---|---|
 | GitHub repository | Connected account has admin/maintain/push access to canonical repository; default branch is `main` | Access verified |
-| GitHub Actions | Latest PR checks on 2026-11-14 (runs 43581739294, 43581740447, 43581741393) concluded `startup_failure`; latest Static CI run returned zero jobs | BLOCKED — startup / runner dispatch recovery |
+| GitHub Actions | Latest PR checks on 2026-11-14 (including new readiness run 43582618910) concluded `startup_failure`; new readiness run returned zero jobs and zero artifacts | BLOCKED — startup / runner dispatch recovery |
 | Branch protection | Read endpoint returned 403 `Resource not accessible by integration` | UNVERIFIED — do not infer protection state |
 | G02 | Self-hosted G02 workflow is present; no runner execution evidence; preserve inactive | HOLD — do not activate |
 | Flutter/Firebase | `lib/firebase_options.dart` contains placeholder API keys/app IDs; `scripts/verify-flutter-firebase.mjs` correctly rejects them | BLOCKED — project credentials/app registration not verified |
 | Firebase Hosting | `firebase.json` publishes `.`; `.firebaserc` names `lingo-legacy-production` | BLOCKED — output scope and live project identity must be confirmed before deploy |
 | Android | `applicationId=com.thelingolegacy.app`; release build currently uses `signingConfigs.debug`; target SDK 34 | BLOCKED — owner-controlled upload signing and current Play target-policy check |
 | iOS | Xcode project file is a stub; no real archive demonstrated | BLOCKED — generate native project and verify on macOS |
-| Cloudflare | Authenticated identity, active `thelingolegacy.com` zone, seven Worker scripts and 21 Worker routes read successfully | PARTIAL — read access verified; route/version/probe and release provenance certification outstanding |
+| Cloudflare | Authenticated identity, active `thelingolegacy.com` zone, seven Worker scripts and 21 Worker routes read successfully; `/healthz` returned `ok` | BLOCKED — active Worker versions lag latest uploads: `thelingolegacyv-5` active v137 vs latest uploaded v327; `lingo-flagship-root` active v1 vs latest uploaded v3; staging Worker is active at v7 |
 | Publisher portals | No Apple, Google Play, Amazon, Samsung, LG, Roku, PlayStation, Xbox or Nintendo account connection evidenced | OUTSTANDING |
 | Signing/submission | No protected signing identity, signed release artifact, submission receipt, publisher approval or internal certificate evidenced | OUTSTANDING |
 
-## Parallel build architecture
+## Cloudflare version reconciliation evidence\n\nRead-only Cloudflare API inspection on 2026-11-14 found: apex and www route to `thelingolegacyv-5`, while the exact-root route `thelingolegacy.com/` routes separately to `lingo-flagship-root`. The latest active deployment for `thelingolegacyv-5` is version 137 (created 2026-10-25), while the latest uploaded version is 327 (created 2026-11-14). The root Worker is active at version 1 while latest uploaded is version 3. The Studio Control Center staging Worker is active at version 7, which matches its latest uploaded version. `/healthz` returned `ok`; the runtime and manifest endpoints could not be fetched by the available public-page reader. These observations are recorded as drift, not as authorization to deploy a newer version. Preserve the current active versions until source-to-version mapping, route ownership, health probes, rollback and acceptance are reconciled.\n\n## Parallel build architecture
 
 The new workflow `.github/workflows/lingo-parallel-build-readiness.yml` uses GitHub-hosted `ubuntu-latest` runners only. It never targets G02, deploys, signs, accesses production secrets, changes DNS, or submits packages.
 
