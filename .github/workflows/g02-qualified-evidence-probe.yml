@@ -28,17 +28,17 @@ jobs:
         run: |
           set -euo pipefail
           echo "G02_PROBE_GENERATION=2026-09-30-g02-retry-01"
-          trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$?"' EXIT
+          trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\n" "$?"' EXIT
 
-          printf '%s\\n' \\
-            "G02_QUALIFIED_PROBE=START" \\
-            "run_id=$RUN_ID" \\
-            "run_number=$RUN_NUMBER" \\
-            "job_name=$JOB_ID" \\
-            "runner_name=$RUNNER_NAME" \\
-            "runner_os=$RUNNER_OS" \\
-            "runner_arch=$RUNNER_ARCH" \\
-            "runner_environment=$RUNNER_ENVIRONMENT" \\
+          printf '%s\n' \
+            "G02_QUALIFIED_PROBE=START" \
+            "run_id=$RUN_ID" \
+            "run_number=$RUN_NUMBER" \
+            "job_name=$JOB_ID" \
+            "runner_name=$RUNNER_NAME" \
+            "runner_os=$RUNNER_OS" \
+            "runner_arch=$RUNNER_ARCH" \
+            "runner_environment=$RUNNER_ENVIRONMENT" \
             "github_sha=$SHA"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
@@ -50,7 +50,7 @@ jobs:
           echo "G02_RUNNER_ASSIGNMENT=PASS"
 
           set +e
-          timeout --foreground --signal=TERM --kill-after=10s 240s \\
+          timeout --foreground --signal=TERM --kill-after=10s 240s \
             node --input-type=module -e '
               const started = Date.now();
               console.log("G02_NODE_DIAGNOSTIC=START");
