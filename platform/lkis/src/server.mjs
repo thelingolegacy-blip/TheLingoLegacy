@@ -1,10 +1,12 @@
 import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
 import { timingSafeEqual } from "node:crypto";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { RecordStore, validateRecord } from "./record-store.mjs";
 const packageDir = fileURLToPath(new URL("..", import.meta.url));
 const dataFile = process.env.LKIS_DATA_FILE || resolve(packageDir, "var", "records.json");
+const publicDir = resolve(packageDir, "public");
 const store = new RecordStore(dataFile);
 const limit = 64 * 1024;
 const levels = { public: 0, internal: 1, confidential: 2, restricted: 3 };
@@ -23,10 +25,18 @@ async function bodyJson(req) {
   try { return JSON.parse(raw); } catch { throw Object.assign(new Error("Invalid JSON"), { status:400 }); }
 }
 function visible(row, actor) { return levels[row.record.classification] <= actor.maxClass; }
+async function sendStatic(res, file, type) {
+  const body = await readFile(resolve(publicDir, file));
+  const csp = ["default-src 'none'", "style-src 'unsafe-inline'", "script-src 'self'", "connect-src 'self'", "base-uri 'none'", "frame-ancestors 'none'", "form-action 'self'"].join("; ");
+  res.writeHead(200, { "content-type": type, "cache-control": "no-store", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer", "content-security-policy": csp });
+  res.end(body);
+}
 export function createLkisServer() {
   return createServer(async (req, res) => {
     try {
       const url = new URL(req.url, "http://localhost");
+      if (req.method === "GET" && url.pathname === "/") return await sendStatic(res, "index.html", "text/html; charset=utf-8");
+      if (req.method === "GET" && url.pathname === "/app.js") return await sendStatic(res, "app.js", "text/javascript; charset=utf-8");
       if (req.method === "GET" && url.pathname === "/healthz") return send(res,200,{status:"ok",service:"lkis-runtime",mode:"repository-backed-pilot"});
       if (req.method === "GET" && url.pathname === "/readyz") {
         try { await store.readAll(); return send(res,200,{status:"ready",storage:"readable",production_mutations:false}); }
