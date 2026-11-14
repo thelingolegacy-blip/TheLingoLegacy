@@ -16,8 +16,14 @@ export function normalizeRoute(route) {
 }
 
 export function validatePublicContract(contract) {
-  if (!contract || contract.contract !== 'LINGO_PUBLIC_SITE_ROUTES' || !Array.isArray(contract.approvedRoutes) || !Array.isArray(contract.assetFiles)) {
+  if (!contract || contract.contract !== 'LINGO_PUBLIC_SITE_ROUTES' || !Array.isArray(contract.approvedRoutes) || !Array.isArray(contract.assetFiles) || !Array.isArray(contract.candidateRoutes)) {
     throw new Error('Public route contract is missing required structure.');
+  }
+  const candidates = new Map();
+  for (const candidate of contract.candidateRoutes) {
+    const candidatePath = normalizeRoute(candidate.path);
+    if (candidates.has(candidatePath)) throw new Error(`Duplicate candidate route: ${candidatePath}`);
+    candidates.set(candidatePath, candidate);
   }
   const excluded = contract.excludedRoutePrefixes || [];
   const seen = new Set();
@@ -27,6 +33,10 @@ export function validatePublicContract(contract) {
     seen.add(route);
     if (entry.status !== 'approved') throw new Error(`Route is not approved: ${route}`);
     if (excluded.some(prefix => route.startsWith(prefix))) throw new Error(`Excluded internal route cannot be published: ${route}`);
+    const candidate = candidates.get(route);
+    if (!candidate) throw new Error(`Public route is missing from candidate inventory: ${route}`);
+    if (candidate.status !== 'proposed') throw new Error(`Candidate route is not eligible for publication: ${route} (${candidate.status})`);
+    if (candidate.source !== entry.source) throw new Error(`Approved route source does not match candidate inventory: ${route}`);
     if (typeof entry.source !== 'string' || path.isAbsolute(entry.source) || entry.source.split(/[\\/]/).includes('..')) {
       throw new Error(`Invalid source path for ${route}`);
     }
