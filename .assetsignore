@@ -88,3 +88,34 @@ gateway-router.js
 pubspec.yaml
 _headers
 _redirects
+
+# Repository and CI configuration must never be part of the public asset surface.
+.assetsignore
+.circleci/
+.yamllint
+Jenkinsfile
+config.yaml
+ansible/
+infrastructure/
+kubernetes/
+
+# Internal operator, identity, integration and release-control pages are private.
+auth0-details/
+auth0-implementation/
+integration-configurations/
+integration-ids-register/
+integration-links-register/
+integration-management/
+integration-action-plan/
+integration-dashboard-snapshot/
+integration-resource-assignment/
+integration-qa-matrix/
+integrations-console-checklist/
+integrations-dashboard-status/
+integrations-readiness/
+dashboard-integration-links/
+exact-dashboard-links/
+installed-integrations/
+provider-handoff/
+protected-routes/
+session-test/
