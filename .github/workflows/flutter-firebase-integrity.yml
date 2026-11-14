@@ -2,7 +2,7 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     paths:
       - 'lib/**'
       - 'android/**'
@@ -15,6 +15,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: flutter-firebase-integrity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   flutter-firebase:
@@ -51,11 +55,35 @@ jobs:
       - name: Flutter web build
         run: flutter build web --release
 
-      - name: Flutter Android debug build
-        run: flutter build apk --debug
-
-      - name: Firebase hosting configuration check
+      - name: Verify Firebase Hosting publication boundary
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+          test -s build/web/index.html
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const config = JSON.parse(fs.readFileSync('firebase.json', 'utf8'));
+          const hosting = config.hosting;
+          if (!hosting) throw new Error('Firebase Hosting configuration missing');
+          if (hosting.public !== 'build/web') {
+            throw new Error(`Unsafe Firebase Hosting public directory: ${hosting.public}`);
+          }
+          if (!Array.isArray(hosting.ignore) || !hosting.ignore.includes('**/.*')) {
+            throw new Error('Firebase Hosting dotfile exclusion missing');
+          }
+          console.log('FIREBASE_HOSTING_PUBLICATION_BOUNDARY=PASS');
+          console.log('FIREBASE_HOSTING_PUBLIC_DIR=build/web');
+          NODE
+
+      - name: Flutter Android debug build
+        run: flutter build apk --debug
+
+      - name: Upload non-production build evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-firebase-integrity-${{ github.sha }}
+          path: |
+            build/web/
+            build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
