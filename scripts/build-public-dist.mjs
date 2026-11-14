@@ -49,33 +49,33 @@ export function validateHtmlReferences(html, route, origin, approvedRoutes, asse
   const base = new URL(route, origin);
   const references = [];
   const add = value => { if (typeof value === 'string' && value.trim()) references.push(value.trim()); };
-  for (const match of html.matchAll(/\\b(?:href|src|action|poster|data)\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))/gi)) add(match[1] ?? match[2] ?? match[3]);
-  for (const match of html.matchAll(/\\bsrcset\\s*=\\s*(?:"([^"]*)"|'([^']*)')/gi)) {
-    for (const candidate of (match[1] ?? match[2]).split(',')) add(candidate.trim().split(/\\s+/)[0]);
+  for (const match of html.matchAll(/\b(?:href|src|action|poster|data)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) add(match[1] ?? match[2] ?? match[3]);
+  for (const match of html.matchAll(/\bsrcset\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+    for (const candidate of (match[1] ?? match[2]).split(',')) add(candidate.trim().split(/\s+/)[0]);
   }
-  const cssBlocks = [...html.matchAll(/\\bstyle\\s*=\\s*(?:"([^"]*)"|'([^']*)')/gi)].map(m => m[1] ?? m[2]);
-  cssBlocks.push(...[...html.matchAll(/<style\\b[^>]*>([\\s\\S]*?)<\\/style>/gi)].map(m => m[1]));
+  const cssBlocks = [...html.matchAll(/\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)].map(m => m[1] ?? m[2]);
+  cssBlocks.push(...[...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(m => m[1]));
   for (const css of cssBlocks) {
-    for (const match of css.matchAll(/url\\(\\s*["']?([^"')]+)["']?\\s*\\)|@import\\s+["']([^"']+)["']/gi)) add(match[1] ?? match[2]);
+    for (const match of css.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)|@import\s+["']([^"']+)["']/gi)) add(match[1] ?? match[2]);
   }
-  for (const match of html.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)) {
-    for (const js of match[1].matchAll(/(?:fetch|import|Worker|SharedWorker|EventSource)\\s*\\(\\s*["']([^"']+)["']/g)) add(js[1]);
-    for (const js of match[1].matchAll(/(?:src|href)\\s*[:=]\\s*["']([^"']+)["']/gi)) add(js[1]);
+  for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    for (const js of match[1].matchAll(/(?:fetch|import|Worker|SharedWorker|EventSource)\s*\(\s*["']([^"']+)["']/g)) add(js[1]);
+    for (const js of match[1].matchAll(/(?:src|href)\s*[:=]\s*["']([^"']+)["']/gi)) add(js[1]);
   }
   for (const raw of references) {
     if (raw.startsWith('#') || /^(?:https?:|mailto:|tel:|data:|blob:)/i.test(raw)) continue;
-    if (/^(?:javascript:|file:)/i.test(raw) || raw.startsWith('//')) throw new Error(`Unsafe local reference on ${route}: ${raw}`);
+    if (/^(?:javascript:|file:)/i.test(raw) || raw.startsWith('//')) throw new Error('Unsafe local reference on ' + route + ': ' + raw);
     let target;
-    try { target = new URL(raw, base); } catch { throw new Error(`Invalid local reference on ${route}: ${raw}`); }
+    try { target = new URL(raw, base); } catch { throw new Error('Invalid local reference on ' + route + ': ' + raw); }
     if (target.origin !== new URL(origin).origin) continue;
     let pathname;
-    try { pathname = decodeURIComponent(target.pathname); } catch { throw new Error(`Invalid encoded local reference on ${route}: ${raw}`); }
-    if (pathname.split('/').includes('..')) throw new Error(`Traversal reference on ${route}: ${raw}`);
-    const routeCandidate = pathname.endsWith('/') ? pathname : (path.extname(pathname) ? null : `${pathname}/`);
+    try { pathname = decodeURIComponent(target.pathname); } catch { throw new Error('Invalid encoded local reference on ' + route + ': ' + raw); }
+    if (pathname.split('/').includes('..')) throw new Error('Traversal reference on ' + route + ': ' + raw);
+    const routeCandidate = pathname.endsWith('/') ? pathname : (path.extname(pathname) ? null : pathname + '/');
     if (routeCandidate && allowedRoutes.has(normalizeRoute(routeCandidate))) continue;
-    const assetCandidate = pathname.replace(/^\\/+/, '');
+    const assetCandidate = pathname.replace(/^\/+/, '');
     if (allowedAssets.has(assetCandidate)) continue;
-    throw new Error(`Unapproved local destination on ${route}: ${raw}`);
+    throw new Error('Unapproved local destination on ' + route + ': ' + raw);
   }
 }
 
@@ -96,34 +96,78 @@ function ensureRegularFile(root, relative) {
 export function buildPublicDist(root, out, contract) {
   const validated = validatePublicContract(contract);
   const origin = new URL(contract.canonicalOrigin);
-  for (const entry of contract.approvedRoutes) {
+  const sourceRoot = fs.realpathSync(root);
+  const outputPath = path.resolve(out);
+  if (outputPath === sourceRoot || sourceRoot.startsWith(outputPath + path.sep)) {
+    throw new Error('Output path must not contain or replace the source root.');
+  }
+  const outputParent = path.dirname(outputPath);
+  fs.mkdirSync(outputParent, { recursive: true });
+  if (fs.existsSync(outputPath) && fs.lstatSync(outputPath).isSymbolicLink()) {
+    throw new Error('Output path must not be a symlink.');
+  }
+
+  const pageSources = contract.approvedRoutes.map(entry => {
     const route = normalizeRoute(entry.path);
-    const source = ensureRegularFile(root, entry.source);
+    const source = ensureRegularFile(sourceRoot, entry.source);
     validateHtmlReferences(fs.readFileSync(source, 'utf8'), route, origin.origin, validated.routes, validated.assets);
+    return { route, source, destination: route === '/' ? 'index.html' : path.join(route.slice(1), 'index.html') };
+  });
+  const assetSources = validated.assets.map(asset => ({
+    asset,
+    source: ensureRegularFile(sourceRoot, asset),
+    destination: asset
+  }));
+
+  const destinations = new Set(['sitemap.xml', 'robots.txt']);
+  for (const item of [...pageSources, ...assetSources]) {
+    const normalized = item.destination.split(path.sep).join('/');
+    if (destinations.has(normalized)) throw new Error('Publication destination collision: ' + normalized);
+    destinations.add(normalized);
   }
-  fs.rmSync(out, { recursive: true, force: true });
-  fs.mkdirSync(out, { recursive: true });
-  for (const entry of contract.approvedRoutes) {
-    const route = normalizeRoute(entry.path);
-    const source = ensureRegularFile(root, entry.source);
-    const destination = path.join(out, route.slice(1), 'index.html');
-    fs.mkdirSync(path.dirname(destination), { recursive: true });
-    fs.copyFileSync(source, destination);
+
+  const stage = fs.mkdtempSync(path.join(outputParent, '.dist-public-stage-'));
+  const backup = outputPath + '.previous-' + process.pid;
+  let movedOldOutput = false;
+  try {
+    for (const page of pageSources) {
+      const destination = path.join(stage, page.destination);
+      fs.mkdirSync(path.dirname(destination), { recursive: true });
+      fs.copyFileSync(page.source, destination, fs.constants.COPYFILE_EXCL);
+    }
+    for (const asset of assetSources) {
+      const destination = path.join(stage, asset.destination);
+      fs.mkdirSync(path.dirname(destination), { recursive: true });
+      fs.copyFileSync(asset.source, destination, fs.constants.COPYFILE_EXCL);
+    }
+    const urls = validated.routes.map(route => '  <url><loc>' + origin.origin + route + '</loc></url>').join('\n');
+    fs.writeFileSync(path.join(stage, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '\n</urlset>\n', { flag: 'wx' });
+    const policy = contract.crawlerPolicy || {};
+    const disallowPaths = [...new Set([...(policy.disallow || []), ...(contract.excludedRoutePrefixes || [])])].sort();
+    const disallow = disallowPaths.map(p => 'Disallow: ' + p).join('\n');
+    const allow = (policy.allow || []).map(p => 'Allow: ' + p).join('\n');
+    fs.writeFileSync(path.join(stage, 'robots.txt'), 'User-agent: ' + (policy.userAgent || '*') + '\n' + disallow + '\n' + allow + '\n\nSitemap: ' + origin.origin + (policy.sitemapPath || '/sitemap.xml') + '\n', { flag: 'wx' });
+
+    if (fs.existsSync(outputPath)) {
+      if (!fs.lstatSync(outputPath).isDirectory()) throw new Error('Existing output path is not a directory.');
+      if (fs.existsSync(backup)) throw new Error('Refusing to overwrite an existing output backup: ' + backup);
+      fs.renameSync(outputPath, backup);
+      movedOldOutput = true;
+    }
+    try {
+      fs.renameSync(stage, outputPath);
+    } catch (error) {
+      if (movedOldOutput && !fs.existsSync(outputPath)) fs.renameSync(backup, outputPath);
+      movedOldOutput = false;
+      throw error;
+    }
+    if (movedOldOutput) fs.rmSync(backup, { recursive: true, force: true });
+    return { routes: validated.routes, assets: validated.assets, output: outputPath };
+  } catch (error) {
+    if (fs.existsSync(stage)) fs.rmSync(stage, { recursive: true, force: true });
+    if (movedOldOutput && !fs.existsSync(outputPath) && fs.existsSync(backup)) fs.renameSync(backup, outputPath);
+    throw error;
   }
-  for (const asset of validated.assets) {
-    const source = ensureRegularFile(root, asset);
-    const destination = path.join(out, asset);
-    fs.mkdirSync(path.dirname(destination), { recursive: true });
-    fs.copyFileSync(source, destination);
-  }
-  const urls = validated.routes.map(route => `  <url><loc>${origin.origin}${route}</loc></url>`).join('\n');
-  fs.writeFileSync(path.join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
-  const policy = contract.crawlerPolicy || {};
-  const disallowPaths = [...new Set([...(policy.disallow || []), ...(contract.excludedRoutePrefixes || [])])].sort();
-  const disallow = disallowPaths.map(p => `Disallow: ${p}`).join('\n');
-  const allow = (policy.allow || []).map(p => `Allow: ${p}`).join('\n');
-  fs.writeFileSync(path.join(out, 'robots.txt'), `User-agent: ${policy.userAgent || '*'}\n${disallow}\n${allow}\n\nSitemap: ${origin.origin}${policy.sitemapPath || '/sitemap.xml'}\n`);
-  return { routes: validated.routes, assets: validated.assets, output: out };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
