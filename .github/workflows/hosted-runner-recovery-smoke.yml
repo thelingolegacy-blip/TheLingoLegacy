@@ -1,0 +1,75 @@
+name: Hosted Runner Recovery Smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/hosted-runner-recovery-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-runner-recovery-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hosted-runner-smoke:
+    name: ubuntu-latest allocation and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Confirm hosted runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "runner_name=${RUNNER_NAME}"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "github_run_id=${GITHUB_RUN_ID}"
+          echo "github_run_attempt=${GITHUB_RUN_ATTEMPT}"
+          echo "github_sha=${GITHUB_SHA}"
+          test -n "${RUNNER_NAME}"
+          test "${RUNNER_OS}" = "Linux"
+          test -n "${GITHUB_SHA}"
+
+      - name: Execute hosted toolchain smoke checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -a
+          bash --version | head -n 1
+          git --version
+          python3 --version
+          node --version
+          npm --version
+
+      - name: Generate commit-correlated evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovery-evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "run_number=${GITHUB_RUN_NUMBER}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "observed_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee recovery-evidence/hosted-runner-evidence.txt
+          sha256sum recovery-evidence/hosted-runner-evidence.txt | tee recovery-evidence/SHA256SUMS
+
+      - name: Upload inspectable evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hosted-runner-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: recovery-evidence/
+          if-no-files-found: error
+          retention-days: 14
