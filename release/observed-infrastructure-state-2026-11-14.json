@@ -1,0 +1,93 @@
+{
+  "observedAt": "2026-11-14T10:19:12.241Z",
+  "github": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "defaultBranch": "main",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "push": true
+    },
+    "branchProtectionRead": "FORBIDDEN_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+    "latestReadinessWorkflowRun": {
+      "id": 43584528310,
+      "conclusion": "startup_failure",
+      "jobs": 0,
+      "artifacts": 0,
+      "headSha": "3811a93a2753ba452988f65c34614abb5ee4d23d",
+      "relatedRuns": [
+        43584527270,
+        43584526300,
+        43584525439,
+        43584524643
+      ]
+    },
+    "g02": "INACTIVE_UNVERIFIED"
+  },
+  "cloudflare": {
+    "account": "Thelingolegacy@gmail.com's Account",
+    "zone": {
+      "name": "thelingolegacy.com",
+      "status": "active",
+      "plan": "Free Website"
+    },
+    "workerScriptsObserved": 7,
+    "workerRoutesObserved": 21,
+    "healthz": "ok",
+    "versions": [
+      {
+        "worker": "thelingolegacyv-5",
+        "activeVersion": 137,
+        "activeVersionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "latestUploadedVersion": 327,
+        "latestVersionId": "41b1dc45-8c00-48dc-a805-83653feecb60",
+        "status": "ACTIVE_VERSION_LAGS_LATEST_UPLOAD"
+      },
+      {
+        "worker": "lingo-flagship-root",
+        "activeVersion": 1,
+        "activeVersionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "latestUploadedVersion": 3,
+        "latestVersionId": "fa6ca7f6-7431-4d22-885d-782c5c9e3631",
+        "status": "ACTIVE_VERSION_LAGS_LATEST_UPLOAD"
+      },
+      {
+        "worker": "lingo-studio-control-center-staging",
+        "activeVersion": 7,
+        "activeVersionId": "8d05879b-db31-43d3-ae10-7f2abc91246a",
+        "latestUploadedVersion": 7,
+        "latestVersionId": "8d05879b-db31-43d3-ae10-7f2abc91246a",
+        "status": "ACTIVE_MATCHES_LATEST_UPLOAD"
+      }
+    ],
+    "mutationPerformed": false
+  },
+  "firebase": {
+    "sourceProjectId": "lingo-legacy-production",
+    "clientKeys": "PLACEHOLDERS",
+    "hostingPublicDirectory": "build/web",
+    "liveProviderVerification": "NOT_AVAILABLE_WITH_CURRENT_CONNECTION",
+    "mutationPerformed": false,
+    "hostingConfig": "BRANCH_CONFIGURED_NOT_DEPLOYED",
+    "realtimeDatabaseRules": "EXPLICIT_DEFAULT_DENY_ADDED_BRANCH_ONLY",
+    "firestoreRules": "EXPLICIT_DEFAULT_DENY_ADDED_BRANCH_ONLY"
+  },
+  "publisherSigningSubmissions": {
+    "publisherConnections": "NOT_VERIFIED",
+    "signedBuilds": "NONE_VERIFIED",
+    "submissionReceipts": "NONE",
+    "publisherApprovals": "NONE",
+    "internalCertification": "NOT_ISSUED"
+  },
+  "recoveryBranch": {
+    "branch": "recovery/build-release-acceleration-2026-11-14",
+    "androidReleaseSigning": "CHANGED_TO_PROTECTED_ENVIRONMENT_BACKED_CONFIG_FAILS_CLOSED",
+    "publisherSecrets": "NOT_CONFIGURED",
+    "iosProject": "STUB_UNCHANGED",
+    "headSha": "3811a93a2753ba452988f65c34614abb5ee4d23d"
+  },
+  "flutter": {
+    "pubspecLock": "NOT_PRESENT_ON_RECOVERY_BRANCH",
+    "toolchainBuild": "NOT_RUN_ACTIONS_STARTUP_FAILURE"
+  }
+}

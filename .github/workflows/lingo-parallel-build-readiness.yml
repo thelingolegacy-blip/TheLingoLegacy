@@ -1,0 +1,104 @@
+name: LINGO Parallel Build Readiness
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "android/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "release/**"
+      - "scripts/verify-release-foundation.mjs"
+      - ".github/workflows/lingo-parallel-build-readiness.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-parallel-build-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  foundation-contract:
+    name: Release foundation contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate release registers and fail-closed defaults
+        run: node scripts/verify-release-foundation.mjs
+      - name: Upload foundation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-foundation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+  flutter-build:
+    name: Flutter ${{ matrix.target }} candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        target: [web, android-debug]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Unit and widget tests
+        run: flutter test
+      - name: Build Web release candidate
+        if: matrix.target == 'web'
+        run: flutter build web --release
+      - name: Build Android debug candidate (never store-release signed)
+        if: matrix.target == 'android-debug'
+        run: flutter build apk --debug
+      - name: Generate artifact digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-evidence
+          if [ "${{ matrix.target }}" = "web" ]; then
+            tar -czf release-evidence/flutter-web.tar.gz -C build/web .
+          else
+            cp build/app/outputs/flutter-apk/app-debug.apk release-evidence/app-debug.apk
+          fi
+          (cd release-evidence && sha256sum * > SHA256SUMS)
+          {
+            echo "target=${{ matrix.target }}"
+            echo "commit=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            flutter --version
+          } > release-evidence/build-context.txt
+      - name: Upload unsigned/debug candidate and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-${{ matrix.target }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+# Intentionally absent: self-hosted G02, Firebase deploy, Cloudflare deploy,
+# Android release signing, Apple signing, publisher upload, store submission,
+# production promotion. Those remain separate owner-approved gates.

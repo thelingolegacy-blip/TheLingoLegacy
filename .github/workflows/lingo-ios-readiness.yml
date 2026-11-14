@@ -1,0 +1,55 @@
+name: LINGO iOS Build Readiness
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - "release/**"
+      - ".github/workflows/lingo-ios-readiness.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-ios-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ios-no-codesign:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate ephemeral iOS project scaffold
+        run: flutter create --platforms=ios --project-name lingo_legacy .
+      - name: Resolve dependencies
+        run: flutter pub get
+      - name: Analyze and test
+        run: |
+          flutter analyze
+          flutter test
+      - name: Build unsigned iOS candidate
+        run: flutter build ios --release --no-codesign
+      - name: Archive iOS build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-ios-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/ios/iphoneos/
+            ios/Runner.xcodeproj/
+          if-no-files-found: warn
+          retention-days: 30
+
+# This validates an unsigned build only. Apple signing, provisioning,
+# App Store Connect upload, review and release authorization remain separate.

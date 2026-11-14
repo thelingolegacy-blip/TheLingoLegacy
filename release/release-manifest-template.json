@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0",
+  "releaseId": "REQUIRED",
+  "productId": "REQUIRED",
+  "platform": "REQUIRED",
+  "channel": "test|staging|production",
+  "source": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "commitSha": "REQUIRED"
+  },
+  "workflow": {
+    "runId": "REQUIRED",
+    "jobIds": [],
+    "toolchain": "REQUIRED"
+  },
+  "artifact": {
+    "uri": "REQUIRED",
+    "sha256": "REQUIRED",
+    "sizeBytes": "REQUIRED",
+    "signatureStatus": "PENDING"
+  },
+  "validation": {
+    "unit": "PENDING",
+    "integration": "PENDING",
+    "security": "PENDING",
+    "accessibility": "PENDING",
+    "sbomUri": "REQUIRED"
+  },
+  "publisher": {
+    "connectionStatus": "NOT_VERIFIED",
+    "submissionReceipt": "NONE",
+    "reviewStatus": "NOT_SUBMITTED"
+  },
+  "approvals": {
+    "engineering": "PENDING",
+    "security": "PENDING",
+    "productOwner": "PENDING",
+    "releaseManager": "PENDING"
+  },
+  "rollback": {
+    "target": "REQUIRED",
+    "rehearsal": "PENDING"
+  },
+  "promotion": {
+    "authorized": false,
+    "authorizationRecord": "NONE"
+  },
+  "status": "DRAFT_NOT_RELEASEABLE"
+}

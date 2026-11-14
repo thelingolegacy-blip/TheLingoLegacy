@@ -1,13 +1,15 @@
 {
   "hosting": {
-    "public": ".",
+    "public": "build/web",
     "ignore": [
       "firebase.json",
-      "firebase.client.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "cleanUrls": true,
     "trailingSlash": false
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

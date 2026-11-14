@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "status": "POLICY_ONLY_NOT_CONFIGURED",
+  "stages": [
+    "unsigned-build",
+    "automated-validation",
+    "freeze-artifact-digest",
+    "protected-signing",
+    "signature-verification",
+    "provenance-attestation",
+    "submission"
+  ],
+  "controls": {
+    "buildWorkersMayAccessPrivateKeys": false,
+    "privateKeysInGit": false,
+    "privateKeysInLogsOrArtifacts": false,
+    "requireProtectedEnvironment": true,
+    "requireShortLivedAuthorization": true,
+    "signExactValidatedArtifactDigest": true,
+    "verifySignatureAndCertificateChain": true,
+    "recordCertificateKeyIdAndExpiry": true,
+    "requireRotationAndRevocationRunbook": true,
+    "requireSBOM": true
+  },
+  "platformRequirements": {
+    "android": [
+      "owner-controlled upload key",
+      "Play App Signing enrollment",
+      "signed AAB",
+      "signature verification"
+    ],
+    "apple": [
+      "Apple Developer team",
+      "distribution certificate",
+      "provisioning profile",
+      "App Store Connect app record",
+      "signed archive/IPA"
+    ],
+    "gameAndTv": [
+      "platform publisher approval",
+      "platform-specific signing/package rules",
+      "device certification"
+    ]
+  },
+  "secretNamesAreReferencesOnly": [
+    "ANDROID_UPLOAD_KEY_REF",
+    "ANDROID_KEYSTORE_PASSWORD_REF",
+    "ANDROID_KEY_ALIAS_REF",
+    "ANDROID_KEY_PASSWORD_REF",
+    "APPLE_CERTIFICATE_REF",
+    "APPLE_PROFILE_REF",
+    "ASC_API_KEY_REF"
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "1.0",
+  "sourceOfTruth": "thelingolegacy-blip/TheLingoLegacy",
+  "status": "DRAFT_NOT_RELEASEABLE",
+  "targetLanes": [
+    {
+      "id": "web",
+      "platform": "Web",
+      "build": "web bundle",
+      "publisher": "Cloudflare / domain owner",
+      "status": "BUILD_CANDIDATE_ONLY"
+    },
+    {
+      "id": "android",
+      "platform": "Android phone/tablet",
+      "build": "Flutter APK debug; AAB release pending",
+      "publisher": "Google Play Console",
+      "status": "DEBUG_ONLY_RELEASE_SIGNING_BLOCKED"
+    },
+    {
+      "id": "ios",
+      "platform": "iPhone/iPad",
+      "build": "Flutter iOS archive/IPA",
+      "publisher": "Apple App Store Connect",
+      "status": "BLOCKED_XCODE_PROJECT_STUB"
+    },
+    {
+      "id": "android-tv",
+      "platform": "Android TV / Google TV",
+      "build": "TV-optimized Android AAB",
+      "publisher": "Google Play Console",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "fire-tv",
+      "platform": "Amazon Fire TV",
+      "build": "Fire OS Android package",
+      "publisher": "Amazon Appstore",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "tvos",
+      "platform": "Apple tvOS",
+      "build": "tvOS target/archive",
+      "publisher": "Apple App Store Connect",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "tizen",
+      "platform": "Samsung Tizen TV",
+      "build": "Tizen package",
+      "publisher": "Samsung Seller Office",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "webos",
+      "platform": "LG webOS TV",
+      "build": "webOS IPK",
+      "publisher": "LG Seller Lounge",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "roku",
+      "platform": "Roku",
+      "build": "Roku channel package",
+      "publisher": "Roku Developer Dashboard",
+      "status": "NOT_BUILT"
+    },
+    {
+      "id": "playstation",
+      "platform": "PlayStation",
+      "build": "Approved native/engine package",
+      "publisher": "PlayStation Partners",
+      "status": "NOT_ENROLLED"
+    },
+    {
+      "id": "xbox",
+      "platform": "Xbox",
+      "build": "Approved native/engine package",
+      "publisher": "ID@Xbox / Partner Center",
+      "status": "NOT_ENROLLED"
+    },
+    {
+      "id": "nintendo-switch",
+      "platform": "Nintendo Switch",
+      "build": "Approved native/engine package",
+      "publisher": "Nintendo Developer Portal",
+      "status": "NOT_ENROLLED"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "LINGOlegacy",
+      "products": [
+        "Flagship identity, account, wallet and community"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "IDENTITY_AND_PLATFORM_MAPPING_REQUIRED"
+    },
+    {
+      "id": "LINGOlane",
+      "products": [
+        "Designs & Promotions",
+        "Apparel",
+        "Laundry-Cycle"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "PER_PRODUCT_SCOPE_REQUIRED"
+    },
+    {
+      "id": "LINGOslots",
+      "products": [
+        "That’s My Lingo",
+        "Spades Is My Lingo",
+        "Uhno Lingo U-No",
+        "Lingo Lions Eruptions",
+        "Cashman Lingo Mania"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "PER_TITLE_ENGINE_AND_STORE_MAPPING_REQUIRED"
+    },
+    {
+      "id": "LINGOarcade",
+      "products": [
+        "Tricias Escape",
+        "Doughboys Oasis",
+        "Crazy Weasols",
+        "Silly in Philly",
+        "Jersey Shore: The Undead"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "PER_TITLE_ENGINE_AND_STORE_MAPPING_REQUIRED"
+    },
+    {
+      "id": "LINGOlibrary",
+      "products": [
+        "KottonsCode",
+        "The Block I Grew Up On",
+        "Say It Again",
+        "Dice Shift Hotel",
+        "Legacy Legends"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "CONTENT_RIGHTS_AND_DISTRIBUTION_MAPPING_REQUIRED"
+    },
+    {
+      "id": "LINGOmedia",
+      "products": [
+        "Rise of Zavione P1",
+        "Rise of Zavione P2"
+      ],
+      "targetLanes": [
+        "web"
+      ],
+      "status": "DISTRIBUTION_PARTNERS_UNCONFIRMED"
+    },
+    {
+      "id": "LINGOworld",
+      "products": [
+        "LINGOai",
+        "askLINGO",
+        "LINGOboom",
+        "LINGOtravel",
+        "LINGOcampus",
+        "LINGOsupport",
+        "LINGOwifi",
+        "LINGOvoice",
+        "LINGOshield",
+        "LINGOlounge",
+        "LINGOdonations"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "SERVICE_BY_SERVICE_TARGET_MAPPING_REQUIRED"
+    },
+    {
+      "id": "LegacyXclub",
+      "products": [
+        "Community / club experience"
+      ],
+      "targetLanes": [
+        "web",
+        "android",
+        "ios"
+      ],
+      "status": "PRODUCT_SCOPE_REQUIRED"
+    }
+  ],
+  "identityReview": {
+    "androidApplicationId": "com.thelingolegacy.app",
+    "iosBundleId": "com.thelingolegacy.app",
+    "uniquenessAndOwnership": "UNVERIFIED"
+  }
+}
