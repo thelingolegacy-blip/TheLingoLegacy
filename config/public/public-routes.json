@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.0.0",
+  "contract": "LINGO_PUBLIC_SITE_ROUTES",
+  "status": "BLOCKED_PENDING_ROUTE_APPROVAL",
+  "canonicalOrigin": "https://thelingolegacy.com",
+  "sourceAuthority": "GitHub",
+  "operationalReleaseManifest": "config/release/lingo-legacy-v1.0.0-rc.json",
+  "separationRule": "This contract controls visitor-facing publication only. It does not replace, narrow, or mutate the operational release manifest or its validator.",
+  "approvalRule": "Only entries in approvedRoutes with status approved may be published. Candidate routes are evidence for review, not publication permission.",
+  "approvedRoutes": [],
+  "candidateRoutes": [
+    {
+      "path": "/",
+      "source": "index.html",
+      "status": "proposed",
+      "notes": "Current root redirects to /studio-hub/; confirm desired canonical entry behavior."
+    },
+    {
+      "path": "/studio-hub/",
+      "source": "studio-hub/index.html",
+      "status": "proposed",
+      "notes": "Current visitor gateway; local links include destinations not classified as public."
+    },
+    {
+      "path": "/living-universe/",
+      "source": "living-universe/index.html",
+      "status": "proposed",
+      "notes": "Potential visitor-facing universe page; inspect links and dependencies before approval."
+    },
+    {
+      "path": "/thats-my-lingo/",
+      "source": "thats-my-lingo/index.html",
+      "status": "proposed",
+      "notes": "Game preview; inspect operational links and assets before approval."
+    },
+    {
+      "path": "/kottons-code/",
+      "source": "kottons-code/index.html",
+      "status": "proposed",
+      "notes": "Story-world preview; inspect linked child pages and family/privacy review before approval."
+    },
+    {
+      "path": "/loyalty-lane-apparel/",
+      "source": "loyalty-lane-apparel/index.html",
+      "status": "proposed",
+      "notes": "Apparel preview; inspect linked operations and commerce claims before approval."
+    },
+    {
+      "path": "/app/",
+      "source": "app/index.html",
+      "status": "proposed",
+      "notes": "App gateway; inspect linked destinations and service claims before approval."
+    },
+    {
+      "path": "/privacy/",
+      "source": "privacy/index.html",
+      "status": "proposed",
+      "notes": "Legal page; inspect internal links and legal review status."
+    },
+    {
+      "path": "/terms/",
+      "source": "terms/index.html",
+      "status": "proposed",
+      "notes": "Legal page; inspect internal links and legal review status."
+    },
+    {
+      "path": "/contact/",
+      "source": "contact/index.html",
+      "status": "proposed",
+      "notes": "Contact page; inspect contact destination and privacy handling."
+    },
+    {
+      "path": "/community-guidelines/",
+      "source": "community-guidelines/index.html",
+      "status": "proposed",
+      "notes": "Community-facing page; linked support and approval routes need classification."
+    },
+    {
+      "path": "/public-roadmap/",
+      "source": "public-roadmap/index.html",
+      "status": "proposed",
+      "notes": "Public roadmap candidate; linked sprint and operations pages need classification."
+    }
+  ],
+  "assetFiles": [],
+  "excludedRoutePrefixes": [
+    "/admin-",
+    "/account/",
+    "/api/",
+    "/config/",
+    "/docs/",
+    "/ops/",
+    "/production-lock/",
+    "/launch-verification/",
+    "/launch-war-room/",
+    "/daily-standup/",
+    "/stakeholder-update/",
+    "/launch-risk-register/",
+    "/integration-",
+    "/integrations-",
+    "/provider-handoff/",
+    "/trust-compliance/",
+    "/studio-production/",
+    "/studio-assets/",
+    "/studio-os/",
+    "/studio/"
+  ],
+  "crawlerPolicy": {
+    "userAgent": "*",
+    "disallow": [
+      "/api/"
+    ],
+    "allow": [
+      "/"
+    ],
+    "sitemapPath": "/sitemap.xml"
+  },
+  "generatedOutputs": [
+    "sitemap.xml",
+    "robots.txt"
+  ],
+  "approvalRecord": {
+    "approvedBy": null,
+    "approvedAt": null,
+    "changeReference": null
+  }
+}
