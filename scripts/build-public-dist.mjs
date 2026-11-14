@@ -47,32 +47,52 @@ export function validateHtmlReferences(html, route, origin, approvedRoutes, asse
   const allowedRoutes = new Set(approvedRoutes.map(normalizeRoute));
   const allowedAssets = new Set(assetFiles);
   const base = new URL(route, origin);
-  for (const match of html.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
-    const raw = match[1].trim();
-    if (!raw || raw.startsWith('#') || /^(?:https?:|mailto:|tel:|data:)/i.test(raw)) continue;
-    if (/^(?:javascript:|blob:|file:)/i.test(raw) || raw.startsWith('//')) {
-      throw new Error(`Unsafe local reference on ${route}: ${raw}`);
-    }
+  const references = [];
+  const add = value => { if (typeof value === 'string' && value.trim()) references.push(value.trim()); };
+  for (const match of html.matchAll(/\\b(?:href|src|action|poster|data)\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))/gi)) add(match[1] ?? match[2] ?? match[3]);
+  for (const match of html.matchAll(/\\bsrcset\\s*=\\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+    for (const candidate of (match[1] ?? match[2]).split(',')) add(candidate.trim().split(/\\s+/)[0]);
+  }
+  const cssBlocks = [...html.matchAll(/\\bstyle\\s*=\\s*(?:"([^"]*)"|'([^']*)')/gi)].map(m => m[1] ?? m[2]);
+  cssBlocks.push(...[...html.matchAll(/<style\\b[^>]*>([\\s\\S]*?)<\\/style>/gi)].map(m => m[1]));
+  for (const css of cssBlocks) {
+    for (const match of css.matchAll(/url\\(\\s*["']?([^"')]+)["']?\\s*\\)|@import\\s+["']([^"']+)["']/gi)) add(match[1] ?? match[2]);
+  }
+  for (const match of html.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)) {
+    for (const js of match[1].matchAll(/(?:fetch|import|Worker|SharedWorker|EventSource)\\s*\\(\\s*["']([^"']+)["']/g)) add(js[1]);
+    for (const js of match[1].matchAll(/(?:src|href)\\s*[:=]\\s*["']([^"']+)["']/gi)) add(js[1]);
+  }
+  for (const raw of references) {
+    if (raw.startsWith('#') || /^(?:https?:|mailto:|tel:|data:|blob:)/i.test(raw)) continue;
+    if (/^(?:javascript:|file:)/i.test(raw) || raw.startsWith('//')) throw new Error(`Unsafe local reference on ${route}: ${raw}`);
     let target;
     try { target = new URL(raw, base); } catch { throw new Error(`Invalid local reference on ${route}: ${raw}`); }
     if (target.origin !== new URL(origin).origin) continue;
-    const pathname = decodeURIComponent(target.pathname);
+    let pathname;
+    try { pathname = decodeURIComponent(target.pathname); } catch { throw new Error(`Invalid encoded local reference on ${route}: ${raw}`); }
+    if (pathname.split('/').includes('..')) throw new Error(`Traversal reference on ${route}: ${raw}`);
     const routeCandidate = pathname.endsWith('/') ? pathname : (path.extname(pathname) ? null : `${pathname}/`);
     if (routeCandidate && allowedRoutes.has(normalizeRoute(routeCandidate))) continue;
-    const assetCandidate = pathname.replace(/^\/+/, '');
+    const assetCandidate = pathname.replace(/^\\/+/, '');
     if (allowedAssets.has(assetCandidate)) continue;
     throw new Error(`Unapproved local destination on ${route}: ${raw}`);
   }
 }
 
 function ensureRegularFile(root, relative) {
-  const absolute = path.resolve(root, relative);
-  if (!absolute.startsWith(root + path.sep)) throw new Error(`Path escapes source root: ${relative}`);
+  const rootReal = fs.realpathSync(root);
+  const absolute = path.resolve(rootReal, relative);
+  if (!absolute.startsWith(rootReal + path.sep)) throw new Error(`Path escapes source root: ${relative}`);
+  let cursor = rootReal;
+  for (const part of path.relative(rootReal, absolute).split(path.sep)) {
+    cursor = path.join(cursor, part);
+    const stat = fs.lstatSync(cursor);
+    if (stat.isSymbolicLink()) throw new Error(`Symlink path component is not allowed: ${relative}`);
+  }
   const stat = fs.lstatSync(absolute);
-  if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`Expected regular file: ${relative}`);
+  if (!stat.isFile()) throw new Error(`Expected regular file: ${relative}`);
   return absolute;
 }
-
 export function buildPublicDist(root, out, contract) {
   const validated = validatePublicContract(contract);
   const origin = new URL(contract.canonicalOrigin);
