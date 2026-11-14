@@ -10,6 +10,9 @@ const requiredExclusions = [
   '*.sh', '*.py', '*.yml', '*.yaml', '*.toml', '*.jsonc', '*.lock', '*.map',
   'worker.js', 'wrangler.jsonc', 'android/', 'ios/', 'lib/', 'infra/', 'cloudflare/',
   'diagnostics/', 'integration-os/', 'admin-command-center/', 'economy-command-center/',
+  'integration-configurations/', 'integration-ids-register/', 'integration-links-register/',
+  'dashboard-integration-links/', 'exact-dashboard-links/', 'auth0-details/', 'auth0-implementation/',
+  'config/ops/', 'docs/ops/', 'docs/superpowers/',
   '.firebaserc',
   '.gitignore',
   '.gitattributes',
@@ -58,6 +61,9 @@ const requiredExclusions = [
 const requiredPublicFiles = [
   'index.html', '404.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest',
 ];
+const requiredPublicRoutes = [
+  '/integrations-readiness/', '/shopify-readiness/', '/exa-readiness/', '/integration-management/',
+];
 
 if (!fs.existsSync(configPath)) {
   errors.push('wrangler.jsonc: missing configuration');
@@ -103,6 +109,11 @@ if (!fs.existsSync(configPath)) {
             if (!Array.isArray(routes)) {
               errors.push('release manifest includedSurfaces must be an array');
             } else {
+              for (const publicRoute of requiredPublicRoutes) {
+                if (!routes.includes(publicRoute)) {
+                  errors.push(`release manifest must preserve customer-facing public route: ${publicRoute}`);
+                }
+              }
               for (const route of routes) {
                 const normalizedRoute = String(route).replace(/^\/+|\/+$/g, '');
                 for (const entry of entries) {
