@@ -57,10 +57,11 @@ test("readiness blocks on missing config and required dependencies", () => {
   const down = readiness({
     config,
     dependencies: {
-      d1: { required: true, status: "unavailable" },
-      firebase: { required: true, status: "unconfigured" },
-      analytics: { required: false, status: "unconfigured" },
+      d1: { status: "unavailable" },
+      firebase: { status: "unconfigured" },
+      analytics: { status: "unconfigured" },
     },
+    requiredDependencies: ["d1", "firebase"],
   });
   assert.equal(down.ok, false);
   assert.equal(down.checks[2].ready, true);
@@ -71,7 +72,8 @@ test("optional unconfigured dependencies do not block readiness", () => {
   const config = readStackConfig({ ENVIRONMENT: "staging" });
   const result = readiness({
     config,
-    dependencies: { analytics: { required: false, status: "unconfigured" } },
+    dependencies: { analytics: { status: "unconfigured" } },
+    requiredDependencies: [],
   });
   assert.equal(result.ok, true);
   assert.equal(result.status, "ready");
@@ -131,6 +133,7 @@ test("unknown gate IDs are rejected", () => {
 test("engine exposes deterministic liveness, readiness and manifest contracts", () => {
   const engine = createStackEngine({ ENVIRONMENT: "staging", STACK_ENGINE_VERSION: "0.1.0" });
   assert.equal(engine.liveness().status, "alive");
-  assert.equal(engine.readiness({}).status, "ready");
+  assert.equal(engine.readiness({}).status, "not_ready");
+  assert.equal(engine.readiness({ dependencies: {}, requiredDependencies: [] }).status, "ready");
   assert.equal(engine.manifest().version, "0.1.0");
 });
