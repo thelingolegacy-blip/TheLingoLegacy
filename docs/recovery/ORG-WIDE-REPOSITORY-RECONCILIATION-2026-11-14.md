@@ -151,3 +151,14 @@ Both projects report shared runners enabled, but neither sampled pipeline produc
 - Production: **PROTECTED HOLD**.
 
 The next highest-value action remains owner-level GitHub Actions account/org policy and usage/support diagnosis. After that, use the existing isolated hosted-runner probe once; only a successful hosted run with a real job, executed steps and retrievable evidence should unlock the single-host G02 repair path.
+
+
+### Vercel retirement reconciliation — duplicate projects and residual domain aliases
+
+A read-only Vercel account inventory found two separate teams with Git-linked projects for the same canonical GitHub repository:
+- Hobby team `shop-c54e0277`: project `the-lingo-legacy` (`prj_RnV4JIMVTcNcdJo0HqonCDI5uKI0`). Latest deployment is **BLOCKED**. Verified project domains include `launch.thelingolegacy.com` on branch `recovery/clean-room-rebuild-2026-10-25` and `studio-preview.thelingolegacy.com` on branch `studio/enterprise-environment-vnext-2026-10-24`. Latest attempted deployments reference `feature/lingomedia-creator-studio-zero-cost` and are blocked.
+- Pro team `thelingolegacy`: project `the-lingo-legacy` (`prj_bPadspr5TOkWEhhcQawWskGBQpuD`). Latest deployment is **READY** but is an older production deployment from 2026-08-01, commit `d73d8849c69113e05371602e9756831adb18d9ed`. Project metadata still lists `thelingolegacy.com` and `www.thelingolegacy.com` as aliases. The project-domain listing returned empty, so the current domain association requires dashboard verification before any removal.
+
+This confirms duplicate Vercel project ownership and stale Vercel deployment/domain metadata despite Cloudflare being the intended production edge. The Vercel commit-status failure is consistent with a lingering Git deployment integration. Do not delete either project or detach domains automatically: first verify Cloudflare apex/www and subdomain routes, active Worker ownership, DNS records, and any direct Vercel dependencies. Then retire the Vercel Git integration and stale project aliases in a controlled change, preserving Cloudflare routing. No Vercel project, domain, deployment, or integration was modified in this audit.
+
+**Vercel disposition: RETIREMENT RECONCILIATION REQUIRED; NOT YET DISCONNECTED.**
