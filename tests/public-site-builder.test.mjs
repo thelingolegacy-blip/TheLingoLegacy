@@ -97,3 +97,23 @@ test('rejects a symlink as an approved page source', (t) => {
   fs.symlinkSync(target, path.join(root, 'index.html'));
   assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }] }), /Expected regular file/);
 });
+
+test('rejects unquoted local attributes and srcset dependencies', () => {
+  assert.throws(() => validateHtmlReferences('<img src=/private.png>', '/', 'https://thelingolegacy.com', ['/'], []), /Unapproved local destination/);
+  assert.throws(() => validateHtmlReferences('<img srcset="/private-a.png 1x, /private-b.png 2x">', '/', 'https://thelingolegacy.com', ['/'], []), /Unapproved local destination/);
+});
+
+test('rejects CSS and JavaScript-loaded local dependencies outside the allowlist', () => {
+  assert.throws(() => validateHtmlReferences('<style>.hero{background:url(/private-bg.png)}</style>', '/', 'https://thelingolegacy.com', ['/'], []), /Unapproved local destination/);
+  assert.throws(() => validateHtmlReferences('<script>fetch("/private-api/data.json")</script>', '/', 'https://thelingolegacy.com', ['/'], []), /Unapproved local destination/);
+});
+
+test('rejects symlinked parent directories for approved sources', (t) => {
+  const { root, out } = fixture(t);
+  const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-outside-'));
+  t.after(() => fs.rmSync(outside, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(outside, 'index.html'), '<p>outside</p>');
+  fs.rmSync(path.join(root, 'index.html'));
+  fs.symlinkSync(outside, path.join(root, 'linked'), 'dir');
+  assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'linked/index.html', status: 'approved' }] }), /Symlink path component/);
+});
