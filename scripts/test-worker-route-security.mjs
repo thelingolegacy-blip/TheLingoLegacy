@@ -17,6 +17,20 @@ test('exact restricted registers and identity implementation paths are blocked',
   ]) assert.equal(isRestrictedPublicPath(path), true, path);
 });
 
+test('restricted register and identity paths also block nested files and assets', () => {
+  for (const path of [
+    '/integration-configurations/index.html',
+    '/integration-ids-register/register.json',
+    '/integration-links-register/export.csv',
+    '/dashboard-integration-links/index.html',
+    '/exact-dashboard-links/private.json',
+    '/auth0-details/index.html',
+    '/auth0-implementation/config.js',
+    '/admin-command-center/assets/app.js',
+    '/economy-command-center/index.html',
+  ]) assert.equal(isRestrictedPublicPath(path), true, path);
+});
+
 test('restricted operational prefixes match only complete path segments', () => {
   for (const path of ['/ops/', '/ops/secrets.json', '/config/ops/', '/docs/ops/runbook.md', '/docs/superpowers/spec.md']) {
     assert.equal(isRestrictedPublicPath(path), true, path);
