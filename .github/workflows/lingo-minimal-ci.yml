@@ -1,0 +1,71 @@
+name: Lingo Minimal CI (GitHub-hosted)
+
+on:
+  push:
+    branches:
+      - main
+      - 'fix/**'
+      - 'recovery/**'
+      - 'staging/**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-minimal-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-and-unit:
+    name: Static checks and available root tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: ${{ hashFiles('package.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install root dependencies when lockfile exists
+        if: ${{ hashFiles('package.json', 'package-lock.json') != '' }}
+        run: npm ci --ignore-scripts
+
+      - name: Run root lint when defined
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run lint --if-present
+
+      - name: Run root typecheck when defined
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run typecheck --if-present
+
+      - name: Run root tests when defined
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm test --if-present
+
+      - name: Static repository smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          echo "Repository checkout: OK"
+          echo "Tracked HTML files matching That’s My Lingo / casino paths:"
+          find . -type f \( -path '*/thats-my-lingo/*' -o -path '*/casino/*' \) -name '*.html' -print | head -50 || true
+          echo "Root package manifest: $([ -f package.json ] && echo present || echo absent)"
+          echo "Root package lock: $([ -f package-lock.json ] && echo present || echo absent)"
+
+      - name: Upload CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-minimal-ci-evidence
+          path: |
+            **/coverage/**
+            **/test-results/**
+            g02-evidence/**
+          if-no-files-found: ignore
