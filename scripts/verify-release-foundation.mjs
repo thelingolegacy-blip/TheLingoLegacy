@@ -19,6 +19,12 @@ for (const publisher of publishers.publishers) if (publisher.status !== 'OUTSTAN
 const firebaseOptions = fs.readFileSync('lib/firebase_options.dart', 'utf8');
 if (/YOUR_[A-Z0-9_]+/.test(firebaseOptions)) blockers.push('Firebase client configuration still contains placeholder values');
 const firebaseConfig = readJson('firebase.json');
+if (firebaseConfig.database?.rules !== 'database.rules.json') errors.push('Firebase Realtime Database rules must be explicitly configured');
+if (!fs.existsSync('database.rules.json')) errors.push('explicit Realtime Database rules file is missing');
+else {
+  const databaseRules = readJson('database.rules.json').rules;
+  if (databaseRules?.['.read'] !== false || databaseRules?.['.write'] !== false) errors.push('Realtime Database rules must remain default-deny until reviewed');
+}
 if (firebaseConfig.hosting?.public !== 'build/web') blockers.push('Firebase Hosting must serve only the generated Flutter web output');
 if (!fs.existsSync('firestore.rules')) errors.push('explicit Firestore rules file is missing');
 else if (!/allow read, write: if false/.test(fs.readFileSync('firestore.rules', 'utf8'))) errors.push('Firestore rules must remain default-deny until reviewed');
