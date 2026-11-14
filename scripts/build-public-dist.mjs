@@ -42,6 +42,29 @@ export function validatePublicContract(contract) {
   return { routes: [...seen].sort(), assets: [...assetSeen].sort() };
 }
 
+
+export function validateHtmlReferences(html, route, origin, approvedRoutes, assetFiles) {
+  const allowedRoutes = new Set(approvedRoutes.map(normalizeRoute));
+  const allowedAssets = new Set(assetFiles);
+  const base = new URL(route, origin);
+  for (const match of html.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
+    const raw = match[1].trim();
+    if (!raw || raw.startsWith('#') || /^(?:https?:|mailto:|tel:|data:)/i.test(raw)) continue;
+    if (/^(?:javascript:|blob:|file:)/i.test(raw) || raw.startsWith('//')) {
+      throw new Error(\`Unsafe local reference on \${route}: \${raw}\`);
+    }
+    let target;
+    try { target = new URL(raw, base); } catch { throw new Error(\`Invalid local reference on \${route}: \${raw}\`); }
+    if (target.origin !== new URL(origin).origin) continue;
+    const pathname = decodeURIComponent(target.pathname);
+    const routeCandidate = pathname.endsWith('/') ? pathname : (path.extname(pathname) ? null : \`\${pathname}/\`);
+    if (routeCandidate && allowedRoutes.has(normalizeRoute(routeCandidate))) continue;
+    const assetCandidate = pathname.replace(/^\/+/, '');
+    if (allowedAssets.has(assetCandidate)) continue;
+    throw new Error(\`Unapproved local destination on \${route}: \${raw}\`);
+  }
+}
+
 function ensureRegularFile(root, relative) {
   const absolute = path.resolve(root, relative);
   if (!absolute.startsWith(root + path.sep)) throw new Error(\`Path escapes source root: \${relative}\`);
@@ -52,6 +75,12 @@ function ensureRegularFile(root, relative) {
 
 export function buildPublicDist(root, out, contract) {
   const validated = validatePublicContract(contract);
+  const origin = new URL(contract.canonicalOrigin);
+  for (const entry of contract.approvedRoutes) {
+    const route = normalizeRoute(entry.path);
+    const source = ensureRegularFile(root, entry.source);
+    validateHtmlReferences(fs.readFileSync(source, 'utf8'), route, origin.origin, validated.routes, validated.assets);
+  }
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
   for (const entry of contract.approvedRoutes) {
@@ -67,7 +96,6 @@ export function buildPublicDist(root, out, contract) {
     fs.mkdirSync(path.dirname(destination), { recursive: true });
     fs.copyFileSync(source, destination);
   }
-  const origin = new URL(contract.canonicalOrigin);
   const urls = validated.routes.map(route => \`  <url><loc>\${origin.origin}\${route}</loc></url>\`).join('\n');
   fs.writeFileSync(path.join(out, 'sitemap.xml'), \`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\${urls}\n</urlset>\n\`);
   const policy = contract.crawlerPolicy || {};
