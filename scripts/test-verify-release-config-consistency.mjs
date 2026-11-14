@@ -48,8 +48,8 @@ const rootFiles = {
   'config/production/launch-foundation.json': JSON.stringify({ observability: { performanceMonitoring: 'Cloudflare deployment metadata; deployment status alone is not acceptance evidence' } }),
   'config/casino/master.json': JSON.stringify({ principles: { deployment: 'static-first Cloudflare Worker delivery', storagePlan: { relational: 'planned only; unverified', cache: 'planned only; unverified' } } }),
   '.github/workflows/production-promotion.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}',
-  '.github/workflows/g02-self-hosted-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]',
+  '.github/workflows/lingo-autorepair-deploy.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\nrunner_context_gate: ${{ steps.assert.outputs.runner_context_gate }}\nG02_RUNNER_ID_CAPTURE=NOT_PERFORMED\nG02_RUNNER_ID_VERIFICATION=INDEPENDENT_JOBS_API_REQUIRED\ndeploy-cloudflare:\n  needs: [runner-gate, repair]\nif: ${{ false }}',
+  '.github/workflows/g02-sentinel.yml': 'runs-on: [self-hosted, linux, x64, lingo-g02]\\nG02_RUNNER_CONTEXT_MATCH=PASS G02_SENTINEL_STEP_EXECUTION=OBSERVED G02_ACCEPTANCE=NOT_EVALUATED G02_RUNNER_ID_CAPTURE=NOT_PERFORMED G02_RUNNER_ID_VERIFICATION=INDEPENDENT_JOBS_API_REQUIRED',
   'SYSTEM-ACTIVATION-AUTHORITY.md': 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION',
   '.github/workflows/docker-image.yml': 'docker build --file ops/github-runner/Dockerfile ops/github-runner',
   'docker/README.md': 'application image intentionally not defined; does not publish an image',
@@ -95,4 +95,78 @@ test('configuration consistency fails closed on compatibility-date drift and hea
   assert.equal(report.status, 'FAIL');
   assert.ok(report.failures.includes('compatibility-date'));
   assert.ok(report.failures.includes('assets-frame-policy'));
+});
+
+
+test('configuration consistency rejects undocumented runner.id context access', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\n' + '$' + '{{ runner.id }}');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('runner-id-verification-boundary'));
+});
+
+test('configuration consistency requires the held deployment job to depend on runner and repair gates', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8').replace('needs: [runner-gate, repair]', 'needs: [runner-gate]'));
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('deployment-job-dependency'));
+});
+
+test('configuration consistency rejects write operations in the read-only surface gate', () => {
+  const result = run({ mutate(root) {
+    const gatePath = path.join(root, 'scripts/sanitize-cloudflare-only-surface.mjs');
+    fs.writeFileSync(gatePath, fs.readFileSync(gatePath, 'utf8') + '\nfs.writeFileSync("release.json", "{}");');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('surface-gate-read-only'));
+});
+
+test('configuration consistency rejects deployment commands in CircleCI validation config', () => {
+  const result = run({ mutate(root) {
+    const configPath = path.join(root, '.circleci/config.yml');
+    fs.writeFileSync(configPath, 'workflows:\n  deploy:\n    jobs:\n      - run: wrangler deploy');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('circleci-is-validation-only'));
+});
+
+
+test('configuration consistency rejects a false claim that the workflow captured runner ID from the Jobs API', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    const source = fs.readFileSync(workflowPath, 'utf8');
+    fs.writeFileSync(workflowPath, source.replace('G02_RUNNER_ID_CAPTURE=NOT_PERFORMED', 'G02_RUNNER_ID_SOURCE=GITHUB_ACTIONS_JOBS_API'));
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('runner-id-verification-boundary'));
+});
+
+test('configuration consistency rejects sentinel output that claims independent runner assignment', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/g02-sentinel.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\nG02_RUNNER_ASSIGNMENT=PASS');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('sentinel-does-not-claim-independent-assignment'));
+});
+
+
+test('configuration consistency rejects auto-repair output that claims independent runner assignment', () => {
+  const result = run({ mutate(root) {
+    const workflowPath = path.join(root, '.github/workflows/lingo-autorepair-deploy.yml');
+    fs.writeFileSync(workflowPath, fs.readFileSync(workflowPath, 'utf8') + '\nG02_RUNNER_ASSIGNMENT=PASS');
+  }});
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.failures.includes('auto-repair-does-not-claim-independent-assignment'));
 });

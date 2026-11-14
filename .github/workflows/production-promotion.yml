@@ -23,7 +23,9 @@ env:
 
 jobs:
   runner-gate:
-    # G02 is the authoritative runner boundary. Do not substitute a GitHub-hosted runner.
+    # SECURITY HOLD: public-repository workflows cannot dispatch onto the privileged persistent G02 host.
+    # Re-enable only through the approved private control plane after host isolation review.
+    if: ${{ false }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     outputs:

@@ -53,6 +53,7 @@ const requiredExclusions = [
   '*.sqlite',
   '*.db',
   'firebase.json', 'firebase.client.json', 'firebase-worker.js', 'gateway-router.js',
+  '**/firebase-functions/', '**/*.rules', '**/tsconfig.json', '**/catalog-seed.json',
   'pubspec.yaml', '_headers', '_redirects',
 ];
 const requiredPublicFiles = [
