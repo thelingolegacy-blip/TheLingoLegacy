@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "lingo-legacy-master-registry",
+  "generatedAt": "2026-11-08",
+  "status": "inventory-baseline",
+  "authority": {
+    "sourceOfTruth": "GitHub",
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "branch": "main",
+    "workingBranch": "feat/lingo-master-registry-wave0-2026-11-08",
+    "productionState": "protected-hold",
+    "releasePromotion": "not-authorized"
+  },
+  "principles": [
+    "Observed deployment is not proof of production readiness",
+    "Unknown or unverified fields remain explicit",
+    "No production mutation without change-specific authorization and evidence",
+    "Free-tier-first; no new paid services without cost approval"
+  ],
+  "architectureChain": [
+    "product",
+    "surface",
+    "repository",
+    "runtime",
+    "route",
+    "api",
+    "identity",
+    "database",
+    "assets",
+    "tests",
+    "releaseGate",
+    "operations"
+  ],
+  "technologyStack": [
+    {
+      "id": "source-control",
+      "provider": "GitHub",
+      "role": "canonical-source-and-change-history",
+      "status": "connected",
+      "evidence": "Repository accessible; 768-entry main tree inspected"
+    },
+    {
+      "id": "edge-runtime",
+      "provider": "Cloudflare Workers",
+      "role": "edge-routing-and-web-runtime",
+      "status": "connected-inventory-read",
+      "evidence": "Active zone and Worker inventory read"
+    },
+    {
+      "id": "identity-data",
+      "provider": "Firebase",
+      "role": "authentication-firestore-storage-functions",
+      "status": "configured-in-repository-unverified-at-runtime",
+      "evidence": "firebase.json and .firebaserc present; runtime security and service health not certified"
+    },
+    {
+      "id": "mobile",
+      "provider": "Flutter",
+      "role": "ios-android-client",
+      "status": "source-present-build-unverified",
+      "evidence": "pubspec.yaml, android and ios project paths present"
+    },
+    {
+      "id": "game-engine",
+      "provider": "Unity",
+      "role": "game-runtime-target",
+      "status": "planned-or-project-specific",
+      "evidence": "No live engine build certification established"
+    },
+    {
+      "id": "staging-apps",
+      "provider": "AppDeploy",
+      "role": "isolated-staging-builds",
+      "status": "connected-free-plan-credit-state-conflict",
+      "evidence": "2026-11-09 account overview: Free plan, 20.892937682 monthly credits available (reset 2026-11-17T00:00:00Z), zero top-up credits; all 18 apps returned ready. Per-app status responses still append an exhausted-credit alert. Treat build capacity as unreconciled; no build or deployment was attempted."
+    },
+    {
+      "id": "commerce",
+      "provider": "Shopify-and-Stripe",
+      "role": "commerce-and-payment-processing",
+      "status": "gated-unverified",
+      "evidence": "No live payment or commerce activation authorized"
+    },
+    {
+      "id": "ai",
+      "provider": "LLG AI gateway",
+      "role": "multi-provider-ai-orchestration",
+      "status": "architecture-defined-integration-unverified",
+      "evidence": "Provider adapters and gateway require independent endpoint and secret validation"
+    }
+  ],
+  "productGroups": [
+    {
+      "id": "LINGOlegacy_MASTER",
+      "role": "governance-brand-legal-creative-engineering-operations",
+      "products": [
+        "master-registry",
+        "master-control-center",
+        "release-governance",
+        "operations-runbooks"
+      ]
+    },
+    {
+      "id": "LINGOlegacy",
+      "role": "flagship-identity-account-wallet-community",
+      "products": [
+        "flagship-website",
+        "LINGO-ID",
+        "universal-legacy-wallet",
+        "community"
+      ]
+    },
+    {
+      "id": "LINGOlane",
+      "role": "designs-promotions-apparel-laundry-cycle",
+      "products": [
+        "Loyalty Lane Designs & Promotions",
+        "Loyalty Lane Apparel",
+        "Loyalty Lane Cycles"
+      ]
+    },
+    {
+      "id": "LINGOslots",
+      "role": "casino-and-card-games",
+      "products": [
+        "That’s My Lingo",
+        "Spades Is My Lingo",
+        "Uhno Lingo U-No",
+        "Lingo Lions Eruptions",
+        "Cashman Lingo Mania"
+      ]
+    },
+    {
+      "id": "LINGOarcade",
+      "role": "arcade-games",
+      "products": [
+        "Tricias Escape",
+        "Doughboys Oasis",
+        "Crazy Weasols",
+        "Silly in Philly",
+        "Jersey Shore: The Undead"
+      ]
+    },
+    {
+      "id": "LINGOlibrary",
+      "role": "books-and-learning-ip",
+      "products": [
+        "KottonsCode",
+        "The Block I Grew Up On",
+        "Say It Again",
+        "Dice Shift Hotel",
+        "Legacy Legends"
+      ]
+    },
+    {
+      "id": "LINGOmedia",
+      "role": "film-and-media",
+      "products": [
+        "Rise of Zavione P1",
+        "Rise of Zavione P2"
+      ]
+    },
+    {
+      "id": "LINGOworld",
+      "role": "shared-digital-services",
+      "products": [
+        "LINGOai",
+        "askLINGO",
+        "LINGOboom",
+        "LINGOtravel",
+        "LINGOcampus",
+        "LINGOsupport",
+        "LINGOwifi",
+        "LINGOvoice",
+        "LINGOshield",
+        "LINGOlounge",
+        "LINGOdonations"
+      ]
+    },
+    {
+      "id": "LegacyXclub",
+      "role": "community-and-membership",
+      "products": [
+        "LegacyXclub"
+      ]
+    }
+  ],
+  "observedCloudflare": {
+    "zone": "thelingolegacy.com",
+    "zoneId": "91c3f6315fb3ca132b22744721103f88",
+    "zoneStatus": "active",
+    "workerAccountId": "16cb6f247cd1b28fca864760c7269606",
+    "workers": [
+      {
+        "name": "thelingolegacyv-5",
+        "role": "wildcard-and-subdomain-routing",
+        "latestUploadedVersion": 269,
+        "versionDeployedStatus": "unverified"
+      },
+      {
+        "name": "lingo-flagship-root",
+        "role": "exact-apex-root-route",
+        "latestUploadedVersion": 2,
+        "versionDeployedStatus": "unverified"
+      },
+      {
+        "name": "lingo-ecosystem-atlas",
+        "role": "atlas-subdomain",
+        "versionDeployedStatus": "route-observed"
+      },
+      {
+        "name": "lingo-static-backup-proxy",
+        "role": "launch-subdomain",
+        "versionDeployedStatus": "route-observed"
+      },
+      {
+        "name": "lingo-legacy-studio-build",
+        "role": "isolated-studio-build",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-flagship-site-preview",
+        "role": "flagship-preview",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-game-engine-staging",
+        "role": "game-engine-staging",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-studio-control-center-staging",
+        "role": "read-only-studio-control-center",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-world-engine-staging",
+        "role": "read-only-world-engine",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "lingo-release-candidate-validation-20261104",
+        "role": "release-candidate-validation",
+        "versionDeployedStatus": "no-production-route-observed"
+      },
+      {
+        "name": "thelingolegacy-web-recovery-preview",
+        "role": "web-recovery-preview",
+        "versionDeployedStatus": "no-production-route-observed"
+      }
+    ],
+    "routingFindings": [
+      {
+        "pattern": "thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "status": "observed"
+      },
+      {
+        "pattern": "thelingolegacy.com/",
+        "script": "lingo-flagship-root",
+        "status": "overlap-requires-precedence-validation"
+      },
+      {
+        "pattern": "www.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "status": "observed"
+      },
+      {
+        "pattern": "atlas.thelingolegacy.com/*",
+        "script": "lingo-ecosystem-atlas",
+        "status": "observed"
+      },
+      {
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy",
+        "status": "observed"
+      }
+    ],
+    "dnsFindings": [
+      {
+        "name": "thelingolegacy.com",
+        "type": "A",
+        "content": "192.0.2.0",
+        "proxied": true,
+        "status": "observed-placeholder-address-requires-review"
+      },
+      {
+        "name": "www.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "thelingolegacy.com",
+        "proxied": true,
+        "status": "observed"
+      },
+      {
+        "name": "studio-preview.thelingolegacy.com",
+        "type": "AAAA",
+        "content": "100::",
+        "proxied": true,
+        "status": "observed"
+      },
+      {
+        "name": "admin.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "admin-thelingolegacy.firebaseapp.com",
+        "proxied": false,
+        "status": "observed"
+      },
+      {
+        "name": "app.thelingolegacy.com",
+        "type": "CNAME",
+        "content": "my-flutter-app.pages.dev",
+        "proxied": false,
+        "status": "observed"
+      }
+    ]
+  },
+  "observedAppDeployApps": [
+    {
+      "id": "lingo-legacy-studio-hub-nhda3b",
+      "name": "LINGO Studio Hub",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "jersey-shore-the-undead-l4h5ea",
+      "name": "Jersey Shore: The Undead",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "crazy-weasels-0j3ujc",
+      "name": "Crazy Weasols",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-enterprise-control-center-qos4ix",
+      "name": "LINGO Enterprise Control Center",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingolegacy-universe-gateway-h6kqu4",
+      "name": "LINGOlegacy Universe Gateway",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingoloyalty-staging-preview-x4ld0h",
+      "name": "LINGOloyalty | Staging Preview",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-ai-sonic-boom-2030-7plgl2",
+      "name": "LINGO AI Sonic Boom",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-master-project-plan-rkh6r6",
+      "name": "LINGO Legacy Master Project Plan",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "hello-the-lingo-legacy-ois1rj",
+      "name": "Hello The Lingo Legacy",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "that-s-my-lingo-casino-studio-2xntye",
+      "name": "That’s My Lingo",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-universe-rpekc0",
+      "name": "LINGO Legacy Universe",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "the-lingo-legacy-y67ewl",
+      "name": "The Lingo Legacy Flagship",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "obsidian-closet-design-studio-zk6va7",
+      "name": "Obsidian Closet & Design Studio",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "the-lingo-legacy-hq-vhjt6i",
+      "name": "The Lingo Legacy HQ",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "kotton-s-code-cartoon-studio-509py3",
+      "name": "Kotton’s Code Cartoon Studio",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "loyalty-lane-community-hub-zb39n2",
+      "name": "Loyalty Lane Community Hub",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-legacy-verification-bridge-wwagn2",
+      "name": "Lingo Legacy Verification Bridge",
+      "status": "deployed-staging"
+    },
+    {
+      "id": "lingo-traveltm-uyd57n",
+      "name": "Lingo Travel",
+      "status": "deployed-staging"
+    }
+  ],
+  "releaseControls": {
+    "criticalGatePolicy": "ALL_CRITICAL_GATES_PASS",
+    "criticalGates": [
+      "source",
+      "build",
+      "tests",
+      "security",
+      "secrets",
+      "routes",
+      "interactions",
+      "apis",
+      "identity",
+      "games",
+      "commerce",
+      "assets",
+      "audio",
+      "motion",
+      "accessibility",
+      "performance",
+      "cloudflare",
+      "live-probes",
+      "rollback"
+    ],
+    "notRunCriticalBlocksPromotion": true,
+    "productionPromotionAuthorized": false
+  },
+  "knownBlockers": [
+    {
+      "id": "G02-CI-STARTUP",
+      "status": "fail",
+      "evidence": "PR #508 workflow runs 42530658034 and 42530658880 concluded startup_failure; first inspected run instantiated zero jobs"
+    },
+    {
+      "id": "APPDEPLOY-CREDITS",
+      "status": "blocked",
+      "evidence": "AppDeploy reported exhausted credit balance"
+    },
+    {
+      "id": "CLOUDFLARE-ROUTE-PRECEDENCE",
+      "status": "specificity-documented-smoke-required",
+      "evidence": "Live routes show thelingolegacy.com/ and thelingolegacy.com/* assigned to different Workers; Cloudflare documents most-specific matching route wins, but root/nested HTTP smoke remains required."
+    },
+    {
+      "id": "CLOUDFLARE-VERSION-RECONCILIATION",
+      "status": "verified-active-version-drift",
+      "evidence": "Active deployments are verified at 100% traffic; primary Worker serves v137 while uploaded v270 is newer; root Worker serves v1 while uploaded v2 is newer."
+    },
+    {
+      "id": "GATEWAY-APP-QA",
+      "status": "fail",
+      "evidence": "Universe Gateway staging QA reported missing Next.js chunks and 404 route-not-registered responses"
+    },
+    {
+      "id": "FIREBASE-PLACEHOLDER-CONFIG",
+      "status": "blocked",
+      "evidence": "firebase.client.json and lib/firebase_options.dart contain placeholder API keys/app IDs; runtime project identity and platform app registration unverified"
+    },
+    {
+      "id": "FIREBASE-HOSTING-SCOPE",
+      "status": "review-required",
+      "evidence": "firebase.json hosting.public is repository root '.'; confirm intended static publish scope and explicit excludes before any deployment"
+    },
+    {
+      "id": "MAIN-BRANCH-PROTECTION",
+      "status": "gap",
+      "evidence": "read-only GitHub branch API reports protected=false and required status checks enforcement off"
+    },
+    {
+      "id": "CLOUDFLARE-DEPLOYED-VERSION-137",
+      "status": "confirmed-old-deployed-version",
+      "evidence": "Read-only version-detail endpoint resolves active deployment version ID to thelingolegacyv-5 v137 while v270 is latest uploaded; root Worker deployment resolves to v1 while v2 is latest uploaded"
+    },
+    {
+      "id": "CLOUDFLARE-APEX-TEST-NET-ORIGIN",
+      "status": "critical",
+      "evidence": "Live proxied apex A record is 192.0.2.0, within RFC 5737 TEST-NET-1 documentation block; any origin fallback requires verified origin mapping."
+    },
+    {
+      "id": "CLOUDFLARE-WRANGLER-ROUTE-DRIFT",
+      "status": "verified-drift",
+      "evidence": "wrangler.jsonc declares 2 routes while 18 live routes are assigned to thelingolegacyv-5; 16 live subdomain routes are not declared. Preserve live route set pending reviewed reconciliation."
+    }
+  ],
+  "acceptance": {
+    "registryReviewRequired": true,
+    "independentVerificationRequired": true,
+    "allUnknownsRemainUnverified": true
+  },
+  "productInventory": [
+    {
+      "division": "LINGOlegacy_MASTER",
+      "product": "master-registry",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy_MASTER",
+      "product": "master-control-center",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy_MASTER",
+      "product": "release-governance",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy_MASTER",
+      "product": "operations-runbooks",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy",
+      "product": "flagship-website",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy",
+      "product": "LINGO-ID",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy",
+      "product": "universal-legacy-wallet",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlegacy",
+      "product": "community",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlane",
+      "product": "Loyalty Lane Designs & Promotions",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlane",
+      "product": "Loyalty Lane Apparel",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlane",
+      "product": "Loyalty Lane Cycles",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOslots",
+      "product": "That’s My Lingo",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOslots",
+      "product": "Spades Is My Lingo",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOslots",
+      "product": "Uhno Lingo U-No",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOslots",
+      "product": "Lingo Lions Eruptions",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOslots",
+      "product": "Cashman Lingo Mania",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOarcade",
+      "product": "Tricias Escape",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOarcade",
+      "product": "Doughboys Oasis",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOarcade",
+      "product": "Crazy Weasols",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOarcade",
+      "product": "Silly in Philly",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOarcade",
+      "product": "Jersey Shore: The Undead",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlibrary",
+      "product": "KottonsCode",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlibrary",
+      "product": "The Block I Grew Up On",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlibrary",
+      "product": "Say It Again",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlibrary",
+      "product": "Dice Shift Hotel",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOlibrary",
+      "product": "Legacy Legends",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOmedia",
+      "product": "Rise of Zavione P1",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOmedia",
+      "product": "Rise of Zavione P2",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOai",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "askLINGO",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOboom",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOtravel",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOcampus",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOsupport",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOwifi",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOvoice",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOshield",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOlounge",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LINGOworld",
+      "product": "LINGOdonations",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    },
+    {
+      "division": "LegacyXclub",
+      "product": "LegacyXclub",
+      "owner": "not-recorded-in-canonical-registry",
+      "repositoryPath": "not-mapped",
+      "publicSurface": "not-verified",
+      "runtime": "not-verified",
+      "apiContract": "not-verified",
+      "releaseGate": "not-certified"
+    }
+  ],
+  "liveObservations": {
+    "refreshedAt": "2026-11-08T23:50:00Z",
+    "cloudflare": {
+      "accountId": "16cb6f247cd1b28fca864760c7269606",
+      "zoneId": "91c3f6315fb3ca132b22744721103f88",
+      "routeCount": 21,
+      "primaryWorker": {
+        "name": "thelingolegacyv-5",
+        "latestUploadedVersion": 270,
+        "latestUploadedVersionId": "d17ceee2-d8ab-4c30-8b8a-b8f87bd5f398",
+        "latestDeploymentId": "ecd71a70-e476-4318-92a7-35249ced360b",
+        "deploymentVersionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "deploymentCreatedAt": "2026-10-25T16:21:58.131638Z",
+        "status": "confirmed-deployed-v137; latest-upload-v270-not-active",
+        "deployedVersionNumber": 137,
+        "deployedVersionMetadata": {
+          "createdOn": "2026-10-25T14:04:26.30168Z",
+          "source": "wrangler",
+          "etag": "702fa998403473b1536e7a43abc58ac16a77d16821915b71ea66a0221e73e85c",
+          "bindings": [
+            "ASSETS",
+            "CANONICAL_DOMAIN",
+            "PUBLIC_SITE_URL"
+          ],
+          "compatibilityDate": "2026-09-01",
+          "observabilityEnabled": true
+        }
+      },
+      "rootWorker": {
+        "name": "lingo-flagship-root",
+        "latestUploadedVersion": 2,
+        "latestUploadedVersionId": "1009da37-9128-44c2-9853-f277eb791c31",
+        "latestDeploymentId": "31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3",
+        "deploymentVersionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "status": "confirmed-deployed-v1; latest-upload-v2-not-active",
+        "deployedVersionNumber": 1,
+        "deployedVersionMetadata": {
+          "createdOn": "2026-10-25T16:38:23.673538Z",
+          "source": "api",
+          "etag": "763efc28368aa4585b0e92bcd546918d69acfe10f05e1ed099c66fde6a7005a8",
+          "bindings": [],
+          "compatibilityDate": "2026-09-01",
+          "observability": "not-configured"
+        }
+      },
+      "dnsCriticalFindings": [
+        {
+          "name": "thelingolegacy.com",
+          "type": "A",
+          "content": "192.0.2.0",
+          "proxied": true,
+          "status": "TEST-NET-1 documentation address; origin mapping must be confirmed before any change"
+        },
+        {
+          "name": "app.thelingolegacy.com",
+          "type": "CNAME",
+          "content": "my-flutter-app.pages.dev",
+          "proxied": false,
+          "status": "target identity and current build unverified"
+        },
+        {
+          "name": "admin.thelingolegacy.com",
+          "type": "CNAME",
+          "content": "admin-thelingolegacy.firebaseapp.com",
+          "proxied": false,
+          "status": "target identity and Firebase project reconciliation pending"
+        },
+        {
+          "name": "_dmarc.thelingolegacy.com",
+          "type": "TXT",
+          "content": "v=DMARC1; p=none",
+          "status": "monitoring-only policy; mail-security review required"
+        },
+        {
+          "name": "_vercel.thelingolegacy.com",
+          "type": "TXT",
+          "content": "two Vercel verification records observed",
+          "status": "legacy provider drift; do not delete without ownership and dependency confirmation"
+        }
+      ],
+      "routeConflicts": [
+        {
+          "patterns": [
+            "thelingolegacy.com/*",
+            "thelingolegacy.com/"
+          ],
+          "scripts": [
+            "thelingolegacyv-5",
+            "lingo-flagship-root"
+          ],
+          "status": "overlap/precedence requires explicit test"
+        }
+      ]
+    },
+    "firebase": {
+      "repositoryDefaultProject": "lingo-legacy-production",
+      "runtimeProjectIdentity": "unverified",
+      "firebaseClientConfig": "placeholder-api-key-and-app-identifiers",
+      "flutterFirebaseOptions": "placeholder-api-keys-and-app-ids",
+      "rootHostingPublicDirectory": ".",
+      "rootFirestoreRules": "not-found-at-repository-root",
+      "nestedOasisFirestoreRules": "present-under-studio-sites/games/oasis-platform/firebase-functions/firestore.rules",
+      "status": "BLOCKED_CONFIG_AND_PROJECT_IDENTITY_RECONCILIATION"
+    },
+    "github": {
+      "mainBranchProtection": "API-read reports protected=false and required checks off",
+      "g02LatestObservedRuns": [
+        "42536863874",
+        "42536864634",
+        "42536862999",
+        "42536631210"
+      ],
+      "g02Disposition": "FAIL_UNVERIFIED",
+      "latestStaticCiJobs": 0,
+      "latestObservedStartupFailureRuns": [
+        {
+          "workflow": "Lingo Legacy Static CI",
+          "runId": 42556911824,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Crimson Smoke UI — static validation",
+          "runId": 42556913021,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "G02 Runner Image Build (no publish)",
+          "runId": 42556910880,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Lingo Legacy Static CI",
+          "runId": 42556974712,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "Crimson Smoke UI — static validation",
+          "runId": 42556973743,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        },
+        {
+          "workflow": "G02 Runner Image Build (no publish)",
+          "runId": 42556972870,
+          "conclusion": "startup_failure",
+          "jobs": 0,
+          "artifacts": 0
+        }
+      ]
+    }
+  },
+  "observedAppDeployAudit": {
+    "observedAt": "2026-11-09",
+    "accountPlan": "free",
+    "monthlyCreditsAvailable": "20.892937682",
+    "monthlyCreditsResetAt": "2026-11-17T00:00:00Z",
+    "topUpCreditsAvailable": "0",
+    "accountOverviewAppCount": 18,
+    "appStatusReadyCount": 18,
+    "storedQaSnapshotFrontendErrors": 0,
+    "storedQaSnapshotNetworkErrors": 0,
+    "qaSnapshotWindowUtc": {
+      "earliest": "2026-09-03T04:15:28Z",
+      "latest": "2026-11-05T00:10:05Z"
+    },
+    "latestCompleteDayUtc": "2026-11-08",
+    "pageViewsByApp": 0,
+    "perAppStatusCreditAlert": "exhausted-credit-alert-conflicts-with-positive-account-overview-balance",
+    "storedFrontendErrorApps": [
+      {
+        "appId": "lingolegacy-universe-gateway-h6kqu4",
+        "count": 10,
+        "latestObservedUtc": "2026-11-06T03:34:38Z"
+      },
+      {
+        "appId": "kotton-s-code-cartoon-studio-509py3",
+        "count": 5,
+        "latestObservedUtc": "2026-11-06T03:07:30Z"
+      },
+      {
+        "appId": "lingo-traveltm-uyd57n",
+        "count": 2,
+        "latestObservedUtc": "older-than-2026-11-06"
+      }
+    ],
+    "disposition": "read-only; app ready status and stored QA snapshot do not certify product acceptance; credit-state conflict must be reconciled before additional build/deploy attempts",
+    "independentBrowserProbe": {
+      "observedAt": "2026-11-09",
+      "urlsAttempted": 4,
+      "urls": [
+        "Kotton's Code Cartoon Studio",
+        "LINGOlegacy Universe Gateway",
+        "Lingo Travel",
+        "LINGO Studio Hub"
+      ],
+      "result": "inaccessible-from-browser-tool-vantage",
+      "outageConclusion": "not-established",
+      "resourceOnlyInventory": {
+        "kottonsCode": [
+          "public/resources/KottonsCode-world-1.jpeg",
+          "public/resources/KottonsCode-world-2.jpeg",
+          "public/resources/KottonsCode-world-3.jpeg",
+          "public/resources/KottonsCode-world-4.jpeg"
+        ],
+        "universeGateway": [],
+        "lingoTravel": []
+      },
+      "disposition": "do not delete or regenerate Kotton assets; investigate preview host/runtime mapping; no deployment or route mutation"
+    }
+  }
+}

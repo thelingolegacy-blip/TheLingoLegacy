@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "llg-plugin-integration-registry",
+  "status": "proposal",
+  "authority": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "sourceOfTruth": "GitHub",
+    "productionState": "protected-hold"
+  },
+  "lifecycle": [
+    "discovered",
+    "evaluating",
+    "approved_for_staging",
+    "staging_verified",
+    "approved_for_production",
+    "production",
+    "degraded",
+    "suspended",
+    "retired"
+  ],
+  "requiredRecordFields": [
+    "id",
+    "provider",
+    "service",
+    "purpose",
+    "products",
+    "owner",
+    "officialDocs",
+    "termsUrl",
+    "dataClasses",
+    "dataFields",
+    "dataDirection",
+    "dataResidency",
+    "retention",
+    "deletionMethod",
+    "authMethod",
+    "oauthScopes",
+    "credentialOwner",
+    "rotationPlan",
+    "revocationPlan",
+    "threatModel",
+    "securityReview",
+    "legalReview",
+    "pricingPlan",
+    "freeQuota",
+    "usageCeiling",
+    "budgetOwner",
+    "rateLimits",
+    "retryPolicy",
+    "idempotency",
+    "fallback",
+    "status",
+    "evidence",
+    "reviewedAt",
+    "approvedBy",
+    "changeHistory"
+  ],
+  "policy": {
+    "secretsStored": false,
+    "thirdPartyPasswordsCollected": false,
+    "productionByDefault": false,
+    "leastPrivilege": true,
+    "explicitUserAuthorization": true,
+    "stagingBeforeProduction": true,
+    "costApprovalRequired": true,
+    "legalReviewRequired": true
+  },
+  "entries": [
+    {
+      "id": "github-source",
+      "provider": "GitHub",
+      "service": "GitHub repository and review workflows",
+      "purpose": "Canonical source control and change evidence",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-read-surface",
+      "approval": "Existing connection; specific scopes and protections require verification"
+    },
+    {
+      "id": "cloudflare-edge",
+      "provider": "Cloudflare",
+      "service": "Workers and DNS",
+      "purpose": "Authoritative edge and public routing",
+      "products": [
+        "LINGOlegacy",
+        "LINGOworld"
+      ],
+      "status": "connected-inventory-read",
+      "approval": "Production mutation not authorized"
+    },
+    {
+      "id": "firebase-identity-candidate",
+      "provider": "Google Firebase",
+      "service": "Firebase Authentication and data services",
+      "purpose": "Candidate identity/data provider",
+      "products": [
+        "LINGOlegacy"
+      ],
+      "status": "blocked-project-identity",
+      "approval": "Do not enable until project ownership and backend ADR resolve #469 and #515"
+    },
+    {
+      "id": "supabase-backend-candidate",
+      "provider": "Supabase",
+      "service": "Supabase Postgres and Edge Functions",
+      "purpose": "Candidate transactional backend",
+      "products": [
+        "LINGOlegacy"
+      ],
+      "status": "connected-project-discovered-architecture-unresolved",
+      "approval": "Project is reachable and reports ACTIVE_HEALTHY; purpose, data ownership, Firebase-vs-Supabase authority, and security review remain unresolved.",
+      "projectId": "zoksxavxmgnkrthselek",
+      "projectStatus": "ACTIVE_HEALTHY",
+      "region": "us-west-2"
+    },
+    {
+      "id": "amplitude-analytics",
+      "provider": "Amplitude",
+      "service": "Product analytics",
+      "purpose": "Governed analytics and measurement",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-discovered-not-approved",
+      "projectId": "902649",
+      "projectName": "default",
+      "observedEvents": 0,
+      "approval": "Owner mapping, privacy review, event taxonomy, retention and cost ceiling required before instrumentation"
+    },
+    {
+      "id": "appdeploy-staging",
+      "provider": "AppDeploy",
+      "service": "App staging and previews",
+      "purpose": "Isolated prototype/staging runtime",
+      "products": [
+        "LINGOlegacy_MASTER"
+      ],
+      "status": "connected-account-ambiguity",
+      "approval": "Three account links previously resolved to two distinct user identities; select intended account and reconcile app inventory before writes or deployments."
+    },
+    {
+      "id": "shopify-commerce",
+      "provider": "Shopify",
+      "service": "Loyalty Lane storefront",
+      "purpose": "Apparel commerce",
+      "products": [
+        "LINGOlane"
+      ],
+      "status": "connected-store-inventory-read",
+      "approval": "Loyalty Lane store reachable; catalog, public copy, fulfillment, tax and commerce approvals required before changes.",
+      "storePlan": "Advanced",
+      "currency": "USD",
+      "timezone": "EST"
+    },
+    {
+      "id": "stripe-payments",
+      "provider": "Stripe",
+      "service": "Payment processing",
+      "purpose": "Approved founder/support/commerce payments",
+      "products": [
+        "LINGOlane"
+      ],
+      "status": "test-mode-only",
+      "approval": "No live payment activation authorized"
+    }
+  ],
+  "note": "Provider records are initial inventory observations, not legal/security certification. Populate full required fields and attach evidence before lifecycle promotion.",
+  "observedIntegrations": {
+    "observedAt": "2026-11-09",
+    "observationType": "read-only-connector-discovery",
+    "warning": "Reachable connector identity or inventory does not prove application-to-application wiring, production approval, legal/security certification, or runtime health.",
+    "records": [
+      {
+        "id": "datadog-observability",
+        "provider": "Datadog",
+        "service": "Dashboards and observability queries",
+        "purpose": "Service telemetry and operational monitoring",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "connected-inventory-read",
+        "observedCapabilities": [
+          "Dashboard discovery: system metrics, disk I/O, networking, host counts, reliability, audit trail"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "No LINGO service mapping, monitor ownership, SLO, alert routing, or production telemetry validation yet."
+      },
+      {
+        "id": "figma-design",
+        "provider": "Figma",
+        "service": "Design files and design system",
+        "purpose": "Product UI, design systems, and implementation handoff",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "connected-inventory-read",
+        "observedCapabilities": [
+          "Starter team; View seat; Code Layers enabled"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "File-level edit access and approved design-to-code workflow must be verified before writes."
+      },
+      {
+        "id": "canva-creative",
+        "provider": "Canva",
+        "service": "Brand and creative assets",
+        "purpose": "Brand governance, presentations, campaign and product creative",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "connected-inventory-read",
+        "observedCapabilities": [
+          "LINGO Legacy Master Identity; Launch Master; Creative Governance Standard; That’s My Lingo lookbooks"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "No asset rights review, canonical-folder reconciliation, or design mutation performed."
+      },
+      {
+        "id": "gitlab-mirror-candidate",
+        "provider": "GitLab",
+        "service": "GitLab profile and potential mirror/CI",
+        "purpose": "Optional engineering mirror or independent CI candidate",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "connected-profile-only",
+        "observedCapabilities": [
+          "Authenticated profile reachable"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "No canonical project, repository mirror, pipeline, or deployment authority assigned; GitHub remains source of truth."
+      },
+      {
+        "id": "monday-work-management",
+        "provider": "monday.com",
+        "service": "Work management account",
+        "purpose": "Potential portfolio planning and task coordination",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "connected-no-board-mapped",
+        "observedCapabilities": [
+          "Account reachable; one active member; no relevant boards surfaced in user context"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "Do not create or modify boards until existing workspaces/boards are reconciled and selected."
+      },
+      {
+        "id": "replit-game-runtime",
+        "provider": "Replit",
+        "service": "Lingo Legacy Gaming app",
+        "purpose": "Game prototype and development runtime",
+        "products": [
+          "LINGOarcade",
+          "LINGOslots"
+        ],
+        "status": "connected-app-discovered",
+        "observedCapabilities": [
+          "Lingo Legacy Gaming app visible"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "App ownership, source synchronization, secrets, runtime dependencies, and deployment posture require review before edits or publishing."
+      },
+      {
+        "id": "higgsfield-creative",
+        "provider": "Higgsfield",
+        "service": "AI image and video creative workspace",
+        "purpose": "Governed cinematic and marketing asset production",
+        "products": [
+          "LINGOmedia",
+          "LINGOarcade",
+          "LINGOslots"
+        ],
+        "status": "connected-credit-limited",
+        "observedCapabilities": [
+          "Private Free workspace; 10 credits observed"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "No generation or credit use; asset rights, prompt privacy, and cost/credit limits require approval."
+      },
+      {
+        "id": "hubspot-crm",
+        "provider": "HubSpot",
+        "service": "CRM and marketing platform",
+        "purpose": "Customer, partner, and marketing operations",
+        "products": [
+          "LINGOlegacy_MASTER",
+          "LINGOlane"
+        ],
+        "status": "connected-onboarding-incomplete",
+        "observedCapabilities": [
+          "Portal reachable; onboarding incomplete"
+        ],
+        "dataDirection": "read-only-discovery",
+        "approval": "No CRM data access or mutation until owner completes onboarding and scopes are reviewed."
+      },
+      {
+        "id": "render-runtime",
+        "provider": "Render",
+        "service": "Application hosting and runtime",
+        "purpose": "Potential backend hosting and service operations",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "blocked-workspace-selection",
+        "dataDirection": "not-connected-to-project",
+        "approval": "No workspace selected. Owner must select the intended workspace before any resource-level inspection or action."
+      },
+      {
+        "id": "vercel-legacy",
+        "provider": "Vercel",
+        "service": "Legacy deployment surface",
+        "purpose": "Historical deployment inventory only pending disposition",
+        "products": [
+          "LINGOlegacy_MASTER"
+        ],
+        "status": "blocked-identity-and-rate-limit",
+        "dataDirection": "not-approved",
+        "approval": "Prior identity lookup returned 404 and latest PR status reported deployment rate limiting. Do not promote, mutate, or incur spend."
+      }
+    ]
+  }
+}
