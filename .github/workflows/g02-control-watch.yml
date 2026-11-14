@@ -1,11 +1,18 @@
 name: G02 Control Watch — Read Only
+
 on:
   workflow_dispatch:
   schedule:
     - cron: "17 * * * *"
+
 permissions:
   actions: read
   contents: read
+
+concurrency:
+  group: g02-control-watch
+  cancel-in-progress: false
+
 jobs:
   inspect:
     runs-on: ubuntu-latest
@@ -19,24 +26,73 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p control-watch
-          gh api "repos/$REPO/actions/workflows/g02-aws-sentinel.yml/runs?per_page=10" > control-watch/g02-recent-runs.json
+          # Use the workflow file that actually exists in this repository.
+          gh api "repos/$REPO/actions/workflows/g02-sentinel.yml/runs?per_page=10" > control-watch/g02-recent-runs.json
           python3 - <<'PY'
-          import json, pathlib
-          d=json.loads(pathlib.Path("control-watch/g02-recent-runs.json").read_text())
-          runs=d.get("workflow_runs", [])
-          for r in runs:
-              print("run_id={id} status={status} conclusion={conclusion} sha={head_sha} created={created_at} url={html_url}".format(**r))
-          latest=runs[0] if runs else {}
-          if not latest: status="BLOCKED_NO_RUNS"
-          elif latest.get("status") != "completed": status="BLOCKED_NOT_COMPLETED"
-          elif latest.get("conclusion") != "success": status="BLOCKED_FAILED_OR_CANCELLED"
-          else: status="REQUIRES_ARTIFACT_AND_RUNNER_IDENTITY_VERIFICATION"
-          print("DISPOSITION:", status)
-          pathlib.Path("control-watch/disposition.txt").write_text(status+"\n")
+          import json, pathlib, os, subprocess
+
+          root = pathlib.Path("control-watch")
+          data = json.loads((root / "g02-recent-runs.json").read_text())
+          runs = data.get("workflow_runs", [])
+          for run in runs:
+              print(
+                  "run_id={id} status={status} conclusion={conclusion} "
+                  "sha={head_sha} created={created_at} url={html_url}".format(**run)
+              )
+
+          disposition = "BLOCKED_NO_RUNS"
+          evidence = {"workflow_file": "g02-sentinel.yml", "run_id": None}
+          if runs:
+              latest = runs[0]
+              run_id = latest["id"]
+              evidence["run_id"] = run_id
+              evidence["run_status"] = latest.get("status")
+              evidence["run_conclusion"] = latest.get("conclusion")
+              if latest.get("status") != "completed":
+                  disposition = "BLOCKED_NOT_COMPLETED"
+              elif latest.get("conclusion") != "success":
+                  disposition = "BLOCKED_FAILED_OR_CANCELLED"
+              else:
+                  jobs = json.loads(subprocess.check_output(
+                      ["gh", "api", f"repos/{os.environ['REPO']}/actions/runs/{run_id}/jobs"],
+                      text=True
+                  ))
+                  artifacts = json.loads(subprocess.check_output(
+                      ["gh", "api", f"repos/{os.environ['REPO']}/actions/runs/{run_id}/artifacts"],
+                      text=True
+                  ))
+                  job_items = jobs.get("jobs", [])
+                  artifact_items = artifacts.get("artifacts", [])
+                  runner_ok = any(
+                      (job.get("runner_id") or 0) > 0
+                      and job.get("runner_name") == "lingo-legacy-g02"
+                      and job.get("status") == "completed"
+                      and job.get("conclusion") == "success"
+                      and all(step.get("status") == "completed" for step in job.get("steps", []))
+                      for job in job_items
+                  )
+                  artifact_ok = any(
+                      item.get("name", "").startswith("g02-sentinel-evidence-")
+                      and not item.get("expired", False)
+                      for item in artifact_items
+                  )
+                  evidence["runner_identity_verified"] = runner_ok
+                  evidence["sentinel_artifact_present"] = artifact_ok
+                  evidence["job_count"] = len(job_items)
+                  evidence["artifact_count"] = len(artifact_items)
+                  if runner_ok and artifact_ok:
+                      disposition = "PASS_G02_EXECUTION_EVIDENCE_VERIFIED"
+                  else:
+                      disposition = "BLOCKED_EVIDENCE_INCOMPLETE"
+
+          evidence["disposition"] = disposition
+          print("DISPOSITION:", disposition)
+          (root / "disposition.txt").write_text(disposition + "\n")
+          (root / "evidence-summary.json").write_text(json.dumps(evidence, indent=2) + "\n")
           PY
       - name: Upload control snapshot
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: g02-control-watch-${{ github.run_id }}
           path: control-watch/
