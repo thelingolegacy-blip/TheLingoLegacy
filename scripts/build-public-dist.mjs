@@ -27,6 +27,8 @@ export function validatePublicContract(contract) {
   }
   const excluded = contract.excludedRoutePrefixes || [];
   const seen = new Set();
+  if (contract.approvedRoutes.length === 0) throw new Error('No approved public routes. Publication is blocked pending explicit route approval.');
+  if (!contract.approvedRoutes.some(entry => entry && entry.path === '/')) throw new Error('Approved public route set must include the root route /.');
   for (const entry of contract.approvedRoutes) {
     const route = normalizeRoute(entry.path);
     if (seen.has(route)) throw new Error(`Duplicate public route: ${route}`);
@@ -42,7 +44,6 @@ export function validatePublicContract(contract) {
     }
   }
   if (!seen.size) throw new Error('No approved public routes. Publication is blocked pending explicit route approval.');
-  if (!seen.has('/')) throw new Error('Approved public route set must include the root route /.');
   const approval = contract.approvalRecord || {};
   if (typeof approval.approvedBy !== 'string' || !approval.approvedBy.trim() ||
       typeof approval.approvedAt !== 'string' || !Number.isFinite(Date.parse(approval.approvedAt)) ||
