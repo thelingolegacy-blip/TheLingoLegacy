@@ -19,7 +19,7 @@ This work package adds a parallel hosted build/readiness workflow, a machine-rea
 | G02 | Self-hosted G02 workflow is present; no runner execution evidence; preserve inactive | HOLD — do not activate |
 | Flutter/Firebase | `lib/firebase_options.dart` contains placeholder API keys/app IDs; `scripts/verify-flutter-firebase.mjs` correctly rejects them | BLOCKED — project credentials/app registration not verified |
 | Firebase Hosting | `firebase.json` publishes `.`; `.firebaserc` names `lingo-legacy-production` | BLOCKED — output scope and live project identity must be confirmed before deploy |
-| Android | `applicationId=com.thelingolegacy.app`; release build currently uses `signingConfigs.debug`; target SDK 34 | BLOCKED — owner-controlled upload signing and current Play target-policy check |
+| Android | `applicationId=com.thelingolegacy.app`; main currently uses debug signing; this recovery branch replaces it with a protected environment-backed release config that fails closed; target SDK 34 | BLOCKED — upload key/secrets are not provisioned; verify current Play target-policy before submission |
 | iOS | Xcode project file is a stub; no real archive demonstrated | BLOCKED — generate native project and verify on macOS |
 | Cloudflare | Authenticated identity, active `thelingolegacy.com` zone, seven Worker scripts and 21 Worker routes read successfully; `/healthz` returned `ok` | BLOCKED — active Worker versions lag latest uploads: `thelingolegacyv-5` active v137 vs latest uploaded v327; `lingo-flagship-root` active v1 vs latest uploaded v3; staging Worker is active at v7 |
 | Publisher portals | No Apple, Google Play, Amazon, Samsung, LG, Roku, PlayStation, Xbox or Nintendo account connection evidenced | OUTSTANDING |
