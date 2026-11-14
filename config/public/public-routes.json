@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0.0",
+  "contract": "LINGO_PUBLIC_SITE_ROUTES",
+  "status": "BLOCKED_PENDING_ROUTE_APPROVAL",
+  "canonicalOrigin": "https://thelingolegacy.com",
+  "sourceAuthority": "GitHub",
+  "operationalReleaseManifest": "config/release/lingo-legacy-v1.0.0-rc.json",
+  "separationRule": "The root route is the visitor-facing entry page. Studio Hub is treated as an internal/operator gateway and is not part of the public visitor build. This contract controls visitor-facing publication only; it does not replace, narrow, or mutate the operational release manifest or its validator.",
+  "approvalRule": "Only entries in approvedRoutes with status approved may be published. Candidate routes are evidence for review, not publication permission.",
+  "approvedRoutes": [],
+  "candidateRoutes": [
+    {
+      "path": "/",
+      "source": "index.html",
+      "status": "proposed",
+      "notes": "Self-contained visitor landing page. No redirect to Studio Hub; no local route or asset dependencies. Recommended first public route, but not yet approved."
+    },
+    {
+      "path": "/studio-hub/",
+      "source": "studio-hub/index.html",
+      "status": "internal_only",
+      "notes": "Operator gateway, not visitor publication. Its links include studio-sites, studio, library, media, lingo-ai and product pages; retain outside dist-public pending separate access and route review."
+    },
+    {
+      "path": "/living-universe/",
+      "source": "living-universe/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to account, admin-command-center, production-lock, protected-routes, session-test, studio-os, studio-production and other service routes; depends on six local CSS/JS/SVG assets plus a web manifest. Do not publish as-is."
+    },
+    {
+      "path": "/thats-my-lingo/",
+      "source": "thats-my-lingo/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to admin-command-center, live-casino-studio, studio-assets, studio-production, trust-compliance, universe and app destinations; depends on 13 local assets including studio runtime files. Keep preview isolated until dependencies and claims are reviewed."
+    },
+    {
+      "path": "/kottons-code/",
+      "source": "kottons-code/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to app, landing, studio-assets, studio-production, universe and multiple child pages; depends on 11 local assets including studio runtime files. Requires child-route dependency review and family/minor privacy review."
+    },
+    {
+      "path": "/loyalty-lane-apparel/",
+      "source": "loyalty-lane-apparel/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to auth0-details, drop, exa-readiness, shopify-readiness and tapstich in addition to contact/privacy/terms; depends on five local assets. Rewrite visitor navigation and verify commerce/reservation claims before review."
+    },
+    {
+      "path": "/app/",
+      "source": "app/index.html",
+      "status": "internal_only",
+      "notes": "Application gateway links to admin-command-center, studio-assets, studio-production, trust-compliance, universe and landing; depends on eight local assets. Do not include in visitor build."
+    },
+    {
+      "path": "/privacy/",
+      "source": "privacy/index.html",
+      "status": "legal_review_required",
+      "notes": "Links to trust-compliance in addition to root/contact/terms and uses five local assets. Rewrite the trust-compliance destination and obtain legal review before approval."
+    },
+    {
+      "path": "/terms/",
+      "source": "terms/index.html",
+      "status": "legal_review_required",
+      "notes": "Links to trust-compliance in addition to root/contact/privacy and uses five local assets. Rewrite the trust-compliance destination and obtain legal review before approval."
+    },
+    {
+      "path": "/contact/",
+      "source": "contact/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to trust-compliance and uses five local assets. Verify the actual public contact method, data handling and privacy notice before approval."
+    },
+    {
+      "path": "/community-guidelines/",
+      "source": "community-guidelines/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to beta-support, content-approvals, creator-outreach, launch-metrics-glossary and tester-feedback; depends on studio-grade.css. Replace operational links with visitor-safe destinations or remove them."
+    },
+    {
+      "path": "/public-roadmap/",
+      "source": "public-roadmap/index.html",
+      "status": "rewrite_required",
+      "notes": "Links to content-approvals, creator-outreach, launch-metrics-glossary, next-sprint-plan and release-notes; depends on studio-grade.css. Publish only a curated public roadmap, not internal sprint/approval workflows."
+    }
+  ],
+  "assetFiles": [],
+  "excludedRoutePrefixes": [
+    "/admin-",
+    "/account/",
+    "/api/",
+    "/config/",
+    "/docs/",
+    "/ops/",
+    "/production-lock/",
+    "/launch-verification/",
+    "/launch-war-room/",
+    "/daily-standup/",
+    "/stakeholder-update/",
+    "/launch-risk-register/",
+    "/integration-",
+    "/integrations-",
+    "/provider-handoff/",
+    "/trust-compliance/",
+    "/studio-production/",
+    "/studio-assets/",
+    "/studio-os/",
+    "/studio/"
+  ],
+  "crawlerPolicy": {
+    "userAgent": "*",
+    "disallow": [
+      "/api/"
+    ],
+    "allow": [
+      "/"
+    ],
+    "sitemapPath": "/sitemap.xml"
+  },
+  "generatedOutputs": [
+    "sitemap.xml",
+    "robots.txt"
+  ],
+  "approvalRecord": {
+    "approvedBy": null,
+    "approvedAt": null,
+    "changeReference": null
+  },
+  "reviewFindings": {
+    "reviewedAt": "2026-11-13",
+    "method": "Static extraction of literal HTML href/src/action/poster/data attributes from candidate page sources on the recovery branch. This is an initial route inventory, not a complete transitive dependency or runtime security audit.",
+    "result": "No candidate product, service, legal, community or roadmap route is approved. Root is the only currently self-contained visitor-facing candidate; approval remains pending explicit route review and executed build tests.",
+    "caveat": "Inline and external CSS/JS, srcset, dynamically constructed URLs, imported assets, manifest references, forms, iframe/srcdoc and runtime navigation require additional inspection. Findings do not establish that any candidate is safe to publish."
+  }
+}
