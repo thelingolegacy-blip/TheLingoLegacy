@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111114"><meta name="description" content="LINGOlegacy Reset Center — controlled recovery, diagnostics and release governance.">
+<title>LINGOlegacy · Reset Center</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b0e;--panel:#141419;--panel2:#19191f;--line:#292930;--muted:#9b9ba7;--text:#f4f3f6;--red:#e33b4b;--red2:#7f202d;--gold:#d7b66c;--green:#55bd8b;--amber:#e6b65c;--blue:#7ba7e8;--radius:16px;font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 80% -10%,#35141b 0%,transparent 65%),var(--bg);color:var(--text)}button,input{font:inherit}button{cursor:pointer}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.side{border-right:1px solid var(--line);padding:24px 16px;background:#101014;display:flex;flex-direction:column;gap:28px}.brand{display:flex;align-items:center;gap:12px;padding:0 8px}.mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#f04b5b,#791b29);display:grid;place-items:center;font-weight:900;box-shadow:0 8px 24px #a72a3c44}.brand strong{letter-spacing:.08em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.15em}.navlabel{color:#70707c;font-size:10px;letter-spacing:.16em;padding:0 12px;margin-bottom:7px}.nav{display:grid;gap:5px}.nav button{background:none;border:0;color:#b9b8c1;text-align:left;padding:11px 12px;border-radius:10px;display:flex;gap:11px;align-items:center}.nav button.active,.nav button:hover{background:#292027;color:white}.nav button.active{box-shadow:inset 3px 0 var(--red)}.ico{width:19px;text-align:center;color:#d6a4aa}.sidefoot{margin-top:auto;border:1px solid var(--line);background:#17171d;border-radius:12px;padding:13px;color:var(--muted);font-size:12px}.sidefoot b{color:var(--gold);display:block;margin-bottom:5px}.main{min-width:0;padding:28px clamp(16px,3vw,42px) 56px;max-width:1500px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:26px}.eyebrow{font-size:10px;letter-spacing:.2em;color:#df8991;font-weight:700}.top h1{font-size:clamp(26px,3vw,36px);line-height:1.1;margin:7px 0}.sub{color:var(--muted);max-width:740px}.topright{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:11px}.pill.hold{color:#ffd5d8;border-color:#79323b;background:#3a171d}.btn{border:1px solid #45414a;background:#211f26;color:white;border-radius:10px;padding:9px 13px;font-weight:650}.btn:hover{border-color:#9b5660}.btn.primary{background:linear-gradient(135deg,#d83a4a,#922534);border-color:#c83a4a}.btn:focus-visible,.nav button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}.card{background:linear-gradient(180deg,#17171d,#131318);border:1px solid var(--line);border-radius:var(--radius);padding:17px;min-width:0}.stathead{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stat{font-size:27px;font-weight:760;letter-spacing:-.04em;margin:8px 0 1px}.hint{color:var(--muted);font-size:11px}.red{color:#ff7b86}.gold{color:var(--gold)}.green{color:var(--green)}.amber{color:var(--amber)}.overview{grid-template-columns:minmax(0,1.45fr) minmax(280px,.85fr);margin-bottom:18px}.cardtitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.cardtitle h2{font-size:15px;margin:0}.tag{font-size:10px;border-radius:6px;padding:4px 7px;background:#27242a;color:#c5c1cb}.notice{border:1px solid #6d343b;background:linear-gradient(100deg,#34191f,#21171b);padding:14px;border-radius:12px;display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}.notice .symbol{font-size:18px}.notice strong{display:block;color:#ffe0e2;margin-bottom:3px}.notice p{margin:0;color:#d2bfc2;font-size:12px}.rows{display:grid;gap:0}.rowitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #25252c}.rowitem:last-child{border:0}.rowitem b{font-size:12px}.rowitem small{display:block;color:var(--muted);font-size:11px}.status{font-size:10px;font-weight:700;letter-spacing:.05em;padding:5px 8px;border-radius:7px;white-space:nowrap}.s-fail{background:#3c1c22;color:#ff8992}.s-block{background:#3a3020;color:#f0c875}.s-hold{background:#272832;color:#c1c6d9}.s-ok{background:#183126;color:#79d6a8}.s-run{background:#1e2d42;color:#a5c5fa}.quick{display:grid;gap:9px}.quick button{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;background:#1a191f;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:12px}.quick button:hover{border-color:#8a4650}.quick small{display:block;color:var(--muted);font-size:11px}.section{margin:22px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.sectionhead h2{font-size:17px;margin:0}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:12px}.lanes{grid-template-columns:repeat(4,minmax(0,1fr))}.lane{padding:14px}.lane h3{font-size:12px;margin:0 0 5px}.lane p{font-size:11px;color:var(--muted);margin:0 0 12px;min-height:33px}.lanefoot{display:flex;justify-content:space-between;align-items:center}.recovery{grid-template-columns:repeat(3,minmax(0,1fr))}.step{display:flex;gap:11px}.num{flex:none;width:27px;height:27px;border-radius:8px;background:#302128;color:#ff9ba3;display:grid;place-items:center;font-weight:800}.step h3{font-size:12px;margin:0 0 4px}.step p{color:var(--muted);font-size:11px;margin:0}.step .status{display:inline-block;margin-top:9px}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:570px}.table th,.table td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);font-size:11px}.table th{color:var(--muted);font-weight:600}.table td:first-child{font-weight:650}.footer{border-top:1px solid var(--line);padding-top:16px;margin-top:28px;color:#777782;font-size:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.view{display:none}.view.active{display:block}.panelgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:11px;color:var(--muted)}.field input{background:#0f0f14;color:white;border:1px solid var(--line);border-radius:9px;padding:10px}.log{font:11px/1.7 ui-monospace,SFMono-Regular,monospace;color:#c8c6ce;background:#0b0b0e;border:1px solid var(--line);padding:12px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}.modalback{position:fixed;inset:0;background:#000b;display:none;place-items:center;padding:18px;z-index:5}.modalback.show{display:grid}.modal{max-width:520px;width:100%;background:#19191f;border:1px solid #4a3940;border-radius:16px;padding:20px;box-shadow:0 24px 80px #000a}.modal h2{margin:0 0 8px;font-size:18px}.modal p{color:var(--muted);font-size:12px}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.lanes{grid-template-columns:repeat(2,minmax(0,1fr))}.recovery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.shell{grid-template-columns:1fr}.side{position:sticky;top:0;z-index:3;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);gap:10px}.brand{padding:0 4px}.brand .mark{width:32px;height:32px}.navlabel,.sidefoot{display:none}.nav{display:flex;overflow:auto;gap:4px}.nav button{white-space:nowrap;padding:8px 10px;font-size:11px}.main{padding:20px 14px 36px}.top{display:block}.topright{margin-top:14px}.overview{grid-template-columns:1fr}.lanes{grid-template-columns:repeat(2,minmax(0,1fr))}.recovery{grid-template-columns:1fr}.panelgrid{grid-template-columns:1fr}.top h1{font-size:28px}}
+@media(max-width:390px){.stats{grid-template-columns:1fr 1fr;gap:8px}.card{padding:13px}.stat{font-size:23px}.lanes{grid-template-columns:1fr}.pill{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><div class="mark">L</div><div><strong>LINGOlegacy</strong><small>RESET CENTER · CONTROL TOWER</small></div></div>
+ <div><div class="navlabel">RECOVERY WORKSPACE</div><nav class="nav" aria-label="Main navigation">
+  <button class="active" data-view="overview"><span class="ico">◈</span> Overview</button>
+  <button data-view="diagnostics"><span class="ico">⌕</span> Diagnostics</button>
+  <button data-view="recovery"><span class="ico">↺</span> Recovery plans</button>
+  <button data-view="systems"><span class="ico">▦</span> System lanes</button>
+  <button data-view="governance"><span class="ico">⬡</span> Governance</button>
+ </nav></div>
+ <div class="sidefoot"><b>PROTECTED MODE</b>Read-only baseline. No production reset, deployment, runner activation, or data mutation is available from this prototype.</div>
+</aside>
+<main class="main">
+<header class="top"><div><div class="eyebrow">ENTERPRISE RECOVERY & RESTORATION</div><h1 id="pageTitle">Reset Center</h1><div class="sub" id="pageSub">One clear operating picture for diagnosing faults, planning repairs, and proving recovery—without risking the last-known-good state.</div></div>
+<div class="topright"><span class="pill hold">● PRODUCTION HOLD</span><span class="pill">Baseline · 14 Nov 2026</span><button class="btn" id="exportBtn">Export snapshot ↗</button></div></header>
+<section class="view active" id="overview">
+ <div class="grid stats">
+  <article class="card"><div class="stathead"><span>Portfolio readiness</span><span>01</span></div><div class="stat red">CONDITIONAL</div><div class="hint">Not release-ready · no overall % assigned</div></article>
+  <article class="card"><div class="stathead"><span>Critical findings</span><span>02</span></div><div class="stat red">2</div><div class="hint">Public asset boundary · CI startup</div></article>
+  <article class="card"><div class="stathead"><span>Release gates</span><span>03</span></div><div class="stat">0 / 8</div><div class="hint">No production release gate certified</div></article>
+  <article class="card"><div class="stathead"><span>Incremental spend</span><span>04</span></div><div class="stat green">$0</div><div class="hint">No paid resources authorized</div></article>
+ </div>
+ <div class="grid overview">
+  <article class="card"><div class="cardtitle"><h2>Operating posture</h2><span class="tag">CONTROLLED RECOVERY</span></div>
+   <div class="notice"><div class="symbol">⛨</div><div><strong>Protected hold is active</strong><p>Preserve last-known-good. Diagnose and prepare repairs first. Every live change requires its own authorization and evidence review.</p></div></div>
+   <div class="rows">
+    <div class="rowitem"><div><b>G02 execution evidence</b><small>Runner assignment and completed job steps not verified</small></div><span class="status s-fail">FAIL / UNVERIFIED</span></div>
+    <div class="rowitem"><div><b>G03–G11 release lanes</b><small>Remain held pending G02 and dependency evidence</small></div><span class="status s-hold">HELD</span></div>
+    <div class="rowitem"><div><b>Public asset boundary</b><small>Operational pages were confirmed publicly reachable</small></div><span class="status s-fail">FAIL</span></div>
+    <div class="rowitem"><div><b>Backend integration</b><small>Firebase identity/config and data ownership unresolved</small></div><span class="status s-block">BLOCKED</span></div>
+    <div class="rowitem"><div><b>Independent acceptance</b><small>Reviewer sign-off and rollback rehearsal outstanding</small></div><span class="status s-block">NOT ACCEPTED</span></div>
+   </div>
+  </article>
+  <article class="card"><div class="cardtitle"><h2>Safe actions</h2><span class="tag">NO LIVE EXECUTION</span></div><div class="quick">
+   <button data-modal="diagnose"><span>Run a diagnostic checklist<small>Review known faults and evidence gaps</small></span><b>→</b></button>
+   <button data-modal="plan"><span>Prepare a recovery plan<small>Build a staged, reversible work order</small></span><b>→</b></button>
+   <button data-modal="rollback"><span>Review rollback readiness<small>Check backups, versions and restore proof</small></span><b>→</b></button>
+   <button data-modal="approval"><span>Review change authorization<small>See what requires separate approval</small></span><b>→</b></button>
+  </div></article>
+ </div>
+ <div class="section"><div class="sectionhead"><div><h2>Recovery priority queue</h2><p>Ordered by risk reduction and dependency—not by convenience.</p></div><span class="tag">WAVE 0 → 1</span></div>
+  <div class="grid recovery">
+   <article class="card step"><div class="num">1</div><div><h3>Contain public asset exposure</h3><p>Define a dedicated public build output, explicit allowlist, and negative-path tests for private operational content.</p><span class="status s-fail">FIRST PRIORITY</span></div></article>
+   <article class="card step"><div class="num">2</div><div><h3>Restore CI job startup</h3><p>Diagnose zero-job startup failures. Keep the G02 runner separate; do not register duplicates or dispatch held workflows.</p><span class="status s-block">BLOCKED</span></div></article>
+   <article class="card step"><div class="num">3</div><div><h3>Reconcile deployment provenance</h3><p>Map canonical commit, build config, artifact checksum, Worker version, and traffic assignment.</p><span class="status s-block">NOT VERIFIED</span></div></article>
+   <article class="card step"><div class="num">4</div><div><h3>Set branch governance</h3><p>Review required checks, rulesets, admin bypass, and merge protections across the canonical repo.</p><span class="status s-block">NOT VERIFIED</span></div></article>
+   <article class="card step"><div class="num">5</div><div><h3>Validate backend ownership</h3><p>Choose one primary transactional writer; verify Firebase project identity and Supabase architecture before migration.</p><span class="status s-hold">DECISION REQUIRED</span></div></article>
+   <article class="card step"><div class="num">6</div><div><h3>Run product acceptance</h3><p>Browser, mobile, game, privacy, commerce, accessibility, recovery, and independent review.</p><span class="status s-hold">AFTER FOUNDATIONS</span></div></article>
+  </div>
+ </div>
+</section>
+<section class="view" id="diagnostics">
+ <div class="sectionhead"><div><h2>Diagnostics register</h2><p>Known findings from the latest read-only assessment. Re-check before acting; this page does not poll live systems.</p></div><span class="tag">EVIDENCE-BASED</span></div>
+ <article class="card tablewrap"><table class="table"><thead><tr><th>System</th><th>Finding</th><th>Disposition</th><th>Next proof required</th></tr></thead><tbody>
+ <tr><td>GitHub Actions</td><td>Latest inspected run had zero jobs / artifacts</td><td><span class="status s-fail">FAIL</span></td><td>Run, job, runner ID, step logs, artifact correlation</td></tr>
+ <tr><td>G02 runner</td><td>No accepted runner execution evidence</td><td><span class="status s-fail">UNVERIFIED</span></td><td>Positive runner ID, host/service, completed sentinel job</td></tr>
+ <tr><td>Cloudflare assets</td><td>Internal operational pages publicly reachable</td><td><span class="status s-fail">FAIL</span></td><td>Allowlist + unauthenticated negative tests</td></tr>
+ <tr><td>Cloudflare routing</td><td>Route overlap and apex origin require reconciliation</td><td><span class="status s-block">BLOCKED</span></td><td>Route map, DNS intent, deployed Worker mapping</td></tr>
+ <tr><td>Firebase</td><td>Project identity/config not validated</td><td><span class="status s-block">BLOCKED</span></td><td>Verified project ID, Hosting output, rules, preview isolation</td></tr>
+ <tr><td>Supabase</td><td>Healthy project, empty public schema</td><td><span class="status s-hold">NOT ACCEPTED</span></td><td>Approved data model, migrations, RLS and app integration tests</td></tr>
+ <tr><td>AppDeploy</td><td>Credit exhaustion reported; sampled QA is not acceptance</td><td><span class="status s-block">BLOCKED</span></td><td>Existing build access or no-cost alternative; repeat QA</td></tr>
+ </tbody></table></article>
+ <div class="grid panelgrid section"><article class="card"><h2>Evidence quality rules</h2><p class="hint">A green indicator is never inferred from a plan, a draft PR, or a successful upload.</p><div class="rows">
+ <div class="rowitem"><b>PASS</b><span class="hint">Executed and passed with retrievable evidence</span></div><div class="rowitem"><b>FAIL</b><span class="hint">Executed and failed</span></div><div class="rowitem"><b>BLOCKED</b><span class="hint">Known dependency or permission prevents test</span></div><div class="rowitem"><b>NOT RUN</b><span class="hint">Test not attempted</span></div><div class="rowitem"><b>UNVERIFIED</b><span class="hint">Evidence cannot establish the result</span></div></div></article>
+ <article class="card"><h2>Evidence record template</h2><div class="log">system: [service / component]
+repo: [owner/name]
+commit: [full SHA]
+run / job: [IDs]
+environment: [staging / production]
+test: [exact test name]
+result: [PASS / FAIL / BLOCKED / NOT RUN]
+artifact: [immutable URL + checksum]
+reviewer: [independent owner]
+timestamp: [UTC]</div></article></div>
+</section>
+<section class="view" id="recovery">
+ <div class="sectionhead"><div><h2>Recovery plans</h2><p>Build a reversible work order. Execution stays disabled in this protected prototype.</p></div><span class="tag">PLAN ONLY</span></div>
+ <div class="grid panelgrid">
+  <article class="card"><h2>Wave 0 · Protect & establish truth</h2><p class="hint">Contain the known security boundary and restore reliable evidence collection.</p>
+   <div class="rows"><div class="rowitem"><b>0.1 Asset boundary containment</b><span class="status s-fail">PRIORITY 1</span></div><div class="rowitem"><b>0.2 CI startup diagnosis</b><span class="status s-block">BLOCKED</span></div><div class="rowitem"><b>0.3 Branch protection</b><span class="status s-block">PENDING</span></div><div class="rowitem"><b>0.4 G02 evidence recovery</b><span class="status s-hold">HELD</span></div><div class="rowitem"><b>0.5 Production/source reconciliation</b><span class="status s-block">PENDING</span></div></div>
+  </article>
+  <article class="card"><h2>Wave 1 · Shared foundations</h2><p class="hint">Resolve architecture once so product teams do not build competing foundations.</p>
+   <div class="rows"><div class="rowitem"><b>Identity and account contract</b><span class="status s-hold">PENDING</span></div><div class="rowitem"><b>API and event contracts</b><span class="status s-hold">PENDING</span></div><div class="rowitem"><b>Primary database ownership</b><span class="status s-hold">DECISION</span></div><div class="rowitem"><b>Public/private asset separation</b><span class="status s-fail">PRIORITY</span></div><div class="rowitem"><b>Evidence-producing CI</b><span class="status s-block">BLOCKED</span></div></div>
+  </article>
+  <article class="card"><h2>Wave 2 · App restoration</h2><p class="hint">Repair sampled errors and restore the flagship and mobile build paths.</p><div class="rows"><div class="rowitem"><b>Universe Gateway</b><span class="status s-block">RETEST</span></div><div class="rowitem"><b>Kotton’s Code</b><span class="status s-block">RETEST</span></div><div class="rowitem"><b>LINGO Travel</b><span class="status s-block">RETEST</span></div><div class="rowitem"><b>Flagship web + Flutter</b><span class="status s-hold">NOT RUN</span></div></div></article>
+  <article class="card"><h2>Wave 3–4 · Product & release</h2><p class="hint">Certify each product independently, then perform enterprise release review.</p><div class="rows"><div class="rowitem"><b>Eight division acceptance</b><span class="status s-hold">NOT ACCEPTED</span></div><div class="rowitem"><b>Wallet / commerce controls</b><span class="status s-hold">UNVERIFIED</span></div><div class="rowitem"><b>Security / privacy / rights</b><span class="status s-hold">PENDING</span></div><div class="rowitem"><b>Backup + rollback rehearsal</b><span class="status s-hold">UNVERIFIED</span></div><div class="rowitem"><b>Independent release sign-off</b><span class="status s-hold">NOT ACCEPTED</span></div></div></article>
+ </div>
+ <div class="section"><button class="btn primary" data-modal="plan">＋ Prepare a new recovery work order</button></div>
+</section>
+<section class="view" id="systems">
+ <div class="sectionhead"><div><h2>System lanes</h2><p>Portfolio map with explicit acceptance boundaries.</p></div><span class="tag">8 DIVISIONS</span></div>
+ <div class="grid lanes">
+  <article class="card lane"><h3>LINGOlegacy</h3><p>Identity, account, wallet and community foundation.</p><div class="lanefoot"><span class="hint">Shared contracts</span><span class="status s-block">BLOCKED</span></div></article>
+  <article class="card lane"><h3>LINGOlane</h3><p>Loyalty Lane apparel, promotions and Laundry-Cycle.</p><div class="lanefoot"><span class="hint">Commerce QA</span><span class="status s-hold">UNVERIFIED</span></div></article>
+  <article class="card lane"><h3>LINGOslots</h3><p>That’s My Lingo, Spades, Uhno, Lions and Cashman.</p><div class="lanefoot"><span class="hint">Game acceptance</span><span class="status s-hold">NOT RUN</span></div></article>
+  <article class="card lane"><h3>LINGOarcade</h3><p>Tricias Escape, Doughboys Oasis, Crazy Weasols and Jersey Shore.</p><div class="lanefoot"><span class="hint">Browser / device QA</span><span class="status s-hold">IN PROGRESS</span></div></article>
+  <article class="card lane"><h3>LINGOlibrary</h3><p>Kotton’s Code and the wider book / story catalog.</p><div class="lanefoot"><span class="hint">Privacy / publishing</span><span class="status s-block">BLOCKED</span></div></article>
+  <article class="card lane"><h3>LINGOmedia</h3><p>Rise of Zavione media and distribution deliverables.</p><div class="lanefoot"><span class="hint">Media acceptance</span><span class="status s-hold">UNVERIFIED</span></div></article>
+  <article class="card lane"><h3>LINGOworld</h3><p>AI, travel, campus, support, Wi-Fi, voice and community services.</p><div class="lanefoot"><span class="hint">Integration tests</span><span class="status s-block">BLOCKED</span></div></article>
+  <article class="card lane"><h3>LegacyXclub</h3><p>Membership, access, benefits and community operations.</p><div class="lanefoot"><span class="hint">Member journeys</span><span class="status s-hold">NOT RUN</span></div></article>
+ </div>
+</section>
+<section class="view" id="governance">
+ <div class="sectionhead"><div><h2>Governance & release control</h2><p>What the Reset Center is allowed to do—and what it deliberately cannot do.</p></div><span class="tag">FAIL-CLOSED</span></div>
+ <div class="grid panelgrid">
+  <article class="card"><h2>Current release gates</h2><div class="rows">
+   <div class="rowitem"><b>Source authority</b><span class="status s-ok">PASS</span></div>
+   <div class="rowitem"><b>G02 execution</b><span class="status s-fail">FAIL / UNVERIFIED</span></div>
+   <div class="rowitem"><b>G03–G11</b><span class="status s-hold">HELD</span></div>
+   <div class="rowitem"><b>Public asset security</b><span class="status s-fail">FAIL</span></div>
+   <div class="rowitem"><b>Integration acceptance</b><span class="status s-block">BLOCKED</span></div>
+   <div class="rowitem"><b>Mobile validation</b><span class="status s-hold">NOT RUN</span></div>
+   <div class="rowitem"><b>Independent review</b><span class="status s-hold">NOT ACCEPTED</span></div>
+   <div class="rowitem"><b>Rollback readiness</b><span class="status s-hold">UNVERIFIED</span></div>
+  </div></article>
+  <article class="card"><h2>Change authorization matrix</h2><div class="rows">
+   <div class="rowitem"><b>Read-only diagnostics</b><span class="status s-ok">ALLOWED</span></div>
+   <div class="rowitem"><b>Draft plans / reports</b><span class="status s-ok">ALLOWED</span></div>
+   <div class="rowitem"><b>Feature branch changes</b><span class="status s-block">SCOPED APPROVAL</span></div>
+   <div class="rowitem"><b>Merge to protected branch</b><span class="status s-hold">SEPARATE APPROVAL</span></div>
+   <div class="rowitem"><b>Production deploy / DNS / Worker</b><span class="status s-hold">UNAUTHORIZED</span></div>
+   <div class="rowitem"><b>Runner registration / dispatch</b><span class="status s-hold">UNAUTHORIZED</span></div>
+   <div class="rowitem"><b>Database / identity / payments</b><span class="status s-hold">UNAUTHORIZED</span></div>
+   <div class="rowitem"><b>Paid resources / billing</b><span class="status s-hold">PROHIBITED</span></div>
+  </div></article>
+ </div>
+ <article class="card section"><h2>Recovery safety protocol</h2><p class="hint">Every repair follows this order. A reset is not a first response.</p>
+ <div class="grid recovery">
+  <div class="step"><div class="num">1</div><div><h3>Identify scope</h3><p>Exact service, environment, owner, dependency and incident reference.</p></div></div>
+  <div class="step"><div class="num">2</div><div><h3>Capture baseline</h3><p>Commit, config, deployment ID, logs, backup and current health.</p></div></div>
+  <div class="step"><div class="num">3</div><div><h3>Classify impact</h3><p>Security, data integrity, availability, cost and customer exposure.</p></div></div>
+  <div class="step"><div class="num">4</div><div><h3>Approve change</h3><p>Named approver, narrow scope, maintenance window and rollback trigger.</p></div></div>
+  <div class="step"><div class="num">5</div><div><h3>Execute and verify</h3><p>One controlled change; automated checks plus human acceptance.</p></div></div>
+  <div class="step"><div class="num">6</div><div><h3>Close with evidence</h3><p>Correlated artifacts, final status, reviewer and rollback disposition.</p></div></div>
+ </div></article>
+</section>
+<footer class="footer"><span>LINGOlegacy Reset Center · prototype v0.1 · feature branch</span><span>Static interface · no live system connection · no actions executed</span></footer>
+</main></div>
+<div class="modalback" id="modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><h2 id="modalTitle">Recovery action</h2><p id="modalText">This prototype can prepare a plan, but cannot execute changes against live systems.</p><div class="modalactions"><button class="btn" id="closeModal">Close</button><button class="btn primary" id="copyPlan">Copy checklist</button></div></div></div>
+<script>
+const labels={overview:["Reset Center","One clear operating picture for diagnosing faults, planning repairs, and proving recovery—without risking the last-known-good state."],diagnostics:["Diagnostics","Known findings, evidence gaps and the exact proof required to close them."],recovery:["Recovery plans","Dependency-ordered, reversible work orders. Planning is available; execution is intentionally disabled."],systems:["System lanes","A consistent acceptance view across every LINGOlegacy division."],governance:["Governance & release control","Permissions, release gates and safe operating boundaries."]};
+const checklist="LINGOlegacy Reset Center — safe recovery checklist\n1. Identify exact system, environment, owner and incident.\n2. Capture commit, config, deployment ID, logs and backup.\n3. Classify security, data, availability and cost impact.\n4. Obtain separate scoped approval and name rollback trigger.\n5. Execute one controlled change and verify it.\n6. Record immutable evidence and independent acceptance.\nPROTECTED HOLD: no production promotion, runner activation, DNS/Worker, database, identity, payment or paid-resource changes.";
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===b.dataset.view));document.getElementById("pageTitle").textContent=labels[b.dataset.view][0];document.getElementById("pageSub").textContent=labels[b.dataset.view][1];window.scrollTo({top:0,behavior:"smooth"})}));
+const modal=document.getElementById("modal");const modalCopy={diagnose:["Diagnostic checklist","Review the recorded findings, then refresh each source before making a decision. No live diagnostic request is sent by this prototype."],plan:["Prepare recovery work order","Draft a scoped work order with owner, baseline, dependencies, approval, validation steps and rollback trigger. Execution remains disabled."],rollback:["Rollback readiness review","Confirm a known-good artifact, deployment mapping, data backup, restore procedure, owner and tested recovery time. No rollback has been rehearsed here."],approval:["Change authorization","A feature-branch edit is distinct from a merge, production deployment, runner action, or data mutation. Those actions require separate explicit authorization."]};
+function showModal(key){const m=modalCopy[key]||modalCopy.plan;document.getElementById("modalTitle").textContent=m[0];document.getElementById("modalText").textContent=m[1];modal.classList.add("show")}
+document.querySelectorAll("[data-modal]").forEach(b=>b.addEventListener("click",()=>showModal(b.dataset.modal)));document.getElementById("closeModal").addEventListener("click",()=>modal.classList.remove("show"));modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show")});document.getElementById("copyPlan").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(checklist);document.getElementById("copyPlan").textContent="Copied"}catch{document.getElementById("modalText").textContent="Clipboard access is unavailable. Select and copy the checklist from the page footer or use Export snapshot."}});
+document.getElementById("exportBtn").addEventListener("click",()=>{const blob=new Blob([checklist+"\n\nBaseline: 14 Nov 2026\nStatus: Conditional completion — not release-ready\n"],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lingo-reset-center-recovery-checklist.txt";a.click();URL.revokeObjectURL(a.href)});
+</script>
+</body></html>
