@@ -1,0 +1,1 @@
+EvidenceID,EntityID,WorkstreamID,EvidenceType,SourceRepository,SourceBranch,SourceCommit,WorkflowRunID,JobID,ArtifactName,ArtifactURI,ArtifactSHA256,Environment,CommandOrProbe,ObservedAt,Result,ReviewerRole,AcceptanceReference,Notes
