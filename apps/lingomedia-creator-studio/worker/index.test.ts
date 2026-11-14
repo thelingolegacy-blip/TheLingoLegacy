@@ -5,7 +5,7 @@ const TOKEN = "test-token-that-is-long-enough-to-pass-the-minimum-length-check";
 function makeEnv() {
   const rows: Record<string, unknown>[] = [];
   const db = {
-    prepare: vi.fn((query: string) => ({
+    prepare: vi.fn(() => ({
       bind: (...values: unknown[]) => ({
         run: async () => {
           rows.push({ id: values[0], title: values[1], kind: values[2], status: "Draft", creator: values[3] });
@@ -37,7 +37,7 @@ describe("Creator Studio Worker API", () => {
 
   it("fails closed when the API secret is not configured", async () => {
     const env = makeEnv();
-    delete env.MEDIA_API_TOKEN;
+    (env as { MEDIA_API_TOKEN?: string }).MEDIA_API_TOKEN = undefined;
     const response = await worker.fetch(request("/api/media", { headers: auth() }), env);
     expect(response.status).toBe(503);
   });
