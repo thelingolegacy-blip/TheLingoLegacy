@@ -131,7 +131,7 @@ test('rejects symlinked parent directories for approved sources', (t) => {
   fs.writeFileSync(path.join(outside, 'index.html'), '<p>outside</p>');
   fs.rmSync(path.join(root, 'index.html'));
   fs.symlinkSync(outside, path.join(root, 'linked'), 'dir');
-  assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'linked/index.html', status: 'approved' }] }), /Symlink path component/);
+  assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'linked/index.html', status: 'approved' }], candidateRoutes: [{ path: '/', source: 'linked/index.html', status: 'proposed' }] }), /Symlink path component/);
 });
 
 
