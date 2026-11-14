@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-14T09:56:00Z",
+  "observedAt": "2026-11-14T09:55:00Z",
   "github": {
     "repository": "thelingolegacy-blip/TheLingoLegacy",
     "defaultBranch": "main",
@@ -10,10 +10,11 @@
     },
     "branchProtectionRead": "FORBIDDEN_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
     "latestReadinessWorkflowRun": {
-      "id": 43582618910,
+      "id": 43582751056,
       "conclusion": "startup_failure",
       "jobs": 0,
-      "artifacts": 0
+      "artifacts": 0,
+      "headSha": "70a70169024c672f7f6bd1e2e67ad2ae1e4ba42f"
     },
     "g02": "INACTIVE_UNVERIFIED"
   },
@@ -68,5 +69,11 @@
     "submissionReceipts": "NONE",
     "publisherApprovals": "NONE",
     "internalCertification": "NOT_ISSUED"
+  },
+  "recoveryBranch": {
+    "branch": "recovery/build-release-acceleration-2026-11-14",
+    "androidReleaseSigning": "CHANGED_TO_PROTECTED_ENVIRONMENT_BACKED_CONFIG_FAILS_CLOSED",
+    "publisherSecrets": "NOT_CONFIGURED",
+    "iosProject": "STUB_UNCHANGED"
   }
 }
