@@ -1,0 +1,33 @@
+name: P1 Slot Engine Restore
+on:
+  push:
+    branches: [recovery/p1-slot-engine-restore]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  slot-engine:
+    name: GitHub-hosted slot engine tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run deterministic slot-engine tests
+        run: npm test
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1-slot-engine-test-evidence
+          path: |
+            package.json
+            src/server/slot-engine.mjs
+            scripts/tests/server-slot-engine.test.mjs
+          if-no-files-found: error
+          retention-days: 30
