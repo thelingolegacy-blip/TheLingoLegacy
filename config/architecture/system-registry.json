@@ -27,6 +27,23 @@
       "status": "partially_operational"
     },
     {
+      "id": "KNOW",
+      "name": "Knowledge & Intelligence Center",
+      "owner": "knowledge-governance",
+      "responsibilities": [
+        "knowledge provenance and source authority",
+        "classification and access boundaries",
+        "freshness and contradiction review",
+        "retrieval quality and citation coverage",
+        "lessons learned and continuous improvement"
+      ],
+      "systems": [
+        "LKIS specification (proposed)",
+        "knowledge-record.schema.json"
+      ],
+      "status": "proposed_not_deployed"
+    },
+    {
       "id": "ENG",
       "name": "Engineering & Automation Station",
       "owner": "engineering",
@@ -211,7 +228,15 @@
     "authorization": "server-side least-privilege checks for every protected operation",
     "idempotency": "required for retried writes, events and payment/ledger operations",
     "observability": "correlation_id across client, edge, backend and CI",
-    "asset_delivery": "explicit public allowlist; deny internal paths before static asset fetch"
+    "asset_delivery": "explicit public allowlist; deny internal paths before static asset fetch",
+    "knowledge": {
+      "record_schema": "config/knowledge/knowledge-record.schema.json",
+      "specification": "docs/knowledge/LINGO-KNOWLEDGE-INTELLIGENCE-SYSTEM-v1.md",
+      "provenance_required": true,
+      "stale_state_visible": true,
+      "authorization": "retrieval must respect source and record classification; writes require separate approval",
+      "runtime_status": "specification_only"
+    }
   },
   "domain_map": {
     "LINGOlegacy": [
