@@ -80,7 +80,7 @@ test('Worker preserves customer-facing readiness requests', async () => {
     ASSETS: {
       fetch: async (request) => {
         requestedAssets.push(new URL(request.url).pathname);
-        return new Response('public readiness page', { status: 200, headers: { 'content-type': 'text/html' } });
+        return new Response('public readiness page', { status: 200, headers: { 'content-type': 'text/plain' } });
       },
     },
   };
