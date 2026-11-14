@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "registry_version": "2026-11-14.1",
+  "portfolio_id": "the-lingo-legacy",
+  "environment": "staging",
+  "default_status": "disabled",
+  "systems": [
+    {
+      "system_id": "stack-engine",
+      "display_name": "LINGO Stack Engine",
+      "owner": "platform",
+      "version": "0.1.0",
+      "tenant_scope": "global",
+      "status": "registered",
+      "dependencies": [],
+      "gates": {
+        "public_status": true,
+        "service_activation": false,
+        "production_release": false
+      },
+      "jobs": []
+    },
+    {
+      "system_id": "lingo-id",
+      "display_name": "LINGO ID",
+      "owner": "identity",
+      "version": "0.1.0",
+      "tenant_scope": "tenant",
+      "status": "planned",
+      "dependencies": ["stack-engine"],
+      "gates": {
+        "public_status": true,
+        "sign_in": false,
+        "account_mutation": false
+      },
+      "jobs": []
+    },
+    {
+      "system_id": "universal-legacy-wallet",
+      "display_name": "Universal Legacy Wallet",
+      "owner": "wallet",
+      "version": "0.1.0",
+      "tenant_scope": "tenant",
+      "status": "planned",
+      "dependencies": ["stack-engine", "lingo-id"],
+      "gates": {
+        "public_status": true,
+        "virtual_ledger_mutation": false,
+        "transfer": false,
+        "cashout": false
+      },
+      "jobs": []
+    },
+    {
+      "system_id": "thats-my-lingo",
+      "display_name": "That’s My Lingo",
+      "owner": "games",
+      "version": "0.1.0",
+      "tenant_scope": "product",
+      "status": "planned",
+      "dependencies": ["stack-engine"],
+      "gates": {
+        "public_demo": true,
+        "registered_play": false,
+        "multiplayer": false,
+        "real_value": false
+      },
+      "jobs": [
+        {
+          "job_id": "game-session-expiry",
+          "trigger": "scheduled",
+          "handler": "game-session-expiry",
+          "max_attempts": 3,
+          "timeout_seconds": 30,
+          "idempotent": true,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "system_id": "asklingo",
+      "display_name": "askLINGO",
+      "owner": "ai-platform",
+      "version": "0.1.0",
+      "tenant_scope": "tenant",
+      "status": "planned",
+      "dependencies": ["stack-engine", "lingo-id"],
+      "gates": {
+        "public_status": true,
+        "provider_calls": false,
+        "agent_execution": false
+      },
+      "jobs": []
+    },
+    {
+      "system_id": "lingo-support",
+      "display_name": "LINGO Support",
+      "owner": "support",
+      "version": "0.1.0",
+      "tenant_scope": "tenant",
+      "status": "planned",
+      "dependencies": ["stack-engine"],
+      "gates": {
+        "public_status": true,
+        "ticket_mutation": false,
+        "community_moderation": false
+      },
+      "jobs": []
+    }
+  ]
+}
