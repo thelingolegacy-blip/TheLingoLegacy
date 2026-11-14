@@ -13,7 +13,7 @@ npm run build
 npm test
 ```
 
-Vite binds to localhost only (127.0.0.1). Starter content and analytics are illustrative. Drafts created in the browser are not durable until an authenticated API/storage adapter is connected.
+Vite binds to localhost only (127.0.0.1). Starter content and analytics are illustrative. Local draft metadata and playlist names are saved in this browser profile using versioned localStorage. This is device-local persistence, not cloud sync or a media-byte upload.
 
 ## Current implementation
 
@@ -31,7 +31,7 @@ The Worker is not deployed and no D1 database or secret is provisioned by this r
 
 ## Persistence and deployment boundary
 
-The UI currently uses in-memory sample data. It does not upload media bytes, transcode video, authenticate users, persist playlists, render slide decks, or collect real analytics. The Worker and D1 migration are source-only and are not bound to any environment.
+The UI starts with illustrative sample data and persists local media metadata and playlist names on the current device. It does not upload media bytes, transcode video, authenticate users, synchronize data across devices, persist server-side playlists, render slide decks, or collect real analytics. The Worker and D1 migration are source-only and are not bound to any environment.
 
 Before any environment binding: provision a separate development D1 database, apply migrations, configure a non-production Worker route and identity/authorization, then add integration tests. Never bind production credentials or production routes from this project branch.
 
