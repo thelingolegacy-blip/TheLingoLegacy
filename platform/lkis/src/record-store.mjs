@@ -58,6 +58,7 @@ export class RecordStore {
       if (index < 0) return { missing: true };
       const row = rows[index];
       if (row.record.status !== "proposed") return { conflict: true, status: row.record.status };
+      if (!Array.isArray(row.record.evidence_refs) || row.record.evidence_refs.length === 0) return { missingEvidence: true };
       const record = { ...row.record, status: "verified", change_history: [...(row.record.change_history || []), { changed_at: new Date().toISOString(), change: "Status changed from proposed to verified", reason: "Independent LKIS reviewer accepted the submitted evidence references.", evidence_refs: row.record.evidence_refs }] };
       const next = { ...row, record, revision: row.revision + 1, stored_at: new Date().toISOString(), reviewed_by: reviewer, sha256: createHash("sha256").update(JSON.stringify(record)).digest("hex") };
       rows[index] = next; await this.writeAll(rows); return { row: next };
