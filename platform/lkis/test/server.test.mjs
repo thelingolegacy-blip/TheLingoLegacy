@@ -53,3 +53,11 @@ test("reader cannot create records", async () => {
   const response = await fetch(base + "/api/v1/records", { method: "POST", headers: headers("reader-test-token"), body: JSON.stringify(record()) });
   assert.equal(response.status, 403);
 });
+
+test("reviewer cannot verify records above their classification scope", async () => {
+  const restricted = { ...record(), id: "lkis.api.restricted-001", classification: "restricted" };
+  const created = await fetch(base + "/api/v1/records", { method: "POST", headers: headers("admin-test-token"), body: JSON.stringify(restricted) });
+  assert.equal(created.status, 201);
+  const response = await fetch(base + "/api/v1/records/lkis.api.restricted-001/verify", { method: "POST", headers: headers("review-test-token") });
+  assert.equal(response.status, 404);
+});
