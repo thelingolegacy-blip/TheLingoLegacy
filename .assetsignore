@@ -82,8 +82,8 @@ integration-os/
 admin-command-center/
 economy-command-center/
 firebase.json
-firebase.client.json
-firebase-worker.js
+firebase.client.example.json
+build/web/
 gateway-router.js
 pubspec.yaml
 _headers

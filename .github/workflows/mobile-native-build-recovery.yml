@@ -1,0 +1,76 @@
+name: Mobile Native Build Recovery
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'test/**'
+      - '.github/workflows/mobile-native-build-recovery.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-native-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-and-web:
+    name: Analyze, test, web and Android debug build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Verify existing Android project scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f android/app/build.gradle || test -f android/app/build.gradle.kts
+          test -f android/gradlew
+          echo "ANDROID_NATIVE_PROJECT=PRESENT"
+          echo "Existing Android project files will be preserved."
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Flutter widget tests
+        run: flutter test
+
+      - name: Build web release artifact (not production publication)
+        run: flutter build web --release
+
+      - name: Build Android debug artifact (not store-signed)
+        run: flutter build apk --debug
+
+      - name: Upload web and Android development artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-mobile-development-builds
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            build/web/
+            build/app/outputs/flutter-apk/app-debug.apk
+
+# iOS CI is intentionally not declared until ios/Runner.xcodeproj is committed.
+# Do not generate or overwrite a native project as part of CI.

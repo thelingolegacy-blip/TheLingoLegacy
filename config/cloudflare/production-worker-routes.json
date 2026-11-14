@@ -1,0 +1,39 @@
+{
+  "zoneName": "thelingolegacy.com",
+  "workerName": "thelingolegacyv-5",
+  "workersDev": false,
+  "routes": [
+    "thelingolegacy.com/*",
+    "theriseofzavione.thelingolegacy.com/*",
+    "thats-my-lingo.thelingolegacy.com/*",
+    "sparkling-rain.thelingolegacy.com/*",
+    "therealzavione.thelingolegacy.com/*",
+    "lingo.thelingolegacy.com/*",
+    "cyber.thelingolegacy.com/*",
+    "solar.thelingolegacy.com/*",
+    "drip.thelingolegacy.com/*",
+    "site.thelingolegacy.com/*",
+    "luxe.thelingolegacy.com/*",
+    "web.thelingolegacy.com/*",
+    "hub.thelingolegacy.com/*",
+    "www.thelingolegacy.com/*",
+    "v4.thelingolegacy.com/*",
+    "v3.thelingolegacy.com/*",
+    "ai.thelingolegacy.com/*",
+    "blog.thelingolegacy.com/*"
+  ],
+  "otherWorkerRoutes": [
+    {
+      "pattern": "atlas.thelingolegacy.com/*",
+      "script": "lingo-ecosystem-atlas"
+    },
+    {
+      "pattern": "launch.thelingolegacy.com/*",
+      "script": "lingo-static-backup-proxy"
+    },
+    {
+      "pattern": "thelingolegacy.com/",
+      "script": "lingo-flagship-root"
+    }
+  ]
+}

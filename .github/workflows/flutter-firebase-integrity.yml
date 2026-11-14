@@ -3,41 +3,81 @@ name: Flutter Firebase Integrity
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
     paths:
       - 'lib/**'
+      - 'test/**'
       - 'android/**'
       - 'ios/**'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'firebase.client.example.json'
+      - '.assetsignore'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/test-verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting.mjs'
+      - 'scripts/test-verify-firebase-hosting.mjs'
+      - 'scripts/verify-cloudflare-route-inventory.mjs'
+      - 'scripts/test-verify-cloudflare-route-inventory.mjs'
+      - 'config/cloudflare/production-worker-routes.json'
+      - 'wrangler.jsonc'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
   contents: read
 
+concurrency:
+  group: flutter-firebase-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   flutter-firebase:
     name: Flutter + Firebase integrity
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    env:
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+      FIREBASE_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_MESSAGING_SENDER_ID }}
+      FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
+      FIREBASE_DATABASE_URL: ${{ vars.FIREBASE_DATABASE_URL }}
+      FIREBASE_STORAGE_BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
+      FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY }}
+      FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID }}
+      FIREBASE_ANDROID_API_KEY: ${{ vars.FIREBASE_ANDROID_API_KEY }}
+      FIREBASE_ANDROID_APP_ID: ${{ vars.FIREBASE_ANDROID_APP_ID }}
+      FIREBASE_ANDROID_PACKAGE_NAME: ${{ vars.FIREBASE_ANDROID_PACKAGE_NAME }}
+      FIREBASE_IOS_API_KEY: ${{ vars.FIREBASE_IOS_API_KEY }}
+      FIREBASE_IOS_APP_ID: ${{ vars.FIREBASE_IOS_APP_ID }}
+      FIREBASE_IOS_BUNDLE_ID: ${{ vars.FIREBASE_IOS_BUNDLE_ID }}
+      FIREBASE_MACOS_API_KEY: ${{ vars.FIREBASE_MACOS_API_KEY }}
+      FIREBASE_MACOS_APP_ID: ${{ vars.FIREBASE_MACOS_APP_ID }}
+      FIREBASE_MACOS_BUNDLE_ID: ${{ vars.FIREBASE_MACOS_BUNDLE_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Firebase contract validator regression tests
+        run: node --test scripts/test-verify-flutter-firebase.mjs
+
+      - name: Firebase Hosting boundary regression tests
+        run: node --test scripts/test-verify-firebase-hosting.mjs
+
+      - name: Cloudflare route inventory regression tests
+        run: node --test scripts/test-verify-cloudflare-route-inventory.mjs
 
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-
-      - name: Verify Firebase project contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f .firebaserc
-          test -f lib/firebase_options.dart
-          node scripts/verify-flutter-firebase.mjs
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -48,14 +88,38 @@ jobs:
       - name: Flutter unit and widget tests
         run: flutter test
 
-      - name: Flutter web build
-        run: flutter build web --release
-
-      - name: Flutter Android debug build
-        run: flutter build apk --debug
-
-      - name: Firebase hosting configuration check
+      - name: Flutter web build (preview-safe when Firebase variables are absent)
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+          flutter build web --release \
+            --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
+            --dart-define=FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --dart-define=FIREBASE_AUTH_DOMAIN="$FIREBASE_AUTH_DOMAIN" \
+            --dart-define=FIREBASE_DATABASE_URL="$FIREBASE_DATABASE_URL" \
+            --dart-define=FIREBASE_STORAGE_BUCKET="$FIREBASE_STORAGE_BUCKET" \
+            --dart-define=FIREBASE_WEB_API_KEY="$FIREBASE_WEB_API_KEY" \
+            --dart-define=FIREBASE_WEB_APP_ID="$FIREBASE_WEB_APP_ID"
+
+      - name: Verify Firebase Hosting publish boundary
+        run: node scripts/verify-firebase-hosting.mjs
+
+      - name: Flutter Android debug build (preview-safe when Firebase variables are absent)
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter build apk --debug \
+            --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
+            --dart-define=FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --dart-define=FIREBASE_AUTH_DOMAIN="$FIREBASE_AUTH_DOMAIN" \
+            --dart-define=FIREBASE_DATABASE_URL="$FIREBASE_DATABASE_URL" \
+            --dart-define=FIREBASE_STORAGE_BUCKET="$FIREBASE_STORAGE_BUCKET" \
+            --dart-define=FIREBASE_ANDROID_API_KEY="$FIREBASE_ANDROID_API_KEY" \
+            --dart-define=FIREBASE_ANDROID_APP_ID="$FIREBASE_ANDROID_APP_ID"
+
+      - name: Verify Cloudflare route and observability contract
+        run: node scripts/verify-cloudflare-route-inventory.mjs
+
+      - name: Verify Firebase project and client configuration
+        shell: bash
+        run: node scripts/verify-flutter-firebase.mjs
