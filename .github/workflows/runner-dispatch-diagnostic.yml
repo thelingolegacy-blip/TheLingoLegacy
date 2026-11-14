@@ -2,8 +2,6 @@ name: G02 Self-Hosted Runner Sentinel
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -11,6 +9,8 @@ permissions:
 
 jobs:
   runner-sentinel:
+    # PROTECTED HOLD: keep this disabled until separate G02 release acceptance.
+    if: false
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
@@ -29,21 +29,21 @@ jobs:
           set -euo pipefail
           mkdir -p g02-evidence
           {
-            printf 'run_id=%s\n' "$GITHUB_RUN_ID_VALUE"
-            printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT_VALUE"
-            printf 'job=%s\n' "$GITHUB_JOB_VALUE"
-            printf 'runner_name=%s\n' "$RUNNER_NAME"
-            printf 'runner_os=%s\n' "$RUNNER_OS"
-            printf 'runner_arch=%s\n' "$RUNNER_ARCH"
-            printf 'runner_environment=%s\n' "$RUNNER_ENVIRONMENT"
-            printf 'github_sha=%s\n' "$GITHUB_SHA_VALUE"
-            printf 'platform_check=STARTED\n'
+            printf 'run_id=%s\\n' "$GITHUB_RUN_ID_VALUE"
+            printf 'run_attempt=%s\\n' "$GITHUB_RUN_ATTEMPT_VALUE"
+            printf 'job=%s\\n' "$GITHUB_JOB_VALUE"
+            printf 'runner_name=%s\\n' "$RUNNER_NAME"
+            printf 'runner_os=%s\\n' "$RUNNER_OS"
+            printf 'runner_arch=%s\\n' "$RUNNER_ARCH"
+            printf 'runner_environment=%s\\n' "$RUNNER_ENVIRONMENT"
+            printf 'github_sha=%s\\n' "$GITHUB_SHA_VALUE"
+            printf 'platform_check=STARTED\\n'
           } > g02-evidence/runner-evidence.txt
           test -n "$RUNNER_NAME"
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
           test -n "$GITHUB_SHA_VALUE"
-          printf 'platform_check=PASS\n' >> g02-evidence/runner-evidence.txt
+          printf 'platform_check=PASS\\n' >> g02-evidence/runner-evidence.txt
           cat g02-evidence/runner-evidence.txt
 
       - name: Execute G02 sentinel
