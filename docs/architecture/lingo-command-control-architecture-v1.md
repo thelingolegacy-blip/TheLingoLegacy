@@ -15,6 +15,7 @@ Create one coordinated operating architecture for the LINGO Legacy ecosystem. Lo
 flowchart TB
   OWNER[Founder / Release Authority]
   C2[LINGO Command & Control Center]
+  KNOW[Knowledge & Intelligence Center]
   GH[GitHub Source + Issues + Actions]
   EDGE[Cloudflare Edge / DNS / Workers]
   ID[Identity & Access Station]
@@ -28,6 +29,9 @@ flowchart TB
   USERS[Web / Mobile / TV / Game Clients]
 
   OWNER --> C2
+  C2 <--> KNOW
+  KNOW <--> ENG
+  KNOW <--> REL
   C2 <--> GH
   GH --> REL
   REL --> EDGE
@@ -51,6 +55,7 @@ flowchart TB
 | ID | Center / station | Primary ownership | Initial implementation boundary |
 |---|---|---|---|
 | C2 | **LINGO Command & Control Center** | Portfolio state, priorities, dependencies, decisions, workstream coordination, incident command | GitHub issue #517 as current Control Tower; canonical decision and status documents in this repo |
+| KNOW | **Knowledge & Intelligence Center** | Knowledge provenance, classification, freshness, retrieval quality, lessons learned, domain knowledge stewardship | Proposed LKIS specification and knowledge-record schema; no retrieval runtime or knowledge database is asserted live |
 | ENG | **Engineering & Automation Station** | Repository structure, code review, CI workflows, tests, build provenance, artifact lineage | GitHub repositories, Actions workflows, protected branches and review gates |
 | EDGE | **Network & Edge Operations Center** | DNS inventory, Worker routing, edge APIs, caching, static assets, runtime config | Cloudflare zone, Worker `thelingolegacyv-5`, route inventory; read-only until release authorization |
 | IAM | **Identity, Access & Trust Station** | Account identity, session lifecycle, authorization, roles, consent, audit trails | Firebase Auth as intended identity provider; server-verified authorization, least privilege |
@@ -70,11 +75,12 @@ flowchart TB
 4. **Domain services:** account/profile, catalog, community, library/media, game session/progression, commerce, wallet/ledger, notifications, support and AI gateway. Each domain owns its schema and API contract.
 5. **Persistence layer:** Firebase/Firestore is the intended primary app data platform. Use transactions and server-side rules for sensitive writes. Do not introduce a second primary database without an architecture decision.
 6. **Integration layer:** provider adapters isolate Cloudflare, Firebase, Stripe, AI providers, analytics and content tools. Each adapter has explicit scopes, timeouts, retries, idempotency and failure behavior.
-7. **Control/evidence layer:** GitHub tracks source, change approvals, workflow evidence, artifacts, deployment references and release decisions.
+7. **Knowledge layer:** LKIS defines governed knowledge records, provenance, freshness, classification, review and reusable learning. It references authoritative systems rather than replacing them.
+8. **Control/evidence layer:** GitHub tracks source, change approvals, workflow evidence, artifacts, deployment references and release decisions.
 
 ## 5. Core contracts and connection rules
 
-- **One source of truth per concern:** GitHub for source/governance; Firebase for intended application identity/data; Cloudflare for authoritative edge/routing; a ledger service for monetary/reward accounting.
+- **One source of truth per concern:** GitHub for source/governance; Firebase for intended application identity/data; Cloudflare for authoritative edge/routing; a ledger service for monetary/reward accounting. LKIS preserves references and evidence without superseding those systems.
 - **API versioning:** use `/api/v1/<domain>/<resource>`; publish request/response schemas and compatibility policy.
 - **No direct client-to-provider secrets:** privileged operations run server-side.
 - **Service-to-service identity:** short-lived scoped credentials, least privilege, rotation procedure, and audit events.
@@ -135,6 +141,8 @@ These are target ownership relationships. Existing route, API, schema and deploy
 ## 9. Acceptance checklist
 
 - [ ] Every center has a documented owner, scope, inputs, outputs and escalation path.
+- [ ] Knowledge records have stable IDs, owners, classification, source/evidence references, observation times and lifecycle status.
+- [ ] Retrieval preserves provenance, respects authorization, and visibly marks stale, disputed, blocked and unknown information.
 - [ ] Every production API has an owner, schema, authz policy, rate limit and test.
 - [ ] Every data domain has one authoritative store and migration owner.
 - [ ] All external integrations use scoped adapters; secrets remain out of source.
@@ -152,5 +160,9 @@ These are target ownership relationships. Existing route, API, schema and deploy
 4. Confirm the canonical design-token source and asset storage policy.
 5. Confirm smart-TV and mobile release targets and their QA device matrix.
 6. Confirm the Cloudflare Access policy for internal control-plane surfaces.
+
+## 11. Knowledge & Intelligence Center integration
+
+The KNOW center is a shared governance and knowledge capability. Its specification is [LINGO Knowledge & Intelligence System v1](../knowledge/LINGO-KNOWLEDGE-INTELLIGENCE-SYSTEM-v1.md), with the structural record contract at `config/knowledge/knowledge-record.schema.json`. The center is proposed, not deployed. Its first implementation wave is repository-backed records and validation; retrieval services, agent workflows, dashboards and automated ingestion require separate review and acceptance.
 
 **Decision rule:** build the smallest secure shared platform that supports all worlds; do not create a separate server or database for every station. Logical stations can share infrastructure while retaining clear ownership, contracts and isolation.
