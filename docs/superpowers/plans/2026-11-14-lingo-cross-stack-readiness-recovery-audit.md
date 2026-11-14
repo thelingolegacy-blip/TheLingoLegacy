@@ -33,7 +33,7 @@ The two new security workflows each returned zero jobs on the prior attempt. Thi
 
 PR #574 has a failing status context named `Vercel – the-lingo-legacy`. The Vercel bot comments report the project has exceeded the free-plan API deployment allowance (more than 100 deployments per day).
 
-This is a separate deployment-provider issue from GitHub Actions startup failure. The intended architecture is GitHub source control plus Cloudflare production edge. Inspect and retire the Vercel Git deployment integration only through a separately reviewed provider change; do not promote a Vercel deployment or upgrade a paid plan as an automatic workaround.
+This is a separate deployment-provider issue from GitHub Actions startup failure. The intended architecture is GitHub source control plus Cloudflare production edge. The Hobby and Pro Vercel projects linked to this same repository were both updated to disable preview deployments. The Hobby project has only Vercel-generated preview domains; the Pro project still lists the apex and www custom domains. Cloudflare DNS currently points apex/www through proxied Worker routes, not to Vercel. A project-pause attempt on the Pro project was rejected by Vercel with `invalid_deployment: Active production deployment does not exist`; no pause or deletion was forced. Therefore preview generation has been disabled, but full Vercel retirement is **not complete**: the Pro project remains attached to the apex/www custom domains and its Git integration has not been disconnected. Do not delete or detach those domains until the Cloudflare-first cutover is formally accepted. Do not upgrade a paid plan as an automatic workaround.
 
 ## 3. Cloudflare live-state reconciliation (read-only inspection)
 
