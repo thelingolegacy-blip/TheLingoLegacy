@@ -85,10 +85,14 @@ export function liveness(version = "unversioned") {
  * Evaluate readiness from caller-supplied dependency observations.
  * Each dependency entry is { required: boolean, status: "ok"|"unavailable"|"unconfigured" }.
  */
-export function readiness({ config, dependencies = {} } = {}) {
+export function readiness({ config, dependencies = {}, requiredDependencies } = {}) {
   const configValid = config?.valid === true;
-  const checks = Object.entries(dependencies).map(([name, value]) => {
-    const required = value?.required === true;
+  const dependencyContractValid = Array.isArray(requiredDependencies);
+  const requiredNames = dependencyContractValid ? requiredDependencies : [];
+  const observed = new Map(Object.entries(dependencies));
+  const checks = [...new Set([...Object.keys(dependencies), ...requiredNames])].map((name) => {
+    const value = observed.get(name);
+    const required = requiredNames.includes(name);
     const status = ["ok", "unavailable", "unconfigured"].includes(value?.status)
       ? value.status
       : "unavailable";
@@ -100,7 +104,7 @@ export function readiness({ config, dependencies = {} } = {}) {
     });
   });
   const failed = checks.filter((check) => check.required && !check.ready);
-  const ready = configValid && failed.length === 0;
+  const ready = configValid && dependencyContractValid && failed.length === 0;
 
   return Object.freeze({
     ok: ready,
@@ -109,6 +113,7 @@ export function readiness({ config, dependencies = {} } = {}) {
     checks: Object.freeze(checks),
     blockers: Object.freeze([
       ...(!configValid ? ["ENVIRONMENT_INVALID_OR_MISSING"] : []),
+      ...(!dependencyContractValid ? ["DEPENDENCY_CONTRACT_MISSING"] : []),
       ...failed.map((check) => `DEPENDENCY_${check.name.toUpperCase()}_${check.status.toUpperCase()}`),
     ]),
   });
@@ -185,7 +190,7 @@ export function createStackEngine(env = {}) {
   return Object.freeze({
     config,
     liveness: () => liveness(config.version),
-    readiness: (dependencies) => readiness({ config, dependencies }),
+    readiness: ({ dependencies, requiredDependencies } = {}) => readiness({ config, dependencies, requiredDependencies }),
     manifest: () => publicManifest(config),
   });
 }
