@@ -18,6 +18,9 @@ for (const publisher of publishers.publishers) if (publisher.status !== 'OUTSTAN
 
 const firebaseOptions = fs.readFileSync('lib/firebase_options.dart', 'utf8');
 if (/YOUR_[A-Z0-9_]+/.test(firebaseOptions)) blockers.push('Firebase client configuration still contains placeholder values');
+const firebaseConfig = readJson('firebase.json');
+if (firebaseConfig.hosting?.public === '.') blockers.push('Firebase Hosting public directory is the repository root; confirm and restrict the build output before any Hosting deploy');
+if (!fs.existsSync('firestore.rules')) blockers.push('Root Firestore security rules file is missing');
 const androidGradle = fs.readFileSync('android/app/build.gradle', 'utf8');
 if (/signingConfig\s+signingConfigs\.debug/.test(androidGradle)) blockers.push('Android release build still uses debug signing');
 if (fs.existsSync('ios/Runner.xcodeproj/project.pbxproj.stub')) blockers.push('iOS Xcode project is still a stub');
