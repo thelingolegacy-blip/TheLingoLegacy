@@ -58,6 +58,7 @@ export function createLkisServer() {
         if(!process.env.LKIS_REVIEWER_ID) return send(res,503,{error:"reviewer_identity_not_configured"});
         const result=await store.verify(verifyMatch[1],process.env.LKIS_REVIEWER_ID);
         if(result.missing) return send(res,404,{error:"record_not_found"});
+        if(result.missingEvidence) return send(res,422,{error:"evidence_refs_required"});
         if(result.conflict) return send(res,409,{error:"record_not_proposed",current_status:result.status});
         return send(res,200,{verified:true,record:result.row});
       }
