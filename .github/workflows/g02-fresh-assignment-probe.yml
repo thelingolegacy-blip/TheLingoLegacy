@@ -2,14 +2,14 @@ name: G02 Fresh Assignment Probe
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   assignment-probe:
+    # PROTECTED HOLD: keep this disabled until separate G02 release acceptance.
+    if: false
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:

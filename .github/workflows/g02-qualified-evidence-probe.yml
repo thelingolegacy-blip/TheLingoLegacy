@@ -2,14 +2,14 @@ name: G02 Qualified Evidence Probe
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   qualified-evidence:
+    # PROTECTED HOLD: keep this disabled until separate G02 release acceptance.
+    if: false
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
@@ -30,15 +30,15 @@ jobs:
           echo "G02_PROBE_GENERATION=2026-09-30-g02-retry-01"
           trap 'printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$?"' EXIT
 
-          printf '%s\\n' \
-            "G02_QUALIFIED_PROBE=START" \
-            "run_id=$RUN_ID" \
-            "run_number=$RUN_NUMBER" \
-            "job_name=$JOB_ID" \
-            "runner_name=$RUNNER_NAME" \
-            "runner_os=$RUNNER_OS" \
-            "runner_arch=$RUNNER_ARCH" \
-            "runner_environment=$RUNNER_ENVIRONMENT" \
+          printf '%s\\n' \\
+            "G02_QUALIFIED_PROBE=START" \\
+            "run_id=$RUN_ID" \\
+            "run_number=$RUN_NUMBER" \\
+            "job_name=$JOB_ID" \\
+            "runner_name=$RUNNER_NAME" \\
+            "runner_os=$RUNNER_OS" \\
+            "runner_arch=$RUNNER_ARCH" \\
+            "runner_environment=$RUNNER_ENVIRONMENT" \\
             "github_sha=$SHA"
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
@@ -49,11 +49,8 @@ jobs:
           echo "G02_RUNNER_IDENTITY=PASS"
           echo "G02_RUNNER_ASSIGNMENT=PASS"
 
-          # The inner Node diagnostic is deliberately bounded below the job-level
-          # timeout. If Node stalls, the OS timeout kills it and the fallback
-          # diagnostic path records time/exit telemetry without bypassing G02.
           set +e
-          timeout --foreground --signal=TERM --kill-after=10s 240s \
+          timeout --foreground --signal=TERM --kill-after=10s 240s \\
             node --input-type=module -e '
               const started = Date.now();
               console.log("G02_NODE_DIAGNOSTIC=START");
