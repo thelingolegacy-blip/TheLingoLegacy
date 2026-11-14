@@ -61,3 +61,11 @@ test("reviewer cannot verify records above their classification scope", async ()
   const response = await fetch(base + "/api/v1/records/lkis.api.restricted-001/verify", { method: "POST", headers: headers("review-test-token") });
   assert.equal(response.status, 404);
 });
+
+test("serves the local console with a restrictive content security policy", async () => {
+  const response = await fetch(base + "/");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-security-policy"), /default-src 'none'/);
+  assert.match(await response.text(), /Knowledge Intelligence Console/);
+  assert.equal((await fetch(base + "/app.js")).status, 200);
+});
