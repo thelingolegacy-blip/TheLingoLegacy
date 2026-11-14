@@ -1,7 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile, chmod } from "node:fs/promises";
 import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { readFile as readText } from "node:fs/promises";
 const schemaUrl = new URL("../../../config/knowledge/knowledge-record.schema.json", import.meta.url);
 const schema = JSON.parse(await readText(schemaUrl, "utf8"));
@@ -28,31 +27,40 @@ function validate(value, rule, path = "$", errors = []) {
 }
 export function validateRecord(record) { return validate(record, schema); }
 export class RecordStore {
-  constructor(filePath) { this.filePath = filePath; }
+  constructor(filePath) { this.filePath = filePath; this.writeQueue = Promise.resolve(); }
   async readAll() {
-    try {
-      const parsed = JSON.parse(await readFile(this.filePath, "utf8"));
-      if (!Array.isArray(parsed)) throw new Error("LKIS store must contain an array");
-      return parsed;
-    } catch (error) { if (error.code === "ENOENT") return []; throw error; }
+    try { const parsed = JSON.parse(await readFile(this.filePath, "utf8")); if (!Array.isArray(parsed)) throw new Error("LKIS store must contain an array"); return parsed; }
+    catch (error) { if (error.code === "ENOENT") return []; throw error; }
   }
   async writeAll(rows) {
     await mkdir(dirname(this.filePath), { recursive: true, mode: 0o700 });
     const temp = this.filePath + "." + randomUUID() + ".tmp";
     await writeFile(temp, JSON.stringify(rows, null, 2) + "\n", { mode: 0o600, flag: "wx" });
-    await chmod(temp, 0o600);
-    await rename(temp, this.filePath);
-    await chmod(dirname(this.filePath), 0o700);
+    await chmod(temp, 0o600); await rename(temp, this.filePath); await chmod(dirname(this.filePath), 0o700);
   }
   async list() { return this.readAll(); }
+  async mutate(operation) {
+    const run = this.writeQueue.then(operation, operation);
+    this.writeQueue = run.then(() => undefined, () => undefined);
+    return run;
+  }
   async create(record) {
-    const rows = await this.readAll();
-    if (rows.some(row => row.record.id === record.id)) return { conflict: true };
-    const storedAt = new Date().toISOString();
-    const digest = createHash("sha256").update(JSON.stringify(record)).digest("hex");
-    const row = { record, revision: 1, stored_at: storedAt, sha256: digest };
-    rows.push(row);
-    await this.writeAll(rows);
-    return { conflict: false, row };
+    return this.mutate(async () => {
+      const rows = await this.readAll();
+      if (rows.some(row => row.record.id === record.id)) return { conflict: true };
+      const row = { record, revision: 1, stored_at: new Date().toISOString(), sha256: createHash("sha256").update(JSON.stringify(record)).digest("hex") };
+      rows.push(row); await this.writeAll(rows); return { conflict: false, row };
+    });
+  }
+  async verify(id, reviewer) {
+    return this.mutate(async () => {
+      const rows = await this.readAll(), index = rows.findIndex(row => row.record.id === id);
+      if (index < 0) return { missing: true };
+      const row = rows[index];
+      if (row.record.status !== "proposed") return { conflict: true, status: row.record.status };
+      const record = { ...row.record, status: "verified", change_history: [...(row.record.change_history || []), { changed_at: new Date().toISOString(), change: "Status changed from proposed to verified", reason: "Independent LKIS reviewer accepted the submitted evidence references.", evidence_refs: row.record.evidence_refs }] };
+      const next = { ...row, record, revision: row.revision + 1, stored_at: new Date().toISOString(), reviewed_by: reviewer, sha256: createHash("sha256").update(JSON.stringify(record)).digest("hex") };
+      rows[index] = next; await this.writeAll(rows); return { row: next };
+    });
   }
 }
