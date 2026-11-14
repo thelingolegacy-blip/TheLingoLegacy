@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.0.0",
+  "status": "proposed",
+  "source_of_truth": "GitHub repository thelingolegacy-blip/TheLingoLegacy",
+  "policy": {
+    "production_mutations": "blocked_without_release_approval",
+    "secrets_in_source": false,
+    "client_provider_secrets": false,
+    "real_money_game_wagering": false
+  },
+  "centers": [
+    {
+      "id": "C2",
+      "name": "LINGO Command & Control Center",
+      "owner": "portfolio-governance",
+      "responsibilities": [
+        "portfolio state",
+        "priorities",
+        "dependencies",
+        "decision log",
+        "incident command"
+      ],
+      "systems": [
+        "GitHub Issues",
+        "Control Tower #517"
+      ],
+      "status": "partially_operational"
+    },
+    {
+      "id": "ENG",
+      "name": "Engineering & Automation Station",
+      "owner": "engineering",
+      "responsibilities": [
+        "source control",
+        "CI",
+        "tests",
+        "build provenance",
+        "artifact lineage"
+      ],
+      "systems": [
+        "GitHub repositories",
+        "GitHub Actions"
+      ],
+      "status": "blocked_ci_evidence"
+    },
+    {
+      "id": "EDGE",
+      "name": "Network & Edge Operations Center",
+      "owner": "platform-infrastructure",
+      "responsibilities": [
+        "DNS inventory",
+        "Worker routing",
+        "edge APIs",
+        "public asset boundary"
+      ],
+      "systems": [
+        "Cloudflare zone",
+        "thelingolegacyv-5"
+      ],
+      "status": "production_read_only"
+    },
+    {
+      "id": "IAM",
+      "name": "Identity, Access & Trust Station",
+      "owner": "identity-platform",
+      "responsibilities": [
+        "authentication",
+        "authorization",
+        "sessions",
+        "roles",
+        "consent",
+        "audit"
+      ],
+      "systems": [
+        "Firebase Auth intended"
+      ],
+      "status": "target_architecture"
+    },
+    {
+      "id": "DATA",
+      "name": "Data & Integration Station",
+      "owner": "data-platform",
+      "responsibilities": [
+        "domain data ownership",
+        "schemas",
+        "migrations",
+        "service adapters",
+        "events"
+      ],
+      "systems": [
+        "Firebase Firestore intended"
+      ],
+      "status": "target_architecture"
+    },
+    {
+      "id": "UX",
+      "name": "Product & Experience Design Studio",
+      "owner": "product-design",
+      "responsibilities": [
+        "design tokens",
+        "journeys",
+        "accessibility",
+        "responsive QA"
+      ],
+      "systems": [
+        "GitHub design system",
+        "approved design tools"
+      ],
+      "status": "target_architecture"
+    },
+    {
+      "id": "GAME",
+      "name": "Game & Interactive Systems Studio",
+      "owner": "game-studio",
+      "responsibilities": [
+        "game engines",
+        "simulation",
+        "progression",
+        "virtual economy",
+        "game QA"
+      ],
+      "systems": [
+        "Unity target",
+        "browser game modules"
+      ],
+      "status": "source_and_project_dependent"
+    },
+    {
+      "id": "MEDIA",
+      "name": "Media & Asset Foundry",
+      "owner": "creative-operations",
+      "responsibilities": [
+        "brand assets",
+        "media catalog",
+        "rights",
+        "metadata",
+        "optimization"
+      ],
+      "systems": [
+        "GitHub asset manifest",
+        "approved object storage"
+      ],
+      "status": "target_architecture"
+    },
+    {
+      "id": "COM",
+      "name": "Commerce, Wallet & Trust Station",
+      "owner": "commerce-platform",
+      "responsibilities": [
+        "catalog",
+        "checkout",
+        "ledger",
+        "rewards",
+        "fraud controls",
+        "reconciliation"
+      ],
+      "systems": [
+        "Stripe adapter proposed",
+        "ledger service proposed"
+      ],
+      "status": "inactive_until_review"
+    },
+    {
+      "id": "OBS",
+      "name": "Observability & Incident Response Center",
+      "owner": "site-reliability",
+      "responsibilities": [
+        "logs",
+        "metrics",
+        "traces",
+        "uptime",
+        "alerts",
+        "incident response"
+      ],
+      "systems": [
+        "structured telemetry",
+        "dashboards"
+      ],
+      "status": "target_architecture"
+    },
+    {
+      "id": "REL",
+      "name": "Release Assurance & Recovery Station",
+      "owner": "release-governance",
+      "responsibilities": [
+        "gate evaluation",
+        "evidence",
+        "rollback",
+        "LKG protection",
+        "certification"
+      ],
+      "systems": [
+        "GitHub Actions evidence",
+        "deployment/version records"
+      ],
+      "status": "protected_hold"
+    }
+  ],
+  "connection_contracts": {
+    "api_prefix": "/api/v1",
+    "event_envelope": [
+      "event_id",
+      "event_type",
+      "schema_version",
+      "occurred_at",
+      "producer",
+      "correlation_id",
+      "payload"
+    ],
+    "authentication": "Firebase Auth intended; verify tokens server-side",
+    "authorization": "server-side least-privilege checks for every protected operation",
+    "idempotency": "required for retried writes, events and payment/ledger operations",
+    "observability": "correlation_id across client, edge, backend and CI",
+    "asset_delivery": "explicit public allowlist; deny internal paths before static asset fetch"
+  },
+  "domain_map": {
+    "LINGOlegacy": [
+      "IAM",
+      "DATA",
+      "EDGE",
+      "OBS"
+    ],
+    "LINGOlane": [
+      "IAM",
+      "COM",
+      "DATA",
+      "OBS"
+    ],
+    "LINGOslots": [
+      "IAM",
+      "GAME",
+      "DATA",
+      "OBS"
+    ],
+    "LINGOarcade": [
+      "IAM",
+      "GAME",
+      "DATA",
+      "OBS"
+    ],
+    "LINGOlibrary": [
+      "IAM",
+      "MEDIA",
+      "DATA",
+      "OBS"
+    ],
+    "LINGOmedia": [
+      "MEDIA",
+      "DATA",
+      "EDGE",
+      "OBS"
+    ],
+    "LINGOworld": [
+      "IAM",
+      "DATA",
+      "EDGE",
+      "OBS"
+    ],
+    "LegacyXclub": [
+      "IAM",
+      "DATA",
+      "OBS"
+    ]
+  }
+}
