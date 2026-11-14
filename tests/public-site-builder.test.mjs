@@ -9,6 +9,11 @@ const base = {
   contract: 'LINGO_PUBLIC_SITE_ROUTES',
   canonicalOrigin: 'https://thelingolegacy.com',
   approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }],
+  candidateRoutes: [
+    { path: '/', source: 'index.html', status: 'proposed' },
+    { path: '/studio-hub/', source: 'studio-hub/index.html', status: 'internal_only' },
+    { path: '/app/', source: 'app/index.html', status: 'internal_only' }
+  ],
   assetFiles: [],
   excludedRoutePrefixes: ['/admin-', '/api/'],
   approvalRecord: { approvedBy: 'test-reviewer', approvedAt: '2026-11-14T00:00:00Z', changeReference: 'test-fixture' }
@@ -41,6 +46,16 @@ test('requires an approved root route', () => {
 
 test('rejects internal routes even if marked approved', () => {
   assert.throws(() => validatePublicContract({ ...base, approvedRoutes: [...base.approvedRoutes, { path: '/admin-command-center/', source: 'admin-command-center/index.html', status: 'approved' }] }), /Excluded internal route/);
+});
+
+test('rejects internal-only candidate routes even if copied into approvedRoutes', () => {
+  for (const route of ['/studio-hub/', '/app/']) {
+    const candidate = base.candidateRoutes.find(item => item.path === route);
+    assert.throws(() => validatePublicContract({
+      ...base,
+      approvedRoutes: [...base.approvedRoutes, { path: route, source: candidate.source, status: 'approved' }]
+    }), /Candidate route is not eligible for publication/);
+  }
 });
 
 test('accepts only explicitly approved route entries', () => {
@@ -96,7 +111,7 @@ test('rejects a symlink as an approved page source', (t) => {
   fs.writeFileSync(target, '<p>private</p>');
   fs.rmSync(path.join(root, 'index.html'));
   fs.symlinkSync(target, path.join(root, 'index.html'));
-  assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }] }), /Expected regular file/);
+  assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }] }), /Expected regular file|Symlink path component/);
 });
 
 test('rejects unquoted local attributes and srcset dependencies', () => {
@@ -140,6 +155,10 @@ test('rejects a route and asset that map to the same output file', (t) => {
     approvedRoutes: [
       { path: '/', source: 'index.html', status: 'approved' },
       { path: '/foo/', source: 'foo/index.html', status: 'approved' }
+    ],
+    candidateRoutes: [
+      ...base.candidateRoutes,
+      { path: '/foo/', source: 'foo/index.html', status: 'proposed' }
     ],
     assetFiles: ['foo/index.html']
   };
