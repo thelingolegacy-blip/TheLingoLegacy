@@ -1,0 +1,48 @@
+{
+  "version": "2026-11-10",
+  "tower": "LINGO-Control-Tower",
+  "mode": "HOLD",
+  "lastKnownGood": "protected",
+  "evidence": {
+    "lastLiveAudit": null,
+    "workflowRunIds": [],
+    "acceptedCommitShas": [],
+    "note": "Null and empty values are intentional until independently observed evidence is attached."
+  },
+  "phases": {
+    "DETECT": {
+      "allowed": true,
+      "scope": "read-only observation, logging, mismatch detection"
+    },
+    "VERIFY": {
+      "allowed": true,
+      "scope": "isolated branch tests, diagnostic workflow runs, reviewable evidence"
+    },
+    "ACCEPT": {
+      "allowed": true,
+      "scope": "acceptance of isolated work products only; does not authorize merge, runner activation, or production change"
+    },
+    "RELEASE": {
+      "allowed": false,
+      "scope": "production promotion, privileged runner activation, deployment, DNS or route changes",
+      "gate": "SEPARATE_HUMAN_RELEASE_AUTHORITY_AND_EVIDENCE"
+    }
+  },
+  "rules": [
+    "A timestamp inside this file is not proof of a live audit.",
+    "Workflow definitions are not execution evidence until committed and run.",
+    "Blueprints are not committed implementation.",
+    "Work orders are not human worker assignments.",
+    "No self-hosted runner registration, activation, restart, or token handling while HOLD is active.",
+    "Use generated test keys only; never production key material in tests.",
+    "Do not expose secrets or dump the complete process environment in diagnostics.",
+    "No automatic merge or production deployment."
+  ],
+  "tracks": {
+    "536": "HELD — test fixture proposal added; reconcile actual verifier and runtime before integration",
+    "537": "BLUEPRINT_READY — repository-specific implementation review required",
+    "437": "PROPOSAL — isolated diagnostic workflow added; no run evidence yet",
+    "242": "UNVERIFIED_FAILURE — no runner actions authorized",
+    "517": "GOVERNANCE — production HOLD enforced"
+  }
+}
