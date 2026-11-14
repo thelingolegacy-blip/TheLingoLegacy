@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Explicit default-deny posture until product-specific access rules are
+    // reviewed, tested, and approved. Do not open this rule globally.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
