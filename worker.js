@@ -30,6 +30,21 @@ const SECURITY_HEADERS = {
   'x-dns-prefetch-control': 'off',
 };
 
+async function stagingSecretMatches(candidate, expected) {
+  if (typeof candidate !== 'string' || candidate.length === 0 || candidate.length > 256
+    || typeof expected !== 'string' || expected.length < 32 || expected.length > 256) return false;
+  const encoder = new TextEncoder();
+  const [candidateHash, expectedHash] = await Promise.all([
+    crypto.subtle.digest('SHA-256', encoder.encode(candidate)),
+    crypto.subtle.digest('SHA-256', encoder.encode(expected)),
+  ]);
+  const left = new Uint8Array(candidateHash);
+  const right = new Uint8Array(expectedHash);
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) difference |= left[index] ^ right[index];
+  return difference === 0;
+}
+
 function canonicalOrigin(env) {
   const domain = String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase();
   return `https://${domain}`;
@@ -201,6 +216,17 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
+      // Staging is deny-by-default. The secret is provisioned as a Worker secret,
+      // never as a plaintext Wrangler variable, and this guard precedes every route.
+      if (env.ENVIRONMENT === 'staging') {
+        if (typeof env.STAGING_ACCESS_SECRET !== 'string' || env.STAGING_ACCESS_SECRET.length < 32) {
+          return json({ ok: false, code: 'STAGING_AUTH_NOT_CONFIGURED' }, 503, request, env);
+        }
+        const supplied = request.headers.get('X-Staging-Access-Key') || '';
+        if (!await stagingSecretMatches(supplied, env.STAGING_ACCESS_SECRET)) {
+          return json({ ok: false, code: 'STAGING_AUTH_REQUIRED' }, 401, request, env);
+        }
+      }
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
       if (url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
         const canonical = new URL(request.url);

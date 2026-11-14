@@ -77,7 +77,7 @@ function makeWorkspace({ failOne = false } = {}) {
   fs.writeFileSync(path.join(root, 'SYSTEM-ACTIVATION-AUTHORITY.md'), 'SUPERSEDED HISTORICAL RECORD — NOT AN ACTIVE AUTHORIZATION\n');
   fs.mkdirSync(path.join(root, '.github/workflows'), { recursive: true });
   fs.writeFileSync(path.join(root, '.github/workflows/production-promotion.yml'), 'runs-on: [self-hosted, linux, x64, lingo-g02]\nif: ${{ false }}\n');
-  fs.writeFileSync(path.join(root, '.github/workflows/g02-self-hosted-sentinel.yml'), 'runs-on: [self-hosted, linux, x64, lingo-g02]\n');
+  fs.writeFileSync(path.join(root, '.github/workflows/g02-sentinel.yml'), 'runs-on: [self-hosted, linux, x64, lingo-g02]\n');
   return root;
 }
 
