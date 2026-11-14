@@ -10,7 +10,8 @@ const base = {
   canonicalOrigin: 'https://thelingolegacy.com',
   approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }],
   assetFiles: [],
-  excludedRoutePrefixes: ['/admin-', '/api/']
+  excludedRoutePrefixes: ['/admin-', '/api/'],
+  approvalRecord: { approvedBy: 'test-reviewer', approvedAt: '2026-11-14T00:00:00Z', changeReference: 'test-fixture' }
 };
 
 function fixture(t) {
@@ -159,4 +160,10 @@ test('recognizes valid regular-expression boundaries and slash-prefixed assets',
     ['/'],
     []
   ), /Unapproved local destination/);
+});
+
+
+test('requires a complete approval record before publishing approved routes', () => {
+  const contract = { ...base, approvalRecord: { approvedBy: null, approvedAt: null, changeReference: null } };
+  assert.throws(() => validatePublicContract(contract), /complete approval record/);
 });
