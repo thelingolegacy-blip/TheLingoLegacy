@@ -42,13 +42,13 @@ export function validatePublicContract(contract) {
     }
   }
   if (!seen.size) throw new Error('No approved public routes. Publication is blocked pending explicit route approval.');
+  if (!seen.has('/')) throw new Error('Approved public route set must include the root route /.');
   const approval = contract.approvalRecord || {};
   if (typeof approval.approvedBy !== 'string' || !approval.approvedBy.trim() ||
       typeof approval.approvedAt !== 'string' || !Number.isFinite(Date.parse(approval.approvedAt)) ||
       typeof approval.changeReference !== 'string' || !approval.changeReference.trim()) {
     throw new Error('Approved routes require a complete approval record: approvedBy, approvedAt, and changeReference.');
   }
-  if (!seen.has('/')) throw new Error('Approved public route set must include the root route /.');
   const assetSeen = new Set();
   for (const asset of contract.assetFiles) {
     if (typeof asset !== 'string' || path.isAbsolute(asset) || asset.split(/[\\/]/).includes('..')) throw new Error(`Invalid asset path: ${String(asset)}`);
