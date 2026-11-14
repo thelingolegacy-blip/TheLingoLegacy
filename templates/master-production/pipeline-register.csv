@@ -1,0 +1,1 @@
+PipelineID,EntityID,WorkstreamID,PipelineName,Environment,Stages,CurrentStage,Dependencies,OwnerRole,AcceptanceGate,RequiredEvidence,Status,BlockerReference,NextSafeAction,LastUpdated,Notes
