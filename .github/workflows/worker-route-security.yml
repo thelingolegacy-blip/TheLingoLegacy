@@ -1,0 +1,35 @@
+name: Worker Route Security
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "worker.js"
+      - "cloudflare/security/**"
+      - "scripts/test-worker-route-security.mjs"
+      - ".github/workflows/worker-route-security.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  worker-route-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check Worker and policy syntax
+        run: |
+          set -euo pipefail
+          node --experimental-default-type=module --check worker.js
+          node --check cloudflare/security/restricted-public-paths.mjs
+
+      - name: Test restricted route policy and Worker asset boundary
+        run: node --experimental-default-type=module --test scripts/test-worker-route-security.mjs
