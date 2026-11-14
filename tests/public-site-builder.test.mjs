@@ -117,3 +117,46 @@ test('rejects symlinked parent directories for approved sources', (t) => {
   fs.symlinkSync(outside, path.join(root, 'linked'), 'dir');
   assert.throws(() => buildPublicDist(root, out, { ...base, approvedRoutes: [{ path: '/', source: 'linked/index.html', status: 'approved' }] }), /Symlink path component/);
 });
+
+
+test('preserves the previous output when an approved asset is missing', (t) => {
+  const { root, out } = fixture(t);
+  fs.mkdirSync(out, { recursive: true });
+  fs.writeFileSync(path.join(out, 'keep.txt'), 'previous good output');
+  const contract = { ...base, approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }], assetFiles: ['assets/missing.svg'] };
+  assert.throws(() => buildPublicDist(root, out, contract), /ENOENT|no such file/i);
+  assert.equal(fs.readFileSync(path.join(out, 'keep.txt'), 'utf8'), 'previous good output');
+});
+
+test('rejects a route and asset that map to the same output file', (t) => {
+  const { root, out } = fixture(t);
+  fs.mkdirSync(path.join(root, 'foo'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'foo', 'index.html'), '<p>asset</p>');
+  fs.writeFileSync(path.join(root, 'index.html'), '<a href="/foo/">foo</a>');
+  const contract = {
+    ...base,
+    approvedRoutes: [
+      { path: '/', source: 'index.html', status: 'approved' },
+      { path: '/foo/', source: 'foo/index.html', status: 'approved' }
+    ],
+    assetFiles: ['foo/index.html']
+  };
+  assert.throws(() => buildPublicDist(root, out, contract), /Publication destination collision/);
+});
+
+test('recognizes valid regular-expression boundaries and slash-prefixed assets', () => {
+  assert.doesNotThrow(() => validateHtmlReferences(
+    '<a href="/studio-hub/">Hub</a><img src="/assets/logo.svg">',
+    '/',
+    'https://thelingolegacy.com',
+    ['/', '/studio-hub/'],
+    ['assets/logo.svg']
+  ));
+  assert.throws(() => validateHtmlReferences(
+    '<a href="/private/">Private</a>',
+    '/',
+    'https://thelingolegacy.com',
+    ['/'],
+    []
+  ), /Unapproved local destination/);
+});
