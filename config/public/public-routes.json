@@ -5,7 +5,7 @@
   "canonicalOrigin": "https://thelingolegacy.com",
   "sourceAuthority": "GitHub",
   "operationalReleaseManifest": "config/release/lingo-legacy-v1.0.0-rc.json",
-  "separationRule": "This contract controls visitor-facing publication only. It does not replace, narrow, or mutate the operational release manifest or its validator.",
+  "separationRule": "The root route is the visitor-facing entry page. Studio Hub is treated as an internal/operator gateway and is not part of the public visitor build. This contract controls visitor-facing publication only; it does not replace, narrow, or mutate the operational release manifest or its validator.",
   "approvalRule": "Only entries in approvedRoutes with status approved may be published. Candidate routes are evidence for review, not publication permission.",
   "approvedRoutes": [],
   "candidateRoutes": [
@@ -13,13 +13,13 @@
       "path": "/",
       "source": "index.html",
       "status": "proposed",
-      "notes": "Current root redirects to /studio-hub/; confirm desired canonical entry behavior."
+      "notes": "Recommended canonical public front door. Source is now a self-contained visitor landing page with no automatic redirect to operator tools. Remains unapproved pending route-specific review and build verification."
     },
     {
       "path": "/studio-hub/",
       "source": "studio-hub/index.html",
       "status": "proposed",
-      "notes": "Current visitor gateway; local links include destinations not classified as public."
+      "notes": "Internal/operator-facing gateway. Do not publish in the visitor-facing asset build; its catalog includes operational and unclassified destinations. Retain in the repository for controlled access and separate review."
     },
     {
       "path": "/living-universe/",
