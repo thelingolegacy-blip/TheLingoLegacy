@@ -73,6 +73,22 @@ test('Worker denies restricted requests before static asset lookup', async () =>
   assert.deepEqual(requestedAssets, []);
 });
 
+test('Worker rejects ambiguous encoded paths before static asset lookup', async () => {
+  const requestedAssets = [];
+  const env = {
+    CANONICAL_DOMAIN: 'thelingolegacy.com',
+    ASSETS: {
+      fetch: async (request) => {
+        requestedAssets.push(new URL(request.url).pathname);
+        return new Response('asset response', { status: 200 });
+      },
+    },
+  };
+  const response = await worker.fetch(new Request('https://thelingolegacy.com/public/%252fops/'), env);
+  assert.equal(response.status, 404);
+  assert.deepEqual(requestedAssets, []);
+});
+
 test('Worker preserves customer-facing readiness requests', async () => {
   const requestedAssets = [];
   const env = {
