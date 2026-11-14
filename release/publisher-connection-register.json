@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0",
+  "status": "NO_PUBLISHER_CONNECTIONS_VERIFIED",
+  "policy": "No credentials or private key material may be stored in this file or Git.",
+  "publishers": [
+    {
+      "id": "apple-app-store-connect",
+      "name": "Apple App Store Connect",
+      "targets": "iOS / tvOS",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "google-play-console",
+      "name": "Google Play Console",
+      "targets": "Android / Android TV",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "amazon-appstore",
+      "name": "Amazon Developer / Appstore",
+      "targets": "Fire TV",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "samsung-seller-office",
+      "name": "Samsung Seller Office",
+      "targets": "Tizen TV",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "lg-seller-lounge",
+      "name": "LG Seller Lounge",
+      "targets": "webOS TV",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "roku-developer",
+      "name": "Roku Developer Dashboard",
+      "targets": "Roku",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "playstation-partners",
+      "name": "PlayStation Partners",
+      "targets": "PlayStation",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "idxbox",
+      "name": "ID@Xbox / Partner Center",
+      "targets": "Xbox",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    },
+    {
+      "id": "nintendo-developer",
+      "name": "Nintendo Developer Portal",
+      "targets": "Nintendo Switch",
+      "accountOwner": "REQUIRED",
+      "accountId": "NOT_VERIFIED",
+      "appIdentity": "NOT_REGISTERED",
+      "credentialReference": "NOT_CONFIGURED",
+      "authenticatedTest": "NOT_RUN",
+      "submissionReceipt": "NONE",
+      "reviewStatus": "NOT_SUBMITTED",
+      "approval": "NOT_GRANTED",
+      "status": "OUTSTANDING"
+    }
+  ],
+  "infrastructure": [
+    {
+      "id": "firebase",
+      "name": "Firebase",
+      "status": "SOURCE_CONFIG_PRESENT_PROVIDER_ACCESS_NOT_VERIFIED",
+      "projectId": "lingo-legacy-production",
+      "apiKeys": "PLACEHOLDERS_IN_SOURCE",
+      "rulesAndAppCheck": "NOT_VERIFIED"
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "status": "READ_ACCESS_VERIFIED_ROUTE_AND_RELEASE_CERTIFICATION_PENDING",
+      "zone": "thelingolegacy.com",
+      "workerCountObserved": 7,
+      "workerRouteCountObserved": 21
+    }
+  ]
+}
