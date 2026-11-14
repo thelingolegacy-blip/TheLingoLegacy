@@ -12,7 +12,8 @@
 - The shared route-policy module, Worker gate, static exclusions, release-manifest cleanup, focused tests, and two independent PR workflow files have been added.
 - Draft PR #574 is open against `main`; it remains unmerged and in draft state.
 - Local test execution is unavailable in this environment because the GitHub host cannot be reached from the local shell.
-- The PR's existing Actions runs ended in `startup_failure` before job creation; no job steps or test evidence were produced. The newly added workflow files have not yet produced run evidence.
+- Both new PR workflows were triggered on the latest branch commit, but each ended in `startup_failure` before job creation: Worker Route Security run `43578109619` and Static Publication Policy run `43578106286`. Both returned zero jobs, so no test steps or GitHub CI evidence were produced.
+- A repository-content consistency audit passed 10/10 static assertions (policy import/order, restricted manifest removal, explicit asset exclusions, public readiness preservation, workflow triggers/permissions, and test coverage presence). This is not a substitute for executing the Node test suites.
 - Therefore implementation is present but verification remains **BLOCKED / UNVERIFIED**. No production changes or release promotion have occurred.
 
 ## 1. Current branch and baseline inspection
