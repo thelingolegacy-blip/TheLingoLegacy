@@ -1,0 +1,47 @@
+name: LINGO Trinity Hub — Static JS Recovery
+on:
+  push:
+    branches: [recovery/trinity-js-2026-11-14]
+    paths: ["lingo-trinity/**", ".github/workflows/trinity-js-recovery.yml"]
+  pull_request:
+    branches: [main]
+    paths: ["lingo-trinity/**", ".github/workflows/trinity-js-recovery.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: trinity-js-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  static-js:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run Trinity tests
+        run: npm --prefix lingo-trinity test
+      - name: Check module syntax
+        run: |
+          node --check lingo-trinity/js/engine.js
+          node --check lingo-trinity/js/worlds.js
+          node --check lingo-trinity/js/apparel.js
+          node --check lingo-trinity/js/hub.js
+      - name: Capture evidence context
+        if: always()
+        run: |
+          mkdir -p trinity-evidence
+          echo "sha=${GITHUB_SHA}" > trinity-evidence/context.txt
+          echo "run_id=${GITHUB_RUN_ID}" >> trinity-evidence/context.txt
+          echo "runner=${RUNNER_NAME}" >> trinity-evidence/context.txt
+          date -u +%Y-%m-%dT%H:%M:%SZ >> trinity-evidence/context.txt
+          npm --prefix lingo-trinity test > trinity-evidence/node-test-output.txt 2>&1 || true
+          cp lingo-trinity/README.md trinity-evidence/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lingo-trinity-evidence-${{ github.run_id }}
+          path: trinity-evidence/
+          retention-days: 14
