@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeRoute, validatePublicContract } from '../scripts/build-public-dist.mjs';
+import { normalizeRoute, validatePublicContract, validateHtmlReferences } from '../scripts/build-public-dist.mjs';
 
 const base = {
   contract: 'LINGO_PUBLIC_SITE_ROUTES',
@@ -33,4 +33,22 @@ test('rejects internal routes even if marked approved', () => {
 test('accepts only explicitly approved route entries', () => {
   const result = validatePublicContract(base);
   assert.deepEqual(result.routes, ['/']);
+});
+
+
+test('rejects local links outside the approved route and asset sets', () => {
+  assert.throws(
+    () => validateHtmlReferences('<a href="/admin-command-center/">ops</a>', '/', 'https://thelingolegacy.com', ['/'], []),
+    /Unapproved local destination/
+  );
+});
+
+test('accepts only approved routes and explicitly listed assets', () => {
+  assert.doesNotThrow(() => validateHtmlReferences(
+    '<a href="/studio-hub/">hub</a><img src="/assets/mark.svg">',
+    '/',
+    'https://thelingolegacy.com',
+    ['/', '/studio-hub/'],
+    ['assets/mark.svg']
+  ));
 });
