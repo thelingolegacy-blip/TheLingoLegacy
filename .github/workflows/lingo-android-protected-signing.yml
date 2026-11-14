@@ -1,0 +1,91 @@
+name: LINGO Android Protected Release Signing
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_signing:
+        description: "Confirm that the exact reviewed source and Android upload-key environment are approved for signing"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-android-protected-signing
+  cancel-in-progress: false
+
+jobs:
+  signed-aab:
+    if: inputs.confirm_signing == true
+    runs-on: ubuntu-latest
+    environment: android-signing
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Materialize protected upload key in ephemeral runner
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "$KEYSTORE_B64"
+          test -n "$STORE_PASSWORD"
+          test -n "$KEY_ALIAS"
+          test -n "$KEY_PASSWORD"
+          KEYSTORE_PATH="$RUNNER_TEMP/lingo-upload-key.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE_PATH"
+          test -s "$KEYSTORE_PATH"
+          echo "ANDROID_UPLOAD_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
+          echo "ANDROID_UPLOAD_STORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "ANDROID_UPLOAD_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "ANDROID_UPLOAD_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+      - name: Resolve dependencies and validate source
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+      - name: Build signed Android App Bundle
+        run: flutter build appbundle --release
+      - name: Verify signature and calculate digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          AAB="build/app/outputs/bundle/release/app-release.aab"
+          test -s "$AAB"
+          jarsigner -verify -strict -verbose -certs "$AAB"
+          mkdir -p release-evidence
+          cp "$AAB" release-evidence/app-release.aab
+          sha256sum release-evidence/app-release.aab > release-evidence/SHA256SUMS
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "artifact=app-release.aab"
+            echo "signing=signature-verified"
+          } > release-evidence/signing-provenance.txt
+      - name: Upload signed candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-android-signed-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Remove ephemeral signing material
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/lingo-upload-key.jks"
+
+# This workflow is manual and requires the android-signing environment.
+# Configure required reviewers on that GitHub Environment before adding secrets.
+# No Play Console upload, store submission, or production release is performed.
