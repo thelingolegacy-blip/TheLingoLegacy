@@ -47,12 +47,18 @@ jobs:
           cache: true
 
       - name: Verify Firebase project contract
+        id: firebase_contract
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           test -f .firebaserc
           test -f lib/firebase_options.dart
           node scripts/verify-flutter-firebase.mjs
+
+      # Keep static analysis, tests, and non-production builds independent of
+      # provider configuration. The final gate still fails the job if the
+      # Firebase project contract is unresolved.
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -90,11 +96,19 @@ jobs:
         run: flutter build apk --debug
 
       - name: Upload non-production build evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: flutter-firebase-integrity-${{ github.sha }}
           path: |
             build/web/
             build/app/outputs/flutter-apk/app-debug.apk
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
+
+      - name: Enforce Firebase project contract
+        if: always() && steps.firebase_contract.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error::Firebase project contract is unresolved. Builds are diagnostic only and must not be deployed."
+          exit 1
