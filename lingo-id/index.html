@@ -1,1 +1,101 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lingo ID Account Readiness</title><meta name="description" content="Lingo ID account readiness status for The Lingo Legacy, tracking Auth0 connection, account flows, protected route decisions, and launch guardrails without enabling broken login routes."><link rel="stylesheet" href="/assets/studio-grade.css"><style>body{margin:0;background:#050706;color:#f9f3df;font-family:Inter,system-ui,sans-serif;line-height:1.6}main{max-width:1080px;margin:auto;padding:48px 20px}.hero,.card{border:1px solid rgba(212,175,55,.3);border-radius:24px;padding:24px;background:rgba(255,255,255,.045)}h1{font-size:clamp(2rem,6vw,4.4rem)}h2{color:#d4af37}.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:20px}ul{padding-left:1.15rem}.ok{color:#9cffc1}.pending{color:#ffd889}.blocked{color:#ffb5b5}footer{margin-top:34px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}</style></head><body><main><section class="hero"><h1>Lingo ID Account Readiness</h1><p>Auth0 is connected in Vercel, but public login buttons stay gated until callback, logout, session, and protected-route behavior are implemented and tested.</p></section><section class="grid"><article class="card"><h2 class="ok">Connected</h2><ul><li>Auth0 resource connected to Vercel project</li><li>Auth0 env names present by name</li><li>Secrets remain in Vercel/Auth0 only</li><li>Implementation checklist is tracked</li></ul></article><article class="card"><h2 class="pending">Account routes needed</h2><ul><li>Login route or link</li><li>Logout route or link</li><li>Callback handler</li><li>Account/profile landing</li><li>Session-state display</li></ul></article><article class="card"><h2 class="pending">Future Lingo ID scope</h2><ul><li>Profile</li><li>XP and badges</li><li>Preferences</li><li>Game progress</li><li>Loyalty status</li></ul></article><article class="card"><h2 class="blocked">Do not gate yet</h2><ul><li>Homepage</li><li>That’s My Lingo preview</li><li>KottonsCode public content</li><li>Privacy, Terms, Contact</li><li>Tester feedback</li></ul></article><article class="card"><h2 class="pending">Test before launch</h2><ul><li>Desktop login</li><li>Mobile login</li><li>Callback return</li><li>Session persistence</li><li>Logout clears session</li></ul></article><article class="card"><h2>Guardrails</h2><ul><li>No child accounts until privacy review</li><li>No billing unlock tied to login</li><li>No wallet/rewards writes until backend rules exist</li><li>No secret values in repo</li></ul></article></section><footer><a href="/auth0-implementation/">Auth0 Implementation</a> · <a href="/vercel-hard-lock/">Vercel Hard-Lock</a> · <a href="/production-lock/">Production Lock</a> · <a href="/account/">Account</a> · <a href="/session-test/">Session Test</a> · <a href="/protected-routes/">Protected Routes</a></footer></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="LINGO ID account readiness. Identity integration is not yet verified; sign-in, wallet writes, and protected account routes remain disabled until staging and security checks pass.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#09090d">
+  <title>LINGO ID — Account Readiness</title>
+  <link rel="stylesheet" href="/assets/studio-grade.css">
+  <style>
+    body{margin:0;background:#050706;color:#f9f3df;font-family:Inter,system-ui,sans-serif;line-height:1.6}
+    main{max-width:1080px;margin:auto;padding:48px 20px}
+    .hero,.card{border:1px solid rgba(212,175,55,.3);border-radius:24px;padding:24px;background:rgba(255,255,255,.045)}
+    h1{font-size:clamp(2rem,6vw,4.4rem);line-height:1.05}
+    h2{color:#d4af37}
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:20px}
+    ul{padding-left:1.15rem}
+    .pending{color:#ffd889}
+    .blocked{color:#ffb5b5}
+    footer{margin-top:34px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}
+    a{color:#f7d66e}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <p class="pending"><strong>READINESS SCAFFOLD — NOT CONNECTED</strong></p>
+      <h1>LINGO ID Account Readiness</h1>
+      <p>No identity provider is currently verified for this public account surface. LINGO ID is an architecture and UI scaffold; it is not an active login, account, or session service.</p>
+      <p>Firebase is the intended identity integration path for the current platform architecture. A dedicated non-production Firebase project and matching Web app must be verified before staging sign-in can be enabled. Production identity remains gated separately.</p>
+    </section>
+    <section class="grid">
+      <article class="card">
+        <h2 class="pending">Integration status</h2>
+        <ul>
+          <li>Identity provider: not verified for this surface</li>
+          <li>Firebase staging project and Web app: verification required</li>
+          <li>Cloudflare Worker identity routes: not accepted</li>
+          <li>Session persistence and logout: not accepted</li>
+          <li>Secrets: must remain in approved secret management, never source</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2 class="pending">Required account flows</h2>
+        <ul>
+          <li>Sign-in and sign-out</li>
+          <li>Verified callback and token validation</li>
+          <li>Session creation, refresh, expiry and revocation</li>
+          <li>Account/profile landing and recovery</li>
+          <li>Protected-route authorization and tenant isolation</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2 class="blocked">Remain disabled</h2>
+        <ul>
+          <li>Public login and registration controls</li>
+          <li>Wallet and rewards mutations</li>
+          <li>Registered game play and persistent progression</li>
+          <li>Commerce, billing and payment unlocks</li>
+          <li>Child accounts pending privacy and safety review</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Future LINGO ID scope</h2>
+        <ul>
+          <li>Profile and preferences</li>
+          <li>XP, badges and loyalty status</li>
+          <li>Game progress and session recovery</li>
+          <li>Community and creator identity</li>
+          <li>Account security and recovery controls</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2 class="pending">Required verification</h2>
+        <ul>
+          <li>Dedicated staging tenant and exact project ID</li>
+          <li>Token issuer, audience and signature checks</li>
+          <li>Desktop and mobile browser tests</li>
+          <li>Session persistence, expiry and logout tests</li>
+          <li>Privacy, security and accessibility review</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Platform guardrails</h2>
+        <ul>
+          <li>GitHub remains source of truth</li>
+          <li>Cloudflare is the intended edge runtime</li>
+          <li>Vercel is retired from the target production architecture</li>
+          <li>No production Firebase credentials in staging</li>
+          <li>No secret values in the repository or public manifest</li>
+        </ul>
+      </article>
+    </section>
+    <footer>
+      <p>Account features will be enabled only after the identity service, security rules, session lifecycle, privacy review and release evidence are accepted.</p>
+      <a href="/studio-hub/">Return to The Lingo Legacy HQ</a>
+    </footer>
+  </main>
+</body>
+</html>
