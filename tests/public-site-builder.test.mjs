@@ -122,6 +122,7 @@ test('rejects symlinked parent directories for approved sources', (t) => {
 
 test('preserves the previous output when an approved asset is missing', (t) => {
   const { root, out } = fixture(t);
+  fs.writeFileSync(path.join(root, 'index.html'), '<p>safe page</p>');
   fs.mkdirSync(out, { recursive: true });
   fs.writeFileSync(path.join(out, 'keep.txt'), 'previous good output');
   const contract = { ...base, approvedRoutes: [{ path: '/', source: 'index.html', status: 'approved' }], assetFiles: ['assets/missing.svg'] };
