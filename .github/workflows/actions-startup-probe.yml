@@ -1,0 +1,78 @@
+name: Actions startup probe
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/actions-startup-probe.yml"
+      - "docs/actions-startup-failure-recovery.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-actions-startup-probe-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hosted-runner-smoke:
+    name: Hosted runner allocation and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Capture runner and execution identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "image_os=${ImageOS:-unknown}"
+            echo "image_version=${ImageVersion:-unknown}"
+            echo "utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee evidence/identity.txt
+          uname -a | tee evidence/uname.txt
+          cat /etc/os-release | tee evidence/os-release.txt
+      - name: Verify baseline tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            bash --version | head -n 1
+            git --version
+            python3 --version
+            node --version
+            npm --version
+          } | tee evidence/tool-versions.txt
+      - name: Write correlated evidence manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "sha=${GITHUB_SHA}"
+            echo "ref=${GITHUB_REF}"
+            echo "job_status=${{ job.status }}"
+            echo "runner_name=${RUNNER_NAME:-unavailable}"
+            echo "runner_os=${RUNNER_OS:-unavailable}"
+          } > evidence/run-manifest.txt
+          (cd evidence && sha256sum *.txt > SHA256SUMS)
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-actions-startup-evidence
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 14
