@@ -25,6 +25,7 @@ async function bodyJson(req) {
   try { return JSON.parse(raw); } catch { throw Object.assign(new Error("Invalid JSON"), { status:400 }); }
 }
 function visible(row, actor) { return levels[row.record.classification] <= actor.maxClass; }
+function effectiveStatus(record) { return record.status === "verified" && record.review_after && Date.parse(record.review_after) <= Date.now() ? "stale" : record.status; }
 async function sendStatic(res, file, type) {
   const body = await readFile(resolve(publicDir, file));
   const csp = ["default-src 'none'", "style-src 'unsafe-inline'", "script-src 'self'", "connect-src 'self'", "base-uri 'none'", "frame-ancestors 'none'", "form-action 'self'"].join("; ");
@@ -46,13 +47,19 @@ export function createLkisServer() {
       if (!actor) return send(res,401,{error:"unauthorized",message:"A valid LKIS bearer token is required."});
       if (req.method === "GET" && url.pathname === "/api/v1/records") {
         const q=(url.searchParams.get("q")||"").trim().toLowerCase(), domain=url.searchParams.get("domain"), status=url.searchParams.get("status");
-        const rows=(await store.list()).filter(row=>visible(row,actor)).filter(row=>!domain||row.record.domain===domain).filter(row=>!status||row.record.status===status).filter(row=>!q||[row.record.title,row.record.statement,row.record.domain,row.record.knowledge_type].join(" ").toLowerCase().includes(q));
-        return send(res,200,{count:rows.length,records:rows});
+        const rows=(await store.list()).filter(row=>visible(row,actor)).filter(row=>!domain||row.record.domain===domain).filter(row=>!status||effectiveStatus(row.record)===status).filter(row=>!q||[row.record.title,row.record.statement,row.record.domain,row.record.knowledge_type].join(" ").toLowerCase().includes(q));
+        return send(res,200,{count:rows.length,records:rows.map(row=>({...row,effective_status:effectiveStatus(row.record)}))});
       }
       if (req.method === "GET" && url.pathname === "/api/v1/assistant/context") {
         const q=(url.searchParams.get("q")||"").trim().toLowerCase(); if(!q) return send(res,400,{error:"query_required"});
-        const rows=(await store.list()).filter(row=>visible(row,actor)&&row.record.status==="verified").filter(row=>[row.record.title,row.record.statement,row.record.domain].join(" ").toLowerCase().includes(q)).slice(0,10);
+        const rows=(await store.list()).filter(row=>visible(row,actor)&&effectiveStatus(row.record)==="verified").filter(row=>[row.record.title,row.record.statement,row.record.domain].join(" ").toLowerCase().includes(q)).slice(0,10);
         return send(res,200,{mode:"retrieval_only",generated_answer:false,query:q,records:rows.map(row=>({id:row.record.id,title:row.record.title,statement:row.record.statement,source_refs:row.record.source_refs,evidence_refs:row.record.evidence_refs||[],observed_at:row.record.observed_at,status:row.record.status,sha256:row.sha256})),citations_required:true});
+      }
+      if (req.method === "GET" && url.pathname === "/api/v1/metrics") {
+        const rows=(await store.list()).filter(row=>visible(row,actor));
+        const byStatus={}, byDomain={};
+        for(const row of rows){const status=effectiveStatus(row.record);byStatus[status]=(byStatus[status]||0)+1;byDomain[row.record.domain]=(byDomain[row.record.domain]||0)+1;}
+        return send(res,200,{total_visible_records:rows.length,by_status:byStatus,by_domain:byDomain,generated_at:new Date().toISOString(),note:"Counts are scoped to this token's classification ceiling."});
       }
       if (req.method === "POST" && url.pathname === "/api/v1/records") {
         if(actor.role!=="admin") return send(res,403,{error:"write_forbidden"});
