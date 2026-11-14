@@ -1,0 +1,10 @@
+import test from "node:test";import assert from "node:assert/strict";import {SYMBOLS,secureRandomInt,createGrid,evaluateGrid} from "../js/engine.js";
+const seq=a=>{let i=0;return()=>a[i++]??0;};
+test("three paylines use a 5x3 grid",()=>{assert.equal(createGrid(()=>0).length,3);assert.equal(createGrid(()=>0)[0].length,5);});
+test("unbiased integer sampling rejects tail values",()=>{assert.equal(secureRandomInt(10,seq([0xffffffff,7])),7);});
+test("weighted grid contains known symbols",()=>{assert.ok(createGrid(()=>0).flat().every(x=>SYMBOLS.some(s=>s.id===x)));});
+test("three, four and five matching symbols pay left to right",()=>{for(const n of [3,4,5]){const row=Array.from({length:5},(_,i)=>i<n?"A":"K");const g=[row,["K","Q","J","10","CHIP"],["Q","J","10","CHIP","DICE"]];assert.equal(evaluateGrid(g,10).payout,10*SYMBOLS[0].pays[n]);}});
+test("WILD substitutes",()=>{const g=[["A","WILD","A","WILD","A"],["K","Q","J","10","CHIP"],["Q","J","10","CHIP","DICE"]];assert.equal(evaluateGrid(g,2).payout,36);});
+test("three SCATTER symbols award the demo bonus",()=>{const g=[["SCATTER","A","K","Q","J"],["10","SCATTER","CHIP","DICE","K"],["Q","J","SCATTER","10","A"]];assert.equal(evaluateGrid(g,5).payout,40);});
+test("MULT doubles a winning spin",()=>{const g=[["A","A","A","K","Q"],["K","Q","J","10","CHIP"],["Q","J","10","CHIP","MULT"]];assert.equal(evaluateGrid(g,10).payout,60);});
+test("invalid input and payout overflow fail closed",()=>{assert.throws(()=>evaluateGrid([],10),TypeError);assert.throws(()=>evaluateGrid([["A"]],10),TypeError);const g=Array.from({length:3},()=>Array(5).fill("A"));assert.throws(()=>evaluateGrid(g,Number.MAX_SAFE_INTEGER),RangeError);});
