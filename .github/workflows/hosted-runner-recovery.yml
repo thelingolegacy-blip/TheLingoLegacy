@@ -1,0 +1,37 @@
+name: Hosted Runner Recovery Probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/hosted-runner-recovery.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/hosted-runner-recovery.yml"
+
+permissions: {}
+
+concurrency:
+  group: hosted-runner-recovery-probe
+  cancel-in-progress: true
+
+jobs:
+  hosted-runner-probe:
+    name: Verify GitHub-hosted runner allocation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Emit runner allocation evidence
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          test -n "$RUNNER_NAME"
+          printf 'runner=%s os=%s arch=%s run_id=%s attempt=%s commit=%s\\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUN_ID" "$RUN_ATTEMPT" "$COMMIT_SHA"
+          echo "HOSTED_RUNNER_ALLOCATION=CONFIRMED"
