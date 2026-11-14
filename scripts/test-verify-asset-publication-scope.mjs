@@ -13,6 +13,9 @@ const requiredExclusions = [
   '*.sh', '*.py', '*.yml', '*.yaml', '*.toml', '*.jsonc', '*.lock', '*.map',
   'worker.js', 'wrangler.jsonc', 'android/', 'ios/', 'lib/', 'infra/', 'cloudflare/',
   'diagnostics/', 'integration-os/', 'admin-command-center/', 'economy-command-center/',
+  'integration-configurations/', 'integration-ids-register/', 'integration-links-register/',
+  'dashboard-integration-links/', 'exact-dashboard-links/', 'auth0-details/', 'auth0-implementation/',
+  'config/ops/', 'docs/ops/', 'docs/superpowers/',
   '.firebaserc', '.gitignore', '.gitattributes', '.npmrc', '.pypirc', '.dev.vars*',
   '.DS_Store', 'package.json', 'package-lock.json', 'pnpm-workspace.yaml',
   'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'Cargo.toml', 'go.mod',
@@ -26,7 +29,7 @@ const requiredExclusions = [
 ];
 const publicFiles = ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest'];
 
-function makeRoot(entries = requiredExclusions, routes = ['/', '/studio-os/']) {
+function makeRoot(entries = requiredExclusions, routes = ['/', '/studio-os/', '/integrations-readiness/', '/shopify-readiness/', '/exa-readiness/', '/integration-management/']) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-asset-scope-'));
   fs.mkdirSync(path.join(root, 'config/release'), { recursive: true });
   fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({ assets: { directory: '.' } }));
@@ -70,4 +73,20 @@ test('excluding a required public entrypoint fails closed', (t) => {
   const result = runValidator(root);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /must not exclude required public file: index\.html/);
+});
+
+test('restricted internal route in the release manifest fails closed', (t) => {
+  const root = makeRoot(requiredExclusions, ['/', '/integration-configurations/']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /conflicts with release-manifest route/);
+});
+
+test('missing customer-facing readiness route fails closed', (t) => {
+  const root = makeRoot(requiredExclusions, ['/', '/integrations-readiness/', '/shopify-readiness/', '/integration-management/']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must preserve customer-facing public route: \/exa-readiness\//);
 });

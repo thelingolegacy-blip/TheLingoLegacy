@@ -81,6 +81,16 @@ diagnostics/
 integration-os/
 admin-command-center/
 economy-command-center/
+integration-configurations/
+integration-ids-register/
+integration-links-register/
+dashboard-integration-links/
+exact-dashboard-links/
+auth0-details/
+auth0-implementation/
+config/ops/
+docs/ops/
+docs/superpowers/
 firebase.json
 firebase.client.json
 firebase-worker.js

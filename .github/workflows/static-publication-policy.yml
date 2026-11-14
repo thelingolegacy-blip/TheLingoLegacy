@@ -1,0 +1,33 @@
+name: Static Publication Policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".assetsignore"
+      - "config/release/lingo-legacy-v1.0.0-rc.json"
+      - "scripts/verify-asset-publication-scope.mjs"
+      - "scripts/test-verify-asset-publication-scope.mjs"
+      - ".github/workflows/static-publication-policy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-publication-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test static publication policy
+        run: node --test scripts/test-verify-asset-publication-scope.mjs
+
+      - name: Verify repository publication scope
+        run: node scripts/verify-asset-publication-scope.mjs
