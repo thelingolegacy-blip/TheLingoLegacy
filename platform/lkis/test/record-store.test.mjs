@@ -34,3 +34,22 @@ test("persists records with revision and content digest and rejects duplicate ID
     assert.equal((await store.list()).length, 1);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
+
+test("requires evidence and records an independent verification revision", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "lkis-review-"));
+  try {
+    const store = new RecordStore(join(dir, "records.json"));
+    const proposed = sample();
+    await store.create(proposed);
+    const blocked = await store.verify(proposed.id, "reviewer-1");
+    assert.equal(blocked.missingEvidence, true);
+    proposed.evidence_refs = ["https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/562"];
+    const replacement = new RecordStore(join(dir, "reviewable.json"));
+    await replacement.create(proposed);
+    const accepted = await replacement.verify(proposed.id, "independent-reviewer");
+    assert.equal(accepted.row.record.status, "verified");
+    assert.equal(accepted.row.revision, 2);
+    assert.equal(accepted.row.reviewed_by, "independent-reviewer");
+    assert.equal(accepted.row.record.change_history.length, 1);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
