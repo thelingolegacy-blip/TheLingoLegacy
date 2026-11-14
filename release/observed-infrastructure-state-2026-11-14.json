@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-14T09:55:00Z",
+  "observedAt": "2026-11-14T10:19:12.241Z",
   "github": {
     "repository": "thelingolegacy-blip/TheLingoLegacy",
     "defaultBranch": "main",
@@ -10,11 +10,17 @@
     },
     "branchProtectionRead": "FORBIDDEN_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
     "latestReadinessWorkflowRun": {
-      "id": 43582751056,
+      "id": 43584528310,
       "conclusion": "startup_failure",
       "jobs": 0,
       "artifacts": 0,
-      "headSha": "70a70169024c672f7f6bd1e2e67ad2ae1e4ba42f"
+      "headSha": "3811a93a2753ba452988f65c34614abb5ee4d23d",
+      "relatedRuns": [
+        43584527270,
+        43584526300,
+        43584525439,
+        43584524643
+      ]
     },
     "g02": "INACTIVE_UNVERIFIED"
   },
@@ -59,9 +65,12 @@
   "firebase": {
     "sourceProjectId": "lingo-legacy-production",
     "clientKeys": "PLACEHOLDERS",
-    "hostingPublicDirectory": ".",
+    "hostingPublicDirectory": "build/web",
     "liveProviderVerification": "NOT_AVAILABLE_WITH_CURRENT_CONNECTION",
-    "mutationPerformed": false
+    "mutationPerformed": false,
+    "hostingConfig": "BRANCH_CONFIGURED_NOT_DEPLOYED",
+    "realtimeDatabaseRules": "EXPLICIT_DEFAULT_DENY_ADDED_BRANCH_ONLY",
+    "firestoreRules": "EXPLICIT_DEFAULT_DENY_ADDED_BRANCH_ONLY"
   },
   "publisherSigningSubmissions": {
     "publisherConnections": "NOT_VERIFIED",
@@ -74,6 +83,11 @@
     "branch": "recovery/build-release-acceleration-2026-11-14",
     "androidReleaseSigning": "CHANGED_TO_PROTECTED_ENVIRONMENT_BACKED_CONFIG_FAILS_CLOSED",
     "publisherSecrets": "NOT_CONFIGURED",
-    "iosProject": "STUB_UNCHANGED"
+    "iosProject": "STUB_UNCHANGED",
+    "headSha": "3811a93a2753ba452988f65c34614abb5ee4d23d"
+  },
+  "flutter": {
+    "pubspecLock": "NOT_PRESENT_ON_RECOVERY_BRANCH",
+    "toolchainBuild": "NOT_RUN_ACTIONS_STARTUP_FAILURE"
   }
 }
