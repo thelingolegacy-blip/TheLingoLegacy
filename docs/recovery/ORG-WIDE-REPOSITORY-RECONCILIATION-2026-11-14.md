@@ -112,3 +112,42 @@ A repository is not marked recovered merely because it exists, a deployment says
 - release gates passed independently of implementation work.
 
 **Current overall state: organization inventory completed; repository recovery in progress; Actions/G02 blocked; production protected hold.**
+
+
+## Addendum — independent CI and provider-status cross-check (2026-11-14)
+
+### GitHub run-level failure is distinct from commit-status integrations
+
+The three latest PR #573 runs were fetched individually:
+- G02 Runner Image Build: run `43575573910`, `startup_failure`
+- Crimson Smoke UI: run `43575573170`, `startup_failure`
+- Lingo Legacy Static CI: run `43575572318`, `startup_failure`
+
+All three were created and completed within the same second, have no instantiated job records, and expose no check runs for the PR commit. The commit-status API separately reports a Vercel context: `Vercel – the-lingo-legacy`, failure reason `Deployment rate limited — retry in 24 hours.` This Vercel status is a separate legacy deployment integration and is not evidence of a GitHub Actions job failure. It does, however, create an additional failed commit status. Because Cloudflare is the intended edge and Vercel has previously been marked for retirement, audit the GitHub Vercel App/status integration and remove it only through an approved account-level change after verifying no remaining Vercel production dependency.
+
+### Existing hosted-runner diagnostic workflow
+
+The canonical repository already contains `.github/workflows/isolated-hosted-runner-probe.yml`. It runs on `ubuntu-latest`, uses `contents: none`, and intentionally avoids checkout, external actions, secrets, network calls, artifacts and production access. It is the appropriate minimal hosted-runner diagnostic. Do not create a competing smoke workflow or add permissions. It has not yet produced a successful run; the same startup-failure pattern on hosted and self-hosted workflow runs keeps the leading fault domain at GitHub Actions dispatch/control plane rather than the G02 host alone.
+
+### Workflow inventory finding
+
+The canonical repository contains multiple overlapping G02 probes and sentinels, including `actions-runner-smoke.yml`, `runner-dispatch-diagnostic.yml`, `g02-fresh-assignment-probe.yml`, `g02-qualified-evidence-probe.yml`, `g02-sentinel.yml`, `g02-aws-sentinel.yml`, `runner-self-hosted-g02.yml`, and the three-stage `g02-run-wrapper.yml`. These should be consolidated only after Actions dispatch recovers and their distinct acceptance/evidence contracts are compared. Until then, preserve all workflows and avoid dispatching repeated probes that cannot instantiate jobs.
+
+### GitLab fallback audit
+
+The connected GitLab identity owns two private projects:
+- `zavionecook/FameMoneyFortune` (project 75092923; 3 commits; default branch `master`; last activity 2026-11-02). Its `.gitlab-ci.yml` defines a G02 sentinel that requires a real nonzero GitLab runner ID. The latest sampled pipeline `2971272201` failed and has no job records.
+- `thatsmylingo/FameMoneyFortune` (project 75092379; 2 commits; default branch `master`; last activity 2026-11-02). Its `.gitlab-ci.yml` is an unmodified .NET Core 7 example template, not a LINGO product build. The latest sampled pipeline `2948273556` failed and has no job records.
+
+Both projects report shared runners enabled, but neither sampled pipeline produced jobs. These are legacy private projects, not confirmed mirrors of canonical GitHub main. They do not currently provide a working CI fallback. Do not migrate source or enable production builds through them without ancestry, pipeline and runner validation.
+
+### Updated CI disposition
+
+- GitHub hosted dispatch: **FAIL / UNVERIFIED** (no jobs instantiated).
+- GitHub self-hosted G02 assignment: **FAIL / UNVERIFIED**.
+- GitLab private fallback: **FAIL / UNVERIFIED** (latest sampled pipelines have zero job records).
+- Vercel commit status: **SEPARATE LEGACY INTEGRATION FAILURE** (deployment rate limit; not an Actions job).
+- Independent Linux host: **NOT CREATED / NOT VERIFIED**.
+- Production: **PROTECTED HOLD**.
+
+The next highest-value action remains owner-level GitHub Actions account/org policy and usage/support diagnosis. After that, use the existing isolated hosted-runner probe once; only a successful hosted run with a real job, executed steps and retrievable evidence should unlock the single-host G02 repair path.
