@@ -18,6 +18,8 @@ The isolated LKIS Runtime Tests workflow runs syntax checks and the Node test su
     cd platform/lkis
     npm test
     npm run check
+    node scripts/backup.mjs backup ./var/backups/lkis-$(date -u +%Y%m%dT%H%M%SZ).json
+    node scripts/backup.mjs restore ./var/backups/<backup-file>.json [./var/restored-records.json]
     LKIS_READ_TOKEN='reader-token' LKIS_ADMIN_TOKEN='admin-token' LKIS_REVIEW_TOKEN='review-token' LKIS_REVIEWER_ID='independent-reviewer-id' npm start
 
 The server binds to loopback (127.0.0.1) by default. Set PORT to change the local port and LKIS_DATA_FILE to select the data file. Do not use production credentials. Keep the data directory private and back it up before maintenance.
@@ -40,7 +42,7 @@ Use Authorization: Bearer token. The reader token sees public/internal records; 
 ## Explicit limitations
 
 - Local file storage is single-instance pilot storage, not a multi-node database.
-- No cloud ingestion connectors, vector index, LLM provider, audit export, backup scheduler, or multi-user identity integration is included. The local console is a pilot interface, not a production dashboard.
+- No cloud ingestion connectors, vector index, LLM provider, tamper-evident audit export, backup scheduler, or multi-user identity integration is included. A manual integrity-checked backup/restore utility is provided; it is not a scheduled or offsite backup service. The local console is a pilot interface, not a production dashboard.
 - Schema validation covers the keywords present in the current knowledge schema; it is not a general-purpose JSON Schema implementation. Expired review_after dates are surfaced as effective stale state and excluded from assistant retrieval.
 - The runtime is not a production service and must not be exposed publicly.
 - No data is seeded: records must come from attributable sources and pass review before their status can become verified.
