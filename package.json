@@ -1,0 +1,13 @@
+{
+  "name": "lingo-slot-engine-validation",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test:slot": "node --test scripts/tests/server-slot-engine.test.mjs",
+    "test": "npm run test:slot"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
