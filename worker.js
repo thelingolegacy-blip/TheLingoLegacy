@@ -1,3 +1,5 @@
+import { isRestrictedPublicPath } from './cloudflare/security/restricted-public-paths.mjs';
+
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -201,6 +203,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
+      if (isRestrictedPublicPath(request.url)) return json({ ok: false, error: 'Not found.' }, 404, request, env);
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
       if (url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
         const canonical = new URL(request.url);
