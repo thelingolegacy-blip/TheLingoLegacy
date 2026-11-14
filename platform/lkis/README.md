@@ -16,7 +16,7 @@ This is an isolated Node.js 20+ pilot runtime for the LINGO Knowledge & Intellig
     cd platform/lkis
     npm test
     npm run check
-    LKIS_READ_TOKEN='use-a-long-random-value' LKIS_ADMIN_TOKEN='use-a-different-random-value' npm start
+    LKIS_READ_TOKEN='reader-token' LKIS_ADMIN_TOKEN='admin-token' LKIS_REVIEW_TOKEN='review-token' LKIS_REVIEWER_ID='independent-reviewer-id' npm start
 
 The server binds to loopback (127.0.0.1) by default. Set PORT to change the local port and LKIS_DATA_FILE to select the data file. Do not use production credentials. Keep the data directory private and back it up before maintenance.
 
@@ -25,7 +25,7 @@ The server binds to loopback (127.0.0.1) by default. Set PORT to change the loca
 - GET /healthz — unauthenticated liveness only.
 - GET /readyz — storage-readiness check.
 - GET /api/v1/records?q=...&domain=...&status=... — authenticated, classification-filtered search.
-- GET /api/v1/assistant/context?q=... — retrieval-only context from verified records, with source/evidence references. It does not call an LLM or generate answers.
+- GET /api/v1/assistant/context?q=... — retrieval-only context from verified, non-stale records, with source/evidence references. It does not call an LLM or generate answers.\n- GET /api/v1/metrics — authenticated record counts scoped to the caller's classification ceiling.
 - POST /api/v1/records — admin-only creation; record must conform to schema and have status proposed.
 
 Use Authorization: Bearer token. The reader token sees public/internal records; confidential-reader sees through confidential; admin sees all classifications and can create proposed records. A separate reviewer token can verify a proposed record only when the record contains evidence references. Set LKIS_REVIEW_TOKEN and LKIS_REVIEWER_ID to distinct reviewer credentials/identity. The reviewer can verify only records within their classification ceiling. Verification appends a review-history entry and increments the revision; it is a knowledge-record decision, not release authorization.
@@ -33,8 +33,8 @@ Use Authorization: Bearer token. The reader token sees public/internal records; 
 ## Explicit limitations
 
 - Local file storage is single-instance pilot storage, not a multi-node database.
-- No cloud ingestion connectors, vector index, LLM provider, dashboard, review workflow, audit export, backup scheduler, or multi-user identity integration is included.
-- Schema validation covers the keywords present in the current knowledge schema; it is not a general-purpose JSON Schema implementation.
+- No cloud ingestion connectors, vector index, LLM provider, audit export, backup scheduler, or multi-user identity integration is included. The local console is a pilot interface, not a production dashboard.
+- Schema validation covers the keywords present in the current knowledge schema; it is not a general-purpose JSON Schema implementation. Expired review_after dates are surfaced as effective stale state and excluded from assistant retrieval.
 - The runtime is not a production service and must not be exposed publicly.
 - No data is seeded: records must come from attributable sources and pass review before their status can become verified.
 
