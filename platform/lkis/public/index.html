@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>LKIS Knowledge Console</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui;background:#09090b;color:#f4f4f5}
+body{margin:0 auto;max-width:1100px;padding:28px 18px 60px}header{border-bottom:1px solid #3f3f46;padding-bottom:18px;margin-bottom:22px}
+h1{margin:0 0 6px;color:#f4f4f5}p,.muted{color:#a1a1aa}.tag{color:#fca5a5;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+section{border:1px solid #3f3f46;border-radius:12px;padding:16px;background:#18181b;margin-bottom:14px}
+label{display:block;font-size:.85rem;color:#d4d4d8;margin:12px 0 5px}
+input,textarea,button{box-sizing:border-box;width:100%;padding:10px;border-radius:8px;border:1px solid #52525b;background:#09090b;color:#fafafa;font:inherit}
+textarea{min-height:190px;font-family:ui-monospace,monospace;font-size:.82rem}
+button{background:#991b1b;border-color:#b91c1c;font-weight:650;cursor:pointer;margin-top:12px}
+button.secondary{background:#27272a;border-color:#52525b}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#09090b;border:1px solid #3f3f46;border-radius:8px;padding:12px;font-size:.8rem;max-height:420px;overflow:auto}
+#status{padding:10px;border-radius:8px;background:#27272a;color:#e4e4e7;margin:12px 0}
+small{color:#a1a1aa}.danger{color:#fca5a5}
+</style>
+</head>
+<body>
+<header><div class="tag">The Lingo Legacy · KNOW</div><h1>Knowledge Intelligence Console</h1><p>Repository-backed pilot · local loopback only · evidence-first retrieval</p></header>
+<div id="status" role="status">Connect using a scoped token. Tokens remain in this page's memory and are not saved.</div>
+<div class="grid">
+<section><h2>Read access</h2><label for="readToken">Reader / confidential / reviewer token</label><input id="readToken" type="password" autocomplete="off" placeholder="Bearer token">
+<label for="query">Search knowledge</label><input id="query" placeholder="Search terms">
+<button id="search">Search records</button><button class="secondary" id="health">Check runtime health</button></section>
+<section><h2>Propose a record</h2><label for="adminToken">Admin token</label><input id="adminToken" type="password" autocomplete="off">
+<label for="record">Knowledge record JSON (status must be proposed)</label><textarea id="record" spellcheck="false" placeholder='{"id":"...","title":"..."}'></textarea><button id="create">Validate and submit proposal</button></section>
+<section><h2>Independent review</h2><label for="reviewToken">Reviewer token</label><input id="reviewToken" type="password" autocomplete="off">
+<label for="recordId">Proposed record ID</label><input id="recordId" placeholder="lkis.record-id">
+<button id="verify">Verify with evidence references</button><p class="muted">Verification changes a knowledge record's status only. It does not authorize releases or production actions.</p></section>
+</div>
+<section><h2>Results and evidence</h2><pre id="output" aria-live="polite">No query executed.</pre></section>
+<script src="/app.js" defer></script>
+</body></html>
