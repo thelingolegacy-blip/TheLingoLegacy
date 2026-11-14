@@ -41,7 +41,7 @@ export function isRestrictedPublicPath(input) {
     const decoded = decodeURIComponent(rawPath);
     if (decoded.includes('\\') || /[\u0000-\u001f\u007f]/.test(decoded)) return true;
     // A second encoded layer is ambiguous; never decode it again.
-    if (/%(?:2e|2f|5c)/i.test(decoded)) return true;
+    if (/%[0-9a-f]{2}/i.test(decoded)) return true;
 
     const segments = decoded.split('/');
     if (segments.some((segment) => segment === '.' || segment === '..')) return true;
