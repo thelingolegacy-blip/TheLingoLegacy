@@ -47,7 +47,7 @@ export function isRestrictedPublicPath(input) {
     if (segments.some((segment) => segment === '.' || segment === '..')) return true;
 
     const normalized = `/${segments.filter(Boolean).join('/')}`.toLowerCase();
-    if (EXACT_RESTRICTED_PATHS.has(normalized)) return true;
+    if ([...EXACT_RESTRICTED_PATHS].some((path) => normalized === path || normalized.startsWith(`${path}/`))) return true;
 
     return RESTRICTED_PREFIXES.some((prefix) =>
       normalized === prefix || normalized.startsWith(`${prefix}/`)
