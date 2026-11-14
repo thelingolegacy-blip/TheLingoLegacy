@@ -68,7 +68,8 @@ jobs:
                       and job.get("runner_name") == "lingo-legacy-g02"
                       and job.get("status") == "completed"
                       and job.get("conclusion") == "success"
-                      and all(step.get("status") == "completed" for step in job.get("steps", []))
+                      bool(job.get("steps"))
+                      and and all(step.get("status") == "completed" for step in job.get("steps", []))
                       for job in job_items
                   )
                   artifact_ok = any(
