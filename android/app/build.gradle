@@ -1,3 +1,10 @@
+def releaseSigning = [
+    storeFile: System.getenv("ANDROID_UPLOAD_KEYSTORE_PATH"),
+    storePassword: System.getenv("ANDROID_UPLOAD_STORE_PASSWORD"),
+    keyAlias: System.getenv("ANDROID_UPLOAD_KEY_ALIAS"),
+    keyPassword: System.getenv("ANDROID_UPLOAD_KEY_PASSWORD")
+]
+
 android {
     compileSdk 34
 
@@ -9,9 +16,48 @@ android {
         versionName "1.0.0"
     }
 
+    signingConfigs {
+        release {
+            if (releaseSigning.storeFile) {
+                storeFile file(releaseSigning.storeFile)
+            }
+            if (releaseSigning.storePassword) {
+                storePassword releaseSigning.storePassword
+            }
+            if (releaseSigning.keyAlias) {
+                keyAlias releaseSigning.keyAlias
+            }
+            if (releaseSigning.keyPassword) {
+                keyPassword releaseSigning.keyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Never fall back to the debug certificate for a release artifact.
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+// Fail closed only when a release task is actually requested. Debug builds remain
+// available for CI smoke tests without any upload-key material.
+gradle.taskGraph.whenReady {
+    def releaseRequested = gradle.taskGraph.allTasks.any {
+        it.name.toLowerCase().contains("release")
+    }
+    if (releaseRequested) {
+        def missing = releaseSigning.findAll { key, value -> !value }.keySet()
+        if (!missing.isEmpty()) {
+            throw new GradleException(
+                "Release signing blocked: missing protected environment values for " +
+                missing.join(", ") + ". Configure the owner-controlled upload key " +
+                "in the protected signing environment; do not use debug signing."
+            )
+        }
+        if (!file(releaseSigning.storeFile).exists()) {
+            throw new GradleException("Release signing blocked: upload keystore file is unavailable.")
         }
     }
 }
