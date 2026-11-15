@@ -73,3 +73,14 @@ The recommended full roster contains **15 agents**: the six core Dusse/Zay/Ava g
 - [Health, collision detection and design measurements](HEALTH_COLLISION_DESIGN_SYSTEM.md) — health checks, route/dependency collisions, design tokens, colors, responsive sizes and accessibility.
 
 These files define architecture and acceptance contracts. They do not indicate that persistent chat, agent runtimes, integrations, scheduling, health telemetry, checkpoint storage or tool execution are already connected. The console must remain in PREVIEW / RUNTIME NOT CONNECTED state until runtime acceptance gates are executed and independently verified.
+
+
+## Data Management Center implementation
+- [DMC control-plane specification](DATA_MANAGEMENT_CENTER.md)
+- [DMC implementation status and verification gates](DMC_IMPLEMENTATION_STATUS.md)
+- [Approval, policy, audit and handoff schemas](schemas/)
+- [Policy engine](src/policy-engine.mjs), [handoff state machine](src/handoff-state-machine.mjs), [audit contract](src/audit-contract.mjs)
+- [Firebase control-plane adapter](firebase-functions/README.md) and [sandbox/emulator config](firebase.dmc.json)
+- [Agent-runtime gateway adapter](src/agent-runtime-gateway.mjs)
+
+The DMC core and Firebase adapter are source-built on this branch. They are not yet test-verified, deployed or connected to a live agent runtime. The existing registry remains `runtime_connected: false`; production remains on HOLD.

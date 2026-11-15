@@ -34,9 +34,9 @@ The coordinator should invite the smallest useful specialist group. Agents may a
 
 ## Handoff lifecycle
 
-`requested → accepted → in_progress → review → returned → integrated → closed`
+`CREATED → ACCEPTED → IN_PROGRESS → READY_FOR_REVIEW → COMPLETED`
 
-Alternative terminal states: `blocked`, `cancelled`, `expired`.
+Alternative states: `REJECTED`, `BLOCKED`, `EXPIRED`, `CANCELLED`. The executable state machine is `src/handoff-state-machine.mjs`; each transition requires an idempotency key and is persisted by the Firebase DMC adapter.
 
 A handoff must never silently transfer accountability. The originating task owner remains responsible until the receiving agent explicitly accepts ownership or the task is reassigned by an authorized coordinator.
 

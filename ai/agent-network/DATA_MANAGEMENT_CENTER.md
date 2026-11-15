@@ -1,6 +1,6 @@
 # LINGOlegacy Data Management Center (DMC)
 
-**Status:** Proposed control-plane specification / implementation not yet verified  
+**Status:** Specification plus source implementation committed on the agent-network feature branch; automated execution, backend deployment and live runtime connection remain unverified  
 **Canonical home:** `LINGOlegacy_MASTER` governance, integrated with the existing LINGOlegacy Enterprise Control Center and the 15-agent network  
 **Release posture:** PROTECTED HOLD; no production activation is authorized by this specification
 
@@ -203,3 +203,16 @@ The DMC is not certified until schemas, server-side policy enforcement, durable 
 - The existing runtime acceptance contract says the agent runtime is not implemented / not verified.
 - This DMC specification is a proposed extension, not evidence that an approval service, audit database, RBAC enforcement, or connected runtime exists.
 - No production deployment, permission broadening, secret mutation, runner activation, payment activation, data migration, or paid resource provisioning is authorized by this document.
+
+
+## 13. Source implementation status (2026-11-15)
+The implementation now has executable source contracts in this branch:
+- `schemas/approval-request.schema.json`, `schemas/policy-decision.schema.json`, `schemas/audit-event.schema.json`, and `schemas/handoff.schema.json`;
+- `src/policy-engine.mjs` for deny-by-default risk/scope/approval evaluation and immutable payload digests;
+- `src/handoff-state-machine.mjs` for bounded, role-checked, idempotent handoff transitions;
+- `src/audit-contract.mjs` for append-only event shape and sensitive-field-key rejection;
+- `tests/*.test.mjs` for negative authorization, handoff and audit cases;
+- `firebase-functions/src/index.mjs` for Firebase callable endpoints and transactional Firestore persistence;
+- `src/agent-runtime-gateway.mjs` for a fail-closed runtime adapter contract.
+
+These files are **built source**, not proof of passing tests, a deployed Firebase service, or a connected agent runtime. See [DMC implementation status](DMC_IMPLEMENTATION_STATUS.md) for exact boundaries and remaining acceptance evidence. The production hold is hard-coded in the Firebase adapter and no production deployment is authorized.

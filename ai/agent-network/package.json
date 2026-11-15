@@ -1,0 +1,19 @@
+{
+  "name": "@lingolegacy/dmc-control-core",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "firebase-functions/src/index.mjs",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:policy": "node --test tests/policy-engine.test.mjs",
+    "test:handoff": "node --test tests/handoff-state-machine.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.0.0"
+  }
+}

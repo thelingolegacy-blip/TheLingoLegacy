@@ -57,3 +57,7 @@ Status: Not implemented / not verified. This checklist is the acceptance contrac
 ## Activation rule
 
 A static UI, architecture document, provider API key, or successful build alone does not pass these gates. Runtime activation requires all applicable tests, independent evidence, explicit human acceptance and separate production authorization. Until then, the console must clearly display PREVIEW / RUNTIME NOT CONNECTED.
+
+
+## DMC control-plane source integration (not yet connected)
+The DMC now includes source implementations for policy evaluation, approval requests/decisions, append-only audit events, handoff transitions and a fail-closed agent gateway adapter. Firebase Functions source persists these records transactionally in Firestore. This does not pass MC-01, MC-05 or MC-07 until server-issued claims, emulator/hosted integration tests, deployed non-production callables, audit failure tests and an actual agent-runtime invocation are evidenced. Registry runtime state remains NOT_CONNECTED.
