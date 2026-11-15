@@ -36,9 +36,7 @@ func New(db *pgxpool.Pool, verify SubjectVerifier) *API {
 	return a
 }
 
-func (a *API) Handler() http.Handler {
-	return securityHeaders(a.mux)
-}
+func (a *API) Handler() http.Handler { return securityHeaders(a.mux) }
 
 func securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -79,18 +77,15 @@ func (a *API) authenticatedSubject(w http.ResponseWriter, r *http.Request) (stri
 }
 
 func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
+	subject, ok := a.authenticatedSubject(w, r)
+	if !ok { return }
 	if a.db == nil {
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
 		return
 	}
-	subject, ok := a.authenticatedSubject(w, r)
-	if !ok {
-		return
-	}
 	var profile Profile
 	err := a.db.QueryRow(r.Context(),
-		"SELECT subject, display_name, updated_at FROM lingo_profiles WHERE subject = $1",
-		subject,
+		"SELECT subject, display_name, updated_at FROM lingo_profiles WHERE subject = $1", subject,
 	).Scan(&profile.Subject, &profile.DisplayName, &profile.UpdatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "profile_not_found"})
@@ -104,18 +99,10 @@ func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
-	if a.db == nil {
-		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
-		return
-	}
 	subject, ok := a.authenticatedSubject(w, r)
-	if !ok {
-		return
-	}
+	if !ok { return }
 	r.Body = http.MaxBytesReader(w, r.Body, 4096)
-	var input struct {
-		DisplayName string `json:"display_name"`
-	}
+	var input struct { DisplayName string `json:"display_name"` }
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&input); err != nil {
@@ -129,6 +116,10 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 	input.DisplayName = strings.TrimSpace(input.DisplayName)
 	if input.DisplayName == "" || len([]rune(input.DisplayName)) > 80 {
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "display_name_must_be_1_to_80_characters"})
+		return
+	}
+	if a.db == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
 		return
 	}
 
