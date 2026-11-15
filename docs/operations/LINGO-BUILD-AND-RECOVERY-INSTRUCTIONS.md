@@ -22,6 +22,11 @@ Version 1.0.0 · 2026-11-15
 ## Parallel work rules
 Parallelize independent, non-overlapping workstreams: web/landing, realm route inventory, API/identity contracts, game engine specs, publishing/media rights, observability/recovery and QA. Each workstream uses a separate branch or explicitly assigned file ownership. Shared files such as registry, package manifests, routing and CI workflows have one designated integrator. No parallel task may change production, shared secrets, branch protection, identity, payment, wallet, DNS or infrastructure without separate approval.
 
+## Validation commands
+- Run node scripts/validate-lingo-registry.mjs to validate the product/realm registry.
+- Run node scripts/validate-lingo-dispatch.mjs to validate trigger routing and automation boundaries.
+- These scripts validate configuration only; they do not provision or activate external triggers.
+
 ## Recovery procedure
 1. Stop unsafe writes; preserve last-known-good and evidence.
 2. Classify severity and identify affected realm, service and environment.
