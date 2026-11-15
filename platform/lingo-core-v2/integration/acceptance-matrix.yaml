@@ -2,6 +2,7 @@ version: 1
 status_vocabulary:
   NOT_STARTED: no implementation or proof
   BUILT: code exists but is not integration-certified
+  TESTED: automated checks executed and passed
   CONNECTED: non-production connection with automated proof
   CERTIFIED: security, resilience, operations, and end-to-end gates passed
   PRODUCTION: separately approved release with post-deploy verification
@@ -10,22 +11,24 @@ connections:
     source: Go Profile API
     target: configured OIDC issuer
     status: BUILT
-    evidence_required: [issuer-validation, audience-validation, signature-validation, expiry-validation, key-rotation-test]
+    token_contract: OIDC_ID_TOKEN
+    identity_key: issuer_plus_subject
+    evidence_required: [issuer-validation, audience-validation, signature-validation, expiry-validation, key-rotation-test, issuer-subject-isolation]
   - id: api-postgresql
     source: Go Profile API
     target: PostgreSQL
     status: BUILT
-    evidence_required: [migration-apply, profile-crud, transaction-rollback, restore-test]
+    evidence_required: [migration-apply, profile-crud, issuer-subject-isolation, transaction-rollback, tls-policy, least-privilege-role, restore-test]
   - id: profile-outbox
     source: PostgreSQL profile transaction
     target: outbox event table
     status: BUILT
-    evidence_required: [atomic-commit-test, atomic-rollback-test, duplicate-delivery-test]
-  - id: outbox-kafka
+    evidence_required: [atomic-commit-test, atomic-rollback-test, event-idempotency, bounded-retry]
+  - id: outbox-delivery
     source: outbox publisher
-    target: Kafka
+    target: consumer adapter
     status: NOT_STARTED
-    evidence_required: [schema-compatibility, idempotent-publish, retry, dead-letter, replay]
+    evidence_required: [claim-lease, idempotent-publish, retry, dead-letter, replay, trace-continuity]
   - id: web-api
     source: Next.js client
     target: Go Profile API
