@@ -62,7 +62,10 @@ func main() {
 		Addr:              addr,
 		Handler:           api.Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20, // 1 MiB
 	}
 
 	go func() {
