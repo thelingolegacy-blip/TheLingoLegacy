@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,15 +25,39 @@ func required(name string) string {
 	return value
 }
 
+func validateDatabaseTLS(databaseURL, appEnv string) error {
+	if appEnv == "development" || appEnv == "test" {
+		return nil
+	}
+	parsed, err := url.Parse(databaseURL)
+	if err != nil {
+		return errors.New("DATABASE_URL must be a valid PostgreSQL URL")
+	}
+	if parsed.Scheme != "postgres" && parsed.Scheme != "postgresql" {
+		return errors.New("DATABASE_URL must use the postgres or postgresql URL scheme")
+	}
+	if parsed.Query().Get("sslmode") != "verify-full" {
+		return errors.New("DATABASE_URL must set sslmode=verify-full outside development and test")
+	}
+	return nil
+}
+
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	pool, err := pgxpool.New(ctx, required("DATABASE_URL"))
+	databaseURL := required("DATABASE_URL")
+	if err := validateDatabaseTLS(databaseURL, os.Getenv("APP_ENV")); err != nil {
+		log.Fatalf("unsafe PostgreSQL connection configuration: %v", err)
+	}
+	pool, err := pgxpool.New(ctx, databaseURL)
 	if err != nil {
 		log.Fatalf("configure PostgreSQL pool: %v", err)
 	}
 	defer pool.Close()
+	if err := pool.Ping(ctx); err != nil {
+		log.Fatalf("connect to PostgreSQL: %v", err)
+	}
 
 	issuer := required("OIDC_ISSUER_URL")
 	clientID := required("OIDC_CLIENT_ID")
