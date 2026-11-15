@@ -57,3 +57,7 @@ No invented endorsements, testimonials, availability, prices, investment returns
 9. Independent release acceptance attached.
 
 The currently known homepage source and exact-root Worker work are in draft PR #548. Keep it separate from this architecture PR and do not promote its Cloudflare preview without the evidence above.
+
+
+## Live edge inventory checkpoint — 2026-11-15
+Read-only Cloudflare inventory confirms the zone is active on the Free Website plan. The apex exact-root route thelingolegacy.com/ points to lingo-flagship-root, with version 1 receiving 100 percent of traffic. PR #548's version 3 (alias flagship-nav-repair-2026-11-11) is preview-only and not active. The apex wildcard route thelingolegacy.com/* and www wildcard route www.thelingolegacy.com/* point to thelingolegacyv-5. This means the apex root and www root are not currently proven to share the same homepage implementation. Treat apex/www parity as a P0 route-ownership issue; do not change routes or promote versions until independent browser QA, deep-link coverage, rollback and owner acceptance pass.
