@@ -38,3 +38,5 @@ test('denies sensitive R3 action without security reviewer',()=>{
  const ap={...approval,action:a.action,risk:'R3',payloadDigest:digest(a.payload),preconditionDigest:a.preconditionDigest,rollbackRef:a.rollbackRef,approverRole:'governance_reviewer'};
  assert.equal(evaluateAction({principal,actionRequest:a,approval:ap},{...ctx,productionHold:false}).reason_code,'ROLE_FORBIDDEN');
 });
+
+test('production remains denied without separate release acceptance even if hold flag is cleared',()=>assert.equal(evaluateAction({principal,actionRequest:{...actionRequest,environment:'production',risk:'R0'}},{...ctx,productionHold:false}).reason_code,'PRODUCTION_HOLD'));

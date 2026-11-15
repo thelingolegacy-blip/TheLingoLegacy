@@ -27,7 +27,7 @@ export function evaluateAction(input, context = {}) {
   if (!Array.isArray(p.scopes) || !p.scopes.includes(a.projectId + ':' + a.action)) return deny('SCOPE_MISMATCH');
   if (!['demo','development','staging','production'].includes(a.environment)) return deny('ENVIRONMENT_MISMATCH');
   if (!Object.hasOwn(RISK_ORDER, a.risk)) return deny('RISK_POLICY_DENY');
-  if (a.environment === 'production' && context.productionHold !== false) return deny('PRODUCTION_HOLD');
+  if (a.environment === 'production' && (context.productionHold !== false || context.productionReleaseAuthorized !== true)) return deny('PRODUCTION_HOLD');
   if (PROTECTED_ACTION.test(a.action) && a.risk !== 'R4') return deny('RISK_POLICY_DENY');
   if (a.risk === 'R0') return decision(true, 'ALLOW_SCOPED_READ', p, a, null, context);
   if (a.risk === 'R1') return decision(true, 'ALLOW_DRAFT', p, a, null, context);

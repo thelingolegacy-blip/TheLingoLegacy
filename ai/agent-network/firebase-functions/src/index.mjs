@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { randomUUID } from 'node:crypto';
@@ -9,7 +10,7 @@ import { createAuditEvent } from '../../src/audit-contract.mjs';
 initializeApp();
 const db = getFirestore();
 const PRODUCTION_HOLD = true; // Deliberate release lock; do not change in this branch.
-const SOURCE_COMMIT = process.env.K_REVISION || 'unreleased-source';
+const SOURCE_COMMIT = process.env.SOURCE_COMMIT || process.env.GITHUB_SHA || 'unreleased-source';
 const nowIso = () => new Date().toISOString();
 const requirePrincipal = request => {
   if (!request.auth?.uid) throw new HttpsError('unauthenticated','Firebase Authentication is required.');
@@ -17,7 +18,7 @@ const requirePrincipal = request => {
   const role = typeof c.dmcRole === 'string' ? c.dmcRole : null;
   const agentId = typeof c.agentId === 'string' ? c.agentId : null;
   const kind = agentId ? 'agent' : 'human';
-  return { uid:request.auth.uid, tenantId:String(c.tenantId || ''), kind, agentId, role, status:c.accountStatus === 'active' ? 'active' : 'unknown', scopes:Array.isArray(c.dmcScopes) ? c.dmcScopes : [] };
+  return { uid:request.auth.uid, tenantId:String(c.tenantId || ''), kind, agentId, role, status:c.accountStatus === 'active' ? 'active' : 'unknown', scopes:Array.isArray(c.dmcScopes) ? c.dmcScopes.filter(s => typeof s === 'string') : [] };
 };
 const audit = async (tx, principal, data) => {
   const event = createAuditEvent({
@@ -37,8 +38,8 @@ const assertAgent = principal => { if (principal.kind !== 'agent' || principal.s
 export const requestDmcApproval = onCall(async request => {
   const principal = requirePrincipal(request); assertAgent(principal);
   const a = request.data?.actionRequest;
-  if (!a || typeof a !== 'object' || typeof a.action !== 'string' || typeof a.resourceId !== 'string' || !a.payload || typeof a.payload !== 'object' || Array.isArray(a.payload) || JSON.stringify(a.payload).length > 64000) throw new HttpsError('invalid-argument','A complete actionRequest is required.');
-  if (!['R2','R3','R4'].includes(a.risk) || !['demo','development','staging','production'].includes(a.environment) || typeof a.projectId !== 'string' || typeof a.realmId !== 'string' || ((a.risk === 'R3' || a.risk === 'R4') && (!/^[a-f0-9]{64}$/.test(a.preconditionDigest || '') || typeof a.rollbackRef !== 'string' || !a.rollbackRef)) || a.tenantId !== principal.tenantId || !principal.scopes.includes(a.projectId + ':' + a.action)) throw new HttpsError('permission-denied','Requested action is outside the agent scope.');
+  if (!a || typeof a !== 'object' || typeof a.action !== 'string' || typeof a.resourceId !== 'string' || !/^[a-z][a-z0-9_.:-]{2,127}$/.test(a.action) || !a.resourceId || !a.payload || typeof a.payload !== 'object' || Array.isArray(a.payload) || JSON.stringify(a.payload).length > 64000) throw new HttpsError('invalid-argument','A complete actionRequest is required.');
+  if (!['R2','R3','R4'].includes(a.risk) || !['demo','development','staging','production'].includes(a.environment) || typeof a.projectId !== 'string' || !a.projectId || typeof a.realmId !== 'string' || !a.realmId || !a.tenantId || ((a.risk === 'R3' || a.risk === 'R4') && (!/^[a-f0-9]{64}$/.test(a.preconditionDigest || '') || typeof a.rollbackRef !== 'string' || !a.rollbackRef)) || a.tenantId !== principal.tenantId || !principal.scopes.includes(a.projectId + ':' + a.action)) throw new HttpsError('permission-denied','Requested action is outside the agent scope.');
   const id = randomUUID();
   const created = Date.now();
   const approval = {
@@ -100,9 +101,9 @@ export const authorizeDmcAgentAction = onCall(async request => {
       realmId:approvalData.realmId, environment:approvalData.environment, action:approvalData.action,
       resourceId:approvalData.resourceId, payloadDigest:approvalData.payloadDigest, preconditionDigest:approvalData.preconditionDigest, rollbackRef:approvalData.rollbackRef
     } : null;
-    result = evaluateAction({principal,actionRequest:a,approval},{productionHold:PRODUCTION_HOLD,auditAvailable:true,policyVersion:POLICY_VERSION});
+    result = evaluateAction({principal,actionRequest:a,approval},{productionHold:PRODUCTION_HOLD,productionReleaseAuthorized:false,auditAvailable:true,policyVersion:POLICY_VERSION});
     await audit(tx,principal,{eventType:'POLICY_DECISION',action:a.action,resourceId:a.resourceId,projectId:a.projectId,realmId:a.realmId,environment:a.environment,tenantId:a.tenantId,decision:result.allowed?'ALLOW':'DENY',reasonCode:result.reason_code,approvalId,payloadDigest:digest(a.payload || {})});
-    if (result.allowed && approvalId && approvalData) {
+    if (result.allowed && result.reason_code === 'ALLOW_APPROVED_ACTION' && approvalId && approvalData) {
       if (approvalData.status !== 'APPROVED' || approvalData.consumedAt || Date.parse(approvalData.expiresAt) <= Date.now()) {
         throw new HttpsError('failed-precondition','Approval was already consumed, expired or is not approved.');
       }
@@ -123,7 +124,12 @@ export const createDmcHandoff = onCall(async request => {
   if (!principal.scopes.some(s => s.startsWith(d.projectId + ':')) || d.scope.some(s => !principal.scopes.includes(s)) || d.allowedTools.some(t => !Array.isArray(request.auth.token.dmcTools) || !request.auth.token.dmcTools.includes(t))) {
     throw new HttpsError('permission-denied','Handoff cannot exceed the sender agent capability scope.');
   }
-  if (!/^[a-z0-9-]{2,128}$/.test(d.handoffId) || !/^[A-Za-z0-9_-]{1,128}$/.test(d.humanOwnerUid) || d.humanOwnerUid === principal.uid) throw new HttpsError('invalid-argument','Valid handoffId and distinct humanOwnerUid are required.');
+  if (!/^[a-z0-9-]{2,128}$/.test(d.handoffId) || typeof d.humanOwnerUid !== 'string' || !d.humanOwnerUid || d.humanOwnerUid.length > 128 || d.humanOwnerUid === principal.uid) throw new HttpsError('invalid-argument','Valid handoffId and distinct humanOwnerUid are required.');
+  const ownerUser = await getAuth().getUser(d.humanOwnerUid).catch(() => null);
+  const ownerClaims = ownerUser?.customClaims || {};
+  const ownerRoleAllowed = ['owner','designated_authority'].includes(ownerClaims.dmcRole)
+    || (ownerClaims.dmcRole === 'project_owner' && Array.isArray(ownerClaims.dmcScopes) && ownerClaims.dmcScopes.includes(d.projectId + ':handoff:own'));
+  if (!ownerUser || ownerClaims.accountStatus !== 'active' || !ownerRoleAllowed) throw new HttpsError('permission-denied','Handoff must be assigned to an active, authorized human owner.');
   const knownAgents = new Set(['dusse-1','dusse-2','zay-1','zay-2','ava-1','ava-2','host-1','research-1','engineering-1','security-1','qa-1','creative-1','community-1','operations-1','analytics-1']);
   if (!knownAgents.has(d.receiverAgentId) || d.receiverAgentId === principal.agentId) {
     throw new HttpsError('invalid-argument','A distinct registered receiverAgentId is required.');
@@ -162,6 +168,7 @@ export const transitionDmcHandoff = onCall(async request => {
     if (!snap.exists) throw new HttpsError('not-found','Handoff not found.');
     const current = snap.data();
     if (principal.tenantId !== current.tenantId) throw new HttpsError('permission-denied','Tenant mismatch.');
+    if (['COMPLETED','REJECTED','CANCELLED','BLOCKED','EXPIRED'].includes(to) && principal.kind === 'human' && !['owner','designated_authority','project_owner'].includes(principal.role)) throw new HttpsError('permission-denied','Human owner authority is required for this handoff decision.');
     const next = transitionHandoff(current,{to,idempotencyKey},principal);
     if (!next.ok) throw new HttpsError('failed-precondition',next.code);
     if (next.replayed) { response = {ok:true,replayed:true,status:current.status}; return; }

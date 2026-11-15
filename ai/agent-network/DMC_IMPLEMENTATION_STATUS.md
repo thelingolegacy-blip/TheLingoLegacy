@@ -24,7 +24,7 @@
 - Firestore rules fragment is not activated because the repository does not yet expose a complete canonical ruleset; deploying a fragment as a full ruleset could unintentionally deny existing application access.
 
 ## Verification still required
-1. Execute `npm test` in Node 20 and obtain the hosted GitHub Actions job, logs and artifact.
+1. Execute `npm test` in Node 20 and obtain the hosted GitHub Actions job, logs and artifact. Initial hosted run `43722777145` returned `startup_failure` before job creation; GitHub reports zero jobs and zero artifacts, so no tests ran.
 2. Add Firebase Emulator Suite integration tests for authenticated/unauthenticated callers, custom-claim spoofing, approval concurrency/replay, Firestore transaction rollback, audit sink failure, handoff authorization and tenant isolation.
 3. Reconcile DMC Firestore rules into the authoritative existing ruleset and verify existing clients are not broken.
 4. Deploy only to an explicitly identified non-production Firebase project; verify deployed callable endpoints and persisted records.
@@ -36,3 +36,11 @@
 - Production environment requests are denied. Protected operations remain denied under the current hold.
 - No G02 runner activation, production deploy, DNS/Worker change, Firebase publication, secrets change, payments, wallet transfer, destructive migration, paid provisioning or permissions broadening is authorized.
 - Ecosystem certification remains **NOT CERTIFIED**.
+
+
+## Hosted CI evidence
+- Commit under test: `1ad29f97f13b1a74125c8da6b10f6dd1dd2265ee`.
+- Workflow: `.github/workflows/dmc-control-core.yml`.
+- Run: `43722777145` — `startup_failure`.
+- Jobs: 0. Artifacts: 0. Executed test steps: 0.
+- Result: **NOT RUN / UNVERIFIED**, not passed and not a test assertion failure.
