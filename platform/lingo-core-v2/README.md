@@ -19,7 +19,8 @@ Requirements: Go 1.23+, PostgreSQL 15+.
 1. Apply `migrations/0001_profiles_and_outbox.sql` to a disposable local database.
 2. Set `DATABASE_URL`, `OIDC_ISSUER_URL` and `OIDC_CLIENT_ID` for the API.
 3. Set `TEST_DATABASE_URL` to a disposable PostgreSQL database to run database integration tests.
-4. Run `go test ./...` from `services/api`.
+4. For non-development runtime, set `DATABASE_URL` with `sslmode=verify-full`; local development may explicitly set `APP_ENV=development`.
+5. Run `go test ./...` from `services/api`.
 5. Run `go run ./cmd/api` from `services/api`.
 
 The API listens on `:8080` by default. `/healthz` is process liveness; `/readyz` checks PostgreSQL. Authenticated profile routes accept OIDC ID tokens whose issuer and audience match configuration. The verified issuer and subject are both part of the profile key. OAuth access-token semantics are not implemented by this slice.
