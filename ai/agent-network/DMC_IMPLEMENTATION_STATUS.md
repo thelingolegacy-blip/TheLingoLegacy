@@ -39,8 +39,9 @@
 
 
 ## Hosted CI evidence
-- Commit under test: `1ad29f97f13b1a74125c8da6b10f6dd1dd2265ee`.
+- Latest source commit: `897ae35bef78874eeef595fe990dadaea084df03` (initial workflow-triggering source commit: `1ad29f97f13b1a74125c8da6b10f6dd1dd2265ee`).
 - Workflow: `.github/workflows/dmc-control-core.yml`.
-- Run: `43722777145` — `startup_failure`.
+- Runs: `43722777145` and `43722933772` — both `startup_failure`.
+- Latest run commit: `897ae35bef78874eeef595fe990dadaea084df03`.
 - Jobs: 0. Artifacts: 0. Executed test steps: 0.
 - Result: **NOT RUN / UNVERIFIED**, not passed and not a test assertion failure.
