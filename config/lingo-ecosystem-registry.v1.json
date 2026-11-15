@@ -28,7 +28,7 @@
       "id": "lingo-legacy",
       "name": "LINGOlegacy",
       "type": "flagship",
-      "status": "preview-needs-independent-qa",
+      "status": "live-uncertified",
       "route": "/",
       "products": [
         "flagship-portal",
@@ -284,7 +284,8 @@
     "scaffolded-unverified": "Source or preview exists; verification incomplete.",
     "preview-needs-independent-qa": "Preview exists; independent browser/security/accessibility QA incomplete.",
     "verified": "Acceptance evidence exists for named version and environment.",
-    "production": "Owner-approved production release with rollback and monitoring evidence."
+    "production": "Owner-approved production release with rollback and monitoring evidence.",
+    "live-uncertified": "Public traffic is routed to a deployed candidate, but production acceptance and independent QA are incomplete."
   },
   "release_gates": [
     "source-commit",

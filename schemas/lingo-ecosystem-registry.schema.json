@@ -89,7 +89,8 @@
               "scaffolded-unverified",
               "preview-needs-independent-qa",
               "verified",
-              "production"
+              "production",
+              "live-uncertified"
             ]
           },
           "route": {

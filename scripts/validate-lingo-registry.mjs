@@ -25,6 +25,7 @@ for (const realm of registry.realms ?? []) {
   ids.add(realm.id);
   if (realm.route !== null && realm.route !== undefined && !String(realm.route).startsWith("/")) errors.push("Route must be root-relative: " + realm.id);
   if (!Array.isArray(realm.products) || realm.products.length === 0) errors.push("Realm must list at least one product: " + realm.id);
+  if (!["planned", "planned-disabled", "scaffolded-unverified", "preview-needs-independent-qa", "verified", "production", "live-uncertified"].includes(realm.status)) errors.push("Unsupported status: " + realm.id + " = " + realm.status);
   if (realm.status === "production") {
     for (const key of ["release_record", "last_verified_commit", "last_verified_at", "owner_acceptance"]) {
       if (!realm[key]) errors.push("Production realm lacks " + key + ": " + realm.id);
