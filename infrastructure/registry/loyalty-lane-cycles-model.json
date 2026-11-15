@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "Loyalty Lane Cycles",
+  "authority": "server",
+  "models": {
+    "Hub": {
+      "required": [
+        "id",
+        "city",
+        "name",
+        "address",
+        "status",
+        "targetHours"
+      ],
+      "fields": {
+        "status": [
+          "candidate-unverified",
+          "partner-review",
+          "approved",
+          "active",
+          "suspended"
+        ],
+        "targetHours": "24/7 target; never proof of current hours"
+      }
+    },
+    "PartnerAgreement": {
+      "required": [
+        "hubId",
+        "operatorId",
+        "status",
+        "effectiveAt",
+        "approvedServices"
+      ],
+      "fields": {
+        "status": [
+          "draft",
+          "under-review",
+          "approved",
+          "expired",
+          "terminated"
+        ],
+        "approvedServices": [
+          "self-service",
+          "wash-fold",
+          "pickup-delivery",
+          "community-programs"
+        ]
+      }
+    },
+    "HubSchedule": {
+      "required": [
+        "hubId",
+        "timezone",
+        "weeklyHours",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "fields": {
+        "timezone": "America/New_York",
+        "hoursSource": [
+          "operator-confirmed",
+          "directory-unverified"
+        ],
+        "mustNotInferOpenNow": true
+      }
+    },
+    "Machine": {
+      "required": [
+        "id",
+        "hubId",
+        "machineType",
+        "capacity",
+        "status"
+      ],
+      "fields": {
+        "machineType": [
+          "washer",
+          "dryer",
+          "bike-generator"
+        ],
+        "status": [
+          "online",
+          "offline",
+          "maintenance",
+          "retired"
+        ]
+      }
+    },
+    "Cycle": {
+      "required": [
+        "id",
+        "userId",
+        "hubId",
+        "machineId",
+        "status",
+        "startedAt"
+      ],
+      "fields": {
+        "status": [
+          "reserved",
+          "started",
+          "completed",
+          "cancelled",
+          "disputed"
+        ],
+        "serverOwnsPricingAndCompletion": true
+      }
+    },
+    "CycleEvent": {
+      "required": [
+        "eventId",
+        "cycleId",
+        "eventType",
+        "occurredAt",
+        "signature",
+        "idempotencyKey"
+      ],
+      "fields": {
+        "eventType": [
+          "machine-start",
+          "machine-progress",
+          "machine-complete",
+          "bike-energy",
+          "operator-adjustment"
+        ],
+        "immutable": true
+      }
+    },
+    "BikeSession": {
+      "required": [
+        "id",
+        "userId",
+        "hubId",
+        "bikeMachineId",
+        "energyWh",
+        "startedAt",
+        "endedAt",
+        "verifiedEventIds"
+      ],
+      "fields": {
+        "energyWh": "server-verified telemetry only"
+      }
+    },
+    "WalletTransaction": {
+      "required": [
+        "id",
+        "userId",
+        "ledgerType",
+        "amount",
+        "reason",
+        "sourceEventId",
+        "createdAt"
+      ],
+      "fields": {
+        "ledgerType": [
+          "earn",
+          "redeem",
+          "reversal",
+          "adjustment"
+        ],
+        "immutable": true,
+        "clientWrites": false,
+        "coinsAreNonCash": true
+      }
+    },
+    "Reward": {
+      "required": [
+        "id",
+        "name",
+        "costCoins",
+        "inventoryStatus",
+        "eligibility"
+      ],
+      "fields": {
+        "redeemableOnlyWhenApproved": true
+      }
+    },
+    "Redemption": {
+      "required": [
+        "id",
+        "userId",
+        "rewardId",
+        "costCoins",
+        "status",
+        "idempotencyKey"
+      ],
+      "fields": {
+        "status": [
+          "requested",
+          "approved",
+          "fulfilled",
+          "rejected",
+          "reversed"
+        ]
+      }
+    },
+    "BeaconContact": {
+      "required": [
+        "id",
+        "source",
+        "serviceAreaId",
+        "assignedHubId",
+        "consent",
+        "status",
+        "createdAt"
+      ],
+      "fields": {
+        "status": [
+          "new",
+          "acknowledged",
+          "assigned",
+          "in-progress",
+          "resolved",
+          "escalated"
+        ],
+        "emergencyDisclaimer": "Not an emergency service; call 911"
+      }
+    },
+    "AuditEvent": {
+      "required": [
+        "id",
+        "actorId",
+        "action",
+        "resourceType",
+        "resourceId",
+        "occurredAt",
+        "correlationId"
+      ],
+      "fields": {
+        "appendOnly": true
+      }
+    }
+  },
+  "invariants": [
+    "Clients cannot create or edit authoritative wallet balances or wallet ledger entries.",
+    "Machine events must be authenticated, signed, replay-protected, and idempotent.",
+    "A cycle earns coins only after trusted server-side completion evidence.",
+    "A candidate hub is not an active partner and must not appear as confirmed open.",
+    "24/7 is a target requirement until operator-confirmed hours and safe operations are approved.",
+    "No payments, cash-out, sweepstakes, or cash-equivalent redemption are enabled by this model.",
+    "Personal data is minimized, role-restricted, consent-aware, and retention-limited."
+  ]
+}
