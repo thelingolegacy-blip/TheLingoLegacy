@@ -1,12 +1,12 @@
-# The Lingo ⭐️ Legacy — Unified Brand & Identity Framework
+# The Lingo Legacy — Unified Brand & Identity Framework
 
 ## Vision
-Every platform, world, game, and sub-app maintains its own **visual identity, UI theme, and audio signature** while staying connected to the central **Lingo ⭐️ Legacy** mothership via:
-- **Visual anchors** (logo, star mark, color accent)
+Every platform, world, game, and sub-app maintains its own **visual identity, UI theme, and audio signature** while staying connected to the central **The Lingo Legacy** mothership via:
+- **Visual anchors** (wordmark, crimson monogram, color accent)
 - **Domain integration** (Cloudflare, DNS, routing)
 - **Navigation spine** (header/footer with back-to-home)
 - **Audio branding** (consistent startup chime, asset library)
-- **CI/CD & deployment** (unified GitHub/Vercel infrastructure)
+- **CI/CD & deployment** (GitHub source control and Cloudflare edge delivery, subject to release gates)
 
 ---
 
@@ -30,7 +30,7 @@ Every platform, world, game, and sub-app maintains its own **visual identity, UI
 - **Trust & Compliance** — Safety-first policy hub
 
 ### Tier 4: Experience Layers
-- **Loading/Star Gate** — Boot & onboarding sequence
+- **Loading Gate** — Boot & onboarding sequence
 - **Studio Assets** — Shared visual library
 - **Master Interface** — System-wide HUD
 
@@ -91,7 +91,7 @@ Each platform gets its own config file: `/identity/[PLATFORM_ID].json`
 ## Branding Rules
 
 ### 1. **Logo & Mark Placement**
-- ✅ All pages MUST display the **Lingo ⭐️ Legacy mark** somewhere visible
+- ✅ All pages MUST display the **The Lingo Legacy wordmark and crimson monogram** somewhere visible
   - Header (top-left or center)
   - Footer (bottom)
   - Floating badge (corner)
@@ -235,12 +235,12 @@ if (pathname.startsWith('/thats-my-lingo/')) {
 /assets/
 ├── lingo-os.css (universal base styles)
 ├── lingo-os.js (universal interactions)
-├── thats-my-lingo-mark.svg ⭐️ (core Lingo logo)
+├── lingo-legacy-crimson-mark.svg (core LINGOlegacy mark)
 ├── premium-studio-refresh.css
 ├── studio-grade.css
 │
 ├── logos/
-│   ├── lingo_mark.svg ⭐️
+│   ├── lingo_legacy_mark.svg
 │   ├── casino_logo.svg
 │   ├── arcade_logo.svg
 │   ├── racing_logo.svg
@@ -271,7 +271,7 @@ if (pathname.startsWith('/thats-my-lingo/')) {
 │   └── reduced_motion.css
 │
 ├── icons/
-│   ├── star.svg (Lingo mark variant)
+│   ├── legacy-mark.svg (brand mark variant)
 │   ├── home.svg
 │   ├── menu.svg
 │   ├── profile.svg
@@ -339,7 +339,7 @@ if (pathname.startsWith('/thats-my-lingo/')) {
 <a href="/" class="lingo-brand" title="Return to Lingo Legacy home">
   <img 
     src="/assets/thats-my-lingo-mark.svg" 
-    alt="Lingo Legacy ⭐️" 
+    alt="The Lingo Legacy" 
     width="32" 
     height="32"
   >
@@ -455,7 +455,7 @@ audio.play('startup');
 - Ignore accessibility standards
 - Create new CSS files without inheriting from base
 - Hard-code colors (use CSS variables)
-- Deploy without testing on Vercel preview
+- Deploy only through an isolated preview after tests and route checks
 
 ---
 
@@ -476,5 +476,5 @@ After implementation, measure:
 
 Tag `@thelingolegacy-blip` or open an issue in `/docs/BRAND-FRAMEWORK-ISSUES/`
 
-**The Lingo ⭐️ Legacy Studio**  
+**The The Lingo Legacy Studio**  
 One brand. Many worlds. Connected everywhere.
