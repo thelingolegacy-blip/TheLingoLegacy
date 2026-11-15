@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -21,9 +22,9 @@ type Profile struct {
 }
 
 type API struct {
-	db       *pgxpool.Pool
-	verify   SubjectVerifier
-	mux      *http.ServeMux
+	db     *pgxpool.Pool
+	verify SubjectVerifier
+	mux    *http.ServeMux
 }
 
 func New(db *pgxpool.Pool, verify SubjectVerifier) *API {
@@ -78,6 +79,10 @@ func (a *API) authenticatedSubject(w http.ResponseWriter, r *http.Request) (stri
 }
 
 func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
+	if a.db == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
+		return
+	}
 	subject, ok := a.authenticatedSubject(w, r)
 	if !ok {
 		return
@@ -99,6 +104,10 @@ func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
+	if a.db == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
+		return
+	}
 	subject, ok := a.authenticatedSubject(w, r)
 	if !ok {
 		return
@@ -110,6 +119,10 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&input); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		return
+	}
+	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
 		return
 	}
