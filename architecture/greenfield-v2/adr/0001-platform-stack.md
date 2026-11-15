@@ -1,22 +1,40 @@
 # ADR-0001: Greenfield Go + PostgreSQL platform core
 
-- Status: Proposed
-- Date: 2026-11-14
+- Status: Proposed — provider selection intentionally deferred
+- Date: 2026-11-15
 
 ## Context
-The current environment spans Next.js, Flutter, Supabase, Firebase, Cloudflare, and GitHub with overlapping identity/backend responsibilities. Previous audits identified fragmented authority, route/version drift, incomplete backend schemas, unverified mobile/API/game integrations, and unreliable runner startup.
+The current environment spans Next.js, Flutter, Supabase, Firebase, Cloudflare and GitHub, with overlapping identity, hosting and backend responsibilities. Previous audits identified fragmented authority, route/version drift, incomplete backend schemas, unverified mobile/API/game integrations and unreliable runner startup. The greenfield platform must improve consistency without creating duplicate production authorities or unapproved recurring costs.
 
 ## Decision
-Use Next.js/TypeScript web, Flutter mobile, Go domain services on ECS Fargate, Cognito OIDC, RDS PostgreSQL, ElastiCache Redis, MSK Serverless Kafka, S3, Cloudflare for audited DNS/WAF, Terraform, GitHub Actions OIDC, and OpenTelemetry/Datadog.
+Adopt a provider-neutral modular application baseline:
+- Next.js/TypeScript for web and Flutter/Dart for mobile.
+- Go modular services with versioned REST/OpenAPI contracts.
+- PostgreSQL as the transactional authority for each migrated domain, beginning with an isolated development profile slice.
+- Transactional outbox at the database boundary; defer broker selection until delivery volume, ordering, retention and operational requirements are measured.
+- OIDC-compatible identity adapter; do not create or switch production identity authority until account-linking and recovery are proven.
+- Cloudflare remains the intended public edge, subject to verified zone, route, Worker and origin ownership.
+- GitHub remains canonical source and engineering evidence.
+- Existing Firebase, Supabase and Worker capabilities are retained only where individually verified and explicitly bounded; no co-equal authority for the same data domain.
 
-## Rationale
-One transactional data authority; one authentication authority; explicit service ownership; managed runtime; durable asynchronous events; reproducible infrastructure.
+## Provider evaluation — not approved for provisioning
+AWS services (Cognito, RDS, ECS/Fargate, ElastiCache, MSK, S3), Cloudflare-native services, Firebase/Supabase and managed PostgreSQL alternatives may be evaluated against the same workload requirements. This ADR does not select an AWS account, region, service bundle or IaC tool.
+
+Before selecting a provider, record:
+1. Workload fit, data residency, security and operational ownership.
+2. Monthly cost estimate at minimum, expected and peak usage, including networking, backups, logs and egress.
+3. Free-tier eligibility, quotas, expiry and cost-overrun controls.
+4. Exit/migration strategy, portability and restore evidence.
+5. Account, region, budget ceiling, owner, alerts and teardown approval.
+
+## Minimum launch topology
+Start with the smallest independently testable slice: one modular Go API, PostgreSQL, an atomic outbox record, and a local/disposable integration test environment. Add cache, broker, multi-region and additional managed services only when measured requirements and cost/security review justify them.
 
 ## Alternatives
-- Continue Supabase + Firebase as co-equal backends: rejected due to duplicated authority.
-- Cloudflare Workers + D1 for the entire platform: rejected as the first target for the full relational/game workload.
-- EKS/Kubernetes: deferred until scale evidence justifies the operational burden; ECS Fargate is the simpler baseline.
-- Active-active multi-cloud: rejected for launch. Start with one AWS primary region across three AZs and a separately tested recovery region.
+- Continue Firebase and Supabase as co-equal authorities for the same domain: rejected because it creates conflicting ownership and reconciliation risk.
+- Move all workloads to Cloudflare Workers/D1 immediately: deferred pending workload-specific compatibility and migration evidence.
+- Adopt Kubernetes or active-active multi-cloud for initial launch: deferred until scale and recovery evidence justify the operational complexity.
+- Provision a full AWS service bundle before cost/account review: rejected.
 
 ## Consequences
-Existing data and identities need controlled migration and account linking. Region, costs, retention, RPO/RTO, and backup policy require approval before provisioning. Live systems remain untouched until parity and rollback are proven.
+Existing identities and data require controlled inventory, canonical ID mapping, account linking, checksummed migration, reconciliation and rollback rehearsal. Wallet/ledger balances, entitlements and game outcomes require domain-specific migration and independent reconciliation; they must not be treated as ordinary profile data. No provider provisioning, production identity/data changes, DNS/route changes, payment activation or deployment is authorized by this ADR.
