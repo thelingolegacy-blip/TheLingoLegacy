@@ -305,5 +305,50 @@
     "sweepstakes",
     "real-money-wagering",
     "destructive-infrastructure"
-  ]
+  ],
+  "cloudflare_edge": {
+    "inventory_state": "read-only-live-inventory-2026-11-15",
+    "zone": "thelingolegacy.com",
+    "zone_status": "active",
+    "plan": "Free Website",
+    "route_topology": [
+      {
+        "pattern": "thelingolegacy.com/",
+        "script": "lingo-flagship-root",
+        "route_id": "04e6903aedf14510b58b34b57df699e1",
+        "active_deployment_id": "31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3",
+        "active_version_id": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "active_version_number": 1,
+        "traffic_percent": 100,
+        "preview": {
+          "version_id": "fa6ca7f6-7431-4d22-885d-782c5c9e3631",
+          "version_number": 3,
+          "alias": "flagship-nav-repair-2026-11-11",
+          "source_pr": 548,
+          "commit_sha": "9c58b0eb638ea73900a2132c886cd56c002405d2",
+          "active": false
+        }
+      },
+      {
+        "pattern": "thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "route_id": "41e8d027e8cd4cb19d21df7143a2c25e",
+        "active_version_id": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "traffic_percent": 100
+      },
+      {
+        "pattern": "www.thelingolegacy.com/*",
+        "script": "thelingolegacyv-5",
+        "route_id": "c861b5b2158745f2bcfbfdca9778c325",
+        "active_version_id": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "traffic_percent": 100
+      }
+    ],
+    "findings": [
+      "The apex exact-root route and wildcard route are owned by different Worker scripts.",
+      "The www wildcard route points to the legacy wildcard Worker and does not have a matching exact-root flagship Worker route.",
+      "The PR #548 exact-root candidate is uploaded as preview version 3; active exact-root deployment remains version 1 at 100 percent.",
+      "Do not promote or change routes until apex/www browser parity, all deep-link routes, rollback and independent QA are verified."
+    ]
+  }
 }
