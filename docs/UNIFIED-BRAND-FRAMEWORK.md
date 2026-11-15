@@ -1,7 +1,7 @@
 # The Lingo Legacy — Unified Brand & Identity Framework
 
 ## Vision
-Every platform, world, game, and sub-app maintains its own **visual identity, UI theme, and audio signature** while staying connected to the central **The Lingo Legacy** mothership via:
+Every platform, world, game, and sub-app maintains its own **visual identity, UI theme, and audio signature** while staying connected to the central **The Lingo Legacy** ecosystem via:
 - **Visual anchors** (wordmark, crimson monogram, color accent)
 - **Domain integration** (Cloudflare, DNS, routing)
 - **Navigation spine** (header/footer with back-to-home)
@@ -476,5 +476,5 @@ After implementation, measure:
 
 Tag `@thelingolegacy-blip` or open an issue in `/docs/BRAND-FRAMEWORK-ISSUES/`
 
-**The The Lingo Legacy Studio**  
+**The Lingo Legacy Studio**  
 One brand. Many worlds. Connected everywhere.
