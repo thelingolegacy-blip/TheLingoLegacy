@@ -1,62 +1,71 @@
 # GitHub Support Escalation — Actions Runner Allocation/Initialization
 
-**Prepared:** 2026-10-10  
+**Prepared:** 2026-11-08  
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
-**Pull request:** [#257](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/257)  
-**Environment:** GitHub Actions, public repository, pull_request-triggered jobs  
-**Impact:** CI cannot provide execution evidence; release gates remain blocked.
+**Current remediation PR:** [#501](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/501)  
+**Affected workflow:** Cloudflare Worker Hardening — Dry Run  
+**Environment:** GitHub Actions, pull-request-triggered workflows  
+**Impact:** No executable CI evidence is available; release gates remain blocked.
 
 ## Suggested support subject
 
-GitHub Actions jobs complete as failures before step initialization; runner_id=0, empty runner_name, no steps/logs/artifacts
+Multiple GitHub Actions workflows terminate with `startup_failure` before any job or executable step is exposed
 
 ## Support request
 
-Please investigate a GitHub Actions runner allocation/initialization failure affecting multiple workflows in this repository.
+Please investigate a GitHub Actions startup/runner initialization failure affecting multiple workflows in this repository.
 
-Multiple jobs requesting the standard GitHub-hosted `ubuntu-latest` runner are marked completed/failure almost immediately, but the Jobs API reports `runner_id: 0`, empty `runner_name`, `runner_group_id: 0`, and `steps: []`. The logs endpoint returns no retrievable logs; the connected log retrieval returned `BlobNotFound`. The artifact endpoint reports zero artifacts. Because no step is instantiated, the available evidence does not show a source-level test failure.
+On the current remediation branch head, four independent workflows returned `completed / startup_failure`. The GitHub connector exposed no executable job or step evidence for these runs. The Cloudflare hardening workflow therefore did not execute its contract checks, Durable Object regression tests, or Wrangler dry-run.
 
-This issue reproduces in both the existing CI workflow and a minimal read-only validation workflow. A separate G02 sentinel requires a self-hosted runner, but the hosted-runner jobs failing with `ubuntu-latest` indicate that simply adjusting custom labels is not a sufficient explanation.
+Earlier repository evidence, recorded in issue #209, includes hosted `ubuntu-latest` jobs that completed as failures with `runner_id: 0`, empty `runner_name`, `steps: []`, no retrievable logs (`BlobNotFound`), and zero artifacts. The repository-side record documents repeated occurrences across unrelated workflows and commits. The current startup-failure observations do not independently establish the provider-side cause.
 
 Please verify:
-1. Whether hosted-runner dispatch/allocation or job initialization is failing for this repository/account.
-2. Whether an account-level hosted-runner quota, billing/build limit, policy, suspension, or service-side restriction is preventing runner assignment.
-3. Whether the empty step list and missing log blob are expected consequences of a pre-initialization failure.
-4. What provider-side evidence or remediation is required to restore normal runner assignment.
-5. Whether any repository/org Actions policy or inherited restriction is involved.
+1. Whether hosted-runner dispatch, allocation, or job initialization is failing for this repository/account.
+2. Whether an account-level quota, billing/build limit, policy, suspension, or service-side restriction is preventing normal job startup.
+3. Whether the current `startup_failure` records and historical empty runner identity/steps/logs share a provider-side cause.
+4. Whether any repository/org Actions policy or inherited restriction is involved.
+5. What provider-side remediation and evidence are required to restore normal runner execution.
 
-## Reproduction evidence
+## Latest branch-head reproduction evidence
 
-All times UTC on 2026-10-10.
+Observed 2026-11-08 for the current PR #501 head `e9198541b2f1861e7c00fdbca24bb10f387db5f7`:
 
-| Run | Workflow | Job ID | Commit | Requested runner | Runner ID | Runner name | Steps | Result |
-|---|---|---:|---|---|---:|---|---|---|
-| [38076892083](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076892083) | Studio Sandbox Guard | 114285643465 | `6eaa828b5fd8249e02e012eb3fc0530c5f6c9bd6` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076892062](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076892062) | Lingo Legacy Static CI | 114285643511 | `6eaa828b5fd8249e02e012eb3fc0530c5f6c9bd6` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076850060](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076850060) | Studio Sandbox Guard | 114285514743 | `1c20b69c59ddcca1f8a941d7e19167ded180f7b8` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076850062](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076850062) | Lingo Legacy Static CI | 114285514623 | `1c20b69c59ddcca1f8a941d7e19167ded180f7b8` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076793713](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076793713) | Studio Sandbox Guard | 114285344938 | `8715bd79ee623dc46e85e3882be4f909b77586c5` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076793697](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076793697) | Lingo Legacy Static CI | 114285344450 | `8715bd79ee623dc46e85e3882be4f909b77586c5` | `ubuntu-latest` | 0 | empty | `[]` | failure |
-| [38076658254](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/38076658254) | Lingo Legacy Static CI | 114284945890 | `92eb918b73abb3700926215d774679f41f37ecf9` | `ubuntu-latest` | 0 | empty | `[]` | failure |
+| Run | Workflow | Run status | Conclusion |
+|---:|---|---|---|
+| [42464642366](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42464642366) | Cloudflare Worker Hardening — Dry Run | completed | startup_failure |
+| [42464643961](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42464643961) | Lingo Legacy Static CI | completed | startup_failure |
+| [42464644547](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42464644547) | G02 Runner Image Build (no publish) | completed | startup_failure |
+| [42464643165](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/42464643165) | Crimson Smoke UI — static validation | completed | startup_failure |
 
-Additional observed API responses:
-- `GET /actions/runs/{run_id}/jobs` consistently returned runner ID 0, empty runner name, and empty steps for the listed jobs.
-- `GET /actions/runs/38076658254/artifacts` returned `total_count: 0`.
-- Log retrieval for job `114284945890` returned `BlobNotFound`.
-- The GitHub repository connector could not read the repository runner inventory or Actions permission endpoints, so runner inventory and effective policy are not asserted here.
-- A separate Vercel status context is also failing with an account deployment-blocked/build-rate-limit destination. Please distinguish that external status from the missing GitHub runner assignment.
+The workflow-run API returned these four records for the current commit. The connector's workflow-run wrapper does not return job payloads or logs; no runner identity, instantiated steps, or executable result can be inferred from these records.
 
-## Expected behavior
+### Historical corroboration
 
-Each job should be assigned to a real runner, have a nonzero runner ID and populated runner name, instantiate steps, execute the first step, and produce retrievable logs. The validation workflow should then produce its normal success/failure result and evidence.
+Repository issue [#209](https://github.com/thelingolegacy-blip/TheLingoLegacy/issues/209) contains prior repeated examples on GitHub-hosted `ubuntu-latest`:
+- `runner_id = 0`
+- empty `runner_name`
+- `steps = []`
+- log retrieval failures including `BlobNotFound`
+- zero artifacts on inspected runs
+- failures across unrelated workflows on the same commit
+
+Issue #209 also records that repository-side workflow minimization, retries, and cross-workflow corroboration were exhausted. It directs escalation to GitHub's hosted Actions/account boundary rather than further workflow complexity or runner substitution.
+
+## Required expected behavior
+
+A genuine GitHub-hosted job must be assigned to a real runner, expose a nonzero runner ID and populated runner name, instantiate and execute steps, and provide retrievable logs. The hardening workflow must then produce real test output and a Wrangler dry-run result tied to the current commit.
 
 ## Release safety
 
-The repository is maintaining a protected hold:
 - G02: FAIL / UNVERIFIED
 - G03–G11: BLOCKED
+- PR #501: DRAFT / OPEN / UNMERGED
 - Production mutation: FROZEN
 - Last-known-good: PROTECTED
-- No production merge, deployment, DNS change, secret mutation, or activation is authorized by this report.
+- No production merge, deployment, DNS change, route mutation, secret mutation, or activation is authorized by this report.
 
-Do not share runner registration tokens, access tokens, secret values, private host credentials, or unredacted environment dumps in the ticket. The linked run/job IDs are sufficient to begin provider-side investigation.
+Do not share runner registration tokens, access tokens, secret values, private host credentials, or unredacted environment dumps in the ticket. The run IDs above and issue #209 provide concrete starting evidence.
+
+## Submission status
+
+**Prepared only — NOT SUBMITTED.** This repository connector cannot create an authenticated GitHub Support case or return an official Support case ID. The account owner must submit this packet through https://support.github.com/contact and record the official case ID and response in the repository.

@@ -1,0 +1,65 @@
+name: Cloudflare Worker Hardening — Dry Run
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "worker.js"
+      - "wrangler.jsonc"
+      - "scripts/verify-cloudflare-bindings.mjs"
+      - "scripts/test-cloudflare-rate-limiter.mjs"
+      - "docs/operations/cloudflare-worker-hardening.md"
+      - ".github/workflows/cloudflare-hardening-dry-run.yml"
+  push:
+    branches: ["repair/cloudflare-worker-hardening-2026-11"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Wrangler JSON configuration
+        run: node -e 'JSON.parse(require("node:fs").readFileSync("wrangler.jsonc", "utf8"))'
+
+      - name: Check Worker module syntax
+        run: node --input-type=module --check < worker.js
+
+      - name: Verify Cloudflare binding contracts
+        run: node scripts/verify-cloudflare-bindings.mjs
+
+      - name: Verify dynamic runtime contract
+        run: node scripts/verify-dynamic-runtime.mjs
+
+      - name: Verify release configuration consistency
+        run: node scripts/verify-release-config-consistency.mjs
+
+      - name: Verify asset publication exclusions
+        run: node scripts/verify-asset-publication-scope.mjs
+
+      - name: Run configuration consistency regression tests
+        run: node --test scripts/test-verify-release-config-consistency.mjs scripts/test-verify-dynamic-runtime.mjs
+
+      - name: Test Durable Object rate limiter
+        run: node --test scripts/test-cloudflare-rate-limiter.mjs
+
+      - name: Wrangler v4 production Worker dry-run (no deployment)
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+
+      - name: Record non-production result
+        if: always()
+        run: |
+          echo "VALIDATION_ONLY=true"
+          echo "PRODUCTION_DEPLOYMENT=NOT_AUTHORIZED"
+          echo "DNS_OR_SECRET_MUTATION=NOT_PERFORMED"
