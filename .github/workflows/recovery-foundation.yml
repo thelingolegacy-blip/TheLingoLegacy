@@ -25,7 +25,11 @@ on:
     branches: [main]
     paths:
       - "ops/recovery/**"
+      - "package.json"
+      - "src/server/slot-engine.mjs"
+      - "scripts/tests/server-slot-engine.test.mjs"
       - ".github/workflows/recovery-foundation.yml"
+      - ".github/workflows/p1-slot-engine-restore.yml"
 
 permissions:
   contents: read
@@ -41,6 +45,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v4
+
       - name: Record source and execution context
         shell: bash
         run: |
@@ -105,5 +111,58 @@ jobs:
         with:
           name: lingo-recovery-foundation-${{ github.run_id }}-${{ github.run_attempt }}
           path: recovery-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  p1-slot-engine-validation:
+    name: P1 slot-engine contract tests (GitHub-hosted)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'recovery/p1-slot-engine-restore'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Record P1 execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p p1-evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "node_version=$(node --version)"
+            echo "npm_version=$(npm --version)"
+            echo "timestamp_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee p1-evidence/execution-context.txt
+
+      - name: Run P1 slot-engine contract tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test 2>&1 | tee p1-evidence/node-test-output.txt
+
+      - name: Record source checksums
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum package.json src/server/slot-engine.mjs scripts/tests/server-slot-engine.test.mjs > p1-evidence/source-sha256.txt
+
+      - name: Upload P1 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-p1-slot-engine-${{ github.run_id }}-${{ github.run_attempt }}
+          path: p1-evidence/
           if-no-files-found: warn
           retention-days: 14
