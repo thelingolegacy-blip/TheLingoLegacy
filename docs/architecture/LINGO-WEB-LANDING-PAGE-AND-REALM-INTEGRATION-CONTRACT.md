@@ -61,3 +61,12 @@ The currently known homepage source and exact-root Worker work are in draft PR #
 
 ## Live edge inventory checkpoint — 2026-11-15
 Read-only Cloudflare inventory confirms the zone is active on the Free Website plan. The apex exact-root route thelingolegacy.com/ points to lingo-flagship-root, with version 1 receiving 100 percent of traffic. PR #548's version 3 (alias flagship-nav-repair-2026-11-11) is preview-only and not active. The apex wildcard route thelingolegacy.com/* and www wildcard route www.thelingolegacy.com/* point to thelingolegacyv-5. This means the apex root and www root are not currently proven to share the same homepage implementation. Treat apex/www parity as a P0 route-ownership issue; do not change routes or promote versions until independent browser QA, deep-link coverage, rollback and owner acceptance pass.
+
+
+## Public surface audit — 2026-11-15
+- The apex homepage responds with the flagship landing experience, but its visible footer currently labels the experience as a candidate and explicitly says it is not a production-status statement. Treat the live surface as live-uncertified, not launch-certified.
+- The current /worlds/ public page presents four interconnected universes rather than the complete portfolio realm directory. Reconcile its content with the 14-realm registry before calling it the complete ecosystem map.
+- /lane/ and /media/ public pages identify themselves as source implementation only, with production promotion independently gated.
+- /thats-my-lingo/ is publicly inspectable as an entertainment demo and explicitly states no cash betting, no wagering and no cash-out; preserve these disclosures.
+- /kottons-code/ is publicly inspectable and includes human/family character names. Complete the existing family/minor privacy review and content minimization before broader promotion.
+- Some routes (including studio-hub, library, privacy and terms) were not inspectable through the available web inspection surface. This is not proof of a 404; complete direct browser QA before marking them verified.
