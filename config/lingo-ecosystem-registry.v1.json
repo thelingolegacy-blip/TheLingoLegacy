@@ -1,0 +1,309 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-15",
+  "authority": "LINGOlegacy_MASTER",
+  "source_of_truth": "https://github.com/thelingolegacy-blip/TheLingoLegacy",
+  "production_policy": "protected-hold",
+  "environments": [
+    "local",
+    "preview",
+    "integration",
+    "staging",
+    "production"
+  ],
+  "platforms": {
+    "edge": "Cloudflare Workers/Pages; route ownership must be verified",
+    "backend": "Firebase where appropriate; isolated service APIs",
+    "web": [
+      "static HTML",
+      "React",
+      "Next.js"
+    ],
+    "mobile": "Flutter",
+    "games": "Unity",
+    "creation_tools": "AppDeploy previews must be exported to GitHub"
+  },
+  "realms": [
+    {
+      "id": "lingo-legacy",
+      "name": "LINGOlegacy",
+      "type": "flagship",
+      "status": "preview-needs-independent-qa",
+      "route": "/",
+      "products": [
+        "flagship-portal",
+        "lingo-identity-entry"
+      ],
+      "dependencies": [
+        "lingo-core",
+        "product-registry",
+        "cloudflare-edge"
+      ]
+    },
+    {
+      "id": "lingo-lane",
+      "name": "LINGOlane",
+      "type": "commerce-community",
+      "status": "scaffolded-unverified",
+      "route": "/lane/",
+      "products": [
+        "loyalty-lane-apparel",
+        "loyalty-lane-cycle",
+        "designs-promotions"
+      ],
+      "dependencies": [
+        "catalog",
+        "commerce-test-mode",
+        "community-safety"
+      ]
+    },
+    {
+      "id": "lingo-slots",
+      "name": "LINGOslots",
+      "type": "games",
+      "status": "scaffolded-unverified",
+      "route": "/thats-my-lingo/",
+      "products": [
+        "thats-my-lingo",
+        "spades-is-my-lingo",
+        "uhno-lingo-u-no",
+        "lingo-lions-eruptions",
+        "cashman-lingo-mania"
+      ],
+      "policy": {
+        "real_money_wagering": false,
+        "play_credits": "non-redeemable-only",
+        "sweepstakes": "disabled-pending-legal-review"
+      },
+      "dependencies": [
+        "game-session",
+        "game-registry",
+        "safety-disclosures"
+      ]
+    },
+    {
+      "id": "lingo-arcade",
+      "name": "LINGOarcade",
+      "type": "games",
+      "status": "scaffolded-unverified",
+      "route": "/studio-sites/lingoarcade/",
+      "products": [
+        "tricias-escape",
+        "doughboys-oasis",
+        "crazy-weasols",
+        "silly-in-philly",
+        "jersey-shore-the-undead"
+      ],
+      "dependencies": [
+        "game-session",
+        "asset-rights",
+        "player-profile"
+      ]
+    },
+    {
+      "id": "lingo-library",
+      "name": "LINGOlibrary",
+      "type": "publishing-learning",
+      "status": "scaffolded-unverified",
+      "route": "/library/",
+      "products": [
+        "kottons-code",
+        "the-block-i-grew-up-on",
+        "say-it-again",
+        "dice-shift-hotel",
+        "legacy-legends"
+      ],
+      "dependencies": [
+        "publishing",
+        "family-privacy",
+        "asset-rights"
+      ]
+    },
+    {
+      "id": "lingo-media",
+      "name": "LINGOmedia",
+      "type": "media",
+      "status": "scaffolded-unverified",
+      "route": "/media/",
+      "products": [
+        "rise-of-zavione-p1",
+        "rise-of-zavione-p2"
+      ],
+      "dependencies": [
+        "media-pipeline",
+        "rights-and-releases"
+      ]
+    },
+    {
+      "id": "lingo-world",
+      "name": "LINGOworld",
+      "type": "services-platform",
+      "status": "scaffolded-unverified",
+      "route": "/worlds/",
+      "products": [
+        "lingoai",
+        "asklingo",
+        "lingoboom",
+        "lingotravel",
+        "lingocampus",
+        "lingosupport",
+        "lingowifi",
+        "lingovoice",
+        "lingoshield",
+        "lingolounge",
+        "lingodonations"
+      ],
+      "dependencies": [
+        "capability-registry",
+        "identity-contract",
+        "support-operations"
+      ]
+    },
+    {
+      "id": "legacy-x-club",
+      "name": "LegacyXclub",
+      "type": "community-membership",
+      "status": "planned",
+      "route": null,
+      "products": [
+        "legacy-x-club"
+      ],
+      "dependencies": [
+        "identity",
+        "membership-eligibility",
+        "moderation"
+      ]
+    },
+    {
+      "id": "lingo-studio",
+      "name": "LINGOstudio",
+      "type": "creation-operations",
+      "status": "preview-needs-independent-qa",
+      "route": "/studio-hub/",
+      "products": [
+        "studio-hub",
+        "studio-production",
+        "studio-os"
+      ],
+      "dependencies": [
+        "project-registry",
+        "permissions",
+        "artifact-lineage"
+      ]
+    },
+    {
+      "id": "lingo-core",
+      "name": "LINGOcore",
+      "type": "shared-platform",
+      "status": "scaffolded-unverified",
+      "route": null,
+      "products": [
+        "api-gateway",
+        "event-dispatcher",
+        "service-registry",
+        "shared-sdk"
+      ],
+      "dependencies": [
+        "identity-contract",
+        "secrets",
+        "observability"
+      ]
+    },
+    {
+      "id": "lingo-identity",
+      "name": "LINGOidentity",
+      "type": "identity",
+      "status": "scaffolded-unverified",
+      "route": null,
+      "products": [
+        "lingo-id",
+        "profiles",
+        "consent",
+        "roles"
+      ],
+      "dependencies": [
+        "oidc-provider",
+        "session-policy",
+        "audit"
+      ]
+    },
+    {
+      "id": "lingo-wallet",
+      "name": "LINGOwallet",
+      "type": "ledger",
+      "status": "planned-disabled",
+      "route": null,
+      "products": [
+        "universal-legacy-wallet",
+        "lingo-coins"
+      ],
+      "dependencies": [
+        "legal-review",
+        "double-entry-ledger",
+        "reconciliation",
+        "identity"
+      ]
+    },
+    {
+      "id": "lingo-shield",
+      "name": "LINGOshield",
+      "type": "security-recovery",
+      "status": "planned",
+      "route": null,
+      "products": [
+        "security-monitoring",
+        "recovery-dispatch",
+        "incident-command"
+      ],
+      "dependencies": [
+        "telemetry",
+        "backup",
+        "runbooks"
+      ]
+    },
+    {
+      "id": "lingo-campus",
+      "name": "LINGOcampus",
+      "type": "learning",
+      "status": "planned",
+      "route": null,
+      "products": [
+        "learning-paths",
+        "creator-training"
+      ],
+      "dependencies": [
+        "content-platform",
+        "safeguarding",
+        "accessibility"
+      ]
+    }
+  ],
+  "status_definitions": {
+    "planned": "Scope recorded; no implementation claim.",
+    "planned-disabled": "Design only; activation disabled.",
+    "scaffolded-unverified": "Source or preview exists; verification incomplete.",
+    "preview-needs-independent-qa": "Preview exists; independent browser/security/accessibility QA incomplete.",
+    "verified": "Acceptance evidence exists for named version and environment.",
+    "production": "Owner-approved production release with rollback and monitoring evidence."
+  },
+  "release_gates": [
+    "source-commit",
+    "ci-jobs-completed",
+    "tests-and-artifacts",
+    "security-review",
+    "privacy-and-rights-review",
+    "accessibility-and-browser-qa",
+    "route-and-api-smoke",
+    "observability-and-rollback",
+    "owner-acceptance"
+  ],
+  "explicit_disabled": [
+    "production-promotion",
+    "G02-runner-activation",
+    "live-payments",
+    "wallet-transfers",
+    "sweepstakes",
+    "real-money-wagering",
+    "destructive-infrastructure"
+  ]
+}
