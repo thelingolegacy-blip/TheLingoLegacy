@@ -42,15 +42,15 @@ func main() {
 	}
 	verifier := provider.Verifier(&oidc.Config{ClientID: clientID})
 
-	verifySubject := func(ctx context.Context, rawToken string) (string, error) {
+	verifySubject := func(ctx context.Context, rawToken string) (httpapi.Identity, error) {
 		idToken, err := verifier.Verify(ctx, rawToken)
 		if err != nil {
-			return "", err
+			return httpapi.Identity{}, err
 		}
-		if idToken.Subject == "" {
-			return "", errors.New("OIDC token has no subject")
+		if idToken.Subject == "" || idToken.Issuer == "" {
+			return httpapi.Identity{}, errors.New("OIDC token has no issuer or subject")
 		}
-		return idToken.Subject, nil
+		return httpapi.Identity{Issuer: idToken.Issuer, Subject: idToken.Subject}, nil
 	}
 
 	api := httpapi.New(pool, verifySubject)
