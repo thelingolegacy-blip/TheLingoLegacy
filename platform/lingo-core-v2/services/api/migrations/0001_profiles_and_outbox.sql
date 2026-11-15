@@ -1,10 +1,12 @@
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS lingo_profiles (
-    subject TEXT PRIMARY KEY,
+    issuer TEXT NOT NULL,
+    subject TEXT NOT NULL,
     display_name TEXT NOT NULL CHECK (char_length(display_name) BETWEEN 1 AND 80),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (issuer, subject)
 );
 
 CREATE TABLE IF NOT EXISTS lingo_outbox_events (
