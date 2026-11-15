@@ -4,7 +4,15 @@
 **Release state:** PROTECTED HOLD  
 **Architecture PR:** #594 (draft)  
 **Implementation PR:** #596 (draft)  
-**Canonical source:** GitHub repository `thelingolegacy-blip/TheLingoLegacy`
+**Master tracker:** #597  
+**Canonical source:** `thelingolegacy-blip/TheLingoLegacy`
+
+## Workstream issue map
+- Wave 0 / P0 CI recovery: #575 (existing authoritative recovery issue)
+- Wave 2 — API, OIDC, PostgreSQL, events: #598
+- Wave 3 — contracts, web and Flutter: #599
+- Waves 4–5 — Control Plane and portfolio onboarding: #600
+- Waves 6–8 — migration, security/SRE and launch readiness: #601
 
 ## Mission and operating rules
 
@@ -13,7 +21,6 @@ Build an independently engineered, modular enterprise foundation that can connec
 Run independent workstreams in parallel. Respect hard dependencies. A greenfield build does not authorize deletion, migration, production cutover, payment activation, or replacement of a last-known-good service.
 
 ### Non-negotiable controls
-
 - GitHub is the source of truth; Cloudflare remains the intended production edge unless a reviewed architecture decision changes that.
 - No production DNS, Cloudflare route, Firebase publication, production identity, payment, or customer-data mutation in this program without a separate approved change.
 - No G02 self-hosted runner activation as a workaround for Actions startup failure.
@@ -23,20 +30,18 @@ Run independent workstreams in parallel. Respect hard dependencies. A greenfield
 - Label every capability NOT_STARTED, BUILT, CONNECTED, CERTIFIED, or PRODUCTION. Source files alone mean BUILT at most.
 
 ## Program architecture
-
-1. **Experience layer:** Next.js/React/TypeScript web; Flutter iOS/Android clients.
-2. **Service layer:** Go modular services and bounded-context APIs.
-3. **Connectivity layer:** versioned REST contracts, event schemas, outbox/inbox, adapters, SDKs, service discovery.
+1. **Experience:** Next.js/React/TypeScript web; Flutter iOS/Android.
+2. **Service:** Go modular services and bounded-context APIs.
+3. **Connectivity:** versioned REST contracts, event schemas, outbox/inbox, adapters, SDKs, service discovery.
 4. **Identity and policy:** LINGO ID federation, OIDC, role/attribute authorization, tenant/product boundaries.
-5. **Data layer:** PostgreSQL for transactional domains where suitable; object storage, cache, search, and event broker only when justified.
-6. **Infrastructure layer:** portable IaC, isolated environments, edge integration, secrets, networking, backups.
-7. **Control plane:** service registry, inventory, health, release status, audit, incident and cost views.
-8. **Governance layer:** architecture decision records, security reviews, data classification, change/release acceptance.
+5. **Data:** PostgreSQL for transactional domains where suitable; object storage, cache, search, and event broker only when justified.
+6. **Infrastructure:** portable IaC, isolated environments, edge integration, secrets, networking, backups.
+7. **Control Plane:** service registry, inventory, health, release status, audit, incident and cost views.
+8. **Governance:** architecture decision records, security reviews, data classification, change/release acceptance.
 
-AWS, Cloudflare, Firebase, and any other provider must have explicit non-overlapping responsibilities. The target is not a provider count; it is one coherent architecture with low operational complexity and reversible decisions.
+AWS, Cloudflare, Firebase, and other providers must have explicit non-overlapping responsibilities. Select one coherent architecture with low operational complexity and reversible decisions.
 
 ## Critical dependency chain
-
 A. Restore hosted GitHub Actions job startup  
 → B. Run deterministic source checks and tests  
 → C. Verify API + OIDC + PostgreSQL in isolated development  
@@ -46,202 +51,126 @@ A. Restore hosted GitHub Actions job startup
 → G. Complete security, resilience, operations and cost certification  
 → H. Obtain separate launch/release acceptance.
 
-Parallel work may continue on architecture, contracts, UI prototypes, threat models, documentation, test fixtures, and migration inventory while A is blocked. Do not claim downstream integration is complete until its dependencies pass.
+Parallel work may continue on architecture, contracts, UI prototypes, threat models, test fixtures, and migration inventory while A is blocked. Do not claim downstream integration is complete until its dependencies pass.
 
 ## Waves, phases and sprints
 
-Sprint durations below are planning targets, not promises. Re-estimate from evidence and actual team capacity.
-
-### Wave 0 — Stabilize execution and protect the baseline
-
-**Phase 0.1 — CI recovery (P0)**
+### Wave 0 — Stabilize execution and protect the baseline (P0)
+**Phase 0.1 — CI recovery**
 - Diagnose repository/org Actions policy, hosted runner capacity, billing/quota, concurrency, workflow configuration, and external service restrictions.
 - Restore ordinary GitHub-hosted `ubuntu-latest` job creation.
 - Keep protected G02 disabled; do not register duplicate runners.
 - Require run → job → step → log → artifact → commit correlation.
 - Record exact failure cause and remediation evidence.
 
-**Sprint 0A:** inspect Actions and org/repo settings with read-only access; collect run/job evidence.  
-**Sprint 0B:** apply only authorized CI configuration repair; execute a harmless hosted-runner smoke test.  
+**Sprint 0A:** read-only inspection of Actions/org/repo settings and run/job evidence.  
+**Sprint 0B:** authorized CI configuration repair; harmless hosted-runner smoke test.  
 **Exit:** at least one hosted job is instantiated and completed with logs and commit correlation; then the CORE V2 workflow itself passes.
 
 ### Wave 1 — Architecture and engineering standards
-
-**Phase 1.1 — Architecture baseline**
-- Approve bounded contexts, service ownership, data classification, trust boundaries, and environment model.
-- Write ADRs for cloud/edge responsibilities, data stores, event transport, identity, and deployment strategy.
-- Define service naming, API versioning, event compatibility, error envelopes, correlation IDs, idempotency, and deprecation policy.
-- Establish repo ownership, branch/review policy proposal, and release evidence template.
-
-**Sprint 1A:** domain map, context map, service inventory, system context and threat boundaries.  
-**Sprint 1B:** technology decision records, cost envelopes, deployment topology, standards and templates.  
-**Exit:** architecture reviewed; no unresolved duplicate sources of truth or unowned critical services.
+**Phase 1.1:** approve bounded contexts, service ownership, data classification, trust boundaries and environment model; write ADRs for cloud/edge responsibilities, data stores, event transport, identity and deployment; define API/event compatibility, error envelopes, correlation IDs, idempotency and deprecation.
+**Sprint 1A:** domain/context maps, service inventory and trust boundaries.  
+**Sprint 1B:** technology ADRs, cost envelopes, deployment topology, standards and templates.  
+**Exit:** architecture reviewed; no unowned critical service or competing source of truth.
 
 ### Wave 2 — Core platform vertical slices
-
-**Phase 2.1 — Identity and profile**
-- Complete OIDC issuer/audience/signature/expiry/key-rotation tests.
-- Define LINGO ID subject mapping and account lifecycle.
-- Add authorization policy and cross-product isolation tests.
-- Define account recovery and session/token refresh.
-
-**Phase 2.2 — Transactional data**
-- Verify schema migration, constraints, transaction rollback, backup and restore.
-- Enforce least-privilege DB roles, TLS, connection limits, migration ownership and retention.
-- Establish data classification and PII minimization.
-
-**Phase 2.3 — Event foundation**
-- Build outbox publisher, idempotent consumer, retry/backoff, dead-letter and replay.
-- Define event envelope, schema registry/compatibility rules, delivery guarantees and audit.
-
+**Phase 2.1 Identity:** OIDC issuer/audience/signature/expiry/key-rotation tests, LINGO ID mapping, authorization, product isolation, recovery/session policy.  
+**Phase 2.2 Data:** migration, constraints, rollback, backup/restore, least-privilege roles, TLS, connection limits, retention.  
+**Phase 2.3 Events:** outbox publisher, idempotent consumer, retries/backoff, dead-letter/replay, versioned event envelope and compatibility.
 **Sprint 2A:** API correctness, input boundaries, unit/fuzz tests.  
 **Sprint 2B:** OIDC + PostgreSQL integration and migration tests.  
-**Sprint 2C:** outbox publisher, consumer, duplicate/replay/failure tests.  
+**Sprint 2C:** outbox publisher, consumer and duplicate/replay/failure tests.  
 **Exit:** isolated end-to-end profile flow passes; events are durable and idempotently consumed.
 
 ### Wave 3 — Universal connectivity and client platforms
-
-**Phase 3.1 — Integration gateway and SDKs**
-- Publish OpenAPI and event contracts.
-- Build typed TypeScript and Dart clients from versioned contracts.
-- Standardize auth refresh, retry budgets, timeouts, error mapping, tracing and idempotency.
-- Add adapter contracts for approved external systems.
-
-**Phase 3.2 — Web**
-- Build Next.js shell, sign-in/profile flows, API client, error handling and accessible component foundation.
-- Verify browser tests against isolated API environment.
-
-**Phase 3.3 — Mobile**
-- Build Flutter app shell, secure token storage, API client, offline-safe retry, device builds and integration tests.
-- Keep platform secrets out of source and artifacts.
-
-**Sprint 3A:** API gateway/SDK and contract tests.  
+**Phase 3.1:** OpenAPI/event contracts, TypeScript/Dart clients, auth refresh, retries, timeouts, errors, idempotency, tracing, adapters.  
+**Phase 3.2 Web:** Next.js shell, sign-in/profile, API client, error handling and browser E2E.  
+**Phase 3.3 Mobile:** Flutter shell, secure token storage, API client, offline retry, device builds and integration tests.
+**Sprint 3A:** gateway/SDK and contract tests.  
 **Sprint 3B:** web client and browser E2E.  
 **Sprint 3C:** Flutter client and iOS/Android build verification.  
-**Exit:** web and mobile clients authenticate and use the same versioned contracts in isolated environments.
+**Exit:** web and mobile use the same versioned contracts in isolated environments.
 
 ### Wave 4 — Master Control Plane
-
-**Phase 4.1 — Inventory and registry**
-- Register repositories, services, environments, owners, contracts, dependencies, data classifications and lifecycle.
-- Add schema validation and ownership checks.
-
-**Phase 4.2 — Operations**
-- Add health aggregation, deployment inventory, build evidence, incidents, audit and configuration status.
-- Add cost/resource views and alerts without allowing unsafe mutations by default.
-
-**Phase 4.3 — Governance**
-- Add approval workflows for sensitive changes, release evidence, rollback records and exception expiry.
-- Separate visibility from operational authority; avoid a control-plane single point of failure.
-
-**Sprint 4A:** read-only registry and service inventory.  
+**Phase 4.1:** read-only repository/service/environment inventory, owners, contracts, dependencies and classifications.  
+**Phase 4.2:** health aggregation, deployment inventory, build evidence, incidents, audit, configuration and cost views.  
+**Phase 4.3:** approval workflows, release evidence, rollback records, exception expiry; separate visibility from authority.
+**Sprint 4A:** registry and inventory.  
 **Sprint 4B:** observability, deployment and incident views.  
-**Sprint 4C:** governed actions, audit and recovery workflows.  
-**Exit:** Control Plane accurately reports service state and cannot silently bypass product/release boundaries.
+**Sprint 4C:** governed actions, audit and recovery.  
+**Exit:** accurate service state without unsafe mutation or single point of failure.
 
 ### Wave 5 — LINGO portfolio integration
-
-Onboard products in parallel only after shared identity/API/event standards are stable.
-
-- LINGOlegacy — flagship identity, account, wallet shell and community boundaries.
-- LINGOlane — design, promotions, apparel and laundry-cycle boundaries.
-- LINGOslots — game services and virtual-currency policy boundaries.
-- LINGOarcade — game sessions, progression and game-specific services.
-- LINGOlibrary — content/catalog and learning experiences.
-- LINGOmedia — media catalog, publishing and rights metadata.
-- LINGOworld — shared utility/service products and integrations.
-- LegacyXclub — membership, community and access boundaries.
-
-For each product: owner, repository, service, contract, data owner, auth policy, health check, test suite, deployment lifecycle, cost owner, rollback and acceptance evidence.
-
-**Sprint 5A:** flagship LINGOlegacy and shared identity integration.  
-**Sprint 5B:** LINGOlane, LINGOlibrary and LINGOmedia adapters.  
-**Sprint 5C:** LINGOslots and LINGOarcade adapters; enforce non-cash virtual-currency boundaries.  
-**Sprint 5D:** LINGOworld and LegacyXclub adapters.  
-**Exit:** every product is registered and its declared integrations pass contract tests; unintegrated products remain explicitly NOT_STARTED.
+Onboard bounded product slices after shared identity/API/event standards stabilize:
+- LINGOlegacy — flagship identity, account, wallet shell and community.
+- LINGOlane — design, promotions, apparel and laundry-cycle.
+- LINGOslots — games and virtual-currency policy.
+- LINGOarcade — sessions, progression and game services.
+- LINGOlibrary — content/catalog and learning.
+- LINGOmedia — publishing, media catalog and rights metadata.
+- LINGOworld — utility/service products and integrations.
+- LegacyXclub — membership, community and access.
+For each: owner, repository, service, contract, data owner, auth policy, health check, tests, lifecycle, cost owner, rollback and acceptance.
+**Sprint 5A:** LINGOlegacy/shared identity.  
+**Sprint 5B:** LINGOlane, LINGOlibrary, LINGOmedia.  
+**Sprint 5C:** LINGOslots, LINGOarcade; preserve non-cash virtual currency.  
+**Sprint 5D:** LINGOworld, LegacyXclub.  
+**Exit:** every product registered with explicit status and passing evidence for each claimed integration.
 
 ### Wave 6 — Migration and coexistence
-
-- Inventory existing repositories, services, routes, data, integrations, deployment targets, owners and last-known-good versions.
-- Classify each component: retain, wrap, migrate, replace, retire, or investigate.
-- Define source-to-target mapping, data reconciliation, identity mapping, rollback and dual-run policy.
-- Rehearse with synthetic/sanitized data first.
-- Measure record counts, checksums, referential integrity, permissions, latency and functional parity.
-- Migrate one bounded product slice at a time after explicit acceptance.
-
+Inventory existing repositories/services/routes/data/integrations/owners/last-known-good; classify retain/wrap/migrate/replace/retire/investigate; define source-target mapping, identity mapping, reconciliation, dual-run and rollback; rehearse with synthetic/sanitized data; validate counts, checksums, referential integrity, permissions, latency and parity; migrate bounded slices only after explicit acceptance.
 **Sprint 6A:** discovery and dependency map.  
 **Sprint 6B:** migration tooling and rehearsal datasets.  
 **Sprint 6C:** parallel-run, reconciliation and rollback drills.  
-**Exit:** migration rehearsal meets signed data-integrity and rollback criteria; no production cutover implied.
+**Exit:** signed integrity and rollback rehearsal; no implied production cutover.
 
 ### Wave 7 — Security, reliability and operational certification
-
-- Independent threat model and architecture review.
-- SAST, dependency scanning, secret scanning, SBOM and image/IaC scanning.
-- Least privilege, TLS, key rotation, audit, PII redaction and retention.
-- Rate limits, abuse protection, secure headers, request limits and incident playbooks.
-- SLOs, SLIs, error budgets, capacity and load testing.
-- Backup/restore, regional/provider failure scenarios, recovery-time and recovery-point objectives.
-- Cost forecasts, budget alerts, resource TTL and teardown controls.
-
+Independent threat/architecture review; SAST, dependency, secret, SBOM, image and IaC scans; least privilege, TLS, key rotation, audit, PII controls; rate limits and incident playbooks; SLO/SLI, error budgets, capacity/load testing; backup/restore, provider failure scenarios, RTO/RPO; cost forecasts, budget alerts, resource TTL and teardown.
 **Sprint 7A:** security hardening and independent review.  
-**Sprint 7B:** load, resilience, backup/restore and disaster-recovery exercises.  
-**Sprint 7C:** cost review, operational readiness and evidence closure.  
-**Exit:** all critical findings closed or explicitly risk-accepted by an authorized owner; SLO and recovery evidence approved.
+**Sprint 7B:** load, resilience, backup/restore and DR.  
+**Sprint 7C:** cost and operational readiness evidence.  
+**Exit:** critical findings closed or formally risk-accepted; SLO/recovery evidence approved.
 
 ### Wave 8 — Launch readiness and controlled release
-
-- Freeze candidate source and dependency versions.
-- Verify all required checks, artifacts, SBOM, provenance, approvals and migration evidence.
-- Validate runbooks, support ownership, on-call/incident escalation and rollback.
-- Confirm privacy, legal, payment and product-specific acceptance where applicable.
-- Run release rehearsal and post-deploy verification plan.
-- Obtain explicit production release acceptance separate from engineering implementation.
-
-**Sprint 8A:** release-candidate and full acceptance rehearsal.  
-**Sprint 8B:** final go/no-go review and approved bounded release only.  
-**Exit:** signed acceptance, deployment evidence, post-deploy health and tested rollback. Otherwise remain HOLD.
+Freeze candidate source/dependencies; verify checks, artifacts, SBOM, provenance, approvals and migration evidence; validate runbooks, support ownership and rollback; confirm privacy/legal/payment/product acceptance; rehearse release; obtain separate production release acceptance.
+**Sprint 8A:** release candidate and acceptance rehearsal.  
+**Sprint 8B:** go/no-go and approved bounded release only.  
+**Exit:** signed acceptance, deployment evidence, post-deploy health and tested rollback; otherwise remain HOLD.
 
 ## Parallel workstream lanes
-
 | Lane | Can proceed now | Hard dependency |
 |---|---|---|
 | Architecture / ADRs | Yes | Review |
-| CI recovery | Yes, P0 | GitHub hosted job startup |
-| API correctness / test fixtures | Yes | Hosted CI for evidence |
-| Identity integration | Design and test harness | Isolated issuer configuration |
+| CI recovery | Yes, P0 | Hosted job startup |
+| API correctness / fixtures | Yes | Hosted CI for evidence |
+| Identity integration | Design and harness | Isolated issuer |
 | Data model / migration | Design and local fixtures | Disposable DB |
 | Event platform | Contracts and local harness | Verified database/API |
-| Web / Flutter | Contract-first scaffolding | Stable API/identity contracts |
-| Control Plane | Registry and read-only prototype | Stable registry schema |
-| Portfolio onboarding | Inventory and mapping | Shared contracts |
-| Security / SRE | Threat model and controls | Implemented vertical slices |
-| Migration | Inventory and rehearsal plan | Target platform certification |
-| Launch | Readiness criteria only | All prior exit gates |
+| Web / Flutter | Contract-first scaffolding | Stable API/identity |
+| Control Plane | Registry/read-only prototype | Stable registry schema |
+| Portfolio onboarding | Inventory/mapping | Shared contracts |
+| Security / SRE | Threat model and controls | Implemented slices |
+| Migration | Inventory/rehearsal plan | Target certification |
+| Launch | Readiness criteria only | All exit gates |
 
 ## Definition of done
-
-A work item is not complete merely because code or documents exist.
-
-- **DESIGNED:** approved design and decision record.
+- **DESIGNED:** approved design and ADR.
 - **BUILT:** implementation exists and is reviewable.
 - **TESTED:** test jobs ran and passed with logs and commit correlation.
 - **CONNECTED:** real non-production systems exchanged verified data through documented contracts.
 - **CERTIFIED:** security, resilience, operations, data and acceptance evidence passed review.
 - **PRODUCTION:** separate release approval, controlled deployment and post-deploy verification.
 
-Each claim must link to source, commit, workflow run, job, logs, artifact, test evidence and reviewer where applicable.
+Every claim links to source, commit, workflow run, job, logs, artifact, test evidence and reviewer.
 
 ## Current blockers and immediate sequence
-
-1. P0: Actions startup failure. Existing recovery issue #575 remains authoritative; do not duplicate or work around with G02.
-2. PR #594 architecture review and PR #596 implementation review remain open and draft.
-3. PR #596 has no successful code-test run; the latest six attempts ended in startup_failure before jobs were created.
-4. Verify local build/test independently only if a reproducible environment is available; do not label it hosted CI.
-5. Do not provision cloud infrastructure until cost, account, region, security and ownership approvals are explicit.
+1. P0: Actions startup failure; #575 remains authoritative. Do not use G02.
+2. PR #594 architecture review and PR #596 implementation review remain draft.
+3. Eight workflow attempts for the implementation branch have failed at startup before job creation. Latest two current-head runs: [43706835606](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/43706835606) and [43706830314](https://github.com/thelingolegacy-blip/TheLingoLegacy/actions/runs/43706830314).
+4. No hosted code test has run; implementation is BUILT / UNVERIFIED.
+5. No cloud provisioning until cost, account, region, security and ownership approval.
 
 ## Program completion criteria
-
-LINGO CORE V2 is ready for a launch decision only when all eight waves have evidence-backed exit acceptance, every portfolio service has a named owner and integration status, migration and rollback have been rehearsed, security and reliability findings are closed or formally accepted, costs are approved, and the release authority has separately approved the target environment.
+All eight waves have evidence-backed exit acceptance; each portfolio service has a named owner and explicit integration status; migration/rollback are rehearsed; security/reliability findings are closed or formally accepted; costs are approved; and release authority separately approves the target environment.
 
 **Build the foundation. Connect the ecosystem. Verify every connection. Protect the legacy.**
