@@ -13,9 +13,15 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type SubjectVerifier func(context.Context, string) (string, error)
+type Identity struct {
+	Issuer  string
+	Subject string
+}
+
+type SubjectVerifier func(context.Context, string) (Identity, error)
 
 type Profile struct {
+	Issuer      string    `json:"-"`
 	Subject     string    `json:"subject"`
 	DisplayName string    `json:"display_name"`
 	UpdatedAt   time.Time `json:"updated_at"`
@@ -58,35 +64,38 @@ func (a *API) ready(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ready"})
 }
 
-func (a *API) authenticatedSubject(w http.ResponseWriter, r *http.Request) (string, bool) {
+func (a *API) authenticatedIdentity(w http.ResponseWriter, r *http.Request) (Identity, bool) {
 	if a.verify == nil {
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "identity_verifier_unavailable"})
-		return "", false
+		return Identity{}, false
 	}
 	parts := strings.Fields(r.Header.Get("Authorization"))
 	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "bearer_token_required"})
-		return "", false
+		return Identity{}, false
 	}
-	subject, err := a.verify(r.Context(), parts[1])
-	if err != nil || strings.TrimSpace(subject) == "" {
+	identity, err := a.verify(r.Context(), parts[1])
+	if err != nil || strings.TrimSpace(identity.Issuer) == "" || strings.TrimSpace(identity.Subject) == "" {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid_token"})
-		return "", false
+		return Identity{}, false
 	}
-	return subject, true
+	return identity, true
 }
 
 func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
-	subject, ok := a.authenticatedSubject(w, r)
-	if !ok { return }
+	identity, ok := a.authenticatedIdentity(w, r)
+	if !ok {
+		return
+	}
 	if a.db == nil {
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "database_unavailable"})
 		return
 	}
 	var profile Profile
 	err := a.db.QueryRow(r.Context(),
-		"SELECT subject, display_name, updated_at FROM lingo_profiles WHERE subject = $1", subject,
-	).Scan(&profile.Subject, &profile.DisplayName, &profile.UpdatedAt)
+		"SELECT issuer, subject, display_name, updated_at FROM lingo_profiles WHERE issuer = $1 AND subject = $2",
+		identity.Issuer, identity.Subject,
+	).Scan(&profile.Issuer, &profile.Subject, &profile.DisplayName, &profile.UpdatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "profile_not_found"})
 		return
@@ -99,10 +108,14 @@ func (a *API) getProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
-	subject, ok := a.authenticatedSubject(w, r)
-	if !ok { return }
+	identity, ok := a.authenticatedIdentity(w, r)
+	if !ok {
+		return
+	}
 	r.Body = http.MaxBytesReader(w, r.Body, 4096)
-	var input struct { DisplayName string `json:"display_name"` }
+	var input struct {
+		DisplayName string `json:"display_name"`
+	}
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&input); err != nil {
@@ -132,25 +145,30 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 
 	var profile Profile
 	err = tx.QueryRow(r.Context(), `
-		INSERT INTO lingo_profiles (subject, display_name)
-		VALUES ($1, $2)
-		ON CONFLICT (subject) DO UPDATE
+		INSERT INTO lingo_profiles (issuer, subject, display_name)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (issuer, subject) DO UPDATE
 		SET display_name = EXCLUDED.display_name, updated_at = now()
-		RETURNING subject, display_name, updated_at
-	`, subject, input.DisplayName).Scan(&profile.Subject, &profile.DisplayName, &profile.UpdatedAt)
+		RETURNING issuer, subject, display_name, updated_at
+	`, identity.Issuer, identity.Subject, input.DisplayName).Scan(
+		&profile.Issuer, &profile.Subject, &profile.DisplayName, &profile.UpdatedAt,
+	)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "profile_write_failed"})
 		return
 	}
-	payload, err := json.Marshal(map[string]string{"subject": subject, "display_name": profile.DisplayName})
+	payload, err := json.Marshal(map[string]string{
+		"issuer": identity.Issuer, "subject": identity.Subject, "display_name": profile.DisplayName,
+	})
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "event_encode_failed"})
 		return
 	}
+	aggregateID := identity.Issuer + "|" + identity.Subject
 	_, err = tx.Exec(r.Context(), `
 		INSERT INTO lingo_outbox_events (aggregate_type, aggregate_id, event_type, schema_version, payload)
 		VALUES ('profile', $1, 'profile.updated', 1, $2::jsonb)
-	`, subject, string(payload))
+	`, aggregateID, string(payload))
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "event_enqueue_failed"})
 		return
