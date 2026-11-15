@@ -6,6 +6,12 @@ const root = path.resolve(process.cwd());
 const checks = [
   ...[
     'scripts/run-static-gates.mjs',
+    'scripts/verify-flutter-firebase.mjs',
+    'scripts/test-verify-flutter-firebase.mjs',
+    'scripts/verify-firebase-hosting.mjs',
+    'scripts/test-verify-firebase-hosting.mjs',
+    'scripts/verify-cloudflare-route-inventory.mjs',
+    'scripts/test-verify-cloudflare-route-inventory.mjs',
     'scripts/verify-asset-publication-scope.mjs',
     'scripts/verify-shared-design-system.mjs',
     'scripts/verify-platform-registries.mjs',
@@ -26,6 +32,9 @@ const checks = [
     'scripts/test-sanitize-cloudflare-only-surface.mjs',
   ].map((file) => ({ id: 'syntax-' + path.basename(file, '.mjs'), command: process.execPath, args: ['--check', file] })),
   { id: 'pipeline-failure-propagation', command: 'bash', args: ['scripts/test-pipeline-failure-propagation.sh'] },
+  { id: 'test-firebase-config-contract', command: process.execPath, args: ['--test', 'scripts/test-verify-flutter-firebase.mjs'] },
+  { id: 'test-firebase-hosting-publish-boundary', command: process.execPath, args: ['--test', 'scripts/test-verify-firebase-hosting.mjs'] },
+  { id: 'test-cloudflare-route-inventory', command: process.execPath, args: ['--test', 'scripts/test-verify-cloudflare-route-inventory.mjs'] },
   { id: 'test-asset-publication-scope', command: process.execPath, args: ['--test', 'scripts/test-verify-asset-publication-scope.mjs'] },
   { id: 'test-shared-design-system', command: process.execPath, args: ['--test', 'scripts/test-verify-shared-design-system.mjs'] },
   { id: 'test-platform-registries', command: process.execPath, args: ['--test', 'scripts/test-verify-platform-registries.mjs'] },

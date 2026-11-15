@@ -1,0 +1,12 @@
+# Owner review is required for source, security, deployment, and release changes.
+* @thelingolegacy-blip
+
+/.github/workflows/ @thelingolegacy-blip
+/wrangler.jsonc @thelingolegacy-blip
+/wrangler.*.jsonc @thelingolegacy-blip
+/firebase.json @thelingolegacy-blip
+/.firebaserc @thelingolegacy-blip
+/lib/firebase_options.dart @thelingolegacy-blip
+/migrations/ @thelingolegacy-blip
+/cloudflare/ @thelingolegacy-blip
+/docs/evidence/ @thelingolegacy-blip

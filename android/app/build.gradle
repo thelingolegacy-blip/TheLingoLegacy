@@ -11,7 +11,8 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Intentionally unsigned until owner-controlled production signing is configured.
+            // Never substitute the debug keystore for a release signing identity.
         }
     }
 }
