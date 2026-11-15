@@ -1,0 +1,19 @@
+version: 1
+services:
+  - id: core-profile-api
+    name: LINGO CORE V2 Profile API
+    domain: identity-profile
+    runtime: go
+    lifecycle: non-production
+    owner: platform-engineering
+    repository_path: platform/lingo-core-v2/services/api
+    contract: platform/lingo-core-v2/services/api/openapi/openapi.yaml
+    health:
+      liveness: /healthz
+      readiness: /readyz
+    dependencies:
+      - oidc-issuer
+      - postgresql
+    data_classification: personal-data
+    production_authorized: false
+    connection_status: BUILT_NOT_CONNECTED
