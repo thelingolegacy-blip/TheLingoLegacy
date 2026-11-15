@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/dmc-approval-request.schema.json",
+  "title": "LINGOlegacy DMC Approval Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "approvalId",
+    "requesterUid",
+    "requesterAgentId",
+    "tenantId",
+    "projectId",
+    "realmId",
+    "environment",
+    "action",
+    "resourceId",
+    "risk",
+    "payloadDigest",
+    "policyVersion",
+    "status",
+    "createdAt",
+    "expiresAt"
+  ],
+  "properties": {
+    "approvalId": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 128
+    },
+    "requesterUid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "requesterAgentId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "realmId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "environment": {
+      "enum": [
+        "demo",
+        "development",
+        "staging",
+        "production"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.:-]{2,127}$"
+    },
+    "resourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "risk": {
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ]
+    },
+    "payloadDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "preconditionDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "rollbackRef": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 512
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "status": {
+      "enum": [
+        "AWAITING_HUMAN",
+        "APPROVED",
+        "REJECTED",
+        "EXPIRED",
+        "CANCELLED",
+        "CONSUMED"
+      ]
+    },
+    "approverUid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "approverRole": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 64
+    },
+    "approverKind": {
+      "enum": [
+        "human",
+        null
+      ]
+    },
+    "decisionReason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 2000
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decidedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "consumedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "risk": {
+            "enum": [
+              "R3",
+              "R4"
+            ]
+          }
+        },
+        "required": [
+          "risk"
+        ]
+      },
+      "then": {
+        "required": [
+          "preconditionDigest",
+          "rollbackRef"
+        ]
+      }
+    }
+  ]
+}
