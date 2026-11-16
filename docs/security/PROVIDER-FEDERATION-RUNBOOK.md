@@ -11,6 +11,7 @@
 - OIDC audience for preflight: `lingo-ci-preflight`
 - Workflow: `.github/workflows/ci-oidc-preflight.yml`
 - Event: `workflow_dispatch`
+- Exact default subject: `repo:thelingolegacy-blip/TheLingoLegacy:ref:refs/heads/main`
 - Permissions: `contents: read`, `id-token: write` only for the preflight job.
 
 The preflight decodes the token claims for a diagnostic assertion; it does not verify the JWT signature. Every relying party must independently validate the signature against GitHub's published OIDC keys, issuer, audience, expiry and exact claim conditions. Do not treat a successful claim parse as external federation success.
@@ -35,7 +36,7 @@ No value is inferred from `.firebaserc`: that file currently declares a producti
 - Map `google.subject` from `assertion.sub`.
 - Map repository identity from `assertion.repository` and `assertion.repository_id`.
 - Map ref from `assertion.ref`, workflow from `assertion.workflow_ref`, and environment from `assertion.environment` when the job targets a protected environment.
-- Attribute condition must require the exact repository name and ID, approved owner, exact branch, exact workflow path, and required environment. Deny pull-request refs for deployment identities.
+- Attribute condition must require the exact repository name and ID, approved owner, exact subject, exact branch, exact workflow path, and required environment. Deny pull-request refs for deployment identities.
 - Separate test/read identity from staging deploy identity. Production identity remains unconfigured until separate release acceptance.
 - Grant only required Firebase/Google Cloud roles at the narrowest resource scope. No Owner, Editor, primitive project-wide roles, service-account key, or JSON key.
 
@@ -45,7 +46,7 @@ Reject a different repository, repository ID, owner, ref, workflow, audience, ev
 
 ## C. Cloudflare Workers
 
-The current connection authenticates a Cloudflare user, not GitHub CI. No approved GitHub-to-Cloudflare OIDC federation has been verified.
+The current connection authenticates a Cloudflare user, not GitHub CI. Account review found one accepted Super Administrator member with member 2FA disabled and account-level 2FA enforcement disabled. The owner must enroll and verify MFA/recovery before enabling enforcement. No approved GitHub-to-Cloudflare OIDC federation has been verified.
 
 For staging, use a dedicated Cloudflare API token only if no supported federation path is approved:
 - Limit to the exact account and staging zone.
@@ -67,7 +68,7 @@ Do not configure all three providers simply because configuration files exist. K
 
 ## E. AppDeploy
 
-The secure secret-entry mechanism is available and values are entered by the owner through a pre-authorized form. The inspected account returned empty secret inventories for all 18 apps.
+The secure secret-entry mechanism is available and values are entered by the owner through a pre-authorized form. Read-only inventory of all 18 apps found zero secret entries and zero declared resource requirements. This does not prove that every app is public-only; inspect source dependencies before requesting any entry.
 
 Before requesting any entries:
 1. Identify the app's actual backend and provider dependencies.
@@ -91,7 +92,7 @@ The repository includes a Firebase ID-token verifier. It must be exercised with 
 
 ## G. Supabase
 
-An active Supabase project is visible in the connected account, but it has not been mapped to an approved LINGO product. Do not create or modify Auth providers, redirect URLs, JWT secrets, RLS policies, service-role keys, or project settings until the project and product scope are confirmed. If adopted, use Supabase Auth for user identity only with server-side JWT validation and RLS on every exposed table; service-role keys remain server-only.
+An active Supabase project is visible in the connected account, but it has not been mapped to an approved LINGO product. The public schema currently lists zero tables and the security-advisor query returned zero lint notices; Auth provider settings, redirect allowlists, MFA, and signing-key mode remain unverified. Do not create or modify Auth providers, redirect URLs, JWT secrets, RLS policies, service-role keys, or project settings until the project and product scope are confirmed. If adopted, use Supabase Auth for user identity only with server-side JWT validation and RLS on every exposed table; service-role keys remain server-only.
 
 ## H. Third-party API keys (AI, commerce, communications)
 
