@@ -9,7 +9,8 @@
 
 - One Supabase organization and one active project are visible through the connected account.
 - Project database reports PostgreSQL 17.
-- The public schema returned zero tables.
+- The public schema returned zero application tables. A full schema inventory returned 41 platform-managed tables across `auth`, `vault`, `realtime`, and `storage`; no public application tables were present.
+- The platform-managed `auth.users` table reports zero rows. No migrations or Edge Functions were listed.
 - The Supabase security-advisor query returned zero lint notices.
 - The available project metadata does not expose enough Auth configuration to verify enabled providers, redirect allowlists, MFA policy, session lifetime, JWT signing-key mode, or user provisioning.
 - No LINGO product-to-project mapping, production role, or approved data boundary has been established.
@@ -35,4 +36,4 @@ Keep this project `CONNECTED_UNVERIFIED` and outside production. Do not create t
 
 ## Evidence boundary
 
-The review verifies project metadata, provider health, public-schema table listing, and the returned security-advisor result. It does not verify Auth provider settings, JWT signing-key state, user accounts, MFA enforcement, database grants in other schemas, storage policies, Edge Function authorization, or application login flows.
+The review verifies project metadata, provider health, public and all-schema table listings, zero reported Auth users, zero migrations, zero Edge Functions, and the returned security-advisor result. It does not verify Auth provider settings, JWT signing-key state, MFA enforcement, database grants, storage policies, Edge Function authorization, or application login flows.
