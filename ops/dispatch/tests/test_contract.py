@@ -133,7 +133,10 @@ class DispatchContractTests(unittest.TestCase):
         ):
             with self.subTest(key=key):
                 self.assertEqual(schema["properties"][key]["pattern"], r".*\S.*")
-        for key in ("scope", "acceptance_tests"):
+        for key in (
+            "scope", "input_refs", "dependency_ids", "allowed_tools",
+            "acceptance_tests", "output_refs", "evidence_refs",
+        ):
             with self.subTest(key=key):
                 self.assertEqual(schema["properties"][key]["items"]["pattern"], r".*\S.*")
 
