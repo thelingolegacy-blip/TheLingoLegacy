@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-11-16",
+  "repository": {
+    "full_name": "thelingolegacy-blip/TheLingoLegacy",
+    "repository_id": "1279436411",
+    "default_branch": "main",
+    "release_posture": "PROTECTED_HOLD"
+  },
+  "states": ["CONNECTED_VERIFIED", "CONNECTED_UNVERIFIED", "AUTH_REQUIRED", "CONFIG_REQUIRED", "DEGRADED", "DISABLED", "NOT_IN_SCOPE"],
+  "integrations": [
+    {"id":"github-actions-oidc","surface":"CI/CD","provider":"GitHub Actions","state":"CONNECTED_UNVERIFIED","identity_type":"workload_oidc","scope":"canonical repository","evidence":"Draft PR #609 contains manual OIDC preflight; hosted job not run; no external provider trust."},
+    {"id":"google-cloud-wif","surface":"Infrastructure","provider":"Google Cloud Workload Identity Federation","state":"CONFIG_REQUIRED","identity_type":"workload_federation","scope":"non-production project first","evidence":"No project number, pool, provider, service account or IAM binding verified."},
+    {"id":"firebase-auth","surface":"Web/mobile identity","provider":"Firebase Authentication","state":"CONFIG_REQUIRED","identity_type":"human_oidc_or_firebase_jwt","scope":"multiple project IDs observed; canonical tenant unresolved","evidence":"Root client config contains placeholders; project registry says deployment target NOT_VERIFIED."},
+    {"id":"firebase-firestore","surface":"Application data","provider":"Cloud Firestore","state":"CONFIG_REQUIRED","identity_type":"firebase_user_token","scope":"product-specific projects/databases","evidence":"Root rules source absent; Oasis rules default deny for sensitive writes; emulator acceptance pending."},
+    {"id":"firebase-functions-oasis","surface":"Game backend","provider":"Firebase Functions","state":"CONFIG_REQUIRED","identity_type":"firebase_auth_context","scope":"Oasis demo wallet only","evidence":"Callable functions require auth; App Check enforcement and emulator tests not verified."},
+    {"id":"cloudflare-user-session","surface":"Edge infrastructure","provider":"Cloudflare","state":"CONNECTED_UNVERIFIED","identity_type":"human_oauth","scope":"authenticated user","evidence":"WhoAmI succeeds; does not prove API token or CI federation."},
+    {"id":"cloudflare-ci-deploy","surface":"CI/CD","provider":"Cloudflare Workers","state":"AUTH_REQUIRED","identity_type":"workload_credential","scope":"staging first; production locked","evidence":"No deployment token or approved federation configured."},
+    {"id":"appdeploy-secrets","surface":"App backends","provider":"AppDeploy","state":"AUTH_REQUIRED","identity_type":"backend_secret_binding","scope":"18 enumerated apps","evidence":"All 18 app secret inventories returned empty; secure entry workflow available; no values created."},
+    {"id":"supabase-project","surface":"Data/auth","provider":"Supabase","state":"CONNECTED_UNVERIFIED","identity_type":"human_oauth","scope":"project zoksxavxmgnkrthselek, us-west-2","evidence":"One active project visible; no approved LINGO app mapping or auth role established."},
+    {"id":"auth0-historical","surface":"Identity","provider":"Auth0","state":"NOT_IN_SCOPE","identity_type":"human_oidc","scope":"historical Vercel-linked records","evidence":"Repository pages are historical; current Auth0 wiring not verified; Vercel retired."},
+    {"id":"vercel","surface":"Hosting","provider":"Vercel","state":"DISABLED","identity_type":"n/a","scope":"retired by current platform direction","evidence":"Do not create credentials or deployments."},
+    {"id":"render","surface":"Hosting","provider":"Render","state":"NOT_IN_SCOPE","identity_type":"human_oauth","scope":"workspace unknown","evidence":"No workspace selected; do not choose without explicit scope."},
+    {"id":"nextjs-react","surface":"Web framework","provider":"Firebase Auth + API Gateway","state":"CONFIG_REQUIRED","identity_type":"human_user_token","scope":"web frontends","evidence":"Server-side token/session contract documented; app-by-app wiring not verified."},
+    {"id":"flutter-ios-android","surface":"Mobile framework","provider":"Firebase Auth SDK","state":"CONFIG_REQUIRED","identity_type":"human_user_token","scope":"Flutter app","evidence":"Firebase dependencies declared; client config placeholders; Android release signing uses debug config."},
+    {"id":"go-api","surface":"API framework","provider":"OIDC/JWKS","state":"CONNECTED_UNVERIFIED","identity_type":"user_oidc","scope":"CORE V2 API","evidence":"Source implements issuer+subject identity and OIDC verifier; cryptographic integration tests and CI evidence pending."},
+    {"id":"cloudflare-workers-runtime","surface":"Edge runtime","provider":"Cloudflare Workers","state":"CONNECTED_UNVERIFIED","identity_type":"user_token_or_service_identity","scope":"edge ingress","evidence":"Firebase ID token verifier source exists; per-route authz and runtime acceptance not complete."},
+    {"id":"unity","surface":"Game framework","provider":"API Gateway","state":"CONFIG_REQUIRED","identity_type":"user_token","scope":"Unity game clients","evidence":"No verified provider callback/client integration evidence."},
+    {"id":"docker-kubernetes-iac","surface":"Infrastructure tooling","provider":"External secret manager + workload identity","state":"CONFIG_REQUIRED","identity_type":"workload_identity","scope":"containers, clusters, IaC","evidence":"Policy documented; no live federation or cluster identity verification."},
+    {"id":"gitlab-circleci-jenkins","surface":"CI alternatives","provider":"GitLab/CircleCI/Jenkins","state":"CONFIG_REQUIRED","identity_type":"workload_identity","scope":"validation-only configs","evidence":"Pipelines exist; no provider OIDC or protected variable evidence."},
+    {"id":"stripe-shopify","surface":"Commerce","provider":"Stripe/Shopify","state":"AUTH_REQUIRED","identity_type":"server_secret_and_signed_webhook","scope":"payments and commerce disabled","evidence":"No verified credentials or webhook signing setup; activation prohibited."},
+    {"id":"openai-model-providers","surface":"AI gateway","provider":"OpenAI and other model APIs","state":"AUTH_REQUIRED","identity_type":"project_api_key_or_provider_federation","scope":"LLG-owned gateway only","evidence":"No provider credentials requested or created."}
+  ],
+  "secret_policy": {
+    "source_of_truth": "approved Secret Manager",
+    "never_commit_values": true,
+    "never_store_in_firestore_or_cloud_sql": true,
+    "prefer_short_lived_workload_identity": true,
+    "separate_environments": ["development", "staging", "production"],
+    "production_requires_separate_release_acceptance": true
+  }
+}
