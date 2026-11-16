@@ -5,6 +5,7 @@ workers, grant permissions, or authorize production changes.
 """
 from __future__ import annotations
 
+import math
 import re
 from typing import Any
 
@@ -50,6 +51,9 @@ def validate_job(job: dict[str, Any]) -> None:
     missing = sorted(required - job.keys())
     if missing:
         raise ContractError("missing fields: " + ", ".join(missing))
+    unexpected = sorted(job.keys() - required)
+    if unexpected:
+        raise ContractError("unexpected fields: " + ", ".join(unexpected))
 
     for key in ("job_id", "parent_id", "idempotency_key"):
         if not isinstance(job[key], str) or not ID_RE.fullmatch(job[key]):
@@ -64,19 +68,29 @@ def validate_job(job: dict[str, Any]) -> None:
         raise ContractError("repository must use owner/name form")
     if not isinstance(job["commit_sha"], str) or not SHA_RE.fullmatch(job["commit_sha"]):
         raise ContractError("commit_sha must be a full 40- or 64-character SHA")
-    if job["environment"] not in {"local", "test", "preview", "staging", "production"}:
+    if not isinstance(job["environment"], str) or job["environment"] not in {
+        "local", "test", "preview", "staging", "production"
+    }:
         raise ContractError("unsupported environment")
     if job["environment"] == "production":
         raise ContractError("production jobs require a separate release authorization path")
-    if job["risk_class"] not in {"low", "medium", "high", "critical"}:
+    if not isinstance(job["risk_class"], str) or job["risk_class"] not in {
+        "low", "medium", "high", "critical"
+    }:
         raise ContractError("unsupported risk_class")
-    if job["status"] not in STATUSES:
+    if not isinstance(job["status"], str) or job["status"] not in STATUSES:
         raise ContractError("unsupported status")
 
-    for key in ("scope", "input_refs", "dependency_ids", "allowed_tools",
-                "acceptance_tests", "output_refs", "evidence_refs"):
+    array_fields = (
+        "scope", "input_refs", "dependency_ids", "allowed_tools",
+        "acceptance_tests", "output_refs", "evidence_refs",
+    )
+    for key in array_fields:
         if not isinstance(job[key], list):
             raise ContractError(f"{key} must be an array")
+    for key in ("input_refs", "dependency_ids", "allowed_tools", "output_refs", "evidence_refs"):
+        if not all(isinstance(x, str) and x.strip() for x in job[key]):
+            raise ContractError(f"{key} must contain only non-empty strings")
     if not job["scope"] or not all(isinstance(x, str) and x.strip() for x in job["scope"]):
         raise ContractError("scope must contain explicit non-empty task strings")
     if not job["acceptance_tests"] or not all(
@@ -92,8 +106,8 @@ def validate_job(job: dict[str, Any]) -> None:
     if type(job["retry_budget"]) is not int or not 0 <= job["retry_budget"] <= 5:
         raise ContractError("retry_budget must be an integer from 0 through 5")
     cost = job["cost_ceiling_usd"]
-    if isinstance(cost, bool) or not isinstance(cost, (int, float)) or cost < 0:
-        raise ContractError("cost_ceiling_usd must be a non-negative number")
+    if isinstance(cost, bool) or not isinstance(cost, (int, float)) or not math.isfinite(cost) or cost < 0:
+        raise ContractError("cost_ceiling_usd must be a finite non-negative number")
 
 
 def transition(current: str, target: str, *, evidence_refs: list[str] | None = None,
