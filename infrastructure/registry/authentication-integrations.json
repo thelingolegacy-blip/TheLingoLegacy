@@ -87,7 +87,7 @@
       "state": "AUTH_REQUIRED",
       "identity_type": "backend_secret_binding",
       "scope": "18 enumerated apps",
-      "evidence": "All 18 app secret inventories returned empty; secure entry workflow available; no values created."
+      "evidence": "All 18 app secret inventories and resource-requirement lists returned empty; app-specific authentication needs still require source review; secure entry workflow available; no values created or bound."
     },
     {
       "id": "supabase-project",
