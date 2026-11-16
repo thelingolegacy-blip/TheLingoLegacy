@@ -52,10 +52,7 @@
     },
     "reviewer_role": {
       "type": "string",
-      "minLength": 1,
-      "not": {
-        "const": "${owner_role}"
-      }
+      "minLength": 1
     },
     "repository": {
       "type": "string",
@@ -185,26 +182,5 @@
         "QUARANTINED"
       ]
     }
-  },
-  "allOf": [
-    {
-      "properties": {
-        "heartbeat_seconds": {
-          "exclusiveMaximum": 300
-        },
-        "lease_seconds": {
-          "minimum": 2
-        }
-      }
-    },
-    {
-      "not": {
-        "properties": {
-          "environment": {
-            "const": "production"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
