@@ -69,7 +69,7 @@
       "state": "CONNECTED_UNVERIFIED",
       "identity_type": "human_oauth",
       "scope": "authenticated user",
-      "evidence": "WhoAmI succeeds; does not prove API token or CI federation."
+      "evidence": "WhoAmI succeeds; one accepted account member has Super Administrator privileges and member 2FA is disabled; account-level 2FA enforcement is disabled; no API token or CI federation was proven."
     },
     {
       "id": "cloudflare-ci-deploy",
