@@ -120,6 +120,23 @@ class DispatchContractTests(unittest.TestCase):
                     schema["properties"][key]["items"]["minLength"], 1
                 )
 
+    def test_schema_rejects_whitespace_only_strings(self):
+        import json
+        from pathlib import Path
+
+        schema = json.loads(
+            Path("ops/dispatch/job-envelope.schema.json").read_text()
+        )
+        for key in (
+            "workstream", "owner_role", "reviewer_role", "branch",
+            "permission_profile", "start_condition", "stop_condition",
+        ):
+            with self.subTest(key=key):
+                self.assertEqual(schema["properties"][key]["pattern"], r".*\\S.*")
+        for key in ("scope", "acceptance_tests"):
+            with self.subTest(key=key):
+                self.assertEqual(schema["properties"][key]["items"]["pattern"], r".*\\S.*")
+
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
         self.assertEqual(transition("RUNNING", "VERIFYING"), "VERIFYING")
