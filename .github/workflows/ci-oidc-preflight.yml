@@ -22,6 +22,9 @@ jobs:
         env:
           EXPECTED_REPOSITORY: thelingolegacy-blip/TheLingoLegacy
           EXPECTED_AUDIENCE: lingo-ci-preflight
+          EXPECTED_REF: refs/heads/main
+          EXPECTED_REPOSITORY_ID: "1279436411"
+          EXPECTED_WORKFLOW_REF: thelingolegacy-blip/TheLingoLegacy/.github/workflows/ci-oidc-preflight.yml@refs/heads/main
         run: |
           set -euo pipefail
           : "${ACTIONS_ID_TOKEN_REQUEST_URL:?GitHub OIDC endpoint unavailable}"
@@ -39,7 +42,6 @@ jobs:
           import base64
           import json
           import os
-          import sys
 
           token = os.environ["OIDC_TOKEN"]
           parts = token.split(".")
@@ -49,8 +51,11 @@ jobs:
           claims = json.loads(base64.urlsafe_b64decode(payload))
           expected = {
               "iss": "https://token.actions.githubusercontent.com",
-              "aud": "lingo-ci-preflight",
-              "repository": "thelingolegacy-blip/TheLingoLegacy",
+              "aud": os.environ["EXPECTED_AUDIENCE"],
+              "repository": os.environ["EXPECTED_REPOSITORY"],
+              "repository_id": os.environ["EXPECTED_REPOSITORY_ID"],
+              "ref": os.environ["EXPECTED_REF"],
+              "workflow_ref": os.environ["EXPECTED_WORKFLOW_REF"],
               "event_name": "workflow_dispatch",
           }
           failures = [key for key, value in expected.items() if claims.get(key) != value]
@@ -64,11 +69,11 @@ jobs:
               "sha", "actor_id",
           )
           safe = {key: claims[key] for key in safe_keys if key in claims}
-          print("GITHUB_OIDC_PREFLIGHT=PASS")
+          print("GITHUB_OIDC_CLAIM_PREFLIGHT=PASS")
           print(json.dumps(safe, sort_keys=True, indent=2))
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as out:
               out.write("## LINGO GitHub OIDC preflight\n\n")
-              out.write("**Result:** PASS — GitHub issued a short-lived token and required claims matched.\n\n")
+              out.write("**Result:** PASS — GitHub issued a short-lived token and repository, ref, workflow, audience and event claims matched. The workflow parses claims but does not perform signature verification; the external identity provider must verify the JWT signature, issuer and audience.\n\n")
               out.write("```json\n" + json.dumps(safe, sort_keys=True, indent=2) + "\n```\n")
           PY
           unset OIDC_TOKEN token response
