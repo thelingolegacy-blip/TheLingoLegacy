@@ -1,0 +1,100 @@
+import unittest
+
+from ops.dispatch.contract import ContractError, transition, validate_job
+
+
+def valid_job():
+    return {
+        "job_id": "job:dispatch:001",
+        "parent_id": "epic:control:001",
+        "workstream": "github-ci",
+        "owner_role": "build-engineer",
+        "reviewer_role": "independent-qa",
+        "repository": "thelingolegacy-blip/TheLingoLegacy",
+        "branch": "feat/dispatch-contract-v1-2026-11-16",
+        "commit_sha": "a" * 40,
+        "environment": "preview",
+        "risk_class": "low",
+        "scope": ["validate a proposed dispatch envelope"],
+        "input_refs": [],
+        "dependency_ids": [],
+        "allowed_tools": ["read-only-github"],
+        "permission_profile": "least-privilege-read-only",
+        "idempotency_key": "dispatch:job:001",
+        "acceptance_tests": ["python -m unittest discover -s ops/dispatch/tests -v"],
+        "timeout_seconds": 600,
+        "lease_seconds": 300,
+        "heartbeat_seconds": 60,
+        "retry_budget": 0,
+        "cost_ceiling_usd": 0,
+        "start_condition": "dependencies satisfied and dispatch accepted",
+        "stop_condition": "policy failure, lease expiry, or scope drift",
+        "output_refs": [],
+        "evidence_refs": [],
+        "status": "PROPOSED",
+    }
+
+
+class DispatchContractTests(unittest.TestCase):
+    def test_valid_preview_job(self):
+        validate_job(valid_job())
+
+    def test_missing_field_fails_closed(self):
+        job = valid_job()
+        del job["reviewer_role"]
+        with self.assertRaisesRegex(ContractError, "missing fields"):
+            validate_job(job)
+
+    def test_owner_cannot_review_own_job(self):
+        job = valid_job()
+        job["reviewer_role"] = job["owner_role"]
+        with self.assertRaisesRegex(ContractError, "independent"):
+            validate_job(job)
+
+    def test_short_commit_sha_rejected(self):
+        job = valid_job()
+        job["commit_sha"] = "abc123"
+        with self.assertRaisesRegex(ContractError, "full"):
+            validate_job(job)
+
+    def test_production_environment_rejected(self):
+        job = valid_job()
+        job["environment"] = "production"
+        with self.assertRaisesRegex(ContractError, "separate release"):
+            validate_job(job)
+
+    def test_heartbeat_must_fit_inside_lease(self):
+        job = valid_job()
+        job["heartbeat_seconds"] = job["lease_seconds"]
+        with self.assertRaisesRegex(ContractError, "shorter"):
+            validate_job(job)
+
+    def test_negative_cost_rejected(self):
+        job = valid_job()
+        job["cost_ceiling_usd"] = -1
+        with self.assertRaisesRegex(ContractError, "non-negative"):
+            validate_job(job)
+
+    def test_valid_lifecycle_transition(self):
+        self.assertEqual(transition("PROPOSED", "READY"), "READY")
+        self.assertEqual(transition("RUNNING", "VERIFYING"), "VERIFYING")
+
+    def test_invalid_lifecycle_transition_rejected(self):
+        with self.assertRaisesRegex(ContractError, "not allowed"):
+            transition("PROPOSED", "COMPLETE")
+
+    def test_completion_requires_evidence_and_independent_review(self):
+        with self.assertRaisesRegex(ContractError, "evidence"):
+            transition("VERIFYING", "COMPLETE", evidence_refs=[])
+        with self.assertRaisesRegex(ContractError, "independent"):
+            transition("VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
+                       reviewer_id="same", owner_id="same")
+        self.assertEqual(
+            transition("VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
+                       reviewer_id="reviewer-1", owner_id="owner-1"),
+            "COMPLETE",
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
