@@ -62,6 +62,7 @@ Applications must not bypass the gateway, authorization policy, secret manager, 
 - Firebase project registry records additional project IDs in other product repositories. Do not consolidate projects or Auth identities without a migration and rollback plan.
 - Firebase Hosting currently publishes from repository root (`public: "."`); publication must remain blocked until a reviewed public output directory and file allowlist exist.
 - Existing `src/auth/firebase-id-token.mjs` verifies Firebase ID-token signature using Google's published signing keys and checks issuer, audience, subject and time claims. Callers must still perform authorization.
+- `gateway-router.js` intentionally fails closed because its cryptographic verifier is not configured. `firebase-worker.js` contains a legacy shared `FIREBASE_ID_TOKEN` environment-token pattern; repository search found no call site/import, so it is not accepted as an active auth path and must be refactored to verify the request user's token before any future use. Do not provision that shared token.
 - Oasis callable functions require authenticated users and use Admin SDK transactions; Firestore client writes to player wallet/inventory/ledger are denied in its rules. App Check enforcement and emulator acceptance remain outstanding.
 - No Google Cloud Workload Identity Pool/provider, service account, Firebase credentials, or IAM bindings were created. Firebase/GCP administrative API access is not connected in this session.
 
@@ -139,11 +140,13 @@ Applications must not bypass the gateway, authorization policy, secret manager, 
 
 ### Cloudflare Workers
 
-1. Use `env.*` secret bindings for private credentials; use `vars` only for non-sensitive configuration.
-2. Never expose secrets through static assets, browser bundles, logs, traces, or error responses.
-3. Verify JWTs at the edge or forward to a trusted API gateway; never trust unsigned decoded claims.
-4. Apply route-level authorization and rate limits; separate public, authenticated, admin and service routes.
-5. Bind production secrets only after environment approval and independent route verification.
+1. Treat `gateway-router.js` as fail-closed scaffolding until a cryptographic verifier is wired and tested. Do not bypass its 401/503 gates.
+2. The unreferenced `firebase-worker.js` helper contains a static shared ID-token binding pattern; do not set `FIREBASE_ID_TOKEN` or import this helper. Any future implementation must verify the caller's bearer token and forward only that caller identity under Firebase rules.
+3. Use `env.*` secret bindings for private credentials; use `vars` only for non-sensitive configuration.
+4. Never expose secrets through static assets, browser bundles, logs, traces, or error responses.
+5. Verify JWTs at the edge or forward to a trusted API gateway; never trust unsigned decoded claims.
+6. Apply route-level authorization and rate limits; separate public, authenticated, admin and service routes.
+7. Bind production secrets only after environment approval and independent route verification.
 
 ### Firebase / Firestore / Functions
 
