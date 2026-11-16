@@ -26,7 +26,7 @@ Workflow: `.github/workflows/ci-oidc-preflight.yml`
 - Manual `workflow_dispatch` only.
 - `contents: read` and `id-token: write` only.
 - Requests a GitHub OIDC token with audience `lingo-ci-preflight`.
-- Validates issuer, audience, repository, and event claims.
+- Validates issuer, dedicated audience, repository name and immutable repository ID, exact subject, branch/ref, workflow ref, and event claims.
 - Prints only an allowlisted set of non-secret claims.
 - Does not contact Firebase, Google Cloud, Cloudflare, or any deployment API.
 - Does not create secrets, change repository settings, activate G02, or deploy.
@@ -79,7 +79,7 @@ After review and merge of this workflow:
 
 - [ ] Workflow exists on default branch and can be manually dispatched.
 - [ ] GitHub-hosted job is instantiated and completes.
-- [ ] OIDC preflight validates expected issuer, audience, repository, and event.
+- [ ] OIDC preflight validates expected issuer, audience, repository ID, subject, branch/ref, workflow ref, and event.
 - [ ] No raw token appears in logs, summaries, artifacts, or repository files.
 - [ ] Provider federation trust is constrained to repository + approved ref + exact workflow + environment.
 - [ ] Non-production authentication succeeds with a least-privilege identity.
