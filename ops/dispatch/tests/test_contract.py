@@ -132,10 +132,10 @@ class DispatchContractTests(unittest.TestCase):
             "permission_profile", "start_condition", "stop_condition",
         ):
             with self.subTest(key=key):
-                self.assertEqual(schema["properties"][key]["pattern"], r".*\\S.*")
+                self.assertEqual(schema["properties"][key]["pattern"], r".*\S.*")
         for key in ("scope", "acceptance_tests"):
             with self.subTest(key=key):
-                self.assertEqual(schema["properties"][key]["items"]["pattern"], r".*\\S.*")
+                self.assertEqual(schema["properties"][key]["items"]["pattern"], r".*\S.*")
 
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
