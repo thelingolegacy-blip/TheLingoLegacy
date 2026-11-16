@@ -4,8 +4,14 @@
   "title": "LINGO profile.updated event payload",
   "type": "object",
   "additionalProperties": false,
-  "required": ["subject", "display_name"],
+  "required": ["issuer", "subject", "display_name"],
   "properties": {
+    "issuer": {
+      "type": "string",
+      "format": "uri",
+      "minLength": 1,
+      "description": "Verified OIDC issuer associated with the profile identity."
+    },
     "subject": {
       "type": "string",
       "minLength": 1,
