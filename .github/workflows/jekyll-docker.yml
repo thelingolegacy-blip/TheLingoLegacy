@@ -61,6 +61,8 @@ jobs:
 
       - name: Run Worker rate-limit regression tests
         run: node scripts/tests/worker-rate-limit.test.mjs
+      - name: Run Studio preview routing regression tests
+        run: node scripts/tests/studio-preview-routing.test.mjs
 
       - name: Sanitize retired provider surface
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
