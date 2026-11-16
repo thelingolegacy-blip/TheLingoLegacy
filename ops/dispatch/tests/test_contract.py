@@ -104,6 +104,22 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "non-empty strings"):
             validate_job(job)
 
+    def test_schema_rejects_empty_reference_strings(self):
+        import json
+        from pathlib import Path
+
+        schema = json.loads(
+            Path("ops/dispatch/job-envelope.schema.json").read_text()
+        )
+        for key in (
+            "input_refs", "dependency_ids", "allowed_tools",
+            "output_refs", "evidence_refs",
+        ):
+            with self.subTest(key=key):
+                self.assertEqual(
+                    schema["properties"][key]["items"]["minLength"], 1
+                )
+
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
         self.assertEqual(transition("RUNNING", "VERIFYING"), "VERIFYING")
