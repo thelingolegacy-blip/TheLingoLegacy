@@ -17,8 +17,8 @@ for (const item of registry.integrations) {
   assert.ok(item.surface && item.provider && item.identity_type && item.scope && item.evidence,
     `incomplete integration record: ${item.id}`);
   if (item.state === 'CONNECTED_VERIFIED') {
-    assert.ok(item.evidence.includes('PASS') || item.evidence.includes('verified'),
-      `verified state requires explicit evidence: ${item.id}`);
+    assert.ok(item.evidence.startsWith('PASS:'),
+      `verified state requires evidence prefixed with PASS:: ${item.id}`);
   }
 }
 assert.equal(registry.secret_policy.source_of_truth, 'approved Secret Manager');
