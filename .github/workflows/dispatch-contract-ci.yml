@@ -1,0 +1,49 @@
+name: LLG Dispatch Contract CI
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ops/dispatch/**"
+      - ".github/workflows/dispatch-contract-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dispatch-contract-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contract-tests:
+    name: Validate dispatch contract (no third-party actions)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source using public Git transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init source
+          cd source
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth=1 origin "${GITHUB_SHA}"
+          git checkout --detach FETCH_HEAD
+      - name: Validate role catalog and JSON schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          roles = json.loads(Path("source/ops/dispatch/roles.json").read_text())
+          schema = json.loads(Path("source/ops/dispatch/job-envelope.schema.json").read_text())
+          assert roles["status"] == "ROLE_CATALOG_ONLY"
+          assert roles["identity_assignment"] == "UNASSIGNED"
+          assert schema["$schema"].endswith("2020-12/schema")
+          assert "production" not in schema["properties"]["environment"]["enum"]
+          print("DISPATCH_ROLE_AND_SCHEMA_STATIC_CHECK=PASS")
+          PY
+      - name: Run fail-closed contract unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source
+          python -m unittest discover -s ops/dispatch/tests -v
