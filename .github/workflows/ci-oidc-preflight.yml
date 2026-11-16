@@ -24,6 +24,7 @@ jobs:
           EXPECTED_AUDIENCE: lingo-ci-preflight
           EXPECTED_REF: refs/heads/main
           EXPECTED_REPOSITORY_ID: "1279436411"
+          EXPECTED_SUBJECT: repo:thelingolegacy-blip/TheLingoLegacy:ref:refs/heads/main
           EXPECTED_WORKFLOW_REF: thelingolegacy-blip/TheLingoLegacy/.github/workflows/ci-oidc-preflight.yml@refs/heads/main
         run: |
           set -euo pipefail
@@ -54,6 +55,7 @@ jobs:
               "aud": os.environ["EXPECTED_AUDIENCE"],
               "repository": os.environ["EXPECTED_REPOSITORY"],
               "repository_id": os.environ["EXPECTED_REPOSITORY_ID"],
+              "sub": os.environ["EXPECTED_SUBJECT"],
               "ref": os.environ["EXPECTED_REF"],
               "workflow_ref": os.environ["EXPECTED_WORKFLOW_REF"],
               "event_name": "workflow_dispatch",
@@ -64,7 +66,7 @@ jobs:
 
           safe_keys = (
               "iss", "aud", "repository", "repository_id", "repository_owner",
-              "ref", "ref_type", "event_name", "workflow", "workflow_ref",
+              "sub", "ref", "ref_type", "event_name", "workflow", "workflow_ref",
               "job_workflow_ref", "runner_environment", "run_id", "run_attempt",
               "sha", "actor_id",
           )
