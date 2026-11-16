@@ -45,6 +45,12 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "missing fields"):
             validate_job(job)
 
+    def test_unknown_fields_rejected(self):
+        job = valid_job()
+        job["admin_override"] = True
+        with self.assertRaisesRegex(ContractError, "unexpected fields"):
+            validate_job(job)
+
     def test_owner_cannot_review_own_job(self):
         job = valid_job()
         job["reviewer_role"] = job["owner_role"]
@@ -63,6 +69,13 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "separate release"):
             validate_job(job)
 
+    def test_malformed_enums_fail_closed(self):
+        for key in ("environment", "risk_class", "status"):
+            job = valid_job()
+            job[key] = []
+            with self.subTest(key=key), self.assertRaises(ContractError):
+                validate_job(job)
+
     def test_heartbeat_must_fit_inside_lease(self):
         job = valid_job()
         job["heartbeat_seconds"] = job["lease_seconds"]
@@ -72,7 +85,23 @@ class DispatchContractTests(unittest.TestCase):
     def test_negative_cost_rejected(self):
         job = valid_job()
         job["cost_ceiling_usd"] = -1
-        with self.assertRaisesRegex(ContractError, "non-negative"):
+        with self.assertRaisesRegex(ContractError, "finite non-negative"):
+            validate_job(job)
+
+    def test_non_finite_cost_rejected(self):
+        import math
+        for value in (math.nan, math.inf, -math.inf, True):
+            job = valid_job()
+            job["cost_ceiling_usd"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(
+                ContractError, "finite non-negative"
+            ):
+                validate_job(job)
+
+    def test_reference_arrays_reject_non_strings(self):
+        job = valid_job()
+        job["allowed_tools"] = [{"tool": "all"}]
+        with self.assertRaisesRegex(ContractError, "non-empty strings"):
             validate_job(job)
 
     def test_valid_lifecycle_transition(self):
@@ -87,11 +116,15 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "evidence"):
             transition("VERIFYING", "COMPLETE", evidence_refs=[])
         with self.assertRaisesRegex(ContractError, "independent"):
-            transition("VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
-                       reviewer_id="same", owner_id="same")
+            transition(
+                "VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
+                reviewer_id="same", owner_id="same",
+            )
         self.assertEqual(
-            transition("VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
-                       reviewer_id="reviewer-1", owner_id="owner-1"),
+            transition(
+                "VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
+                reviewer_id="reviewer-1", owner_id="owner-1",
+            ),
             "COMPLETE",
         )
 
