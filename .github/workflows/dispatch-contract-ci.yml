@@ -24,7 +24,7 @@ jobs:
           git init source
           cd source
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth=1 origin "${GITHUB_SHA}"
+          git fetch --depth=1 origin "${GITHUB_REF}"
           git checkout --detach FETCH_HEAD
       - name: Validate role catalog and JSON schema
         shell: bash
