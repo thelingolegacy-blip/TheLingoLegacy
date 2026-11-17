@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -56,6 +57,5 @@ class DefaultFirebaseOptions {
     projectId: 'lingo-legacy-production',
     databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
     storageBucket: 'lingo-legacy-production.appspot.com',
-    macOsBundleId: 'com.thelingolegacy.app',
   );
 }
