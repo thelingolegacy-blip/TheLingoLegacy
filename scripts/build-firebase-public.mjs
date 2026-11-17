@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(process.argv[2]||process.cwd());
 const manifestPath=path.join(root,'config/firebase/hosting-public-manifest.json');
-const output=path.join(root,'build/firebase-public');
+const buildRoot=path.join(root,'build');
+const output=path.join(buildRoot,'firebase-public');
 const errors=[];
 const forbidden=/(^|\/)\.|\.(?:map|mjs|cjs|js|ts|tsx|jsx|dart|yaml|yml|toml|jsonc?|lock|pem|key|crt|p12|pfx|env|log)$/i;
 function fail(message){errors.push(message);}
@@ -22,7 +23,15 @@ if(manifest.status==='QUARANTINED'&&manifest.files.length)fail('QUARANTINED mani
 if(new Set(manifest.files).size!==manifest.files.length)fail('duplicate manifest paths are not allowed');
 const sources=manifest.files.map(inspectSource).filter(Boolean);
 if(errors.length){console.error(JSON.stringify({ok:false,gate:'FIREBASE_PUBLICATION_BOUNDARY',errors},null,2));process.exit(1);}
-fs.rmSync(output,{recursive:true,force:true});fs.mkdirSync(output,{recursive:true});
+try {
+ const buildStat=fs.lstatSync(buildRoot);
+ if(buildStat.isSymbolicLink()||!buildStat.isDirectory())throw new Error('build directory must be a real directory, not a symlink or special file');
+} catch(error) {
+ if(error.code!=='ENOENT')throw error;
+ fs.mkdirSync(buildRoot);
+}
+if(!inside(fs.realpathSync(root),fs.realpathSync(buildRoot)))throw new Error('build directory resolves outside the repository');
+fs.rmSync(output,{recursive:true,force:true});fs.mkdirSync(output);
 for(let i=0;i<manifest.files.length;i++){const destination=path.resolve(output,manifest.files[i]);if(!inside(output,destination))throw new Error('output path escapes: '+manifest.files[i]);fs.mkdirSync(path.dirname(destination),{recursive:true});fs.copyFileSync(sources[i],destination,fs.constants.COPYFILE_EXCL);}
 if(!fs.existsSync(path.join(output,'404.html')))fs.writeFileSync(path.join(output,'404.html'),'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unavailable</title><main><h1>LINGOlegacy</h1><p>This Firebase Hosting surface is not published yet.</p></main></html>\n',{flag:'wx'});
 const inventory=[];function walk(dir,prefix=''){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const rel=prefix?prefix+'/'+entry.name:entry.name,full=path.join(dir,entry.name);if(entry.isSymbolicLink())throw new Error('output symlink rejected: '+rel);if(entry.isDirectory())walk(full,rel);else if(entry.isFile())inventory.push(rel);else throw new Error('unsupported output entry: '+rel);}}
