@@ -35,14 +35,20 @@ font paths. The current recovery branch removed those unused declarations.
   `69db1b4bd87d99695aa769434755e1681f4fdc56`: web build succeeded, but it
   used the prior Pages command snapshot and did not execute analyzer/tests.
 
-Two widget tests now cover the flagship hub render and account preview-only
-disclosure. A Pages command snapshot was updated to run
-`flutter analyze` and `flutter test --reporter expanded` before the web
-release build. The first two attempts with a shallow Flutter SDK clone
-remained active without build logs after repository checkout. Those stale,
-unaliased preview deployments were removed. The command has been reverted to
-the previously successful Flutter clone/fetch sequence while retaining
-analyzer, widget-test and dependency-evidence capture.
+Two widget tests cover the flagship hub render and account preview-only
+disclosure. A later preview analyzer run found that repository-wide
+`flutter analyze` incorrectly included the separate nested Oasis game
+package, resolving its `flutter_map`, `geolocator` and `latlong2`
+imports against the root app's dependency graph. The check is now scoped to
+`flutter analyze lib test` for the root app, then runs `flutter pub get` and
+`flutter analyze lib` in `studio-sites/games/oasis-platform/flutter` using
+that package's own `pubspec.yaml`. The root widget test imports `Size`
+directly from `dart:ui`, avoiding a deprecated Material umbrella import.
+
+The current Pages build command now runs, in order: root dependency upgrade,
+root scoped analyze, root widget tests, nested Oasis dependency resolution and
+analysis, root web release build, then base64 dependency-evidence output.
+No completed result for this corrected scope has been captured yet.
 
 ## Reproducible lockfile capture
 
@@ -53,7 +59,8 @@ committed; no lockfile has yet been retrieved or committed.
 
 ## Remaining acceptance
 
-1. Complete the current-head preview with analyzer and widget-test output.
+1. Complete the corrected preview with root analyzer, widget-test and nested
+   Oasis analyzer output.
 2. Retrieve and review the generated `pubspec.yaml` and `pubspec.lock`;
    commit them only after verifying constraints and transitive dependencies.
 3. Run `flutter pub get --enforce-lockfile`, `flutter analyze`,
