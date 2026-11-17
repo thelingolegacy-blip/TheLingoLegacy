@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const script = fileURLToPath(new URL('./verify-flutter-firebase.mjs', import.meta.url));
 
-function fixture({ projects = {}, options = 'apiKey: "TEST_ONLY_API_KEY"; appId: "TEST_ONLY_APP_ID";' } = {}) {
+function fixture({ projects = {}, options = 'projectId: "lingo-staging-test"; apiKey: "TEST_ONLY_API_KEY"; appId: "TEST_ONLY_APP_ID";' } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-firebase-contract-'));
   fs.mkdirSync(path.join(root, 'lib'), { recursive: true });
   fs.writeFileSync(path.join(root, '.firebaserc'), JSON.stringify({ projects }));
@@ -45,6 +45,17 @@ test('production default alias is rejected', (t) => {
   assert.match(result.stderr, /production Firebase project must not appear/);
 });
 
+test('production project ID in Firebase options is rejected', (t) => {
+  const root = fixture({
+    projects: { staging: 'lingo-staging-test' },
+    options: 'projectId: "lingo-legacy-production"; apiKey: "TEST_ONLY_API_KEY";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = run(root, 'lingo-staging-test');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Firebase options still reference the production project/);
+});
+
 test('staging alias must match the approved environment identity', (t) => {
   const root = fixture({ projects: { staging: 'different-staging-project' } });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -53,10 +64,21 @@ test('staging alias must match the approved environment identity', (t) => {
   assert.match(result.stderr, /staging alias must exactly match/);
 });
 
+test('Firebase options project IDs must match the approved staging identity', (t) => {
+  const root = fixture({
+    projects: { staging: 'lingo-staging-test' },
+    options: 'projectId: "different-staging-project"; apiKey: "TEST_ONLY_API_KEY";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = run(root, 'lingo-staging-test');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Every Firebase options projectId must exactly match/);
+});
+
 test('placeholder Firebase options are rejected', (t) => {
   const root = fixture({
     projects: { staging: 'lingo-staging-test' },
-    options: 'apiKey: "YOUR_WEB_API_KEY"; appId: "YOUR_WEB_APP_ID";',
+    options: 'projectId: "lingo-staging-test"; apiKey: "YOUR_WEB_API_KEY"; appId: "YOUR_WEB_APP_ID";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const result = run(root, 'lingo-staging-test');
