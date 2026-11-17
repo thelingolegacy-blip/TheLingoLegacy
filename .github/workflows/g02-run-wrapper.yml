@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   trigger:
+    # PROTECTED HOLD: do not dispatch downstream G02 runner workflows.
+    if: false
     name: "1 · Trigger"
     runs-on: ubuntu-latest
     timeout-minutes: 5
