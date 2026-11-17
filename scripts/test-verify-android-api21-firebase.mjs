@@ -4,9 +4,9 @@ import { FIREBASE_ANDROID_API21_VERSIONS, verifyAndroidApi21FirebaseContract } f
 
 const pubspec = Object.entries(FIREBASE_ANDROID_API21_VERSIONS)
   .map(([name, version]) => '  ' + name + ': ' + version)
-  .join('\\n');
-const groovyGradle = 'android {\\n  defaultConfig {\\n    minSdk 21\\n  }\\n}\\n';
-const kotlinGradle = 'android {\\n  defaultConfig {\\n    minSdk = 21\\n  }\\n}\\n';
+  .join('\n');
+const groovyGradle = 'android {\n  defaultConfig {\n    minSdk 21\n  }\n}\n';
+const kotlinGradle = 'android {\n  defaultConfig {\n    minSdk = 21\n  }\n}\n';
 
 test('accepts the pinned Firebase set with Android minSdk 21 in Groovy DSL', () => {
   assert.deepEqual(verifyAndroidApi21FirebaseContract(pubspec, groovyGradle), { ok: true, errors: [] });
@@ -41,7 +41,7 @@ test('rejects floating dependency constraints', () => {
 });
 
 test('rejects duplicate minSdk declarations', () => {
-  const result = verifyAndroidApi21FirebaseContract(pubspec, kotlinGradle.replace('minSdk = 21', 'minSdk = 21\\n    minSdkVersion 21'));
+  const result = verifyAndroidApi21FirebaseContract(pubspec, kotlinGradle.replace('minSdk = 21', 'minSdk = 21\n    minSdkVersion 21'));
   assert.equal(result.ok, false);
   assert.match(result.errors.join(' '), /exactly one explicit numeric Android minSdk/);
 });

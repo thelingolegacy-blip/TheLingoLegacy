@@ -22,9 +22,7 @@ export function verifyAndroidApi21FirebaseContract(pubspec, gradle) {
   }
 
   // Accept both the legacy Groovy DSL and the official Flutter Kotlin DSL scaffold.
-  const minSdkMatches = [
-    ...gradle.matchAll(/^\\s*minSdk(?:Version)?\\s*(?:=\\s*)?(\\d+)\\s*$/gm),
-  ];
+  const minSdkMatches = [...gradle.matchAll(/^\s*minSdk(?:Version)?\s*(?:=\s*)?(\d+)\s*$/gm)];
   if (minSdkMatches.length !== 1) {
     errors.push('Expected exactly one explicit numeric Android minSdk declaration; found ' + minSdkMatches.length + '.');
   } else if (Number(minSdkMatches[0][1]) !== 21) {
