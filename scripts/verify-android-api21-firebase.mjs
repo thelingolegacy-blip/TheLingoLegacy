@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 export const FIREBASE_ANDROID_API21_VERSIONS = Object.freeze({
   firebase_core: '2.32.0',
@@ -21,7 +21,10 @@ export function verifyAndroidApi21FirebaseContract(pubspec, gradle) {
     }
   }
 
-  const minSdkMatches = [...gradle.matchAll(/^\s*minSdk(?:Version)?\s+(\d+)\s*$/gm)];
+  // Accept both the legacy Groovy DSL and the official Flutter Kotlin DSL scaffold.
+  const minSdkMatches = [
+    ...gradle.matchAll(/^\\s*minSdk(?:Version)?\\s*(?:=\\s*)?(\\d+)\\s*$/gm),
+  ];
   if (minSdkMatches.length !== 1) {
     errors.push('Expected exactly one explicit numeric Android minSdk declaration; found ' + minSdkMatches.length + '.');
   } else if (Number(minSdkMatches[0][1]) !== 21) {
@@ -31,10 +34,17 @@ export function verifyAndroidApi21FirebaseContract(pubspec, gradle) {
   return { ok: errors.length === 0, errors };
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+export function verifyAndroidApi21FirebaseFiles() {
   const pubspec = readFileSync('pubspec.yaml', 'utf8');
-  const gradle = readFileSync('android/app/build.gradle', 'utf8');
-  const result = verifyAndroidApi21FirebaseContract(pubspec, gradle);
+  const gradlePath = existsSync('android/app/build.gradle.kts')
+    ? 'android/app/build.gradle.kts'
+    : 'android/app/build.gradle';
+  const gradle = readFileSync(gradlePath, 'utf8');
+  return verifyAndroidApi21FirebaseContract(pubspec, gradle);
+}
+
+if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+  const result = verifyAndroidApi21FirebaseFiles();
   if (!result.ok) {
     for (const error of result.errors) console.error('ERROR: ' + error);
     process.exitCode = 1;
