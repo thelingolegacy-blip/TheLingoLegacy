@@ -127,7 +127,7 @@ class _UniverseHomeState extends State<UniverseHome> {
               }, childCount: destinations.length),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isWide ? 4 : (MediaQuery.sizeOf(context).width < 390 ? 2 : 2),
-                mainAxisSpacing: 12, crossAxisSpacing: 12, mainAxisExtent: 205,
+                mainAxisSpacing: 12, crossAxisSpacing: 12, mainAxisExtent: 215,
               ),
             ),
           ),
