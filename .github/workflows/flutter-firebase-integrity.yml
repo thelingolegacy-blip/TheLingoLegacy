@@ -2,11 +2,25 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'scripts/**'
+      - 'docs/android-api21-firebase-compatibility.md'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
       - 'android/**'
       - 'ios/**'
+      - 'scripts/**'
+      - 'docs/android-api21-firebase-compatibility.md'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - '.firebaserc'
@@ -28,7 +42,7 @@ jobs:
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.50.0'
           cache: true
 
       - name: Verify Firebase project contract
