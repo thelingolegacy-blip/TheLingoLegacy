@@ -11,7 +11,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Release signing is intentionally deferred until an approved CI keystore is configured.
         }
     }
 }
