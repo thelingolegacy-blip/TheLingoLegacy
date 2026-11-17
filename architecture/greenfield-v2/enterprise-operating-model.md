@@ -159,3 +159,59 @@ This addendum does not authorize:
 - Merging draft PRs, force-pushing protected branches or replacing last-known-good.
 
 Production remains PROTECTED HOLD. G02 remains FAIL / UNVERIFIED. Work may continue in isolated branches, local tests and non-production previews with evidence and cost controls.
+
+
+## 10. CI/CD and reference implementation security review
+
+The six proposed workflows are a useful target, not production-ready code. Implement in isolated PRs only after hosted Actions recovery.
+
+### Workflow topology
+- `.github/workflows/ci-quality-gate.yml`: PR-only lint, typecheck, unit/integration tests, Flutter analyze/tests, migration validation, secret/dependency scanning.
+- `deploy-edge-web.yml`: isolated preview deploys for trusted PRs; production only from protected main after required checks and GitHub Environment approval. Never deploy production Workers from pull_request.
+- `deploy-supabase.yml`: disposable/staging migration tests first; production migrations require protected environment approval, reviewed SQL, backup/restore evidence, project allowlist and post-migration smoke tests. Do not automatically run `supabase db push` against production after a main push.
+- `deploy-firebase.yml`: emulator/rules tests and verified staging project; production project allowlist and approval.
+- `build-flutter-release.yml`: unsigned PR artifacts separately from signed releases. iOS requires macOS/Xcode; Android signing secrets are protected and never exposed to fork PRs. Beta distribution is gated.
+- `media-asset-sync.yml`: quarantine and scan untrusted files, validate content/size/duration, sandbox processing, create deterministic derivatives, publish to staging bucket first.
+
+Use least-privilege per-job permissions, normally `contents: read`; pin Actions to verified full commit SHAs; add timeouts and concurrency groups; protect production with GitHub Environments and required reviewers; use OIDC short-lived credentials where supported. Fork PRs receive no deployment secrets. Do not run untrusted code in privileged `pull_request_target` contexts.
+
+### Cloudflare / Next.js
+The sample output `apps/web/.vercel/output/static` is adapter-specific, not a universal Next.js build path. Decide static export versus SSR. For static export, explicitly configure and verify `output: "export"`; for SSR, use a pinned supported Cloudflare Next.js/OpenNext adapter and its documented output. Pages deployment does not certify Worker routes/bindings. Separate preview and production Pages projects, Workers, Queues, KV and R2 namespaces. Validate Wrangler config, account/project IDs, compatibility date and bindings. Waiting Room and Queues availability/cost depend on account plan. Turnstile requires server-side Siteverify, secret protection, hostname/action checks and expiry/replay handling; a client widget alone is not protection.
+
+### Supabase migrations and Firebase identity
+Pin Supabase CLI to a tested version, not `latest`. A `db push --dry-run` is not a substitute for applying migrations to disposable/staging DBs, reviewing SQL, testing RLS, checking drift, backup/restore rehearsal and explicit production approval. Separate migration and function deployment credentials; deploy named functions and verify JWT settings/secrets.
+
+Firebase ID tokens are not automatically Supabase Auth JWTs, and Firebase `uid` is not automatically `auth.uid()`. Choose and test a supported third-party JWT trust integration for the Firebase issuer (issuer/audience/JWKS/rotation/subject mapping), or use a server-side token-exchange/BFF. Never mint privileged JWTs in client code or synchronize passwords. Keep LINGO roles/authorization server-owned. If direct Supabase JWT trust cannot be securely configured, keep the Go API as authorization boundary. FCM is a delivery hint, not authoritative order/reward state. Verify Firebase project ID before deployment.
+
+### Ledger schema correction
+The supplied `lingo_ledger(amount signed)` is a signed event log, not a double-entry ledger: it has no account model, balanced postings or transaction-level balance invariant. Use:
+- `ledger_accounts` with owner/type/unit/status;
+- immutable `ledger_transactions` with scoped unique idempotency key and source event;
+- `ledger_postings` with signed integer amounts and account/unit;
+- deferred constraint trigger or trusted posting procedure ensuring postings sum to zero per transaction and unit;
+- unique provider-event/business-claim IDs, integer smallest units, reversal postings, audit actor/correlation ID and reconciliation.
+
+Post atomically; lock accounts in deterministic order or use serializable isolation with safe retry; prevent negative spendable balances in the same transaction. Revoke client direct writes; expose narrow server-side functions only. Every `SECURITY DEFINER` function needs a fixed safe `search_path`, schema-qualified objects, authorization checks and revoked PUBLIC execute. Idempotency alone does not prevent overdraft or concurrent races.
+
+### Inventory reservation correction
+The sample `reserve_drop_inventory` is incomplete. Validate positive bounded quantity and TTL; handle missing/inactive SKU; add reservation status (held/committed/released/expired), idempotency key, cart/order reference and timestamps. Make stock reservation and row insertion atomic with nonnegative constraints. Commit, cancel, release and expire exactly once. Reaper should use `FOR UPDATE SKIP LOCKED`, transition held expired reservations and restore stock in the same transaction. A 60-second cron is not a correctness guarantee: checkout must reject expired locks too. Add stress tests for simultaneous reservations, duplicate requests, expiry, payment replay/failure, cancellation and worker crash. The sample lacks quantity validation, missing-SKU handling, commit/release lifecycle, reaper and safe `search_path` configuration.
+
+### Outbox, DLQ and webhook reliability
+Write an outbox row in the same transaction as ledger/order/reservation changes. Dispatch stable event IDs; consumers persist inbox/deduplication keys; bounded exponential retry with jitter; DLQ alert, operator replay and audit. For Stripe, verify signatures against raw body, persist unique provider event ID before async processing, handle out-of-order/replayed events and reconcile; never trust browser redirects to mark paid. For X, use approved scopes and provider-verifiable evidence; never reward screenshots/client claims or untrusted webhook bodies. Human approval and demo-only rewards remain default until API policy and abuse controls are proven.
+
+### Media and acceptance tests
+Treat uploads as hostile: content-based MIME validation, size/duration/frame limits, sandboxed up-to-date FFmpeg/image libraries, protocol restrictions, path/SSRF protection, source/output hashes and tool-version provenance. Preserve masters and rights/consent records; -14 LUFS is a delivery profile, not universal mastering law. Test: fork-secret isolation; required checks/branch protection; clean install and upgrade migrations; RLS tenant denial; JWT invalid issuer/audience/expiry/revocation/key rotation; balanced ledger/no overdraft/idempotency/reversal; inventory concurrency invariants; webhook invalid signature/replay/out-of-order/DLQ; no cross-user cache leakage; browser/device/accessibility/crash tests; backup restore and recovery rehearsal.
+
+## 11. CI/CD delivery order and current status
+
+1. Restore GitHub-hosted Actions job creation; G02 remains quarantined.
+2. Inventory actual repo workflows, lockfiles, Next.js adapter/output, Flutter toolchain, secret names only, Cloudflare bindings and environment IDs.
+3. Add PR-only quality gate with pinned Actions and least privilege.
+4. Add isolated preview deployment; no production deployment from PR.
+5. Add staging migration/RLS pipeline; no automatic production `db push`.
+6. Add Firebase emulator/rules tests after project identity reconciliation.
+7. Add Flutter unsigned CI artifacts, then gated signing/release.
+8. Add media quarantine/processing and staging R2 sync.
+9. Add protected production jobs only after acceptance, owner approval, restore proof and security review.
+
+Status: target design documented; these workflow files and database objects have not been implemented by this review. CI startup remains blocked. Production remains PROTECTED HOLD; G02 remains FAIL / UNVERIFIED.
