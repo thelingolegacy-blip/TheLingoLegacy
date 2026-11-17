@@ -10,11 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^5.2.0
-  firebase_database: ^13.1.0
-  firebase_auth: ^7.1.0
-  firebase_storage: ^14.1.0
-  firebase_analytics: ^13.1.0
+  # Keep the Android API-21-compatible FlutterFire line used by PR #613.
+  # Firebase Core 5.x requires minSdk 24; do not silently raise device requirements.
+  firebase_core: 2.32.0
+  firebase_database: 10.5.7
+  firebase_auth: 4.20.0
+  firebase_storage: 11.7.7
+  firebase_analytics: 10.10.7
   provider: ^6.1.0
   http: ^1.1.0
   intl: ^0.19.0
