@@ -38,6 +38,8 @@ jobs:
           test -f .firebaserc
           test -f lib/firebase_options.dart
           node scripts/verify-flutter-firebase.mjs
+          node scripts/build-firebase-public.mjs
+          node --test scripts/test-build-firebase-public.mjs
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -58,4 +60,4 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+          node --input-type=module -e "import fs from 'node:fs'; import f from './firebase.json' with { type: 'json' }; if(f.hosting?.public !== 'build/firebase-public') process.exit(1); if(!fs.existsSync('build/firebase-public/404.html')) process.exit(1); const entries=fs.readdirSync('build/firebase-public'); if(entries.some(x => x !== '404.html')) process.exit(1); console.log('Firebase Hosting publication boundary verified.')"
