@@ -24,8 +24,8 @@ if (!fs.existsSync(pubspecPath)) {
 } else {
   const pubspec = fs.readFileSync(pubspecPath, 'utf8');
   const gradle = fs.readFileSync(gradlePath, 'utf8');
-  const firebaseCore = pubspec.match(/^\\s*firebase_core:\\s*\\^?(\\d+)\\./m);
-  const minSdk = gradle.match(/\\bminSdk(?:Version)?\\s*(?:=\\s*)?(\\d+)/);
+  const firebaseCore = pubspec.match(/^\s*firebase_core:\s*\^?(\d+)\./m);
+  const minSdk = gradle.match(/\bminSdk(?:Version)?\s*(?:=\s*)?(\d+)/);
   if (!firebaseCore) {
     blockers.push('firebase_core version cannot be determined from pubspec.yaml');
   } else if (Number(firebaseCore[1]) >= 5) {
@@ -34,10 +34,10 @@ if (!fs.existsSync(pubspecPath)) {
       blockers.push(`Firebase Core 5.x requires Android minSdk 24; project declares minSdk ${minSdk[1]}`);
     }
   }
-  if (!/com\\.android\\.application/.test(gradle)) {
+  if (!/com\.android\.application/.test(gradle)) {
     blockers.push('Android app Gradle file does not declare the Android application plugin');
   }
-  if (!/dev\\.flutter\\.flutter-gradle-plugin|flutter\\.gradle/.test(gradle)) {
+  if (!/dev\.flutter\.flutter-gradle-plugin|flutter\.gradle/.test(gradle)) {
     blockers.push('Android app Gradle file does not apply the Flutter Gradle plugin');
   }
 }
