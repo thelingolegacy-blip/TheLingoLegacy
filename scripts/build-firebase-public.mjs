@@ -5,7 +5,7 @@ const manifestPath=path.join(root,'config/firebase/hosting-public-manifest.json'
 const buildRoot=path.join(root,'build');
 const output=path.join(buildRoot,'firebase-public');
 const errors=[];
-const forbidden=/(^|\/)\.|\\.(?:map|mjs|cjs|js|ts|tsx|jsx|dart|yaml|yml|toml|jsonc?|lock|pem|key|crt|p12|pfx|env|log)$/i;
+const forbidden=/(^|\/)\.|\.(?:map|mjs|cjs|js|ts|tsx|jsx|dart|yaml|yml|toml|jsonc?|lock|pem|key|crt|p12|pfx|env|log)$/i;
 function fail(message){errors.push(message);}
 function inside(parent,candidate){const rel=path.relative(parent,candidate);return rel===''||(!rel.startsWith('..'+path.sep)&&rel!=='..'&&!path.isAbsolute(rel));}
 function inspectSource(relative){
