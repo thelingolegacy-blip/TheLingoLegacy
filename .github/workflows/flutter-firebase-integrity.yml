@@ -35,6 +35,8 @@ on:
       - 'config/firebase/**'
       - 'scripts/verify-flutter-firebase.mjs'
       - 'scripts/test-verify-flutter-firebase.mjs'
+      - 'scripts/verify-flutter-android-readiness.mjs'
+      - 'scripts/test-verify-flutter-android-readiness.mjs'
       - 'scripts/build-firebase-public.mjs'
       - 'scripts/test-build-firebase-public.mjs'
       - 'studio-sites/games/oasis-platform/flutter/**'
