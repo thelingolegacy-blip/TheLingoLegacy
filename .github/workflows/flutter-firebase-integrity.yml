@@ -5,9 +5,12 @@ on:
   pull_request:
     paths:
       - 'lib/**'
+      - 'test/**'
+      - 'integration_test/**'
       - 'android/**'
       - 'ios/**'
       - 'scripts/**'
+      - 'studio-sites/games/oasis-platform/flutter/**'
       - 'docs/android-api21-firebase-compatibility.md'
       - 'pubspec.yaml'
       - 'pubspec.lock'
@@ -17,9 +20,12 @@ on:
   push:
     paths:
       - 'lib/**'
+      - 'test/**'
+      - 'integration_test/**'
       - 'android/**'
       - 'ios/**'
       - 'scripts/**'
+      - 'studio-sites/games/oasis-platform/flutter/**'
       - 'docs/android-api21-firebase-compatibility.md'
       - 'pubspec.yaml'
       - 'pubspec.lock'
