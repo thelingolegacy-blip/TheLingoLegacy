@@ -25,7 +25,7 @@ export async function handleAskLingoRequest(request, env, options = {}) {
   const match = authorization.match(/^Bearer ([A-Za-z0-9._~-]+)$/);
   if (!match) return json({ ok: false, code: 'AUTHENTICATION_REQUIRED' }, 401);
 
-  const projectId = env.FIREBASE_PROJECT_ID;
+  const projectId = env.FIREBASE_AUTH_PROJECT_ID;
   const verifier = options.verifyToken || verifyFirebaseIdToken;
   const identity = await verifier(match[1], projectId, options.verifierOptions || {});
   if (!identity?.ok || !identity.uid) {
@@ -35,8 +35,8 @@ export async function handleAskLingoRequest(request, env, options = {}) {
   }
 
   let raw;
-  try { raw = await request.text(); } catch { return json({ ok: false, code: 'INVALID_REQUEST' }, 400); }
-  if (new TextEncoder().encode(raw).byteLength > MAX_BODY_BYTES) return json({ ok: false, code: 'REQUEST_TOO_LARGE' }, 413);
+  try { raw = await readBodyLimited(request, MAX_BODY_BYTES); } catch { return json({ ok: false, code: 'INVALID_REQUEST' }, 400); }
+  if (raw === null) return json({ ok: false, code: 'REQUEST_TOO_LARGE' }, 413);
   let body;
   try { body = JSON.parse(raw); } catch { return json({ ok: false, code: 'INVALID_JSON' }, 400); }
 
@@ -93,4 +93,29 @@ function json(body, status) {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
   });
+}
+
+async function readBodyLimited(request, maxBytes) {
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return new TextDecoder().decode(bytes);
 }
