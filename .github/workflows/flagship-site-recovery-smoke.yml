@@ -1,0 +1,49 @@
+name: LINGO Flagship Site Recovery Smoke
+
+on:
+  push:
+    branches:
+      - recovery/flagship-site-integration-2026-11-06
+    paths:
+      - "worker.js"
+      - "cloudflare/flagship-root/worker.js"
+      - "wrangler.jsonc"
+      - "studio/routes.json"
+      - "scripts/tests/flagship-route-contract.test.mjs"
+      - "scripts/verify-live-site.mjs"
+      - ".github/workflows/flagship-site-recovery-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-flagship-site-recovery-smoke
+  cancel-in-progress: false
+
+jobs:
+  site-recovery:
+    name: Verify route contract and public site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch exact source commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init "$RUNNER_TEMP/lingo-repo"
+          git -C "$RUNNER_TEMP/lingo-repo" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -C "$RUNNER_TEMP/lingo-repo" fetch --depth=1 origin "$GITHUB_SHA"
+          git -C "$RUNNER_TEMP/lingo-repo" checkout --detach FETCH_HEAD
+          echo "SOURCE_SHA=$(git -C "$RUNNER_TEMP/lingo-repo" rev-parse HEAD)"
+      - name: Verify Node runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version
+      - name: Run local Worker route and safety contract
+        working-directory: ${{ runner.temp }}/lingo-repo
+        run: node scripts/tests/flagship-route-contract.test.mjs
+      - name: Run read-only public-site acceptance smoke
+        working-directory: ${{ runner.temp }}/lingo-repo
+        run: node scripts/verify-live-site.mjs
