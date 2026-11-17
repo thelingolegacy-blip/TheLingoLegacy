@@ -49,18 +49,21 @@ jobs:
 
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
 
       - name: Setup Node.js
         id: setup-node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
 
       - name: Run Worker rate-limit regression tests
-        run: node scripts/tests/worker-rate-limit.test.mjs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/tests/worker-rate-limit.test.mjs 2>&1 | tee worker-rate-limit-tests.log
 
       - name: Sanitize retired provider surface
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
@@ -98,9 +101,17 @@ jobs:
           node --check scripts/run-static-gates.mjs
           node scripts/run-static-gates.mjs 2>&1 | tee static-gate-stack.log
 
+      - name: Validate staging Worker configuration (dry-run only)
+        if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.159.0 --version | tee wrangler-version.log
+          npx --yes wrangler@4.159.0 deploy --dry-run --config wrangler.staging.jsonc 2>&1 | tee staging-wrangler-dry-run.log
+
       - name: Upload validation evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: lingo-legacy-static-ci-evidence
           path: |
@@ -113,5 +124,7 @@ jobs:
             static-gate-stack.log
             static-gate-results.json
             static-gate-*.log
+            staging-wrangler-dry-run.log
+            wrangler-version.log
           if-no-files-found: warn
           retention-days: 14
