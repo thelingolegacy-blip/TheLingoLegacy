@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+const script=fileURLToPath(new URL('./build-firebase-public.mjs',import.meta.url));
+function fixture(files=[]){const root=fs.mkdtempSync(path.join(os.tmpdir(),'lingo-firebase-public-'));fs.mkdirSync(path.join(root,'config/firebase'),{recursive:true});fs.mkdirSync(path.join(root,'scripts'),{recursive:true});fs.writeFileSync(path.join(root,'config/firebase/hosting-public-manifest.json'),JSON.stringify({schemaVersion:'1.0',status:files.length?'REVIEWED':'QUARANTINED',files}));fs.copyFileSync(script,path.join(root,'scripts/build-firebase-public.mjs'));return root;}
+function run(root){return spawnSync(process.execPath,[path.join(root,'scripts/build-firebase-public.mjs'),root],{encoding:'utf8'});}
+test('quarantined manifest creates only a self-contained noindex 404 page',t=>{const root=fixture();t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const r=run(root);assert.equal(r.status,0,r.stderr);const out=path.join(root,'build/firebase-public');assert.deepEqual(fs.readdirSync(out),['404.html']);assert.match(fs.readFileSync(path.join(out,'404.html'),'utf8'),/noindex,nofollow/);});
+test('manifest rejects traversal and hidden paths',t=>{for(const file of ['../README.md','.env','docs/../README.md']){const root=fixture([file]);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/invalid manifest path|forbidden publication path/);}});
+test('manifest rejects symlinked files',t=>{const root=fixture(['public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'target.html'),'secret');fs.symlinkSync(path.join(root,'target.html'),path.join(root,'public.html'));const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/symlink rejected/);});
+test('reviewed manifest copies only exact allowlisted files',t=>{const root=fixture(['public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'public.html'),'<h1>Approved</h1>');fs.writeFileSync(path.join(root,'private.json'),'{"secret":true}');const r=run(root);assert.equal(r.status,0,r.stderr);const out=path.join(root,'build/firebase-public');assert.deepEqual(fs.readdirSync(out).sort(),['404.html','public.html']);assert.equal(fs.readFileSync(path.join(out,'public.html'),'utf8'),'<h1>Approved</h1>');});
