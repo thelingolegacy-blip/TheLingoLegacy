@@ -4,8 +4,27 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const LingoLegacyApp());
+  var firebaseReady = false;
+  var firebaseStatus = 'Firebase staging configuration is not connected. Backend features remain disabled.';
+
+  try {
+    final options = DefaultFirebaseOptions.currentPlatform;
+    final configured = !options.apiKey.startsWith('YOUR_') &&
+        !options.appId.startsWith('YOUR_') &&
+        !options.messagingSenderId.startsWith('YOUR_');
+    if (configured) {
+      await Firebase.initializeApp(options: options);
+      firebaseReady = true;
+      firebaseStatus = 'Firebase configuration loaded. Staging connectivity and security rules still require verification.';
+    }
+  } catch (_) {
+    firebaseStatus = 'Firebase initialization failed. Backend features remain unavailable in this build.';
+  }
+
+  runApp(LingoLegacyApp(
+    firebaseReady: firebaseReady,
+    firebaseStatus: firebaseStatus,
+  ));
 }
 
 const gold = Color(0xFFE6BD58);
@@ -15,7 +34,15 @@ const ink = Color(0xFF08090E);
 const muted = Color(0xFFAAB3C7);
 
 class LingoLegacyApp extends StatelessWidget {
-  const LingoLegacyApp({super.key});
+  const LingoLegacyApp({
+    super.key,
+    required this.firebaseReady,
+    required this.firebaseStatus,
+  });
+
+  final bool firebaseReady;
+  final String firebaseStatus;
+
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'The Lingo Legacy',
@@ -27,7 +54,7 @@ class LingoLegacyApp extends StatelessWidget {
       useMaterial3: true,
       cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
     ),
-    home: const UniverseHome(),
+    home: UniverseHome(firebaseReady: firebaseReady, firebaseStatus: firebaseStatus),
   );
 }
 
@@ -48,7 +75,15 @@ const destinations = <Destination>[
 ];
 
 class UniverseHome extends StatefulWidget {
-  const UniverseHome({super.key});
+  const UniverseHome({
+    super.key,
+    required this.firebaseReady,
+    required this.firebaseStatus,
+  });
+
+  final bool firebaseReady;
+  final String firebaseStatus;
+
   @override
   State<UniverseHome> createState() => _UniverseHomeState();
 }
@@ -66,6 +101,28 @@ class _UniverseHomeState extends State<UniverseHome> {
       body: SafeArea(child: Center(child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1100),
         child: CustomScrollView(slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: widget.firebaseReady ? const Color(0xFF123126) : const Color(0xFF332817),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: widget.firebaseReady ? const Color(0xFF397A5D) : const Color(0xFF8B6B35)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(widget.firebaseReady ? Icons.cloud_done_outlined : Icons.cloud_off_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(widget.firebaseStatus, style: const TextStyle(color: muted, fontSize: 12, height: 1.4))),
+                  ],
+                ),
+              ),
+            ),
+          ),
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 28, 20, 18),
             child: Container(

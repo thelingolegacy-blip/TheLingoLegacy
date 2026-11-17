@@ -5,12 +5,16 @@ on:
   push:
     paths:
       - 'lib/**'
+      - 'test/**'
       - 'android/**'
       - 'ios/**'
+      - 'firebase/staging/**'
+      - 'firebase.staging.json'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
@@ -30,6 +34,13 @@ jobs:
         with:
           channel: stable
           cache: true
+
+      - name: Record Flutter and Dart toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter --version
+          dart --version
 
       - name: Verify Firebase project contract
         shell: bash
