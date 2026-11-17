@@ -2,24 +2,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(process.argv[2] || process.cwd());
-const requiredFiles = [
-  'android/gradlew',
-  'android/gradle/wrapper/gradle-wrapper.jar',
-  'android/gradle/wrapper/gradle-wrapper.properties',
-  'android/settings.gradle',
-  'android/build.gradle',
-  'android/app/build.gradle',
-  'android/app/src/main/AndroidManifest.xml',
+const requiredFileGroups = [
+  ['android/gradlew'],
+  ['android/gradle/wrapper/gradle-wrapper.jar'],
+  ['android/gradle/wrapper/gradle-wrapper.properties'],
+  ['android/settings.gradle', 'android/settings.gradle.kts'],
+  ['android/build.gradle', 'android/build.gradle.kts'],
+  ['android/app/build.gradle', 'android/app/build.gradle.kts'],
+  ['android/app/src/main/AndroidManifest.xml'],
 ];
 const blockers = [];
-const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)));
-if (missing.length) blockers.push(`Android Gradle scaffold is incomplete: ${missing.join(', ')}`);
+const missing = requiredFileGroups.filter((group) => !group.some((file) => fs.existsSync(path.join(root, file))));
+if (missing.length) blockers.push(`Android Gradle scaffold is incomplete: ${missing.map((group) => group.join(' or ')).join(', ')}`);
 
 const pubspecPath = path.join(root, 'pubspec.yaml');
-const gradlePath = path.join(root, 'android/app/build.gradle');
+const gradlePath = ['android/app/build.gradle', 'android/app/build.gradle.kts']
+  .map((file) => path.join(root, file))
+  .find((file) => fs.existsSync(file));
 if (!fs.existsSync(pubspecPath)) {
   blockers.push('pubspec.yaml is missing');
-} else if (!fs.existsSync(gradlePath)) {
+} else if (!gradlePath) {
   blockers.push('android/app/build.gradle is missing; cannot verify Android SDK compatibility');
 } else {
   const pubspec = fs.readFileSync(pubspecPath, 'utf8');
