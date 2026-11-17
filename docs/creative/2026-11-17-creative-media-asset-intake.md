@@ -61,6 +61,17 @@ Purpose: Run creative asset recovery and production in parallel with CORE V2 eng
 8. Acceptance: rendering, mobile/desktop, accessibility, performance, rights, provenance, route smoke tests; keep publication disabled until separately accepted.
 
 
+
+## Additional Library items found in the next image-index page
+
+- Kotton’s Code Franchise Pitch Bible.png; Kotton’s Code Character Asset Pack.png; Kotton’s Code Universe Overview.png; Kotton’s Code Brand Bible Moodboard.png; Kotton’s Code Character Guide.png; Kotton’s Code Character Bible.png.
+- The Lingo Legacy: A Neon Worlds Showcase.png.
+- That’s My Lingo: Neon Casino Experience.png and duplicate promo-thumbnail JPGs.
+- That’s My Lingo game asset concepts: ballroom category badges/achievement icons, expanding-wild animation sequence, combo meter/streak counter, Daddy May I event logo, ICONIC win animation, Demo Features screen, and Loyalty Anchor symbol.
+- Additional `IMG_626*.jpeg` personal photo sources were indexed. They remain private/unclassified and are not product-ready assets.
+
+The first two pages of the Library image listing have now been enumerated (200 image records, newest-first). This is a useful expanded index, not a full-library exhaustive claim; the listing returned another continuation cursor and must be paged further.
+
 ## New original concept asset generated during this intake
 
 - File: `a_wide_cinematic_futuristic_cityscape_fantasy_hu.png`
