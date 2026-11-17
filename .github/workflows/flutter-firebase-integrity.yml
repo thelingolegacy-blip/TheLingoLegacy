@@ -15,6 +15,8 @@ on:
       - 'config/firebase/**'
       - 'scripts/verify-flutter-firebase.mjs'
       - 'scripts/test-verify-flutter-firebase.mjs'
+      - 'scripts/verify-flutter-android-readiness.mjs'
+      - 'scripts/test-verify-flutter-android-readiness.mjs'
       - 'scripts/build-firebase-public.mjs'
       - 'scripts/test-build-firebase-public.mjs'
       - 'studio-sites/games/oasis-platform/flutter/**'
@@ -74,6 +76,9 @@ jobs:
       - name: Test Firebase project contract guard
         run: node --test scripts/test-verify-flutter-firebase.mjs
 
+      - name: Test Android readiness gate
+        run: node --test scripts/test-verify-flutter-android-readiness.mjs
+
       - name: Build quarantined Firebase public output
         run: node scripts/build-firebase-public.mjs
 
@@ -122,8 +127,18 @@ jobs:
           console.log('FIREBASE_HOSTING_PUBLICATION_BOUNDARY=PASS');
           NODE
 
+      - name: Inspect Android build readiness
+        id: android_readiness
+        continue-on-error: true
+        run: node scripts/verify-flutter-android-readiness.mjs
+
       - name: Flutter Android debug build
+        if: steps.android_readiness.outcome == 'success'
         run: flutter build apk --debug
+
+      - name: Report Android build blocked
+        if: steps.android_readiness.outcome == 'failure'
+        run: echo '::warning::Android APK build skipped because the checked-in Gradle scaffold or Firebase minSdk contract is incomplete.'
 
       - name: Upload non-production build evidence
         if: always()
@@ -136,6 +151,13 @@ jobs:
             build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Enforce Android build readiness
+        if: always() && steps.android_readiness.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error::Android build is blocked by an incomplete Gradle scaffold or incompatible minSdk. Resolve the reported blocker before release."
+          exit 1
 
       - name: Enforce Firebase project contract
         if: always() && steps.firebase_contract.outcome == 'failure'
