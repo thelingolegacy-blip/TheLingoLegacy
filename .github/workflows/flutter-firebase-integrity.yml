@@ -12,6 +12,8 @@ on:
       - '.firebaserc'
       - 'firebase.json'
       - 'config/firebase/**'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/test-verify-flutter-firebase.mjs'
       - 'scripts/build-firebase-public.mjs'
       - 'scripts/test-build-firebase-public.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
@@ -26,6 +28,8 @@ on:
       - '.firebaserc'
       - 'firebase.json'
       - 'config/firebase/**'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/test-verify-flutter-firebase.mjs'
       - 'scripts/build-firebase-public.mjs'
       - 'scripts/test-build-firebase-public.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
@@ -62,6 +66,9 @@ jobs:
           test -f .firebaserc
           test -f lib/firebase_options.dart
           node scripts/verify-flutter-firebase.mjs
+
+      - name: Test Firebase project contract guard
+        run: node --test scripts/test-verify-flutter-firebase.mjs
 
       # Static publication validation must run even while Firebase credentials
       # and project identity are unresolved. The final gate remains fail-closed.
