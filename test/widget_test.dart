@@ -16,6 +16,20 @@ void main() {
     expect(find.text('CHOOSE YOUR DESTINATION'), findsOneWidget);
     expect(find.text('Games & Play'), findsOneWidget);
     expect(find.text('Stories & Books'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('destination cards fit a narrow mobile viewport without overflow', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const LingoLegacyApp());
+
+    expect(find.text('CHOOSE YOUR DESTINATION'), findsOneWidget);
+    expect(find.text('Games & Play'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('account action clearly states preview-only availability', (tester) async {
@@ -28,5 +42,6 @@ void main() {
       find.text('Account and signup services are not connected in this preview.'),
       findsOneWidget,
     );
+    expect(tester.takeException(), isNull);
   });
 }
