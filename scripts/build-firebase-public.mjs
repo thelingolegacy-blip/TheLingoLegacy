@@ -25,7 +25,7 @@ if(manifest.status==='REVIEWED'){
  const approvedAt=typeof approval?.approvedAt==='string'?Date.parse(approval.approvedAt):NaN;
  if(manifest.files.length===0)fail('REVIEWED manifest must contain at least one approved file');
  if(typeof approval?.approvedBy!=='string'||!approval.approvedBy.trim())fail('REVIEWED manifest requires approvalRecord.approvedBy');
- if(!Number.isFinite(approvedAt)||!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$/.test(approval.approvedAt))fail('REVIEWED manifest requires an ISO-8601 UTC approvalRecord.approvedAt');
+ if(!Number.isFinite(approvedAt)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(approval.approvedAt))fail('REVIEWED manifest requires an ISO-8601 UTC approvalRecord.approvedAt');
  if(typeof approval?.changeReference!=='string'||!approval.changeReference.trim())fail('REVIEWED manifest requires approvalRecord.changeReference');
 }
 if(new Set(manifest.files).size!==manifest.files.length)fail('duplicate manifest paths are not allowed');
