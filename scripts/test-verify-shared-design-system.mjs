@@ -16,16 +16,17 @@ function makeRoot(iconValue, { omitIcons = false } = {}) {
   fs.mkdirSync(path.join(root, 'assets'), { recursive: true });
   fs.mkdirSync(path.join(root, 'icons'), { recursive: true });
   fs.writeFileSync(path.join(root, 'config/design/design-tokens.json'), JSON.stringify({
-    colors: { obsidian: '#050507', gold: '#f7c84b', royalPurple: '#6b2dff', cyan: '#56efff' },
+    colors: { obsidian: '#050507', carbon: '#15171d', metallicSlate: '#273246', electricGold: '#f7c84b', focus: '#f7c84b' },
     spacing: { minimumTouchTargetPx: 48 },
     motion: { reducedMotion: 'honor-prefers-reduced-motion' }
   }));
   const registry = {};
   if (!omitIcons) registry.icons = iconValue;
   fs.writeFileSync(path.join(root, 'config/icons/icon-registry.json'), JSON.stringify(registry));
+  fs.writeFileSync(path.join(root, 'assets/studio-ui-runtime.css'), 'runtime colors use only obsidian, carbon, metallic slate and electric gold');
   fs.writeFileSync(path.join(root, 'assets/lingo-design-tokens.css'), [
-    '--lingo-color-obsidian', '--lingo-color-gold', '--lingo-color-royal-purple',
-    '--lingo-color-cyan', '--lingo-touch-target-min', '--lingo-motion-standard',
+    '--lingo-color-obsidian', '--lingo-color-carbon', '--lingo-color-metallic-slate',
+    '--lingo-color-electric-gold', '--lingo-color-focus', '--lingo-touch-target-min', '--lingo-motion-standard',
     'prefers-reduced-motion: reduce'
   ].join('\n'));
   for (const id of canonicalIds) fs.writeFileSync(path.join(root, 'icons', id + '.svg'), '<svg></svg>');
