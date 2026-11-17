@@ -110,7 +110,8 @@ jobs:
           } | tee g02-evidence/host-diagnostics.txt
 
       - name: Upload G02 execution evidence artifact
-        if: always()
+    # PROTECTED HOLD: no staging or production runner allocation is authorized.
+    if: ${{ false && always() }}
         uses: actions/upload-artifact@v4
         with:
           name: g02-execution-evidence-${{ github.run_id }}
