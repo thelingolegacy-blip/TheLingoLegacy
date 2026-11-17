@@ -41,7 +41,7 @@ jobs:
 
       - name: Verify Android API 21 Firebase compatibility
         run: |
-          node scripts/test-verify-android-api21-firebase.mjs
+          node --test scripts/test-verify-android-api21-firebase.mjs
           node scripts/verify-android-api21-firebase.mjs
 
       - name: Flutter dependencies
