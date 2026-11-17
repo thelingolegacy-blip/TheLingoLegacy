@@ -2,7 +2,7 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     paths:
       - 'lib/**'
       - 'android/**'
@@ -11,16 +11,37 @@ on:
       - 'pubspec.lock'
       - '.firebaserc'
       - 'firebase.json'
+      - 'config/firebase/**'
+      - 'scripts/build-firebase-public.mjs'
+      - 'scripts/test-build-firebase-public.mjs'
+      - '.github/workflows/flutter-firebase-integrity.yml'
+  push:
+    branches: ["main"]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - 'config/firebase/**'
+      - 'scripts/build-firebase-public.mjs'
+      - 'scripts/test-build-firebase-public.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
   contents: read
 
+concurrency:
+  group: flutter-firebase-integrity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   flutter-firebase:
     name: Flutter + Firebase integrity
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,18 +49,27 @@ jobs:
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: "3.50.0"
           channel: stable
           cache: true
 
       - name: Verify Firebase project contract
+        id: firebase_contract
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           test -f .firebaserc
           test -f lib/firebase_options.dart
           node scripts/verify-flutter-firebase.mjs
-          node scripts/build-firebase-public.mjs
-          node --test scripts/test-build-firebase-public.mjs
+
+      # Static publication validation must run even while Firebase credentials
+      # and project identity are unresolved. The final gate remains fail-closed.
+      - name: Build quarantined Firebase public output
+        run: node scripts/build-firebase-public.mjs
+
+      - name: Test Firebase publication boundary
+        run: node --test scripts/test-build-firebase-public.mjs
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -53,11 +83,46 @@ jobs:
       - name: Flutter web build
         run: flutter build web --release
 
-      - name: Flutter Android debug build
-        run: flutter build apk --debug
-
-      - name: Firebase hosting configuration check
+      - name: Verify Firebase Hosting publication boundary
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const fs=require('node:fs'); const f=require('./firebase.json'); if(f.hosting?.public !== 'build/firebase-public') process.exit(1); if(!fs.existsSync('build/firebase-public/404.html')) process.exit(1); const entries=fs.readdirSync('build/firebase-public'); if(entries.some(x => x !== '404.html')) process.exit(1); console.log('Firebase Hosting publication boundary verified.')"
+          test -s build/firebase-public/404.html
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const config = JSON.parse(fs.readFileSync('firebase.json', 'utf8'));
+          if (config.hosting?.public !== 'build/firebase-public') {
+            throw new Error('Firebase Hosting must publish only build/firebase-public');
+          }
+          const entries = fs.readdirSync('build/firebase-public');
+          if (entries.length !== 1 || entries[0] !== '404.html') {
+            throw new Error('Quarantined Firebase output must contain only 404.html');
+          }
+          const page = fs.readFileSync('build/firebase-public/404.html', 'utf8');
+          if (!page.includes('noindex,nofollow')) {
+            throw new Error('Quarantine page must be noindex,nofollow');
+          }
+          console.log('FIREBASE_HOSTING_PUBLICATION_BOUNDARY=PASS');
+          NODE
+
+      - name: Flutter Android debug build
+        run: flutter build apk --debug
+
+      - name: Upload non-production build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-firebase-integrity-${{ github.sha }}
+          path: |
+            build/firebase-public/
+            build/web/
+            build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce Firebase project contract
+        if: always() && steps.firebase_contract.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error::Firebase project contract is unresolved. Builds are diagnostic only and must not be deployed."
+          exit 1
