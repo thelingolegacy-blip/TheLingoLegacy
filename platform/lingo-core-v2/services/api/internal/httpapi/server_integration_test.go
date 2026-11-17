@@ -2,6 +2,8 @@ package httpapi
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -19,9 +21,36 @@ func integrationPool(t *testing.T) *pgxpool.Pool {
 		t.Skip("TEST_DATABASE_URL is not set; PostgreSQL integration test skipped")
 	}
 	ctx := context.Background()
-	pool, err := pgxpool.New(ctx, dsn)
+	adminPool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		t.Fatalf("create test PostgreSQL pool: %v", err)
+		t.Fatalf("create administrative test PostgreSQL pool: %v", err)
+	}
+	t.Cleanup(adminPool.Close)
+
+	// Each test receives a unique schema. Never migrate or truncate shared
+	// application tables, even if TEST_DATABASE_URL is misconfigured.
+	suffix := make([]byte, 8)
+	if _, err := rand.Read(suffix); err != nil {
+		t.Fatalf("generate isolated test schema name: %v", err)
+	}
+	schema := "lingo_test_" + hex.EncodeToString(suffix)
+	if _, err := adminPool.Exec(ctx, "CREATE SCHEMA " + schema); err != nil {
+		t.Fatalf("create isolated test schema: %v", err)
+	}
+	t.Cleanup(func() {
+		if _, err := adminPool.Exec(context.Background(), "DROP SCHEMA IF EXISTS " + schema + " CASCADE"); err != nil {
+			t.Errorf("drop isolated test schema: %v", err)
+		}
+	})
+
+	config, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		t.Fatalf("parse test PostgreSQL configuration: %v", err)
+	}
+	config.ConnConfig.RuntimeParams["search_path"] = schema
+	pool, err := pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		t.Fatalf("create isolated-schema PostgreSQL pool: %v", err)
 	}
 	t.Cleanup(pool.Close)
 
@@ -44,9 +73,6 @@ func integrationPool(t *testing.T) *pgxpool.Pool {
 		}
 	}
 	conn.Release()
-	if _, err := pool.Exec(ctx, "TRUNCATE lingo_outbox_events, lingo_profiles"); err != nil {
-		t.Fatalf("clear integration tables: %v", err)
-	}
 	return pool
 }
 
