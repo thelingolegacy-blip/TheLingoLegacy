@@ -32,6 +32,12 @@ Sources:
 - Run `flutter pub get`, `flutter analyze`, `flutter test`, and `flutter build apk --debug` in hosted CI before calling Android readiness verified.
 - The Android Gradle wrapper/project scaffold must be completed before an APK build can pass.
 
+## Firebase environment isolation
+
+The checked-in Firebase options currently contain placeholder API keys/app IDs and the Firebase CLI alias still names the production project. These are not valid app credentials. App startup now checks `DefaultFirebaseOptions.isConfigured` and skips Firebase initialization while placeholders remain. The recovery workflow accepts this explicitly disconnected state only while that guard is present; it rejects configured production credentials in the non-production recovery workflow.
+
+Do not replace placeholders with production credentials or activate Firebase from this recovery branch. A dedicated staging Firebase project and its platform-specific app credentials must be approved and configured first. Until then, Firebase-backed features remain disconnected.
+
 ## Verification status
 
-Source constraints are pinned and the Android minimum remains 21. The dependency graph has not yet been resolved in this environment; no lockfile or successful APK build is claimed.
+Source constraints are pinned and the Android minimum remains 21. The latest Cloudflare preview run passed the six API-21 contract tests, root Flutter analysis, and root widget tests, but failed in the separate Oasis Flutter analysis due to a deprecated Material import. That import/dependency was repaired on the recovery branch and is pending the next preview build. No source-branch `pubspec.lock` or successful APK build is claimed.
