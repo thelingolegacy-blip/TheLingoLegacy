@@ -3,6 +3,17 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
+  static bool get isConfigured {
+    final configurations = <FirebaseOptions>[web, android, ios, macos];
+    return configurations.every((options) =>
+        options.apiKey.isNotEmpty &&
+        options.appId.isNotEmpty &&
+        options.messagingSenderId.isNotEmpty &&
+        !options.apiKey.startsWith('YOUR_') &&
+        !options.appId.startsWith('YOUR_') &&
+        !options.messagingSenderId.startsWith('YOUR_'));
+  }
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) return web;
     switch (defaultTargetPlatform) {
