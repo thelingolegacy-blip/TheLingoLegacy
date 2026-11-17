@@ -4,6 +4,7 @@ const firebaseRc = JSON.parse(fs.readFileSync('.firebaserc', 'utf8'));
 const aliases = firebaseRc?.projects ?? {};
 const stagingProjectId = process.env.LINGO_FIREBASE_STAGING_PROJECT_ID?.trim();
 const source = fs.readFileSync('lib/firebase_options.dart', 'utf8');
+const projectIds = [...source.matchAll(/projectId:\s*['"]([^'"]+)['"]/g)].map((match) => match[1]);
 const blockers = [];
 
 if (!stagingProjectId) {
@@ -18,11 +19,20 @@ if (Object.hasOwn(aliases, 'default')) {
 if (Object.values(aliases).includes('lingo-legacy-production')) {
   blockers.push('The production Firebase project must not appear in any project alias.');
 }
+if (Object.keys(aliases).some((alias) => alias !== 'staging')) {
+  blockers.push('Only the explicitly approved staging project alias is permitted.');
+}
 if (stagingProjectId && aliases.staging !== stagingProjectId) {
   blockers.push('The staging alias must exactly match LINGO_FIREBASE_STAGING_PROJECT_ID.');
 }
-if (Object.keys(aliases).some((alias) => alias !== 'staging')) {
-  blockers.push('Only the explicitly approved staging project alias is permitted.');
+if (projectIds.length === 0) {
+  blockers.push('Firebase options must declare a projectId for each configured platform.');
+}
+if (projectIds.includes('lingo-legacy-production')) {
+  blockers.push('Firebase options still reference the production project.');
+}
+if (stagingProjectId && projectIds.some((projectId) => projectId !== stagingProjectId)) {
+  blockers.push('Every Firebase options projectId must exactly match the approved staging project ID.');
 }
 
 const placeholders = [...new Set(source.match(/YOUR_[A-Z0-9_]+/g) ?? [])];
