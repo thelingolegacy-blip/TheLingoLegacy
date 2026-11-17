@@ -1,0 +1,607 @@
+{
+  "schemaVersion": "1.0.0",
+  "purpose": "Canonical catalog and destination registry for consistent LINGO naming, copy, and route synchronization. This file is an inventory, not proof of production certification.",
+  "canonicalDomain": "https://thelingolegacy.com",
+  "sourceOfTruth": "thelingolegacy-blip/TheLingoLegacy",
+  "brandRules": {
+    "productPrefix": "LINGO",
+    "productNameStyle": "LINGO + lowercase product name where defined by canon",
+    "forbiddenBrandComparisons": [
+      "Duolingo"
+    ],
+    "forbiddenNameDecoration": [
+      "★",
+      "⭐"
+    ],
+    "slogan": "LINGOlegacy-LoyaltyLane #StayLoyaltoYourOwnLane #StayLoyal",
+    "releaseStatusVocabulary": [
+      "production-verified",
+      "deployed-preview",
+      "staging-only",
+      "design-only",
+      "not-yet-deployed",
+      "blocked",
+      "unverified",
+      "candidate-experience"
+    ]
+  },
+  "destinations": {
+    "canonicalHomepage": {
+      "url": "https://thelingolegacy.com/",
+      "status": "live-reachable",
+      "contentStatus": "candidate-experience",
+      "productionCertified": false
+    },
+    "studioHub": {
+      "url": "https://lingo-legacy-studio-hub-nhda3b.v2.appdeploy.ai/",
+      "status": "deployed-preview",
+      "productionRoute": "/studio-hub/",
+      "productionRouteStatus": "not-found"
+    },
+    "ecosystemGateway": {
+      "url": "https://lingolegacy-universe-gateway-h6kqu4.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "studioControlCenter": {
+      "url": "https://lingo-enterprise-control-center-qos4ix.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "loyaltyLaneCommunity": {
+      "url": "https://loyalty-lane-community-hub-zb39n2.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "loyaltyLaneWallet": {
+      "url": "https://lingoloyalty-staging-preview-x4ld0h.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "askLINGO": {
+      "url": "https://lingo-ai-sonic-boom-2030-7plgl2.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "kottonsCodeStudio": {
+      "url": "https://kotton-s-code-cartoon-studio-509py3.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "thatsMyLingoStudio": {
+      "url": "https://that-s-my-lingo-casino-studio-2xntye.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "thatsMyLingoGame": {
+      "url": "https://lingo-legacy-universe-rpekc0.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "jerseyShoreUndead": {
+      "url": "https://jersey-shore-the-undead-l4h5ea.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "crazyWeasols": {
+      "url": "https://crazy-weasels-0j3ujc.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "lingoTravel": {
+      "url": "https://lingo-traveltm-uyd57n.v2.appdeploy.ai/",
+      "status": "deployed-preview"
+    },
+    "founderDrop": {
+      "url": "https://thelingolegacy.com/drop/",
+      "status": "live-reachable",
+      "contentStatus": "stale-public-checkout-ui",
+      "productionRouteStatus": "requires-replacement-before-launch",
+      "observedIssues": [
+        "three Stripe checkout buttons are visible",
+        "page describes Stripe Checkout as ready",
+        "paid founder tiers are presented"
+      ],
+      "paymentActivation": "not-verified-in-this-audit"
+    },
+    "legacyThatsMyLingo": {
+      "url": "https://thelingolegacy.com/thats-my-lingo/",
+      "status": "live-reachable",
+      "contentStatus": "legacy-v7-experience",
+      "productionRouteStatus": "requires-brand-and-copy-reconciliation",
+      "observedIssues": [
+        "uses star decoration in brand headings",
+        "product name omits canonical apostrophe",
+        "older copy and navigation differ from the current free-play staging candidate"
+      ]
+    }
+  },
+  "properties": [
+    {
+      "id": "lingolegacy",
+      "name": "LINGOlegacy",
+      "category": "flagship-platform",
+      "description": "Identity, account access, ecosystem discovery, and shared platform foundation.",
+      "productionStatus": "candidate-experience",
+      "previewDestination": "ecosystemGateway"
+    },
+    {
+      "id": "lingolane-apparel",
+      "name": "LINGOlane Apparel",
+      "category": "apparel",
+      "description": "Loyalty Lane apparel and streetwear.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "loyaltyLaneCommunity",
+      "commerce": {
+        "platform": "Shopify",
+        "storeDomain": "vercel-store-f0dc9593.myshopify.com",
+        "collectionId": "gid://shopify/Collection/333352992929",
+        "collectionName": "LINGOlane | Apparel",
+        "listedProductCount": 7,
+        "inventoryStatus": "requires-variant-level-reconciliation",
+        "supplierDisclosure": "Current collection copy states selected items are fulfilled by independent Shopify Collective suppliers and are not represented as original LINGO designs.",
+        "observedProducts": [
+          {
+            "title": "District 09 Streetwear Hockey Jersey | Men's Relaxed Fit — Hunter & Havoc",
+            "price": "79.99 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "G West Skull Streetwear Graphic Oversized T-Shirt Mens",
+            "price": "75.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "G West Streetwear Graphic Oversized T-Shirt Mens",
+            "price": "75.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "Noisy Boy-Inspired T-Shirt – Sci-Fi Robot Graphic Tee for Movie Fans",
+            "price": "50.00 USD",
+            "status": "ACTIVE",
+            "review": "supplier and third-party IP/brand review required"
+          },
+          {
+            "title": "Winchester Undertaker T-Shirt - Grim Reaper Cowboy Graphic Tee",
+            "price": "25.00 USD",
+            "status": "ACTIVE",
+            "review": "supplier and third-party IP/brand review required"
+          },
+          {
+            "title": "May the Bridges I Burn Light My Way Skull Print Hoodie",
+            "price": "40.00 USD",
+            "status": "ACTIVE"
+          },
+          {
+            "title": "3D Evil Smile Shirt for Men – Streetwear Graphic Short Sleeve Tee",
+            "price": "36.99 USD",
+            "status": "ACTIVE"
+          }
+        ],
+        "productLaunchStatus": "active-third-party-supplier-listings; not yet verified as proprietary LINGO apparel",
+        "requiredChecks": [
+          "variant-level inventory",
+          "supplier fulfillment and delivery terms",
+          "trademark and artwork rights",
+          "product-title and brand alignment",
+          "mobile product-page and checkout QA"
+        ]
+      },
+      "studioHubSlug": "loyalty-lane-apparel"
+    },
+    {
+      "id": "lingolane-cycle",
+      "name": "LINGOlane Laundry-Cycle",
+      "category": "community-commerce",
+      "description": "Laundry-cycle community and loyalty experience.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "loyaltyLaneCommunity",
+      "studioHubSlug": "loyalty-lane-cycle"
+    },
+    {
+      "id": "thats-my-lingo",
+      "name": "That’s My Lingo",
+      "category": "game",
+      "description": "Entertainment-only virtual game experience; no real-money wagering, cash-out, or cash-equivalent prizes.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "thatsMyLingoGame",
+      "safety": {
+        "realMoneyWagering": false,
+        "cashOut": false,
+        "cashEquivalentPrizes": false,
+        "sweepstakesEnabled": false
+      },
+      "studioHubSlug": "thats-my-lingo",
+      "productionRoute": "/thats-my-lingo/",
+      "productionRouteStatus": "legacy-v7-requires-replacement-before-release"
+    },
+    {
+      "id": "spades-is-my-lingo",
+      "name": "Spades Is My Lingo",
+      "category": "game",
+      "description": "Non-wagering spades learning and play experience.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "spades-is-my-lingo"
+    },
+    {
+      "id": "uhno-lingo-u-no",
+      "name": "Uhno Lingo U-No",
+      "category": "game",
+      "description": "Original word, trivia, and logic game.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "uhno-lingo-u-no"
+    },
+    {
+      "id": "lingo-lions-eruptions",
+      "name": "Lingo Lions Eruptions",
+      "category": "game",
+      "description": "Original chain-reaction puzzle and timing game.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "cashman-lingo-mania",
+      "name": "Cashman Lingo Mania",
+      "category": "game",
+      "description": "Fictional ledger and symbol puzzle game; no real cash.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "cashman-lingo-mania"
+    },
+    {
+      "id": "tricias-escape",
+      "name": "Tricias Escape",
+      "category": "game",
+      "description": "Route-puzzle adventure.",
+      "productionStatus": "staging-only",
+      "studioHubSlug": "tricias-escape"
+    },
+    {
+      "id": "doughboys-oasis",
+      "name": "Doughboys Oasis",
+      "category": "game",
+      "description": "Exploration, crew, territory, and resource-puzzle adventure.",
+      "productionStatus": "staging-only",
+      "studioHubSlug": "doughboys-oasis"
+    },
+    {
+      "id": "crazy-weasols",
+      "name": "Crazy Weasols",
+      "category": "game",
+      "description": "Original comedy, reflex, and cooperative platform game.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "crazyWeasols",
+      "studioHubSlug": "crazy-weasols"
+    },
+    {
+      "id": "silly-in-philly",
+      "name": "Silly in Philly",
+      "category": "game",
+      "description": "Original fictional-city rhythm and community adventure.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "silly-in-philly-the-streets"
+    },
+    {
+      "id": "jersey-shore-undead",
+      "name": "Jersey Shore: The Undead",
+      "category": "game",
+      "description": "Original stylized survival-action game.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "jerseyShoreUndead",
+      "studioHubSlug": "jersey-shore-the-undead"
+    },
+    {
+      "id": "kottons-code",
+      "name": "KottonsCode",
+      "category": "books-and-learning",
+      "description": "Family-friendly story and learning world. Requires youth privacy and content review.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "kottonsCodeStudio",
+      "commerce": {
+        "platform": "Shopify",
+        "collectionId": "gid://shopify/Collection/336154919073",
+        "collectionName": "LINGOlibrary | Books & Digital Editions",
+        "listedProductCount": 0
+      },
+      "studioHubSlug": "kottonscode"
+    },
+    {
+      "id": "the-block-i-grew-up-on",
+      "name": "The Block I Grew Up On",
+      "category": "book",
+      "description": "Original LINGOlibrary book property.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "the-block-i-grew-up-on"
+    },
+    {
+      "id": "say-it-again",
+      "name": "Say It Again",
+      "category": "book",
+      "description": "Original LINGOlibrary book property.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "say-it-again"
+    },
+    {
+      "id": "dice-shift-hotel",
+      "name": "Dice Shift Hotel",
+      "category": "book-and-game",
+      "description": "Original LINGOlibrary story and game property.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "diceshift-hotel"
+    },
+    {
+      "id": "legacy-legends",
+      "name": "Legacy Legends",
+      "category": "book-and-media",
+      "description": "Original LINGOlibrary legacy story property.",
+      "productionStatus": "not-yet-deployed",
+      "studioHubSlug": "legacy-legends-lingo-city"
+    },
+    {
+      "id": "rise-of-zavione-part-1",
+      "name": "Rise of Zavione — Part 1",
+      "category": "media",
+      "description": "Original LINGOmedia release.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "rise-of-zavione-part-2",
+      "name": "Rise of Zavione — Part 2",
+      "category": "media",
+      "description": "Original LINGOmedia release.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingo-travel",
+      "name": "LINGOtravel",
+      "category": "service",
+      "description": "Travel discovery and planning experience.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "lingoTravel",
+      "studioHubSlug": "lingotravel"
+    },
+    {
+      "id": "asklingo",
+      "name": "askLINGO",
+      "category": "ai-service",
+      "description": "Assistant concept for business, creativity, and everyday workflows.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "askLINGO",
+      "studioHubSlug": "asklingo"
+    },
+    {
+      "id": "lingoai",
+      "name": "LINGOai",
+      "category": "ai-platform",
+      "description": "AI platform foundation; provider credentials and model access remain gated.",
+      "productionStatus": "staging-only",
+      "studioHubSlug": "lingo-ai"
+    },
+    {
+      "id": "lingoboom",
+      "name": "LINGOboom",
+      "category": "audio-service",
+      "description": "Sound, voice, and audio experience layer.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingocampus",
+      "name": "LINGOcampus",
+      "category": "education-service",
+      "description": "Learning and campus experience.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingosupport",
+      "name": "LINGOsupport",
+      "category": "support-service",
+      "description": "Customer and community support experience.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingowifi",
+      "name": "LINGOwifi",
+      "category": "connectivity-service",
+      "description": "Connectivity service concept.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingovoice",
+      "name": "LINGOvoice",
+      "category": "voice-service",
+      "description": "Voice experience concept.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingoshield",
+      "name": "LINGOshield",
+      "category": "security-service",
+      "description": "Security and trust experience concept.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingolounge",
+      "name": "LINGOlounge",
+      "category": "community-service",
+      "description": "Community and membership experience.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingodonations",
+      "name": "LINGOdonations",
+      "category": "community-service",
+      "description": "Donation and community support concept.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "legacyxclub",
+      "name": "LegacyXclub",
+      "category": "membership",
+      "description": "Membership and community property.",
+      "productionStatus": "not-yet-deployed"
+    },
+    {
+      "id": "lingo-slots",
+      "name": "LINGOslots",
+      "category": "game-platform",
+      "description": "Parent brand for That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions, and Cashman Lingo Mania.",
+      "productionStatus": "staging-only"
+    },
+    {
+      "id": "lingo-arcade",
+      "name": "LINGOarcade",
+      "category": "game-platform",
+      "description": "Competitive play, events, tournaments, community challenges, and original arcade worlds.",
+      "productionStatus": "staging-only",
+      "studioHubSlug": "lingoarcade"
+    },
+    {
+      "id": "lingo-library",
+      "name": "LINGOlibrary",
+      "category": "publishing-platform",
+      "description": "Books, audiobooks, stories, and knowledge properties across generations.",
+      "productionStatus": "not-yet-deployed",
+      "commerce": {
+        "platform": "Shopify",
+        "collectionIds": [
+          "gid://shopify/Collection/336154919073"
+        ],
+        "listedProductCount": 0
+      }
+    },
+    {
+      "id": "lingo-media",
+      "name": "LINGOmedia",
+      "category": "media-platform",
+      "description": "Music, video, creator releases, film, and editorial media.",
+      "productionStatus": "not-yet-deployed",
+      "commerce": {
+        "platform": "Shopify",
+        "collectionIds": [
+          "gid://shopify/Collection/336154951841",
+          "gid://shopify/Collection/336155115681"
+        ],
+        "listedProductCount": 0
+      }
+    },
+    {
+      "id": "lingo-world",
+      "name": "LINGOworld",
+      "category": "services-platform",
+      "description": "Connected services and experiences including LINGOai, askLINGO, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge, and LINGOdonations.",
+      "productionStatus": "design-only"
+    },
+    {
+      "id": "lingo-nexus",
+      "name": "LINGO Nexus",
+      "category": "discovery-platform",
+      "description": "Discovery layer connecting games, worlds, and player journeys.",
+      "productionStatus": "design-only"
+    },
+    {
+      "id": "lingo-id",
+      "name": "LINGO ID",
+      "category": "identity-service",
+      "description": "Shared identity and account access layer for connected LINGO experiences.",
+      "productionStatus": "design-only"
+    },
+    {
+      "id": "universal-legacy-wallet",
+      "name": "Universal Legacy Wallet",
+      "category": "wallet-service",
+      "description": "Shared wallet concept for eligible rewards, payments, and assets; activation remains gated.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "loyaltyLaneWallet"
+    },
+    {
+      "id": "lingo-coins",
+      "name": "Lingo Coins",
+      "category": "virtual-currency",
+      "description": "Non-cash virtual currency concept; no cash-out or financial value.",
+      "productionStatus": "design-only"
+    },
+    {
+      "id": "lingolane-designs-promotions",
+      "name": "LINGOlane Designs & Promotions",
+      "category": "creative-commerce",
+      "description": "Design, promotion, apparel, and lifestyle branch of LINGOlane.",
+      "productionStatus": "deployed-preview",
+      "previewDestination": "loyaltyLaneCommunity"
+    },
+    {
+      "id": "lingostudios",
+      "name": "LINGOstudios",
+      "category": "creative-campus",
+      "description": "Physical creative campus concept for media, games, music, film, and fashion.",
+      "productionStatus": "design-only",
+      "studioHubSlug": "lingo-studios"
+    },
+    {
+      "id": "lingo-towers",
+      "name": "LINGO Towers",
+      "category": "hotel-and-hospitality",
+      "description": "Hotel, entertainment, dining, events, and LINGO lifestyle concept.",
+      "productionStatus": "design-only",
+      "studioHubSlug": "lingo-towers"
+    },
+    {
+      "id": "bridged-gap",
+      "name": "Bridged Gap",
+      "category": "community-infrastructure",
+      "description": "Community infrastructure for opportunity, resources, and growth.",
+      "productionStatus": "design-only",
+      "studioHubSlug": "bridged-gap"
+    }
+  ],
+  "commerceCollections": [
+    {
+      "name": "LINGOlane | Apparel",
+      "id": "gid://shopify/Collection/333352992929",
+      "productCount": 7,
+      "status": "has-products-in-collection",
+      "inventoryStatus": "reconcile-variants-before-launch"
+    },
+    {
+      "name": "LINGOlibrary | Books & Digital Editions",
+      "id": "gid://shopify/Collection/336154919073",
+      "productCount": 0,
+      "status": "empty"
+    },
+    {
+      "name": "LINGOmedia | Episodes & Creative Releases",
+      "id": "gid://shopify/Collection/336154951841",
+      "productCount": 0,
+      "status": "empty"
+    },
+    {
+      "name": "LINGOmedia | Music & Listening",
+      "id": "gid://shopify/Collection/336155115681",
+      "productCount": 0,
+      "status": "empty"
+    },
+    {
+      "name": "LINGOworld | Services & Enrollment",
+      "id": "gid://shopify/Collection/336155148449",
+      "productCount": 0,
+      "status": "empty"
+    },
+    {
+      "name": "LINGOworld | Free Experiences",
+      "id": "gid://shopify/Collection/336155181217",
+      "productCount": 0,
+      "status": "empty"
+    },
+    {
+      "name": "LINGOworld | Approved Paid Offerings",
+      "id": "gid://shopify/Collection/336155213985",
+      "productCount": 0,
+      "status": "empty"
+    }
+  ],
+  "releaseControls": {
+    "productionPromotion": "blocked-until-independent-gate-acceptance",
+    "g02": "FAIL-UNVERIFIED",
+    "supabaseProject": "zoksxavxmgnkrthselek",
+    "supabaseStatus": "INACTIVE",
+    "productionRouteChangesAuthorized": false,
+    "paymentActivationAuthorized": false,
+    "youthProductLaunchRequiresPrivacyReview": true,
+    "assetRightsReviewRequired": true,
+    "finalPublicLinksRequireLiveRouteProbe": true,
+    "publicCheckoutUi": "stale-enabled-stripe-buttons-visible-on-drop-route",
+    "productionThatsMyLingo": "legacy-v7-brand-and-copy-drift"
+  },
+  "notes": [
+    "studioHubSlug values are source-confirmed preview slugs from the current AppDeploy Studio Hub code, not verified production paths.",
+    "Only destinations with an explicit deployed URL are in destinations; all other routes require live probing before public navigation."
+  ]
+}
