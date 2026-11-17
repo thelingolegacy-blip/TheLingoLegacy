@@ -118,8 +118,14 @@ def transition(current: str, target: str, *, evidence_refs: list[str] | None = N
     if target not in TRANSITIONS[current]:
         raise ContractError(f"transition {current} -> {target} is not allowed")
     if target == "COMPLETE":
-        if not evidence_refs:
+        if not isinstance(evidence_refs, list) or not evidence_refs or not all(
+            isinstance(ref, str) and ref.strip() for ref in evidence_refs
+        ):
             raise ContractError("completion requires retrievable evidence references")
-        if not reviewer_id or not owner_id or reviewer_id == owner_id:
+        if (
+            not isinstance(reviewer_id, str) or not reviewer_id.strip()
+            or not isinstance(owner_id, str) or not owner_id.strip()
+            or reviewer_id == owner_id
+        ):
             raise ContractError("completion requires an independent reviewer")
     return target
