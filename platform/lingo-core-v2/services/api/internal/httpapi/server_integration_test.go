@@ -3,9 +3,9 @@ package httpapi
 import (
 	"context"
 	"crypto/rand"
-	"fmt"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -204,8 +204,8 @@ func TestPostgresOutboxFailureRollsBackProfileWrite(t *testing.T) {
 
 func TestValidateIntegrationDatabaseURL(t *testing.T) {
 	tests := []struct {
-		name string
-		dsn  string
+		name    string
+		dsn     string
 		wantErr bool
 	}{
 		{name: "approved loopback test database", dsn: "postgres://postgres:postgres@localhost:5432/lingo_test?sslmode=disable"},
