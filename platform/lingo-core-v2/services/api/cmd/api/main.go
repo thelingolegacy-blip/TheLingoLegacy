@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -42,6 +43,28 @@ func validateDatabaseTLS(databaseURL, appEnv string) error {
 	return nil
 }
 
+
+func validateOIDCIssuer(issuer, appEnv string) error {
+	parsed, err := url.Parse(issuer)
+	if err != nil || !parsed.IsAbs() || parsed.Hostname() == "" {
+		return errors.New("OIDC_ISSUER_URL must be an absolute URL with a hostname")
+	}
+	if parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" {
+		return errors.New("OIDC_ISSUER_URL must not contain user info, query parameters, or a fragment")
+	}
+	if parsed.Scheme == "https" {
+		return nil
+	}
+	if parsed.Scheme == "http" && (appEnv == "development" || appEnv == "test") {
+		host := parsed.Hostname()
+		ip := net.ParseIP(host)
+		if host == "localhost" || (ip != nil && ip.IsLoopback()) {
+			return nil
+		}
+	}
+	return errors.New("OIDC_ISSUER_URL must use HTTPS; HTTP is allowed only for loopback development/test issuers")
+}
+
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -60,6 +83,9 @@ func main() {
 	}
 
 	issuer := required("OIDC_ISSUER_URL")
+	if err := validateOIDCIssuer(issuer, os.Getenv("APP_ENV")); err != nil {
+		log.Fatalf("unsafe OIDC issuer configuration: %v", err)
+	}
 	clientID := required("OIDC_CLIENT_ID")
 	provider, err := oidc.NewProvider(ctx, issuer)
 	if err != nil {
