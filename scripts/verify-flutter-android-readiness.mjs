@@ -10,6 +10,7 @@ const requiredFileGroups = [
   ['android/build.gradle', 'android/build.gradle.kts'],
   ['android/app/build.gradle', 'android/app/build.gradle.kts'],
   ['android/app/src/main/AndroidManifest.xml'],
+  ['android/app/src/main/kotlin/com/thelingolegacy/app/MainActivity.kt'],
 ];
 const blockers = [];
 const missing = requiredFileGroups.filter((group) => !group.some((file) => fs.existsSync(path.join(root, file))));
