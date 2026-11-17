@@ -30,24 +30,40 @@ checkout's `pubspec.yaml`: `assets/images/`, `assets/icons/`,
 No such Flutter asset/font files exist in the repository tree, and the current
 PR branch has already removed these unused declarations from `pubspec.yaml`.
 Therefore this deployment tested an earlier branch commit and does not test
-the current PR head. The next preview must use the current branch head, not
-reuse commit `1e82a17`.
+the current PR head.
 
-The preview build remains an experiment: its ephemeral dependency upgrade did
-not write a reviewed lockfile to Git, and no reproducible dependency update
-has yet been accepted. Do not infer that all Flutter packages are compatible
-from this one web compile attempt.
+## Successful current-head preview
 
-## Remaining acceptance
+- Deployment `98a6e679-3d0c-4ad5-ba2e-3c5c5da15f16`, commit
+  `d105f408f75e7ec38310ae923aec821f24b35bf1`: Flutter web release build
+  succeeded; 39 assets published to the isolated preview.
+- Deployment `bca75879-2393-4ab5-9b78-2ce97ac565d4`, commit
+  `152063c90543aa94a7a4fd2f5fd56fe090da357a`: follow-up current-head
+  preview also succeeded.
+- Deployment `f38c8e18-1dd9-4fe0-8024-36e2e081d495`, commit
+  `69db1b4bd87d99695aa769434755e1681f4fdc56`: Flutter web build succeeded
+  and the two new widget tests were committed in the source, but this
+  deployment used the previous Pages build-command snapshot. Its logs do not
+  show `flutter analyze` or `flutter test` execution.
 
-1. Re-run the isolated preview against the current recovery branch head and
-   capture exact commit, toolchain, resolved dependency graph and full logs.
-2. If web compilation passes, reproduce the resolved dependency set in source
-   and commit a real `pubspec.lock`; do not fabricate a lockfile.
+Two widget tests now cover the flagship hub rendering and the account
+preview-only disclosure. The Cloudflare preview build command has since been
+updated to run `flutter analyze` and `flutter test --reporter expanded`
+before the release web build. A new deployment against the current branch
+head is required to collect those results; they are not yet verified.
+
+## Dependency reproducibility and remaining acceptance
+
+The ephemeral major-version upgrade still does not provide a reviewed,
+committed lockfile. Do not infer that all Flutter packages are compatible from
+the successful web compilation alone.
+
+1. Run the updated preview command and capture analyzer and widget-test output.
+2. Reproduce the resolved dependency set in source and commit a real
+   `pubspec.lock`; do not fabricate a lockfile.
 3. Run `flutter pub get --enforce-lockfile`, `flutter analyze`, unit/widget
    tests, web release build and Android debug build against that lockfile.
-4. Review any required Dart/API migrations caused by major Firebase package
-   upgrades.
+4. Review any Dart/API migrations caused by major Firebase package upgrades.
 5. Verify genuine Firebase app registrations/options and runtime connectivity
    separately. Current Firebase options contain placeholders and cannot
    establish a working Firebase runtime.
