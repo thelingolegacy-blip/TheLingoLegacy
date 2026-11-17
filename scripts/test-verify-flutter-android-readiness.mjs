@@ -14,6 +14,9 @@ function fixture({ minSdk = 24, firebaseCore = '5.2.0', complete = true } = {}) 
   fs.writeFileSync(path.join(root, 'pubspec.yaml'), `dependencies:\n  firebase_core: ^${firebaseCore}\n`);
   fs.writeFileSync(path.join(root, 'android/app/build.gradle'), `plugins { id "com.android.application"; id "dev.flutter.flutter-gradle-plugin" }\nandroid { defaultConfig { minSdk ${minSdk} } }\n`);
   fs.writeFileSync(path.join(root, 'android/app/src/main/AndroidManifest.xml'), '<manifest/>');
+  const activity = path.join(root, 'android/app/src/main/kotlin/com/thelingolegacy/app/MainActivity.kt');
+  fs.mkdirSync(path.dirname(activity), { recursive: true });
+  fs.writeFileSync(activity, 'package com.thelingolegacy.app\\nclass MainActivity : FlutterActivity()\\n');
   if (complete) {
     for (const file of ['android/gradlew', 'android/gradle/wrapper/gradle-wrapper.jar', 'android/gradle/wrapper/gradle-wrapper.properties', 'android/settings.gradle', 'android/build.gradle']) {
       const full = path.join(root, file);
@@ -56,4 +59,14 @@ test('missing Flutter Gradle plugin fails closed', (t) => {
   const result = run(root);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /does not apply the Flutter Gradle plugin/);
+});
+
+
+test('missing native Flutter entry activity fails closed', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.rmSync(path.join(root, 'android/app/src/main/kotlin/com/thelingolegacy/app/MainActivity.kt'));
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /MainActivity.kt/);
 });
