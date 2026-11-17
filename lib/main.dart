@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -78,7 +78,7 @@ class _UniverseHomeState extends State<UniverseHome> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('ONE UNIVERSE · MANY DESTINATIONS', style: TextStyle(color: cyan, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.6)),
                 const SizedBox(height: 16),
-                const Text('The Lingo\nUniverse Hub', style: TextStyle(fontSize: 42, height: 0.98, fontWeight: FontWeight.w900, letterSpacing: -2)),
+                const Text('The Lingo\\nUniverse Hub', style: TextStyle(fontSize: 42, height: 0.98, fontWeight: FontWeight.w900, letterSpacing: -2)),
                 const SizedBox(height: 14),
                 const Text('Explore worlds, discover stories, play, build, and connect — all from one home.', style: TextStyle(color: muted, height: 1.5)),
                 const SizedBox(height: 20),
@@ -96,75 +96,58 @@ class _UniverseHomeState extends State<UniverseHome> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: isWide ? 4 : 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: isWide ? 1.25 : 0.95,
+              ),
               delegate: SliverChildBuilderDelegate((context, index) {
-                final d = destinations[index];
+                final item = destinations[index];
                 final active = selected == index;
-                return Semantics(
-                  button: true,
-                  label: d.title,
+                return Card(
+                  clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(22),
-                    onTap: () { setState(() => selected = index); _openDestination(d); },
-                    child: Container(
-                      padding: const EdgeInsets.all(17),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: active ? cyan.withValues(alpha: .7) : const Color(0xFF30384B)),
-                        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: active ? [const Color(0xFF1C3340), const Color(0xFF17162B)] : [const Color(0xFF151A28), const Color(0xFF0D101A)]),
-                      ),
+                    onTap: () => setState(() => selected = index),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(d.icon, style: const TextStyle(fontSize: 27)),
+                        Text(item.icon, style: const TextStyle(fontSize: 28)),
                         const Spacer(),
-                        Text(d.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+                        Text(item.title, style: const TextStyle(fontWeight: FontWeight.w900)),
                         const SizedBox(height: 6),
-                        Text(d.description, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: muted, height: 1.4)),
-                        const SizedBox(height: 10),
-                        const Row(children: [Text('EXPLORE', style: TextStyle(color: cyan, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)), Spacer(), Icon(Icons.arrow_forward, color: cyan, size: 17)]),
+                        Text(item.description, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: muted)),
+                        if (active) const Padding(padding: EdgeInsets.only(top: 8), child: Text('SELECTED', style: TextStyle(color: cyan, fontSize: 10, fontWeight: FontWeight.w900))),
                       ]),
                     ),
                   ),
                 );
               }, childCount: destinations.length),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWide ? 4 : (MediaQuery.sizeOf(context).width < 390 ? 2 : 2),
-                mainAxisSpacing: 12, crossAxisSpacing: 12, mainAxisExtent: 205,
-              ),
             ),
           ),
           SliverToBoxAdapter(child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF30384B))),
-              child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('LOYALTY. LEGACY. LANGUAGE.', style: TextStyle(color: gold, fontWeight: FontWeight.w900, letterSpacing: 1.1)),
-                SizedBox(height: 8),
-                Text('This is the mobile navigation concept. Destination cards are connected to preview-safe information surfaces; production accounts, payments, AI, and gameplay integrations are not claimed active.', style: TextStyle(color: muted, height: 1.5)),
-              ]),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(children: [
+                  const Icon(Icons.auto_awesome, color: gold),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(destinations[selected].title, style: const TextStyle(fontWeight: FontWeight.w900)),
+                    Text(destinations[selected].description, style: const TextStyle(color: muted)),
+                  ])),
+                  TextButton(onPressed: () => _notice('This destination is a discovery preview; connected navigation is being completed.'), child: const Text('Explore')),
+                ]),
+              ),
             ),
           )),
         ]),
       ))),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selected < 5 ? selected : 0,
-        onDestinationSelected: (index) { setState(() => selected = index); _openDestination(destinations[index]); },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.public), label: 'Worlds'),
-          NavigationDestination(icon: Icon(Icons.sports_esports_outlined), label: 'Play'),
-          NavigationDestination(icon: Icon(Icons.menu_book_outlined), label: 'Stories'),
-          NavigationDestination(icon: Icon(Icons.auto_awesome_outlined), label: 'Create'),
-          NavigationDestination(icon: Icon(Icons.groups_outlined), label: 'Community'),
-        ],
-      ),
     );
   }
 
-  void _openDestination(Destination d) {
-    final known = {'Worlds': '/worlds/', 'Games & Play': '/games/', 'Stories & Books': '/library/', 'Loyalty Lane': '/lane/', 'Music & Media': '/media/', 'askLINGO': '/ai/', 'Creator Studio': '/studio/', 'Community': '/community/'};
-    _notice('${d.title}: website route ${known[d.title] ?? d.route}. Native service integration remains pending.');
-  }
-
   void _notice(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), behavior: SnackBarBehavior.floating));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }
