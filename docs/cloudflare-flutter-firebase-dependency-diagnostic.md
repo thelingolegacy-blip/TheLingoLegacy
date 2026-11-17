@@ -36,19 +36,20 @@ font paths. The current recovery branch removed those unused declarations.
   used the prior Pages command snapshot and did not execute analyzer/tests.
 
 Two widget tests now cover the flagship hub render and account preview-only
-disclosure. The Pages build command was updated to run
+disclosure. A Pages command snapshot was updated to run
 `flutter analyze` and `flutter test --reporter expanded` before the web
-release build. Deployment `1ef6cde7-5558-4f40-968d-a1913e3f8af2` for commit
-`5cee19695b480aea491dadbf0e129a070259a000` remained active without build
-logs after repository clone; no analyzer/test result is attributed to it.
+release build. The first two attempts with a shallow Flutter SDK clone
+remained active without build logs after repository checkout. Those stale,
+unaliased preview deployments were removed. The command has been reverted to
+the previously successful Flutter clone/fetch sequence while retaining
+analyzer, widget-test and dependency-evidence capture.
 
 ## Reproducible lockfile capture
 
-The isolated preview command has now been hardened to use a shallow Flutter
-SDK clone and, after successful analyze/test/web build, emit base64-encoded
-`pubspec.yaml` and `pubspec.lock` in the deployment logs. This is intended
-to capture the actual generated dependency resolution for review and source
-control; no lockfile has yet been retrieved or committed.
+After successful analyze/test/web build, the preview command emits
+base64-encoded `pubspec.yaml` and `pubspec.lock` in deployment logs. This
+will allow the actual generated dependency resolution to be reviewed and
+committed; no lockfile has yet been retrieved or committed.
 
 ## Remaining acceptance
 
