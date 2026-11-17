@@ -39,6 +39,11 @@ jobs:
           test -f lib/firebase_options.dart
           node scripts/verify-flutter-firebase.mjs
 
+      - name: Verify Android API 21 Firebase compatibility
+        run: |
+          node scripts/test-verify-android-api21-firebase.mjs
+          node scripts/verify-android-api21-firebase.mjs
+
       - name: Flutter dependencies
         run: flutter pub get
 
