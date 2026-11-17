@@ -164,6 +164,29 @@ class DispatchContractTests(unittest.TestCase):
             "COMPLETE",
         )
 
+    def test_completion_rejects_malformed_evidence_references(self):
+        for evidence in (None, "sha256:abc", [""], [None], [{}]):
+            with self.subTest(evidence=evidence), self.assertRaisesRegex(
+                ContractError, "evidence references"
+            ):
+                transition(
+                    "VERIFYING", "COMPLETE", evidence_refs=evidence,
+                    reviewer_id="reviewer-1", owner_id="owner-1",
+                )
+
+    def test_completion_rejects_missing_or_malformed_reviewer_identity(self):
+        for reviewer, owner in (
+            (None, "owner-1"), ("", "owner-1"), ("reviewer-1", None),
+            ("reviewer-1", ""), ([], "owner-1"),
+        ):
+            with self.subTest(reviewer=reviewer, owner=owner), self.assertRaisesRegex(
+                ContractError, "independent reviewer"
+            ):
+                transition(
+                    "VERIFYING", "COMPLETE", evidence_refs=["sha256:abc"],
+                    reviewer_id=reviewer, owner_id=owner,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
