@@ -1,6 +1,12 @@
 name: Actions startup probe
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "recovery/actions-startup-probe-2026-11-16"
+    paths:
+      - ".github/workflows/actions-startup-probe.yml"
+      - "docs/actions-startup-failure-recovery.md"
   pull_request:
     paths:
       - ".github/workflows/actions-startup-probe.yml"
