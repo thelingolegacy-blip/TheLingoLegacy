@@ -1,0 +1,131 @@
+name: Actions startup probe
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/actions-startup-probe.yml"
+      - "docs/actions-startup-failure-recovery.md"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: lingo-actions-startup-probe-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  hosted-runner-smoke:
+    name: Hosted runner allocation and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Capture runner and execution identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "image_os=${ImageOS:-unknown}"
+            echo "image_version=${ImageVersion:-unknown}"
+            echo "utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee evidence/identity.txt
+          uname -a | tee evidence/uname.txt
+          cat /etc/os-release | tee evidence/os-release.txt
+      - name: Verify baseline tools and execute smoke assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            bash --version | head -n 1
+            git --version
+            python3 --version
+            node --version
+            npm --version
+            node -e 'if (process.platform !== "linux") process.exit(1); console.log("node_linux_smoke=PASS")'
+            python3 -c 'import json, platform; assert platform.system() == "Linux"; print("python_linux_smoke=PASS")'
+          } | tee evidence/tool-versions.txt
+      - name: Capture provider-observed job and runner identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" \
+            -o /tmp/provider-jobs.json
+          python3 - <<'PY'
+          import json, os, pathlib
+          payload = json.loads(pathlib.Path('/tmp/provider-jobs.json').read_text())
+          runner_name = os.environ['RUNNER_NAME']
+          run_id = int(os.environ['GITHUB_RUN_ID'])
+          sha = os.environ['GITHUB_SHA']
+          matches = [
+              job for job in payload.get('jobs', [])
+              if job.get('runner_name') == runner_name
+              and int(job.get('id', 0)) > 0
+              and int(job.get('runner_id', 0)) > 0
+          ]
+          if len(matches) != 1:
+              raise SystemExit(f'Expected exactly one provider-observed runner job; found {len(matches)}')
+          job = matches[0]
+          record = {
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'run_id': run_id,
+              'run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+              'commit_sha': sha,
+              'job_id': job['id'],
+              'job_name': job.get('name'),
+              'job_status': job.get('status'),
+              'job_conclusion': job.get('conclusion'),
+              'runner_id': job['runner_id'],
+              'runner_name': job['runner_name'],
+              'runner_group_name': job.get('runner_group_name'),
+              'started_at': job.get('started_at'),
+              'completed_at': job.get('completed_at'),
+          }
+          pathlib.Path('evidence/provider-job.json').write_text(
+              json.dumps(record, indent=2, sort_keys=True) + '\n'
+          )
+          print(f"provider_job_id={record['job_id']}")
+          print(f"provider_runner_id={record['runner_id']}")
+          print(f"provider_runner_name={record['runner_name']}")
+          print(f"provider_commit_sha={record['commit_sha']}")
+          PY
+      - name: Write correlated evidence manifest and checksums
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "sha=${GITHUB_SHA}"
+            echo "ref=${GITHUB_REF}"
+            echo "job_status=${{ job.status }}"
+            echo "runner_name=${RUNNER_NAME:-unavailable}"
+            echo "runner_os=${RUNNER_OS:-unavailable}"
+            echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > evidence/run-manifest.txt
+          (cd evidence && find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lingo-actions-startup-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 14
