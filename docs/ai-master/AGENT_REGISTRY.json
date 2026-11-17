@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "system": "LINGO AI Master",
+  "coordinator": "ELIZA",
+  "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
+  "deployment_status": "SPECIFICATION_ONLY",
+  "agents": [
+    {
+      "id": "eliza",
+      "display_name": "ELIZA",
+      "role": "chief_coordinator",
+      "responsibilities": ["intake", "prioritization", "delegation", "approval_gates", "consolidated_reporting"],
+      "default_access": ["project_registry_read", "work_queue_read_write", "evidence_read", "report_write"],
+      "production_authority": false
+    },
+    {
+      "id": "instant-ai",
+      "display_name": "INSTANT AI",
+      "role": "fast_operations",
+      "responsibilities": ["routine_support", "bounded_fast_tasks", "simple_operations"],
+      "default_access": ["assigned_task_read", "assigned_output_write"],
+      "production_authority": false
+    },
+    {
+      "id": "thinking-ai",
+      "display_name": "THINKING AI",
+      "role": "reasoning_and_planning",
+      "responsibilities": ["architecture", "complex_analysis", "planning", "troubleshooting"],
+      "default_access": ["assigned_task_read", "technical_document_write"],
+      "production_authority": false
+    },
+    {
+      "id": "sol",
+      "display_name": "SOL",
+      "role": "creative_intelligence",
+      "responsibilities": ["brand", "storytelling", "design", "media", "creative_prototyping"],
+      "default_access": ["approved_asset_read", "creative_output_write"],
+      "production_authority": false
+    },
+    {
+      "id": "terra",
+      "display_name": "TERRA",
+      "role": "systems_and_infrastructure",
+      "responsibilities": ["engineering", "cloud_infrastructure", "security", "operations"],
+      "default_access": ["read_only_diagnostics", "isolated_branch_write_when_authorized"],
+      "production_authority": false
+    },
+    {
+      "id": "luna",
+      "display_name": "LUNA",
+      "role": "research_and_verification",
+      "responsibilities": ["research", "documentation", "test_design", "independent_qa"],
+      "default_access": ["source_read", "test_evidence_read", "verification_report_write"],
+      "production_authority": false
+    }
+  ],
+  "provider_adapters": {
+    "status": "NOT_CONFIGURED",
+    "candidates": ["xAI Grok", "Anthropic Claude", "OpenAI GPT", "Google Gemini"],
+    "requirements": ["server_side_secret_storage", "per_provider_scope", "timeouts", "rate_limits", "cost_limits", "audit_events", "fallback_policy"],
+    "credentials_in_repository": false
+  },
+  "human_gate": {
+    "required_for": ["production_deploy", "production_routing", "dns_changes", "billing", "paid_infrastructure", "payment_activation", "financial_transactions", "production_credentials", "destructive_changes", "security_policy_changes", "legally_binding_publication"],
+    "agent_can_self_approve": false
+  }
+}
