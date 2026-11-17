@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   runner-sentinel:
+    # PROTECTED HOLD: prevent all runner allocation pending separate G02 acceptance.
+    if: false
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     steps:
