@@ -5,6 +5,7 @@ on:
   pull_request:
     paths:
       - 'lib/**'
+      - 'test/**'
       - 'android/**'
       - 'ios/**'
       - 'pubspec.yaml'
@@ -21,6 +22,7 @@ on:
     branches: ["main"]
     paths:
       - 'lib/**'
+      - 'test/**'
       - 'android/**'
       - 'ios/**'
       - 'pubspec.yaml'
@@ -70,8 +72,6 @@ jobs:
       - name: Test Firebase project contract guard
         run: node --test scripts/test-verify-flutter-firebase.mjs
 
-      # Static publication validation must run even while Firebase credentials
-      # and project identity are unresolved. The final gate remains fail-closed.
       - name: Build quarantined Firebase public output
         run: node scripts/build-firebase-public.mjs
 
