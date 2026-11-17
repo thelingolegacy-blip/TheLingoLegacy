@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"crypto/rand"
+	"fmt"
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
@@ -14,14 +15,38 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+func validateIntegrationDatabaseURL(dsn string) error {
+	config, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		return err
+	}
+	host := strings.Trim(config.ConnConfig.Host, "[]")
+	switch host {
+	case "localhost", "127.0.0.1", "::1":
+	default:
+		return fmt.Errorf("TEST_DATABASE_URL host must be loopback, got %q", host)
+	}
+	if config.ConnConfig.Database != "lingo_test" {
+		return fmt.Errorf("TEST_DATABASE_URL database must be lingo_test, got %q", config.ConnConfig.Database)
+	}
+	return nil
+}
+
 func integrationPool(t *testing.T) *pgxpool.Pool {
 	t.Helper()
 	dsn := os.Getenv("TEST_DATABASE_URL")
 	if dsn == "" {
 		t.Skip("TEST_DATABASE_URL is not set; PostgreSQL integration test skipped")
 	}
+	if err := validateIntegrationDatabaseURL(dsn); err != nil {
+		t.Fatalf("unsafe TEST_DATABASE_URL: %v", err)
+	}
 	ctx := context.Background()
-	adminPool, err := pgxpool.New(ctx, dsn)
+	adminConfig, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		t.Fatalf("parse administrative test PostgreSQL configuration: %v", err)
+	}
+	adminPool, err := pgxpool.NewWithConfig(ctx, adminConfig)
 	if err != nil {
 		t.Fatalf("create administrative test PostgreSQL pool: %v", err)
 	}
@@ -174,5 +199,28 @@ func TestPostgresOutboxFailureRollsBackProfileWrite(t *testing.T) {
 	}
 	if count != 0 {
 		t.Fatalf("profile row must roll back with failed outbox insert; found %d rows", count)
+	}
+}
+
+func TestValidateIntegrationDatabaseURL(t *testing.T) {
+	tests := []struct {
+		name string
+		dsn  string
+		wantErr bool
+	}{
+		{name: "approved loopback test database", dsn: "postgres://postgres:postgres@localhost:5432/lingo_test?sslmode=disable"},
+		{name: "IPv4 loopback test database", dsn: "postgres://postgres:postgres@127.0.0.1:5432/lingo_test?sslmode=disable"},
+		{name: "IPv6 loopback test database", dsn: "postgres://postgres:postgres@[::1]:5432/lingo_test?sslmode=disable"},
+		{name: "remote host rejected", dsn: "postgres://user:pass@db.example.test:5432/lingo_test?sslmode=disable", wantErr: true},
+		{name: "production database name rejected", dsn: "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable", wantErr: true},
+		{name: "malformed URL rejected", dsn: "not-a-postgres-url", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateIntegrationDatabaseURL(tt.dsn)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("validateIntegrationDatabaseURL() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
 	}
 }
