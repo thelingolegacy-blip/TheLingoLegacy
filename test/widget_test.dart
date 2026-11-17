@@ -1,8 +1,13 @@
 import 'dart:ui' show Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lingo_legacy/main.dart';
+import 'package:lingo_legacy/firebase_options.dart';
 
 void main() {
+  test('Firebase remains disconnected while credentials are placeholders', () {
+    expect(DefaultFirebaseOptions.isConfigured, isFalse);
+  });
+
   testWidgets('universe hub renders the flagship navigation preview', (tester) async {
     tester.view.physicalSize = const Size(900, 1600);
     tester.view.devicePixelRatio = 1;
