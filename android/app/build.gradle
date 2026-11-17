@@ -11,7 +11,8 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Intentionally unsigned until an approved environment-backed
+            // release keystore is configured. Never use the debug signing key.
         }
     }
 }
