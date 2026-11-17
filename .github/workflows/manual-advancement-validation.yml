@@ -9,12 +9,14 @@ on:
       - "docs/manual-advancement-charter.md"
   push:
     branches:
+      - "main"
       - "manual-control/**"
     paths:
       - "ops/manual-control/**"
       - ".github/workflows/manual-advancement.yml"
       - ".github/workflows/manual-advancement-validation.yml"
       - "docs/manual-advancement-charter.md"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +27,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
       - name: Validate shell syntax and project registry JSON

@@ -50,14 +50,27 @@ case "$COMMAND:$FROM_STAGE:$TO_STAGE" in
   *) fail "Unsupported transition: $COMMAND $FROM_STAGE -> $TO_STAGE." ;;
 esac
 
+is_authorized_approver() {
+  [[ -n "${GITHUB_ACTOR:-}" ]] || fail "GITHUB_ACTOR is required for privileged actions."
+  [[ -n "${AUTHORIZED_APPROVERS:-}" ]] || fail "AUTHORIZED_APPROVERS must be configured before privileged actions are enabled."
+  python3 - "${GITHUB_ACTOR}" "${AUTHORIZED_APPROVERS}" <<'PY'
+import sys
+actor = sys.argv[1]
+allowed = {item.strip() for item in sys.argv[2].split(",") if item.strip()}
+if actor not in allowed:
+    print("::error::Actor is not in the configured privileged-approver allowlist.", file=sys.stderr)
+    raise SystemExit(1)
+PY
+}
+
 if [[ "$COMMAND" == "approve" ]]; then
   [[ "${CONFIRMATION:-}" == "APPROVE $PROJECT_KEY" ]] || fail "Confirmation must exactly equal: APPROVE $PROJECT_KEY"
-  [[ "${GITHUB_ACTOR:-}" == "${GITHUB_REPOSITORY_OWNER:-}" ]] || fail "Only the repository owner may approve."
+  is_authorized_approver
 fi
 
 if [[ "$COMMAND" == "record-release" ]]; then
   [[ "${CONFIRMATION:-}" == "RELEASE $PROJECT_KEY" ]] || fail "Confirmation must exactly equal: RELEASE $PROJECT_KEY"
-  [[ "${GITHUB_ACTOR:-}" == "${GITHUB_REPOSITORY_OWNER:-}" ]] || fail "Only the repository owner may record a release."
+  is_authorized_approver
   [[ "${DEPLOYMENT_EVIDENCE_URL:-}" =~ ^https://[^[:space:]]+$ ]] || fail "DEPLOYMENT_EVIDENCE_URL must point to deployed/live verification evidence."
 fi
 
