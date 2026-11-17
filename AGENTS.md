@@ -86,3 +86,13 @@ Every agent-authored PR must include:
 ## Fail-closed decision
 
 If any required fact is missing, contradictory, stale, or not independently retrievable, do not advance the affected gate. State what is known, what remains unknown, the precise missing evidence, and the smallest safe next action.
+
+## Route-level and parallel recovery agents
+
+- The canonical route-level operating contract is [`docs/ROUTE-LEVEL-AGENT.md`](docs/ROUTE-LEVEL-AGENT.md). Any agent changing route tables, Worker dispatch, navigation, redirects, asset prefixes, or route-facing API contracts must follow it.
+- Parallel work is permitted only as isolated, named work packages with explicit ownership, source/commit identity, non-production scope, tests, evidence, and rollback. Parallelism does not authorize conflicting edits to shared files or concurrent production changes.
+- Before editing shared files, coordinate the owning workstream and re-read the current branch head. Do not overwrite changes made by another branch; reconcile via reviewable commits/PRs.
+- Preserve the existing framework, runtime, package manager, directory structure, public interfaces, and dependency set. Do not add a framework or dependency unless a reproduced requirement demonstrates necessity and a human-reviewed PR records the rationale.
+- Apply the same evidence standard to every Markdown policy, agent instruction, architecture document, and recovery register: label proposals as proposed, historical material as historical, and current status only when supported by current retrievable evidence.
+- Treat PRs #481 and #482 as separate open draft proposals until their current GitHub state and diffs are reviewed. Do not claim their contents are part of `main` or accepted policy.
+- Use Master Recovery #480 as the current consolidated work register. Preserve all stated blockers and the production/LKG hold until each product has its own independent acceptance and separately authorized promotion.
