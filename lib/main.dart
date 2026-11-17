@@ -4,7 +4,9 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (DefaultFirebaseOptions.isConfigured) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
   runApp(const LingoLegacyApp());
 }
 
@@ -126,7 +128,7 @@ class _UniverseHomeState extends State<UniverseHome> {
                 );
               }, childCount: destinations.length),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWide ? 4 : (MediaQuery.sizeOf(context).width < 390 ? 2 : 2),
+                crossAxisCount: isWide ? 4 : 2,
                 mainAxisSpacing: 12, crossAxisSpacing: 12, mainAxisExtent: 215,
               ),
             ),
