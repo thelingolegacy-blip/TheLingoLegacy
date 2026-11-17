@@ -216,6 +216,9 @@ export default {
       if (url.pathname === '/api/create-checkout-session') return await createCheckout(request, env);
       if (url.pathname === '/api/beacon-text-alerts') return await beaconAlerts(request, env);
       if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'API route not found.' }, 404, request, env);
+      if (!env.ASSETS || typeof env.ASSETS.fetch !== 'function') {
+        return json({ ok: false, error: 'Static assets are not bound to this API-only validation Worker.' }, 404, request, env);
+      }
       const assetResponse = await env.ASSETS.fetch(request);
       return withSecurityHeaders(await renderDynamicHtml(request, env, assetResponse), request, env);
     } catch { return json({ ok: false, error: 'Request could not be completed right now.' }, 500, request, env); }
