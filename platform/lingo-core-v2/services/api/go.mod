@@ -1,6 +1,6 @@
 module github.com/thelingolegacy-blip/TheLingoLegacy/platform/lingo-core-v2/services/api
 
-go 1.23.0
+go 1.27.0
 
 require (
 	github.com/coreos/go-oidc/v3 v3.12.0
