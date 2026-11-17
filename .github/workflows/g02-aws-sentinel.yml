@@ -15,6 +15,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sentinel:
+    # PROTECTED HOLD: prevent all runner allocation pending separate G02 acceptance.
+    if: false
     name: g02-aws-runner-sentinel
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
