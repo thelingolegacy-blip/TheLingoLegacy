@@ -3,19 +3,160 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
-const script=fileURLToPath(new URL('./build-firebase-public.mjs',import.meta.url));
-function fixture(files=[]){const root=fs.mkdtempSync(path.join(os.tmpdir(),'lingo-firebase-public-'));fs.mkdirSync(path.join(root,'config/firebase'),{recursive:true});fs.mkdirSync(path.join(root,'scripts'),{recursive:true});fs.writeFileSync(path.join(root,'config/firebase/hosting-public-manifest.json'),JSON.stringify({schemaVersion:'1.0',status:files.length?'REVIEWED':'QUARANTINED',files}));fs.copyFileSync(script,path.join(root,'scripts/build-firebase-public.mjs'));return root;}
-function run(root){return spawnSync(process.execPath,[path.join(root,'scripts/build-firebase-public.mjs'),root],{encoding:'utf8'});}
-test('quarantined manifest creates only a self-contained noindex 404 page',t=>{const root=fixture();t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const r=run(root);assert.equal(r.status,0,r.stderr);const out=path.join(root,'build/firebase-public');assert.deepEqual(fs.readdirSync(out),['404.html']);assert.match(fs.readFileSync(path.join(out,'404.html'),'utf8'),/noindex,nofollow/);});
-test('manifest rejects traversal and hidden paths',t=>{for(const file of ['../README.md','.env','docs/../README.md']){const root=fixture([file]);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/invalid manifest path|forbidden publication path/);}});
-test('manifest rejects symlinked files',t=>{const root=fixture(['public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'target.html'),'secret');fs.symlinkSync(path.join(root,'target.html'),path.join(root,'public.html'));const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/symlink rejected/);});
-test('reviewed manifest copies only exact allowlisted files',t=>{const root=fixture(['public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'public.html'),'<h1>Approved</h1>');fs.writeFileSync(path.join(root,'private.json'),'{"secret":true}');const r=run(root);assert.equal(r.status,0,r.stderr);const out=path.join(root,'build/firebase-public');assert.deepEqual(fs.readdirSync(out).sort(),['404.html','public.html']);assert.equal(fs.readFileSync(path.join(out,'public.html'),'utf8'),'<h1>Approved</h1>');});
-test('manifest rejects duplicate allowlist entries',t=>{const root=fixture(['public.html','public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'public.html'),'<h1>Approved</h1>');const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/duplicate manifest paths/);});
-test('manifest rejects source, configuration, map, and credential file types',t=>{for(const file of ['app.js','types.d.ts','bundle.js.map','firebase.json','private.pem','nested/.env']){const root=fixture([file]);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const r=run(root);assert.equal(r.status,1,file);assert.match(r.stderr,/forbidden publication path/,file);}});
-test('manifest rejects symlinked parent directories',t=>{const root=fixture(['linked/public.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.mkdirSync(path.join(root,'real'));fs.writeFileSync(path.join(root,'real/public.html'),'<h1>Private</h1>');fs.symlinkSync(path.join(root,'real'),path.join(root,'linked'),'dir');const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/symlink rejected/);});
-test('nested allowlist publishes only the exact nested file',t=>{const root=fixture(['assets/approved.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.mkdirSync(path.join(root,'assets'));fs.writeFileSync(path.join(root,'assets/approved.html'),'<h1>Approved</h1>');fs.writeFileSync(path.join(root,'assets/private.html'),'<h1>Private</h1>');const r=run(root);assert.equal(r.status,0,r.stderr);const out=path.join(root,'build/firebase-public');assert.deepEqual(fs.readdirSync(path.join(out,'assets')),['approved.html']);assert.equal(fs.readFileSync(path.join(out,'assets/approved.html'),'utf8'),'<h1>Approved</h1>');});
-test('invalid manifest preserves the prior generated output',t=>{const root=fixture(['../blocked.html']);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const out=path.join(root,'build/firebase-public');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'sentinel.txt'),'preserve');const r=run(root);assert.equal(r.status,1);assert.equal(fs.readFileSync(path.join(out,'sentinel.txt'),'utf8'),'preserve');});
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-test('manifest refuses a symlinked build parent without modifying its target',t=>{const root=fixture();const external=fs.mkdtempSync(path.join(os.tmpdir(),'lingo-firebase-outside-'));t.after(()=>{fs.rmSync(root,{recursive:true,force:true});fs.rmSync(external,{recursive:true,force:true});});fs.writeFileSync(path.join(external,'sentinel.txt'),'preserve');fs.symlinkSync(external,path.join(root,'build'),'dir');const r=run(root);assert.equal(r.status,1);assert.match(r.stderr,/build directory must be a real directory/);assert.equal(fs.readFileSync(path.join(external,'sentinel.txt'),'utf8'),'preserve');});
+const script = fileURLToPath(new URL('./build-firebase-public.mjs', import.meta.url));
+const approvalRecord = {
+  approvedBy: 'test-reviewer',
+  approvedAt: '2026-11-17T00:00:00Z',
+  changeReference: 'test-fixture',
+};
+
+function fixture(files = [], approval = approvalRecord) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-firebase-public-'));
+  fs.mkdirSync(path.join(root, 'config/firebase'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'scripts'), { recursive: true });
+  const manifest = {
+    schemaVersion: '1.0',
+    status: files.length ? 'REVIEWED' : 'QUARANTINED',
+    files,
+    ...(files.length && approval ? { approvalRecord: approval } : {}),
+  };
+  fs.writeFileSync(path.join(root, 'config/firebase/hosting-public-manifest.json'), JSON.stringify(manifest));
+  fs.copyFileSync(script, path.join(root, 'scripts/build-firebase-public.mjs'));
+  return root;
+}
+
+function run(root) {
+  return spawnSync(process.execPath, [path.join(root, 'scripts/build-firebase-public.mjs'), root], { encoding: 'utf8' });
+}
+
+test('quarantined manifest creates only a self-contained noindex 404 page', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = run(root);
+  assert.equal(result.status, 0, result.stderr);
+  const output = path.join(root, 'build/firebase-public');
+  assert.deepEqual(fs.readdirSync(output), ['404.html']);
+  assert.match(fs.readFileSync(path.join(output, '404.html'), 'utf8'), /noindex,nofollow/);
+});
+
+test('manifest rejects traversal and hidden paths', (t) => {
+  for (const file of ['../README.md', '.env', 'docs/../README.md']) {
+    const root = fixture([file]);
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const result = run(root);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /invalid manifest path|forbidden publication path/);
+  }
+});
+
+test('manifest rejects symlinked files', (t) => {
+  const root = fixture(['public.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, 'target.html'), 'secret');
+  fs.symlinkSync(path.join(root, 'target.html'), path.join(root, 'public.html'));
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /symlink rejected/);
+});
+
+test('reviewed manifest copies only exact allowlisted files with approval metadata', (t) => {
+  const root = fixture(['public.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Approved</h1>');
+  fs.writeFileSync(path.join(root, 'private.json'), '{"secret":true}');
+  const result = run(root);
+  assert.equal(result.status, 0, result.stderr);
+  const output = path.join(root, 'build/firebase-public');
+  assert.deepEqual(fs.readdirSync(output).sort(), ['404.html', 'public.html']);
+  assert.equal(fs.readFileSync(path.join(output, 'public.html'), 'utf8'), '<h1>Approved</h1>');
+});
+
+test('REVIEWED manifest fails closed without approval metadata', (t) => {
+  const root = fixture(['public.html'], null);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Unapproved</h1>');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /approvalRecord\.approvedBy/);
+});
+
+test('REVIEWED manifest rejects a non-UTC approval timestamp', (t) => {
+  const root = fixture(['public.html'], { ...approvalRecord, approvedAt: '2026-11-17T00:00:00-05:00' });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Unapproved</h1>');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /ISO-8601 UTC/);
+});
+
+test('manifest rejects duplicate allowlist entries', (t) => {
+  const root = fixture(['public.html', 'public.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Approved</h1>');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /duplicate manifest paths/);
+});
+
+test('manifest rejects source, configuration, map, and credential file types', (t) => {
+  for (const file of ['app.js', 'types.d.ts', 'bundle.js.map', 'firebase.json', 'private.pem', 'nested/.env']) {
+    const root = fixture([file]);
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const result = run(root);
+    assert.equal(result.status, 1, file);
+    assert.match(result.stderr, /forbidden publication path/, file);
+  }
+});
+
+test('manifest rejects symlinked parent directories', (t) => {
+  const root = fixture(['linked/public.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(root, 'real'));
+  fs.writeFileSync(path.join(root, 'real/public.html'), '<h1>Private</h1>');
+  fs.symlinkSync(path.join(root, 'real'), path.join(root, 'linked'), 'dir');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /symlink rejected/);
+});
+
+test('nested allowlist publishes only the exact nested file', (t) => {
+  const root = fixture(['assets/approved.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(root, 'assets'));
+  fs.writeFileSync(path.join(root, 'assets/approved.html'), '<h1>Approved</h1>');
+  fs.writeFileSync(path.join(root, 'assets/private.html'), '<h1>Private</h1>');
+  const result = run(root);
+  assert.equal(result.status, 0, result.stderr);
+  const output = path.join(root, 'build/firebase-public');
+  assert.deepEqual(fs.readdirSync(path.join(output, 'assets')), ['approved.html']);
+  assert.equal(fs.readFileSync(path.join(output, 'assets/approved.html'), 'utf8'), '<h1>Approved</h1>');
+});
+
+test('invalid manifest preserves the prior generated output', (t) => {
+  const root = fixture(['../blocked.html']);
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const output = path.join(root, 'build/firebase-public');
+  fs.mkdirSync(output, { recursive: true });
+  fs.writeFileSync(path.join(output, 'sentinel.txt'), 'preserve');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.equal(fs.readFileSync(path.join(output, 'sentinel.txt'), 'utf8'), 'preserve');
+});
+
+test('manifest refuses a symlinked build parent without modifying its target', (t) => {
+  const root = fixture();
+  const external = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-firebase-outside-'));
+  t.after(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(external, { recursive: true, force: true });
+  });
+  fs.writeFileSync(path.join(external, 'sentinel.txt'), 'preserve');
+  fs.symlinkSync(external, path.join(root, 'build'), 'dir');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /build directory must be a real directory/);
+  assert.equal(fs.readFileSync(path.join(external, 'sentinel.txt'), 'utf8'), 'preserve');
+});
