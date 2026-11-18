@@ -1,12 +1,19 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
-  static bool get isConfigured =>
-      !web.apiKey.startsWith('YOUR_') &&
-      !android.apiKey.startsWith('YOUR_') &&
-      !ios.apiKey.startsWith('YOUR_') &&
-      !macos.apiKey.startsWith('YOUR_');
+  static bool get isConfigured {
+    final configurations = <FirebaseOptions>[web, android, ios, macos];
+    return configurations.every((options) =>
+        options.apiKey.isNotEmpty &&
+        options.appId.isNotEmpty &&
+        options.messagingSenderId.isNotEmpty &&
+        !options.apiKey.startsWith('YOUR_') &&
+        !options.appId.startsWith('YOUR_') &&
+        !options.messagingSenderId.startsWith('YOUR_'));
+  }
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) return web;
     switch (defaultTargetPlatform) {
@@ -61,6 +68,5 @@ class DefaultFirebaseOptions {
     projectId: 'lingo-staging-not-configured',
     databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
     storageBucket: 'lingo-staging-not-configured.appspot.com',
-    macOsBundleId: 'com.thelingolegacy.app',
   );
 }
