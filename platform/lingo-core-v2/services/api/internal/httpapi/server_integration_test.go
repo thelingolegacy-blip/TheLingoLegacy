@@ -152,8 +152,8 @@ func TestPostgresProfileIsolationAndTransactionalOutbox(t *testing.T) {
 	if err := json.Unmarshal(second.Body.Bytes(), &response); err != nil {
 		t.Fatal(err)
 	}
-	if response.Issuer != "" {
-		t.Fatal("issuer must not be exposed in the public profile response")
+	if response.Issuer != "" || response.Subject != "" {
+		t.Fatal("issuer and stable subject must not be exposed in the public profile response")
 	}
 }
 
