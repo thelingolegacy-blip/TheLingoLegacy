@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const script = fileURLToPath(new URL('./verify-flutter-firebase.mjs', import.meta.url));
-const placeholderOptions = "projectId: 'lingo-staging-not-configured'; apiKey: 'YOUR_WEB_API_KEY'; appId: 'YOUR_WEB_APP_ID';";
+const placeholderOptions = "static bool get isConfigured => false; projectId: 'lingo-staging-not-configured'; apiKey: 'YOUR_WEB_API_KEY'; appId: 'YOUR_WEB_APP_ID';";
 const stagingOptions = "projectId: 'lingo-staging-test'; apiKey: 'test-key'; appId: 'test-app';";
 
 function fixture({ projects = {}, options = placeholderOptions, guarded = true } = {}) {
