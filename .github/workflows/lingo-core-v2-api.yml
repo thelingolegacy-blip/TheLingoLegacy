@@ -57,8 +57,28 @@ jobs:
           test -z "$(gofmt -l .)"
       - name: Verify dependency manifest
         run: go mod tidy -diff
-      - name: Test (unit and PostgreSQL integration)
-        run: go test -race -cover ./...
+      - name: Test (unit and PostgreSQL integration) with coverage profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          go test -race -count=1 -coverpkg=./... -coverprofile=coverage.out -covermode=atomic ./... 2>&1 | tee go-test-coverage.log
+      - name: Summarize function coverage
+        if: always() && hashFiles('platform/lingo-core-v2/services/api/coverage.out') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          go tool cover -func=coverage.out | tee coverage-summary.txt
+      - name: Upload Go coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-core-v2-go-coverage-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            platform/lingo-core-v2/services/api/coverage.out
+            platform/lingo-core-v2/services/api/go-test-coverage.log
+            platform/lingo-core-v2/services/api/coverage-summary.txt
+          if-no-files-found: warn
+          retention-days: 14
       - name: Vet
         run: go vet ./...
       - name: Build
