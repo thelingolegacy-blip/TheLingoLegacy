@@ -1,6 +1,6 @@
 # That’s My Lingo — Slot Math Specification (Proposal)
 
-**Status:** DRAFT / NOT PRODUCT-APPROVED / NOT RELEASE MATH  
+**Status:** DRAFT / STAKE SEMANTICS APPROVED / OTHER MATH NOT PRODUCT-APPROVED OR RELEASE-APPROVED  
 **Scope:** 5-reel × 3-row, 20-line presentation; isolated demo-credit engine only  
 **Required reviewers:** Product owner, independent game-math reviewer, engineering reviewer  
 **Safety:** no real-money wagering, purchase, transfer, cash-out, prize redemption, or production wallet integration.
@@ -116,16 +116,22 @@ Current unapproved implementation fixtures:
 
 Do not publish these as approved paytable math.
 
-**Critical unresolved decision — wager units:** the current implementation multiplies every winning line by the full wagerUnits input. It does not establish whether that input means stake per line or total spin stake. With 20 active lines, this ambiguity materially changes total exposure and RTP.
+**Approved product-owner decision — Option 2, total-spin stake:** `wagerUnits` is the single total amount staked for one spin. It is not a per-line amount. The player-facing UI presents one total wager per spin.
 
-Choose exactly one contract before acceptance:
+For the current configuration, all 20 configured paylines are active:
 
-- **Per-line stake:** input betPerLineUnits; total wager = 20 × betPerLineUnits; each line payout = betPerLineUnits × approved multiplier.
-- **Total-spin stake:** input totalWagerUnits; define a deterministic allocation across 20 lines and apply the allocated stake to each line.
+- `activePaylineCount = PAYLINES.length` (currently 20).
+- `lineStakeUnits = wagerUnits / activePaylineCount`.
+- Division must be exact. The engine rejects a wager when `wagerUnits % activePaylineCount !== 0`; it does not round, distribute a remainder, or use banker’s rounding.
+- Every active payline receives exactly the same `lineStakeUnits`.
+- For each winning line, `linePayoutUnits = approvedMultiplier × lineStakeUnits`.
+- `totalSpinPayoutUnits` is the integer sum of all winning line payouts.
+- Any future bonus/feature multiplier is applied exactly once to the aggregated total spin payout, after line payouts are summed. No bonus/feature multiplier is currently implemented.
+- If variable active paylines are introduced, allocation uses the active line count for that spin, not the configured maximum.
 
-Never reuse one field name for both meanings. Reject zero, negative, fractional, unsafe-integer, and overflow values. Use integer credit units, never floating-point balances.
+`wagerUnits` is expressed in the same smallest integer wallet/demo-credit unit used by the rest of the engine. All intermediate values, multipliers, line payouts, and aggregate payouts must remain in that integer representation; floating-point arithmetic is prohibited. Any future fractional multiplier must first define an explicit integer scale and exact rounding/remainder policy. Reject zero, negative, fractional, unsafe-integer, non-divisible, and overflow values. No residual is silently discarded.
 
-Under the proposed per-line model, spin payout is the sum of the 20 line payouts and total stake is 20 × betPerLineUnits.
+For the current integer paytable, the exact divisibility rule guarantees that the total stake is fully and equally allocated across all 20 active lines.
 
 ## 6. RTP, hit frequency, and volatility
 
@@ -172,7 +178,7 @@ Add tests for:
 - Left-to-right breaks at each reel position; gaps never count as contiguous.
 - Overlapping paylines and simultaneous wins; each winning line paid exactly once.
 - Every profile's symbol distribution and selected profile identity.
-- Per-line vs total-spin stake semantics, including the 20-line total.
+- Total-spin wager allocation, exact divisibility/rejection, equal 20-line stakes, and aggregate payout; future variable-line-count allocation.
 - Maximum payout and integer-overflow boundaries.
 - Invalid paytable, missing symbols, zero/negative weights, and invalid profiles.
 - Deterministic fixed vectors for exact payout and exact probability calculations.
