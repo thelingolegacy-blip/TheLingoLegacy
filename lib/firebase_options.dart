@@ -36,28 +36,28 @@ class DefaultFirebaseOptions {
     apiKey: 'YOUR_WEB_API_KEY',
     appId: 'YOUR_WEB_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    authDomain: 'lingo-legacy-production.firebaseapp.com',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    authDomain: 'lingo-staging-not-configured.firebaseapp.com',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'YOUR_ANDROID_API_KEY',
     appId: 'YOUR_ANDROID_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'YOUR_IOS_API_KEY',
     appId: 'YOUR_IOS_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
     iosBundleId: 'com.thelingolegacy.app',
   );
 
@@ -65,8 +65,8 @@ class DefaultFirebaseOptions {
     apiKey: 'YOUR_MACOS_API_KEY',
     appId: 'YOUR_MACOS_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 }
