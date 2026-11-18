@@ -2,52 +2,57 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(process.argv[2] || process.cwd());
-const requiredFileGroups = [
-  ['android/gradlew'],
-  ['android/gradle/wrapper/gradle-wrapper.jar'],
-  ['android/gradle/wrapper/gradle-wrapper.properties'],
-  ['android/settings.gradle', 'android/settings.gradle.kts'],
-  ['android/build.gradle', 'android/build.gradle.kts'],
-  ['android/app/build.gradle', 'android/app/build.gradle.kts'],
-  ['android/app/src/main/AndroidManifest.xml'],
-  ['android/app/src/main/kotlin/com/thelingolegacy/app/MainActivity.kt'],
+const requiredFiles = [
+  'android/gradle/wrapper/gradle-wrapper.properties',
+  'android/settings.gradle.kts',
+  'android/build.gradle.kts',
+  'android/app/build.gradle.kts',
+  'android/app/src/main/AndroidManifest.xml',
+  'android/app/src/main/kotlin/com/thelingolegacy/app/MainActivity.kt',
+  'android/app/src/main/res/values/styles.xml',
+  'android/app/src/main/res/values-night/styles.xml',
 ];
 const blockers = [];
-const missing = requiredFileGroups.filter((group) => !group.some((file) => fs.existsSync(path.join(root, file))));
-if (missing.length) blockers.push(`Android Gradle scaffold is incomplete: ${missing.map((group) => group.join(' or ')).join(', ')}`);
+const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)));
+if (missing.length) blockers.push(\`Android Gradle scaffold is incomplete: \${missing.join(', ')}\`);
 
 const pubspecPath = path.join(root, 'pubspec.yaml');
-const gradlePath = ['android/app/build.gradle', 'android/app/build.gradle.kts']
-  .map((file) => path.join(root, file))
-  .find((file) => fs.existsSync(file));
+const gradlePath = path.join(root, 'android/app/build.gradle.kts');
 if (!fs.existsSync(pubspecPath)) {
   blockers.push('pubspec.yaml is missing');
-} else if (!gradlePath) {
-  blockers.push('android/app/build.gradle is missing; cannot verify Android SDK compatibility');
 } else {
   const pubspec = fs.readFileSync(pubspecPath, 'utf8');
-  const gradle = fs.readFileSync(gradlePath, 'utf8');
-  const firebaseCore = pubspec.match(/^\s*firebase_core:\s*\^?(\d+)\./m);
-  const minSdk = gradle.match(/\bminSdk(?:Version)?\s*(?:=\s*)?(\d+)/);
-  if (!firebaseCore) {
-    blockers.push('firebase_core version cannot be determined from pubspec.yaml');
-  } else if (Number(firebaseCore[1]) >= 5) {
-    if (!minSdk) blockers.push('Android minSdk cannot be determined');
-    else if (Number(minSdk[1]) < 24) {
-      blockers.push(`Firebase Core 5.x requires Android minSdk 24; project declares minSdk ${minSdk[1]}`);
+  const pins = {
+    firebase_core: '2.32.0',
+    firebase_auth: '4.20.0',
+    firebase_database: '10.5.7',
+    firebase_storage: '11.7.7',
+    firebase_analytics: '10.10.7',
+  };
+  for (const [name, expected] of Object.entries(pins)) {
+    const matches = [...pubspec.matchAll(new RegExp('^\\s{2}' + name + ':\\s*([^\\s#]+)', 'gm'))];
+    if (matches.length !== 1 || matches[0][1] !== expected) {
+      blockers.push(\`\${name} must be pinned exactly to \${expected}; found \${matches.map((m) => m[1]).join(', ') || 'no declaration'}\`);
     }
   }
-  if (!/com\.android\.application/.test(gradle)) {
-    blockers.push('Android app Gradle file does not declare the Android application plugin');
-  }
-  if (!/dev\.flutter\.flutter-gradle-plugin|flutter\.gradle/.test(gradle)) {
-    blockers.push('Android app Gradle file does not apply the Flutter Gradle plugin');
-  }
 }
-
+if (!fs.existsSync(gradlePath)) {
+  blockers.push('android/app/build.gradle.kts is missing; cannot verify Android compatibility');
+} else {
+  const gradle = fs.readFileSync(gradlePath, 'utf8');
+  const minSdk = gradle.match(/\bminSdk\s*=\s*(\d+)/);
+  if (!minSdk || Number(minSdk[1]) !== 21) blockers.push(\`Android minSdk must remain exactly 21; found \${minSdk?.[1] ?? 'no explicit value'}\`);
+  if (!gradle.includes('id("com.android.application")')) blockers.push('Android application Gradle plugin is missing');
+  if (!gradle.includes('id("dev.flutter.flutter-gradle-plugin")')) blockers.push('Flutter Gradle plugin is missing');
+  if (!gradle.includes('namespace = "com.thelingolegacy.app"')) blockers.push('Android namespace does not match com.thelingolegacy.app');
+  if (!gradle.includes('applicationId = "com.thelingolegacy.app"')) blockers.push('Android applicationId does not match com.thelingolegacy.app');
+}
 if (blockers.length) {
   console.error('FLUTTER_ANDROID_READINESS=BLOCKED');
-  for (const blocker of blockers) console.error(`- ${blocker}`);
+  for (const blocker of blockers) console.error('- ' + blocker);
   process.exit(1);
 }
 console.log('FLUTTER_ANDROID_READINESS=PASS');
+console.log('ANDROID_MIN_SDK=21');
+console.log('FIREBASE_ANDROID_COMPATIBILITY=PINNED');
+console.log('GRADLE_WRAPPER=FLUTTER_GENERATED_ON_FIRST_GRADLE_INVOCATION');
