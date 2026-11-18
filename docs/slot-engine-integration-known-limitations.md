@@ -13,7 +13,7 @@ The server slot engine is a separate implementation under `src/server/slot-engin
 3. **No persistence:** `validateIdempotencyKey` validates key syntax only. There is no durable idempotency store, atomic debit/credit ledger, replay protection across processes, or transactional spin record.
 4. **No authoritative service integration:** this module is not wired to an authenticated API, account service, server-side wallet, or shared balance ledger.
 5. **No live-runtime parity:** the existing live page, `lingo-os`, and Studio-grade runtime have not yet been inspected in a real browser session in this recovery pass. Their loaded script URLs and math implementations remain unverified.
-6. **No release evidence:** local test evidence is not hosted CI acceptance, product acceptance, or production authorization.
+6. **No release evidence:** local test evidence is not hosted CI acceptance, product acceptance, or production authorization. The current local test result is 10/10; hosted verification remains NOT_RUN.
 
 ## Required follow-up
 
@@ -23,7 +23,7 @@ The server slot engine is a separate implementation under `src/server/slot-engin
 4. Capture loaded script URLs from the live demo page on desktop and mobile.
 5. Diff each runtime's reel generation, symbol weights, paylines, wild/scatter rules, payout table, rounding, and RNG source against the approved math specification.
 6. Capture desktop and phone-browser screenshots of the demo loop as separate evidence items.
-7. Execute the expanded 20-payline suite locally and in hosted CI; no execution result is claimed by this source update.
+7. **Local suite:** read-back Node test suite executed in an isolated scratch directory: 10 passed, 0 failed. This is local E2 evidence only, not a clean-checkout or hosted result. **Hosted suite:** NOT RUN; current GitHub Actions attempts fail before job creation with `startup_failure` and zero jobs/artifacts.
 
 Do not connect this prototype to purchasable, transferable, cash-equivalent, or redeemable balances. No real-money wagering, payment, cash-out, or prize redemption is authorized.
 
