@@ -8,10 +8,19 @@ function fixedMatrix(matrix){
 }
 test('secureRandomInt rejects biased tail before modulo reduction',()=>{const v=[0xffff_ffff,7];assert.equal(secureRandomInt(10,()=>v.shift()),7);});
 test('secureRandomInt validates bounds and source',()=>{assert.throws(()=>secureRandomInt(0),RangeError);assert.throws(()=>secureRandomInt(3,()=>-1),TypeError);assert.throws(()=>secureRandomInt(3,()=>0x1_0000_0000),TypeError);});
-test('defines five standard paylines of five positions',()=>{assert.equal(PAYLINES.length,5);for(const p of PAYLINES)assert.equal(p.length,5);});
-test('creates a 3x5 matrix and integer payout values',()=>{const m=Array.from({length:3},()=>Array(5).fill('OBSIDIAN_BAR'));const r=evaluateFiveReelSpin({wagerUnits:10,readUint32:fixedMatrix(m)});assert.equal(r.matrix.length,3);assert.ok(r.matrix.every(x=>x.length===5));assert.ok(Number.isSafeInteger(r.payoutUnits));assert.equal(r.paylinesEvaluated,5);});
+test('defines twenty unique five-reel paylines within the three-row matrix',()=>{
+ assert.equal(PAYLINES.length,20);
+ const keys=new Set();
+ for(const line of PAYLINES){
+  assert.equal(line.length,5);
+  assert.ok(line.every(row=>Number.isInteger(row)&&row>=0&&row<3));
+  keys.add(line.join(','));
+ }
+ assert.equal(keys.size,20);
+});
+test('creates a 3x5 matrix and integer payout values',()=>{const m=Array.from({length:3},()=>Array(5).fill('OBSIDIAN_BAR'));const r=evaluateFiveReelSpin({wagerUnits:10,readUint32:fixedMatrix(m)});assert.equal(r.matrix.length,3);assert.ok(r.matrix.every(x=>x.length===5));assert.ok(Number.isSafeInteger(r.payoutUnits));assert.equal(r.paylinesEvaluated,20);});
 test('evaluates contiguous left-to-right match lengths 3, 4 and 5',()=>{for(const n of [3,4,5]){const row=Array.from({length:5},(_,i)=>i<n?'LEGACY_LION':'OBSIDIAN_BAR');const m=[['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN'],row,['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN']];const r=evaluateFiveReelSpin({wagerUnits:2,readUint32:fixedMatrix(m)});const win=r.wins.find(x=>x.payline===1);assert.equal(win?.matchLength,n);assert.equal(win?.payoutUnits,2*DEFAULT_PAYTABLE.LEGACY_LION[n]);}});
-test('each of the five configured paylines can win independently',()=>{for(let i=0;i<PAYLINES.length;i++){const m=Array.from({length:3},(_,r)=>Array.from({length:5},(_,c)=>(r+c)%2===0?'OBSIDIAN_BAR':'SEVEN'));for(let c=0;c<5;c++)m[PAYLINES[i][c]][c]='LEGACY_LION';const r=evaluateFiveReelSpin({wagerUnits:1,readUint32:fixedMatrix(m)});assert.ok(r.wins.some(w=>w.payline===i+1),`payline ${i+1} did not win`);}});
+test('each of the twenty configured paylines can win independently',()=>{for(let i=0;i<PAYLINES.length;i++){const m=Array.from({length:3},(_,r)=>Array.from({length:5},(_,c)=>(r+c)%2===0?'OBSIDIAN_BAR':'SEVEN'));for(let c=0;c<5;c++)m[PAYLINES[i][c]][c]='LEGACY_LION';const r=evaluateFiveReelSpin({wagerUnits:1,readUint32:fixedMatrix(m)});assert.ok(r.wins.some(w=>w.payline===i+1),`payline ${i+1} did not win`);}});
 test('WILD substitutes for target symbols',()=>{const m=[['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN'],['LEGACY_LION','WILD','LEGACY_LION','WILD','LEGACY_LION'],['SEVEN','OBSIDIAN_BAR','SEVEN','OBSIDIAN_BAR','SEVEN']];const r=evaluateFiveReelSpin({wagerUnits:1,readUint32:fixedMatrix(m)});assert.ok(r.wins.some(x=>x.payline===1&&x.symbol==='LEGACY_LION'&&x.matchLength===5));});
 test('volatility tables define positive integer weights for every symbol',()=>{for(const t of Object.values(DEFAULT_VOLATILITY_TABLES))for(const s of DEFAULT_SYMBOLS)assert.ok(Number.isSafeInteger(t[s])&&t[s]>0);});
 test('rejects invalid wager, volatility, paytable and payout overflow',()=>{assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1.5}),RangeError);assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1,volatility:'extreme'}),TypeError);assert.throws(()=>evaluateFiveReelSpin({wagerUnits:1,paytable:{...DEFAULT_PAYTABLE,LEGACY_LION:{3:1.5,4:2,5:3}}}),TypeError);const m=Array.from({length:3},()=>Array(5).fill('LEGACY_LION'));assert.throws(()=>evaluateFiveReelSpin({wagerUnits:Number.MAX_SAFE_INTEGER,readUint32:fixedMatrix(m)}),RangeError);});
