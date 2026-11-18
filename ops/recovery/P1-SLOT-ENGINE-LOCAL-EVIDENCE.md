@@ -4,21 +4,24 @@
 
 - Repository: `thelingolegacy-blip/TheLingoLegacy`
 - Branch: `recovery/p1-slot-engine-restore`
-- Source baseline commit inspected: `7d5d4ddaf668ca219f6b3948f800a2a67675256b`
-- Source engine blob inspected: `5bb7ea09d1eb8cb7d45836d01ef7e42faa15dd94`
+- Branch head read back for this run: `6c894f53345cae9416fb9390fbb39990440af650`
+- Source engine blob: `6a5f79fc3cd9c34e1763104a9244628f9f7e4925`
+- Test file blob: `364aac9199dfc4be35c00ed3443d422d46b9087a`
 - Runtime: Node.js `v22.16.0`
 - npm: `10.9.2`
 - Command: `npm test`
-- Result: **10 tests passed, 0 failed**.
+- Result: **11 tests passed, 0 failed**.
 
-## Test correction
+## Validation scope
 
-Two deterministic fixtures placed the first configured payline's symbols in row 0. The configured first payline is the center row `[1,1,1,1,1]`. The fixtures were corrected to place their intended winning sequences in row 1. No slot-engine implementation code was changed in this validation.
+The branch-read-back engine, tests, and package manifest were copied into an isolated scratch directory and executed with the repository's `npm test` command. The suite covers the fixed 20-line geometry, equal total-wager allocation, exact divisibility rejection, line payout calculation, aggregate payout, invalid inputs, integer overflow, WILD substitution, and bounded RNG behavior.
+
+The new stake contract uses `wagerUnits` as the total spin stake. The engine computes `lineStakeUnits = wagerUnits / 20`, rejects any wager that is not exactly divisible by the active line count, and calculates each winning line from its allocated line stake. The tests explicitly verify a 400-unit spin allocates 20 units to each line and rejects 401 units.
 
 ## Source SHA-256
 
 - `package.json`: `01f918bfc14f6dda3699173312ebd324c597e571780be5d089b1dfccb36bde38`
-- `src/server/slot-engine.mjs`: `8f772bbecfdd682f2a96157df55383ca9bced214bede7454d54b269e14365a9c`
-- `scripts/tests/server-slot-engine.test.mjs` (corrected): `164c9bb40a1973dcb9cb05061efcdf952b408b60b735abb5a58c14aee282ba0f`
+- `src/server/slot-engine.mjs`: `ad1cc1345f64540750f053f586e7776faae9883754600985e805bad9b9f71b69`
+- `scripts/tests/server-slot-engine.test.mjs`: `189fc9d6cc103e431875b663c2c33a50dedc7ca867503e168fd7b5c27846f256`
 
-This evidence records a local isolated runtime execution of the fetched source plus corrected test fixture. It does not establish that GitHub Actions started, that an Actions job completed, or that an artifact was uploaded. Those require a separate completed hosted run correlated to the final commit SHA.
+This evidence records a local isolated runtime execution of the fetched branch files. It does not establish that GitHub Actions started, that an Actions job completed, or that a hosted artifact was uploaded. Hosted acceptance still requires a completed GitHub-hosted run correlated to the final commit SHA, provider-observed runner identity, test logs, and retrievable evidence artifact.
