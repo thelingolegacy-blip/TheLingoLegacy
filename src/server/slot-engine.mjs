@@ -2,11 +2,28 @@ import { randomBytes } from 'node:crypto';
 
 export const DEFAULT_SYMBOLS = Object.freeze(['LEGACY_LION','OBSIDIAN_BAR','SEVEN','DIAMOND','WILD']);
 export const PAYLINES = Object.freeze([
+  // Candidate 20-line geometry for the 5-reel × 3-row presentation.
+  // Product/math acceptance is still required before this becomes a release contract.
   Object.freeze([1,1,1,1,1]),
   Object.freeze([0,0,0,0,0]),
   Object.freeze([2,2,2,2,2]),
   Object.freeze([0,1,2,1,0]),
-  Object.freeze([2,1,0,1,2])
+  Object.freeze([2,1,0,1,2]),
+  Object.freeze([0,0,1,2,2]),
+  Object.freeze([2,2,1,0,0]),
+  Object.freeze([1,0,0,0,1]),
+  Object.freeze([1,2,2,2,1]),
+  Object.freeze([0,1,1,1,0]),
+  Object.freeze([2,1,1,1,2]),
+  Object.freeze([1,0,1,2,1]),
+  Object.freeze([1,2,1,0,1]),
+  Object.freeze([0,0,1,1,2]),
+  Object.freeze([2,2,1,1,0]),
+  Object.freeze([0,1,0,1,0]),
+  Object.freeze([2,1,2,1,2]),
+  Object.freeze([1,0,1,0,1]),
+  Object.freeze([1,2,1,2,1]),
+  Object.freeze([0,1,2,2,1])
 ]);
 export const DEFAULT_PAYTABLE = Object.freeze({
   LEGACY_LION:Object.freeze({3:5,4:20,5:100}),
