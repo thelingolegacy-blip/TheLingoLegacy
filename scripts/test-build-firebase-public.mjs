@@ -62,34 +62,23 @@ test('manifest rejects symlinked files', (t) => {
   assert.match(result.stderr, /symlink rejected/);
 });
 
-test('reviewed manifest copies only exact allowlisted files with approval metadata', (t) => {
+test('REVIEWED manifest is rejected even when it carries self-asserted approval metadata', (t) => {
   const root = fixture(['public.html']);
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Approved</h1>');
-  fs.writeFileSync(path.join(root, 'private.json'), '{"secret":true}');
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Not publishable</h1>');
   const result = run(root);
-  assert.equal(result.status, 0, result.stderr);
-  const output = path.join(root, 'build/firebase-public');
-  assert.deepEqual(fs.readdirSync(output).sort(), ['404.html', 'public.html']);
-  assert.equal(fs.readFileSync(path.join(output, 'public.html'), 'utf8'), '<h1>Approved</h1>');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /separately approved and verified publisher/);
+  assert.equal(fs.existsSync(path.join(root, 'build/firebase-public')), false);
 });
 
-test('REVIEWED manifest fails closed without approval metadata', (t) => {
+test('REVIEWED manifest is rejected when approval metadata is absent', (t) => {
   const root = fixture(['public.html'], null);
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Unapproved</h1>');
+  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Not publishable</h1>');
   const result = run(root);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /approvalRecord\.approvedBy/);
-});
-
-test('REVIEWED manifest rejects a non-UTC approval timestamp', (t) => {
-  const root = fixture(['public.html'], { ...approvalRecord, approvedAt: '2026-11-17T00:00:00-05:00' });
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'public.html'), '<h1>Unapproved</h1>');
-  const result = run(root);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /ISO-8601 UTC/);
+  assert.match(result.stderr, /separately approved and verified publisher/);
 });
 
 test('manifest rejects duplicate allowlist entries', (t) => {
