@@ -22,7 +22,7 @@ type SubjectVerifier func(context.Context, string) (Identity, error)
 
 type Profile struct {
 	Issuer      string    `json:"-"`
-	Subject     string    `json:"subject"`
+	Subject     string    `json:"-"`
 	DisplayName string    `json:"display_name"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
