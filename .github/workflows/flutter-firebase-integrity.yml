@@ -65,6 +65,15 @@ jobs:
           node --test scripts/test-verify-android-api21-firebase.mjs
           node scripts/verify-android-api21-firebase.mjs
 
+      - name: Generate ephemeral Android Gradle wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter create . --platforms=android --no-pub
+          test -f android/gradlew
+          test -f android/gradle/wrapper/gradle-wrapper.jar
+          test -f android/gradle/wrapper/gradle-wrapper.properties
+
       - name: Flutter dependencies
         run: flutter pub get
 
