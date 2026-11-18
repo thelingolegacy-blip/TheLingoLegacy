@@ -19,7 +19,9 @@ Inspected Go files under platform/lingo-core-v2/services/api:
 | internal/httpapi/server.go | HTTP routes, security headers, health/readiness, bearer verification, profile read/write, transaction and outbox | 9 unit test functions in server_test.go; 3 integration test functions in server_integration_test.go |
 | cmd/api/main.go | Environment validation, PostgreSQL TLS policy, OIDC issuer policy/discovery/verifier, server timeouts and shutdown | No *_test.go file in the inspected package directory |
 
-The 9 unit test functions cover liveness/security header, nil-DB readiness, missing/invalid bearer, missing issuer, unknown JSON fields, multiple JSON values, display-name over-limit, and nil-DB write fail-closed.
+The 2 `cmd/api` test functions cover PostgreSQL TLS policy (12 table cases) and OIDC issuer policy (10 table cases). They cover verified TLS, loopback development exceptions, remote plaintext rejection, duplicate sslmode, malformed/wrong-scheme URLs, HTTPS enforcement, loopback HTTP exceptions, remote HTTP rejection, credentials/query strings, and relative issuer URLs.
+
+The 9 `internal/httpapi` unit test functions cover liveness/security header, nil-DB readiness, missing/invalid bearer, missing issuer, unknown JSON fields, multiple JSON values, display-name over-limit, and nil-DB write fail-closed.
 
 The 3 integration test functions cover issuer/subject isolation and committed outbox records; outbox insert failure rolling back the profile mutation; and integration DSN safety validation with 7 table-driven DSN cases.
 
