@@ -21,9 +21,7 @@ func validateIntegrationDatabaseURL(dsn string) error {
 		return err
 	}
 	host := strings.Trim(config.ConnConfig.Host, "[]")
-	switch host {
-	case "localhost", "127.0.0.1", "::1":
-	default:
+	if !strings.EqualFold(host, "localhost") && host != "127.0.0.1" && host != "::1" {
 		return fmt.Errorf("TEST_DATABASE_URL host must be loopback, got %q", host)
 	}
 	if config.ConnConfig.Database != "lingo_test" {
@@ -209,6 +207,7 @@ func TestValidateIntegrationDatabaseURL(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "approved loopback test database", dsn: "postgres://postgres:postgres@localhost:5432/lingo_test?sslmode=disable"},
+		{name: "case-insensitive localhost test database", dsn: "postgres://postgres:postgres@LOCALHOST:5432/lingo_test?sslmode=disable"},
 		{name: "IPv4 loopback test database", dsn: "postgres://postgres:postgres@127.0.0.1:5432/lingo_test?sslmode=disable"},
 		{name: "IPv6 loopback test database", dsn: "postgres://postgres:postgres@[::1]:5432/lingo_test?sslmode=disable"},
 		{name: "remote host rejected", dsn: "postgres://user:pass@db.example.test:5432/lingo_test?sslmode=disable", wantErr: true},
