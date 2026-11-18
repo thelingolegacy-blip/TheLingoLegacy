@@ -12,8 +12,13 @@ func TestValidateDatabaseTLSRequiresVerifiedPostgresTLS(t *testing.T) {
 		{name: "verified TLS", databaseURL: "postgres://user:pass@db.example.test:5432/lingo?sslmode=verify-full", appEnv: "production", wantErr: false},
 		{name: "require without hostname verification", databaseURL: "postgres://user:pass@db.example.test:5432/lingo?sslmode=require", appEnv: "production", wantErr: true},
 		{name: "TLS disabled", databaseURL: "postgres://user:pass@localhost:5432/lingo?sslmode=disable", appEnv: "production", wantErr: true},
-		{name: "development may use local database", databaseURL: "postgres://user:pass@localhost:5432/lingo?sslmode=disable", appEnv: "development", wantErr: false},
-		{name: "test may use disposable database", databaseURL: "postgres://user:pass@localhost:5432/lingo?sslmode=disable", appEnv: "test", wantErr: false},
+		{name: "development may use loopback database", databaseURL: "postgres://user:pass@localhost:5432/lingo?sslmode=disable", appEnv: "development", wantErr: false},
+		{name: "test may use IPv4 loopback database", databaseURL: "postgres://user:pass@127.0.0.1:5432/lingo?sslmode=disable", appEnv: "test", wantErr: false},
+		{name: "development remote database still requires verified TLS", databaseURL: "postgres://user:pass@db.example.test:5432/lingo?sslmode=verify-full", appEnv: "development", wantErr: false},
+		{name: "development remote plaintext database is rejected", databaseURL: "postgres://user:pass@db.example.test:5432/lingo?sslmode=disable", appEnv: "development", wantErr: true},
+		{name: "test non-loopback IP plaintext database is rejected", databaseURL: "postgres://user:pass@192.0.2.10:5432/lingo?sslmode=disable", appEnv: "test", wantErr: true},
+		{name: "duplicate sslmode is rejected", databaseURL: "postgres://user:pass@localhost:5432/lingo?sslmode=verify-full&sslmode=disable", appEnv: "development", wantErr: true},
+		{name: "malformed URL is rejected in development", databaseURL: "not-a-database-url", appEnv: "development", wantErr: true},
 		{name: "wrong scheme", databaseURL: "https://db.example.test/lingo?sslmode=verify-full", appEnv: "production", wantErr: true},
 	}
 	for _, test := range tests {
