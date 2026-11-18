@@ -26,3 +26,44 @@ The server slot engine is a separate implementation under `src/server/slot-engin
 7. Execute the expanded 20-payline suite locally and in hosted CI; no execution result is claimed by this source update.
 
 Do not connect this prototype to purchasable, transferable, cash-equivalent, or redeemable balances. No real-money wagering, payment, cash-out, or prize redemption is authorized.
+
+## Future demo-credit ledger design (proposal only)
+
+This section is an implementation-neutral acceptance design. It does not authorize a wallet connection, payment integration, or live balance mutation.
+
+### Transaction boundary
+
+A future authenticated spin request should be processed as one database transaction:
+
+1. Resolve the authenticated account identity server-side; never accept an account ID or balance as authoritative from the client.
+2. Validate the request and compute a canonical request fingerprint covering game/version, wager units, selected approved volatility profile, and relevant ruleset version.
+3. Insert a spin request row with a unique key on (account_id, idempotency_key). Persist the request fingerprint and state.
+4. If the key already exists, compare fingerprints. Return the original committed result for an exact retry; reject a key reused with different request content.
+5. Lock or atomically update the account's demo-credit balance and reject insufficient balance without partial writes.
+6. Persist one immutable debit ledger entry, the spin outcome, payout calculation, and any credit ledger entry in the same transaction.
+7. Commit the spin result and ledger entries together. A failure at any point must roll back all balance and spin mutations.
+8. Return the stored result for retries; never regenerate a new random outcome for an already committed idempotency key.
+
+### Minimum data and integrity constraints
+
+- Spin request: account scope, idempotency key, canonical request hash, ruleset/version, state, outcome, wager units, payout units, timestamps.
+- Ledger entry: immutable account-scoped record, unique transaction reference, entry type, signed integer units, associated spin ID, and creation timestamp.
+- Database constraints: unique (account_id, idempotency_key), unique ledger transaction reference, foreign keys to account/spin records, positive wager, non-negative payout, and integer-safe balance arithmetic.
+- Auditability: correlate each spin, debit, payout, and retry to one stable spin ID; do not log credentials or raw bearer tokens.
+- Concurrency: serialize balance-affecting requests per account or use an atomic conditional update with a balance floor; verify behavior under concurrent duplicate requests.
+
+### Acceptance tests required before integration
+
+- Same key + same request returns byte-equivalent stored outcome without a second debit.
+- Same key + different request is rejected and causes no ledger mutation.
+- Two concurrent requests with the same key create exactly one spin and one debit.
+- Insufficient balance creates no spin/debit/payout record.
+- Forced failure after debit but before payout rolls back every write.
+- Forced failure after outcome persistence but before commit rolls back every write.
+- A retry after simulated client timeout returns the committed result.
+- Balance reconciliation equals opening demo credits plus ledger entries.
+- No client-supplied balance, payout, account ID, or RNG result can override server-calculated values.
+
+### Volatility / RTP acceptance
+
+Do not choose numeric weights by intuition. For each approved profile, retain the exact symbol-weight vector, reel independence assumptions, paytable version, wild/scatter rules, line set, and wager interpretation. Calculate theoretical RTP and hit frequency from the complete ruleset; use Monte Carlo only as a secondary implementation cross-check. Distinct labels must map to distinct approved distributions, and regression tests must prove profile separation. No RTP or volatility claim is accepted until the math is independently reviewed.
