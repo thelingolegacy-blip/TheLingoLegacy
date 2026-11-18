@@ -50,7 +50,7 @@ func validateDatabaseTLS(databaseURL, appEnv string) error {
 
 	host := strings.Trim(parsed.Hostname(), "[]")
 	ip := net.ParseIP(host)
-	loopback := host == "localhost" || (ip != nil && ip.IsLoopback())
+	loopback := strings.EqualFold(host, "localhost") || (ip != nil && ip.IsLoopback())
 	localDevelopment := appEnv == "development" || appEnv == "test"
 	if localDevelopment && loopback && (sslMode == "disable" || sslMode == "verify-full") {
 		return nil
@@ -75,7 +75,7 @@ func validateOIDCIssuer(issuer, appEnv string) error {
 	if parsed.Scheme == "http" && (appEnv == "development" || appEnv == "test") {
 		host := parsed.Hostname()
 		ip := net.ParseIP(host)
-		if host == "localhost" || (ip != nil && ip.IsLoopback()) {
+		if strings.EqualFold(host, "localhost") || (ip != nil && ip.IsLoopback()) {
 			return nil
 		}
 	}
