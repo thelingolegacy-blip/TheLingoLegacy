@@ -18,16 +18,8 @@ function inspectSource(relative){
 if(!fs.existsSync(manifestPath))throw new Error('Firebase publication manifest is missing');
 const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 if(manifest.schemaVersion!=='1.0'||!Array.isArray(manifest.files))throw new Error('Invalid Firebase publication manifest schema');
-if(!['QUARANTINED','REVIEWED'].includes(manifest.status))throw new Error('Manifest status must be QUARANTINED or REVIEWED');
-if(manifest.status==='QUARANTINED'&&manifest.files.length)fail('QUARANTINED manifest must not publish customer files');
-if(manifest.status==='REVIEWED'){
- const approval=manifest.approvalRecord;
- const approvedAt=typeof approval?.approvedAt==='string'?Date.parse(approval.approvedAt):NaN;
- if(manifest.files.length===0)fail('REVIEWED manifest must contain at least one approved file');
- if(typeof approval?.approvedBy!=='string'||!approval.approvedBy.trim())fail('REVIEWED manifest requires approvalRecord.approvedBy');
- if(!Number.isFinite(approvedAt)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(approval.approvedAt))fail('REVIEWED manifest requires an ISO-8601 UTC approvalRecord.approvedAt');
- if(typeof approval?.changeReference!=='string'||!approval.changeReference.trim())fail('REVIEWED manifest requires approvalRecord.changeReference');
-}
+if(manifest.status!=='QUARANTINED')throw new Error('Firebase publication remains quarantined; reviewed publication requires a separately approved and verified publisher');
+if(manifest.files.length)fail('QUARANTINED manifest must not publish customer files');
 if(new Set(manifest.files).size!==manifest.files.length)fail('duplicate manifest paths are not allowed');
 const sources=manifest.files.map(inspectSource).filter(Boolean);
 if(errors.length){console.error(JSON.stringify({ok:false,gate:'FIREBASE_PUBLICATION_BOUNDARY',errors},null,2));process.exit(1);}
