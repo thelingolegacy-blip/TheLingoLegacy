@@ -27,10 +27,12 @@ for (const [index, candidate] of [path.join(root, 'config'), path.dirname(manife
 }
 const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 if(manifest.schemaVersion!=='1.0'||!Array.isArray(manifest.files))throw new Error('Invalid Firebase publication manifest schema');
-if(manifest.status!=='QUARANTINED')throw new Error('Firebase publication remains quarantined; reviewed publication requires a separately approved and verified publisher');
-if(manifest.files.length)fail('QUARANTINED manifest must not publish customer files');
+if(!['QUARANTINED','REVIEWED'].includes(manifest.status))throw new Error('Invalid Firebase publication manifest status');
 if(new Set(manifest.files).size!==manifest.files.length)fail('duplicate manifest paths are not allowed');
 const sources=manifest.files.map(inspectSource).filter(Boolean);
+if(errors.length){console.error(JSON.stringify({ok:false,gate:'FIREBASE_PUBLICATION_BOUNDARY',errors},null,2));process.exit(1);}
+if(manifest.status!=='QUARANTINED')throw new Error('Firebase publication remains quarantined; reviewed publication requires a separately approved and verified publisher');
+if(manifest.files.length)fail('QUARANTINED manifest must not publish customer files');
 if(errors.length){console.error(JSON.stringify({ok:false,gate:'FIREBASE_PUBLICATION_BOUNDARY',errors},null,2));process.exit(1);}
 try {
  const buildStat=fs.lstatSync(buildRoot);

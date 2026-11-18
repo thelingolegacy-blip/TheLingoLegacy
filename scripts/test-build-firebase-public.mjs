@@ -124,19 +124,20 @@ test('manifest rejects symlinked parent directories', (t) => {
   assert.match(result.stderr, /symlink rejected/);
 });
 
-test('nested allowlist publishes only the exact nested file', (t) => {
+test('valid nested allowlist remains unpublished while the manifest is quarantined', (t) => {
   const root = fixture(['assets/approved.html']);
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.mkdirSync(path.join(root, 'assets'));
   fs.writeFileSync(path.join(root, 'assets/approved.html'), '<h1>Approved</h1>');
-  fs.writeFileSync(path.join(root, 'assets/private.html'), '<h1>Private</h1>');
+  const manifestPath = path.join(root, 'config/firebase/hosting-public-manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  manifest.status = 'QUARANTINED';
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest));
   const result = run(root);
-  assert.equal(result.status, 0, result.stderr);
-  const output = path.join(root, 'build/firebase-public');
-  assert.deepEqual(fs.readdirSync(path.join(output, 'assets')), ['approved.html']);
-  assert.equal(fs.readFileSync(path.join(output, 'assets/approved.html'), 'utf8'), '<h1>Approved</h1>');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QUARANTINED manifest must not publish customer files/);
+  assert.equal(fs.existsSync(path.join(root, 'build/firebase-public')), false);
 });
-
 test('invalid manifest preserves the prior generated output', (t) => {
   const root = fixture(['../blocked.html']);
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
