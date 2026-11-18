@@ -114,7 +114,7 @@ jobs:
                 "head_sha": job.get("head_sha"),
                 "acceptance_scope": "GitHub-hosted runner admission only; not G02 acceptance or production release evidence"
             }
-            pathlib.Path("evidence/manifest.json").write_text(json.dumps(manifest, indent=2) + "\\n")
+            pathlib.Path("evidence/manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
             PY
             (cd evidence && sha256sum runner-environment.txt jobs.json provider-job.json manifest.json > SHA256SUMS)
           else
