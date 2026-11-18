@@ -12,6 +12,16 @@ This is the operating system blueprint and navigation hub for completing, operat
 
 The Center is an operational governance layer. It does not become a second source of truth: GitHub remains authoritative for code, issues, reviews, commits, CI runs and release provenance. Provider systems remain authoritative for their own live resource state. The Center records source references, freshness, decisions and evidence pointers.
 
+## Prototype boundaries
+
+The current `index.html` is a static navigation and governance-reference prototype:
+- Search and Show All filter the in-memory center directory only.
+- Export downloads a JSON snapshot of static directory descriptions and the literal status `DESIGN_DEFINED_NOT_CONNECTED`.
+- There is no authentication, authorization service, database, durable evidence ledger, API client, provider connector, workflow dispatcher, audit-event backend, or live resource mutation.
+- A visible center or exported record is not proof that its capability is implemented, connected, authorized, or operational.
+
+Do not use this prototype to dispatch work, grant access, change provider configuration, approve releases, or claim live operational status. Those capabilities require separate backend contracts, identity/access controls, persistence, auditability, provider-specific integration tests, and independent acceptance.
+
 ## Center directory
 
 | Center | Primary responsibility |
