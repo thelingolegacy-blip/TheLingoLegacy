@@ -57,7 +57,7 @@ jobs:
                 printf '%s=' "$tool"
                 "$tool" --version 2>&1 | head -n 1 || true
               else
-                printf '%s=NOT_INSTALLED\\n' "$tool"
+                printf '%s=NOT_INSTALLED\n' "$tool"
               fi
             done
           } | tee evidence/runner-environment.txt
