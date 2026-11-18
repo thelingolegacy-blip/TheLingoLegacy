@@ -5,19 +5,20 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^2.24.0
-  firebase_database: ^10.2.0
-  firebase_auth: ^4.14.0
-  firebase_storage: ^11.5.0
-  firebase_analytics: ^10.7.0
+  material_ui: ^1.11.1
+  firebase_core: 2.32.0
+  firebase_database: 10.5.7
+  firebase_auth: 4.20.0
+  firebase_storage: 11.7.7
+  firebase_analytics: 10.10.7
   provider: ^6.1.0
   http: ^1.1.0
-  intl: ^0.19.0
+  intl: ^0.20.3
   shared_preferences: ^2.2.0
   connectivity_plus: ^5.0.0
 
@@ -30,15 +31,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/images/
-    - assets/icons/
-    - assets/sounds/
-
-  fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700
