@@ -42,6 +42,19 @@ test('quarantined manifest creates only a self-contained noindex 404 page', (t) 
   assert.match(fs.readFileSync(path.join(output, '404.html'), 'utf8'), /noindex,nofollow/);
 });
 
+test('publication manifest symlinks are rejected', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const manifestPath = path.join(root, 'config/firebase/hosting-public-manifest.json');
+  const target = path.join(root, 'outside-manifest.json');
+  fs.writeFileSync(target, JSON.stringify({ schemaVersion: '1.0', status: 'QUARANTINED', files: [] }));
+  fs.rmSync(manifestPath);
+  fs.symlinkSync(target, manifestPath);
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must not contain symlinks/);
+});
+
 test('manifest rejects traversal and hidden paths', (t) => {
   for (const file of ['../README.md', '.env', 'docs/../README.md']) {
     const root = fixture([file]);
