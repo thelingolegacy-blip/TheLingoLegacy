@@ -93,29 +93,29 @@ jobs:
           set -euo pipefail
           if [[ -s evidence/provider-job.json && -s evidence/runner-environment.txt ]]; then
             python3 - <<'PY'
-            import datetime, json, os, pathlib
-            job = json.loads(pathlib.Path("evidence/provider-job.json").read_text())
-            manifest = {
-                "schema": "lingo-actions-startup-evidence-v1",
-                "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "repository": os.environ["GITHUB_REPOSITORY"],
-                "run_id": int(os.environ["GITHUB_RUN_ID"]),
-                "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
-                "workflow": os.environ["GITHUB_WORKFLOW"],
-                "event": os.environ["GITHUB_EVENT_NAME"],
-                "ref": os.environ["GITHUB_REF"],
-                "commit_sha": os.environ["GITHUB_SHA"],
-                "job_id": job.get("id"),
-                "runner_id": job.get("runner_id"),
-                "runner_name": job.get("runner_name"),
-                "runner_group_name": job.get("runner_group_name"),
-                "job_status": job.get("status"),
-                "job_conclusion": job.get("conclusion"),
-                "head_sha": job.get("head_sha"),
-                "acceptance_scope": "GitHub-hosted runner admission only; not G02 acceptance or production release evidence"
-            }
-            pathlib.Path("evidence/manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-            PY
+          import datetime, json, os, pathlib
+          job = json.loads(pathlib.Path("evidence/provider-job.json").read_text())
+          manifest = {
+              "schema": "lingo-actions-startup-evidence-v1",
+              "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "event": os.environ["GITHUB_EVENT_NAME"],
+              "ref": os.environ["GITHUB_REF"],
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "job_id": job.get("id"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "runner_group_name": job.get("runner_group_name"),
+              "job_status": job.get("status"),
+              "job_conclusion": job.get("conclusion"),
+              "head_sha": job.get("head_sha"),
+              "acceptance_scope": "GitHub-hosted runner admission only; not G02 acceptance or production release evidence"
+          }
+          pathlib.Path("evidence/manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+          PY
             (cd evidence && sha256sum runner-environment.txt jobs.json provider-job.json manifest.json > SHA256SUMS)
           else
             echo "Evidence incomplete; manifest/checksums not generated." >&2
