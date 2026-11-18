@@ -24,8 +24,13 @@ else
   echo "LINGO_FIREBASE_INTEGRATION=BLOCKED_PREVIEW_ONLY"
 fi
 
+echo "LINGO_STAGE=firebase_publication_boundary"
+node --test scripts/test-verify-flutter-firebase.mjs
+node --test scripts/test-build-firebase-public.mjs
+node scripts/build-firebase-public.mjs
+
 echo "LINGO_STAGE=root_flutter_checks"
-flutter pub get
+flutter pub get --enforce-lockfile
 flutter pub deps --style=compact | tee /tmp/lingo-firebase-deps.txt | grep -E "firebase|flutterfire|^js "
 flutter analyze lib test
 flutter test
@@ -35,6 +40,7 @@ cd "$ROOT_DIR/studio-sites/games/oasis-platform/flutter"
 flutter pub get
 flutter analyze
 flutter test
+echo "OASIS_PUBSPEC_LOCK_BASE64=$(base64 -w0 pubspec.lock)"
 cd "$ROOT_DIR"
 
 echo "LINGO_STAGE=flutter_web_build"
