@@ -19,7 +19,7 @@ function fixture(files = [], approval = approvalRecord) {
   fs.mkdirSync(path.join(root, 'scripts'), { recursive: true });
   const manifest = {
     schemaVersion: '1.0',
-    status: files.length ? 'REVIEWED' : 'QUARANTINED',
+    status: 'QUARANTINED',
     files,
     ...(files.length && approval ? { approvalRecord: approval } : {}),
   };
@@ -111,17 +111,16 @@ test('manifest rejects symlinked parent directories', (t) => {
   assert.match(result.stderr, /symlink rejected/);
 });
 
-test('nested allowlist publishes only the exact nested file', (t) => {
+test('quarantined manifest rejects every non-empty allowlist without publishing customer files', (t) => {
   const root = fixture(['assets/approved.html']);
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.mkdirSync(path.join(root, 'assets'));
-  fs.writeFileSync(path.join(root, 'assets/approved.html'), '<h1>Approved</h1>');
+  fs.writeFileSync(path.join(root, 'assets/approved.html'), '<h1>Not publishable</h1>');
   fs.writeFileSync(path.join(root, 'assets/private.html'), '<h1>Private</h1>');
   const result = run(root);
-  assert.equal(result.status, 0, result.stderr);
-  const output = path.join(root, 'build/firebase-public');
-  assert.deepEqual(fs.readdirSync(path.join(output, 'assets')), ['approved.html']);
-  assert.equal(fs.readFileSync(path.join(output, 'assets/approved.html'), 'utf8'), '<h1>Approved</h1>');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QUARANTINED manifest must not publish customer files/);
+  assert.equal(fs.existsSync(path.join(root, 'build/firebase-public')), false);
 });
 
 test('invalid manifest preserves the prior generated output', (t) => {
