@@ -139,9 +139,9 @@ For one payline under independent reel draws, the five-reel sequence space has |
 
 Expected line payout:
 
-E[line payout] = betPerLine × sum over all five-symbol sequences of (sequence probability × resolved multiplier).
+E[line payout] = lineStakeUnits × sum over all five-symbol sequences of (sequence probability × resolved multiplier).
 
-For 20 always-active lines, expected total payout is the sum of expected line payouts. Theoretical RTP is expected total payout divided by total wager (20 × betPerLine under the proposed per-line model). This linearity-of-expectation calculation does not require paylines to be independent.
+For 20 always-active lines, expected total payout is the sum of expected line payouts. Theoretical RTP is expected total payout divided by total-spin wagerUnits (20 × lineStakeUnits under the current exact-allocation rule). This linearity-of-expectation calculation does not require paylines to be independent.
 
 However, paylines share cells and are correlated. Total-spin variance must include covariance between every pair of lines. Exact any-win frequency and total-spin variance therefore require a validated joint-state/dynamic-programming calculation or another independently reviewed exact method. Monte Carlo is a secondary cross-check, never the sole basis for a published RTP claim.
 
