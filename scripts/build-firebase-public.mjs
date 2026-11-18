@@ -15,7 +15,16 @@ function inspectSource(relative){
  let cursor=root;for(const part of relative.split('/')){cursor=path.join(cursor,part);if(!fs.existsSync(cursor)){fail('missing allowlisted file: '+relative);return null;}if(fs.lstatSync(cursor).isSymbolicLink()){fail('symlink rejected: '+relative);return null;}}
  if(!fs.statSync(absolute).isFile()){fail('not a regular file: '+relative);return null;}return absolute;
 }
-if(!fs.existsSync(manifestPath))throw new Error('Firebase publication manifest is missing');
+for (const [index, candidate] of [path.join(root, 'config'), path.dirname(manifestPath), manifestPath].entries()) {
+ let stat;
+ try { stat = fs.lstatSync(candidate); } catch (error) {
+  if (error.code === 'ENOENT') throw new Error('Firebase publication manifest path is incomplete');
+  throw error;
+ }
+ if (stat.isSymbolicLink()) throw new Error('Firebase publication manifest path must not contain symlinks');
+ if (index < 2 && !stat.isDirectory()) throw new Error('Firebase publication manifest parent must be a directory');
+ if (index === 2 && !stat.isFile()) throw new Error('Firebase publication manifest must be a regular file');
+}
 const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 if(manifest.schemaVersion!=='1.0'||!Array.isArray(manifest.files))throw new Error('Invalid Firebase publication manifest schema');
 if(manifest.status!=='QUARANTINED')throw new Error('Firebase publication remains quarantined; reviewed publication requires a separately approved and verified publisher');
