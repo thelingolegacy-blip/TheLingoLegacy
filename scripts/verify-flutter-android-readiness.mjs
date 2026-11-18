@@ -14,7 +14,7 @@ const requiredFiles = [
 ];
 const blockers = [];
 const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)));
-if (missing.length) blockers.push(\`Android Gradle scaffold is incomplete: \${missing.join(', ')}\`);
+if (missing.length) blockers.push('Android Gradle scaffold is incomplete: ' + missing.join(', '));
 
 const pubspecPath = path.join(root, 'pubspec.yaml');
 const gradlePath = path.join(root, 'android/app/build.gradle.kts');
@@ -32,7 +32,7 @@ if (!fs.existsSync(pubspecPath)) {
   for (const [name, expected] of Object.entries(pins)) {
     const matches = [...pubspec.matchAll(new RegExp('^\\s{2}' + name + ':\\s*([^\\s#]+)', 'gm'))];
     if (matches.length !== 1 || matches[0][1] !== expected) {
-      blockers.push(\`\${name} must be pinned exactly to \${expected}; found \${matches.map((m) => m[1]).join(', ') || 'no declaration'}\`);
+      blockers.push(name + ' must be pinned exactly to ' + expected + '; found ' + (matches.map((m) => m[1]).join(', ') || 'no declaration'));
     }
   }
 }
@@ -41,7 +41,7 @@ if (!fs.existsSync(gradlePath)) {
 } else {
   const gradle = fs.readFileSync(gradlePath, 'utf8');
   const minSdk = gradle.match(/\bminSdk\s*=\s*(\d+)/);
-  if (!minSdk || Number(minSdk[1]) !== 21) blockers.push(\`Android minSdk must remain exactly 21; found \${minSdk?.[1] ?? 'no explicit value'}\`);
+  if (!minSdk || Number(minSdk[1]) !== 21) blockers.push('Android minSdk must remain exactly 21; found ' + (minSdk?.[1] ?? 'no explicit value'));
   if (!gradle.includes('id("com.android.application")')) blockers.push('Android application Gradle plugin is missing');
   if (!gradle.includes('id("dev.flutter.flutter-gradle-plugin")')) blockers.push('Flutter Gradle plugin is missing');
   if (!gradle.includes('namespace = "com.thelingolegacy.app"')) blockers.push('Android namespace does not match com.thelingolegacy.app');
