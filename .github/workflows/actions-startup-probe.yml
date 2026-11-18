@@ -1,13 +1,26 @@
 name: Actions startup probe (inline only)
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/actions-startup-probe.yml"
+      - "docs/actions-startup-failure-recovery.md"
   push:
     branches:
       - "recovery/actions-startup-probe-2026-11-16"
     paths:
       - ".github/workflows/actions-startup-probe.yml"
+      - "docs/actions-startup-failure-recovery.md"
+  workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: lingo-actions-startup-probe-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   hosted-runner-smoke:
@@ -15,30 +28,69 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Capture runner allocation and execute native smoke checks
+      - name: Capture runner environment and execute native smoke checks
+        id: smoke
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          set -eu
-          echo "probe=LINGO_ACTIONS_INLINE_ONLY"
-          echo "repository=${GITHUB_REPOSITORY}"
-          echo "run_id=${GITHUB_RUN_ID}"
-          echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
-          echo "workflow=${GITHUB_WORKFLOW}"
-          echo "event=${GITHUB_EVENT_NAME}"
-          echo "ref=${GITHUB_REF}"
-          echo "sha=${GITHUB_SHA}"
-          echo "runner_name=${RUNNER_NAME}"
-          echo "runner_os=${RUNNER_OS}"
-          echo "runner_arch=${RUNNER_ARCH}"
-          echo "utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          uname -a
-          cat /etc/os-release
-          for tool in bash git python3 node npm; do
-            if command -v "$tool" >/dev/null 2>&1; then
-              printf '%s=' "$tool"
-              "$tool" --version 2>&1 | head -n 1 || true
-            else
-              printf '%s=NOT_INSTALLED\n' "$tool"
-            fi
-          done
-          echo "inline_probe=PASS"
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "probe=LINGO_ACTIONS_INLINE_ONLY"
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "workflow=${GITHUB_WORKFLOW}"
+            echo "job=${GITHUB_JOB}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            uname -a
+            cat /etc/os-release
+            for tool in bash git python3 node npm; do
+              if command -v "$tool" >/dev/null 2>&1; then
+                printf '%s=' "$tool"
+                "$tool" --version 2>&1 | head -n 1 || true
+              else
+                printf '%s=NOT_INSTALLED\\n' "$tool"
+              fi
+            done
+          } | tee evidence/runner-environment.txt
+
+          curl --fail --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" \
+            > evidence/jobs.json
+
+          jq -e '
+            [.jobs[] | select(.runner_id != null and .runner_name != null)]
+            | .[0] // error("GitHub did not return an assigned runner identity")
+          ' evidence/jobs.json > evidence/provider-job.json
+
+          jq -r '
+            "provider_job_id=\(.id)",
+            "provider_runner_id=\(.runner_id)",
+            "provider_runner_name=\(.runner_name)",
+            "provider_runner_group=\(.runner_group_name // "unreported")",
+            "provider_job_status=\(.status)",
+            "provider_job_conclusion=\(.conclusion // "pending")",
+            "provider_head_sha=\(.head_sha)"
+          ' evidence/provider-job.json | tee -a evidence/runner-environment.txt
+
+          echo "inline_probe=PASS" | tee -a evidence/runner-environment.txt
+
+      - name: Upload correlated startup evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-actions-startup-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 14
