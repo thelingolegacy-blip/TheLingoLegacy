@@ -52,6 +52,9 @@ export function validateIdempotencyKey(value) {
 }
 export function evaluateFiveReelSpin({wagerUnits,volatility='medium',paytable=DEFAULT_PAYTABLE,readUint32}={}) {
   if (!Number.isSafeInteger(wagerUnits) || wagerUnits <= 0) throw new RangeError('wagerUnits must be a positive safe integer');
+  if (wagerUnits % PAYLINES.length !== 0) throw new RangeError('wagerUnits must divide evenly across active paylines');
+  const lineStakeUnits = wagerUnits / PAYLINES.length;
+  if (!Number.isSafeInteger(lineStakeUnits) || lineStakeUnits <= 0) throw new RangeError('line stake must be a positive safe integer');
   if (!Object.hasOwn(DEFAULT_VOLATILITY_TABLES,volatility)) throw new TypeError('unsupported volatility');
   const weights=DEFAULT_VOLATILITY_TABLES[volatility];
   for (const symbol of DEFAULT_SYMBOLS) {
@@ -72,11 +75,11 @@ export function evaluateFiveReelSpin({wagerUnits,volatility='medium',paytable=DE
     }
     if(matchLength>=3&&target!=='WILD'){
       const multiplier=paytable[target]?.[matchLength]??0;
-      const payoutUnits=wagerUnits*multiplier;
+      const payoutUnits=lineStakeUnits*multiplier;
       if(!Number.isSafeInteger(payoutUnits))throw new RangeError('payout overflow');
       if(payoutUnits>0)wins.push({payline:i+1,symbol:target,matchLength,payoutUnits});
     }
   }
   const payoutUnits=wins.reduce((sum,w)=>{const next=sum+w.payoutUnits;if(!Number.isSafeInteger(next))throw new RangeError('payout overflow');return next;},0);
-  return {matrix,wins,payoutUnits,paylinesEvaluated:PAYLINES.length,wagerUnits,volatility};
+  return {matrix,wins,payoutUnits,paylinesEvaluated:PAYLINES.length,wagerUnits,lineStakeUnits,volatility};
 }
