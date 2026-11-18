@@ -13,13 +13,13 @@ const approvalRecord = {
   changeReference: 'test-fixture',
 };
 
-function fixture(files = [], approval = approvalRecord) {
+function fixture(files = [], approval = approvalRecord, status = 'QUARANTINED') {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-firebase-public-'));
   fs.mkdirSync(path.join(root, 'config/firebase'), { recursive: true });
   fs.mkdirSync(path.join(root, 'scripts'), { recursive: true });
   const manifest = {
     schemaVersion: '1.0',
-    status: 'QUARANTINED',
+    status,
     files,
     ...(files.length && approval ? { approvalRecord: approval } : {}),
   };
@@ -63,7 +63,7 @@ test('manifest rejects symlinked files', (t) => {
 });
 
 test('REVIEWED manifest is rejected even when it carries self-asserted approval metadata', (t) => {
-  const root = fixture(['public.html']);
+  const root = fixture(['public.html'], approvalRecord, 'REVIEWED');
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.writeFileSync(path.join(root, 'public.html'), '<h1>Not publishable</h1>');
   const result = run(root);
@@ -73,7 +73,7 @@ test('REVIEWED manifest is rejected even when it carries self-asserted approval 
 });
 
 test('REVIEWED manifest is rejected when approval metadata is absent', (t) => {
-  const root = fixture(['public.html'], null);
+  const root = fixture(['public.html'], null, 'REVIEWED');
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.writeFileSync(path.join(root, 'public.html'), '<h1>Not publishable</h1>');
   const result = run(root);
