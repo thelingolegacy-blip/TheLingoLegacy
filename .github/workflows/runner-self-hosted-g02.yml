@@ -38,7 +38,7 @@ jobs:
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
-          trap 'rc=$?; printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$rc"; exit "$rc"' EXIT
+          trap 'rc=$?; printf "G02_FORENSIC_EXIT_STATUS=%s\n" "$rc"; exit "$rc"' EXIT
 
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
@@ -94,7 +94,7 @@ jobs:
               runner_environment: $runner_environment
             }' > g02-evidence/g02-sentinel.json
 
-          printf 'RUNNER_EXECUTION_SENTINEL=PASS\\nrunner_id=%s\\nrunner_name=%s\\nrunner_os=%s\\nrunner_arch=%s\\nrunner_environment=%s\\ngithub_run_id=%s\\ngithub_job_id=%s\\ngithub_commit_sha=%s\\n' \
+          printf 'RUNNER_EXECUTION_SENTINEL=PASS\nrunner_id=%s\nrunner_name=%s\nrunner_os=%s\nrunner_arch=%s\nrunner_environment=%s\ngithub_run_id=%s\ngithub_job_id=%s\ngithub_commit_sha=%s\n' \
             "$RUNNER_ID" "$API_RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUNNER_ENVIRONMENT" "$GITHUB_RUN_ID" "$JOB_ID" "$GITHUB_SHA_VALUE"
 
       - name: Host diagnostics
