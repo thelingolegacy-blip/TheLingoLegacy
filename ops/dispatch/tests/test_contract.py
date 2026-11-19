@@ -39,6 +39,30 @@ class DispatchContractTests(unittest.TestCase):
     def test_valid_preview_job(self):
         validate_job(valid_job())
 
+    def test_unknown_owner_role_rejected(self):
+        job = valid_job()
+        job["owner_role"] = "unknown-operator"
+        with self.assertRaisesRegex(ContractError, "unknown role"):
+            validate_job(job)
+
+    def test_unknown_reviewer_role_rejected(self):
+        job = valid_job()
+        job["reviewer_role"] = "unlisted-reviewer"
+        with self.assertRaisesRegex(ContractError, "unknown role"):
+            validate_job(job)
+
+    def test_service_role_rejected_for_owner(self):
+        job = valid_job()
+        job["owner_role"] = "worker"
+        with self.assertRaisesRegex(ContractError, "human role"):
+            validate_job(job)
+
+    def test_service_role_rejected_for_reviewer(self):
+        job = valid_job()
+        job["reviewer_role"] = "worker"
+        with self.assertRaisesRegex(ContractError, "human role"):
+            validate_job(job)
+
     def test_missing_field_fails_closed(self):
         job = valid_job()
         del job["reviewer_role"]
