@@ -1,3 +1,5 @@
 # Isolated website preview root
 
-Cloudflare Pages uses this directory as its build root. `build.sh` invokes the repository's curated website staging script and writes only the allowlisted static website files to `dist/`. The preview project remains non-production and protected by Cloudflare Access.
+This directory retains an alternate static website preview entrypoint. The connected Cloudflare Pages project currently builds from the repository root and invokes `scripts/cloudflare-pages-preview-build.sh`, which delegates to the curated `scripts/build-website-preview.sh` and writes the allowlisted artifact to `build/web/`.
+
+The publication script copies only explicitly listed public files and directories. Internal admin, economy, integration-configuration, identity implementation, backend, workflow, infrastructure, test and secret-bearing paths are excluded or rejected. This preview remains non-production; access protection must be independently verified and must not be assumed from this README.
