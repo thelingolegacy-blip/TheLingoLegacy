@@ -3,15 +3,20 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
-  static bool get isConfigured {
-    final configurations = <FirebaseOptions>[web, android, ios, macos];
-    return configurations.every((options) =>
-        options.apiKey.isNotEmpty &&
+  /// True only when the configuration for the active platform is complete.
+  ///
+  /// Unsupported platforms continue to fail closed through [currentPlatform].
+  static bool get isConfigured => isConfiguredFor(currentPlatform);
+
+  /// Validates one platform independently; an unconfigured platform must not
+  /// disable Firebase for a different platform that has valid options.
+  static bool isConfiguredFor(FirebaseOptions options) {
+    return options.apiKey.isNotEmpty &&
         options.appId.isNotEmpty &&
         options.messagingSenderId.isNotEmpty &&
         !options.apiKey.startsWith('YOUR_') &&
         !options.appId.startsWith('YOUR_') &&
-        !options.messagingSenderId.startsWith('YOUR_'));
+        !options.messagingSenderId.startsWith('YOUR_');
   }
 
   static FirebaseOptions get currentPlatform {
