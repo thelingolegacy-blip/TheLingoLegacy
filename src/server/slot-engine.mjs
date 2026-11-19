@@ -2,28 +2,13 @@ import { randomBytes } from 'node:crypto';
 
 export const DEFAULT_SYMBOLS = Object.freeze(['LEGACY_LION','OBSIDIAN_BAR','SEVEN','DIAMOND','WILD']);
 export const PAYLINES = Object.freeze([
-  // Candidate 20-line geometry for the 5-reel × 3-row presentation.
-  // Product/math acceptance is still required before this becomes a release contract.
-  Object.freeze([1,1,1,1,1]),
-  Object.freeze([0,0,0,0,0]),
-  Object.freeze([2,2,2,2,2]),
-  Object.freeze([0,1,2,1,0]),
-  Object.freeze([2,1,0,1,2]),
-  Object.freeze([0,0,1,2,2]),
-  Object.freeze([2,2,1,0,0]),
-  Object.freeze([1,0,0,0,1]),
-  Object.freeze([1,2,2,2,1]),
-  Object.freeze([0,1,1,1,0]),
-  Object.freeze([2,1,1,1,2]),
-  Object.freeze([1,0,1,2,1]),
-  Object.freeze([1,2,1,0,1]),
-  Object.freeze([0,0,1,1,2]),
-  Object.freeze([2,2,1,1,0]),
-  Object.freeze([0,1,0,1,0]),
-  Object.freeze([2,1,2,1,2]),
-  Object.freeze([1,0,1,0,1]),
-  Object.freeze([1,2,1,2,1]),
-  Object.freeze([0,1,2,2,1])
+  Object.freeze([1,1,1,1,1]), Object.freeze([0,0,0,0,0]), Object.freeze([2,2,2,2,2]),
+  Object.freeze([0,1,2,1,0]), Object.freeze([2,1,0,1,2]), Object.freeze([0,0,1,2,2]),
+  Object.freeze([2,2,1,0,0]), Object.freeze([1,0,0,0,1]), Object.freeze([1,2,2,2,1]),
+  Object.freeze([0,1,1,1,0]), Object.freeze([2,1,1,1,2]), Object.freeze([1,0,1,2,1]),
+  Object.freeze([1,2,1,0,1]), Object.freeze([0,0,1,1,2]), Object.freeze([2,2,1,1,0]),
+  Object.freeze([0,1,0,1,0]), Object.freeze([2,1,2,1,2]), Object.freeze([1,0,1,0,1]),
+  Object.freeze([1,2,1,2,1]), Object.freeze([0,1,2,2,1])
 ]);
 export const DEFAULT_PAYTABLE = Object.freeze({
   LEGACY_LION:Object.freeze({3:5,4:20,5:100}),
@@ -50,11 +35,42 @@ export function secureRandomInt(max, readUint32 = () => randomBytes(4).readUInt3
 export function validateIdempotencyKey(value) {
   return typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$/.test(value);
 }
-export function evaluateFiveReelSpin({wagerUnits,volatility='medium',paytable=DEFAULT_PAYTABLE,readUint32}={}) {
-  if (!Number.isSafeInteger(wagerUnits) || wagerUnits <= 0) throw new RangeError('wagerUnits must be a positive safe integer');
-  if (wagerUnits % PAYLINES.length !== 0) throw new RangeError('wagerUnits must divide evenly across active paylines');
-  const lineStakeUnits = wagerUnits / PAYLINES.length;
-  if (!Number.isSafeInteger(lineStakeUnits) || lineStakeUnits <= 0) throw new RangeError('line stake must be a positive safe integer');
+
+/**
+ * Option 2 allocation: wagerUnits is the total spin stake. Allocate it using
+ * the selected active-payline count with integer arithmetic only. A non-zero
+ * remainder is rejected explicitly; no stake is silently rounded or dropped.
+ */
+export function calculateLineStakeAllocation(wagerUnits, activePaylines = PAYLINES.length) {
+  if (!Number.isSafeInteger(wagerUnits) || wagerUnits <= 0) {
+    throw new RangeError('wagerUnits must be a positive safe integer');
+  }
+  if (!Number.isSafeInteger(activePaylines) || activePaylines < 1 || activePaylines > PAYLINES.length) {
+    throw new RangeError(`activePaylines must be an integer from 1 to ${PAYLINES.length}`);
+  }
+  const lineStakeUnits = Math.floor(wagerUnits / activePaylines);
+  const remainderUnits = wagerUnits % activePaylines;
+  if (remainderUnits !== 0) {
+    throw new RangeError(`wagerUnits must divide evenly across active paylines; remainderUnits=${remainderUnits}`);
+  }
+  if (!Number.isSafeInteger(lineStakeUnits) || lineStakeUnits <= 0) {
+    throw new RangeError('line stake must be a positive safe integer');
+  }
+  return Object.freeze({ activePaylines, lineStakeUnits, remainderUnits });
+}
+
+export function evaluateFiveReelSpin({
+  wagerUnits,
+  activePaylines = PAYLINES.length,
+  featureMultiplier = 1,
+  volatility = 'medium',
+  paytable = DEFAULT_PAYTABLE,
+  readUint32
+} = {}) {
+  const allocation = calculateLineStakeAllocation(wagerUnits, activePaylines);
+  if (!Number.isSafeInteger(featureMultiplier) || featureMultiplier < 1) {
+    throw new RangeError('featureMultiplier must be a positive safe integer');
+  }
   if (!Object.hasOwn(DEFAULT_VOLATILITY_TABLES,volatility)) throw new TypeError('unsupported volatility');
   const weights=DEFAULT_VOLATILITY_TABLES[volatility];
   for (const symbol of DEFAULT_SYMBOLS) {
@@ -65,7 +81,7 @@ export function evaluateFiveReelSpin({wagerUnits,volatility='medium',paytable=DE
   const draw=()=>{const n=readUint32?secureRandomInt(total,readUint32):secureRandomInt(total);let x=n;for(const s of DEFAULT_SYMBOLS){x-=weights[s];if(x<0)return s;}throw new Error('weight selection failed');};
   const matrix=Array.from({length:3},()=>Array.from({length:5},draw));
   const wins=[];
-  for(let i=0;i<PAYLINES.length;i++){
+  for(let i=0;i<allocation.activePaylines;i++){
     const line=PAYLINES[i], first=matrix[line[0]][0];
     let matchLength=0, target=first;
     for(let c=0;c<5;c++){
@@ -75,11 +91,25 @@ export function evaluateFiveReelSpin({wagerUnits,volatility='medium',paytable=DE
     }
     if(matchLength>=3&&target!=='WILD'){
       const multiplier=paytable[target]?.[matchLength]??0;
-      const payoutUnits=lineStakeUnits*multiplier;
+      const payoutUnits=allocation.lineStakeUnits*multiplier;
       if(!Number.isSafeInteger(payoutUnits))throw new RangeError('payout overflow');
       if(payoutUnits>0)wins.push({payline:i+1,symbol:target,matchLength,payoutUnits});
     }
   }
-  const payoutUnits=wins.reduce((sum,w)=>{const next=sum+w.payoutUnits;if(!Number.isSafeInteger(next))throw new RangeError('payout overflow');return next;},0);
-  return {matrix,wins,payoutUnits,paylinesEvaluated:PAYLINES.length,wagerUnits,lineStakeUnits,volatility};
+  const basePayoutUnits=wins.reduce((sum,w)=>{const next=sum+w.payoutUnits;if(!Number.isSafeInteger(next))throw new RangeError('payout overflow');return next;},0);
+  const payoutUnits=basePayoutUnits*featureMultiplier;
+  if(!Number.isSafeInteger(payoutUnits))throw new RangeError('feature-adjusted payout overflow');
+  return {
+    matrix,
+    wins,
+    basePayoutUnits,
+    featureMultiplier,
+    payoutUnits,
+    paylinesEvaluated:allocation.activePaylines,
+    activePaylines:allocation.activePaylines,
+    wagerUnits,
+    lineStakeUnits:allocation.lineStakeUnits,
+    remainderUnits:allocation.remainderUnits,
+    volatility
+  };
 }
