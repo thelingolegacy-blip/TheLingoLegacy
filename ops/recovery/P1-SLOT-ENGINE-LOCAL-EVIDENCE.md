@@ -4,7 +4,8 @@
 
 - Repository: `thelingolegacy-blip/TheLingoLegacy`
 - Branch: `recovery/p1-slot-engine-restore`
-- Implementation commit: `2fd439c80e8f96f35ee8686ea5fa2c0191c9552f`\n- Test commit / current branch head: `3e373e17339aabe6088dd8e7d4862f9cb2d4c29b`
+- Implementation commit: `2fd439c80e8f96f35ee8686ea5fa2c0191c9552f`
+- Test commit: `3e373e17339aabe6088dd8e7d4862f9cb2d4c29b`
 - Package manifest blob: `2b36af54e8b4278ca0ce9bf4ac64861cce3bdb47`
 - Source engine blob: `3193be9754b8d7f235e40dfd71fae1048a7661bc`
 - Test file blob: `26c689feea1d3ac95d34db22c6d8c6f825a033f8`
