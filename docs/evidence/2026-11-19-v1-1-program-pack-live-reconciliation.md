@@ -86,7 +86,25 @@ These observations do not satisfy any execution-based G02 acceptance predicate. 
 
 The repository file `infrastructure/registry/workers.json` records 21 routes and has `observed_at: 2026-11-11`. The six-route difference is accounted for by six live integration-configuration quarantine routes added after that snapshot. Refresh the evidence and registry deliberately; do not edit live routes.
 
-### 4.3 Route assignments
+### 4.3 Worker script inventory
+
+The nine live script names returned by the Cloudflare account API:
+
+| Worker script | Route assignment observed |
+|---|---|
+| `lingo-ecosystem-atlas` | `atlas.thelingolegacy.com/*` |
+| `lingo-flagship-root` | `thelingolegacy.com/` |
+| `lingo-flagship-site-preview` | No route in the 27-route inventory |
+| `lingo-integration-config-404` | Six integration-configuration quarantine routes |
+| `lingo-resilience-gateway` | No route in the 27-route inventory |
+| `lingo-static-backup-proxy` | `launch.thelingolegacy.com/*` |
+| `lingo-studio-control-center-staging` | No route in the 27-route inventory |
+| `lingo-unified-control-tower-preview` | No route in the 27-route inventory |
+| `thelingolegacyv-5` | Apex/www wildcard and the product/utility subdomain routes |
+
+“No route” means no matching assignment appeared in the returned zone route list; it does not prove the script is unused or safe to delete. Preserve these scripts pending ownership and deployment review.
+
+### 4.4 Route assignments
 
 | Pattern | Assigned Worker |
 |---|---|
@@ -120,7 +138,7 @@ The repository file `infrastructure/registry/workers.json` records 21 routes and
 
 The apex exact-root route and apex wildcard route are distinct live assignments. Preserve both in the inventory until the Program Owner approves a single canonical homepage/delegation design. Runtime response-marker attribution remains a separate verification item.
 
-### 4.4 Worker versions and deployment distinction
+### 4.5 Worker versions and deployment distinction
 
 **`thelingolegacyv-5`**
 - Live route assignment includes apex wildcard, www wildcard, and product/utility subdomains.
@@ -139,7 +157,7 @@ The apex exact-root route and apex wildcard route are distinct live assignments.
 - Latest listed version is 2, uploaded 2026-11-16.
 - Keep it a preview/read-only surface.
 
-### 4.5 DNS observations
+### 4.6 DNS observations
 
 - Apex `thelingolegacy.com`: proxied A record to `192.0.2.0`.
 - `www.thelingolegacy.com`: proxied CNAME to `thelingolegacy.com`.
