@@ -34,7 +34,7 @@ for dir in "${PUBLIC_DIRS[@]}"; do
     # Defense in depth: never publish backend, test, dependency, or build-tool trees
     # even when they live beneath an otherwise approved public directory.
     case "/$relative/" in
-      */firebase-functions/*|*/functions/*|*/__tests__/*|*/tests/*|*/test/*|*/node_modules/*|*/.git/*|*/vendor/*) continue ;;
+      */firebase-functions/*|*/functions/*|*/cloudflare/*|*/infrastructure/*|*/infra/*|*/terraform/*|*/kubernetes/*|*/ansible/*|*/workflows/*|*/.github/*|*/__tests__/*|*/tests/*|*/test/*|*/node_modules/*|*/.git/*|*/vendor/*) continue ;;
     esac
     case "$relative" in
       *.test.js|*.spec.js|*.test.mjs|*.spec.mjs|package.json|tsconfig.json|*lock*) continue ;;
