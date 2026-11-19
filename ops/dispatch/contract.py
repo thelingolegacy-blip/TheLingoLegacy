@@ -72,7 +72,7 @@ def _load_role_catalog() -> dict[str, str]:
         principal_type = entry.get("principal_type")
         if not isinstance(role_id, str) or not role_id.strip():
             raise ContractError("role catalog contains an invalid role identifier")
-        if principal_type not in {"human", "service"}:
+        if not isinstance(principal_type, str) or principal_type not in {"human", "service"}:
             raise ContractError(f"role {role_id!r} has an unsupported principal type")
         if role_id in roles:
             raise ContractError(f"role catalog contains duplicate role {role_id!r}")
