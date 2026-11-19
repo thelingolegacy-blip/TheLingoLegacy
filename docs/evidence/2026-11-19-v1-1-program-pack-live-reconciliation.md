@@ -146,7 +146,24 @@ The apex exact-root route and apex wildcard route are distinct live assignments.
 - Google Workspace MX records and SPF TXT record are present.
 - The apex A target is in the TEST-NET-1 documentation range. Confirm whether this is an intentional proxied placeholder/origin arrangement with the account holder; no DNS change was made.
 
-## 5. Program-pack arithmetic and status reconciliation
+## 5. Library metadata observation and program-pack arithmetic
+
+A recursive ChatGPT Library metadata listing of `/LINGOlegacy_MASTER/` was captured at 2026-11-19 21:58:22 UTC:
+
+| Metadata field | Observed |
+|---|---:|
+| Files | 421 |
+| Folders | 68 |
+| Reported bytes | 388,754,453 |
+| Pages traversed | 5 |
+| Remaining cursor | None |
+| Listing warnings | None |
+
+This independently matches the reported **421 files in the master folder** count as a Library metadata observation. It does not establish the physical Drive folder count, local file bytes, source-file completeness, or SHA-256 digests. It must not be merged with the separate 674-file/114-folder/679,702,158-byte observation or the 788-entry observation. The discrepancy between 114 folders and 68 Library folder entries remains unresolved because the source scopes may differ.
+
+The named files `LINGOlegacy_MASTER_39_to_51_Crosswalk_v1.1.csv` and `LINGOlegacy_MASTER_REMAINING_WORK_REGISTER_v1.1.csv` were not located in the current ChatGPT Library listing or the GitHub repository default-branch code search. This does not establish that they are absent from an external Drive location; that source remains unverified. Do not claim their physical row counts have been inspected.
+
+## 5.1 Program-pack arithmetic and status reconciliation
 
 The pasted v1.1 material preserves three different counting concepts:
 
