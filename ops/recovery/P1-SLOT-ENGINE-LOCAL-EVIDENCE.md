@@ -10,7 +10,7 @@
 - Test file blob: `26c689feea1d3ac95d34db22c6d8c6f825a033f8`
 - Runtime: Node.js `v22.16.0`
 - npm: `10.9.2`
-- Command: `node --test scripts/tests/server-slot-engine.test.mjs`
+- Command: `node --test` against the isolated scratch copy of `scripts/tests/server-slot-engine.test.mjs`
 - Result: **14 tests passed, 0 failed**.
 
 ## Validation scope
@@ -21,8 +21,6 @@ The selected stake contract uses `wagerUnits` as the total spin stake. The engin
 
 ## Source SHA-256
 
-- `package.json`: `95ee7e11725e3d192d46c56e7d039454f88227fab13286bfec394cc328f53888`
-- `src/server/slot-engine.mjs`: `ad1cc1345f64540750f053f586e7776faae9883754600985e805bad9b9f71b69`
-- `scripts/tests/server-slot-engine.test.mjs`: `189fc9d6cc103e431875b663c2c33a50dedc7ca867503e168fd7b5c27846f256`
+The SHA-256 values from the prior 11-test snapshot are superseded by the active-payline and feature-multiplier update. The GitHub blob IDs for the updated source and test files are recorded above. A fresh local SHA-256 capture for these updated bytes remains pending; no stale digest is represented as current evidence.
 
 Four exact-head GitHub workflow runs after the branch update (44623470621, 44623468757, 44623465288, 44623466883) completed with `startup_failure`. For each run, the Jobs API returned zero jobs and the Artifacts API returned zero artifacts. No hosted test step ran. This evidence records local-only validation and does not establish hosted acceptance. Hosted acceptance still requires a completed GitHub-hosted run correlated to the final commit SHA, provider-observed runner identity, completed test steps, retrievable logs, and a verified evidence artifact.
