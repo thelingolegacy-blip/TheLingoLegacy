@@ -24,7 +24,7 @@ PUBLIC_DIRS=(
   loyalty-lane-apparel loyalty-lane-cycles lane thats-my-lingo
   library kottons-code media trust-compliance community-guidelines
   privacy terms studio-assets studio-production universe app
-  live-casino-studio admin-command-center landing
+  live-casino-studio landing
 )
 
 for dir in "${PUBLIC_DIRS[@]}"; do
@@ -67,6 +67,9 @@ done
 forbidden=(
   .github docs infra infrastructure ansible kubernetes ops recovery diagnostics
   .env.example .firebaserc firebase.json firebase.client.json
+  admin-command-center economy-command-center
+  integration-configurations integration-ids-register integration-links-register
+  dashboard-integration-links exact-dashboard-links auth0-details auth0-implementation
   wrangler.jsonc pubspec.yaml README.md AGENTS.md SYSTEM-ACTIVATION-AUTHORITY.md
 )
 for path in "${forbidden[@]}"; do
