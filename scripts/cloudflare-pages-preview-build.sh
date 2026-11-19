@@ -13,7 +13,13 @@ export PATH="/tmp/flutter/bin:$PATH"
 flutter --version
 
 echo "LINGO_STAGE=flutter_scaffold"
-flutter create . --platforms web --no-pub
+# Generate only the web platform scaffold in a temporary project. Running
+# "flutter create ." here rewrites the repository pubspec and invalidates the
+# committed lockfile before --enforce-lockfile can verify it.
+rm -rf /tmp/lingo_legacy_web_scaffold
+flutter create /tmp/lingo_legacy_web_scaffold --project-name lingo_legacy --platforms web --no-pub
+mkdir -p web
+cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
 node --test scripts/test-verify-flutter-android-readiness.mjs
 node scripts/verify-flutter-android-readiness.mjs
 
