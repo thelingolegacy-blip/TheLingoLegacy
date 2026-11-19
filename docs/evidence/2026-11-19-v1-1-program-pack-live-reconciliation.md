@@ -185,7 +185,17 @@ The supplied register labels C08 `AUTHORIZED` and its completion record `Hold Ac
 - **PR #574** provides public-surface security and restricted-path controls; it remains draft/unmerged and requires full publication-boundary and route-security execution evidence.
 - **PR #611** provides fail-closed dispatch-contract primitives; it is not a live scheduler or authorization grant. Keep dispatch non-operational until independently reviewed and tested.
 
-## 7. Next executable actions
+## 7. That’s My Lingo — Library source-artifact reconciliation
+
+The current Library contains three materially different product artifacts:
+
+1. `Products/That’s My Lingo/Builds & Documentation/Game_Design_Document.docx` (36,682 bytes) is a one-page placeholder. Its content says the document should be populated and refined as implementation progresses. It is not an approved GDD or payout specification.
+2. `Products/That’s My Lingo/Builds & Documentation/thats-my-lingo-production-architecture.md` (9,017 bytes) describes the current standalone preview as entertainment-only: Play Coins have no cash value and cannot be purchased, transferred, redeemed, or cashed out; outcomes and balances are browser-local and not secure. It correctly requires server-authoritative state before multi-device/networked play.
+3. `Products/That’s My Lingo/Builds & Documentation/Thats_My_Lingo_Developer_Handoff.pdf` (35,634 bytes) contains legacy mechanics that conflict with the current preview-only contract: premium/real-value conversion language, 96% RTP, a 49% secondary-gamble limit, a $10,000 grand prize, $35 initial and $5 standard cashout thresholds, a wager/deposit velocity gate, and a forced-guaranteed-win event.
+
+**Disposition:** preserve the legacy PDF unchanged as historical source material, but classify its real-value, cashout, prize, RTP, gamble, and guaranteed-win instructions as NON-AUTHORITATIVE / SUPERSEDED for current implementation. Do not implement, advertise, or activate those mechanics. No deletion or Library mutation was performed. Add the PDF to L09 only after its provenance is captured and local SHA-256 is computed. The current Option 2 contract and play-money-only boundary govern the active prototype; the empty GDD must be completed and approved before paytable, weights, RTP, volatility, bonus, or feature rules are certified.
+
+## 8. Next executable actions
 
 1. C09: refresh `infrastructure/registry/workers.json` in a reviewed branch using the 27-route snapshot, include all six quarantine routes, exact route IDs, Worker assignments, version/deployment distinctions, and capture timestamp.
 2. C09/P02: record the exact-root route as out-of-band relative to `wrangler.jsonc`; present the homepage/delegation options for owner decision. No live route mutation.
@@ -195,7 +205,7 @@ The supplied register labels C08 `AUTHORIZED` and its completion record `Hold Ac
 6. L03/L04: obtain local recursive library inventory and actual file bytes before counts or hashes are certified.
 7. Governance: correct the 39/51/56 accounting and C08 evidence contradiction in the next reviewed register revision.
 
-## 8. Explicit non-authorization
+## 9. Explicit non-authorization
 
 This evidence document does not authorize:
 - production deployment or promotion;
