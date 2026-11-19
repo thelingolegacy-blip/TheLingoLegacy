@@ -43,7 +43,7 @@ flutter test
 
 echo "LINGO_STAGE=oasis_flutter_checks"
 cd "$ROOT_DIR/studio-sites/games/oasis-platform/flutter"
-flutter pub get
+flutter pub get --enforce-lockfile
 flutter analyze
 flutter test
 echo "OASIS_PUBSPEC_LOCK_BASE64=$(base64 -w0 pubspec.lock)"
