@@ -202,6 +202,8 @@ The supplied register labels C08 `AUTHORIZED` and its completion record `Hold Ac
 - **PR #602** provides the 14-realm registry/control framework. Its existing review records a diverged stacked dependency, stale 21-route snapshot, and missing hosted validator evidence. Keep it draft and reconcile its dependency/route inventory.
 - **PR #574** provides public-surface security and restricted-path controls; it remains draft/unmerged and requires full publication-boundary and route-security execution evidence.
 - **PR #611** provides fail-closed dispatch-contract primitives; it is not a live scheduler or authorization grant. Keep dispatch non-operational until independently reviewed and tested.
+- **PR #606** now contains the Option 2 server-engine candidate: variable active paylines, integer allocation, explicit remainder rejection, and aggregate feature multiplier. Four hosted workflow attempts failed before job creation; local scratch suite reported 14/14, but hosted acceptance remains absent. Keep draft/unmerged.
+- **PR #616** adds a separate front-end preview-parity candidate for the canonical `/thats-my-lingo/` page, with a browser-only 20-payline module, 5/10/20 active-line selection, and deterministic local tests (9/9). It remains draft/unmerged; no hosted CI or deployment has been verified.
 
 ## 7. That’s My Lingo — Library source-artifact reconciliation
 
