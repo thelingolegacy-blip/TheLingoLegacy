@@ -8,22 +8,25 @@ The server slot engine is a separate implementation under `src/server/slot-engin
 
 ## Known product and integration gaps
 
-1. **Payline geometry:** the implementation now defines 20 unique five-reel paths across a three-row matrix (5 reels × 3 rows). This closes the raw line-count/geometry gap at source level only. The path set is a candidate implementation and still requires product-owner confirmation against the approved game layout, payline numbering, line-direction rules, and wild behavior. It is not yet accepted math or feature parity.
-2. **Volatility mismatch:** `low`, `medium`, and `high` currently use identical symbol weights. The selector does not currently change the outcome distribution and must not be marketed as distinct volatility profiles.
-3. **No persistence:** `validateIdempotencyKey` validates key syntax only. There is no durable idempotency store, atomic debit/credit ledger, replay protection across processes, or transactional spin record.
-4. **No authoritative service integration:** this module is not wired to an authenticated API, account service, server-side wallet, or shared balance ledger.
-5. **No live-runtime parity:** the existing live page, `lingo-os`, and Studio-grade runtime have not yet been inspected in a real browser session in this recovery pass. Their loaded script URLs and math implementations remain unverified.
-6. **No release evidence:** local test evidence is not hosted CI acceptance, product acceptance, or production authorization. The current local test result is 11/11; hosted verification remains NOT_RUN.
+1. **Payline geometry:** the implementation defines 20 unique candidate five-reel paths across a three-row matrix (5 reels × 3 rows). The evaluator now accepts `activePaylines` from 1 through 20 and evaluates the first N paths in configured order. Product-owner confirmation is still required for the approved path set, line numbering/order, activation behavior, line-direction rules, and wild behavior. This is source-level capability, not accepted math or feature parity.
+2. **Stake remainder policy:** `wagerUnits` is the total spin stake. `calculateLineStakeAllocation` divides by the actual `activePaylines` count using integer arithmetic. A non-zero remainder is explicitly rejected with its remainder value; no floating-point allocation, silent truncation, or discarded stake is permitted. Product owner must confirm that rejection is the intended denomination policy.
+3. **Feature multiplier:** the evaluator accepts a positive integer `featureMultiplier` and applies it once to the aggregate of winning-line payouts after the line payouts are summed. This does not implement bonus triggers, feature state, free spins, or a feature lifecycle. Fractional multipliers are not supported.
+4. **Volatility mismatch:** `low`, `medium`, and `high` currently use identical symbol weights. The selector does not currently change the outcome distribution and must not be marketed as distinct volatility profiles.
+5. **No persistence:** `validateIdempotencyKey` validates key syntax only. There is no durable idempotency store, atomic debit/credit ledger, replay protection across processes, or transactional spin record.
+6. **No authoritative service integration:** this module is not wired to an authenticated API, account service, server-side wallet, or shared balance ledger.
+7. **No live-runtime parity:** the existing live page, `lingo-os`, and Studio-grade runtime have not yet been inspected in a real browser session in this recovery pass. Their loaded script URLs and math implementations remain unverified.
+8. **No release evidence:** local test evidence is not hosted CI acceptance, product acceptance, or production authorization. The updated local scratch suite reports 14 passed, 0 failed. Four exact-head GitHub workflow runs after the branch update ended `startup_failure`; the Jobs API and Artifacts API each returned zero records for all four runs, so no hosted test step executed.
 
 ## Required follow-up
 
-1. Independently review and approve the candidate 20-line geometry, numbering, line-direction rules, and exact product math before claiming game parity.
+1. Independently review and approve the candidate 20-line geometry, active-line ordering/selection, line-direction rules, remainder-rejection policy, feature-multiplier semantics, and exact product math before claiming game parity.
 2. Define distinct, approved low/medium/high weight tables and publish their math/RTP assumptions for review.
-3. Implement transactional, server-authoritative play-credit accounting and durable idempotency before any shared wallet integration.
-4. Capture loaded script URLs from the live demo page on desktop and mobile.
-5. Diff each runtime's reel generation, symbol weights, paylines, wild/scatter rules, payout table, rounding, and RNG source against the approved math specification.
-6. Capture desktop and phone-browser screenshots of the demo loop as separate evidence items.
-7. **Local suite:** read-back Node test suite executed in an isolated scratch directory: 11 passed, 0 failed. This is local E2 evidence only, not a clean-checkout or hosted result. **Hosted suite:** NOT RUN; current GitHub Actions attempts fail before job creation with `startup_failure` and zero jobs/artifacts.
+3. Implement a real feature-trigger/state lifecycle only after product rules are approved; keep the current integer multiplier hook as a calculation contract only.
+4. Implement transactional, server-authoritative play-credit accounting and durable idempotency before any shared wallet integration.
+5. Capture loaded script URLs from the live demo page on desktop and mobile.
+6. Diff each runtime's reel generation, symbol weights, paylines, wild/scatter rules, payout table, rounding, and RNG source against the approved math specification.
+7. Capture desktop and phone-browser screenshots of the demo loop as separate evidence items.
+8. **Local suite:** 14 passed, 0 failed in an isolated Node.js v22.16.0 scratch run. This is local-only evidence, not hosted acceptance. **Hosted suite:** four exact-head runs ended `startup_failure`; each returned zero jobs and zero artifacts.
 
 Do not connect this prototype to purchasable, transferable, cash-equivalent, or redeemable balances. No real-money wagering, payment, cash-out, or prize redemption is authorized.
 
