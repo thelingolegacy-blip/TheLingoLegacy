@@ -31,11 +31,19 @@ for dir in "${PUBLIC_DIRS[@]}"; do
   [[ -d "$dir" ]] || continue
   while IFS= read -r -d '' file; do
     relative="${file#./}"
+    # Defense in depth: never publish backend, test, dependency, or build-tool trees
+    # even when they live beneath an otherwise approved public directory.
+    case "/$relative/" in
+      */firebase-functions/*|*/functions/*|*/__tests__/*|*/tests/*|*/test/*|*/node_modules/*|*/.git/*|*/vendor/*) continue ;;
+    esac
+    case "$relative" in
+      *.test.js|*.spec.js|*.test.mjs|*.spec.mjs|package.json|tsconfig.json|*lock*) continue ;;
+    esac
     mkdir -p "$OUT/$(dirname "$relative")"
     cp "$file" "$OUT/$relative"
   done < <(find "$dir" -type f \( \
     -iname '*.html' -o -iname '*.htm' \
-    -o -iname '*.css' -o -iname '*.js' -o -iname '*.mjs' \
+    -o -iname '*.css' -o -iname '*.js' \
     -o -iname '*.svg' -o -iname '*.png' -o -iname '*.jpg' \
     -o -iname '*.jpeg' -o -iname '*.webp' -o -iname '*.gif' \
     -o -iname '*.ico' -o -iname '*.woff' -o -iname '*.woff2' \
