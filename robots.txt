@@ -1,4 +1,4 @@
-# Studio no-cost crawler guardrails. robots.txt is advisory; use Vercel Firewall for enforcement when traffic becomes material.
+# Studio no-cost crawler guardrails. robots.txt is advisory; use Cloudflare edge controls for enforcement when configured and approved.
 User-agent: GPTBot
 Disallow: /
 
