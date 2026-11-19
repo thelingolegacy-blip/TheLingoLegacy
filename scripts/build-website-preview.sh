@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT="$ROOT/build/web"
+OUT="${PAGES_BUILD_OUTPUT_DIR:-$ROOT/build/web}"
+if [[ "$OUT" != /* ]]; then OUT="$PWD/$OUT"; fi
 cd "$ROOT"
 
 rm -rf "$OUT"
