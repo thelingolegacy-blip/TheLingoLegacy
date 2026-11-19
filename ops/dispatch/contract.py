@@ -5,8 +5,10 @@ workers, grant permissions, or authorize production changes.
 """
 from __future__ import annotations
 
+import json
 import math
 import re
+from pathlib import Path
 from typing import Any
 
 STATUSES = {
@@ -35,8 +37,51 @@ class ContractError(ValueError):
     """Raised when a job envelope violates the dispatch contract."""
 
 
+def _load_role_catalog() -> dict[str, str]:
+    """Load the committed role catalog; fail closed on missing or unsafe data."""
+    try:
+        catalog = json.loads(Path(__file__).with_name("roles.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ContractError("role catalog is unavailable or invalid") from exc
+
+    if not isinstance(catalog, dict):
+        raise ContractError("role catalog must be an object")
+    if catalog.get("status") != "ROLE_CATALOG_ONLY":
+        raise ContractError("role catalog is not in catalog-only state")
+    if catalog.get("identity_assignment") != "UNASSIGNED":
+        raise ContractError("role catalog must not contain identity assignments")
+    policy = catalog.get("policy")
+    if not isinstance(policy, dict) or any((
+        policy.get("default") != "deny",
+        policy.get("human_identity_required") is not True,
+        policy.get("shared_accounts_allowed") is not False,
+        policy.get("privileged_mfa_required") is not True,
+        policy.get("role_assignment_requires_verified_identity") is not True,
+    )):
+        raise ContractError("role catalog security policy is missing or unsafe")
+
+    entries = catalog.get("roles")
+    if not isinstance(entries, list) or not entries:
+        raise ContractError("role catalog must contain role entries")
+
+    roles: dict[str, str] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise ContractError("role catalog contains a malformed role")
+        role_id = entry.get("id")
+        principal_type = entry.get("principal_type")
+        if not isinstance(role_id, str) or not role_id.strip():
+            raise ContractError("role catalog contains an invalid role identifier")
+        if principal_type not in {"human", "service"}:
+            raise ContractError(f"role {role_id!r} has an unsupported principal type")
+        if role_id in roles:
+            raise ContractError(f"role catalog contains duplicate role {role_id!r}")
+        roles[role_id] = principal_type
+    return roles
+
+
 def validate_job(job: dict[str, Any]) -> None:
-    """Validate required fields and conservative execution bounds."""
+    """Validate required fields, role assignments, and conservative bounds."""
     if not isinstance(job, dict):
         raise ContractError("job must be an object")
     required = {
@@ -64,6 +109,15 @@ def validate_job(job: dict[str, Any]) -> None:
             raise ContractError(f"{key} must be a non-empty string")
     if job["owner_role"] == job["reviewer_role"]:
         raise ContractError("owner and reviewer roles must be independent")
+
+    role_catalog = _load_role_catalog()
+    for field in ("owner_role", "reviewer_role"):
+        role = job[field]
+        if role not in role_catalog:
+            raise ContractError(f"{field} references unknown role {role!r}")
+        if role_catalog[role] != "human":
+            raise ContractError(f"{field} must reference a human role; service roles are prohibited")
+
     if not isinstance(job["repository"], str) or not REPO_RE.fullmatch(job["repository"]):
         raise ContractError("repository must use owner/name form")
     if not isinstance(job["commit_sha"], str) or not SHA_RE.fullmatch(job["commit_sha"]):
