@@ -163,3 +163,28 @@ test('manifest refuses a symlinked build parent without modifying its target', (
   assert.match(result.stderr, /build directory must be a real directory/);
   assert.equal(fs.readFileSync(path.join(external, 'sentinel.txt'), 'utf8'), 'preserve');
 });
+
+
+test('publication rejects a symlinked config directory', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const configPath = path.join(root, 'config');
+  const realConfigPath = path.join(root, 'config-real');
+  fs.renameSync(configPath, realConfigPath);
+  fs.symlinkSync(realConfigPath, configPath, 'dir');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must not contain symlinks/);
+});
+
+test('publication rejects a symlinked config/firebase directory', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const firebasePath = path.join(root, 'config/firebase');
+  const realFirebasePath = path.join(root, 'config/firebase-real');
+  fs.renameSync(firebasePath, realFirebasePath);
+  fs.symlinkSync(realFirebasePath, firebasePath, 'dir');
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must not contain symlinks/);
+});
