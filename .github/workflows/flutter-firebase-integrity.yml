@@ -85,6 +85,12 @@ jobs:
       - name: Test Android readiness gate
         run: node --test scripts/test-verify-flutter-android-readiness.mjs
 
+      - name: Test Android API 21 Firebase contract
+        run: node --test scripts/test-verify-android-api21-firebase.mjs
+
+      - name: Verify Android API 21 Firebase contract
+        run: node scripts/verify-android-api21-firebase.mjs
+
       - name: Build quarantined Firebase public output
         run: node scripts/build-firebase-public.mjs
 
