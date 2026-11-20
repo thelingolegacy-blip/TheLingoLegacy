@@ -70,6 +70,47 @@ test('customer-facing product and readiness paths remain public', () => {
   ]) assert.equal(isRestrictedPublicPath(path), false, path);
 });
 
+test('beacon endpoint rejects non-JSON content types before parsing', async () => {
+  const response = await worker.fetch(new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: '{"phone":"+12155550123","zone":"nyc-crown-zone","consent":true}',
+  }), { CANONICAL_DOMAIN: 'thelingolegacy.com' });
+  assert.equal(response.status, 415);
+});
+
+test('beacon endpoint rejects oversized streamed JSON bodies', async () => {
+  const response = await worker.fetch(new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: '+12155550123', zone: 'nyc-crown-zone', consent: true, padding: 'x'.repeat(3000) }),
+  }), { CANONICAL_DOMAIN: 'thelingolegacy.com' });
+  assert.equal(response.status, 413);
+});
+
+test('beacon endpoint rejects malformed and non-object JSON', async () => {
+  for (const body of ['{invalid', '[]', 'null']) {
+    const response = await worker.fetch(new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    }), { CANONICAL_DOMAIN: 'thelingolegacy.com' });
+    assert.equal(response.status, 400, body);
+  }
+});
+
+test('beacon request cap applies per edge IP even when the phone number changes', async () => {
+  const ip = '198.51.100.77';
+  const env = { CANONICAL_DOMAIN: 'thelingolegacy.com' };
+  const send = (suffix) => worker.fetch(new Request('https://thelingolegacy.com/api/beacon-text-alerts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'cf-connecting-ip': ip },
+    body: JSON.stringify({ phone: '+1215555' + String(suffix).padStart(4, '0'), zone: 'nyc-crown-zone', consent: true }),
+  }), env);
+  for (let i = 1; i <= 5; i++) assert.equal((await send(i)).status, 202);
+  assert.equal((await send(6)).status, 429);
+});
+
 test('Worker denies restricted requests before static asset lookup', async () => {
   const requestedAssets = [];
   const env = {
