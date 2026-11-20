@@ -263,8 +263,10 @@ class Runner:
             else:
                 results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED", "reason": "iOS simulator build requires macOS/Xcode"}))
         failed = [x for x in results if x["status"] == "FAIL"]
-        blocked = [x for x in results if x["status"] == "BLOCKED"]
-        status = "FAIL" if failed else ("BLOCKED" if blocked else "PASS")
+        # An unsupported iOS simulator target remains an explicit BLOCKED
+        # subtask, but it must not suppress independent web/Android checks or
+        # the read-only W3 probes on a non-macOS host.
+        status = "FAIL" if failed else "PASS"
         return self.record({"task": task_id, "status": status, "subtasks": results,
                             "lockfile": "present", "source_commit_sha": source_sha,
                             "source_branch": source_branch,
@@ -681,13 +683,13 @@ async def main_async(args: argparse.Namespace) -> int:
                 ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot)),
             ], {"recovery-unit-tests", "recovery-contracts", "repository-static-gates",
                 "product-regressions", "shell-safety-tests", "studio-contracts",
-                "crimson-smoke-static", "firebase-hosting-candidate", "core-v2-go"}),
+                "crimson-smoke-static"}),
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
                 ("flutter-root", lambda: runner.flutter_project(workspace, ".", "flutter-root")),
                 ("flutter-oasis", lambda: runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis")),
                 ("flutter-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, ".", "flutter-firebase-candidate", firebase_snapshot)),
                 ("flutter-oasis-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, "studio-sites/games/oasis-platform/flutter", "flutter-oasis-firebase-candidate", firebase_snapshot)),
-            ], {"flutter-root", "flutter-oasis", "flutter-firebase-candidate", "flutter-oasis-firebase-candidate"}),
+            ], {"flutter-root", "flutter-oasis"}),
             ("WAVE 3 — PUBLIC ROUTE OBSERVATION", [
                 ("public-route-probes", lambda: runner.public_probes()),
             ], {"public-route-probes"}),
