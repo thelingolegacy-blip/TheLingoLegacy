@@ -1,7 +1,7 @@
 import { verifyFirebaseIdToken } from '../../src/auth/firebase-id-token.mjs';
 import { playAndSettleD1Spin, claimDailyDemoReward } from '../../src/server/d1-slot-service.mjs';
 import { validateIdempotencyKey, PAYLINES } from '../../src/server/slot-engine.mjs';
-const RULE_VERSION='staging-5x3-demo-v3',MAX_WAGER_UNITS=5000,VOLATILITY_LEVELS=new Set(['low','medium','high']);
+const RULE_VERSION='staging-5x3-20line-demo-v4',MAX_WAGER_UNITS=5000,VOLATILITY_LEVELS=new Set(['low','medium','high']);
 function corsHeaders(request,env){const origin=request.headers.get('Origin');const allowed=String(env.STAGING_ALLOWED_ORIGINS||'').split(',').map(v=>v.trim()).filter(Boolean);if(!origin||!allowed.includes(origin))return{};return{'access-control-allow-origin':origin,'access-control-allow-methods':'GET, POST, OPTIONS','access-control-allow-headers':'Authorization, Content-Type, Idempotency-Key','access-control-max-age':'600','vary':'Origin'};}
 function json(body,status=200,request,env){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...corsHeaders(request,env)}});}
 export function bearerTokenFromRequest(request){const h=request.headers.get('authorization')||'';const m=/^Bearer\s+([^\s]+)$/i.exec(h);return m?.[1]||null;}
@@ -33,12 +33,12 @@ export default {async fetch(request,env){
   if(request.method!=='POST')return respond({error:'METHOD_NOT_ALLOWED'},405);
   await ensureAccount(env.DB,uid);
   let body;try{body=await request.json();}catch{return respond({error:'INVALID_JSON'},400);}
-  const wagerUnits=body?.wagerUnits,volatility=body?.volatility??'medium',idempotencyKey=request.headers.get('Idempotency-Key')||body?.idempotencyKey;
+  const wagerUnits=body?.wagerUnits,activePaylines=body?.activePaylines??PAYLINES.length,volatility=body?.volatility??'medium',idempotencyKey=request.headers.get('Idempotency-Key')||body?.idempotencyKey;
   if(!Number.isSafeInteger(wagerUnits)||wagerUnits<1||wagerUnits>MAX_WAGER_UNITS)return respond({error:'INVALID_WAGER',maxTotalWagerUnits:MAX_WAGER_UNITS},400);
-  if(wagerUnits%PAYLINES.length!==0)return respond({error:'WAGER_MUST_COVER_ALL_PAYLINES',lineCount:PAYLINES.length},400);
+  if(!Number.isSafeInteger(activePaylines)||activePaylines<1||activePaylines>PAYLINES.length)return respond({error:'INVALID_ACTIVE_PAYLINES',maxActivePaylines:PAYLINES.length},400);if(wagerUnits%activePaylines!==0)return respond({error:'WAGER_MUST_DIVIDE_EVENLY_ACROSS_ACTIVE_PAYLINES',activePaylines},400);
   if(!VOLATILITY_LEVELS.has(volatility))return respond({error:'INVALID_VOLATILITY'},400);
   if(!validateIdempotencyKey(idempotencyKey))return respond({error:'INVALID_IDEMPOTENCY_KEY'},400);
-  const result=await playAndSettleD1Spin(env.DB,{firebaseUid:uid,gameId:'thats-my-lingo',idempotencyKey,ruleVersion:RULE_VERSION,volatility,wagerUnits});
-  return respond({sessionId:result.session_id,matrix:result.matrix??JSON.parse(result.reels_json),rows:3,columns:5,wins:result.wins??[],paylinesEvaluated:5,wagerUnits:result.wager_units,lineWagerUnits:result.wager_units/5,payoutUnits:result.payout_units,newBalanceUnits:result.balance_after_units,xpUnits:result.xpUnits,xpAwardUnits:result.xpAwardUnits??0,replayed:result.replayed,currency:'DEMO_COIN',redeemable:false,volatility:result.volatility??volatility,rulesVersion:result.rule_version});
+  const result=await playAndSettleD1Spin(env.DB,{firebaseUid:uid,gameId:'thats-my-lingo',idempotencyKey,ruleVersion:RULE_VERSION,volatility,wagerUnits,activePaylines});
+  return respond({sessionId:result.session_id,matrix:result.matrix??JSON.parse(result.reels_json),rows:3,columns:5,wins:result.wins??[],paylinesEvaluated:result.activePaylines??activePaylines,wagerUnits:result.wager_units,totalWagerUnits:result.wager_units,lineWagerUnits:result.lineWagerUnits??wagerUnits/activePaylines,payoutUnits:result.payout_units,newBalanceUnits:result.balance_after_units,xpUnits:result.xpUnits,xpAwardUnits:result.xpAwardUnits??0,replayed:result.replayed,currency:'DEMO_COIN',redeemable:false,volatility:result.volatility??volatility,rulesVersion:result.rule_version});
  }catch(error){const m=String(error?.message||error);if(m.includes('INSUFFICIENT_FUNDS'))return respond({error:'INSUFFICIENT_FUNDS'},409);if(m.includes('IDEMPOTENCY_KEY_REUSED'))return respond({error:'IDEMPOTENCY_CONFLICT'},409);if(m.includes('IDEMPOTENT_SESSION_NOT_SETTLED'))return respond({error:'SETTLEMENT_PENDING'},409);return respond({error:'INTERNAL_ERROR'},500);}
 }};
