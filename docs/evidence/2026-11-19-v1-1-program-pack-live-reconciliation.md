@@ -834,7 +834,7 @@ To include the separate draft workstreams in the same run:
 python3 ops/recovery/run_one_time_restoration.py \
   --network-enabled \
   --firebase-candidate-dir /path/to/local-pr-614-worktree \
-  --firebase-expected-sha 578dce2c83f21088f9338bf4afee88416e8d6adf \
+  --firebase-expected-sha b00a1cd3081aef361bc27803cd18427420174179 \
   --core-v2-dir /path/to/local-pr-596-worktree \
   --core-v2-expected-sha 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1
 ```
@@ -890,14 +890,14 @@ No toolchain was installed and no test/build command was executed by this docume
 A read-only source review identified three evidence-integrity defects in the initial one-time orchestrator draft. These were corrected on the existing PR #615 branch; no local execution or hosted workflow dispatch was performed.
 
 1. **Real wave gates:** W0 now blocks W1 unless the source baseline passes. W1 required contract/product/candidate suites gate W2; W2 Flutter analysis/tests/builds gate W3. Optional scanner/provider-tool checks remain visible as BLOCKED when unavailable and do not suppress independent builds by themselves; any actual FAIL blocks the next wave. Final evidence packaging and G02 evaluation still run after the waves.
-2. **Exact source provenance:** W0 now requires a clean checkout and records branch, full commit SHA, working-tree status and git diff --check. The orchestrator excludes its own generated evidence directory from this cleanliness check. PR #614 and PR #596 inputs receive separate Git provenance checks; dirty/unreadable worktrees or mismatched optional expected SHAs fail closed. Candidate task summaries include their source commit SHA and branch.
+2. **Exact source provenance:** W0 now requires a clean checkout and records branch, full commit SHA, working-tree status and git diff --check. The orchestrator excludes its own generated evidence directory from this cleanliness check. PR #614 and PR #596 inputs receive separate Git provenance checks; dirty/unreadable worktrees or missing or mismatched expected SHAs fail closed. Candidate task summaries include their source commit SHA and branch.
 3. **CORE V2 module-root handling:** --core-v2-dir now accepts the full PR #596 repository worktree and resolves platform/lingo-core-v2/services/api/go.mod, while still accepting the Go module directory directly. This aligns the documented input with the actual PR layout.
 
-Optional exact-head correlation flags are available:
+Exact-head correlation flags are mandatory whenever a candidate directory is supplied:
 - --firebase-expected-sha for the PR #614 checkout.
 - --core-v2-expected-sha for the PR #596 checkout.
 
-At this checkpoint, the connected PR heads observed were PR #614 578dce2c83f21088f9338bf4afee88416e8d6adf and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1. Re-read each PR head immediately before a local run; do not use these values if either PR has advanced.
+At this checkpoint, the connected PR heads observed were PR #614 b00a1cd3081aef361bc27803cd18427420174179 and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1. Re-read each PR head immediately before a local run; do not use these values if either PR has advanced.
 
 The live Cloudflare inventory was re-read through GET-only APIs:
 - 27 Worker routes, still assigned 18 to thelingolegacyv-5, 6 to lingo-integration-config-404, and one each to lingo-flagship-root, lingo-ecosystem-atlas, and lingo-static-backup-proxy.
@@ -911,7 +911,7 @@ The read-only GitHub branch endpoint reports main at 1a60e2314cb3f9b5e3efe648ade
 
 The current PR #615 head is c05b127439fdf43d85db4e835aaea4d5d04ab52b. Its five associated Actions runs (44790866031, 44790864533, 44790863158, 44790861524, 44790859742) all concluded startup_failure; every latest-attempt job list and artifact list returned zero entries.
 
-The PR #614 head 578dce2c83f21088f9338bf4afee88416e8d6adf has seven associated runs (44602578320, 44602576340, 44602572139, 44602574262, 44602568797, 44602565745, 44602563123). All seven concluded startup_failure; all seven job lists and artifact lists returned zero entries. The PR #596 head 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1 has two associated runs (44428739381, 44428737664); both concluded startup_failure with zero jobs and zero artifacts.
+The PR #614 head b00a1cd3081aef361bc27803cd18427420174179 has seven associated runs (44602578320, 44602576340, 44602572139, 44602574262, 44602568797, 44602565745, 44602563123). All seven concluded startup_failure; all seven job lists and artifact lists returned zero entries. The PR #596 head 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1 has two associated runs (44428739381, 44428737664); both concluded startup_failure with zero jobs and zero artifacts.
 
 These 14 run observations establish repeated Actions admission/startup failure across the current #615, #614 and #596 candidate heads. They do not establish test failure or test execution. No dispatch or rerun was attempted.
 
@@ -938,7 +938,7 @@ The orchestrator currently contains 826 lines. Its latest PR #615 head after the
 - The apex `A` record remains proxied to `192.0.2.0` (TEST-NET-1). The `app` CNAME remains `my-flutter-app.pages.dev` and is not proxied; the `admin` CNAME remains `admin-thelingolegacy.firebaseapp.com` and is not proxied. No DNS changes were made.
 - The latest deployments for `lingo-execution-center-preview` and `lingo-flutter-firebase-preview` are both marked skipped. They are not successful preview-build evidence. The `my-flutter-app` production deployment's latest recorded timestamp remains 2026-08-30.
 - Current PR #615 head is `8a566ee9c532883046be987bc653d2f7252ddd6a`. Its associated Crimson Smoke static-validation run (44791974453) concluded `startup_failure` with zero jobs and zero artifacts. This is startup/admission failure, not a test-suite result. The preceding-head runs are documented in section 9.13.
-- PR #614 remains at `578dce2c83f21088f9338bf4afee88416e8d6adf`; PR #596 remains at `40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1`. Both remain open, draft and unmerged.
+- PR #614 remains at `b00a1cd3081aef361bc27803cd18427420174179`; PR #596 remains at `40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1`. Both remain open, draft and unmerged.
 
 No local compile, test, build, or orchestrator execution was performed. No Actions dispatch/rerun, DNS/Worker/Pages/Firebase mutation, merge, runner activation, payment activation, migration, or backup deletion was performed.
 
@@ -974,10 +974,26 @@ The PR #615 orchestrator was expanded again after reviewing the actual PR #614 a
 - **Android/iOS toolchain reporting:** Android debug builds run only when an SDK path is found via ANDROID_SDK_ROOT, ANDROID_HOME, or android/local.properties. Otherwise the Android target is recorded BLOCKED. iOS simulator builds require macOS and xcodebuild; an unavailable iOS target remains BLOCKED without suppressing independent web/Android work or W3 GET observation. The overall evidence bundle still remains BLOCKED when any target is blocked.
 - **PR #596 Go coverage:** W1 now includes gofmt validation, go mod tidy -diff, verbose Go tests, race tests, vet, and build. The PostgreSQL integration tests self-skip when TEST_DATABASE_URL is absent; the orchestrator explicitly records the integration target BLOCKED in that case instead of treating a passing unit-test command as integration evidence. A supplied TEST_DATABASE_URL is accepted only for localhost/loopback and database lingo_test; the raw DSN is never written to logs or evidence.
 - **Dependency-aware wave policy:** W0 clean-source integrity gates W1. Required baseline repository contracts gate W2. Candidate suites remain explicit in the evidence bundle but a missing optional candidate/tool target is recorded BLOCKED without suppressing independent baseline builds; an actual FAIL still blocks the next wave. W2 baseline root/Oasis Flutter checks gate W3; candidate Flutter tasks are recorded separately. A blocked iOS simulator target does not suppress read-only W3 probes, but remains a final BLOCKED gate.
-- **Exact candidate provenance:** When --firebase-candidate-dir or --core-v2-dir is supplied, its matching --firebase-expected-sha or --core-v2-expected-sha is mandatory. The current observed candidate heads remain PR #614 578dce2c83f21088f9338bf4afee88416e8d6adf and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1; re-read immediately before execution.
+- **Exact candidate provenance:** When --firebase-candidate-dir or --core-v2-dir is supplied, its matching --firebase-expected-sha or --core-v2-expected-sha is mandatory. The current observed candidate heads remain PR #614 b00a1cd3081aef361bc27803cd18427420174179 and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1; re-read immediately before execution.
 - **Evidence hashing:** SHA256SUMS now covers final-evidence.json and every generated task log/artifact; the manifest digest is printed separately.
 
 The latest PR #615 head at this checkpoint is 8a566ee9c532883046be987bc653d2f7252ddd6a. Its associated run 44791974453 ended startup_failure with zero jobs and zero artifacts. The script is read-back verified at source level, but still has not been Python-compiled or executed in a local checkout. No Actions dispatch/rerun was attempted.
 
 **Disposition:** expanded candidate test coverage and execution gates are committed on the existing PR #615 draft branch; local execution remains pending. G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
+
+## 9.17 Firebase initialization guard hardening — 2026-11-20
+
+A source-level review of PR #614 found that Firebase initialization checked API key, app ID, and messaging sender placeholders but did not independently validate projectId. If the first three values were filled while projectId remained lingo-staging-not-configured, app startup could attempt Firebase initialization with an invalid project target.
+
+The existing PR #614 branch was hardened without changing Firebase project selection or provider state:
+- DefaultFirebaseOptions.isConfiguredFor now trims and validates API key, app ID, messaging sender ID, and project ID.
+- It rejects an empty project ID, the lingo-staging-not-configured sentinel, and YOUR_* placeholders.
+- Added Flutter unit tests for empty, sentinel, and generic project-ID placeholders.
+- PR #614 remains open/draft/unmerged at head b00a1cd3081aef361bc27803cd18427420174179. Its current commit-run query returned no associated workflow runs; no local Flutter tests were executed.
+
+The orchestrator's required PR #614 expected SHA was refreshed to b00a1cd3081aef361bc27803cd18427420174179. PR #596 remains at 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1. Re-read both candidate heads before local execution; any changed head requires updating the supplied expected SHA.
+
+Firebase remains unconfigured: .firebaserc has no staging alias, Firebase options remain placeholders, the Hosting allowlist is empty, and no staging credentials/provider connection were added. This source guard is not Firebase connectivity, a successful Flutter test run, or deployment certification.
+
+**Disposition:** source-level candidate hardening only; no local compile/test/build or hosted success is claimed. PR #614 remains draft; PR #615 remains draft; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
 
