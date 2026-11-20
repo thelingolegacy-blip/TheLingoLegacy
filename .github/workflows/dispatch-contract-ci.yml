@@ -1,0 +1,73 @@
+name: LLG Dispatch Contract CI
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ops/dispatch/**"
+      - ".github/workflows/dispatch-contract-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dispatch-contract-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contract-tests:
+    name: Validate dispatch contract (no third-party actions)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source using public Git transport
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          git init source
+          cd source
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [[ -n "$PR_NUMBER" ]]; then
+            source_ref="refs/pull/$PR_NUMBER/head"
+          else
+            source_ref="$GITHUB_REF"
+          fi
+          git fetch --depth=1 origin "$source_ref"
+          git checkout --detach FETCH_HEAD
+          checked_out_sha="$(git rev-parse HEAD)"
+          test "$checked_out_sha" = "$SOURCE_HEAD_SHA"
+          {
+            echo "source_sha=$SOURCE_HEAD_SHA"
+            echo "checked_out_sha=$checked_out_sha"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate role catalog and JSON schema invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY
+          import json
+          from pathlib import Path
+          roles = json.loads(Path("source/ops/dispatch/roles.json").read_text())
+          schema = json.loads(Path("source/ops/dispatch/job-envelope.schema.json").read_text())
+          assert roles["status"] == "ROLE_CATALOG_ONLY"
+          assert roles["identity_assignment"] == "UNASSIGNED"
+          assert schema["$schema"].endswith("2020-12/schema")
+          assert "production" not in schema["properties"]["environment"]["enum"]
+          assert schema["properties"]["cost_ceiling_usd"]["const"] == 0
+          assert schema["properties"]["permission_profile"]["enum"] == [
+              "least-privilege-read-only", "source-validation-only"
+          ]
+          assert schema["properties"]["allowed_tools"]["items"]["enum"] == [
+              "read-only-github", "read-only-cloudflare", "read-only-firebase",
+              "local-unit-tests", "static-analysis", "preview-build"
+          ]
+          print("DISPATCH_ROLE_AND_SCHEMA_STATIC_CHECK=PASS")
+          PY
+      - name: Run fail-closed contract unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source
+          python3 -m unittest discover -s ops/dispatch/tests -v
