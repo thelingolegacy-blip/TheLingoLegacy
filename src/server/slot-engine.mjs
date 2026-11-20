@@ -1,5 +1,26 @@
 const UINT32_RANGE = 0x1_0000_0000;
-export const PAYLINES = Object.freeze([Object.freeze([1,1,1,1,1]),Object.freeze([0,0,0,0,0]),Object.freeze([2,2,2,2,2]),Object.freeze([0,1,2,1,0]),Object.freeze([2,1,0,1,2])]);
+export const PAYLINES = Object.freeze([
+ Object.freeze([1,1,1,1,1]),
+ Object.freeze([0,0,0,0,0]),
+ Object.freeze([2,2,2,2,2]),
+ Object.freeze([0,1,2,1,0]),
+ Object.freeze([2,1,0,1,2]),
+ Object.freeze([0,0,1,2,2]),
+ Object.freeze([2,2,1,0,0]),
+ Object.freeze([1,0,0,0,1]),
+ Object.freeze([1,2,2,2,1]),
+ Object.freeze([0,1,1,1,0]),
+ Object.freeze([2,1,1,1,2]),
+ Object.freeze([1,0,1,2,1]),
+ Object.freeze([1,2,1,0,1]),
+ Object.freeze([0,0,1,1,2]),
+ Object.freeze([2,2,1,1,0]),
+ Object.freeze([0,1,0,1,0]),
+ Object.freeze([2,1,2,1,2]),
+ Object.freeze([1,0,1,0,1]),
+ Object.freeze([1,2,1,2,1]),
+ Object.freeze([0,1,2,2,1])
+]);
 export const DEFAULT_SYMBOLS = Object.freeze(['LEGACY_LION','ELECTRIC_GOLD','CRIMSON_CROWN','OBSIDIAN_BAR','SEVEN','WILD']);
 export const DEFAULT_VOLATILITY_TABLES = Object.freeze({
  low:Object.freeze({LEGACY_LION:18,ELECTRIC_GOLD:18,CRIMSON_CROWN:18,OBSIDIAN_BAR:18,SEVEN:18,WILD:10}),
@@ -18,14 +39,20 @@ function validateSymbols(symbols){if(!Array.isArray(symbols)||symbols.length<1||
 function weightedSymbol(weights,readUint32){const entries=Object.entries(weights);if(!entries.length)throw new TypeError('volatility weights must not be empty');let total=0;for(const [symbol,w] of entries){if(!symbol||!Number.isSafeInteger(w)||w<1)throw new TypeError('volatility weights must be positive integers');total+=w;if(!Number.isSafeInteger(total)||total>UINT32_RANGE)throw new RangeError('volatility weight total is invalid');}let cursor=secureRandomInt(total,readUint32);for(const [symbol,w] of entries){if(cursor<w)return symbol;cursor-=w;}throw new Error('WEIGHTED_SYMBOL_SELECTION_FAILED');}
 function validatePaytable(paytable,symbols){if(!paytable||typeof paytable!=='object'||Array.isArray(paytable))throw new TypeError('paytable must map symbols to integer multipliers');for(const s of symbols){const row=paytable[s];if(!row||typeof row!=='object')throw new TypeError(`missing paytable for ${s}`);for(const n of [3,4,5])if(!Number.isSafeInteger(row[n])||row[n]<0)throw new TypeError(`invalid integer multiplier for ${s} match length ${n}`);}}
 function evaluateLine(matrix,line,paytable){const values=line.map((r,c)=>matrix[r][c]);const candidates=values[0]==='WILD'?[...new Set(values.filter(s=>s!=='WILD')),'WILD']:[values[0]];let best=null;for(const symbol of candidates){let count=0;for(let c=0;c<5;c++){if(values[c]!==symbol&&values[c]!=='WILD')break;count++;}if(count<3)continue;const multiplier=paytable[symbol]?.[count]??0;if(!best||multiplier>best.multiplier)best={symbol,matchLength:count,multiplier};}return best;}
-export function evaluateFiveReelSpin({symbols=DEFAULT_SYMBOLS,volatility='medium',volatilityTables=DEFAULT_VOLATILITY_TABLES,paytable=DEFAULT_PAYTABLE,wagerUnits,readUint32=readCryptoUint32}){
- validateSymbols(symbols);if(!Number.isSafeInteger(wagerUnits)||wagerUnits<1)throw new RangeError('wagerUnits must be a positive safe integer');
- const weights=typeof volatility==='string'?volatilityTables?.[volatility]:volatility;if(!weights||typeof weights!=='object'||Array.isArray(weights))throw new TypeError('unknown volatility table');
+export function evaluateFiveReelSpin({symbols=DEFAULT_SYMBOLS,volatility='medium',volatilityTables=DEFAULT_VOLATILITY_TABLES,paytable=DEFAULT_PAYTABLE,lineWagerUnits,activePaylines=PAYLINES.length,readUint32=readCryptoUint32}){
+ validateSymbols(symbols);
+ if(!Number.isSafeInteger(lineWagerUnits)||lineWagerUnits<1)throw new RangeError('lineWagerUnits must be a positive safe integer');
+ if(!Number.isSafeInteger(activePaylines)||activePaylines<1||activePaylines>PAYLINES.length)throw new RangeError('activePaylines must be an integer from 1 through 20');
+ const weights=typeof volatility==='string'?volatilityTables?.[volatility]:volatility;
+ if(!weights||typeof weights!=='object'||Array.isArray(weights))throw new TypeError('unknown volatility table');
  if(Object.keys(weights).some(s=>!symbols.includes(s)))throw new TypeError('volatility table contains an unknown symbol');
  for(const s of symbols)if(!Object.hasOwn(weights,s))throw new TypeError(`missing volatility weight for ${s}`);
- validatePaytable(paytable,symbols);const matrix=Array.from({length:3},()=>Array.from({length:5},()=>weightedSymbol(weights,readUint32)));const wins=[];let totalMultiplier=0;
- for(let i=0;i<PAYLINES.length;i++){const match=evaluateLine(matrix,PAYLINES[i],paytable);if(!match)continue;const linePayout=wagerUnits*match.multiplier;if(!Number.isSafeInteger(linePayout))throw new RangeError('line payout exceeds safe integer range');totalMultiplier+=match.multiplier;if(!Number.isSafeInteger(totalMultiplier))throw new RangeError('total payout multiplier exceeds safe integer range');wins.push({payline:i+1,symbol:match.symbol,matchLength:match.matchLength,multiplier:match.multiplier,payoutUnits:linePayout});}
- const payoutUnits=wagerUnits*totalMultiplier;if(!Number.isSafeInteger(payoutUnits))throw new RangeError('total payout exceeds safe integer range');
- return Object.freeze({matrix:Object.freeze(matrix.map(r=>Object.freeze(r))),wagerUnits,payoutUnits,netDeltaUnits:payoutUnits-wagerUnits,isWin:wins.length>0,wins:Object.freeze(wins),volatility:typeof volatility==='string'?volatility:'custom',paylinesEvaluated:PAYLINES.length});
+ validatePaytable(paytable,symbols);
+ const matrix=Array.from({length:3},()=>Array.from({length:5},()=>weightedSymbol(weights,readUint32)));
+ const wins=[];let totalMultiplier=0;
+ for(let i=0;i<activePaylines;i++){const match=evaluateLine(matrix,PAYLINES[i],paytable);if(!match)continue;const linePayout=lineWagerUnits*match.multiplier;if(!Number.isSafeInteger(linePayout))throw new RangeError('line payout exceeds safe integer range');totalMultiplier+=match.multiplier;if(!Number.isSafeInteger(totalMultiplier))throw new RangeError('total payout multiplier exceeds safe integer range');wins.push({payline:i+1,symbol:match.symbol,matchLength:match.matchLength,multiplier:match.multiplier,payoutUnits:linePayout});}
+ const totalWagerUnits=lineWagerUnits*activePaylines,payoutUnits=lineWagerUnits*totalMultiplier;
+ if(!Number.isSafeInteger(totalWagerUnits)||!Number.isSafeInteger(payoutUnits))throw new RangeError('spin totals exceed safe integer range');
+ return Object.freeze({matrix:Object.freeze(matrix.map(r=>Object.freeze(r))),lineWagerUnits,totalWagerUnits,activePaylines,payoutUnits,netDeltaUnits:payoutUnits-totalWagerUnits,isWin:wins.length>0,wins:Object.freeze(wins),volatility:typeof volatility==='string'?volatility:'custom',paylinesEvaluated:activePaylines});
 }
 export function validateIdempotencyKey(value){return typeof value==='string'&&/^[A-Za-z0-9._:-]{16,128}$/.test(value);}
