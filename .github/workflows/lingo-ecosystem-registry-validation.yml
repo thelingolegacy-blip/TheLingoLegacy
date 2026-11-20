@@ -1,0 +1,52 @@
+name: LINGO Ecosystem Registry Validation
+
+on:
+  pull_request:
+    paths:
+      - "config/lingo-ecosystem-registry.v1.json"
+      - "config/lingo-dispatch-routes.v1.json"
+      - "schemas/lingo-ecosystem-registry.schema.json"
+      - "schemas/lingo-dispatch-routes.schema.json"
+      - "scripts/validate-lingo-registry.mjs"
+      - "scripts/validate-lingo-dispatch.mjs"
+      - "scripts/test-validate-lingo-registry.mjs"
+      - ".github/workflows/lingo-ecosystem-registry-validation.yml"
+  push:
+    branches:
+      - "build/lingo-ecosystem-foundation-2026-11-15"
+    paths:
+      - "config/lingo-ecosystem-registry.v1.json"
+      - "config/lingo-dispatch-routes.v1.json"
+      - "schemas/lingo-ecosystem-registry.schema.json"
+      - "schemas/lingo-dispatch-routes.schema.json"
+      - "scripts/validate-lingo-registry.mjs"
+      - "scripts/validate-lingo-dispatch.mjs"
+      - "scripts/test-validate-lingo-registry.mjs"
+      - ".github/workflows/lingo-ecosystem-registry-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-ecosystem-registry-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: Test realm registry validator
+        run: node --test scripts/test-validate-lingo-registry.mjs
+      - name: Validate canonical realm registry
+        run: node scripts/validate-lingo-registry.mjs
+      - name: Validate dispatch routes
+        run: node scripts/validate-lingo-dispatch.mjs
