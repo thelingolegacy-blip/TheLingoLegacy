@@ -118,7 +118,7 @@ func TestProfileWriteRejectsNonJSONContentType(t *testing.T) {
 func TestProfileWriteReturns413WhenBodyExceedsLimit(t *testing.T) {
 	api := New(nil, testVerifier)
 	recorder := httptest.NewRecorder()
-	body := "{\\"display_name\\":\\"" + strings.Repeat("x", 5000) + "\\"}"
+	body := "{\"display_name\":\"" + strings.Repeat("x", 5000) + "\"}"
 	request := httptest.NewRequest(http.MethodPut, "/v1/me/profile", strings.NewReader(body))
 	request.Header.Set("Authorization", "Bearer valid")
 	request.Header.Set("Content-Type", "application/json")
