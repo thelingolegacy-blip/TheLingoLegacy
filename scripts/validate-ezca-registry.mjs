@@ -26,7 +26,7 @@ const workers = parsed[files[2]];
 const reconciliation = parsed['infrastructure/registry/reconciliation-status.json'];
 const workerBindings = parsed['infrastructure/registry/worker-bindings.json'];
 const firebaseProjects = parsed['infrastructure/registry/firebase-projects.json'];
-if (repositories.inventory_count !== 38 || repositories.repositories.length !== 38) {
+if (repositories.inventory_count !== 39 || repositories.repositories.length !== 39) {
   throw new Error('Repository inventory count mismatch');
 }
 if (engines.packages.length !== 12) throw new Error('Expected exactly 12 shared engines');
