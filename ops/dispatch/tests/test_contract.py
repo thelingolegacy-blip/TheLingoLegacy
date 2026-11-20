@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from ops.dispatch.contract import ContractError, transition, validate_job
 
@@ -122,6 +123,50 @@ class DispatchContractTests(unittest.TestCase):
             ):
                 validate_job(job)
 
+    def test_unapproved_tool_rejected(self):
+        job = valid_job()
+        job["allowed_tools"] = ["arbitrary-production-deploy"]
+        with self.assertRaisesRegex(ContractError, "unapproved tool"):
+            validate_job(job)
+
+    def test_unapproved_permission_profile_rejected(self):
+        job = valid_job()
+        job["permission_profile"] = "administrator-all-access"
+        with self.assertRaisesRegex(ContractError, "not approved"):
+            validate_job(job)
+
+    def test_nonzero_cost_ceiling_rejected_until_budget_policy_exists(self):
+        job = valid_job()
+        job["cost_ceiling_usd"] = 0.01
+        with self.assertRaisesRegex(ContractError, "exactly zero"):
+            validate_job(job)
+
+    def test_owner_role_must_have_a_proposal_permission(self):
+        catalog = {
+            "engineering-administrator": {
+                "principal_type": "human", "permissions": frozenset({"build.read"}),
+            },
+            "independent-auditor": {
+                "principal_type": "human", "permissions": frozenset({"acceptance.review"}),
+            },
+        }
+        with patch("ops.dispatch.contract._load_role_catalog", return_value=catalog):
+            with self.assertRaisesRegex(ContractError, "proposal permission"):
+                validate_job(valid_job())
+
+    def test_reviewer_role_must_have_an_independent_review_permission(self):
+        catalog = {
+            "engineering-administrator": {
+                "principal_type": "human", "permissions": frozenset({"source.propose"}),
+            },
+            "independent-auditor": {
+                "principal_type": "human", "permissions": frozenset({"build.read"}),
+            },
+        }
+        with patch("ops.dispatch.contract._load_role_catalog", return_value=catalog):
+            with self.assertRaisesRegex(ContractError, "independent-review permission"):
+                validate_job(valid_job())
+
     def test_reference_arrays_reject_non_strings(self):
         job = valid_job()
         job["allowed_tools"] = [{"tool": "all"}]
@@ -163,6 +208,24 @@ class DispatchContractTests(unittest.TestCase):
         ):
             with self.subTest(key=key):
                 self.assertEqual(schema["properties"][key]["items"]["pattern"], r".*\S.*")
+
+    def test_schema_limits_tools_permissions_and_cost(self):
+        import json
+        from pathlib import Path
+
+        schema = json.loads(
+            Path("ops/dispatch/job-envelope.schema.json").read_text()
+        )
+        self.assertEqual(
+            schema["properties"]["allowed_tools"]["items"]["enum"],
+            ["read-only-github", "read-only-cloudflare", "read-only-firebase",
+             "local-unit-tests", "static-analysis", "preview-build"],
+        )
+        self.assertEqual(
+            schema["properties"]["permission_profile"]["enum"],
+            ["least-privilege-read-only", "source-validation-only"],
+        )
+        self.assertEqual(schema["properties"]["cost_ceiling_usd"]["const"], 0)
 
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
