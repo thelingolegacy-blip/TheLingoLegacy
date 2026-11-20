@@ -182,9 +182,9 @@ class Runner:
         flutter = shutil.which("flutter")
         if not flutter:
             return self.record({"task": task_id, "status": "BLOCKED", "reason": "Flutter SDK not installed"})
-        cache = self.out / "pub-cache" / task_id
-        cache.mkdir(parents=True, exist_ok=True)
-        env = {"PUB_CACHE": str(cache)}
+        # Reuse the operator's existing PUB_CACHE. Offline mode must not
+        # point to a newly created empty cache.
+        env: dict[str, str] = {}
         pub_args = [flutter, "pub", "get"] + ([] if self.network else ["--offline"])
         pub = await self.command(f"{task_id}-pub-get", project, pub_args, timeout=max(self.timeout, 900), extra_env=env)
         if pub["status"] != "PASS":
