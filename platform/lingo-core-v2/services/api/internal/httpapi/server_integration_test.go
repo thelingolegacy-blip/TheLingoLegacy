@@ -104,6 +104,7 @@ func performProfileWrite(t *testing.T, api *API, displayName string) *httptest.R
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPut, "/v1/me/profile", strings.NewReader(`{"display_name":"`+displayName+`"}`))
 	request.Header.Set("Authorization", "Bearer integration-test")
+	request.Header.Set("Content-Type", "application/json")
 	api.Handler().ServeHTTP(recorder, request)
 	return recorder
 }
