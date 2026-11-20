@@ -15,7 +15,9 @@ Usage:
 Network-enabled mode permits only fixed-host public HTTPS GET probes. Dependency
 provider downloads remain disabled; no provider-side mutation is performed.
 Candidate directories must be pre-existing local checkouts/worktrees; this tool
-does not fetch branches, alter refs, or create worktrees.
+does not fetch branches, alter refs, or create worktrees. Run only inside a
+disposable, unprivileged VM/container with no provider credentials or host mounts.
+The required acknowledgement flag is an operator attestation, not a sandbox.
 """
 from __future__ import annotations
 
@@ -669,6 +671,9 @@ async def main_async(args: argparse.Namespace) -> int:
         if value and not SHA_RE.fullmatch(value):
             print(f"BLOCKED: --{label.lower().replace(' ', '-')}-expected-sha must be a full lowercase 40-character SHA.", file=sys.stderr)
             return 2
+    if not args.isolated_host_confirmed:
+        print("BLOCKED: run only in a disposable, unprivileged, uncredentialed VM/container and pass --isolated-host-confirmed.", file=sys.stderr)
+        return 2
     if args.timeout < 1:
         print("BLOCKED: --timeout must be positive.", file=sys.stderr)
         return 2
@@ -897,6 +902,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo-root", default=".", help="Existing local Git checkout (default: current directory)")
     parser.add_argument("--output-dir", default="release/evidence/one-time-restoration", help="Evidence output root inside repo")
     parser.add_argument("--timeout", type=int, default=900, help="Per-command timeout in seconds")
+    parser.add_argument("--isolated-host-confirmed", action="store_true",
+                        help="Attest that execution is inside a disposable unprivileged VM/container with no provider credentials or host mounts")
     parser.add_argument("--network-enabled", action="store_true", help="Allow only fixed-host public HTTPS GET probes; dependency downloads remain disabled")
     parser.add_argument("--core-v2-dir", help="Existing clean local PR #596 checkout/worktree (repository root or Go module directory)")
     parser.add_argument("--core-v2-expected-sha", help="Required with --core-v2-dir: exact current PR #596 head SHA")
