@@ -147,6 +147,22 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "exactly zero"):
             validate_job(job)
 
+    def test_role_catalog_rejects_removed_security_restrictions(self):
+        import json
+        from pathlib import Path
+
+        catalog_path = Path("ops/dispatch/roles.json")
+        catalog = json.loads(catalog_path.read_text())
+        engineering = next(
+            role for role in catalog["roles"]
+            if role["id"] == "engineering-administrator"
+        )
+        engineering["restricted"] = []
+        with patch("pathlib.Path.read_text", return_value=json.dumps(catalog)):
+            from ops.dispatch.contract import _load_role_catalog
+            with self.assertRaisesRegex(ContractError, "missing required security restrictions"):
+                _load_role_catalog()
+
     def test_owner_role_must_have_a_proposal_permission(self):
         catalog = {
             "engineering-administrator": {
