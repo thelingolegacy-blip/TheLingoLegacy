@@ -106,7 +106,7 @@ class Runner:
             text = output.decode("utf-8", errors="replace")
             # Never persist a PostgreSQL connection URI if a child process
             # includes it in diagnostics.
-            text = re.sub(r"postgres(?:ql)?://[^\\s'\"<>]+", "[REDACTED_POSTGRES_DSN]", text, flags=re.I)
+            text = re.sub(r"postgres(?:ql)?://[^\s'\"<>]+", "[REDACTED_POSTGRES_DSN]", text, flags=re.I)
             if extra_env and extra_env.get("TEST_DATABASE_URL"):
                 text = text.replace(extra_env["TEST_DATABASE_URL"], "[REDACTED_POSTGRES_DSN]")
             log.write_text(text, encoding="utf-8")
