@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: hosted-canary-zero-uses-\${{ github.ref }}
+  group: hosted-canary-zero-uses-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,21 +27,21 @@ jobs:
           {
             echo "schema=lingo-hosted-canary-zero-uses-v1"
             echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "repository=\${GITHUB_REPOSITORY}"
-            echo "run_id=\${GITHUB_RUN_ID}"
-            echo "run_attempt=\${GITHUB_RUN_ATTEMPT}"
-            echo "sha=\${GITHUB_SHA}"
-            echo "ref=\${GITHUB_REF}"
-            echo "runner_name=\${RUNNER_NAME}"
-            echo "runner_os=\${RUNNER_OS}"
-            echo "runner_arch=\${RUNNER_ARCH}"
-            echo "github_actions=\${GITHUB_ACTIONS}"
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "sha=${GITHUB_SHA}"
+            echo "ref=${GITHUB_REF}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "github_actions=${GITHUB_ACTIONS}"
           } | tee canary-evidence/identity.txt
 
-          test -n "\${RUNNER_NAME:-}"
-          test "\${RUNNER_OS}" = "Linux"
-          test "\${GITHUB_ACTIONS}" = "true"
-          echo "ZERO_USES_CANARY=PASS" | tee -a canary-evidence/identity.txt
+          test -n "${RUNNER_NAME:-}"
+          test "${RUNNER_OS}" = "Linux"
+          test "${GITHUB_ACTIONS}" = "true"
+          echo "ZERO_UNDERSCORE_USES_CANARY=PASS" | tee -a canary-evidence/identity.txt
 
       - name: Preserve evidence in job summary
         if: always()
@@ -50,9 +50,10 @@ jobs:
           {
             echo "## Hosted zero-uses canary"
             echo
-            echo "- Run: \${GITHUB_RUN_ID}"
-            echo "- Attempt: \${GITHUB_RUN_ATTEMPT}"
-            echo "- Commit: \${GITHUB_SHA}"
-            echo "- Runner OS: \${RUNNER_OS}"
-            echo "- Runner name present: $([ -n "\${RUNNER_NAME:-}" ] && echo yes || echo no)"
-          } >> "\${GITHUB_STEP_SUMMARY}"
+            echo "- Run: ${GITHUB_RUN_ID}"
+            echo "- Attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Runner OS: ${RUNNER_OS}"
+            echo "- Runner name present: $([ -n "${RUNNER_NAME:-}" ] && echo yes || echo no)"
+            echo "- Acceptance marker: ZERO_UNDERSCORE_USES_CANARY=PASS"
+          } >> "${GITHUB_STEP_SUMMARY}"
