@@ -10,22 +10,27 @@ The API has an initial safety-focused test set, and the current API workflow is 
 
 Do not state a coverage percentage until a completed run produces `coverage.out` and `go tool cover -func` output. Do not describe the Go tests as passing or failing until a job actually executes them.
 
+
+### Dependency lock evidence
+
+The current branch contains `go.mod` but no `go.sum`. The workflow's `go mod tidy -diff` step is expected to fail until a checksum file is generated from the exact module graph and committed. Do not hand-author checksums. Generate `go.sum` with the pinned Go toolchain in a controlled dependency-fetch environment, review the full module graph, then rerun `go mod tidy -diff` and `go mod verify` before claiming reproducibility.
+
 ## 2. Static test inventory
 
 Inspected Go files under `platform/lingo-core-v2/services/api`:
 
 | Package / file | Source inventory | Test inventory |
 |---|---|---|
-| `internal/httpapi/server.go` | HTTP routes, security headers, health/readiness, bearer verification, profile read/write, transaction and outbox | 9 unit test functions in `server_test.go`; 3 integration test functions in `server_integration_test.go` |
+| `internal/httpapi/server.go` | HTTP routes, security headers, health/readiness, bearer verification, profile read/write, transaction and outbox | 12 unit test functions in `server_test.go`; 3 integration test functions in `server_integration_test.go` |
 | `cmd/api/main.go` | Environment validation, PostgreSQL TLS policy, OIDC issuer policy/discovery/verifier, server timeouts and shutdown | 2 table-driven test functions in `main_test.go` |
 
 The 2 `cmd/api` test functions cover PostgreSQL TLS policy (12 table cases) and OIDC issuer policy (10 table cases). They cover verified TLS, loopback development exceptions, remote plaintext rejection, duplicate `sslmode`, malformed/wrong-scheme URLs, HTTPS enforcement, loopback HTTP exceptions, remote HTTP rejection, credentials/query strings, and relative issuer URLs.
 
-The 9 `internal/httpapi` unit test functions cover liveness/security header, nil-DB readiness, missing/invalid bearer, missing issuer, unknown JSON fields, multiple JSON values, display-name over-limit, and nil-DB write fail-closed.
+The 12 `internal/httpapi` unit test functions cover liveness/security header, nil-DB readiness, missing/invalid bearer, missing issuer, unknown JSON fields, multiple JSON values, display-name over-limit, nil-DB write fail-closed, required JSON media type, malformed JSON, and the 4 KiB request-body limit with HTTP 413.
 
 The 3 integration test functions cover issuer/subject isolation and committed outbox records; outbox insert failure rolling back the profile mutation; and integration DSN safety validation with 7 table-driven DSN cases.
 
-The two PostgreSQL-dependent integration functions call `t.Skip` when `TEST_DATABASE_URL` is absent. The API workflow defines a PostgreSQL 16 service and supplies a loopback `lingo_test` DSN, but current hosted workflows have not instantiated jobs. The separate bootstrap workflow permits DB-less integration skips; its result must not be confused with a full PostgreSQL integration pass.
+The two PostgreSQL-dependent integration functions call `t.Skip` when `TEST_DATABASE_URL` is absent. The consolidated API workflow defines a PostgreSQL 16 service and supplies a loopback `lingo_test` DSN. The duplicate DB-less bootstrap workflow was removed so there is one canonical hosted validation lane. Current hosted workflows have not instantiated jobs.
 
 ## 3. Coverage status and metric semantics
 
@@ -92,7 +97,7 @@ Add cancellation/deadline behavior, concurrent profile writes, request-size boun
 
 ## 5. Coverage workflow configuration
 
-The API workflow is configured to retain a profile and readable report, not only print package coverage:
+The single API workflow is configured to check out the exact PR head SHA, record runner/run identity, retain a profile and readable report, and execute PostgreSQL integration tests—not only print package coverage:
 
     set -euo pipefail
     go test -race -count=1 -coverpkg=./... -coverprofile=coverage.out -covermode=atomic ./... 2>&1 | tee go-test-coverage.log
@@ -100,7 +105,7 @@ The API workflow is configured to retain a profile and readable report, not only
 
 It also uploads `coverage.out`, `go-test-coverage.log`, and `coverage-summary.txt` as one run-correlated artifact, using an `always()` upload condition. The summary step is conditional on the profile existing. A missing profile must not be labeled as passing coverage.
 
-Keep the separate bootstrap job's DB-less run classified as unit/smoke-only. Only the API workflow with its healthy PostgreSQL service can provide full database integration coverage.
+Only the consolidated API workflow with its healthy PostgreSQL service can provide full database integration coverage. A job without an instantiated runner, completed steps, logs and artifact remains UNEXECUTED.
 
 ## 6. Acceptance thresholds — proposed, not adopted
 
