@@ -12,8 +12,8 @@ Usage:
   python3 ops/recovery/run_one_time_restoration.py --firebase-candidate-dir /path/to/pr614
   python3 ops/recovery/run_one_time_restoration.py --g02-evidence /secure/g02.json --expected-sha <40-char-sha>
 
-Network-enabled mode permits public HTTPS GET probes and ordinary dependency
-downloads only. It does not authorize or perform any provider-side mutation.
+Network-enabled mode permits only fixed-host public HTTPS GET probes. Dependency
+provider downloads remain disabled; no provider-side mutation is performed.
 Candidate directories must be pre-existing local checkouts/worktrees; this tool
 does not fetch branches, alter refs, or create worktrees.
 """
@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import fnmatch
 import hashlib
 import ipaddress
 import json
@@ -58,23 +59,86 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+SAFE_ENV_KEYS = {
+    "PATH", "SYSTEMROOT", "WINDIR", "PATHEXT", "TEMP", "TMP",
+    "LANG", "LC_ALL", "CI", "ANDROID_SDK_ROOT", "ANDROID_HOME",
+    "JAVA_HOME", "FLUTTER_ROOT", "PUB_CACHE", "GOTOOLCHAIN", "GOPROXY",
+}
+
+
 def safe_env(extra: dict[str, str] | None = None) -> dict[str, str]:
-    # Database URLs are never inherited by unrelated build/test processes.
-    # Go integration tests receive one only through the explicit opt-in path.
-    env = {k: v for k, v in os.environ.items()
-           if not SECRET_ENV.search(k) and k != "TEST_DATABASE_URL"}
+    # Do not inherit the operator's HOME, cloud credentials, SSH agent, proxy
+    # credentials, provider profiles, or arbitrary application environment.
+    env = {k: v for k, v in os.environ.items() if k in SAFE_ENV_KEYS}
+    env["HOME"] = tempfile.gettempdir()
+    env.setdefault("PATH", os.defpath)
     env.setdefault("CI", "1")
     if extra:
+        unexpected = set(extra) - (SAFE_ENV_KEYS | {"TEST_DATABASE_URL"})
+        if unexpected:
+            raise ValueError("unsupported child environment keys: " + ", ".join(sorted(unexpected)))
         env.update(extra)
     return env
 
 
+def find_workspace_symlinks(source: Path) -> list[str]:
+    found: list[str] = []
+    for current, directories, files in os.walk(source, followlinks=False):
+        current_path = Path(current)
+        kept_directories = []
+        for name in directories:
+            item = current_path / name
+            relative_parts = item.relative_to(source).parts
+            ignored = any(fnmatch.fnmatch(part, pattern) for part in relative_parts for pattern in IGNORED)
+            if ignored:
+                continue
+            if item.is_symlink():
+                found.append(item.relative_to(source).as_posix())
+            else:
+                kept_directories.append(name)
+        directories[:] = kept_directories
+        for name in files:
+            item = current_path / name
+            relative_parts = item.relative_to(source).parts
+            if any(fnmatch.fnmatch(part, pattern) for part in relative_parts for pattern in IGNORED):
+                continue
+            if item.is_symlink():
+                found.append(item.relative_to(source).as_posix())
+    return found
+
+
+def resolve_output_root(source: Path, output_dir: str) -> Path:
+    requested = Path(output_dir)
+    lexical = requested if requested.is_absolute() else source / requested
+    resolved = lexical.resolve()
+    if resolved == source or source not in resolved.parents:
+        raise ValueError("output directory must resolve to a child of the source repository")
+    try:
+        relative = lexical.absolute().relative_to(source)
+    except ValueError as exc:
+        raise ValueError("output directory must be specified inside the source repository") from exc
+    current = source
+    for part in relative.parts:
+        current = current / part
+        if current.exists() and current.is_symlink():
+            raise ValueError("output directory path must not contain symlink components")
+    return resolved
+
+
 def copy_workspace(source: Path, destination: Path) -> None:
+    symlinks = find_workspace_symlinks(source)
+    if symlinks:
+        raise ValueError("workspace contains symlinks; refusing to preserve or follow them: " + ", ".join(symlinks[:20]))
     shutil.copytree(
         source, destination,
         ignore=shutil.ignore_patterns(*IGNORED, "*.log", "static-gate-results.json"),
-        symlinks=True,
+        symlinks=False,
     )
+
+
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 class Runner:
@@ -248,7 +312,7 @@ class Runner:
         # Enforce the committed lockfile and reuse the operator's existing
         # PUB_CACHE. Offline mode must not point to a newly created empty cache.
         env: dict[str, str] = {}
-        pub_args = [flutter, "pub", "get", "--enforce-lockfile"] + ([] if self.network else ["--offline"])
+        pub_args = [flutter, "pub", "get", "--enforce-lockfile", "--offline"]
         pub = await self.command(f"{task_id}-pub-get", project, pub_args, timeout=max(self.timeout, 900), extra_env=env)
         if pub["status"] != "PASS":
             return self.record({"task": task_id, "status": "BLOCKED",
@@ -304,7 +368,7 @@ class Runner:
         if not go:
             return self.record({"task": "core-v2-go", "status": "BLOCKED", "reason": "Go toolchain not installed",
                                 "source_commit_sha": source_sha, "source_branch": source_branch})
-        env = {"GOTOOLCHAIN": "local", "GOPROXY": "direct" if self.network else "off"}
+        env = {"GOTOOLCHAIN": "local", "GOPROXY": "off"}
         results = []
         gofmt = shutil.which("gofmt")
         if gofmt:
@@ -555,35 +619,26 @@ print("CRIMSON_SMOKE_STATIC=PASS")
         if terraform and tfdir.is_dir():
             results.append(await self.command("devops-terraform-format", workspace,
                                               [terraform, "-chdir=infrastructure/terraform", "fmt", "-check", "-recursive"]))
-            if self.network:
-                init = await self.command("devops-terraform-init", workspace,
-                                          [terraform, "-chdir=infrastructure/terraform", "init", "-backend=false", "-input=false"],
-                                          timeout=max(self.timeout, 900))
-                results.append(init)
-                if init["status"] == "PASS":
-                    results.append(await self.command("devops-terraform-validate", workspace,
-                                                      [terraform, "-chdir=infrastructure/terraform", "validate"],
-                                                      timeout=max(self.timeout, 900)))
-                else:
-                    results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED", "reason": "Terraform init did not complete"}))
-            else:
-                results.append(self.record({"task": "devops-terraform-init", "status": "BLOCKED", "reason": "Terraform provider initialization may download dependencies; pass --network-enabled"}))
-                results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED", "reason": "Terraform validation requires initialized providers"}))
+            results.append(self.record({"task": "devops-terraform-init", "status": "BLOCKED",
+                                        "reason": "provider installation is intentionally disabled; prepare a separately verified offline provider cache"}))
+            results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED",
+                                        "reason": "Terraform validation requires an independently prepared provider cache"}))
         else:
             results.append(self.record({"task": "devops-terraform", "status": "BLOCKED", "reason": "Terraform or infrastructure/terraform unavailable"}))
         statuses = [x["status"] for x in results]
         overall = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
         return self.record({"task": "devops-static", "status": overall, "subtasks": results,
-                            "note": "Terraform initialization is explicitly backend=false; network-enabled mode is required to download providers; no cloud backend or credentials are used."})
+                            "note": "Terraform provider installation is intentionally disabled; use a separately prepared and verified offline provider cache."})
 
     async def public_probes(self) -> dict[str, Any]:
         if not self.network:
             return self.record({"task": "public-route-probes", "status": "BLOCKED", "reason": "pass --network-enabled to allow public HTTPS GET probes"})
         results = []
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirectHandler())
         for url in PROBES:
             req = urllib.request.Request(url, headers={"User-Agent": "LINGO-Recovery-Evidence/1.0"}, method="GET")
             try:
-                with urllib.request.urlopen(req, timeout=20) as response:
+                with opener.open(req, timeout=20) as response:
                     results.append({"url": url, "status": response.status, "final_url": response.geturl()})
             except urllib.error.HTTPError as exc:
                 results.append({"url": url, "status": exc.code, "final_url": exc.geturl(), "error": "HTTPError"})
@@ -619,7 +674,12 @@ async def main_async(args: argparse.Namespace) -> int:
         return 2
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = (source / args.output_dir / f"run-{run_id}").resolve()
+    try:
+        output_root = resolve_output_root(source, args.output_dir)
+    except ValueError as exc:
+        print(f"BLOCKED: {exc}", file=sys.stderr)
+        return 2
+    out = output_root / f"run-{run_id}"
     out.mkdir(parents=True, exist_ok=False)
     started = utc_now()
     runner = Runner(source, out, args.timeout, args.network_enabled)
@@ -631,7 +691,11 @@ async def main_async(args: argparse.Namespace) -> int:
     print("Mode: local tests/builds + optional public GET probes; production activation disabled.")
     with tempfile.TemporaryDirectory(prefix="lingo-recovery-") as temp:
         workspace = Path(temp) / "repo"
-        copy_workspace(source, workspace)
+        try:
+            copy_workspace(source, workspace)
+        except (OSError, ValueError) as exc:
+            print(f"BLOCKED: source workspace cannot be copied safely: {exc}", file=sys.stderr)
+            return 2
 
         # Capture immutable provenance before copying either candidate. Dirty
         # worktrees are rejected so test results cannot be attributed only to
@@ -661,8 +725,11 @@ async def main_async(args: argparse.Namespace) -> int:
 
         core_module = bool(core_dir and ((core_dir / "platform/lingo-core-v2/services/api/go.mod").is_file()
                                          or (core_dir / "go.mod").is_file()))
-        core_ok = candidate_ok(core_snapshot, args.core_v2_expected_sha, core_module)
+        core_has_symlinks = bool(core_dir and core_dir.is_dir() and find_workspace_symlinks(core_dir))
+        core_ok = candidate_ok(core_snapshot, args.core_v2_expected_sha, core_module) and not core_has_symlinks
         core_status, core_reason = candidate_status(core_snapshot, args.core_v2_expected_sha, core_module)
+        if core_has_symlinks:
+            core_status, core_reason = "FAIL", "candidate contains symlinks; safe disposable copy is not permitted"
         runner.record({"task": "core-v2-source-provenance", "status": core_status,
                        **(core_snapshot or {"path": str(core_dir) if core_dir else None, "git_readable": False}),
                        "expected_sha": args.core_v2_expected_sha, "module_present": core_module,
@@ -674,8 +741,11 @@ async def main_async(args: argparse.Namespace) -> int:
                                    "scripts/test-verify-android-api21-firebase.mjs",
                                    "scripts/test-verify-flutter-android-readiness.mjs",
                                ]))
-        firebase_ok = candidate_ok(firebase_snapshot, args.firebase_expected_sha, firebase_module)
+        firebase_has_symlinks = bool(firebase_dir and firebase_dir.is_dir() and find_workspace_symlinks(firebase_dir))
+        firebase_ok = candidate_ok(firebase_snapshot, args.firebase_expected_sha, firebase_module) and not firebase_has_symlinks
         firebase_status, firebase_reason = candidate_status(firebase_snapshot, args.firebase_expected_sha, firebase_module)
+        if firebase_has_symlinks:
+            firebase_status, firebase_reason = "FAIL", "candidate contains symlinks; safe disposable copy is not permitted"
         runner.record({"task": "firebase-source-provenance", "status": firebase_status,
                        **(firebase_snapshot or {"path": str(firebase_dir) if firebase_dir else None, "git_readable": False}),
                        "expected_sha": args.firebase_expected_sha, "required_tests_present": firebase_module,
@@ -827,7 +897,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo-root", default=".", help="Existing local Git checkout (default: current directory)")
     parser.add_argument("--output-dir", default="release/evidence/one-time-restoration", help="Evidence output root inside repo")
     parser.add_argument("--timeout", type=int, default=900, help="Per-command timeout in seconds")
-    parser.add_argument("--network-enabled", action="store_true", help="Allow public HTTPS GET probes and dependency downloads")
+    parser.add_argument("--network-enabled", action="store_true", help="Allow only fixed-host public HTTPS GET probes; dependency downloads remain disabled")
     parser.add_argument("--core-v2-dir", help="Existing clean local PR #596 checkout/worktree (repository root or Go module directory)")
     parser.add_argument("--core-v2-expected-sha", help="Required with --core-v2-dir: exact current PR #596 head SHA")
     parser.add_argument("--allow-local-postgres-integration", action="store_true",
