@@ -929,7 +929,7 @@ A second read-only code review of the PR #615 orchestrator identified and correc
 2. **Firebase candidate coverage is expanded.** The isolated PR #614 task now requires and executes the publication builder syntax check plus all four available contract suites: Firebase public-output boundary, Flutter Firebase staging identity, Android API-21 Firebase pin compatibility, and Flutter Android scaffold readiness. These remain local contract tests, not Firebase provider connectivity or deployment evidence.
 3. **Evidence bundle checksums now cover every artifact.** `SHA256SUMS` is generated for `final-evidence.json` and all task logs, rather than hashing only the summary file. The script reports the checksum-manifest digest separately.
 
-The orchestrator currently contains 826 lines. Its latest PR #615 head after these source updates is `8a566ee9c532883046be987bc653d2f7252ddd6a`; the script blob SHA read back from GitHub is `08161284a992ac4daa6817b51c0ceeb2380c58c6`. The updated file and this document remain on the existing PR #615 branch; PR #615 remains draft and unmerged.
+The orchestrator currently contains 840 lines. Its latest script commit is `9c533f4ae5f7d6e0d88274c60f913f49d582937d`; the script blob SHA read back from GitHub is `da6f9aa9fc0bfd86ae0046eddd2390542f48d25f`. The updated file and this document remain on the existing PR #615 branch; PR #615 remains draft and unmerged.
 
 ### Latest read-only infrastructure observations
 
@@ -972,7 +972,7 @@ The PR #615 orchestrator was expanded again after reviewing the actual PR #614 a
 - **PR #614 candidate execution:** W1 now runs syntax checks for the Firebase builder and Firebase/Android contract validators, all four existing Node contract suites, and the concrete Android readiness/API-21 validators against the candidate checkout. W2 also runs the PR #614 root Flutter and Oasis Flutter projects, not just the baseline source branch.
 - **Flutter reproducibility:** Every Flutter project requires a committed source pubspec.lock and runs pub get with --enforce-lockfile. Missing lockfiles block that project; the script will not create a new lockfile and treat it as accepted source evidence.
 - **Android/iOS toolchain reporting:** Android debug builds run only when an SDK path is found via ANDROID_SDK_ROOT, ANDROID_HOME, or android/local.properties. Otherwise the Android target is recorded BLOCKED. iOS simulator builds require macOS and xcodebuild; an unavailable iOS target remains BLOCKED without suppressing independent web/Android work or W3 GET observation. The overall evidence bundle still remains BLOCKED when any target is blocked.
-- **PR #596 Go coverage:** W1 now includes gofmt validation, go mod tidy -diff, verbose Go tests, race tests, vet, and build. The PostgreSQL integration tests self-skip when TEST_DATABASE_URL is absent; the orchestrator explicitly records the integration target BLOCKED in that case instead of treating a passing unit-test command as integration evidence. A supplied TEST_DATABASE_URL is accepted only for localhost/loopback and database lingo_test; the raw DSN is never written to logs or evidence.
+- **PR #596 Go coverage:** W1 now includes gofmt validation, go mod tidy -diff, verbose Go tests, race tests, vet, and build. The PostgreSQL integration tests self-skip when TEST_DATABASE_URL is absent; the orchestrator explicitly records the integration target BLOCKED in that case instead of treating a passing unit-test command as integration evidence. A supplied TEST_DATABASE_URL is accepted only for localhost/loopback and database lingo_test, and only when the operator also passes --allow-local-postgres-integration. Without that explicit opt-in, the DSN is suppressed from child processes and the integration gate remains BLOCKED. The raw DSN is never written to logs or evidence.
 - **Dependency-aware wave policy:** W0 clean-source integrity gates W1. Required baseline repository contracts gate W2. Candidate suites remain explicit in the evidence bundle but a missing optional candidate/tool target is recorded BLOCKED without suppressing independent baseline builds; an actual FAIL still blocks the next wave. W2 baseline root/Oasis Flutter checks gate W3; candidate Flutter tasks are recorded separately. A blocked iOS simulator target does not suppress read-only W3 probes, but remains a final BLOCKED gate.
 - **Exact candidate provenance:** When --firebase-candidate-dir or --core-v2-dir is supplied, its matching --firebase-expected-sha or --core-v2-expected-sha is mandatory. The current observed candidate heads remain PR #614 b00a1cd3081aef361bc27803cd18427420174179 and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1; re-read immediately before execution.
 - **Evidence hashing:** SHA256SUMS now covers final-evidence.json and every generated task log/artifact; the manifest digest is printed separately.
@@ -1013,4 +1013,18 @@ The my-flutter-app production project's latest deployment remains a successful d
 The current DNS observations remain: apex A -> 192.0.2.0 (proxied), www CNAME -> thelingolegacy.com (proxied), app CNAME -> my-flutter-app.pages.dev (unproxied), and admin CNAME -> admin-thelingolegacy.firebaseapp.com (unproxied). DNS remains untouched.
 
 **Disposition:** preview attempts are explicitly SKIPPED, not PASS; production deployment evidence is historical only. PROTECTED HOLD remains active.
+
+## 9.19 Explicit opt-in for local PostgreSQL integration tests — 2026-11-20
+
+The CORE V2 integration test fixture creates and drops a unique PostgreSQL schema. A loopback URL alone cannot rule out an operator-created SSH tunnel to a remote database, so the orchestrator now requires a separate explicit opt-in before it passes TEST_DATABASE_URL to Go test processes.
+
+- Default behavior: TEST_DATABASE_URL is blanked for child processes; PostgreSQL integration tests self-skip and the integration-target gate is BLOCKED.
+- Opt-in: pass --allow-local-postgres-integration together with TEST_DATABASE_URL pointing to localhost/loopback database lingo_test.
+- The raw DSN is never written to task logs or final-evidence.json. The evidence records only the sanitized host and database name.
+- An unsafe scheme, non-loopback host, or database name other than lingo_test fails the target preflight and the DSN is not passed to test processes.
+- This flag permits only the test suite's isolated local schema create/drop behavior. It does not authorize production migrations or any provider-side data mutation.
+
+The orchestrator is now 840 lines at script commit 9c533f4ae5f7d6e0d88274c60f913f49d582937d (blob SHA da6f9aa9fc0bfd86ae0046eddd2390542f48d25f). The current PR #615 head is the same script commit; its commit-run query returned no associated workflow runs. No local compile or execution has been performed.
+
+**Disposition:** local PostgreSQL integration remains opt-in and BLOCKED by default; production and all external release gates remain under PROTECTED HOLD.
 
