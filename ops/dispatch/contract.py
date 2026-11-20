@@ -53,6 +53,17 @@ OWNER_PROPOSER_PERMISSIONS = frozenset({
     "registry.manage", "security.manage",
 })
 REVIEWER_PERMISSIONS = frozenset({"acceptance.review", "audit.read"})
+REQUIRED_ROLE_RESTRICTIONS = {
+    "super-administrator": frozenset({"cannot_self_approve_release", "cannot_bypass_release_gate"}),
+    "enterprise-administrator": frozenset({"cannot_grant_super_administrator", "cannot_approve_own_changes"}),
+    "security-administrator": frozenset({"cannot_approve_own_security_change"}),
+    "infrastructure-administrator": frozenset({"no_production_mutation_without_release_authorization"}),
+    "engineering-administrator": frozenset({"no_self_approval"}),
+    "operations-administrator": frozenset({"no_production_mutation_without_release_authorization"}),
+    "product-administrator": frozenset({"no_release_authorization"}),
+    "independent-auditor": frozenset({"read_only"}),
+    "worker": frozenset({"no_identity_admin", "no_policy_admin", "no_release", "no_secret_read_by_default"}),
+}
 
 
 class ContractError(ValueError):
@@ -108,6 +119,9 @@ def _load_role_catalog() -> dict[str, str]:
             isinstance(rule, str) and rule.strip() for rule in restricted
         ):
             raise ContractError(f"role {role_id!r} has an invalid restriction list")
+        required_restrictions = REQUIRED_ROLE_RESTRICTIONS.get(role_id)
+        if required_restrictions is None or not required_restrictions.issubset(set(restricted)):
+            raise ContractError(f"role {role_id!r} is missing required security restrictions")
         if role_id in roles:
             raise ContractError(f"role catalog contains duplicate role {role_id!r}")
         roles[role_id] = {
