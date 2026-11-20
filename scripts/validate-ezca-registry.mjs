@@ -88,4 +88,13 @@ if (!pagesProjects.projects.some((project) => project.name === 'thelingolegacy-s
   throw new Error('Historical static backup must not be represented as restore-accepted');
 }
 
+
+const backupProject = pagesProjects.projects.find((project) => project.name === 'thelingolegacy-static-backup');
+if (!backupProject?.dns_aliases?.some((alias) => alias.name === 'launch.thelingolegacy.com' && alias.target === 'thelingolegacy-static-backup.pages.dev' && alias.proxied === true)) {
+  throw new Error('Static backup launch DNS alias and proxy state must remain documented');
+}
+if (backupProject.worker_route?.script !== 'lingo-static-backup-proxy' || backupProject.access_application_exact_domain_match !== 'NOT_FOUND_IN_READ_ONLY_QUERY') {
+  throw new Error('Backup route and Access application association must remain explicitly unverified');
+}
+
 console.log('PASS EZCA registry invariants');
