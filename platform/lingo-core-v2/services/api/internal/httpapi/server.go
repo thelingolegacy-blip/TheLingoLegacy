@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"mime"
 	"net/http"
 	"strings"
 	"time"
@@ -112,6 +113,11 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	mediaType, _, mediaTypeErr := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if mediaTypeErr != nil || mediaType != "application/json" {
+		writeJSON(w, http.StatusUnsupportedMediaType, map[string]string{"error": "content_type_must_be_application_json"})
+		return
+	}
 	r.Body = http.MaxBytesReader(w, r.Body, 4096)
 	var input struct {
 		DisplayName string `json:"display_name"`
@@ -119,11 +125,21 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&input); err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]string{"error": "request_body_too_large"})
+		} else {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		}
 		return
 	}
 	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]string{"error": "request_body_too_large"})
+		} else {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		}
 		return
 	}
 	input.DisplayName = strings.TrimSpace(input.DisplayName)
