@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "observed_at": "2026-11-11",
+  "observed_at": "2026-11-20",
   "account_id": "16cb6f247cd1b28fca864760c7269606",
   "workers": [
     {
@@ -83,6 +83,29 @@
       "role": "flagship",
       "routes": [],
       "status": "LIVE_OBSERVED_UNROUTED"
+    },
+    {
+      "name": "lingo-integration-config-404",
+      "environment": "production-quarantine",
+      "role": "restricted-path-quarantine",
+      "routes": [
+        "www.thelingolegacy.com/integration-configurations/*",
+        "thelingolegacy.com/integration-configurations/",
+        "thelingolegacy.com/integration-configurations/*",
+        "www.thelingolegacy.com/integration-configurations",
+        "thelingolegacy.com/integration-configurations",
+        "www.thelingolegacy.com/integration-configurations/"
+      ],
+      "status": "LIVE_OBSERVED_QUARANTINE_ROUTE",
+      "notes": "Six exact integration-config quarantine route patterns returned by the live Cloudflare zone route API. Preserve as separate route owners; no route mutation performed."
+    },
+    {
+      "name": "lingo-unified-control-tower-preview",
+      "environment": "staging-preview",
+      "role": "control-tower",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED",
+      "notes": "Live script inventory confirms this preview script exists; no route assignment appeared in the 27-route zone inventory. No inference that it is unused or safe to delete."
     }
   ],
   "target_workers_not_observed": [
@@ -120,8 +143,8 @@
     "interpretation": "No secret names were returned for the seven scripts. The settings endpoint exposes three non-secret bindings on thelingolegacyv-5 and no regular bindings on the other six. This is not a complete audit of account-level secret stores, service bindings, or external provider credentials."
   },
   "route_inventory": {
-    "observed_routes": 21,
-    "source": "Cloudflare zone Workers Routes API read-only snapshot",
+    "observed_routes": 27,
+    "source": "Cloudflare zone Workers Routes API read-only snapshot captured 2026-11-20",
     "query_string_behavior": "Route matching considers the entire request URL; patterns cannot include query parameters. Therefore the exact apex-root route does not match a root URL carrying a query string; the apex wildcard catches it.",
     "runtime_attribution": "ROUTE_SELECTION_CONFIRMED_FROM_LIVE_ROUTE_API_AND_DEPLOYED_SOURCE; HTTP response marker capture PARTIAL",
     "no_routes_changed": true,
@@ -230,6 +253,36 @@
         "id": "cc917f80e69d470281cc6347ee8c0195",
         "pattern": "atlas.thelingolegacy.com/*",
         "script": "lingo-ecosystem-atlas"
+      },
+      {
+        "id": "d7879e2eec6846e4b7f38123c1152590",
+        "pattern": "www.thelingolegacy.com/integration-configurations/*",
+        "script": "lingo-integration-config-404"
+      },
+      {
+        "id": "c141ed6ada0547ca9ba26d2549eb65ce",
+        "pattern": "thelingolegacy.com/integration-configurations/",
+        "script": "lingo-integration-config-404"
+      },
+      {
+        "id": "7c69316b9e614aa78295a35412d5371c",
+        "pattern": "thelingolegacy.com/integration-configurations/*",
+        "script": "lingo-integration-config-404"
+      },
+      {
+        "id": "ad60f113dc6e4665a88f0bfb2ae727a8",
+        "pattern": "www.thelingolegacy.com/integration-configurations",
+        "script": "lingo-integration-config-404"
+      },
+      {
+        "id": "4c468e2eed7f4b22990600d1ab2e58f9",
+        "pattern": "thelingolegacy.com/integration-configurations",
+        "script": "lingo-integration-config-404"
+      },
+      {
+        "id": "9527e3f65dcc4ba79e6996d2a3adbfa7",
+        "pattern": "www.thelingolegacy.com/integration-configurations/",
+        "script": "lingo-integration-config-404"
       }
     ],
     "root_worker_source_inspection": {
@@ -247,15 +300,21 @@
         "behavior": "Implements /healthz and /api/v1/* runtime endpoints; non-API paths are served through ASSETS.fetch(request)"
       }
     },
-    "recommended_normalization": "DECISION_REQUIRED; do not mutate production until intended apex homepage and delegation model are approved.",
+    "recommended_normalization": "DECISION_REQUIRED; preserve the exact-root homepage Worker and six quarantine routes as observed assignments. Do not mutate production until homepage/delegation ownership and source-controlled route representation are approved.",
     "canonical_wrangler_routes": [
       "thelingolegacy.com/*",
       "www.thelingolegacy.com/*"
     ],
     "out_of_band_routes": [
-      "thelingolegacy.com/"
+      "thelingolegacy.com/",
+      "www.thelingolegacy.com/integration-configurations/*",
+      "thelingolegacy.com/integration-configurations/",
+      "thelingolegacy.com/integration-configurations/*",
+      "www.thelingolegacy.com/integration-configurations",
+      "thelingolegacy.com/integration-configurations",
+      "www.thelingolegacy.com/integration-configurations/"
     ],
-    "source_of_truth_drift": "The exact-root route is present in the live Cloudflare zone but absent from main-branch wrangler.jsonc.",
+    "source_of_truth_drift": "The exact apex-root route and six integration-config quarantine routes are present in the live Cloudflare zone but absent from the canonical wrangler.jsonc route declarations. The apex/www wildcard declarations remain aligned with thelingolegacyv-5.",
     "homepage_behavior": {
       "lingo-flagship-root": "Standalone crimson/white HOME document; GET/HEAD / only; non-root path returns 404; no regular/service bindings.",
       "thelingolegacyv-5": "ASSETS binding serves canonical index.html; current index.html is a redirect stub to /studio-hub/."
