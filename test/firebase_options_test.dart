@@ -8,12 +8,13 @@ FirebaseOptions options({
   String apiKey = 'valid-api-key',
   String appId = 'valid-app-id',
   String messagingSenderId = '123456789',
+  String projectId = 'lingo-staging-test',
 }) {
   return FirebaseOptions(
     apiKey: apiKey,
     appId: appId,
     messagingSenderId: messagingSenderId,
-    projectId: 'lingo-staging-test',
+    projectId: projectId,
   );
 }
 
@@ -46,6 +47,26 @@ void main() {
         DefaultFirebaseOptions.isConfiguredFor(
           options(messagingSenderId: 'YOUR_MESSAGING_SENDER_ID'),
         ),
+        isFalse,
+      );
+    });
+
+    test('rejects an empty Firebase project ID', () {
+      expect(DefaultFirebaseOptions.isConfiguredFor(options(projectId: '')), isFalse);
+    });
+
+    test('rejects the unconfigured staging project placeholder', () {
+      expect(
+        DefaultFirebaseOptions.isConfiguredFor(
+          options(projectId: 'lingo-staging-not-configured'),
+        ),
+        isFalse,
+      );
+    });
+
+    test('rejects a project ID placeholder', () {
+      expect(
+        DefaultFirebaseOptions.isConfiguredFor(options(projectId: 'YOUR_FIREBASE_PROJECT_ID')),
         isFalse,
       );
     });
