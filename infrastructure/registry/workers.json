@@ -106,6 +106,14 @@
       "routes": [],
       "status": "LIVE_OBSERVED_UNROUTED",
       "notes": "Live script inventory confirms this preview script exists; no route assignment appeared in the 27-route zone inventory. No inference that it is unused or safe to delete."
+    },
+    {
+      "name": "thelingolegacy-web",
+      "environment": "unrouted",
+      "role": "unclassified",
+      "routes": [],
+      "status": "LIVE_OBSERVED_UNROUTED",
+      "notes": "Cloudflare Workers Scripts API confirms this script exists (created 2026-11-19) with three dashboard-template deployment records and latest version 3 at 100% for this script. No zone Worker route assignment was returned; the Workers.dev subdomain is disabled; settings and secret-list readbacks returned no regular bindings or secret binding names. Preserve pending owner/source-purpose review; do not infer unused or safe to delete."
     }
   ],
   "target_workers_not_observed": [
