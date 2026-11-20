@@ -123,6 +123,10 @@ jobs:
         working-directory: studio-sites/games/oasis-platform/flutter
         run: flutter analyze lib
 
+      - name: Oasis Flutter unit and widget tests
+        working-directory: studio-sites/games/oasis-platform/flutter
+        run: flutter test
+
       - name: Verify Firebase Hosting publication boundary
         shell: bash
         run: |
