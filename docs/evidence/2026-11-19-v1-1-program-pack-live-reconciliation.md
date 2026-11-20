@@ -905,9 +905,15 @@ The live Cloudflare inventory was re-read through GET-only APIs:
 
 The earlier section 4 nine-script count was a stale snapshot and is corrected to 10. The ten-script inventory and the separate binding/deployment findings in section 9.2 remain the current reconciliation. The apex A record still points to proxied TEST-NET-1 address 192.0.2.0; no DNS edit is authorized or performed.
 
-The current PR #615 head produced five new associated Actions runs (IDs 44788215951, 44788214073, 44788212240, 44788210137, 44788208337). All five concluded startup_failure; every latest-attempt job list and artifact list returned zero entries. This is an Actions admission/startup failure, not evidence of test execution or test failure. No dispatch or rerun was attempted.
+The read-only GitHub branch endpoint reports main at 1a60e2314cb3f9b5e3efe648ade83121080cb7b2 with protected=false, protection.enabled=false, and required_status_checks.enforcement_level=off. The active repository ruleset 27403956 (Lingo - protect main) currently returns deletion, non_fast_forward, and copilot_code_review (review_on_push=true) rules, with no required status-check or required-approval rule in its payload. The branch-protection detail endpoint returned 403 and the Actions permissions endpoint was not accessible through the connected integration. Treat effective branch protection and Actions admission policy as unresolved/high-priority owner-side controls; no repository settings were changed.
 
-**Verification limitation:** the orchestrator changes are committed and read-back review is pending. They have not been Python-compiled or executed in a local checkout in this environment. Do not claim syntax, unit, build, or end-to-end success until a clean local run emits the evidence bundle.
+The current PR #615 head is c05b127439fdf43d85db4e835aaea4d5d04ab52b. Its five associated Actions runs (44790866031, 44790864533, 44790863158, 44790861524, 44790859742) all concluded startup_failure; every latest-attempt job list and artifact list returned zero entries.
+
+The PR #614 head 578dce2c83f21088f9338bf4afee88416e8d6adf has seven associated runs (44602578320, 44602576340, 44602572139, 44602574262, 44602568797, 44602565745, 44602563123). All seven concluded startup_failure; all seven job lists and artifact lists returned zero entries. The PR #596 head 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1 has two associated runs (44428739381, 44428737664); both concluded startup_failure with zero jobs and zero artifacts.
+
+These 14 run observations establish repeated Actions admission/startup failure across the current #615, #614 and #596 candidate heads. They do not establish test failure or test execution. No dispatch or rerun was attempted.
+
+**Verification limitation:** the orchestrator changes are committed and have been read back from GitHub for source-level review. They have not been Python-compiled or executed in a local checkout in this environment. Do not claim syntax, unit, build, or end-to-end success until a clean local run emits the evidence bundle.
 
 **Disposition:** PR #615 remains open/draft/unmerged; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
 
