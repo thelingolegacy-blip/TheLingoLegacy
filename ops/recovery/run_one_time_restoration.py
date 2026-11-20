@@ -59,7 +59,10 @@ def utc_now() -> str:
 
 
 def safe_env(extra: dict[str, str] | None = None) -> dict[str, str]:
-    env = {k: v for k, v in os.environ.items() if not SECRET_ENV.search(k)}
+    # Database URLs are never inherited by unrelated build/test processes.
+    # Go integration tests receive one only through the explicit opt-in path.
+    env = {k: v for k, v in os.environ.items()
+           if not SECRET_ENV.search(k) and k != "TEST_DATABASE_URL"}
     env.setdefault("CI", "1")
     if extra:
         env.update(extra)
@@ -101,6 +104,11 @@ class Runner:
             )
             output, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout or self.timeout)
             text = output.decode("utf-8", errors="replace")
+            # Never persist a PostgreSQL connection URI if a child process
+            # includes it in diagnostics.
+            text = re.sub(r"postgres(?:ql)?://[^\\s'\"<>]+", "[REDACTED_POSTGRES_DSN]", text, flags=re.I)
+            if extra_env and extra_env.get("TEST_DATABASE_URL"):
+                text = text.replace(extra_env["TEST_DATABASE_URL"], "[REDACTED_POSTGRES_DSN]")
             log.write_text(text, encoding="utf-8")
             status = "PASS" if proc.returncode == 0 else "FAIL"
             return self.record({
