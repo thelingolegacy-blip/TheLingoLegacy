@@ -795,3 +795,61 @@ A final read-only cross-check was performed for the active Pages custom domain `
 - None of the 27 current Workers route patterns matches `app.thelingolegacy.com`.
 
 This confirms that the active app Pages domain is not currently shadowed by one of the inspected custom Worker routes. Preserve the existing CNAME and Pages domain association; no DNS, Pages or Worker route changes were made.
+
+
+## 9.11 One-time parallel restoration orchestrator — 2026-11-20
+
+Added `ops/recovery/run_one_time_restoration.py` to the existing PR #615 branch. This is a single-run, fail-closed local orchestrator that executes independent checks concurrently within dependency-ordered waves and emits a consolidated evidence bundle.
+
+### Waves and tasks
+
+| Wave | Parallel work |
+|---|---|
+| 0 — Source/baseline | Exact HEAD SHA, `git diff --check`, working-tree observation |
+| 1 — Repository/contracts | Existing Python recovery-gate unit tests; existing Node static-gate suite; optional gitleaks secret scan; optional PR #614 Firebase publication-boundary tests; optional PR #596 Go tests/race tests/vet |
+| 2 — Mobile/web builds | Root Flutter dependency resolution, analyze, tests, web release build, Android debug APK where scaffold exists, iOS simulator build on macOS; same checks for Oasis Flutter project |
+| 3 — Public routes | Optional unauthenticated HTTPS GET checks for apex, www and app domains when `--network-enabled` is supplied |
+| Final — Acceptance | G02 evidence-gate evaluation only when externally captured evidence JSON and exact SHA are supplied; writes final consolidated JSON and SHA-256 manifest |
+
+Tasks within a wave run concurrently. Waves run in order so baseline checks precede source tests, and mobile builds follow repository/static contract checks. Candidate worktrees for PR #614 and PR #596 must be supplied as existing local directories; the orchestrator copies them into a disposable workspace before running package/build tools. The original checkouts are not modified by those tools.
+
+### Run instructions
+
+From a local checkout of this repository:
+
+```bash
+python3 ops/recovery/run_one_time_restoration.py
+```
+
+To permit public HTTPS GET probes and dependency downloads:
+
+```bash
+python3 ops/recovery/run_one_time_restoration.py --network-enabled
+```
+
+To include the separate draft workstreams in the same run:
+
+```bash
+python3 ops/recovery/run_one_time_restoration.py \
+  --network-enabled \
+  --firebase-candidate-dir /path/to/local-pr-614-worktree \
+  --core-v2-dir /path/to/local-pr-596-worktree
+```
+
+To evaluate a previously captured G02 evidence record, also provide `--g02-evidence` and `--expected-sha`. The tool does not manufacture runner, job, log, artifact, or approval evidence.
+
+### Output and execution boundaries
+
+Each run writes to `release/evidence/one-time-restoration/run-<UTC timestamp>/`, including per-task logs, `final-evidence.json`, and `SHA256SUMS`. The script returns a nonzero exit status when any task or critical gate is FAIL/BLOCKED.
+
+- Default mode is offline; `--network-enabled` permits package downloads and public GET probes only.
+- Flutter, Go and Firebase candidate checks run in disposable copies. Existing `PUB_CACHE` is reused rather than replaced with an empty offline cache.
+- Missing SDKs, missing lockfiles, unavailable candidate worktrees, absent scanners, missing evidence and unsupported platforms are recorded as BLOCKED rather than skipped as successful.
+- GitHub Actions admission, Worker version/source provenance, Firebase live connectivity, identity/wallet integration, backup restore/DR, independent security certification and production activation remain external blocked gates.
+- **Production activation is deliberately hard-blocked in the script.** It has no deployment, merge, DNS, Worker, Firebase, payment, runner, data-migration or backup-deletion commands. Passing local tests cannot authorize these actions.
+
+### Verification limitation
+
+The artifact was committed and read-back verified, but it has **not been executed in this ChatGPT environment**: the live GitHub connector exposes repository source but not a local checkout with Flutter/Android/Xcode/Go toolchains. No Actions dispatch was attempted because Actions admission remains unresolved. The first execution must occur in an authorized local recovery checkout; its machine-generated report, not this source commit, will determine which test/build tasks pass.
+
+**Disposition:** orchestrator source added; execution pending local toolchain and optional PR candidate worktrees. PROTECTED HOLD remains active.
