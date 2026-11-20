@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/events/profile.updated.v1.schema.json",
+  "title": "LINGO profile.updated event payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["issuer", "subject", "display_name"],
+  "properties": {
+    "issuer": {
+      "type": "string",
+      "format": "uri",
+      "minLength": 1,
+      "description": "Verified OIDC issuer associated with the profile identity."
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Opaque OIDC subject identifier; never an email address."
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    }
+  }
+}

@@ -1,0 +1,46 @@
+version: 1
+status_vocabulary:
+  NOT_STARTED: no implementation or proof
+  BUILT: code exists but is not integration-certified
+  TESTED: automated checks executed and passed
+  CONNECTED: non-production connection with automated proof
+  CERTIFIED: security, resilience, operations, and end-to-end gates passed
+  PRODUCTION: separately approved release with post-deploy verification
+connections:
+  - id: api-oidc
+    source: Go Profile API
+    target: configured OIDC issuer
+    status: BUILT
+    token_contract: OIDC_ID_TOKEN
+    identity_key: issuer_plus_subject
+    evidence_required: [issuer-validation, audience-validation, signature-validation, expiry-validation, key-rotation-test, issuer-subject-isolation]
+  - id: api-postgresql
+    source: Go Profile API
+    target: PostgreSQL
+    status: BUILT
+    evidence_required: [migration-apply, profile-crud, issuer-subject-isolation, transaction-rollback, tls-policy, least-privilege-role, restore-test]
+  - id: profile-outbox
+    source: PostgreSQL profile transaction
+    target: outbox event table
+    status: BUILT
+    evidence_required: [atomic-commit-test, atomic-rollback-test, event-idempotency, bounded-retry]
+  - id: outbox-delivery
+    source: outbox publisher
+    target: consumer adapter
+    status: NOT_STARTED
+    evidence_required: [claim-lease, idempotent-publish, retry, dead-letter, replay, trace-continuity]
+  - id: web-api
+    source: Next.js client
+    target: Go Profile API
+    status: NOT_STARTED
+    evidence_required: [browser-e2e, token-refresh, error-contract]
+  - id: flutter-api
+    source: Flutter client
+    target: Go Profile API
+    status: NOT_STARTED
+    evidence_required: [device-build, token-refresh, offline-retry]
+  - id: control-plane-registry
+    source: service registry
+    target: Master Control Plane
+    status: BUILT
+    evidence_required: [schema-validation, owner-validation, health-probe]
