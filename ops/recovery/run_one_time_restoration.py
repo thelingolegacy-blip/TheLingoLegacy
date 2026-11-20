@@ -12,12 +12,16 @@ Usage:
   python3 ops/recovery/run_one_time_restoration.py --firebase-candidate-dir /path/to/pr614
   python3 ops/recovery/run_one_time_restoration.py --g02-evidence /secure/g02.json --expected-sha <40-char-sha>
 
-Network-enabled mode permits only fixed-host public HTTPS GET probes. Dependency
-provider downloads remain disabled; no provider-side mutation is performed.
+Network-enabled mode adds only fixed-host public HTTPS GET probes in this
+process; it does NOT sandbox child-process egress. The host must enforce
+outbound deny-by-default networking (or remain fully offline), with only the
+three fixed probe hosts allowlisted when probes are enabled. Provider downloads
+and provider-side mutations remain disabled.
 Candidate directories must be pre-existing local checkouts/worktrees; this tool
 does not fetch branches, alter refs, or create worktrees. Run only inside a
 disposable, unprivileged VM/container with no provider credentials or host mounts.
-The required acknowledgement flag is an operator attestation, not a sandbox.
+The required acknowledgement flag is an operator attestation, not a sandbox;
+it cannot enforce network egress restrictions or prove the host is isolated.
 """
 from __future__ import annotations
 
@@ -927,8 +931,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default="release/evidence/one-time-restoration", help="Evidence output root inside repo")
     parser.add_argument("--timeout", type=int, default=900, help="Per-command timeout in seconds")
     parser.add_argument("--isolated-host-confirmed", action="store_true",
-                        help="Attest that execution is inside a disposable unprivileged VM/container with no provider credentials or host mounts")
-    parser.add_argument("--network-enabled", action="store_true", help="Allow only fixed-host public HTTPS GET probes; dependency downloads remain disabled")
+                        help="Attest that execution is inside a disposable unprivileged VM/container with no provider credentials or host mounts and host-enforced deny-by-default egress restrictions")
+    parser.add_argument("--network-enabled", action="store_true", help="Run fixed-host public HTTPS GET probes; host egress firewall must deny all other outbound access, including from child processes")
     parser.add_argument("--core-v2-dir", help="Existing clean local PR #596 checkout/worktree (repository root or Go module directory)")
     parser.add_argument("--core-v2-expected-sha", help="Required with --core-v2-dir: exact current PR #596 head SHA")
     parser.add_argument("--allow-local-postgres-integration", action="store_true",
