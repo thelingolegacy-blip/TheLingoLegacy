@@ -24,6 +24,12 @@ A missing field, API error, queued job, zero runner ID, empty steps, missing log
 
 Use `quarantine-manifest.json` to record candidate stale resources and their evidence. The manifest is an inventory, not an instruction to delete. Capture owner, exact resource ID/path, dependency scan, last-seen timestamp, backup/export hash, and rollback method before approving retirement. Prefer disable/quarantine, observe, then separately authorize deletion. Never delete a runner registration, workflow, DNS record, Worker route, artifact, or deployment merely because it looks duplicated.
 
+## Orchestrator execution boundary
+
+`run_one_time_restoration.py` executes repository-controlled scripts, tests, build tools, and analyzers in child processes. A temporary copy is not a security sandbox. Execute it only inside a disposable, unprivileged VM/container with no provider credentials, no SSH agent, no host filesystem mounts, and no privileged sockets. The required `--isolated-host-confirmed` flag is an operator attestation only; it does not technically prove isolation.
+
+Workspace copying now rejects non-ignored symlinks, output paths must remain inside the repository and cannot traverse symlinked directories, and child processes receive a narrow environment rather than inherited cloud/SSH/provider credentials. Flutter and Go dependency resolution are offline-only; Terraform provider installation is blocked. `--network-enabled` permits only fixed-host public HTTPS GET probes, and redirects are recorded rather than followed. Do not treat these controls as a substitute for OS-level isolation.
+
 ## Operator commands
 
 ```bash
