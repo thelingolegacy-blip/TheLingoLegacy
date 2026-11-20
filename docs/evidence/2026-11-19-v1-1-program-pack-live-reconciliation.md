@@ -878,3 +878,6 @@ No toolchain was installed and no test/build command was executed by this docume
 
 
 **Additional regression coverage:** Wave 1 now also runs the Crimson Smoke homepage/CSS/audio/accessibility source contract and recovery-artifact checks: bridge-adapter shell syntax, evidence/quarantine JSON parsing, and a negative test proving the incomplete G02 evidence template remains BLOCKED. These are source/static checks, not browser playback or real runner execution.
+
+
+**Lockfile acceptance detail:** Flutter lockfile presence is measured from the supplied source checkout before dependency resolution. A lockfile generated only inside the disposable test copy does not count as committed/reproducible dependency evidence; the corresponding Flutter project remains BLOCKED until its source lockfile is committed and validated.
