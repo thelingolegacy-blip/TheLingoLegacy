@@ -206,7 +206,6 @@
         "ACCEPTED",
         "RUNNING",
         "VERIFYING",
-        "COMPLETE",
         "BLOCKED",
         "REJECTED",
         "FAILED",
