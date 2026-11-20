@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
+import ipaddress
 import json
 import os
 import platform
@@ -35,6 +36,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 IGNORED = {
     ".git", ".dart_tool", ".gradle", ".idea", ".venv", "venv",
@@ -211,21 +213,40 @@ class Runner:
             "note": "A clean, exact-SHA checkout is required; dirty or untracked files fail W0 so later waves cannot test content misattributed to HEAD.",
         })
 
-    async def flutter_project(self, workspace: Path, relative: str, task_id: str) -> dict[str, Any]:
+    async def flutter_project(
+        self, workspace: Path | None, relative: str, task_id: str,
+        provenance: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        source_sha = (provenance or {}).get("commit_sha")
+        source_branch = (provenance or {}).get("branch")
+        if workspace is None or not workspace.is_dir():
+            return self.record({"task": task_id, "status": "BLOCKED",
+                                "reason": "required clean candidate workspace is unavailable",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         project = workspace / relative
         if not (project / "pubspec.yaml").is_file():
-            return self.record({"task": task_id, "status": "BLOCKED", "reason": f"{relative}/pubspec.yaml not found"})
+            return self.record({"task": task_id, "status": "BLOCKED",
+                                "reason": f"{relative}/pubspec.yaml not found",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         flutter = shutil.which("flutter")
         if not flutter:
-            return self.record({"task": task_id, "status": "BLOCKED", "reason": "Flutter SDK not installed"})
+            return self.record({"task": task_id, "status": "BLOCKED", "reason": "Flutter SDK not installed",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         source_lockfile_present = (project / "pubspec.lock").is_file()
-        # Reuse the operator's existing PUB_CACHE. Offline mode must not
-        # point to a newly created empty cache.
+        if not source_lockfile_present:
+            return self.record({"task": task_id, "status": "BLOCKED",
+                                "reason": "committed source pubspec.lock is missing; refusing to generate an unreviewed lockfile",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
+        # Enforce the committed lockfile and reuse the operator's existing
+        # PUB_CACHE. Offline mode must not point to a newly created empty cache.
         env: dict[str, str] = {}
-        pub_args = [flutter, "pub", "get"] + ([] if self.network else ["--offline"])
+        pub_args = [flutter, "pub", "get", "--enforce-lockfile"] + ([] if self.network else ["--offline"])
         pub = await self.command(f"{task_id}-pub-get", project, pub_args, timeout=max(self.timeout, 900), extra_env=env)
         if pub["status"] != "PASS":
-            return self.record({"task": task_id, "status": "BLOCKED", "reason": "dependency resolution did not complete; analyze/test/build steps were not run", "dependency_task": pub["task"]})
+            return self.record({"task": task_id, "status": "BLOCKED",
+                                "reason": "dependency resolution did not complete; analyze/test/build steps were not run",
+                                "dependency_task": pub["task"], "source_commit_sha": source_sha,
+                                "source_branch": source_branch})
         commands = [
             ("analyze", [flutter, "analyze"]),
             ("tests", [flutter, "test"]),
@@ -243,58 +264,127 @@ class Runner:
                 results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED", "reason": "iOS simulator build requires macOS/Xcode"}))
         failed = [x for x in results if x["status"] == "FAIL"]
         blocked = [x for x in results if x["status"] == "BLOCKED"]
-        lock = "present" if source_lockfile_present else "missing"
-        status = "FAIL" if failed else ("BLOCKED" if blocked or lock == "missing" else "PASS")
+        status = "FAIL" if failed else ("BLOCKED" if blocked else "PASS")
         return self.record({"task": task_id, "status": status, "subtasks": results,
-                            "lockfile": lock, "note": "All Flutter commands run in a disposable copy; source tree is not modified."})
+                            "lockfile": "present", "source_commit_sha": source_sha,
+                            "source_branch": source_branch,
+                            "note": "All Flutter commands run in a disposable copy with --enforce-lockfile; source tree is not modified."})
 
     async def go_project(self, path: Path | None, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
+        source_sha = (provenance or {}).get("commit_sha")
+        source_branch = (provenance or {}).get("branch")
         if path is None or not (path / "go.mod").is_file():
             return self.record({"task": "core-v2-go", "status": "BLOCKED",
-                                "reason": "CORE V2 Go module was not copied from a clean PR #596 checkout; expected platform/lingo-core-v2/services/api/go.mod or a module-directory input"})
+                                "reason": "CORE V2 Go module was not copied from a clean PR #596 checkout; expected platform/lingo-core-v2/services/api/go.mod or a module-directory input",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         go = shutil.which("go")
         if not go:
-            return self.record({"task": "core-v2-go", "status": "BLOCKED", "reason": "Go toolchain not installed"})
+            return self.record({"task": "core-v2-go", "status": "BLOCKED", "reason": "Go toolchain not installed",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         env = {"GOTOOLCHAIN": "local", "GOPROXY": "direct" if self.network else "off"}
         results = []
-        for suffix, args in [
-            ("tests", ["test", "./..."]),
-            ("race-tests", ["test", "-race", "./..."]),
-            ("vet", ["vet", "./..."]),
-        ]:
-            results.append(await self.command(f"core-v2-{suffix}", path, [go, *args], timeout=max(self.timeout, 1800), extra_env=env))
-        status = "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL"
-        return self.record({"task": "core-v2-go", "status": status, "source_commit_sha": (provenance or {}).get("commit_sha"), "source_branch": (provenance or {}).get("branch"), "subtasks": results})
+        gofmt = shutil.which("gofmt")
+        if gofmt:
+            format_check = (
+                "import subprocess; p=subprocess.run(['gofmt','-l','.'],capture_output=True,text=True); "
+                "assert p.returncode == 0, p.stderr; "
+                "assert not p.stdout.strip(), 'unformatted Go files: '+p.stdout; "
+                "print('GOFMT=PASS')"
+            )
+            results.append(await self.command("core-v2-gofmt-check", path, [sys.executable, "-c", format_check],
+                                               timeout=max(self.timeout, 600), extra_env=env))
+        else:
+            results.append(self.record({"task": "core-v2-gofmt-check", "status": "BLOCKED", "reason": "gofmt not installed"}))
+        results.append(await self.command("core-v2-module-tidy-check", path, [go, "mod", "tidy", "-diff"],
+                                           timeout=max(self.timeout, 1800), extra_env=env))
+
+        test_dsn = os.environ.get("TEST_DATABASE_URL", "").strip()
+        if not test_dsn:
+            results.append(self.record({"task": "core-v2-postgres-integration-target", "status": "BLOCKED",
+                                        "reason": "TEST_DATABASE_URL is unset; PostgreSQL integration tests would self-skip. Supply a local loopback database named lingo_test."}))
+        else:
+            parsed = urlparse(test_dsn)
+            host = parsed.hostname or ""
+            database = parsed.path.lstrip("/")
+            try:
+                loopback = host.lower() == "localhost" or ipaddress.ip_address(host).is_loopback
+            except ValueError:
+                loopback = False
+            safe_target = parsed.scheme in {"postgres", "postgresql"} and loopback and database == "lingo_test"
+            results.append(self.record({
+                "task": "core-v2-postgres-integration-target",
+                "status": "PASS" if safe_target else "FAIL",
+                "host": host, "database": database,
+                "reason": None if safe_target else "TEST_DATABASE_URL must target localhost/loopback and database lingo_test; raw DSN is never recorded.",
+            }))
+        results.append(await self.command("core-v2-tests", path, [go, "test", "-count=1", "-v", "./..."],
+                                           timeout=max(self.timeout, 1800), extra_env=env))
+        results.append(await self.command("core-v2-race-tests", path, [go, "test", "-race", "-count=1", "./..."],
+                                           timeout=max(self.timeout, 1800), extra_env=env))
+        results.append(await self.command("core-v2-vet", path, [go, "vet", "./..."],
+                                           timeout=max(self.timeout, 1800), extra_env=env))
+        results.append(await self.command("core-v2-build", path, [go, "build", "./..."],
+                                           timeout=max(self.timeout, 1800), extra_env=env))
+        statuses = [x["status"] for x in results]
+        status = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
+        return self.record({"task": "core-v2-go", "status": status, "source_commit_sha": source_sha,
+                            "source_branch": source_branch, "subtasks": results,
+                            "note": "PostgreSQL integration acceptance is BLOCKED unless TEST_DATABASE_URL targets a local loopback lingo_test database; the raw DSN is never copied into evidence."})
 
     async def firebase_candidate(self, path: Path | None, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
+        source_sha = (provenance or {}).get("commit_sha")
+        source_branch = (provenance or {}).get("branch")
         if path is None or not path.is_dir():
             return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED",
-                                "reason": "PR #614 is separate from the evidence branch; pass --firebase-candidate-dir pointing to its local checkout"})
+                                "reason": "PR #614 is separate from the evidence branch; pass --firebase-candidate-dir pointing to its local checkout",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
         node = shutil.which("node")
         if not node:
-            return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED", "reason": "Node.js not installed"})
-        results = []
-        builder = path / "scripts/build-firebase-public.mjs"
+            return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED", "reason": "Node.js not installed",
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
+        scripts = [
+            "scripts/build-firebase-public.mjs",
+            "scripts/verify-flutter-firebase.mjs",
+            "scripts/verify-flutter-android-readiness.mjs",
+            "scripts/verify-android-api21-firebase.mjs",
+        ]
         tests = [
             "scripts/test-build-firebase-public.mjs",
             "scripts/test-verify-flutter-firebase.mjs",
             "scripts/test-verify-android-api21-firebase.mjs",
             "scripts/test-verify-flutter-android-readiness.mjs",
         ]
-        if builder.is_file():
-            results.append(await self.command("firebase-builder-syntax", path, [node, "--check", str(builder)]))
-        missing = [name for name in tests if not (path / name).is_file()]
+        missing = [name for name in scripts + tests if not (path / name).is_file()]
         if missing:
             return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED",
-                                "reason": "required PR #614 contract test files missing", "missing": missing,
-                                "completed_subtasks": results})
-        results.append(await self.command("firebase-contract-tests", path, [node, "--test", *tests],
-                                           timeout=max(self.timeout, 900)))
-        status = "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL"
+                                "reason": "required PR #614 Firebase/Android contract files missing", "missing": missing,
+                                "source_commit_sha": source_sha, "source_branch": source_branch})
+        results = []
+        for name in scripts:
+            results.append(await self.command("firebase-syntax-" + Path(name).stem, path,
+                                               [node, "--check", name], timeout=max(self.timeout, 600)))
+        results.append(await self.command("firebase-contract-tests", path,
+                                          [node, "--test", *tests], timeout=max(self.timeout, 1200)))
+        # Run the concrete Android contract validators against this candidate,
+        # not only their fixture tests. Firebase project identity remains an
+        # external gate until an approved staging ID and alias are supplied.
+        results.append(await self.command("firebase-android-readiness", path,
+                                          [node, "scripts/verify-flutter-android-readiness.mjs"],
+                                          timeout=max(self.timeout, 600)))
+        results.append(await self.command("firebase-android-api21-contract", path,
+                                          [node, "scripts/verify-android-api21-firebase.mjs"],
+                                          timeout=max(self.timeout, 600)))
+        staging_id = os.environ.get("LINGO_FIREBASE_STAGING_PROJECT_ID", "").strip()
+        if staging_id:
+            results.append(await self.command("firebase-staging-project-contract", path,
+                                              [node, "scripts/verify-flutter-firebase.mjs"],
+                                              timeout=max(self.timeout, 600)))
+        statuses = [x["status"] for x in results]
+        status = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
         return self.record({"task": "firebase-hosting-candidate", "status": status,
-                            "source_commit_sha": (provenance or {}).get("commit_sha"),
-                            "source_branch": (provenance or {}).get("branch"), "subtasks": results,
-                            "note": "These are local publication-boundary tests, not Firebase connectivity or Hosting deployment evidence."})
+                            "source_commit_sha": source_sha, "source_branch": source_branch,
+                            "subtasks": results,
+                            "note": "Runs publication-boundary and Firebase/Android contract tests plus concrete Android validators. Firebase staging identity/connectivity and Hosting deployment remain external gates; no Firebase provider operation is performed."})
 
     async def recovery_contracts(self, workspace: Path) -> dict[str, Any]:
         bridge = workspace / "ops/recovery/bridge-adapter.sh"
@@ -595,7 +685,9 @@ async def main_async(args: argparse.Namespace) -> int:
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
                 ("flutter-root", lambda: runner.flutter_project(workspace, ".", "flutter-root")),
                 ("flutter-oasis", lambda: runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis")),
-            ], {"flutter-root", "flutter-oasis"}),
+                ("flutter-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, ".", "flutter-firebase-candidate", firebase_snapshot)),
+                ("flutter-oasis-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, "studio-sites/games/oasis-platform/flutter", "flutter-oasis-firebase-candidate", firebase_snapshot)),
+            ], {"flutter-root", "flutter-oasis", "flutter-firebase-candidate", "flutter-oasis-firebase-candidate"}),
             ("WAVE 3 — PUBLIC ROUTE OBSERVATION", [
                 ("public-route-probes", lambda: runner.public_probes()),
             ], {"public-route-probes"}),
