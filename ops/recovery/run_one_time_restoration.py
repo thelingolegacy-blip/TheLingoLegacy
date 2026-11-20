@@ -70,11 +70,22 @@ SAFE_ENV_KEYS = {
 }
 
 
-def safe_env(extra: dict[str, str] | None = None) -> dict[str, str]:
+def aggregate_status(statuses: list[str]) -> str:
+    """A task passes only when every required subtask passes."""
+    if not statuses or any(status not in {"PASS", "FAIL", "BLOCKED"} for status in statuses):
+        return "BLOCKED"
+    if "FAIL" in statuses:
+        return "FAIL"
+    if "BLOCKED" in statuses:
+        return "BLOCKED"
+    return "PASS"
+
+
+def safe_env(extra: dict[str, str] | None = None, home_dir: Path | None = None) -> dict[str, str]:
     # Do not inherit the operator's HOME, cloud credentials, SSH agent, proxy
     # credentials, provider profiles, or arbitrary application environment.
     env = {k: v for k, v in os.environ.items() if k in SAFE_ENV_KEYS}
-    env["HOME"] = tempfile.gettempdir()
+    env["HOME"] = str(home_dir) if home_dir is not None else tempfile.gettempdir()
     env.setdefault("PATH", os.defpath)
     env.setdefault("CI", "1")
     if extra:
@@ -151,6 +162,12 @@ class Runner:
         self.out = out
         self.timeout = timeout
         self.network = network
+        self.home = self.out / "isolated-home"
+        self.home.mkdir(parents=True, exist_ok=True, mode=0o700)
+        try:
+            self.home.chmod(0o700)
+        except OSError:
+            pass
         self.results: list[dict[str, Any]] = []
 
     def record(self, item: dict[str, Any]) -> dict[str, Any]:
@@ -167,7 +184,7 @@ class Runner:
         log.parent.mkdir(parents=True, exist_ok=True)
         try:
             proc = await asyncio.create_subprocess_exec(
-                *argv, cwd=str(cwd), env=safe_env(extra_env),
+                *argv, cwd=str(cwd), env=safe_env(extra_env, self.home),
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
             )
             output, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout or self.timeout)
@@ -236,7 +253,7 @@ class Runner:
         async def git_value(*args: str) -> tuple[int | None, str]:
             try:
                 proc = await asyncio.create_subprocess_exec(
-                    "git", *args, cwd=str(path), env=safe_env(),
+                    "git", *args, cwd=str(path), env=safe_env(home_dir=self.home),
                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
                 )
                 raw, _ = await asyncio.wait_for(proc.communicate(), timeout=60)
@@ -267,7 +284,7 @@ class Runner:
         snapshot = await self.git_snapshot(source, self.out)
         try:
             proc = await asyncio.create_subprocess_exec(
-                "git", "diff", "--check", cwd=str(source), env=safe_env(),
+                "git", "diff", "--check", cwd=str(source), env=safe_env(home_dir=self.home),
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
             )
             raw, _ = await asyncio.wait_for(proc.communicate(), timeout=60)
@@ -350,11 +367,9 @@ class Runner:
             else:
                 results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED",
                                             "reason": "iOS simulator build requires macOS with Xcode/xcodebuild"}))
-        failed = [x for x in results if x["status"] == "FAIL"]
-        # An unsupported iOS simulator target remains an explicit BLOCKED
-        # subtask, but it must not suppress independent web/Android checks or
-        # the read-only W3 probes on a non-macOS host.
-        status = "FAIL" if failed else "PASS"
+        # A platform task is accepted only when every applicable build passes.
+        # Missing SDKs/Xcode remain BLOCKED and cannot be hidden by a web PASS.
+        status = aggregate_status([x["status"] for x in results])
         return self.record({"task": task_id, "status": status, "subtasks": results,
                             "lockfile": "present", "source_commit_sha": source_sha,
                             "source_branch": source_branch,
@@ -538,7 +553,7 @@ class Runner:
         results = []
         for name in scripts:
             results.append(await self.command("shell-" + Path(name).stem, workspace, ["bash", name], timeout=max(self.timeout, 600)))
-        return self.record({"task": "shell-safety-tests", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "subtasks": results})
+        return self.record({"task": "shell-safety-tests", "status": aggregate_status([x["status"] for x in results]), "subtasks": results})
 
     async def studio_contracts(self, workspace: Path) -> dict[str, Any]:
         node = shutil.which("node")
@@ -556,7 +571,7 @@ class Runner:
         for command in commands:
             name = Path(command[0]).stem
             results.append(await self.command("studio-" + name, workspace, [node, command[0]], timeout=max(self.timeout, 600)))
-        return self.record({"task": "studio-contracts", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "subtasks": results})
+        return self.record({"task": "studio-contracts", "status": aggregate_status([x["status"] for x in results]), "subtasks": results})
 
     async def crimson_smoke_static(self, workspace: Path) -> dict[str, Any]:
         code = r"""
@@ -786,7 +801,7 @@ async def main_async(args: argparse.Namespace) -> int:
         waves = [
             ("WAVE 0 — SOURCE AND BASELINE", [
                 ("source-integrity", lambda: runner.integrity(source)),
-            ], {"source-integrity"}),
+            ]),
             ("WAVE 1 — REPOSITORY / SECURITY / SERVICE CONTRACTS", [
                 ("recovery-unit-tests", lambda: runner.python_recovery(workspace)),
                 ("recovery-contracts", lambda: runner.recovery_contracts(workspace)),
@@ -800,22 +815,20 @@ async def main_async(args: argparse.Namespace) -> int:
                 ("devops-static", lambda: runner.devops_static(workspace)),
                 ("firebase-hosting-candidate", lambda: runner.firebase_candidate(firebase_candidate, firebase_snapshot)),
                 ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot, args.allow_local_postgres_integration)),
-            ], {"recovery-unit-tests", "recovery-contracts", "repository-static-gates",
-                "product-regressions", "shell-safety-tests", "studio-contracts",
-                "crimson-smoke-static"}),
+            ]),
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
                 ("flutter-root", lambda: runner.flutter_project(workspace, ".", "flutter-root")),
                 ("flutter-oasis", lambda: runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis")),
                 ("flutter-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, ".", "flutter-firebase-candidate", firebase_snapshot)),
                 ("flutter-oasis-firebase-candidate", lambda: runner.flutter_project(firebase_candidate, "studio-sites/games/oasis-platform/flutter", "flutter-oasis-firebase-candidate", firebase_snapshot)),
-            ], {"flutter-root", "flutter-oasis"}),
+            ]),
             ("WAVE 3 — PUBLIC ROUTE OBSERVATION", [
                 ("public-route-probes", lambda: runner.public_probes()),
-            ], {"public-route-probes"}),
+            ]),
         ]
         upstream_blocker = None
         wave_results = []
-        for title, task_factories, required_tasks in waves:
+        for title, task_factories in waves:
             print(f"\n{title}")
             if upstream_blocker:
                 blocked = []
@@ -827,10 +840,9 @@ async def main_async(args: argparse.Namespace) -> int:
                     print(f"  [{result['status']}] {result['task']}")
                 continue
             results = await asyncio.gather(*(factory() for _name, factory in task_factories))
-            required_results = [x for x in results if x["task"] in required_tasks]
-            required_pass = len(required_results) == len(required_tasks) and all(x["status"] == "PASS" for x in required_results)
+            all_pass = len(results) == len(task_factories) and all(x["status"] == "PASS" for x in results)
             any_failure = any(x["status"] == "FAIL" for x in results)
-            wave_status = "PASS" if required_pass and not any_failure else "BLOCKED"
+            wave_status = "PASS" if all_pass else ("FAIL" if any_failure else "BLOCKED")
             wave_results.append({"wave": title, "status": wave_status,
                                  "tasks": [{"task": x["task"], "status": x["status"]} for x in results]})
             for result in results:
