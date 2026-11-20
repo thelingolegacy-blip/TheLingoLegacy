@@ -997,3 +997,20 @@ Firebase remains unconfigured: .firebaserc has no staging alias, Firebase option
 
 **Disposition:** source-level candidate hardening only; no local compile/test/build or hosted success is claimed. PR #614 remains draft; PR #615 remains draft; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
 
+## 9.18 Refreshed Pages deployment state — 2026-11-20
+
+A fresh read-only Cloudflare Pages inventory returned five projects and 34 DNS records. The current latest deployments for the two relevant preview projects were inspected individually:
+
+| Pages project | Deployment ID | Source commit | Latest stage | Explicit skip reason |
+|---|---|---|---|---|
+| lingo-execution-center-preview | 08802470-ba71-42a5-be01-d4a69c780426 | b6a1e6afec01d110912547ba7728a242a892aae5 | queued / idle | is_skipped=true; path_config |
+| lingo-flutter-firebase-preview | 1466b367-e36c-4546-a78c-4bd4e73d66fd | b6a1e6afec01d110912547ba7728a242a892aae5 | queued / idle | is_skipped=true; branch_config |
+
+These are not pending builds and are not successful preview deployments: the API explicitly reports both as skipped. The first project is skipped by path configuration; the second by branch configuration. No Pages build was dispatched or retried.
+
+The my-flutter-app production project's latest deployment remains a successful deployment dated 2026-08-30T21:44:09Z. This historical deployment does not certify the current PR branch or the Firebase candidate. No Pages project configuration, domain, deployment, or production setting was changed.
+
+The current DNS observations remain: apex A -> 192.0.2.0 (proxied), www CNAME -> thelingolegacy.com (proxied), app CNAME -> my-flutter-app.pages.dev (unproxied), and admin CNAME -> admin-thelingolegacy.firebaseapp.com (unproxied). DNS remains untouched.
+
+**Disposition:** preview attempts are explicitly SKIPPED, not PASS; production deployment evidence is historical only. PROTECTED HOLD remains active.
+
