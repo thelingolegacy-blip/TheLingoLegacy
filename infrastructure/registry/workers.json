@@ -110,7 +110,7 @@
         "created_on": "2026-10-25T07:27:06.441272Z"
       },
       "deployment_records": 0,
-      "notes": "Cloudflare zone has launch.thelingolegacy.com/* assigned to this script. Worker Versions API returns two uploaded versions (latest v2), but Worker Deployments API returns no deployment records. Preserve route and script; actual active version and runtime reachability are unverified."
+      "notes": "Cloudflare zone has launch.thelingolegacy.com/* assigned to this script. Worker Versions API returns two uploaded versions (latest v2), but Worker Deployments API returns no deployment records. Preserve route and script; actual active version and runtime reachability are unverified. DNS readback: launch.thelingolegacy.com is a proxied CNAME to thelingolegacy-static-backup.pages.dev. Pages project has no custom-domain association; Access exact-domain lookup returned no match. This does not establish runtime reachability or policy coverage."
     },
     {
       "name": "lingo-resilience-gateway",
