@@ -62,6 +62,7 @@ func TestProfileRejectsIdentityWithoutIssuer(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/v1/me/profile", nil)
 	request.Header.Set("Authorization", "Bearer valid")
+	request.Header.Set("Content-Type", "application/json")
 	api.Handler().ServeHTTP(recorder, request)
 	if recorder.Code != http.StatusUnauthorized {
 		t.Fatalf("expected 401, got %d", recorder.Code)
@@ -99,6 +100,43 @@ func TestProfileWriteRejectsDisplayNameOverLimit(t *testing.T) {
 	api.Handler().ServeHTTP(recorder, request)
 	if recorder.Code != http.StatusUnprocessableEntity {
 		t.Fatalf("expected 422, got %d", recorder.Code)
+	}
+}
+
+func TestProfileWriteRejectsNonJSONContentType(t *testing.T) {
+	api := New(nil, testVerifier)
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPut, "/v1/me/profile", strings.NewReader(`{"display_name":"Zavione"}`))
+	request.Header.Set("Authorization", "Bearer valid")
+	request.Header.Set("Content-Type", "text/plain")
+	api.Handler().ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusUnsupportedMediaType {
+		t.Fatalf("expected 415, got %d", recorder.Code)
+	}
+}
+
+func TestProfileWriteReturns413WhenBodyExceedsLimit(t *testing.T) {
+	api := New(nil, testVerifier)
+	recorder := httptest.NewRecorder()
+	body := "{\\"display_name\\":\\"" + strings.Repeat("x", 5000) + "\\"}"
+	request := httptest.NewRequest(http.MethodPut, "/v1/me/profile", strings.NewReader(body))
+	request.Header.Set("Authorization", "Bearer valid")
+	request.Header.Set("Content-Type", "application/json")
+	api.Handler().ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected 413, got %d", recorder.Code)
+	}
+}
+
+func TestProfileWriteRejectsMalformedJSON(t *testing.T) {
+	api := New(nil, testVerifier)
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPut, "/v1/me/profile", strings.NewReader("{invalid"))
+	request.Header.Set("Authorization", "Bearer valid")
+	request.Header.Set("Content-Type", "application/json")
+	api.Handler().ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", recorder.Code)
 	}
 }
 
