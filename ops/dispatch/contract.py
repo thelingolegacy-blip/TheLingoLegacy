@@ -31,6 +31,28 @@ TRANSITIONS = {
 SHA_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{2,127}$")
+SAFE_TOOLS = frozenset({
+    "read-only-github", "read-only-cloudflare", "read-only-firebase",
+    "local-unit-tests", "static-analysis", "preview-build",
+})
+SAFE_PERMISSION_PROFILES = frozenset({
+    "least-privilege-read-only", "source-validation-only",
+})
+ALLOWED_ROLE_PERMISSIONS = frozenset({
+    "registry.read", "registry.manage", "dispatch.read", "dispatch.manage",
+    "policy.propose", "audit.read", "security.read", "security.manage",
+    "identity.review", "infrastructure.read", "infrastructure.propose",
+    "source.read", "source.propose", "build.read", "operations.read",
+    "dispatch.propose", "portfolio.read", "portfolio.propose",
+    "acceptance.read", "acceptance.review", "evidence.read",
+    "job.accept", "job.progress", "job.output",
+})
+OWNER_PROPOSER_PERMISSIONS = frozenset({
+    "source.propose", "dispatch.propose", "infrastructure.propose",
+    "operations.propose", "portfolio.propose", "policy.propose",
+    "registry.manage", "security.manage",
+})
+REVIEWER_PERMISSIONS = frozenset({"acceptance.review", "audit.read"})
 
 
 class ContractError(ValueError):
@@ -64,19 +86,34 @@ def _load_role_catalog() -> dict[str, str]:
     if not isinstance(entries, list) or not entries:
         raise ContractError("role catalog must contain role entries")
 
-    roles: dict[str, str] = {}
+    roles: dict[str, dict[str, Any]] = {}
     for entry in entries:
         if not isinstance(entry, dict):
             raise ContractError("role catalog contains a malformed role")
         role_id = entry.get("id")
         principal_type = entry.get("principal_type")
+        permissions = entry.get("permissions")
+        restricted = entry.get("restricted")
         if not isinstance(role_id, str) or not role_id.strip():
             raise ContractError("role catalog contains an invalid role identifier")
         if not isinstance(principal_type, str) or principal_type not in {"human", "service"}:
             raise ContractError(f"role {role_id!r} has an unsupported principal type")
+        if not isinstance(permissions, list) or not permissions or not all(
+            isinstance(permission, str) and permission.strip() for permission in permissions
+        ):
+            raise ContractError(f"role {role_id!r} has an invalid permission list")
+        if len(set(permissions)) != len(permissions) or set(permissions) - ALLOWED_ROLE_PERMISSIONS:
+            raise ContractError(f"role {role_id!r} contains duplicate or unapproved permissions")
+        if not isinstance(restricted, list) or not restricted or not all(
+            isinstance(rule, str) and rule.strip() for rule in restricted
+        ):
+            raise ContractError(f"role {role_id!r} has an invalid restriction list")
         if role_id in roles:
             raise ContractError(f"role catalog contains duplicate role {role_id!r}")
-        roles[role_id] = principal_type
+        roles[role_id] = {
+            "principal_type": principal_type,
+            "permissions": frozenset(permissions),
+        }
     return roles
 
 
@@ -115,8 +152,13 @@ def validate_job(job: dict[str, Any]) -> None:
         role = job[field]
         if role not in role_catalog:
             raise ContractError(f"{field} references unknown role {role!r}")
-        if role_catalog[role] != "human":
+        if role_catalog[role]["principal_type"] != "human":
             raise ContractError(f"{field} must reference a human role; service roles are prohibited")
+
+    if not (role_catalog[job["owner_role"]]["permissions"] & OWNER_PROPOSER_PERMISSIONS):
+        raise ContractError("owner_role lacks an approved proposal permission")
+    if not (role_catalog[job["reviewer_role"]]["permissions"] & REVIEWER_PERMISSIONS):
+        raise ContractError("reviewer_role lacks an approved independent-review permission")
 
     if not isinstance(job["repository"], str) or not REPO_RE.fullmatch(job["repository"]):
         raise ContractError("repository must use owner/name form")
@@ -145,6 +187,12 @@ def validate_job(job: dict[str, Any]) -> None:
     for key in ("input_refs", "dependency_ids", "allowed_tools", "output_refs", "evidence_refs"):
         if not all(isinstance(x, str) and x.strip() for x in job[key]):
             raise ContractError(f"{key} must contain only non-empty strings")
+    if not set(job["allowed_tools"]).issubset(SAFE_TOOLS):
+        raise ContractError("allowed_tools contains an unapproved tool")
+    if len(set(job["allowed_tools"])) != len(job["allowed_tools"]):
+        raise ContractError("allowed_tools must not contain duplicates")
+    if job["permission_profile"] not in SAFE_PERMISSION_PROFILES:
+        raise ContractError("permission_profile is not approved for the v1 contract")
     if not job["scope"] or not all(isinstance(x, str) and x.strip() for x in job["scope"]):
         raise ContractError("scope must contain explicit non-empty task strings")
     if not job["acceptance_tests"] or not all(
@@ -160,8 +208,8 @@ def validate_job(job: dict[str, Any]) -> None:
     if type(job["retry_budget"]) is not int or not 0 <= job["retry_budget"] <= 5:
         raise ContractError("retry_budget must be an integer from 0 through 5")
     cost = job["cost_ceiling_usd"]
-    if isinstance(cost, bool) or not isinstance(cost, (int, float)) or not math.isfinite(cost) or cost < 0:
-        raise ContractError("cost_ceiling_usd must be a finite non-negative number")
+    if isinstance(cost, bool) or not isinstance(cost, (int, float)) or not math.isfinite(cost) or cost != 0:
+        raise ContractError("cost_ceiling_usd must be exactly zero until a separately approved budget policy exists")
 
 
 def transition(current: str, target: str, *, evidence_refs: list[str] | None = None,
