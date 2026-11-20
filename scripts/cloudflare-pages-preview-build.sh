@@ -20,6 +20,7 @@ rm -rf /tmp/lingo_legacy_web_scaffold
 flutter create /tmp/lingo_legacy_web_scaffold --project-name lingo_legacy --platforms web --no-pub
 mkdir -p web
 cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
+node --test scripts/test-cloudflare-pages-preview-build.mjs
 node --test scripts/test-verify-flutter-android-readiness.mjs
 echo "LINGO_STAGE=android_readiness"
 if node scripts/verify-flutter-android-readiness.mjs; then
