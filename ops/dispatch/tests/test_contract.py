@@ -129,6 +129,12 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "unapproved tool"):
             validate_job(job)
 
+    def test_empty_allowed_tools_rejected(self):
+        job = valid_job()
+        job["allowed_tools"] = []
+        with self.assertRaisesRegex(ContractError, "at least one approved tool"):
+            validate_job(job)
+
     def test_unapproved_permission_profile_rejected(self):
         job = valid_job()
         job["permission_profile"] = "administrator-all-access"
