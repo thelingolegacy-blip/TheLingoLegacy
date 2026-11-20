@@ -872,3 +872,6 @@ The orchestrator's Wave 1 was expanded after a complete repository test-path inv
 These checks run concurrently with the other independent Wave 1 tasks. Flutter/Oasis builds remain in Wave 2. Optional PR #614 and PR #596 worktrees are isolated and copied into a disposable workspace before their tests execute.
 
 No toolchain was installed and no test/build command was executed by this documentation update. The latest script source remains committed on the existing PR #615 draft branch; execution and machine-generated results are still pending an authorized local recovery checkout.
+
+
+**Execution refinement:** unsupported platform/tool checks remain BLOCKED rather than being misreported as test failures. A genuine nonzero test/build exit is FAIL. Offline mode never initializes Terraform providers; `terraform init -backend=false` and subsequent provider validation require the explicit `--network-enabled` option. No deployment backend is initialized.
