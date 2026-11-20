@@ -28,11 +28,17 @@ const requiredExclusions = [
   'pubspec.yaml', '_headers', '_redirects'
 ];
 const publicFiles = ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'manifest.webmanifest'];
+const requiredWorkerFirstPaths = [
+  '/integration-configurations*', '/integration-ids-register*', '/integration-links-register*',
+  '/dashboard-integration-links*', '/exact-dashboard-links*', '/auth0-details*',
+  '/auth0-implementation*', '/admin-command-center*', '/economy-command-center*',
+  '/ops*', '/config/ops*', '/docs/ops*', '/docs/superpowers*',
+];
 
 function makeRoot(entries = requiredExclusions, routes = ['/', '/studio-os/', '/integrations-readiness/', '/shopify-readiness/', '/exa-readiness/', '/integration-management/']) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-asset-scope-'));
   fs.mkdirSync(path.join(root, 'config/release'), { recursive: true });
-  fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({ assets: { directory: '.' } }));
+  fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify({ assets: { directory: '.', run_worker_first: requiredWorkerFirstPaths } }));
   fs.writeFileSync(path.join(root, '.assetsignore'), entries.join('\n') + '\n');
   fs.writeFileSync(path.join(root, 'config/release/lingo-legacy-v1.0.0-rc.json'), JSON.stringify({ includedSurfaces: routes }));
   return root;
@@ -48,6 +54,18 @@ test('valid publication exclusions pass and public entrypoints remain included',
   const result = runValidator(root);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /"ok": true/);
+});
+
+test('missing Worker-first restricted path routing fails closed', (t) => {
+  const root = makeRoot();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const configPath = path.join(root, 'wrangler.jsonc');
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  config.assets.run_worker_first = config.assets.run_worker_first.filter((entry) => entry !== '/auth0-details*');
+  fs.writeFileSync(configPath, JSON.stringify(config));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /assets\.run_worker_first missing restricted path pattern: \/auth0-details\*/);
 });
 
 test('missing sensitive root-file exclusion fails closed', (t) => {
