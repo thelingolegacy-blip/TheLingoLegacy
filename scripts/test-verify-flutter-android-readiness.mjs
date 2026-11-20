@@ -25,6 +25,10 @@ function fixture({ minSdk = 21, overrides = {}, complete = true, flutterPlugin =
   write('android/app/build.gradle.kts', `plugins { id("com.android.application") ${flutterPlugin ? 'id("dev.flutter.flutter-gradle-plugin")' : ''} }\nandroid { namespace = "com.thelingolegacy.app"; defaultConfig { applicationId = "com.thelingolegacy.app"; minSdk = ${minSdk} } }\n`);
   if (complete) {
     write('android/gradle/wrapper/gradle-wrapper.properties');
+    write('android/gradle/wrapper/gradle-wrapper.jar', 'PK\\u0003\\u0004' + 'x'.repeat(5000));
+    write('android/gradlew', '#!/bin/sh\\nexec java org.gradle.wrapper.GradleWrapperMain "$@"\\n');
+    fs.chmodSync(path.join(root, 'android/gradlew'), 0o755);
+    write('android/gradlew.bat', '@echo off\\r\\njava org.gradle.wrapper.GradleWrapperMain %*\\r\\n');
     write('android/settings.gradle.kts');
     write('android/build.gradle.kts');
     write('android/app/src/main/AndroidManifest.xml');
@@ -67,6 +71,26 @@ test('missing tracked Android Gradle scaffold fails closed', (t) => {
   const result = run(root);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Gradle scaffold is incomplete/);
+});
+
+test('missing tracked Gradle wrapper fails closed', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.rmSync(path.join(root, 'android/gradlew'));
+  fs.rmSync(path.join(root, 'android/gradlew.bat'));
+  fs.rmSync(path.join(root, 'android/gradle/wrapper/gradle-wrapper.jar'));
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Gradle scaffold is incomplete/);
+});
+
+test('non-executable Gradle wrapper fails closed', (t) => {
+  const root = fixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.chmodSync(path.join(root, 'android/gradlew'), 0o644);
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must be committed with its executable bit/);
 });
 
 test('missing Flutter Gradle plugin fails closed', (t) => {
