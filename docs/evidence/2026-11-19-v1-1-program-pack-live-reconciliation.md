@@ -689,3 +689,20 @@ A targeted patch comparison was completed for the overlapping Firebase, Flutter,
 ### Decision
 
 **PR #614 remains the preferred review baseline, not an approved merge candidate.** Preserve PR #613 as independent history until the file-level checks above are resolved. Do not merge either PR, change the Firebase project, activate Firebase services, or promote a Hosting deployment. No source mutation to PRs #613/#614 was made during this comparison; this section records review findings only.
+
+
+## 9.7 Post-reconciliation Actions admission check — commit a51dcfc (2026-11-20)
+
+The documentation-only reconciliation commit `a51dcfceea2d90cead0719b99c18990c8781c1fe` was associated with three GitHub Actions runs:
+
+| Workflow | Run ID | Result | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Lingo Legacy Static CI | 44767706209 | `startup_failure` | 0 | 0 |
+| Crimson Smoke UI — static validation | 44767704417 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 44767702639 | `startup_failure` | 0 | 0 |
+
+The runs completed in startup failure before any job was instantiated. The latest-attempt job-list reads returned empty arrays, and artifact-list reads returned empty arrays. No test step, runner assignment, build, log-bearing job, or evidence artifact was produced.
+
+**Interpretation:** this repeats the previously observed Actions admission/startup failure. It is not evidence of test failures in the changed files, nor evidence that the workflows passed. Do not dispatch or rerun more probes. Owner-side repository/organization Actions policy, billing/quota, hosted-runner availability, and admission controls remain the required next investigation.
+
+No G02 runner was activated. No workflow was dispatched or rerun by this continuation. This check only read the runs automatically associated with the documentation commit.
