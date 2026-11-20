@@ -687,10 +687,11 @@ async def main_async(args: argparse.Namespace) -> int:
     for artifact in sorted(path for path in out.rglob("*") if path.is_file() and path.name != "SHA256SUMS"):
         digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
         checksum_lines.append(f"{digest}  {artifact.relative_to(out).as_posix()}")
-    (out / "SHA256SUMS").write_text("\\n".join(checksum_lines) + "\\n", encoding="utf-8")
+    (out / "SHA256SUMS").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")
+    manifest_digest = hashlib.sha256((out / "SHA256SUMS").read_bytes()).hexdigest()
     print("\nFINAL DISPOSITION:", summary["final_disposition"])
     print("Evidence:", report)
-    print("SHA-256:", digest)
+    print("SHA256SUMS manifest SHA-256:", manifest_digest)
     print("Production activation: NOT PERFORMED — PROTECTED HOLD")
     return 0 if summary["final_disposition"] == "PASS" else 1
 
