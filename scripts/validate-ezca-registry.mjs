@@ -11,6 +11,7 @@ const files = [
   'infrastructure/registry/reconciliation-status.json',
   'infrastructure/registry/worker-bindings.json',
   'infrastructure/registry/firebase-projects.json',
+  'infrastructure/registry/pages-projects.json',
 ];
 
 const parsed = {};
@@ -73,4 +74,18 @@ for (const assignment of parsed[files[6]].repository_assignments) {
     throw new Error(`Repository disposition mismatch for ${assignment.repository}: expected ${expectedStatus}, got ${assignment.repository_status}`);
   }
 }
+
+const pagesProjects = parsed['infrastructure/registry/pages-projects.json'];
+if (pagesProjects.projects?.length !== 5 || pagesProjects.observed_at !== '2026-11-20') {
+  throw new Error('Expected five current Cloudflare Pages projects in the live inventory');
+}
+const pagesNames = pagesProjects.projects.map((project) => project.name);
+if (new Set(pagesNames).size !== pagesNames.length) throw new Error('Pages project inventory contains duplicate names');
+if (!pagesProjects.projects.some((project) => project.name === 'my-flutter-app' && project.custom_domains?.some((domain) => domain.name === 'app.thelingolegacy.com' && domain.status === 'active'))) {
+  throw new Error('Active app.thelingolegacy.com Pages custom domain must remain visible in the inventory');
+}
+if (!pagesProjects.projects.some((project) => project.name === 'thelingolegacy-static-backup' && project.disposition === 'HISTORICAL_PRODUCTION_DEPLOYMENT_NOT_RESTORE_TESTED')) {
+  throw new Error('Historical static backup must not be represented as restore-accepted');
+}
+
 console.log('PASS EZCA registry invariants');
