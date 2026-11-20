@@ -16,6 +16,8 @@ STATUSES = {
     "VERIFYING", "COMPLETE", "BLOCKED", "REJECTED", "FAILED",
     "CANCELLED", "EXPIRED", "QUARANTINED",
 }
+# COMPLETE is a terminal transition result, never an accepted initial envelope state.
+ENVELOPE_STATUSES = STATUSES - {"COMPLETE"}
 TRANSITIONS = {
     "PROPOSED": {"READY", "BLOCKED", "REJECTED", "CANCELLED"},
     "READY": {"DISPATCHED", "BLOCKED", "CANCELLED"},
@@ -189,8 +191,8 @@ def validate_job(job: dict[str, Any]) -> None:
         "low", "medium", "high", "critical"
     }:
         raise ContractError("unsupported risk_class")
-    if not isinstance(job["status"], str) or job["status"] not in STATUSES:
-        raise ContractError("unsupported status")
+    if not isinstance(job["status"], str) or job["status"] not in ENVELOPE_STATUSES:
+        raise ContractError("unsupported or terminal status; COMPLETE must be reached through the evidence-gated transition()")
 
     array_fields = (
         "scope", "input_refs", "dependency_ids", "allowed_tools",
