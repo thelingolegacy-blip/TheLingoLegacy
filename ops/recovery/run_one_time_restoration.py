@@ -275,13 +275,21 @@ class Runner:
             return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED", "reason": "Node.js not installed"})
         results = []
         builder = path / "scripts/build-firebase-public.mjs"
-        test = path / "scripts/test-build-firebase-public.mjs"
+        tests = [
+            "scripts/test-build-firebase-public.mjs",
+            "scripts/test-verify-flutter-firebase.mjs",
+            "scripts/test-verify-android-api21-firebase.mjs",
+            "scripts/test-verify-flutter-android-readiness.mjs",
+        ]
         if builder.is_file():
             results.append(await self.command("firebase-builder-syntax", path, [node, "--check", str(builder)]))
-        if test.is_file():
-            results.append(await self.command("firebase-publication-negative-tests", path, [node, "--test", str(test)], timeout=max(self.timeout, 600)))
-        if not results:
-            return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED", "reason": "expected PR #614 builder/test files not found"})
+        missing = [name for name in tests if not (path / name).is_file()]
+        if missing:
+            return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED",
+                                "reason": "required PR #614 contract test files missing", "missing": missing,
+                                "completed_subtasks": results})
+        results.append(await self.command("firebase-contract-tests", path, [node, "--test", *tests],
+                                           timeout=max(self.timeout, 900)))
         status = "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL"
         return self.record({"task": "firebase-hosting-candidate", "status": status,
                             "source_commit_sha": (provenance or {}).get("commit_sha"),
@@ -508,30 +516,46 @@ async def main_async(args: argparse.Namespace) -> int:
         firebase_snapshot = await runner.git_snapshot(firebase_dir) if firebase_dir and firebase_dir.is_dir() else None
 
         def candidate_ok(snapshot: dict[str, Any] | None, expected: str | None, module_ok: bool) -> bool:
-            return bool(snapshot and snapshot.get("git_readable") and snapshot.get("working_tree_clean")
-                        and snapshot.get("commit_sha") and module_ok
-                        and (expected is None or snapshot.get("commit_sha") == expected))
+            # A candidate is admissible only when tied to the exact live PR head.
+            # Omitting the expected SHA must never silently accept an arbitrary clean checkout.
+            return bool(snapshot and expected and snapshot.get("git_readable") and snapshot.get("working_tree_clean")
+                        and snapshot.get("commit_sha") == expected and module_ok)
+
+        def candidate_status(snapshot: dict[str, Any] | None, expected: str | None,
+                             module_ok: bool) -> tuple[str, str | None]:
+            if snapshot is None:
+                return "BLOCKED", "candidate checkout path is missing or is not a directory"
+            if not expected:
+                return "BLOCKED", "exact current PR head SHA is required; supply the matching --*-expected-sha"
+            if not snapshot.get("git_readable") or not snapshot.get("working_tree_clean"):
+                return "FAIL", "candidate Git checkout is unreadable or dirty"
+            if snapshot.get("commit_sha") != expected:
+                return "FAIL", "candidate HEAD does not match the expected current PR head SHA"
+            if not module_ok:
+                return "FAIL", "required candidate module or contract tests are missing"
+            return "PASS", None
 
         core_module = bool(core_dir and ((core_dir / "platform/lingo-core-v2/services/api/go.mod").is_file()
                                          or (core_dir / "go.mod").is_file()))
         core_ok = candidate_ok(core_snapshot, args.core_v2_expected_sha, core_module)
-        if core_dir is None:
-            runner.record({"task": "core-v2-source-provenance", "status": "BLOCKED",
-                           "reason": "PR #596 checkout not supplied"})
-        else:
-            runner.record({"task": "core-v2-source-provenance", "status": "PASS" if core_ok else "FAIL",
-                           **(core_snapshot or {"path": str(core_dir), "git_readable": False}),
-                           "expected_sha": args.core_v2_expected_sha, "module_present": core_module})
+        core_status, core_reason = candidate_status(core_snapshot, args.core_v2_expected_sha, core_module)
+        runner.record({"task": "core-v2-source-provenance", "status": core_status,
+                       **(core_snapshot or {"path": str(core_dir) if core_dir else None, "git_readable": False}),
+                       "expected_sha": args.core_v2_expected_sha, "module_present": core_module,
+                       **({"reason": core_reason} if core_reason else {})})
         firebase_module = bool(firebase_dir and (firebase_dir / "scripts/build-firebase-public.mjs").is_file()
-                               and (firebase_dir / "scripts/test-build-firebase-public.mjs").is_file())
+                               and all((firebase_dir / name).is_file() for name in [
+                                   "scripts/test-build-firebase-public.mjs",
+                                   "scripts/test-verify-flutter-firebase.mjs",
+                                   "scripts/test-verify-android-api21-firebase.mjs",
+                                   "scripts/test-verify-flutter-android-readiness.mjs",
+                               ]))
         firebase_ok = candidate_ok(firebase_snapshot, args.firebase_expected_sha, firebase_module)
-        if firebase_dir is None:
-            runner.record({"task": "firebase-source-provenance", "status": "BLOCKED",
-                           "reason": "PR #614 checkout not supplied"})
-        else:
-            runner.record({"task": "firebase-source-provenance", "status": "PASS" if firebase_ok else "FAIL",
-                           **(firebase_snapshot or {"path": str(firebase_dir), "git_readable": False}),
-                           "expected_sha": args.firebase_expected_sha, "required_tests_present": firebase_module})
+        firebase_status, firebase_reason = candidate_status(firebase_snapshot, args.firebase_expected_sha, firebase_module)
+        runner.record({"task": "firebase-source-provenance", "status": firebase_status,
+                       **(firebase_snapshot or {"path": str(firebase_dir) if firebase_dir else None, "git_readable": False}),
+                       "expected_sha": args.firebase_expected_sha, "required_tests_present": firebase_module,
+                       **({"reason": firebase_reason} if firebase_reason else {})})
 
         core_candidate = None
         if core_ok and core_dir:
@@ -657,8 +681,13 @@ async def main_async(args: argparse.Namespace) -> int:
     }
     report = out / "final-evidence.json"
     report.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-    digest = hashlib.sha256(report.read_bytes()).hexdigest()
-    (out / "SHA256SUMS").write_text(f"{digest}  final-evidence.json\n", encoding="utf-8")
+    # Hash the complete evidence bundle (summary plus every task log), excluding
+    # the checksum manifest itself to avoid a recursive/self-referential digest.
+    checksum_lines = []
+    for artifact in sorted(path for path in out.rglob("*") if path.is_file() and path.name != "SHA256SUMS"):
+        digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+        checksum_lines.append(f"{digest}  {artifact.relative_to(out).as_posix()}")
+    (out / "SHA256SUMS").write_text("\\n".join(checksum_lines) + "\\n", encoding="utf-8")
     print("\nFINAL DISPOSITION:", summary["final_disposition"])
     print("Evidence:", report)
     print("SHA-256:", digest)
