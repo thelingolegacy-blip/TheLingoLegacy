@@ -116,13 +116,25 @@
       "items": {
         "type": "string",
         "minLength": 1,
-        "pattern": ".*\\S.*"
+        "pattern": ".*\\S.*",
+        "enum": [
+          "read-only-github",
+          "read-only-cloudflare",
+          "read-only-firebase",
+          "local-unit-tests",
+          "static-analysis",
+          "preview-build"
+        ]
       }
     },
     "permission_profile": {
       "type": "string",
       "minLength": 1,
-      "pattern": ".*\\S.*"
+      "pattern": ".*\\S.*",
+      "enum": [
+        "least-privilege-read-only",
+        "source-validation-only"
+      ]
     },
     "idempotency_key": {
       "type": "string",
@@ -156,7 +168,8 @@
     },
     "cost_ceiling_usd": {
       "type": "number",
-      "minimum": 0
+      "const": 0,
+      "description": "Nonzero spend requires a separately approved budget policy and contract revision."
     },
     "start_condition": {
       "type": "string",
