@@ -554,3 +554,101 @@ The register does not renumber or collapse the historical work:
 No merge, G02 runner activation, production deployment, DNS/Worker route or traffic change, Firebase publication or production project mutation, payment/checkout/cashout activation, real-value reward or wagering activation, secret rotation, data migration, paid resource provisioning, backup deletion, last-known-good replacement, or production release is authorized by this document.
 
 **Current outcome:** consolidated system register drafted from the available evidence. It is not a restoration completion certificate. Unknowns remain open until independently inspected and tested.
+
+
+---
+
+# 9. Live parallel-workstream checkpoint — 2026-11-20
+
+**Observation class:** READ-ONLY provider/source inspection.  
+**Register status:** Draft working evidence; this checkpoint does not certify any product or authorize provider mutation.
+
+## 9.1 GitHub hosted Actions — fresh failure correlation
+
+The new PR #615 commit \`1b4f4b5b7be3f6991ee87d0e1cac3399986f0f78\` triggered four workflows at 2026-11-20 09:52 UTC:
+
+| Workflow | Run ID | Conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| EZCA Registry Validation | 44714322084 | \`startup_failure\` | 0 | 0 |
+| Lingo Legacy Static CI | 44714320186 | \`startup_failure\` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 44714318296 | \`startup_failure\` | 0 | 0 |
+| Crimson Smoke UI — static validation | 44714316173 | \`startup_failure\` | 0 | 0 |
+
+All four are correlated to the same PR #615 head SHA and base \`main\` SHA. No job, step, runner identity, test log or artifact was created. This is admission/startup failure, not a test failure. Do not dispatch further repeated probes until the owner-side GitHub Actions admission/quota/policy review is completed. G02 remains quarantined.
+
+GitHub ruleset inventory exposes active ruleset **27403956 — “Lingo - protect main”**. The connector could not return repository Actions permissions or branch-protection details; these remain owner-side verification items. No settings were changed.
+
+## 9.2 Cloudflare — current inventory supersedes earlier nine-script snapshot
+
+Fresh Cloudflare API reads for zone \`thelingolegacy.com\` (zone ID \`91c3f6315fb3ca132b22744721103f88\`) returned:
+
+- **27 live Worker routes**
+- **10 Worker scripts**, not nine
+- **34 DNS records**
+- **5 Pages projects**
+
+The earlier nine-script count in the v1.1 snapshot is superseded by this 2026-11-20 observation. The 10 script names are:
+
+1. \`lingo-ecosystem-atlas\`
+2. \`lingo-flagship-root\`
+3. \`lingo-flagship-site-preview\`
+4. \`lingo-integration-config-404\`
+5. \`lingo-resilience-gateway\`
+6. \`lingo-static-backup-proxy\`
+7. \`lingo-studio-control-center-staging\`
+8. \`lingo-unified-control-tower-preview\`
+9. \`thelingolegacy-web\`
+10. \`thelingolegacyv-5\`
+
+All 10 Worker settings endpoints were successfully read. Nine scripts returned no bindings. \`thelingolegacyv-5\` returned exactly three bindings: \`ASSETS\` (assets), \`CANONICAL_DOMAIN\` (plain text), and \`PUBLIC_SITE_URL\` (plain text). This replaces the prior partial seven-script binding audit; no other binding types were returned by these settings reads.
+
+The 27 route assignments reconcile as:
+- 18 routes → \`thelingolegacyv-5\`
+- 6 routes → \`lingo-integration-config-404\`
+- 1 route → \`lingo-flagship-root\` (exact apex path \`thelingolegacy.com/\`)
+- 1 route → \`lingo-ecosystem-atlas\`
+- 1 route → \`lingo-static-backup-proxy\`
+
+Five scripts currently have no route assignment in the returned inventory: \`lingo-flagship-site-preview\`, \`lingo-resilience-gateway\`, \`lingo-studio-control-center-staging\`, \`lingo-unified-control-tower-preview\`, and \`thelingolegacy-web\`. This is not proof they are unused; inspect their service bindings, triggers, Pages relationships and invocation history before disposition.
+
+The apex DNS A record remains proxied and points to \`192.0.2.0\`, a documentation-only TEST-NET-1 address. This is a configuration finding requiring owner/provider interpretation, not authorization to edit DNS. Preserve the record pending explicit approval and origin/Worker routing validation.
+
+Cloudflare Pages currently lists five projects. Production deployments are disabled on the two named preview projects, \`lingo-execution-center-preview\` and \`lingo-flutter-firebase-preview\`. The latest preview attempts at 09:51:55 UTC were skipped: execution-center by \`path_config\`; Flutter/Firebase by \`branch_config\`. A skipped deployment is not a build pass. The static-backup Pages project has a successful production deployment dated 2026-10-25; \`my-flutter-app\` has a successful production deployment dated 2026-08-30. These are inventory facts only; do not change them.
+
+## 9.3 Firebase and Flutter — source and branch reconciliation
+
+The current \`main\` source still has:
+- Root \`firebase.json\` with \`hosting.public: "."\`.
+- \`.firebaserc\` default alias \`lingo-legacy-production\`.
+- \`lib/firebase_options.dart\` with placeholder API/app credentials but a production project ID and production-looking Auth/Database/Storage endpoints.
+- Root \`pubspec.yaml\` with older Firebase package declarations than the API-21-compatible pins recorded in PR #613/#614.
+- Android source on main is incomplete (only a small scaffold inventory was found); iOS contains \`.stub\` project/registrant files, not a complete native project.
+
+PRs #613 and #614 remain separate drafts and overlap across Firebase config, Flutter configuration, Android scaffolding, workflows and tests. #614 adds the generated \`build/firebase-public\` quarantine/empty allowlist, removes the production default alias, uses staging-not-configured Firebase placeholders/startup guard, and adds Firebase publication-boundary tests. PR descriptions record successful preview Flutter analysis, widget/Oasis tests and web build on exact earlier commits, but no GitHub-hosted Actions jobs were created. The #614 preview deployment is not a Firebase Hosting production deploy and does not establish Firebase Auth/Firestore/Storage connectivity.
+
+**Disposition:** preserve both draft histories; treat #614 as the more complete current Hosting-boundary candidate for review, but do not merge, deploy, choose a Firebase project, or mutate rules. Keep production Firebase configuration and publication blocked until staging project identity, credentials, rules, contract tests, exact generated output and hosted evidence are independently accepted.
+
+The repository tree shows Oasis Firestore rules under \`studio-sites/games/oasis-platform/firebase-functions/firestore.rules\`; there is no root-level \`firestore.rules\` file on the inspected refs. Do not infer root Firestore rules are absent from the entire repository.
+
+## 9.4 Seven parallel workstreams — current disposition
+
+| Workstream | New evidence | Current disposition / next safe action |
+|---|---|---|
+| GitHub CI and governance | Four new \`startup_failure\` runs, each zero jobs/artifacts; active main ruleset 27403956; settings endpoints unavailable through current connector. | **BLOCKED.** Owner must inspect Actions policy/admission, hosted-runner quota/billing and effective branch/ruleset settings. No G02. |
+| Cloudflare routing and Workers | 27 routes, 10 scripts, 34 DNS records, 10/10 script settings read; one apex TEST-NET-1 A record; 5 Pages projects and two skipped preview runs. | **PARTIAL / OWNER REVIEW.** Reconcile 10-script registry and route inventory, validate origin/response behavior, and inspect unused-route scripts without mutation. |
+| Firebase publication isolation | Main still points Hosting public at repository root and default alias at production; PR #614 has empty allowlist/staging guard candidate. | **BLOCKED / SOURCE CANDIDATE.** Keep PR #614 draft, complete exact artifact/negative tests and staging-only contract proof. |
+| Flutter Android/iOS/web | Main Android incomplete and iOS stubbed; PR #613/#614 contain Android API-21 scaffold and successful prior web preview test descriptions. | **PARTIAL.** Preserve candidate work; reconcile overlapping PRs; obtain Android debug build/device evidence and complete iOS project/simulator evidence. |
+| Identity and wallet foundations | Main Firebase options contain placeholders plus production project identifiers; CORE V2 #594/#596 remain drafts; no verified staging identity or shared authoritative ledger. | **BLOCKED.** Define and test synthetic non-production identity/session and ledger vertical slices only after provider and data contracts are reviewed. |
+| Portfolio product recovery | Source tree contains flagship, games, lane, library, media and world surfaces; product-wide runtime acceptance not established by this parallel inspection. | **INVENTORY PARTIAL.** Continue per-product route, journey, content, rights, economy and integration testing using existing child workstreams. |
+| Security, backup and disaster recovery | Existing recovery scripts/schemas and ruleset exist; no verified full backup manifest, local SHA-256 set, restore drill, SBOM/SCA/SAST or RPO/RTO proof retrieved in this pass. | **NOT CERTIFIED.** Preserve all backups; inspect source and provider backup catalogs; schedule isolated restore/security tests after evidence environment is available. |
+
+## 9.5 Explicit evidence limitations and controls
+
+- GitHub connector access did not expose repository Actions permissions or branch protection details; owner-side review is required.
+- No Firebase project/account connector was available in this pass; GitHub source/config inspection is not a live Firebase provider inventory.
+- Cloudflare inspection used GET operations only. No DNS, route, Worker, Pages, deployment, secret or setting mutations were performed.
+- GitHub inspection used GET operations except this document update. No workflow dispatch, rerun, branch deletion, merge or settings change was performed.
+- No mobile builds, test suites, browser journeys, provider restore drills or security scans were run in this pass.
+- No credential values were retrieved or reproduced.
+
+**Checkpoint conclusion:** parallel evidence gathering advanced all seven workstreams, but the program remains PROTECTED HOLD. The most urgent external dependency is GitHub-hosted Actions startup admission; the most urgent source safety issue is the still-unmerged Firebase root-publication configuration on \`main\`. Unknowns remain unknown until tested.
