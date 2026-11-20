@@ -2,9 +2,6 @@ name: Hosted Canary Zero Uses
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "recovery/**"
 
 permissions:
   contents: read
