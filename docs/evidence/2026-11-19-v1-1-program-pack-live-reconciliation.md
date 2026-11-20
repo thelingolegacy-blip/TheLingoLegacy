@@ -706,3 +706,39 @@ The runs completed in startup failure before any job was instantiated. The lates
 **Interpretation:** this repeats the previously observed Actions admission/startup failure. It is not evidence of test failures in the changed files, nor evidence that the workflows passed. Do not dispatch or rerun more probes. Owner-side repository/organization Actions policy, billing/quota, hosted-runner availability, and admission controls remain the required next investigation.
 
 No G02 runner was activated. No workflow was dispatched or rerun by this continuation. This check only read the runs automatically associated with the documentation commit.
+
+
+## 9.8 Cloudflare deployment-history and Pages reconciliation — 2026-11-20
+
+Read-only GET inspection was extended from route/script counts to Worker version/deployment history, script observability settings, Pages project configuration, recent deployments and custom domains.
+
+### Worker version versus deployed-version state
+
+- `thelingolegacyv-5` has **367 uploaded versions** in Cloudflare's version inventory. The latest uploaded version is **367**, ID `52b3cfc2-c60c-495b-a873-8ee9d9cb2a12`, created `2026-11-20T06:35:22Z`.
+- The same Worker has **five deployment records total**. Its most recent/active deployment record is dated `2026-10-25T16:21:58Z` and explicitly identifies **version 137** (ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`) at 100% traffic. The deployment annotation says it activated uploaded version 137 while preserving existing domain routes and rollback history.
+- Therefore, the newest uploaded Worker code is not the currently deployed Worker code. Versions 138–367 are present in the upload/version inventory but are not represented in the five deployment records. This is a material separation between uploaded candidates and deployed production state—not proof that the newer versions are safe or ready.
+- Do not promote version 367, change traffic weights, or alter routes. Preserve version 137 as the current deployed baseline until source-to-version provenance, tests, route behavior, and rollback evidence are correlated and accepted.
+
+Other script histories show deployed records for the route-less preview/staging scripts as well. In particular, `thelingolegacy-web` has three uploaded/deployed version records through version 3 on 2026-11-19; `lingo-studio-control-center-staging` has seven versions and a 100% deployment of version 7 dated 2026-11-12; `lingo-unified-control-tower-preview` has version 2 deployed at 100% on 2026-11-16. Thus, a missing custom route is not sufficient evidence that a Worker is unused. All nine non-primary Workers returned empty service-binding arrays; the primary `thelingolegacyv-5` returned only `ASSETS`, `CANONICAL_DOMAIN`, and `PUBLIC_SITE_URL`. Invocation history and all external entry points still need independent review.
+
+### Worker observability configuration
+
+- `thelingolegacyv-5` has persisted invocation logs with 10% head sampling and query-string redaction enabled.
+- `lingo-unified-control-tower-preview` has persisted invocation logs at 100% head sampling with `redact_query_string: false`. Treat this as a privacy/security review item: determine whether query strings can contain tokens, identifiers or personal data before relying on these logs. No logging configuration was changed.
+- `lingo-ecosystem-atlas`, `lingo-resilience-gateway`, and `lingo-studio-control-center-staging` have persisted invocation logs with query-string redaction enabled. Several other scripts returned no observability settings in the inspected response; absence of returned settings is not proof that no logs exist elsewhere.
+
+### Pages project inventory correction and deployment state
+
+The live account contains these five Pages projects (the names below supersede shorthand labels in earlier notes):
+
+1. `lingo-execution-center-preview` — latest preview deployments for the reconciliation commits were skipped with `path_config`; build command copies `studio-sites/execution-center/index.html` into `dist`. No deployment was executed for the current evidence commits.
+2. `lingo-flutter-firebase-preview` — latest preview deployments for the reconciliation commits were skipped with `branch_config`; build command is `bash scripts/cloudflare-pages-preview-build.sh`. No deployment was executed for the current evidence commits.
+3. `lingo-legacy-github-integration-test` — latest inspected preview deployment succeeded on 2026-11-06 from branch `security/g02-disable-untrusted-self-hosted-lane-2026-11-05`, commit `a06e2b7f891c1c65188c4d9431a1abac96e1d3e3`. This is a Cloudflare Pages preview build/deploy, not proof of GitHub Actions runner admission or G02 acceptance.
+4. `thelingolegacy-static-backup` — production deployment succeeded on 2026-10-25 from branch `recovery/static-backup-2026-10-24`, commit `0c9f4c85aed17ece871fae6f515d9c8384509a2d`. Preserve this backup deployment and its source history.
+5. `my-flutter-app` — production deployment succeeded on 2026-08-30. Its active custom domain is `app.thelingolegacy.com`. The recorded build command clones the moving Flutter `stable` branch, runs `flutter pub get` without an enforced lockfile, then builds web; the deployment has an empty commit hash. Treat it as a live legacy surface with reproducibility/provenance gaps, not as proof of current main-branch Flutter readiness.
+
+The two preview project skip reasons repeat on the latest evidence commits: `path_config` for execution-center and `branch_config` for Flutter/Firebase. Do not call either a successful build. No Pages project settings, deployment, domain, or routing changes were made.
+
+### Disposition
+
+Keep the currently deployed `thelingolegacyv-5` version 137 and all existing Pages production/backup deployments protected. Reconcile the 367-version upload history against GitHub source commits and release records before any promotion. Review the Control Tower preview's query-string logging setting. Fix/verify preview project path and branch filters only through a separately reviewed, non-production change. No Cloudflare mutations were performed.
