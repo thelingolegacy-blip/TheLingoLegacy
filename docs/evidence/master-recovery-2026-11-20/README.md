@@ -14,10 +14,15 @@
 
 | PR | Head branch | Head SHA | State | Files |
 |---|---|---|---|---:|
+| [#574](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/574) | `security/two-layer-public-surface-repair-2026-11-14` | `eef0fd99709216f7fd2bf36bb9f8aaf29ab661f2` | Open / draft / unmerged | 12 |
+| [#589](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/589) | `safety/2026-11-14-g02-push-trigger-quarantine` | `940695bb39cdf7802617e13dd1626e8fac8ff110` | Open / draft / unmerged | 12 |
+| [#596](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/596) | `implementation/lingo-core-v2-foundation` | `9dd256532c056f4aa5985aa68fd3975e5f7d4d9a` | Open / draft / unmerged | 29 |
+| [#611](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/611) | `feat/dispatch-contract-v1-2026-11-16` | `f779686eec42d10be0fbc8a2ac436304edc86e45` | Open / draft / unmerged | 4 |
 | [#613](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/613) | `recovery/actions-startup-probe-2026-11-16` | `09028483c78da0df9804a27cfcf2c0a44ffd6c32` | Open / draft / unmerged | 43 |
-| [#614](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/614) | `recovery/firebase-hosting-quarantine-boundary` | `66be1f6369f9a8bf3fd8b6c7aeca1a0ce768a666` | Open / draft / unmerged | 41 |
+| [#614](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/614) | `recovery/firebase-hosting-quarantine-boundary` | `7574ad6308f048547a604bd2ace22cab05dc1ef9` | Open / draft / unmerged | 41 |
 | [#615](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/615) | `audit/reconciled-v1-1-live-inventory-2026-11-19` | `b266d375e70a048899f32d4681fa0f920feee349` | Open / draft / unmerged | 10 |
 | [#618](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/618) | `recovery/hosted-canary-zero-uses-2026-11-20` | `0340b1f3cfae66ac11ad7a1da85bcb92a56ce85a` | Open / draft / unmerged | 1 |
+| [#619](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/619) | `recovery/master-recovery-evidence-2026-11-20` | `b632726d133180b7e292164c3f11aa5bfae85d56` | Open / draft / unmerged | 12 |
 
 All four PRs target the same observed main baseline. No merge was performed.
 
@@ -61,6 +66,21 @@ All four PRs target the same observed main baseline. No merge was performed.
 5. After Actions admission is restored, run the zero-uses canary first, then the artifact-bearing evidence workflow, then restore CI incrementally.
 6. Continue Phases 2–9 of #612 with phase-specific evidence and independent review. Production remains HOLD pending separate explicit authorization.
 
+## Evidence index
+
+- `01-dependency-and-safety-reconciliation.md`
+- `02-source-review-findings.md`
+- `03-portfolio-and-contract-review.md`
+- `04-actions-run-evidence.md`
+- `05-current-main-public-surface.md`
+- `06-website-branch-ancestry.md`
+- `07-isolated-source-repairs.md`
+- `08-flutter-firebase-candidate-reconciliation.md`
+- `09-flutter-ci-coverage-repair.md`
+- `10-post-repair-actions-admission.md`
+- `11-g02-workflow-quarantine-review.md`
+
 ## Change log
 
+- 2026-11-20: added current PR heads, #574/#589 quarantine inventory, and G02 workflow quarantine review.
 - 2026-11-20: created this evidence record on isolated branch `recovery/master-recovery-evidence-2026-11-20`. No main-branch change, PR merge, workflow dispatch, runner action, provider mutation, deployment, payment activation, or production operation was performed.
