@@ -97,4 +97,22 @@ if (backupProject.worker_route?.script !== 'lingo-static-backup-proxy' || backup
   throw new Error('Backup route and Access application association must remain explicitly unverified');
 }
 
+
+const flutterPreview = pagesProjects.projects.find((project) => project.name === 'lingo-flutter-firebase-preview');
+const executionPreview = pagesProjects.projects.find((project) => project.name === 'lingo-execution-center-preview');
+const staticBackup = pagesProjects.projects.find((project) => project.name === 'thelingolegacy-static-backup');
+const appProject = pagesProjects.projects.find((project) => project.name === 'my-flutter-app');
+if (flutterPreview?.latest_deployment?.all_stages_idle !== true || flutterPreview.latest_deployment.branch_is_allowlisted !== false) {
+  throw new Error('Flutter preview must remain recorded as queued/not-started for the non-allowlisted audit branch');
+}
+if (executionPreview?.latest_deployment?.all_stages_idle !== true || executionPreview.latest_deployment.path_is_included !== false) {
+  throw new Error('Execution Center preview must remain queued/not-started for the non-matching path');
+}
+if (staticBackup?.source?.deployments_enabled !== false || staticBackup.source.production_deployments_enabled !== false) {
+  throw new Error('Static backup Pages project must remain deployment-disabled');
+}
+if (appProject?.source?.status !== 'NOT_RETURNED_IN_PROJECT_READBACK' || appProject.latest_deployment?.commit_sha !== null) {
+  throw new Error('Legacy app production provenance gap must remain visible');
+}
+
 console.log('PASS EZCA registry invariants');
