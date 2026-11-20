@@ -648,9 +648,19 @@ print("CRIMSON_SMOKE_STATIC=PASS")
                 results.append({"url": url, "status": exc.code, "final_url": exc.geturl(), "error": "HTTPError"})
             except Exception as exc:
                 results.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
-        acceptable = all(x.get("status") in {200, 301, 302, 307, 308} for x in results)
+        accepted = []
+        for index, result in enumerate(results):
+            status = result.get("status")
+            # The apex is expected to serve the homepage directly. www and app
+            # may redirect, but redirects are recorded and never followed here.
+            if index == 0:
+                accepted.append(status == 200)
+            else:
+                accepted.append(status in {200, 301, 302, 307, 308})
+            result["expectation"] = "HTTP 200" if index == 0 else "HTTP 200 or redirect"
+        acceptable = len(accepted) == len(PROBES) and all(accepted)
         return self.record({"task": "public-route-probes", "status": "PASS" if acceptable else "FAIL",
-                            "probes": results, "note": "Unauthenticated GET only; no mutation."})
+                            "probes": results, "note": "Unauthenticated HTTPS GET only; redirects are not followed; no mutation."})
 
     async def security_tools(self, workspace: Path) -> dict[str, Any]:
         scanner = shutil.which("gitleaks")
