@@ -94,6 +94,19 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "separate release"):
             validate_job(job)
 
+    def test_direct_complete_envelope_rejected(self):
+        job = valid_job()
+        job["status"] = "COMPLETE"
+        with self.assertRaisesRegex(ContractError, "COMPLETE must be reached through the evidence-gated transition"):
+            validate_job(job)
+
+    def test_schema_does_not_allow_complete_as_initial_envelope_status(self):
+        import json
+        from pathlib import Path
+
+        schema = json.loads(Path("ops/dispatch/job-envelope.schema.json").read_text())
+        self.assertNotIn("COMPLETE", schema["properties"]["status"]["enum"])
+
     def test_malformed_enums_fail_closed(self):
         for key in ("environment", "risk_class", "status"):
             job = valid_job()
@@ -110,7 +123,7 @@ class DispatchContractTests(unittest.TestCase):
     def test_negative_cost_rejected(self):
         job = valid_job()
         job["cost_ceiling_usd"] = -1
-        with self.assertRaisesRegex(ContractError, "finite non-negative"):
+        with self.assertRaisesRegex(ContractError, "exactly zero"):
             validate_job(job)
 
     def test_non_finite_cost_rejected(self):
@@ -119,7 +132,7 @@ class DispatchContractTests(unittest.TestCase):
             job = valid_job()
             job["cost_ceiling_usd"] = value
             with self.subTest(value=value), self.assertRaisesRegex(
-                ContractError, "finite non-negative"
+                ContractError, "exactly zero"
             ):
                 validate_job(job)
 
