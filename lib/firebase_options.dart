@@ -20,6 +20,7 @@ class DefaultFirebaseOptions {
         senderId.isNotEmpty &&
         projectId.isNotEmpty &&
         projectId != 'lingo-staging-not-configured' &&
+        projectId != 'lingo-legacy-production' &&
         !apiKey.startsWith('YOUR_') &&
         !appId.startsWith('YOUR_') &&
         !senderId.startsWith('YOUR_') &&
