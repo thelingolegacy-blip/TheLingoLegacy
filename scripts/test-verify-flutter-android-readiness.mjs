@@ -14,7 +14,7 @@ const pins = {
   firebase_storage: '11.7.7',
   firebase_analytics: '10.10.7',
 };
-function fixture({ minSdk = 21, overrides = {}, complete = true, flutterPlugin = true, activity = true } = {}) {
+function fixture({ minSdk = 21, overrides = {}, complete = true, flutterPlugin = true, kotlinPlugin = true, activity = true } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lingo-android-readiness-'));
   const write = (file, content = 'fixture') => {
     const full = path.join(root, file);
@@ -22,7 +22,7 @@ function fixture({ minSdk = 21, overrides = {}, complete = true, flutterPlugin =
     fs.writeFileSync(full, content);
   };
   write('pubspec.yaml', 'dependencies:\n' + Object.entries({ ...pins, ...overrides }).map(([name, version]) => `  ${name}: ${version}`).join('\n') + '\n');
-  write('android/app/build.gradle.kts', `plugins { id("com.android.application") ${flutterPlugin ? 'id("dev.flutter.flutter-gradle-plugin")' : ''} }\nandroid { namespace = "com.thelingolegacy.app"; defaultConfig { applicationId = "com.thelingolegacy.app"; minSdk = ${minSdk} } }\n`);
+  write('android/app/build.gradle.kts', `plugins { id("com.android.application") ${kotlinPlugin ? 'id("org.jetbrains.kotlin.android")' : ''} ${flutterPlugin ? 'id("dev.flutter.flutter-gradle-plugin")' : ''} }\nandroid { namespace = "com.thelingolegacy.app"; defaultConfig { applicationId = "com.thelingolegacy.app"; minSdk = ${minSdk} } }\n`);
   if (complete) {
     write('android/gradle/wrapper/gradle-wrapper.properties');
     write('android/gradle/wrapper/gradle-wrapper.jar', 'PK\u0003\u0004' + 'x'.repeat(5000));
@@ -99,6 +99,14 @@ test('missing Flutter Gradle plugin fails closed', (t) => {
   const result = run(root);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Flutter Gradle plugin is missing/);
+});
+
+test('missing Kotlin Android Gradle plugin fails closed', (t) => {
+  const root = fixture({ kotlinPlugin: false });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = run(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Kotlin Android Gradle plugin is missing/);
 });
 
 test('missing native Flutter entry activity fails closed', (t) => {
