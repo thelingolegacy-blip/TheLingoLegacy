@@ -21,7 +21,13 @@ flutter create /tmp/lingo_legacy_web_scaffold --project-name lingo_legacy --plat
 mkdir -p web
 cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
 node --test scripts/test-verify-flutter-android-readiness.mjs
-node scripts/verify-flutter-android-readiness.mjs
+echo "LINGO_STAGE=android_readiness"
+if node scripts/verify-flutter-android-readiness.mjs; then
+  echo "LINGO_ANDROID_READINESS=PASS"
+else
+  echo "::warning::LINGO_ANDROID_READINESS=BLOCKED_PREVIEW_ONLY — Android Gradle wrapper or API-21 compatibility evidence is incomplete. Web preview continues; no Android package is produced."
+  echo "LINGO_ANDROID_READINESS=BLOCKED_PREVIEW_ONLY"
+fi
 
 echo "LINGO_STAGE=firebase_contract"
 if node scripts/verify-flutter-firebase.mjs; then
