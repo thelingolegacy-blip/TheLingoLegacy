@@ -856,3 +856,19 @@ The artifact was committed and read-back verified, but it has **not been execute
 
 
 **Disposable-copy hygiene:** repository and candidate copies exclude Git metadata, dependency/build caches, generated evidence, `.env` files, secret directories, private-key/certificate files, and service-account/credential JSON patterns. The runner also removes secret-like environment variables before starting child processes. This reduces accidental exposure but does not replace a dedicated secret scan or host-level isolation.
+
+
+## 9.12 Consolidated test-matrix expansion — 2026-11-20
+
+The orchestrator's Wave 1 was expanded after a complete repository test-path inventory. In addition to the existing static-gate and recovery-gate suites, it now includes these existing project tests/validators:
+
+- Node product regressions: static-gate harness, server slot-engine math/idempotency tests, Worker rate-limit regression tests, Doughboys Oasis campaign-state progression/replay tests, and LINGO repair-engine workflow tests.
+- Shell safety regressions: G02 runner-control guard assertions, local runner telemetry/sanitizer harness, and manual advancement lifecycle-validator tests. These tests use local synthetic fixtures; they do not register/restart runners or advance a real production lifecycle.
+- Studio/registry contracts: Studio site configuration/assets validation, Studio surface/routes/manifest integrity, and EZCA registry validation.
+- Cloudflare source build: Wrangler `deploy --dry-run` only when a pre-installed local Wrangler CLI and the checked-in dry-run config are available. The script does not install Wrangler or publish a Worker.
+- DevOps static validation: yamllint, Ansible syntax check, and Terraform fmt/init-backend-false/validate only when each tool and its source configuration are present. Missing tools are recorded as BLOCKED; no tool is installed by the orchestrator.
+- Existing recovery Python tests and the complete existing Node static-gate suite remain in the same parallel Wave 1.
+
+These checks run concurrently with the other independent Wave 1 tasks. Flutter/Oasis builds remain in Wave 2. Optional PR #614 and PR #596 worktrees are isolated and copied into a disposable workspace before their tests execute.
+
+No toolchain was installed and no test/build command was executed by this documentation update. The latest script source remains committed on the existing PR #615 draft branch; execution and machine-generated results are still pending an authorized local recovery checkout.
