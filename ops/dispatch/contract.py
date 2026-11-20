@@ -187,6 +187,8 @@ def validate_job(job: dict[str, Any]) -> None:
     for key in ("input_refs", "dependency_ids", "allowed_tools", "output_refs", "evidence_refs"):
         if not all(isinstance(x, str) and x.strip() for x in job[key]):
             raise ContractError(f"{key} must contain only non-empty strings")
+    if not job["allowed_tools"]:
+        raise ContractError("allowed_tools must contain at least one approved tool")
     if not set(job["allowed_tools"]).issubset(SAFE_TOOLS):
         raise ContractError("allowed_tools contains an unapproved tool")
     if len(set(job["allowed_tools"])) != len(job["allowed_tools"]):
