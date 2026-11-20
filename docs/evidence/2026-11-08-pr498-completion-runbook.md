@@ -94,12 +94,12 @@ npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.json
 ## 2026-11-08 follow-on math/accounting correction
 
 - Source now defines the UI-selected bet as a **per-line** Demo Coin amount.
-- Total spin debit is exactly five times the per-line wager, matching all five active paylines.
+- Total spin debit equals `lineWagerUnits × activePaylines`; the default is 20 active paylines and supported active counts are 1–20.
 - Local preview checks and deducts `game.bet * paylines.length`; the display includes both Bet / Line and Spin Cost.
-- The browser sends total `wagerUnits`; the D1 service validates divisibility by five, evaluates each payline using one-fifth of the total, and records/debits the total spin wager.
-- API rule version advanced to `staging-5x3-demo-v3`; response includes total `wagerUnits` and `lineWagerUnits`.
+- The browser sends total `wagerUnits`; the D1 service validates exact divisibility by `activePaylines`, evaluates each active payline using `lineWagerUnits = wagerUnits / activePaylines`, and records/debits the total spin wager. The default active count is 20.
+- API rule version advanced to `staging-5x3-20line-demo-v4`; response includes total `wagerUnits`, `lineWagerUnits`, `activePaylines`, and `paylinesEvaluated`.
 - API rejects non-divisible total wagers before settlement. Max total spin wager is 5,000 Demo Coins (1,000 per line).
-- Added a unit test for valid/invalid five-line wager conversion. The worker health test expectation is updated to v3.
+- Added unit tests for active-payline wager conversion, indivisible totals, and active-count idempotency. The Worker health test expectation is updated to `staging-5x3-20line-demo-v4`.
 - This correction has not been executed in GitHub Actions. No staging Worker code deployment has occurred.
 
 ## Actions retry investigation
@@ -110,9 +110,9 @@ npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.json
 
 ## Additional verification performed after the accounting correction
 
-### Five-payline wager contract
+### 20-payline Option 2 wager contract
 
-- UI-selected bet is per line; the total spin stake is `lineWagerUnits * 5`.
+- The UI/API wager is the total spin stake; the per-line stake is derived from the selected active payline count. No rounding or discarded remainder is allowed.
 - The browser preview deducts the total stake, and the remote request sends that total.
 - D1 settlement validates a positive total wager divisible by five, evaluates each payline at one-fifth of the total, and debits the full total.
 - Rule version: `staging-5x3-demo-v3`.
@@ -130,7 +130,7 @@ Enumerated all 6^5 possible ordered symbol sequences for one payline using the c
 | Medium | 9.7120% | 79.6260% |
 | High | 9.6544% | 94.8766% |
 
-These are exact theoretical values for the current five-symbol-position line evaluator and weight/paytable configuration, not live telemetry. RTP is expected line payout divided by line wager. Because all five paylines receive the same line wager, aggregate expected RTP remains the same.
+These are exact theoretical values for the current five-symbol-position line evaluator and weight/paytable configuration, not live telemetry. RTP is expected line payout divided by line wager. Because every active line receives the same line wager, the expected aggregate RTP is the line expectation under identical reel weights; full 20-line and feature-adjusted math still requires independent review.
 
 ### Current Actions state
 
@@ -176,7 +176,7 @@ These are exact theoretical values for the current five-symbol-position line eva
 
 ## Casino display consistency scan
 
-- The reel-side signage now says `5 PAYLINES`, matching the actual five-payline evaluator; the prior decorative `243 WAYS` label was removed.
+- The reel-side signage now says `20 PAYLINES`, matching the canonical 20-line evaluator; the prior decorative `243 WAYS` label was removed.
 - Jackpot tier amounts are labeled as Demo Coins, and the section's accessible label is `Demo Coin tier display`.
 - Source scan found no dollar-prefixed jackpot amounts or USD-formatted jackpot labels. This is a source inspection, not browser screenshot QA.
 
