@@ -39,7 +39,7 @@ from typing import Any
 IGNORED = {
     ".git", ".dart_tool", ".gradle", ".idea", ".venv", "venv",
     "node_modules", "build", ".next", ".turbo", "coverage",
-    "__pycache__", ".pytest_cache", ".mypy_cache", ".cache",
+    "__pycache__", ".pytest_cache", ".mypy_cache", ".cache", "one-time-restoration",
 }
 SECRET_ENV = re.compile(r"(TOKEN|SECRET|PASSWORD|PRIVATE_KEY|CREDENTIAL|COOKIE|AUTH)", re.I)
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -282,6 +282,9 @@ async def main_async(args: argparse.Namespace) -> int:
     if args.expected_sha and not SHA_RE.fullmatch(args.expected_sha):
         print("BLOCKED: --expected-sha must be a full lowercase 40-character SHA.", file=sys.stderr)
         return 2
+    if args.timeout < 1:
+        print("BLOCKED: --timeout must be positive.", file=sys.stderr)
+        return 2
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out = (source / args.output_dir / f"run-{run_id}").resolve()
@@ -303,10 +306,12 @@ async def main_async(args: argparse.Namespace) -> int:
         core_candidate = None
         if core_dir and (core_dir / "go.mod").is_file():
             core_candidate = workspace / "_external_candidates" / "core-v2"
+            core_candidate.parent.mkdir(parents=True, exist_ok=True)
             copy_workspace(core_dir, core_candidate)
         firebase_candidate = None
         if firebase_dir and firebase_dir.is_dir():
             firebase_candidate = workspace / "_external_candidates" / "firebase-hosting"
+            firebase_candidate.parent.mkdir(parents=True, exist_ok=True)
             copy_workspace(firebase_dir, firebase_candidate)
 
         waves = [
@@ -358,7 +363,7 @@ async def main_async(args: argparse.Namespace) -> int:
     tasks = runner.results
     gates = [{"gate": x["task"], "status": x["status"]} for x in tasks] + external
     if g02_result["status"] != "PASS":
-        gates.append({"gate": "G02", "status": "BLOCKED", "reason": g02_result.get("reason", "G02 evidence gate did not pass")})
+        gates.append({"gate": "G02", "status": g02_result["status"], "reason": g02_result.get("reason", "G02 evidence gate did not pass")})
     critical_nonpass = [x for x in gates if x["status"] != "PASS"]
     summary = {
         "schema_version": "lingo.one-time-restoration.v1",
