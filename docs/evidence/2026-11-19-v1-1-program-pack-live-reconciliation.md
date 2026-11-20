@@ -652,3 +652,40 @@ The repository tree shows Oasis Firestore rules under \`studio-sites/games/oasis
 - No credential values were retrieved or reproduced.
 
 **Checkpoint conclusion:** parallel evidence gathering advanced all seven workstreams, but the program remains PROTECTED HOLD. The most urgent external dependency is GitHub-hosted Actions startup admission; the most urgent source safety issue is the still-unmerged Firebase root-publication configuration on \`main\`. Unknowns remain unknown until tested.
+
+
+## 9.6 File-level reconciliation — PRs #613 and #614 (2026-11-20)
+
+A targeted patch comparison was completed for the overlapping Firebase, Flutter, Android, workflow, and publication-boundary files. Both drafts remain preserved and unmerged.
+
+### Reconciled common baseline
+
+- Both PRs change the same core Firebase boundary files: `.firebaserc`, `firebase.json`, `lib/firebase_options.dart`, `lib/main.dart`, root `pubspec.yaml`, Android Gradle scaffolding, and the Firebase publication manifest/builder.
+- Both set Firebase Hosting's public directory to `build/firebase-public`, set the Firebase project alias map to empty, and use the non-routable `lingo-staging-not-configured` placeholder project identifiers rather than the production project.
+- Both pin the same API-21 FlutterFire package line: `firebase_core 2.32.0`, `firebase_auth 4.20.0`, `firebase_database 10.5.7`, `firebase_storage 11.7.7`, and `firebase_analytics 10.10.7`.
+- Both replace the legacy Groovy app Gradle file with Kotlin DSL, declare Android `minSdk = 21`, and add a Gradle wrapper configured for Gradle 9.5.0. These are source declarations only; no Android build was run in this pass.
+- Both publication manifests remain `QUARANTINED` with an empty file allowlist. The builder rejects non-empty customer publication while quarantined and emits only a noindex 404 page.
+
+### Meaningful differences and disposition
+
+| Area | PR #613 | PR #614 | Reconciliation |
+|---|---|---|---|
+| Dart SDK floor | `>=3.6.0` | `>=3.12.0` | #614 aligns its declared SDK floor with its pinned Flutter 3.50.0 workflow; verify the actual lockfile/toolchain in a hosted run. |
+| Firebase readiness | `isConfigured` requires every declared platform configuration to be complete. | `isConfigured` validates only the active platform and exposes `isConfiguredFor`. | Prefer #614's per-platform semantics; an unconfigured platform should not disable a separately configured platform. |
+| Firebase contract check | Contract verifier allows an explicitly unconfigured, guarded placeholder mode. | Contract verifier requires a staging project ID and real non-placeholder credentials. | #614 is stricter for staging integration acceptance. Its workflow currently marks this step `continue-on-error: true`; therefore a passing overall job must not be interpreted as Firebase integration acceptance. Replace this with explicit, separately reported states: preview-only/disabled when no staging identity exists, and blocked until staging integration evidence is supplied. |
+| Publication tests | Rejects a non-empty quarantined allowlist and validates path/symlink protections. | Adds explicit tests for symlinked manifest/config parents and preserves the same quarantine boundary. | Retain #614's additional negative tests. |
+| Flutter workflow | Includes root Flutter checks, Android debug build and a narrow generated-output check. | Adds root and Oasis Flutter analysis, root tests/web build, Android readiness inspection, publication boundary checks and longer execution. | #614 is the more complete candidate, but its exact hosted workflow has not executed successfully in this recovery window. |
+| Startup probe | Push trigger targets `recovery/actions-startup-probe-2026-11-16`. | Push trigger targets `recovery/firebase-hosting-quarantine-boundary`. | Keep the PR-specific branch trigger only if that branch is still the intended probe source; do not dispatch or rerun while Actions admission remains unresolved. |
+
+### Remaining pre-acceptance checks
+
+1. Resolve the #614 workflow's `continue-on-error` semantics so a green workflow cannot be mistaken for Firebase-connected acceptance while staging is intentionally unconfigured.
+2. Reconcile the root `pubspec.yaml` removal of the declared `assets/images/`, `assets/icons/`, `assets/sounds/`, and Inter font entries against the actual repository asset inventory. Do not restore or delete assets by assumption.
+3. Verify root and Oasis lockfiles with the exact declared Flutter/Dart toolchain using `flutter pub get --enforce-lockfile`; compare resolved dependencies and generated platform files.
+4. Run Android debug build and API-21 compatibility tests on a hosted runner, then obtain device/emulator evidence. Validate the Gradle/AGP/Kotlin/Flutter combination rather than treating the version declarations as proof.
+5. Run iOS project generation/build and simulator checks separately; the Android scaffold does not establish iOS readiness.
+6. Run the Firebase publication negative tests and inspect the exact generated output inventory. Do not configure a Firebase project or publish to Hosting as part of this review.
+
+### Decision
+
+**PR #614 remains the preferred review baseline, not an approved merge candidate.** Preserve PR #613 as independent history until the file-level checks above are resolved. Do not merge either PR, change the Firebase project, activate Firebase services, or promote a Hosting deployment. No source mutation to PRs #613/#614 was made during this comparison; this section records review findings only.
