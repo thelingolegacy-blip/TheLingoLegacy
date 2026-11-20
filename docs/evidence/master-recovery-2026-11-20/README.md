@@ -22,7 +22,7 @@
 | [#614](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/614) | `recovery/firebase-hosting-quarantine-boundary` | `7574ad6308f048547a604bd2ace22cab05dc1ef9` | Open / draft / unmerged | 41 |
 | [#615](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/615) | `audit/reconciled-v1-1-live-inventory-2026-11-19` | `b266d375e70a048899f32d4681fa0f920feee349` | Open / draft / unmerged | 10 |
 | [#618](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/618) | `recovery/hosted-canary-zero-uses-2026-11-20` | `0340b1f3cfae66ac11ad7a1da85bcb92a56ce85a` | Open / draft / unmerged | 1 |
-| [#619](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/619) | `recovery/master-recovery-evidence-2026-11-20` | `443d3ae214257fefe577532cbe63d38b7a29686e` | Open / draft / unmerged | 13 |
+| [#619](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/619) | `recovery/master-recovery-evidence-2026-11-20` | `6c4cbad70ba86f446d5df3e3bb420aa03efcbe4b` | Open / draft / unmerged | 14 |
 
 All four PRs target the same observed main baseline. No merge was performed.
 
@@ -80,8 +80,9 @@ All four PRs target the same observed main baseline. No merge was performed.
 - `10-post-repair-actions-admission.md`
 - `11-g02-workflow-quarantine-review.md`
 - `12-worker-first-static-routing.md`
+- `13-static-asset-root-inventory.md`
 
 ## Change log
 
-- 2026-11-20: added current PR heads, #574/#589 quarantine inventory, G02 workflow quarantine review, and Worker-first static routing correction.
+- 2026-11-20: added current PR heads, #574/#589 quarantine inventory, G02 workflow quarantine review, Worker-first static routing correction, and a measured top-level static-asset inventory.
 - 2026-11-20: created this evidence record on isolated branch `recovery/master-recovery-evidence-2026-11-20`. No main-branch change, PR merge, workflow dispatch, runner action, provider mutation, deployment, payment activation, or production operation was performed.
