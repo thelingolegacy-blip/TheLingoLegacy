@@ -92,6 +92,22 @@ class RestorationOrchestratorSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unsupported child environment keys"):
             MODULE.safe_env({"AWS_ACCESS_KEY_ID": "must-not-pass"})
 
+    def test_aggregate_status_requires_every_subtask_to_pass(self):
+        self.assertEqual(MODULE.aggregate_status(["PASS", "PASS"]), "PASS")
+        self.assertEqual(MODULE.aggregate_status(["PASS", "BLOCKED"]), "BLOCKED")
+        self.assertEqual(MODULE.aggregate_status(["PASS", "FAIL"]), "FAIL")
+        self.assertEqual(MODULE.aggregate_status([]), "BLOCKED")
+
+    def test_runner_uses_a_private_isolated_home(self):
+        output = self.root / "evidence"
+        output.mkdir()
+        runner = MODULE.Runner(self.source, output, 30, False)
+        env = MODULE.safe_env(home_dir=runner.home)
+        self.assertEqual(Path(env["HOME"]), runner.home)
+        self.assertTrue(runner.home.is_dir())
+        if os.name != "nt":
+            self.assertEqual(runner.home.stat().st_mode & 0o777, 0o700)
+
     def test_public_probe_redirects_are_not_followed(self):
         handler = MODULE.NoRedirectHandler()
         self.assertIsNone(handler.redirect_request(None, None, 302, "Found", {}, "https://other.example/"))
