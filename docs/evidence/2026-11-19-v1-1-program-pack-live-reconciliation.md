@@ -742,3 +742,45 @@ The two preview project skip reasons repeat on the latest evidence commits: `pat
 ### Disposition
 
 Keep the currently deployed `thelingolegacyv-5` version 137 and all existing Pages production/backup deployments protected. Reconcile the 367-version upload history against GitHub source commits and release records before any promotion. Review the Control Tower preview's query-string logging setting. Fix/verify preview project path and branch filters only through a separately reviewed, non-production change. No Cloudflare mutations were performed.
+
+
+## 9.9 CORE V2 architecture/implementation reconciliation — PRs #594 and #596
+
+A changed-file inventory and targeted source review were completed for the two CORE V2 drafts.
+
+### Branch separation
+
+- PR #594 changes six architecture-only files under `architecture/greenfield-v2/`.
+- PR #596 changes 30 implementation, contract, workflow, runbook, registry, security and roadmap files under `platform/lingo-core-v2/`.
+- The two PRs have **zero overlapping changed paths**. Preserve their independent histories; there is no file-level merge conflict to resolve at this stage.
+
+### Architecture/implementation alignment
+
+PR #594 proposes a provider-neutral modular baseline: Next.js web, Flutter mobile, Go services, PostgreSQL as the transactional authority for explicitly migrated domains, OIDC identity adapter, transactional outbox, Cloudflare as intended edge subject to route verification, and GitHub as source/evidence authority. Provider provisioning and recurring costs are explicitly deferred pending workload/cost/security approval.
+
+PR #596 implements a narrow non-production profile slice:
+- Go HTTP API with `/healthz`, `/readyz`, `GET /v1/me/profile`, and `PUT /v1/me/profile`.
+- OIDC ID-token verification through issuer discovery/JWKS and client audience; profile ownership uses verified issuer plus subject rather than client-supplied identity.
+- PostgreSQL profile table and an outbox row written in the same transaction.
+- Database TLS policy requires `sslmode=verify-full` outside loopback development/test; OIDC issuer requires HTTPS outside loopback development/test.
+- Integration tests restrict `TEST_DATABASE_URL` to loopback and database `lingo_test`, create a unique schema per test, apply the migration in that schema, and verify issuer/subject isolation plus rollback when outbox insertion fails.
+- No live OIDC issuer, database, publisher, consumer, web client, Flutter client, or production deployment is established by this source review.
+
+### Acceptance status remains intentionally limited
+
+The implementation acceptance matrix labels API/OIDC, API/PostgreSQL and profile/outbox as `BUILT`, not `TESTED`, `CONNECTED` or `CERTIFIED`. Outbox delivery, web API and Flutter API remain `NOT_STARTED`. This is the correct conservative classification until evidence exists.
+
+The API workflow defines a disposable PostgreSQL 16 service and sets a loopback `TEST_DATABASE_URL`, so it is the workflow intended to execute database integration tests. The separate hosted-bootstrap workflow does not define `TEST_DATABASE_URL`; its own description says database integration tests skip without it. Do not count that bootstrap workflow as PostgreSQL integration evidence.
+
+### Remaining review items
+
+1. Obtain completed GitHub Actions jobs before counting any Go test, race, vet, build, coverage, PostgreSQL integration, or hosted runner identity evidence. Current Actions admission failures prevent this.
+2. Complete real OIDC issuer/audience/signature/expiry/key-rotation tests and verify issuer-plus-subject tenant isolation against a non-production issuer.
+3. Review outbox event idempotency, publisher lease/claim behavior, retry, dead-letter, replay and trace continuity before building consumers. The publisher/consumer is not implemented in this slice.
+4. Prove PostgreSQL TLS, least-privilege roles, migration rollback, backup/restore and failure recovery with an isolated test environment.
+5. Complete independent threat-model review, SAST/SCA, SBOM/provenance, rate limiting, audit/PII handling and operational telemetry.
+6. Keep profile data isolated from wallet balances, rewards, game outcomes and other domain authorities; those domains require their own schemas, ledger contracts and reconciliation.
+
+### Decision
+
+PR #594 remains the proposed architecture baseline and PR #596 remains a non-production implementation candidate. Their source separation is clean, but the implementation is **BUILT / NOT CONNECTED / NOT CERTIFIED**. Do not provision providers, create production databases/identity, merge either draft, migrate data, or deploy.
