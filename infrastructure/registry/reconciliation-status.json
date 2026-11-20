@@ -86,6 +86,27 @@
         "resolve Worker upload-versus-deployed-version drift only through reviewed staging and approved release plan",
         "perform authorized restore rehearsal and integrity verification for static backup"
       ]
+    },
+    {
+      "id": 5,
+      "name": "private-enterprise-workspace-reconciliation",
+      "status": "PARTIAL",
+      "completed": [
+        "GitHub account repository search returned 39 repositories; the prior canonical registry contained 38",
+        "previously omitted private repository Lingo-enterprise identified and verified by repository ID 1459419679",
+        "main branch remains README-only; foundation PR #1, CircleCI PR #3, and integration documentation PR #5 remain draft and unmerged",
+        "enterprise repository branch API reports protected=false for all five observed branches",
+        "rulesets endpoint returned HTTP 403 due GitHub plan restriction; effective ruleset protection remains unverified",
+        "CircleCI configuration exists on a draft branch, but no CircleCI project/pipeline evidence is present in the controlling issue"
+      ],
+      "remaining": [
+        "review PR #1 foundation charter, architecture, threat model, secrets policy, and product registry",
+        "resolve GitHub hosted Actions startup failure for the private enterprise repo",
+        "verify authorized CircleCI project connection and real hosted pipeline evidence before treating PR #3 as verified",
+        "obtain authorized GitHub branch governance review and establish required human review/check rules",
+        "reconcile PR #5 repository inventory and migration plan against current 39-repository source inventory",
+        "keep all source imports and authority transfers blocked until history-preserving import rehearsal, independent builds, rollback proof, and owner approvals"
+      ]
     }
   ],
   "branch": "feature/wave-00-2-ezca-registry",
@@ -183,5 +204,42 @@
       "project": "my-flutter-app",
       "deployment_commit_sha": "MISSING"
     }
+  },
+  "enterprise_repository": {
+    "name": "thelingolegacy-blip/Lingo-enterprise",
+    "repository_id": 1459419679,
+    "visibility": "PRIVATE",
+    "default_branch": "main",
+    "main_sha": "601d72ca7d1be2bc5a47915319c5f49c4a33f5c1",
+    "main_tree": "README-only",
+    "observed_branches": [
+      "main",
+      "enterprise/foundation-baseline",
+      "ci/circleci-hosted-verification",
+      "circleci-project-setup",
+      "integration/monorepo-foundation"
+    ],
+    "branch_protection": "API reports protected=false on all five branches; rulesets endpoint inaccessible (403)",
+    "pull_requests": [
+      {
+        "number": 1,
+        "head": "458ab06a2e9f85ab22e0ba3a838d8a0400b7d655",
+        "state": "OPEN_DRAFT",
+        "purpose": "foundation baseline"
+      },
+      {
+        "number": 3,
+        "head": "72d70c313f174b179261bfcbf949d69c1f7c048b",
+        "state": "OPEN_DRAFT_STACKED_ON_PR_1",
+        "purpose": "CircleCI hosted verification"
+      },
+      {
+        "number": 5,
+        "head": "ee489569e3ecbd3239dadbdbe6a9687615c2f0fd",
+        "state": "OPEN_DRAFT",
+        "purpose": "documentation-only monorepo integration"
+      }
+    ],
+    "source_of_truth_transfer": "NOT_AUTHORIZED_OR_PERFORMED"
   }
 }
