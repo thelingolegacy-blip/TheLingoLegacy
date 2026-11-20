@@ -256,12 +256,24 @@ class Runner:
         for suffix, argv in commands:
             results.append(await self.command(f"{task_id}-{suffix}", project, argv, timeout=max(self.timeout, 1200), extra_env=env))
         if (project / "android").is_dir():
-            results.append(await self.command(f"{task_id}-android-debug", project, [flutter, "build", "apk", "--debug"], timeout=max(self.timeout, 1800), extra_env=env))
+            android_sdk = os.environ.get("ANDROID_SDK_ROOT") or os.environ.get("ANDROID_HOME")
+            local_properties = project / "android/local.properties"
+            if local_properties.is_file():
+                for line in local_properties.read_text(encoding="utf-8", errors="replace").splitlines():
+                    if line.startswith("sdk.dir="):
+                        android_sdk = line.split("=", 1)[1].replace("\\:", ":")
+                        break
+            if android_sdk and Path(android_sdk).is_dir():
+                results.append(await self.command(f"{task_id}-android-debug", project, [flutter, "build", "apk", "--debug"], timeout=max(self.timeout, 1800), extra_env=env))
+            else:
+                results.append(self.record({"task": f"{task_id}-android-debug", "status": "BLOCKED",
+                                            "reason": "Android SDK not found via ANDROID_SDK_ROOT, ANDROID_HOME, or android/local.properties"}))
         if (project / "ios").is_dir():
-            if platform.system() == "Darwin":
+            if platform.system() == "Darwin" and shutil.which("xcodebuild"):
                 results.append(await self.command(f"{task_id}-ios-simulator", project, [flutter, "build", "ios", "--simulator", "--no-codesign"], timeout=max(self.timeout, 1800), extra_env=env))
             else:
-                results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED", "reason": "iOS simulator build requires macOS/Xcode"}))
+                results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED",
+                                            "reason": "iOS simulator build requires macOS with Xcode/xcodebuild"}))
         failed = [x for x in results if x["status"] == "FAIL"]
         # An unsupported iOS simulator target remains an explicit BLOCKED
         # subtask, but it must not suppress independent web/Android checks or
