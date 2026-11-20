@@ -64,6 +64,12 @@ const requiredPublicFiles = [
 const requiredPublicRoutes = [
   '/integrations-readiness/', '/shopify-readiness/', '/exa-readiness/', '/integration-management/',
 ];
+const requiredWorkerFirstPaths = [
+  '/integration-configurations*', '/integration-ids-register*', '/integration-links-register*',
+  '/dashboard-integration-links*', '/exact-dashboard-links*', '/auth0-details*',
+  '/auth0-implementation*', '/admin-command-center*', '/economy-command-center*',
+  '/ops*', '/config/ops*', '/docs/ops*', '/docs/superpowers*',
+];
 
 if (!fs.existsSync(configPath)) {
   errors.push('wrangler.jsonc: missing configuration');
@@ -71,6 +77,16 @@ if (!fs.existsSync(configPath)) {
   try {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     const directory = config.assets?.directory;
+    const workerFirst = config.assets?.run_worker_first;
+    if (!Array.isArray(workerFirst)) {
+      errors.push('wrangler.jsonc: assets.run_worker_first must be an array covering restricted paths');
+    } else {
+      for (const pattern of requiredWorkerFirstPaths) {
+        if (!workerFirst.includes(pattern)) {
+          errors.push(`wrangler.jsonc: assets.run_worker_first missing restricted path pattern: ${pattern}`);
+        }
+      }
+    }
     if (typeof directory !== 'string' || !directory.trim()) {
       errors.push('wrangler.jsonc: assets.directory is missing');
     } else {
