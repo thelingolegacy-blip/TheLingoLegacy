@@ -46,6 +46,8 @@ IGNORED = {
     "node_modules", "build", ".next", ".turbo", "coverage",
     "__pycache__", ".pytest_cache", ".mypy_cache", ".cache", "one-time-restoration",
     ".env", ".env.*", ".secrets", "secrets", "*.pem", "*.key", "*.p12", "*.pfx",
+    ".ssh", ".aws", ".azure", ".docker", ".npmrc", ".netrc", ".pypirc",
+    ".git-credentials", "id_rsa*", "id_ed25519*", "*.tfstate", "*.tfstate.*",
     "service-account*.json", "*credentials*.json",
 }
 SECRET_ENV = re.compile(r"(TOKEN|SECRET|PASSWORD|PRIVATE_KEY|CREDENTIAL|COOKIE|AUTH)", re.I)
