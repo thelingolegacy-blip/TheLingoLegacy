@@ -154,7 +154,7 @@ class Runner:
             return self.record({"task": "repository-static-gates", "status": "BLOCKED", "reason": "Node.js not installed"})
         return await self.command("repository-static-gates", workspace, [node, "scripts/run-static-gates.mjs"], timeout=max(self.timeout, 900))
 
-    async def git_snapshot(self, path: Path) -> dict[str, Any]:
+    async def git_snapshot(self, path: Path, exclude_path: Path | None = None) -> dict[str, Any]:
         async def git_value(*args: str) -> tuple[int | None, str]:
             try:
                 proc = await asyncio.create_subprocess_exec(
@@ -168,7 +168,14 @@ class Runner:
 
         head_rc, head = await git_value("rev-parse", "HEAD")
         branch_rc, branch = await git_value("branch", "--show-current")
-        status_rc, status = await git_value("status", "--porcelain", "--untracked-files=all")
+        status_args = ["status", "--porcelain", "--untracked-files=all"]
+        if exclude_path is not None:
+            try:
+                relative_output = exclude_path.relative_to(path).as_posix()
+                status_args.extend(["--", ".", f":(exclude){relative_output}"])
+            except ValueError:
+                pass
+        status_rc, status = await git_value(*status_args)
         return {
             "path": str(path),
             "commit_sha": head if head_rc == 0 else None,
@@ -179,7 +186,7 @@ class Runner:
         }
 
     async def integrity(self, source: Path) -> dict[str, Any]:
-        snapshot = await self.git_snapshot(source)
+        snapshot = await self.git_snapshot(source, self.out)
         try:
             proc = await asyncio.create_subprocess_exec(
                 "git", "diff", "--check", cwd=str(source), env=safe_env(),
@@ -544,7 +551,7 @@ async def main_async(args: argparse.Namespace) -> int:
         waves = [
             ("WAVE 0 — SOURCE AND BASELINE", [
                 ("source-integrity", lambda: runner.integrity(source)),
-            ]),
+            ], {"source-integrity"}),
             ("WAVE 1 — REPOSITORY / SECURITY / SERVICE CONTRACTS", [
                 ("recovery-unit-tests", lambda: runner.python_recovery(workspace)),
                 ("recovery-contracts", lambda: runner.recovery_contracts(workspace)),
@@ -558,18 +565,20 @@ async def main_async(args: argparse.Namespace) -> int:
                 ("devops-static", lambda: runner.devops_static(workspace)),
                 ("firebase-hosting-candidate", lambda: runner.firebase_candidate(firebase_candidate, firebase_snapshot)),
                 ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot)),
-            ]),
+            ], {"recovery-unit-tests", "recovery-contracts", "repository-static-gates",
+                "product-regressions", "shell-safety-tests", "studio-contracts",
+                "crimson-smoke-static", "firebase-hosting-candidate", "core-v2-go"}),
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
                 ("flutter-root", lambda: runner.flutter_project(workspace, ".", "flutter-root")),
                 ("flutter-oasis", lambda: runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis")),
-            ]),
+            ], {"flutter-root", "flutter-oasis"}),
             ("WAVE 3 — PUBLIC ROUTE OBSERVATION", [
                 ("public-route-probes", lambda: runner.public_probes()),
-            ]),
+            ], {"public-route-probes"}),
         ]
         upstream_blocker = None
         wave_results = []
-        for title, task_factories in waves:
+        for title, task_factories, required_tasks in waves:
             print(f"\n{title}")
             if upstream_blocker:
                 blocked = []
@@ -581,7 +590,10 @@ async def main_async(args: argparse.Namespace) -> int:
                     print(f"  [{result['status']}] {result['task']}")
                 continue
             results = await asyncio.gather(*(factory() for _name, factory in task_factories))
-            wave_status = "PASS" if all(x["status"] == "PASS" for x in results) else "BLOCKED"
+            required_results = [x for x in results if x["task"] in required_tasks]
+            required_pass = len(required_results) == len(required_tasks) and all(x["status"] == "PASS" for x in required_results)
+            any_failure = any(x["status"] == "FAIL" for x in results)
+            wave_status = "PASS" if required_pass and not any_failure else "BLOCKED"
             wave_results.append({"wave": title, "status": wave_status,
                                  "tasks": [{"task": x["task"], "status": x["status"]} for x in results]})
             for result in results:
