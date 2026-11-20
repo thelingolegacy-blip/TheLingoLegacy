@@ -19,18 +19,25 @@ jobs:
     steps:
       - name: Checkout source using public Git transport
         shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           git init source
           cd source
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          source_sha="${{ github.event.pull_request.head.sha || github.sha }}"
-          git fetch --depth=1 origin "$source_sha"
+          if [[ -n "$PR_NUMBER" ]]; then
+            source_ref="refs/pull/$PR_NUMBER/head"
+          else
+            source_ref="$GITHUB_REF"
+          fi
+          git fetch --depth=1 origin "$source_ref"
           git checkout --detach FETCH_HEAD
           checked_out_sha="$(git rev-parse HEAD)"
-          test "$checked_out_sha" = "$source_sha"
+          test "$checked_out_sha" = "$SOURCE_HEAD_SHA"
           {
-            echo "source_sha=$source_sha"
+            echo "source_sha=$SOURCE_HEAD_SHA"
             echo "checked_out_sha=$checked_out_sha"
             echo "run_id=$GITHUB_RUN_ID"
             echo "run_attempt=$GITHUB_RUN_ATTEMPT"
@@ -63,4 +70,4 @@ jobs:
         run: |
           set -euo pipefail
           cd source
-          python -m unittest discover -s ops/dispatch/tests -v
+          python3 -m unittest discover -s ops/dispatch/tests -v
