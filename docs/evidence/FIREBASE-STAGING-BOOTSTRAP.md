@@ -20,7 +20,7 @@
 7. Run `node scripts/verify-firebase-staging-config.mjs`. It must report `FIREBASE_STAGING_CONFIG=PASS`.
 8. Set the isolated Cloudflare staging Worker plain-text binding `FIREBASE_PROJECT_ID` to the verified staging project ID only. Read the binding back and verify it is not `lingo-legacy-production`.
 9. Configure the staging browser app with the same Web app config, a real Firebase Auth instance, and `window.LINGO_AUTH.getIdToken()`. Set `window.LINGO_GAME_API` to the isolated staging Worker endpoint. Confirm the browser origin is included in `STAGING_ALLOWED_ORIGINS`.
-10. Run the issuer/audience/signature tests, authenticated bootstrap, one-time 5,000 Demo Coin grant, wallet balance, five-payline spin, idempotent replay, insufficient-funds rollback, and logout/session-expiry tests.
+10. Run the issuer/audience/signature tests, authenticated bootstrap, one-time 5,000 Demo Coin grant, wallet balance, 20-payline Option 2 spin with total wager evenly allocated across active paylines and non-zero remainders rejected, idempotent replay, insufficient-funds rollback, and logout/session-expiry tests.
 11. Capture exact commit, Worker version/deployment ID, test account identity hash (never token), run/job/runner IDs, logs, and artifacts.
 
 ## Activation boundary
