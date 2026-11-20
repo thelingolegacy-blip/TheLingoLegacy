@@ -853,3 +853,6 @@ Each run writes to `release/evidence/one-time-restoration/run-<UTC timestamp>/`,
 The artifact was committed and read-back verified, but it has **not been executed in this ChatGPT environment**: the live GitHub connector exposes repository source but not a local checkout with Flutter/Android/Xcode/Go toolchains. No Actions dispatch was attempted because Actions admission remains unresolved. The first execution must occur in an authorized local recovery checkout; its machine-generated report, not this source commit, will determine which test/build tasks pass.
 
 **Disposition:** orchestrator source added; execution pending local toolchain and optional PR candidate worktrees. PROTECTED HOLD remains active.
+
+
+**Disposable-copy hygiene:** repository and candidate copies exclude Git metadata, dependency/build caches, generated evidence, `.env` files, secret directories, private-key/certificate files, and service-account/credential JSON patterns. The runner also removes secret-like environment variables before starting child processes. This reduces accidental exposure but does not replace a dedicated secret scan or host-level isolation.
