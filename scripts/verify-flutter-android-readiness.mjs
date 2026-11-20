@@ -4,6 +4,9 @@ import path from 'node:path';
 const root = path.resolve(process.argv[2] || process.cwd());
 const requiredFiles = [
   'android/gradle/wrapper/gradle-wrapper.properties',
+  'android/gradle/wrapper/gradle-wrapper.jar',
+  'android/gradlew',
+  'android/gradlew.bat',
   'android/settings.gradle.kts',
   'android/build.gradle.kts',
   'android/app/build.gradle.kts',
@@ -15,6 +18,26 @@ const requiredFiles = [
 const blockers = [];
 const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)));
 if (missing.length) blockers.push('Android Gradle scaffold is incomplete: ' + missing.join(', '));
+if (fs.existsSync(path.join(root, 'android/gradlew'))) {
+  const wrapperScript = fs.readFileSync(path.join(root, 'android/gradlew'), 'utf8');
+  const mode = fs.statSync(path.join(root, 'android/gradlew')).mode;
+  if ((mode & 0o111) === 0) blockers.push('android/gradlew must be committed with its executable bit set');
+  if (!wrapperScript.includes('org.gradle.wrapper.GradleWrapperMain')) {
+    blockers.push('android/gradlew does not contain the expected Gradle wrapper entry point');
+  }
+}
+if (fs.existsSync(path.join(root, 'android/gradlew.bat'))) {
+  const wrapperScript = fs.readFileSync(path.join(root, 'android/gradlew.bat'), 'utf8');
+  if (!wrapperScript.includes('org.gradle.wrapper.GradleWrapperMain')) {
+    blockers.push('android/gradlew.bat does not contain the expected Gradle wrapper entry point');
+  }
+}
+if (fs.existsSync(path.join(root, 'android/gradle/wrapper/gradle-wrapper.jar'))) {
+  const wrapperJar = fs.readFileSync(path.join(root, 'android/gradle/wrapper/gradle-wrapper.jar'));
+  if (wrapperJar.length < 4096 || wrapperJar[0] !== 0x50 || wrapperJar[1] !== 0x4b) {
+    blockers.push('Gradle wrapper JAR is missing, truncated, or not a ZIP/JAR archive');
+  }
+}
 
 const pubspecPath = path.join(root, 'pubspec.yaml');
 const gradlePath = path.join(root, 'android/app/build.gradle.kts');
@@ -55,4 +78,4 @@ if (blockers.length) {
 console.log('FLUTTER_ANDROID_READINESS=PASS');
 console.log('ANDROID_MIN_SDK=21');
 console.log('FIREBASE_ANDROID_COMPATIBILITY=PINNED');
-console.log('GRADLE_WRAPPER=FLUTTER_GENERATED_ON_FIRST_GRADLE_INVOCATION');
+console.log('GRADLE_WRAPPER=TRACKED_AND_PRESENT');
