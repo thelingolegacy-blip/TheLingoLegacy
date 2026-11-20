@@ -1,6 +1,6 @@
 # LINGO CORE V2 Architecture Baseline
 
-**Decision state:** PROPOSED — review required  
+**Decision state:** ACCEPTED provider-neutral CORE V2 baseline; provider implementation selection deferred  
 **Program:** #597  
 **Architecture proposal:** PR #594  
 **Implementation:** PR #596
@@ -18,10 +18,10 @@
 ## Provisional provider boundaries
 - GitHub: canonical source, review history and engineering evidence.
 - Cloudflare: intended public edge, DNS and Worker routing subject to existing release controls.
-- Firebase: existing/legacy capabilities only where an explicit service contract and project identity are verified.
+- Firebase: existing specialist integrations only where justified, with explicit service contract and verified project identity; not a co-equal authority for the same data domain.
 - AWS: candidate application infrastructure provider; no account, region, resources or recurring costs are approved by this ADR.
 - OpenTofu/Terraform: IaC candidate; choose and pin one implementation after licensing, provider compatibility, state security and cost review.
-- PostgreSQL: candidate transactional store for the first Go vertical slice; isolated disposable development only.
+- PostgreSQL: authoritative transactional data for explicitly migrated domains; initial Go vertical slice uses isolated disposable development only.
 
 These are proposed responsibility boundaries, not a claim that providers are currently connected or provisioned.
 
