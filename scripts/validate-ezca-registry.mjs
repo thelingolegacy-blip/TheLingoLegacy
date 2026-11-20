@@ -29,9 +29,9 @@ if (repositories.inventory_count !== 38 || repositories.repositories.length !== 
   throw new Error('Repository inventory count mismatch');
 }
 if (engines.packages.length !== 12) throw new Error('Expected exactly 12 shared engines');
-if (workers.workers.length !== 7) throw new Error('Expected exactly 7 observed Workers');
-if (workers.route_inventory?.observed_routes !== 21 || workers.route_inventory?.route_ids_and_assignments?.length !== 21) {
-  throw new Error('Expected 21 observed Worker routes with complete route ID mapping');
+if (workers.workers.length !== 9) throw new Error('Expected exactly 9 observed Worker scripts');
+if (workers.route_inventory?.observed_routes !== 27 || workers.route_inventory?.route_ids_and_assignments?.length !== 27) {
+  throw new Error('Expected 27 observed Worker routes with complete route ID mapping');
 }
 if (workerBindings.workers?.length !== 7) throw new Error('Expected binding observations for all 7 Workers');
 if (firebaseProjects.projects?.length !== 3 || firebaseProjects.deployment_verification !== 'NOT_VERIFIED') {
