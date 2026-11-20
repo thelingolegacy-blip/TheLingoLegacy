@@ -334,12 +334,20 @@ class Runner:
         if terraform and tfdir.is_dir():
             results.append(await self.command("devops-terraform-format", workspace,
                                               [terraform, "-chdir=infrastructure/terraform", "fmt", "-check", "-recursive"]))
-            results.append(await self.command("devops-terraform-init", workspace,
-                                              [terraform, "-chdir=infrastructure/terraform", "init", "-backend=false", "-input=false"],
-                                              timeout=max(self.timeout, 900)))
-            results.append(await self.command("devops-terraform-validate", workspace,
-                                              [terraform, "-chdir=infrastructure/terraform", "validate"],
-                                              timeout=max(self.timeout, 900)))
+            if self.network:
+                init = await self.command("devops-terraform-init", workspace,
+                                          [terraform, "-chdir=infrastructure/terraform", "init", "-backend=false", "-input=false"],
+                                          timeout=max(self.timeout, 900))
+                results.append(init)
+                if init["status"] == "PASS":
+                    results.append(await self.command("devops-terraform-validate", workspace,
+                                                      [terraform, "-chdir=infrastructure/terraform", "validate"],
+                                                      timeout=max(self.timeout, 900)))
+                else:
+                    results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED", "reason": "Terraform init did not complete"}))
+            else:
+                results.append(self.record({"task": "devops-terraform-init", "status": "BLOCKED", "reason": "Terraform provider initialization may download dependencies; pass --network-enabled"}))
+                results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED", "reason": "Terraform validation requires initialized providers"}))
         else:
             results.append(self.record({"task": "devops-terraform", "status": "BLOCKED", "reason": "Terraform or infrastructure/terraform unavailable"}))
         return self.record({"task": "devops-static", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "BLOCKED" if all(x["status"] == "BLOCKED" for x in results) else "FAIL", "subtasks": results,
