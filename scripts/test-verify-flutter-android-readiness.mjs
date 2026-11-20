@@ -25,10 +25,10 @@ function fixture({ minSdk = 21, overrides = {}, complete = true, flutterPlugin =
   write('android/app/build.gradle.kts', `plugins { id("com.android.application") ${flutterPlugin ? 'id("dev.flutter.flutter-gradle-plugin")' : ''} }\nandroid { namespace = "com.thelingolegacy.app"; defaultConfig { applicationId = "com.thelingolegacy.app"; minSdk = ${minSdk} } }\n`);
   if (complete) {
     write('android/gradle/wrapper/gradle-wrapper.properties');
-    write('android/gradle/wrapper/gradle-wrapper.jar', 'PK\\u0003\\u0004' + 'x'.repeat(5000));
-    write('android/gradlew', '#!/bin/sh\\nexec java org.gradle.wrapper.GradleWrapperMain "$@"\\n');
+    write('android/gradle/wrapper/gradle-wrapper.jar', 'PK\u0003\u0004' + 'x'.repeat(5000));
+    write('android/gradlew', '#!/bin/sh\nexec java org.gradle.wrapper.GradleWrapperMain "$@"\n');
     fs.chmodSync(path.join(root, 'android/gradlew'), 0o755);
-    write('android/gradlew.bat', '@echo off\\r\\njava org.gradle.wrapper.GradleWrapperMain %*\\r\\n');
+    write('android/gradlew.bat', '@echo off\r\njava org.gradle.wrapper.GradleWrapperMain %*\r\n');
     write('android/settings.gradle.kts');
     write('android/build.gradle.kts');
     write('android/app/src/main/AndroidManifest.xml');
