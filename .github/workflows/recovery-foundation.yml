@@ -124,6 +124,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -134,10 +135,15 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p p1-evidence
+          source_head_sha="${{ github.event.pull_request.head.sha }}"
+          checked_out_sha="$(git rev-parse HEAD)"
+          test "$checked_out_sha" = "$source_head_sha"
           {
             echo "repository=${GITHUB_REPOSITORY}"
             echo "ref=${GITHUB_REF}"
             echo "sha=${GITHUB_SHA}"
+            echo "source_head_sha=$source_head_sha"
+            echo "checked_out_sha=$checked_out_sha"
             echo "run_id=${GITHUB_RUN_ID}"
             echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
             echo "runner_name=${RUNNER_NAME}"
@@ -165,7 +171,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: lingo-p1-slot-engine-${{ github.run_id }}-${{ github.run_attempt }}
+          name: lingo-p1-slot-engine-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: p1-evidence/
           if-no-files-found: warn
           retention-days: 14
