@@ -943,3 +943,24 @@ The orchestrator currently contains 720 lines. Its latest PR #615 head after the
 No local compile, test, build, or orchestrator execution was performed. No Actions dispatch/rerun, DNS/Worker/Pages/Firebase mutation, merge, runner activation, payment activation, migration, or backup deletion was performed.
 
 **Disposition:** Source-level evidence hardening committed and read-back verified; local execution pending. G02 remains FAIL / UNVERIFIED; G03–G11 remain BLOCKED; PROTECTED HOLD remains active.
+
+
+## 9.15 Unrouted Worker trigger and subdomain review — 2026-11-20
+
+A further read-only Cloudflare inspection queried deployment history, Cron schedules, Worker settings (bindings and tail consumers), and workers.dev subdomain settings for all five scripts with no custom zone route assignment.
+
+| Script | Latest deployment observed | Cron schedules | Bindings / tail consumers | workers.dev / preview |
+|---|---|---:|---|---|
+| `lingo-flagship-site-preview` | 2026-11-06; upload; version 100% | 0 | None returned | Enabled / previews disabled |
+| `lingo-resilience-gateway` | 2026-11-09; upload; version 100% | 0 | None returned | Enabled / previews disabled |
+| `lingo-studio-control-center-staging` | 2026-11-12; deployment; version 100% | 0 | None returned | Enabled / previews enabled |
+| `lingo-unified-control-tower-preview` | 2026-11-16; upload; version 100% | 0 | None returned | Enabled / previews enabled |
+| `thelingolegacy-web` | 2026-11-19; dashboard-template upload; version 100% | 0 | None returned | Disabled / previews disabled |
+
+Interpretation and controls:
+- No Cron schedule, regular binding, or tail-consumer relationship was returned for these five scripts by the queried APIs. This does not establish absence of every possible invocation path or account-level integration.
+- Four of the five scripts have workers.dev enabled despite having no custom zone route. The Studio Control Center staging and Unified Control Tower preview scripts also have preview URLs enabled. These are configured alternate access surfaces and must be included in exposure review; do not infer they are private solely because they lack custom DNS routes.
+- Thelingolegacy-web has workers.dev and preview access disabled, but its three dashboard-template deployment records show an uploaded version at 100%; preserve pending source, owner, and intended-purpose attribution.
+- No deployment, route, subdomain, preview, binding, trigger, or script setting was changed. Do not disable any access surface without owner confirmation, traffic/invocation review, and a rollback plan.
+
+**Disposition:** the five unrouted scripts remain INVESTIGATE / PRESERVE, not RETIRE. Production and staging boundaries remain unchanged; PROTECTED HOLD remains active.
