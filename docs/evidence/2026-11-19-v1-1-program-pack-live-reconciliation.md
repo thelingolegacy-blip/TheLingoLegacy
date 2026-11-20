@@ -1028,3 +1028,16 @@ The orchestrator is now 840 lines at script commit 9c533f4ae5f7d6e0d88274c60f913
 
 **Disposition:** local PostgreSQL integration remains opt-in and BLOCKED by default; production and all external release gates remain under PROTECTED HOLD.
 
+## 9.20 PostgreSQL DSN isolation and log redaction — 2026-11-20
+
+A final safety pass tightened how the optional CORE V2 test database URL is handled:
+
+- TEST_DATABASE_URL is excluded from the inherited environment for all child processes.
+- It is passed only to the Go test commands after both explicit --allow-local-postgres-integration opt-in and loopback/lingo_test target validation.
+- When the DSN is passed, PostgreSQL connection URIs are redacted from child-process output before task logs are written; the exact DSN is also replaced if echoed verbatim.
+- The final evidence contains sanitized host/database metadata only, never the connection URI.
+
+The orchestrator is now 848 lines at script commit 2a8a75a1f6e09bb5a186416e21f95cd3ab6f0491 (blob SHA 70ddfb3ce89ece551fa4894b7293f404e2953bdf). The code is read back from GitHub but has not been Python-compiled or executed locally. PostgreSQL integration remains disabled by default.
+
+**Disposition:** local test database access remains explicit opt-in and fail-closed; PROTECTED HOLD remains active.
+
