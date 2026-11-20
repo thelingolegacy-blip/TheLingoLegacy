@@ -875,3 +875,6 @@ No toolchain was installed and no test/build command was executed by this docume
 
 
 **Execution refinement:** unsupported platform/tool checks remain BLOCKED rather than being misreported as test failures. A genuine nonzero test/build exit is FAIL. Offline mode never initializes Terraform providers; `terraform init -backend=false` and subsequent provider validation require the explicit `--network-enabled` option. No deployment backend is initialized.
+
+
+**Additional regression coverage:** Wave 1 now also runs the Crimson Smoke homepage/CSS/audio/accessibility source contract and recovery-artifact checks: bridge-adapter shell syntax, evidence/quarantine JSON parsing, and a negative test proving the incomplete G02 evidence template remains BLOCKED. These are source/static checks, not browser playback or real runner execution.
