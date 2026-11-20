@@ -250,6 +250,101 @@ class Runner:
         return self.record({"task": "firebase-hosting-candidate", "status": status, "subtasks": results,
                             "note": "These are local publication-boundary tests, not Firebase connectivity or Hosting deployment evidence."})
 
+    async def product_regressions(self, workspace: Path) -> dict[str, Any]:
+        node = shutil.which("node")
+        tests = [
+            "scripts/test-run-static-gates.mjs",
+            "scripts/tests/server-slot-engine.test.mjs",
+            "scripts/tests/worker-rate-limit.test.mjs",
+            "studio-sites/games/doughboys-oasis-racing/campaign-state.test.js",
+            "lingoassister/repair-engine.test.mjs",
+        ]
+        missing = [name for name in tests if not (workspace / name).is_file()]
+        if missing:
+            return self.record({"task": "product-regressions", "status": "BLOCKED", "reason": "expected regression tests missing", "missing": missing})
+        if not node:
+            return self.record({"task": "product-regressions", "status": "BLOCKED", "reason": "Node.js not installed"})
+        return await self.command("product-regressions", workspace, [node, "--test", *tests], timeout=max(self.timeout, 1200))
+
+    async def shell_safety_tests(self, workspace: Path) -> dict[str, Any]:
+        scripts = [
+            "ops/g02/tests/test-recovery-guard.sh",
+            "ops/github-runner/tests/local-harness.sh",
+            "ops/manual-control/test-validator.sh",
+        ]
+        missing = [name for name in scripts if not (workspace / name).is_file()]
+        if missing:
+            return self.record({"task": "shell-safety-tests", "status": "BLOCKED", "reason": "expected shell regression tests missing", "missing": missing})
+        results = []
+        for name in scripts:
+            results.append(await self.command("shell-" + Path(name).stem, workspace, ["bash", name], timeout=max(self.timeout, 600)))
+        return self.record({"task": "shell-safety-tests", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "subtasks": results})
+
+    async def studio_contracts(self, workspace: Path) -> dict[str, Any]:
+        node = shutil.which("node")
+        if not node:
+            return self.record({"task": "studio-contracts", "status": "BLOCKED", "reason": "Node.js not installed"})
+        commands = [
+            ["studio-sites/scripts/validate-studio.mjs"],
+            ["studio/runtime/surface-integrity.js"],
+            ["scripts/validate-ezca-registry.mjs"],
+        ]
+        missing = [cmd[0] for cmd in commands if not (workspace / cmd[0]).is_file()]
+        if missing:
+            return self.record({"task": "studio-contracts", "status": "BLOCKED", "reason": "expected studio/registry validators missing", "missing": missing})
+        results = []
+        for command in commands:
+            name = Path(command[0]).stem
+            results.append(await self.command("studio-" + name, workspace, [node, command[0]], timeout=max(self.timeout, 600)))
+        return self.record({"task": "studio-contracts", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "subtasks": results})
+
+    async def cloudflare_dry_run(self, workspace: Path) -> dict[str, Any]:
+        wrangler = shutil.which("wrangler")
+        config = workspace / "cloudflare/wrangler.toml"
+        if not wrangler or not config.is_file():
+            return self.record({"task": "cloudflare-worker-dry-run", "status": "BLOCKED",
+                                "reason": "local Wrangler CLI or cloudflare/wrangler.toml unavailable; no package was installed"})
+        return await self.command("cloudflare-worker-dry-run", workspace,
+                                  [wrangler, "deploy", "--dry-run", "--config", "cloudflare/wrangler.toml"],
+                                  timeout=max(self.timeout, 900))
+
+    async def devops_static(self, workspace: Path) -> dict[str, Any]:
+        results = []
+        yamllint = shutil.which("yamllint")
+        if yamllint and (workspace / ".yamllint").is_file():
+            files = [".github/cache-policy.yml", ".github/workflows/devops-foundation-validation.yml",
+                     ".circleci/config.yml", ".gitlab-ci.yml", "config.yaml",
+                     "ansible/playbooks/read-only-diagnostics.yml",
+                     "observability/prometheus/prometheus.yml",
+                     "observability/grafana/provisioning/datasources/datasource.yml",
+                     "observability/elk/docker-compose.yml"]
+            files = [x for x in files if (workspace / x).is_file()]
+            results.append(await self.command("devops-yaml-lint", workspace, [yamllint, "-c", ".yamllint", "-s", *files]))
+        else:
+            results.append(self.record({"task": "devops-yaml-lint", "status": "BLOCKED", "reason": "yamllint or .yamllint unavailable"}))
+        ansible = shutil.which("ansible-playbook")
+        playbook = workspace / "ansible/playbooks/read-only-diagnostics.yml"
+        if ansible and playbook.is_file():
+            results.append(await self.command("devops-ansible-syntax", workspace,
+                                              [ansible, "--syntax-check", "-i", "localhost,", str(playbook)]))
+        else:
+            results.append(self.record({"task": "devops-ansible-syntax", "status": "BLOCKED", "reason": "Ansible or read-only diagnostics playbook unavailable"}))
+        terraform = shutil.which("terraform")
+        tfdir = workspace / "infrastructure/terraform"
+        if terraform and tfdir.is_dir():
+            results.append(await self.command("devops-terraform-format", workspace,
+                                              [terraform, "-chdir=infrastructure/terraform", "fmt", "-check", "-recursive"]))
+            results.append(await self.command("devops-terraform-init", workspace,
+                                              [terraform, "-chdir=infrastructure/terraform", "init", "-backend=false", "-input=false"],
+                                              timeout=max(self.timeout, 900)))
+            results.append(await self.command("devops-terraform-validate", workspace,
+                                              [terraform, "-chdir=infrastructure/terraform", "validate"],
+                                              timeout=max(self.timeout, 900)))
+        else:
+            results.append(self.record({"task": "devops-terraform", "status": "BLOCKED", "reason": "Terraform or infrastructure/terraform unavailable"}))
+        return self.record({"task": "devops-static", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "BLOCKED" if all(x["status"] == "BLOCKED" for x in results) else "FAIL", "subtasks": results,
+                            "note": "Terraform initialization is explicitly backend=false; no cloud backend or credentials are used."})
+
     async def public_probes(self) -> dict[str, Any]:
         if not self.network:
             return self.record({"task": "public-route-probes", "status": "BLOCKED", "reason": "pass --network-enabled to allow public HTTPS GET probes"})
@@ -324,6 +419,11 @@ async def main_async(args: argparse.Namespace) -> int:
                 runner.python_recovery(workspace),
                 runner.static_gates(workspace),
                 runner.security_tools(workspace),
+                runner.product_regressions(workspace),
+                runner.shell_safety_tests(workspace),
+                runner.studio_contracts(workspace),
+                runner.cloudflare_dry_run(workspace),
+                runner.devops_static(workspace),
                 runner.firebase_candidate(firebase_candidate),
                 runner.go_project(core_candidate),
             ]),
