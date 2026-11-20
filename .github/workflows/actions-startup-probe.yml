@@ -6,12 +6,6 @@ on:
     paths:
       - ".github/workflows/actions-startup-probe.yml"
       - "docs/actions-startup-failure-recovery.md"
-  push:
-    branches:
-      - "recovery/firebase-hosting-quarantine-boundary"
-    paths:
-      - ".github/workflows/actions-startup-probe.yml"
-      - "docs/actions-startup-failure-recovery.md"
   workflow_dispatch:
 
 permissions:
