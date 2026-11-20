@@ -114,11 +114,11 @@ npx --yes wrangler@4 deploy --dry-run --config wrangler.game-engine-staging.json
 
 - The UI/API wager is the total spin stake; the per-line stake is derived from the selected active payline count. No rounding or discarded remainder is allowed.
 - The browser preview deducts the total stake, and the remote request sends that total.
-- D1 settlement validates a positive total wager divisible by five, evaluates each payline at one-fifth of the total, and debits the full total.
+- D1 settlement validates a positive total wager divisible by the active payline count, evaluates each active line at `wagerUnits / activePaylines`, and debits the full total.
 - Rule version: `staging-5x3-demo-v3`.
 - A one-time staging-only welcome grant of 5,000 non-redeemable Demo Coins is implemented as an auditable `admin_adjustment` ledger event attached to a deterministic system grant session. Repeated bootstrap calls are idempotent.
 - The staging D1 schema already permits `admin_adjustment`; read-only catalog inspection confirmed all five application tables and four ledger triggers. Aggregate read-only counts: 1 account, 1 wallet, 1 session, 2 ledger events, 1 progression row. No welcome grant or admin-adjustment event existed at inspection time. No rows were changed by the inspection.
-- The grant and ledger behavior passed an independent in-memory SQLite execution of the same schema/trigger pattern: migration idempotency, five-line total debit/payout, insufficient-funds rollback, one-time 5,000 grant, and append-only ledger. This is local SQLite evidence, not GitHub Actions evidence or live D1 execution.
+- The grant and ledger behavior passed an independent in-memory SQLite execution of the same schema/trigger pattern: migration idempotency, 20-line Option 2 total debit/payout, insufficient-funds rollback, one-time 5,000 grant, and append-only ledger. This is local SQLite evidence, not GitHub Actions evidence or live D1 execution.
 
 ### Exact theoretical paytable math
 
