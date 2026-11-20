@@ -311,19 +311,19 @@ html = (root / "index.html").read_text(encoding="utf-8")
 css = (root / "assets/crimson-smoke.css").read_text(encoding="utf-8")
 js = (root / "assets/crimson-smoke.js").read_text(encoding="utf-8")
 svg = (root / "assets/lingo-legacy-crimson-mark.svg").read_text(encoding="utf-8")
-head = re.search(r"<head\\b[^>]*>(.*?)</head>", html, re.I | re.S)
+head = re.search(r"<head\b[^>]*>(.*?)</head>", html, re.I | re.S)
 assert head, "homepage head missing"
 head_text = head.group(1)
 assert head_text.rfind('href="/assets/crimson-smoke.css"') > head_text.lower().rfind("</style>"), "stylesheet order incorrect"
-body = re.search(r"<body\\b[^>]*>", html, re.I)
-assert body and len(re.findall(r"\\bclass\\s*=", body.group(0), re.I)) == 1, "body must have exactly one class attribute"
+body = re.search(r"<body\b[^>]*>", html, re.I)
+assert body and len(re.findall(r"\bclass\s*=", body.group(0), re.I)) == 1, "body must have exactly one class attribute"
 assert 'src="/assets/crimson-smoke.js"' in html, "audio script missing"
 assert "/assets/lingo-legacy-crimson-mark.svg" in html, "brand mark missing"
 assert "prefers-reduced-motion" in css, "reduced-motion support missing"
 assert ".ll-audio-toggle{position:fixed;left:18px;right:auto;bottom:18px;" in css, "desktop audio placement mismatch"
 assert "@media(max-width:620px){.ll-audio-toggle{left:12px;right:auto;bottom:12px;" in css, "mobile audio placement mismatch"
 assert "aria-pressed" in js and "btn.addEventListener('click'" in js and "osc.start()" in js, "explicit audio interaction contract missing"
-assert re.search(r"<title[\\s>]", svg, re.I), "SVG title missing"
+assert re.search(r"<title[\s>]", svg, re.I), "SVG title missing"
 print("CRIMSON_SMOKE_STATIC=PASS")
 """
         return await self.command("crimson-smoke-static", workspace, [sys.executable, "-c", code], timeout=max(self.timeout, 300))
