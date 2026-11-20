@@ -25,7 +25,7 @@ accounts, grant permissions, read secrets, or authorize deployments.
 
 Production jobs are rejected by this validator and require a separate human
 release authorization path. Default job cost ceiling is zero. A job cannot be
-marked complete without retrievable evidence and an independent reviewer.
+marked complete without retrievable evidence and an independent reviewer. The v1 job-envelope schema rejects an initial `COMPLETE` status; completion must be reached through the evidence-gated `transition()` path.
 
 Role entries are permission templates, not assignments. Bind a role to a
 verified individual or service principal only through a separately reviewed
