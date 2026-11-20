@@ -81,14 +81,14 @@ These observations do not satisfy any execution-based G02 acceptance predicate. 
 | Inventory | Live API observation |
 |---|---:|
 | Worker routes | 27 |
-| Worker scripts | 9 |
+| Worker scripts | 10 |
 | DNS records | 34 |
 
 The repository file `infrastructure/registry/workers.json` records 21 routes and has `observed_at: 2026-11-11`. The six-route difference is accounted for by six live integration-configuration quarantine routes added after that snapshot. Refresh the evidence and registry deliberately; do not edit live routes.
 
 ### 4.3 Worker script inventory
 
-The nine live script names returned by the Cloudflare account API:
+The ten live script names returned by the Cloudflare account API:
 
 | Worker script | Route assignment observed |
 |---|---|
@@ -100,6 +100,7 @@ The nine live script names returned by the Cloudflare account API:
 | `lingo-static-backup-proxy` | `launch.thelingolegacy.com/*` |
 | `lingo-studio-control-center-staging` | No route in the 27-route inventory |
 | `lingo-unified-control-tower-preview` | No route in the 27-route inventory |
+| `thelingolegacy-web` | No route in the 27-route inventory |
 | `thelingolegacyv-5` | Apex/www wildcard and the product/utility subdomain routes |
 
 “No route” means no matching assignment appeared in the returned zone route list; it does not prove the script is unused or safe to delete. Preserve these scripts pending ownership and deployment review.
@@ -310,7 +311,7 @@ These observations do not satisfy any execution-based G02 acceptance predicate. 
 | Inventory | Live API observation |
 |---|---:|
 | Worker routes | 27 |
-| Worker scripts | 9 |
+| Worker scripts | 10 |
 | DNS records | 34 |
 
 The repository file `infrastructure/registry/workers.json` records 21 routes and has `observed_at: 2026-11-11`. The six-route difference is accounted for by six live integration-configuration quarantine routes added after that snapshot. Refresh the evidence and registry deliberately; do not edit live routes.
@@ -881,3 +882,32 @@ No toolchain was installed and no test/build command was executed by this docume
 
 
 **Lockfile acceptance detail:** Flutter lockfile presence is measured from the supplied source checkout before dependency resolution. A lockfile generated only inside the disposable test copy does not count as committed/reproducible dependency evidence; the corresponding Flutter project remains BLOCKED until its source lockfile is committed and validated.
+
+## 9.13 Orchestrator code-review hardening and latest live inventory — 2026-11-20
+
+A read-only source review identified three evidence-integrity defects in the initial one-time orchestrator draft. These were corrected on the existing PR #615 branch; no local execution or hosted workflow dispatch was performed.
+
+1. **Real wave gates:** W0 now blocks W1 unless the source baseline passes. W1 required contract/product/candidate suites gate W2; W2 Flutter analysis/tests/builds gate W3. Optional scanner/provider-tool checks remain visible as BLOCKED when unavailable and do not suppress independent builds by themselves; any actual FAIL blocks the next wave. Final evidence packaging and G02 evaluation still run after the waves.
+2. **Exact source provenance:** W0 now requires a clean checkout and records branch, full commit SHA, working-tree status and git diff --check. The orchestrator excludes its own generated evidence directory from this cleanliness check. PR #614 and PR #596 inputs receive separate Git provenance checks; dirty/unreadable worktrees or mismatched optional expected SHAs fail closed. Candidate task summaries include their source commit SHA and branch.
+3. **CORE V2 module-root handling:** --core-v2-dir now accepts the full PR #596 repository worktree and resolves platform/lingo-core-v2/services/api/go.mod, while still accepting the Go module directory directly. This aligns the documented input with the actual PR layout.
+
+Optional exact-head correlation flags are available:
+- --firebase-expected-sha for the PR #614 checkout.
+- --core-v2-expected-sha for the PR #596 checkout.
+
+At this checkpoint, the connected PR heads observed were PR #614 578dce2c83f21088f9338bf4afee88416e8d6adf and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1. Re-read each PR head immediately before a local run; do not use these values if either PR has advanced.
+
+The live Cloudflare inventory was re-read through GET-only APIs:
+- 27 Worker routes, still assigned 18 to thelingolegacyv-5, 6 to lingo-integration-config-404, and one each to lingo-flagship-root, lingo-ecosystem-atlas, and lingo-static-backup-proxy.
+- 10 Worker scripts, including thelingolegacy-web (created 2026-11-19; no custom zone route returned).
+- 34 DNS records.
+- 5 Pages projects.
+
+The earlier section 4 nine-script count was a stale snapshot and is corrected to 10. The ten-script inventory and the separate binding/deployment findings in section 9.2 remain the current reconciliation. The apex A record still points to proxied TEST-NET-1 address 192.0.2.0; no DNS edit is authorized or performed.
+
+The current PR #615 head produced five new associated Actions runs (IDs 44788215951, 44788214073, 44788212240, 44788210137, 44788208337). All five concluded startup_failure; every latest-attempt job list and artifact list returned zero entries. This is an Actions admission/startup failure, not evidence of test execution or test failure. No dispatch or rerun was attempted.
+
+**Verification limitation:** the orchestrator changes are committed and read-back review is pending. They have not been Python-compiled or executed in a local checkout in this environment. Do not claim syntax, unit, build, or end-to-end success until a clean local run emits the evidence bundle.
+
+**Disposition:** PR #615 remains open/draft/unmerged; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
+
