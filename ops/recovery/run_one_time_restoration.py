@@ -284,7 +284,8 @@ class Runner:
                             "source_branch": source_branch,
                             "note": "All Flutter commands run in a disposable copy with --enforce-lockfile; source tree is not modified."})
 
-    async def go_project(self, path: Path | None, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
+    async def go_project(self, path: Path | None, provenance: dict[str, Any] | None = None,
+                        allow_local_db: bool = False) -> dict[str, Any]:
         source_sha = (provenance or {}).get("commit_sha")
         source_branch = (provenance or {}).get("branch")
         if path is None or not (path / "go.mod").is_file():
@@ -313,9 +314,16 @@ class Runner:
                                            timeout=max(self.timeout, 1800), extra_env=env))
 
         test_dsn = os.environ.get("TEST_DATABASE_URL", "").strip()
-        if not test_dsn:
+        if not allow_local_db:
+            # Do not pass a possibly tunneled loopback DSN to tests unless the
+            # operator explicitly opts in to isolated schema create/drop work.
+            env["TEST_DATABASE_URL"] = ""
             results.append(self.record({"task": "core-v2-postgres-integration-target", "status": "BLOCKED",
-                                        "reason": "TEST_DATABASE_URL is unset; PostgreSQL integration tests would self-skip. Supply a local loopback database named lingo_test."}))
+                                        "reason": "local PostgreSQL integration tests create/drop isolated schemas; explicit --allow-local-postgres-integration opt-in is required."}))
+        elif not test_dsn:
+            env["TEST_DATABASE_URL"] = ""
+            results.append(self.record({"task": "core-v2-postgres-integration-target", "status": "BLOCKED",
+                                        "reason": "TEST_DATABASE_URL is unset; supply a local loopback database named lingo_test."}))
         else:
             parsed = urlparse(test_dsn)
             host = parsed.hostname or ""
@@ -331,6 +339,10 @@ class Runner:
                 "host": host, "database": database,
                 "reason": None if safe_target else "TEST_DATABASE_URL must target localhost/loopback and database lingo_test; raw DSN is never recorded.",
             }))
+            if safe_target:
+                env["TEST_DATABASE_URL"] = test_dsn
+            else:
+                env["TEST_DATABASE_URL"] = ""
         results.append(await self.command("core-v2-tests", path, [go, "test", "-count=1", "-v", "./..."],
                                            timeout=max(self.timeout, 1800), extra_env=env))
         results.append(await self.command("core-v2-race-tests", path, [go, "test", "-race", "-count=1", "./..."],
@@ -692,7 +704,7 @@ async def main_async(args: argparse.Namespace) -> int:
                 ("cloudflare-dry-run", lambda: runner.cloudflare_dry_run(workspace)),
                 ("devops-static", lambda: runner.devops_static(workspace)),
                 ("firebase-hosting-candidate", lambda: runner.firebase_candidate(firebase_candidate, firebase_snapshot)),
-                ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot)),
+                ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot, args.allow_local_postgres_integration)),
             ], {"recovery-unit-tests", "recovery-contracts", "repository-static-gates",
                 "product-regressions", "shell-safety-tests", "studio-contracts",
                 "crimson-smoke-static"}),
@@ -810,6 +822,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--network-enabled", action="store_true", help="Allow public HTTPS GET probes and dependency downloads")
     parser.add_argument("--core-v2-dir", help="Existing clean local PR #596 checkout/worktree (repository root or Go module directory)")
     parser.add_argument("--core-v2-expected-sha", help="Required with --core-v2-dir: exact current PR #596 head SHA")
+    parser.add_argument("--allow-local-postgres-integration", action="store_true",
+                        help="Explicitly permit CORE V2 integration tests to create/drop isolated schemas in a loopback lingo_test database")
     parser.add_argument("--firebase-candidate-dir", help="Existing clean local checkout/worktree for PR #614 Firebase candidate")
     parser.add_argument("--firebase-expected-sha", help="Required with --firebase-candidate-dir: exact current PR #614 head SHA")
     parser.add_argument("--g02-evidence", help="Externally captured G02 evidence JSON; never fabricated by this script")
