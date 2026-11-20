@@ -929,7 +929,7 @@ A second read-only code review of the PR #615 orchestrator identified and correc
 2. **Firebase candidate coverage is expanded.** The isolated PR #614 task now requires and executes the publication builder syntax check plus all four available contract suites: Firebase public-output boundary, Flutter Firebase staging identity, Android API-21 Firebase pin compatibility, and Flutter Android scaffold readiness. These remain local contract tests, not Firebase provider connectivity or deployment evidence.
 3. **Evidence bundle checksums now cover every artifact.** `SHA256SUMS` is generated for `final-evidence.json` and all task logs, rather than hashing only the summary file. The script reports the checksum-manifest digest separately.
 
-The orchestrator currently contains 720 lines. Its latest PR #615 head after these source updates is `89d8e894091ccfcc862cb224a09cfe6522759d67`; the script blob SHA read back from GitHub is `c52925fd64a709371a698df61719ce6e5d3ba5ec`. The updated file and this document remain on the existing PR #615 branch; PR #615 remains draft and unmerged.
+The orchestrator currently contains 826 lines. Its latest PR #615 head after these source updates is `8a566ee9c532883046be987bc653d2f7252ddd6a`; the script blob SHA read back from GitHub is `08161284a992ac4daa6817b51c0ceeb2380c58c6`. The updated file and this document remain on the existing PR #615 branch; PR #615 remains draft and unmerged.
 
 ### Latest read-only infrastructure observations
 
@@ -937,7 +937,7 @@ The orchestrator currently contains 720 lines. Its latest PR #615 head after the
 - Five Worker scripts have no custom zone route in the returned route inventory: `lingo-flagship-site-preview`, `lingo-resilience-gateway`, `lingo-studio-control-center-staging`, `lingo-unified-control-tower-preview`, and `thelingolegacy-web`. No route does not prove unused; retain pending service-binding, trigger, invocation, and ownership review.
 - The apex `A` record remains proxied to `192.0.2.0` (TEST-NET-1). The `app` CNAME remains `my-flutter-app.pages.dev` and is not proxied; the `admin` CNAME remains `admin-thelingolegacy.firebaseapp.com` and is not proxied. No DNS changes were made.
 - The latest deployments for `lingo-execution-center-preview` and `lingo-flutter-firebase-preview` are both marked skipped. They are not successful preview-build evidence. The `my-flutter-app` production deployment's latest recorded timestamp remains 2026-08-30.
-- Current PR #615 head is `89d8e894091ccfcc862cb224a09cfe6522759d67`. Its five associated Actions runs (44788215951, 44788214073, 44788212240, 44788210137, 44788208337) all concluded `startup_failure`; every latest-attempt job list returned zero jobs. This is startup/admission failure, not a test-suite result.
+- Current PR #615 head is `8a566ee9c532883046be987bc653d2f7252ddd6a`. Its associated Crimson Smoke static-validation run (44791974453) concluded `startup_failure` with zero jobs and zero artifacts. This is startup/admission failure, not a test-suite result. The preceding-head runs are documented in section 9.13.
 - PR #614 remains at `578dce2c83f21088f9338bf4afee88416e8d6adf`; PR #596 remains at `40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1`. Both remain open, draft and unmerged.
 
 No local compile, test, build, or orchestrator execution was performed. No Actions dispatch/rerun, DNS/Worker/Pages/Firebase mutation, merge, runner activation, payment activation, migration, or backup deletion was performed.
@@ -964,3 +964,20 @@ Interpretation and controls:
 - No deployment, route, subdomain, preview, binding, trigger, or script setting was changed. Do not disable any access surface without owner confirmation, traffic/invocation review, and a rollback plan.
 
 **Disposition:** the five unrouted scripts remain INVESTIGATE / PRESERVE, not RETIRE. Production and staging boundaries remain unchanged; PROTECTED HOLD remains active.
+
+## 9.16 Candidate test coverage, lockfile enforcement, and local integration preconditions — 2026-11-20
+
+The PR #615 orchestrator was expanded again after reviewing the actual PR #614 and PR #596 test paths.
+
+- **PR #614 candidate execution:** W1 now runs syntax checks for the Firebase builder and Firebase/Android contract validators, all four existing Node contract suites, and the concrete Android readiness/API-21 validators against the candidate checkout. W2 also runs the PR #614 root Flutter and Oasis Flutter projects, not just the baseline source branch.
+- **Flutter reproducibility:** Every Flutter project requires a committed source pubspec.lock and runs pub get with --enforce-lockfile. Missing lockfiles block that project; the script will not create a new lockfile and treat it as accepted source evidence.
+- **Android/iOS toolchain reporting:** Android debug builds run only when an SDK path is found via ANDROID_SDK_ROOT, ANDROID_HOME, or android/local.properties. Otherwise the Android target is recorded BLOCKED. iOS simulator builds require macOS and xcodebuild; an unavailable iOS target remains BLOCKED without suppressing independent web/Android work or W3 GET observation. The overall evidence bundle still remains BLOCKED when any target is blocked.
+- **PR #596 Go coverage:** W1 now includes gofmt validation, go mod tidy -diff, verbose Go tests, race tests, vet, and build. The PostgreSQL integration tests self-skip when TEST_DATABASE_URL is absent; the orchestrator explicitly records the integration target BLOCKED in that case instead of treating a passing unit-test command as integration evidence. A supplied TEST_DATABASE_URL is accepted only for localhost/loopback and database lingo_test; the raw DSN is never written to logs or evidence.
+- **Dependency-aware wave policy:** W0 clean-source integrity gates W1. Required baseline repository contracts gate W2. Candidate suites remain explicit in the evidence bundle but a missing optional candidate/tool target is recorded BLOCKED without suppressing independent baseline builds; an actual FAIL still blocks the next wave. W2 baseline root/Oasis Flutter checks gate W3; candidate Flutter tasks are recorded separately. A blocked iOS simulator target does not suppress read-only W3 probes, but remains a final BLOCKED gate.
+- **Exact candidate provenance:** When --firebase-candidate-dir or --core-v2-dir is supplied, its matching --firebase-expected-sha or --core-v2-expected-sha is mandatory. The current observed candidate heads remain PR #614 578dce2c83f21088f9338bf4afee88416e8d6adf and PR #596 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1; re-read immediately before execution.
+- **Evidence hashing:** SHA256SUMS now covers final-evidence.json and every generated task log/artifact; the manifest digest is printed separately.
+
+The latest PR #615 head at this checkpoint is 8a566ee9c532883046be987bc653d2f7252ddd6a. Its associated run 44791974453 ended startup_failure with zero jobs and zero artifacts. The script is read-back verified at source level, but still has not been Python-compiled or executed in a local checkout. No Actions dispatch/rerun was attempted.
+
+**Disposition:** expanded candidate test coverage and execution gates are committed on the existing PR #615 draft branch; local execution remains pending. G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
+
