@@ -6,8 +6,8 @@ function priorSessionDb(volatility) {
   const prior = {
     session_id: 'session-prior',
     game_id: 'thats-my-lingo',
-    rule_version: 'staging-5x3-demo-v3',
-    reels_json: JSON.stringify({ matrix: Array.from({ length: 3 }, () => Array(5).fill('LEGACY_LION')), wins: [], volatility, xpAwardUnits: 25 }),
+    rule_version: 'staging-5x3-20line-demo-v4',
+    reels_json: JSON.stringify({ matrix: Array.from({ length: 3 }, () => Array(5).fill('LEGACY_LION')), wins: [], volatility, xpAwardUnits: 25, activePaylines: 20, lineWagerUnits: 25 }),
     wager_units: 500,
     payout_units: 0,
     status: 'settled',
@@ -31,7 +31,8 @@ const request = {
   firebaseUid: 'firebase-user-001',
   gameId: 'thats-my-lingo',
   idempotencyKey: 'spin-2026-11-08-00000001',
-  ruleVersion: 'staging-5x3-demo-v3',
+  ruleVersion: 'staging-5x3-20line-demo-v4',
+  activePaylines: 20,
   wagerUnits: 500,
 };
 
@@ -86,4 +87,8 @@ test('daily reward replay reports no newly awarded coins or XP', async () => {
   assert.equal(result.xpAwardUnits, 0);
   assert.equal(result.newBalanceUnits, 5500);
   assert.equal(result.xpUnits, 300);
+});
+
+test('same idempotency key with a different active payline count is rejected', async () => {
+  await assert.rejects(playAndSettleD1Spin(priorSessionDb('medium'), { ...request, activePaylines: 10 }), /IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_REQUEST/);
 });
