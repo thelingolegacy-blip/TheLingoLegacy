@@ -298,6 +298,17 @@ async def main_async(args: argparse.Namespace) -> int:
         workspace = Path(temp) / "repo"
         copy_workspace(source, workspace)
 
+        # Optional PR worktrees are copied into the disposable workspace so
+        # package managers and test tools cannot modify the supplied checkout.
+        core_candidate = None
+        if core_dir and (core_dir / "go.mod").is_file():
+            core_candidate = workspace / "_external_candidates" / "core-v2"
+            copy_workspace(core_dir, core_candidate)
+        firebase_candidate = None
+        if firebase_dir and firebase_dir.is_dir():
+            firebase_candidate = workspace / "_external_candidates" / "firebase-hosting"
+            copy_workspace(firebase_dir, firebase_candidate)
+
         waves = [
             ("WAVE 0 — SOURCE AND BASELINE", [
                 runner.integrity(source),
@@ -306,8 +317,8 @@ async def main_async(args: argparse.Namespace) -> int:
                 runner.python_recovery(workspace),
                 runner.static_gates(workspace),
                 runner.security_tools(workspace),
-                runner.firebase_candidate(firebase_dir),
-                runner.go_project(core_dir),
+                runner.firebase_candidate(firebase_candidate),
+                runner.go_project(core_candidate),
             ]),
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
                 runner.flutter_project(workspace, ".", "flutter-root"),
