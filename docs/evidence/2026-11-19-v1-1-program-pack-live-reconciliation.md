@@ -834,7 +834,9 @@ To include the separate draft workstreams in the same run:
 python3 ops/recovery/run_one_time_restoration.py \
   --network-enabled \
   --firebase-candidate-dir /path/to/local-pr-614-worktree \
-  --core-v2-dir /path/to/local-pr-596-worktree
+  --firebase-expected-sha 578dce2c83f21088f9338bf4afee88416e8d6adf \
+  --core-v2-dir /path/to/local-pr-596-worktree \
+  --core-v2-expected-sha 40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1
 ```
 
 To evaluate a previously captured G02 evidence record, also provide `--g02-evidence` and `--expected-sha`. The tool does not manufacture runner, job, log, artifact, or approval evidence.
@@ -917,3 +919,27 @@ These 14 run observations establish repeated Actions admission/startup failure a
 
 **Disposition:** PR #615 remains open/draft/unmerged; G02 FAIL / UNVERIFIED; G03–G11 BLOCKED; PROTECTED HOLD active.
 
+
+
+## 9.14 One-time orchestrator evidence-integrity fixes and refreshed checkpoint — 2026-11-20
+
+A second read-only code review of the PR #615 orchestrator identified and corrected three remaining evidence-quality issues on the same existing draft branch:
+
+1. **Candidate SHA is now mandatory.** Supplying a PR #614 or PR #596 worktree without its exact expected current PR head SHA records the provenance task as BLOCKED. A dirty checkout, unreadable Git state, mismatched SHA, or missing required source/test files fails closed. The command above includes the currently observed PR heads; re-read both PRs immediately before execution and replace either SHA if its PR has advanced.
+2. **Firebase candidate coverage is expanded.** The isolated PR #614 task now requires and executes the publication builder syntax check plus all four available contract suites: Firebase public-output boundary, Flutter Firebase staging identity, Android API-21 Firebase pin compatibility, and Flutter Android scaffold readiness. These remain local contract tests, not Firebase provider connectivity or deployment evidence.
+3. **Evidence bundle checksums now cover every artifact.** `SHA256SUMS` is generated for `final-evidence.json` and all task logs, rather than hashing only the summary file. The script reports the checksum-manifest digest separately.
+
+The orchestrator currently contains 720 lines. Its latest PR #615 head after these source updates is `89d8e894091ccfcc862cb224a09cfe6522759d67`; the script blob SHA read back from GitHub is `c52925fd64a709371a698df61719ce6e5d3ba5ec`. The updated file and this document remain on the existing PR #615 branch; PR #615 remains draft and unmerged.
+
+### Latest read-only infrastructure observations
+
+- Cloudflare returned 27 Worker routes, 10 Worker scripts, 34 DNS records and 5 Pages projects.
+- Five Worker scripts have no custom zone route in the returned route inventory: `lingo-flagship-site-preview`, `lingo-resilience-gateway`, `lingo-studio-control-center-staging`, `lingo-unified-control-tower-preview`, and `thelingolegacy-web`. No route does not prove unused; retain pending service-binding, trigger, invocation, and ownership review.
+- The apex `A` record remains proxied to `192.0.2.0` (TEST-NET-1). The `app` CNAME remains `my-flutter-app.pages.dev` and is not proxied; the `admin` CNAME remains `admin-thelingolegacy.firebaseapp.com` and is not proxied. No DNS changes were made.
+- The latest deployments for `lingo-execution-center-preview` and `lingo-flutter-firebase-preview` are both marked skipped. They are not successful preview-build evidence. The `my-flutter-app` production deployment's latest recorded timestamp remains 2026-08-30.
+- Current PR #615 head is `89d8e894091ccfcc862cb224a09cfe6522759d67`. Its five associated Actions runs (44788215951, 44788214073, 44788212240, 44788210137, 44788208337) all concluded `startup_failure`; every latest-attempt job list returned zero jobs. This is startup/admission failure, not a test-suite result.
+- PR #614 remains at `578dce2c83f21088f9338bf4afee88416e8d6adf`; PR #596 remains at `40a53bb9c636c3edd3d6e4e2df531ad3c53abbe1`. Both remain open, draft and unmerged.
+
+No local compile, test, build, or orchestrator execution was performed. No Actions dispatch/rerun, DNS/Worker/Pages/Firebase mutation, merge, runner activation, payment activation, migration, or backup deletion was performed.
+
+**Disposition:** Source-level evidence hardening committed and read-back verified; local execution pending. G02 remains FAIL / UNVERIFIED; G03–G11 remain BLOCKED; PROTECTED HOLD remains active.
