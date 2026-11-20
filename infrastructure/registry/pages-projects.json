@@ -109,7 +109,22 @@
       },
       "custom_domains": [],
       "disposition": "HISTORICAL_PRODUCTION_DEPLOYMENT_NOT_RESTORE_TESTED",
-      "notes": "Historical Pages production deployment completed successfully; no custom domain and no restore rehearsal evidence."
+      "notes": "Historical Pages production deployment completed successfully; no custom domain and no restore rehearsal evidence. DNS CNAME launch.thelingolegacy.com is proxied to the Pages.dev hostname and the Worker route points to lingo-static-backup-proxy. The Pages project has no custom-domain association; exact-domain Access application lookup returned no match. Do not assume the Access bypass application is attached to this hostname.",
+      "dns_aliases": [
+        {
+          "type": "CNAME",
+          "name": "launch.thelingolegacy.com",
+          "target": "thelingolegacy-static-backup.pages.dev",
+          "proxied": true,
+          "ttl": 1,
+          "comment": "Public static recovery site via dedicated Cloudflare Worker route."
+        }
+      ],
+      "worker_route": {
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy"
+      },
+      "access_application_exact_domain_match": "NOT_FOUND_IN_READ_ONLY_QUERY"
     },
     {
       "name": "my-flutter-app",
@@ -141,7 +156,17 @@
         }
       ],
       "disposition": "ACTIVE_CUSTOM_DOMAIN_REVIEW_REQUIRED",
-      "notes": "Active app.thelingolegacy.com custom domain. Last production deployment is successful but records no commit SHA. Build clones the moving Flutter stable branch at build time; toolchain is not immutably pinned. Ownership and current app source/runtime need review."
+      "notes": "Active app.thelingolegacy.com custom domain. Last production deployment is successful but records no commit SHA. Build clones the moving Flutter stable branch at build time; toolchain is not immutably pinned. Ownership and current app source/runtime need review.",
+      "dns_aliases": [
+        {
+          "type": "CNAME",
+          "name": "app.thelingolegacy.com",
+          "target": "my-flutter-app.pages.dev",
+          "proxied": false,
+          "ttl": 1,
+          "comment": "Pages custom domain"
+        }
+      ]
     }
   ]
 }
