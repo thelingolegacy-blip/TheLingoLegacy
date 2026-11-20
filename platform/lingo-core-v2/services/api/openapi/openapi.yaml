@@ -57,6 +57,10 @@ paths:
           description: Profile and outbox event committed atomically
         "400":
           description: Invalid JSON or unknown fields
+        "413":
+          description: Request body exceeds the 4 KiB limit
+        "415":
+          description: Content-Type must be application/json
         "401":
           description: Missing or invalid OIDC ID token
         "422":
