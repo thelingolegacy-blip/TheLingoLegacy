@@ -299,6 +299,35 @@ class Runner:
             results.append(await self.command("studio-" + name, workspace, [node, command[0]], timeout=max(self.timeout, 600)))
         return self.record({"task": "studio-contracts", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "subtasks": results})
 
+    async def crimson_smoke_static(self, workspace: Path) -> dict[str, Any]:
+        code = r"""
+from pathlib import Path
+import re
+root = Path(".")
+required = ["index.html", "assets/crimson-smoke.css", "assets/crimson-smoke.js", "assets/lingo-legacy-crimson-mark.svg"]
+missing = [name for name in required if not (root / name).is_file()]
+assert not missing, "missing required Crimson Smoke files: " + ", ".join(missing)
+html = (root / "index.html").read_text(encoding="utf-8")
+css = (root / "assets/crimson-smoke.css").read_text(encoding="utf-8")
+js = (root / "assets/crimson-smoke.js").read_text(encoding="utf-8")
+svg = (root / "assets/lingo-legacy-crimson-mark.svg").read_text(encoding="utf-8")
+head = re.search(r"<head\\b[^>]*>(.*?)</head>", html, re.I | re.S)
+assert head, "homepage head missing"
+head_text = head.group(1)
+assert head_text.rfind('href="/assets/crimson-smoke.css"') > head_text.lower().rfind("</style>"), "stylesheet order incorrect"
+body = re.search(r"<body\\b[^>]*>", html, re.I)
+assert body and len(re.findall(r"\\bclass\\s*=", body.group(0), re.I)) == 1, "body must have exactly one class attribute"
+assert 'src="/assets/crimson-smoke.js"' in html, "audio script missing"
+assert "/assets/lingo-legacy-crimson-mark.svg" in html, "brand mark missing"
+assert "prefers-reduced-motion" in css, "reduced-motion support missing"
+assert ".ll-audio-toggle{position:fixed;left:18px;right:auto;bottom:18px;" in css, "desktop audio placement mismatch"
+assert "@media(max-width:620px){.ll-audio-toggle{left:12px;right:auto;bottom:12px;" in css, "mobile audio placement mismatch"
+assert "aria-pressed" in js and "btn.addEventListener('click'" in js and "osc.start()" in js, "explicit audio interaction contract missing"
+assert re.search(r"<title[\\s>]", svg, re.I), "SVG title missing"
+print("CRIMSON_SMOKE_STATIC=PASS")
+"""
+        return await self.command("crimson-smoke-static", workspace, [sys.executable, "-c", code], timeout=max(self.timeout, 300))
+
     async def cloudflare_dry_run(self, workspace: Path) -> dict[str, Any]:
         wrangler = shutil.which("wrangler")
         config = workspace / "cloudflare/wrangler.toml"
@@ -433,6 +462,7 @@ async def main_async(args: argparse.Namespace) -> int:
                 runner.product_regressions(workspace),
                 runner.shell_safety_tests(workspace),
                 runner.studio_contracts(workspace),
+                runner.crimson_smoke_static(workspace),
                 runner.cloudflare_dry_run(workspace),
                 runner.devops_static(workspace),
                 runner.firebase_candidate(firebase_candidate),
