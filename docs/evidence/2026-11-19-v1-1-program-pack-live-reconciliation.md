@@ -1037,7 +1037,9 @@ A final safety pass tightened how the optional CORE V2 test database URL is hand
 - When the DSN is passed, PostgreSQL connection URIs are redacted from child-process output before task logs are written; the exact DSN is also replaced if echoed verbatim.
 - The final evidence contains sanitized host/database metadata only, never the connection URI.
 
-The orchestrator is now 848 lines at script commit 2a8a75a1f6e09bb5a186416e21f95cd3ab6f0491 (blob SHA 70ddfb3ce89ece551fa4894b7293f404e2953bdf). The code is read back from GitHub but has not been Python-compiled or executed locally. PostgreSQL integration remains disabled by default.
+The orchestrator is now 848 lines at script commit 6f19aef2380ae853b56d123f4a0bc3136d1754fe (blob SHA 975343ab0a4953b78058683a81225fecc4d072c1). The code is read back from GitHub but has not been Python-compiled or executed locally. PostgreSQL integration remains disabled by default.
+
+The 6f19aef script commit triggered five associated GitHub Actions runs (44792812681, 44792810715, 44792808648, 44792806791, 44792804798). All five concluded startup_failure; every job list and artifact list returned zero entries. This is an admission/startup failure, not test execution. No dispatch or rerun was attempted.
 
 **Disposition:** local test database access remains explicit opt-in and fail-closed; PROTECTED HOLD remains active.
 
