@@ -184,6 +184,7 @@ class Runner:
         flutter = shutil.which("flutter")
         if not flutter:
             return self.record({"task": task_id, "status": "BLOCKED", "reason": "Flutter SDK not installed"})
+        source_lockfile_present = (project / "pubspec.lock").is_file()
         # Reuse the operator's existing PUB_CACHE. Offline mode must not
         # point to a newly created empty cache.
         env: dict[str, str] = {}
@@ -208,7 +209,7 @@ class Runner:
                 results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED", "reason": "iOS simulator build requires macOS/Xcode"}))
         failed = [x for x in results if x["status"] == "FAIL"]
         blocked = [x for x in results if x["status"] == "BLOCKED"]
-        lock = "present" if (project / "pubspec.lock").is_file() else "missing"
+        lock = "present" if source_lockfile_present else "missing"
         status = "FAIL" if failed else ("BLOCKED" if blocked or lock == "missing" else "PASS")
         return self.record({"task": task_id, "status": status, "subtasks": results,
                             "lockfile": lock, "note": "All Flutter commands run in a disposable copy; source tree is not modified."})
