@@ -11,12 +11,19 @@ class DefaultFirebaseOptions {
   /// Validates one platform independently; an unconfigured platform must not
   /// disable Firebase for a different platform that has valid options.
   static bool isConfiguredFor(FirebaseOptions options) {
-    return options.apiKey.isNotEmpty &&
-        options.appId.isNotEmpty &&
-        options.messagingSenderId.isNotEmpty &&
-        !options.apiKey.startsWith('YOUR_') &&
-        !options.appId.startsWith('YOUR_') &&
-        !options.messagingSenderId.startsWith('YOUR_');
+    final apiKey = options.apiKey.trim();
+    final appId = options.appId.trim();
+    final senderId = options.messagingSenderId.trim();
+    final projectId = options.projectId.trim();
+    return apiKey.isNotEmpty &&
+        appId.isNotEmpty &&
+        senderId.isNotEmpty &&
+        projectId.isNotEmpty &&
+        projectId != 'lingo-staging-not-configured' &&
+        !apiKey.startsWith('YOUR_') &&
+        !appId.startsWith('YOUR_') &&
+        !senderId.startsWith('YOUR_') &&
+        !projectId.startsWith('YOUR_');
   }
 
   static FirebaseOptions get currentPlatform {
