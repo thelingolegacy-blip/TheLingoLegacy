@@ -90,6 +90,7 @@ def _load_role_catalog() -> dict[str, str]:
         policy.get("shared_accounts_allowed") is not False,
         policy.get("privileged_mfa_required") is not True,
         policy.get("role_assignment_requires_verified_identity") is not True,
+        policy.get("production_release_requires_separate_human_authorization") is not True,
     )):
         raise ContractError("role catalog security policy is missing or unsafe")
 
