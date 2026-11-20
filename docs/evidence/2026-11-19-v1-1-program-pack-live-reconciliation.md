@@ -456,3 +456,29 @@ This evidence document does not authorize:
 - lifting PROTECTED HOLD.
 
 **Final disposition:** PROTECTED HOLD remains active. G02 remains FAIL / UNVERIFIED. G03–G11 remain BLOCKED. This is a read-only reconciliation record and a candidate input to C09/C01/C06, not a certificate or release authorization.
+
+
+## 11. 2026-11-20 route-registry refresh addendum
+
+A fresh read-only GET of the Cloudflare zone Workers Routes API was performed on 2026-11-20. It returned **27 route objects**, each with a route ID, pattern, and assigned script. The reviewed branch now refreshes `infrastructure/registry/workers.json` to match all 27 live route records and all nine script names.
+
+Per-script route counts in the refreshed registry:
+
+| Worker script | Live route count |
+|---|---:|
+| `thelingolegacyv-5` | 18 |
+| `lingo-flagship-root` | 1 |
+| `lingo-ecosystem-atlas` | 1 |
+| `lingo-static-backup-proxy` | 1 |
+| `lingo-integration-config-404` | 6 |
+| `lingo-flagship-site-preview` | 0 |
+| `lingo-resilience-gateway` | 0 |
+| `lingo-studio-control-center-staging` | 0 |
+| `lingo-unified-control-tower-preview` | 0 |
+| **Total** | **27** |
+
+The six integration-configuration quarantine routes are now individually recorded with their live route IDs and assigned to `lingo-integration-config-404`. The exact-root route `thelingolegacy.com/` remains assigned to `lingo-flagship-root`; the apex wildcard `thelingolegacy.com/*` remains assigned to `thelingolegacyv-5`. These are separate assignments and have not been normalized or changed.
+
+The registry refresh also updates the EZCA validator's expected Worker-script count from 7 to 9 and route count from 21 to 27. The existing `worker-bindings.json` remains explicitly scoped to seven scripts checked in the earlier binding-name inventory; it is not silently relabeled as a nine-script binding audit.
+
+**Validation boundary:** the JSON was parsed and structurally updated from the live API response in this workflow. Hosted CI has not yet executed the updated validator; GitHub Actions startup failures remain an external gate. No Cloudflare route, Worker, deployment, DNS record, binding, secret, or production setting was modified. No route ownership decision beyond recording the observed live assignments is implied.
