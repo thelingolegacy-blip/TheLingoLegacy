@@ -55,6 +55,15 @@ void main() {
       expect(DefaultFirebaseOptions.isConfiguredFor(options(projectId: '')), isFalse);
     });
 
+    test('rejects the production Firebase project in mobile runtime configuration', () {
+      expect(
+        DefaultFirebaseOptions.isConfiguredFor(
+          options(projectId: 'lingo-legacy-production'),
+        ),
+        isFalse,
+      );
+    });
+
     test('rejects the unconfigured staging project placeholder', () {
       expect(
         DefaultFirebaseOptions.isConfiguredFor(
