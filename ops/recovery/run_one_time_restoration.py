@@ -206,9 +206,10 @@ class Runner:
                 results.append(await self.command(f"{task_id}-ios-simulator", project, [flutter, "build", "ios", "--simulator", "--no-codesign"], timeout=max(self.timeout, 1800), extra_env=env))
             else:
                 results.append(self.record({"task": f"{task_id}-ios-simulator", "status": "BLOCKED", "reason": "iOS simulator build requires macOS/Xcode"}))
-        failed = [x for x in results if x["status"] != "PASS"]
+        failed = [x for x in results if x["status"] == "FAIL"]
+        blocked = [x for x in results if x["status"] == "BLOCKED"]
         lock = "present" if (project / "pubspec.lock").is_file() else "missing"
-        status = "PASS" if not failed and lock == "present" else ("BLOCKED" if not failed else "FAIL")
+        status = "FAIL" if failed else ("BLOCKED" if blocked or lock == "missing" else "PASS")
         return self.record({"task": task_id, "status": status, "subtasks": results,
                             "lockfile": lock, "note": "All Flutter commands run in a disposable copy; source tree is not modified."})
 
@@ -350,8 +351,10 @@ class Runner:
                 results.append(self.record({"task": "devops-terraform-validate", "status": "BLOCKED", "reason": "Terraform validation requires initialized providers"}))
         else:
             results.append(self.record({"task": "devops-terraform", "status": "BLOCKED", "reason": "Terraform or infrastructure/terraform unavailable"}))
-        return self.record({"task": "devops-static", "status": "PASS" if all(x["status"] == "PASS" for x in results) else "BLOCKED" if all(x["status"] == "BLOCKED" for x in results) else "FAIL", "subtasks": results,
-                            "note": "Terraform initialization is explicitly backend=false; no cloud backend or credentials are used."})
+        statuses = [x["status"] for x in results]
+        overall = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
+        return self.record({"task": "devops-static", "status": overall, "subtasks": results,
+                            "note": "Terraform initialization is explicitly backend=false; network-enabled mode is required to download providers; no cloud backend or credentials are used."})
 
     async def public_probes(self) -> dict[str, Any]:
         if not self.network:
