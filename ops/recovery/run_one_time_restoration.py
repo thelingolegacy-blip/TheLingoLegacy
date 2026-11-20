@@ -251,6 +251,28 @@ class Runner:
         return self.record({"task": "firebase-hosting-candidate", "status": status, "subtasks": results,
                             "note": "These are local publication-boundary tests, not Firebase connectivity or Hosting deployment evidence."})
 
+    async def recovery_contracts(self, workspace: Path) -> dict[str, Any]:
+        bridge = workspace / "ops/recovery/bridge-adapter.sh"
+        evidence = workspace / "ops/recovery/evidence-template.json"
+        quarantine = workspace / "ops/recovery/quarantine-manifest.json"
+        if not bridge.is_file() or not evidence.is_file() or not quarantine.is_file():
+            return self.record({"task": "recovery-contracts", "status": "BLOCKED", "reason": "bridge adapter or recovery JSON manifests missing"})
+        results = []
+        results.append(await self.command("recovery-bridge-shell-syntax", workspace, ["bash", "-n", "ops/recovery/bridge-adapter.sh"]))
+        json_check = "import json; from pathlib import Path; [json.loads(Path(p).read_text(encoding='utf-8')) for p in ['ops/recovery/evidence-template.json','ops/recovery/quarantine-manifest.json']]; print('RECOVERY_JSON=PASS')"
+        results.append(await self.command("recovery-json-contracts", workspace, [sys.executable, "-c", json_check]))
+        blocked_check = (
+            "import subprocess,sys; "
+            "p=subprocess.run([sys.executable,'ops/recovery/checkpoint_gate.py','--evidence','ops/recovery/evidence-template.json','--expected-sha','a'*40],capture_output=True,text=True); "
+            "out=p.stdout+'\\n'+p.stderr; "
+            "assert p.returncode==1 and 'RESULT=BLOCKED' in out, ('incomplete evidence template did not fail closed: '+out); "
+            "print('INCOMPLETE_TEMPLATE_FAIL_CLOSED=PASS')"
+        )
+        results.append(await self.command("recovery-template-fail-closed", workspace, [sys.executable, "-c", blocked_check]))
+        statuses = [x["status"] for x in results]
+        overall = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
+        return self.record({"task": "recovery-contracts", "status": overall, "subtasks": results})
+
     async def product_regressions(self, workspace: Path) -> dict[str, Any]:
         node = shutil.which("node")
         tests = [
@@ -457,6 +479,7 @@ async def main_async(args: argparse.Namespace) -> int:
             ]),
             ("WAVE 1 — REPOSITORY / SECURITY / SERVICE CONTRACTS", [
                 runner.python_recovery(workspace),
+                runner.recovery_contracts(workspace),
                 runner.static_gates(workspace),
                 runner.security_tools(workspace),
                 runner.product_regressions(workspace),
