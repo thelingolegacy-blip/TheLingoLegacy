@@ -29,11 +29,22 @@ if (repositories.inventory_count !== 38 || repositories.repositories.length !== 
   throw new Error('Repository inventory count mismatch');
 }
 if (engines.packages.length !== 12) throw new Error('Expected exactly 12 shared engines');
-if (workers.workers.length !== 9) throw new Error('Expected exactly 9 observed Worker scripts');
+if (workers.workers.length !== 10) throw new Error('Expected exactly 10 observed Worker scripts');
+const workerNames = workers.workers.map((worker) => worker.name);
+if (new Set(workerNames).size !== workerNames.length) throw new Error('Worker registry contains duplicate script names');
 if (workers.route_inventory?.observed_routes !== 27 || workers.route_inventory?.route_ids_and_assignments?.length !== 27) {
   throw new Error('Expected 27 observed Worker routes with complete route ID mapping');
 }
-if (workerBindings.workers?.length !== 7) throw new Error('Expected binding observations for all 7 Workers');
+if (workerBindings.workers_checked !== 10 || workerBindings.workers?.length !== 10) {
+  throw new Error('Expected current binding observations for all 10 Worker scripts');
+}
+const bindingWorkerNames = workerBindings.workers.map((worker) => worker.name);
+if (new Set(bindingWorkerNames).size !== bindingWorkerNames.length) {
+  throw new Error('Worker binding inventory contains duplicate script names');
+}
+if (workerNames.some((name) => !bindingWorkerNames.includes(name)) || bindingWorkerNames.some((name) => !workerNames.includes(name))) {
+  throw new Error('Worker binding inventory must exactly cover the Worker script registry');
+}
 if (firebaseProjects.projects?.length !== 3 || firebaseProjects.deployment_verification !== 'NOT_VERIFIED') {
   throw new Error('Firebase project inventory must remain explicit and unverified until live target verification');
 }
