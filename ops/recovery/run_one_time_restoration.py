@@ -154,28 +154,55 @@ class Runner:
             return self.record({"task": "repository-static-gates", "status": "BLOCKED", "reason": "Node.js not installed"})
         return await self.command("repository-static-gates", workspace, [node, "scripts/run-static-gates.mjs"], timeout=max(self.timeout, 900))
 
-    async def integrity(self, source: Path) -> dict[str, Any]:
-        checks: list[dict[str, Any]] = []
-        for args, label in [
-            (["git", "rev-parse", "HEAD"], "head"),
-            (["git", "diff", "--check"], "diff_check"),
-            (["git", "status", "--porcelain"], "working_tree"),
-        ]:
+    async def git_snapshot(self, path: Path) -> dict[str, Any]:
+        async def git_value(*args: str) -> tuple[int | None, str]:
             try:
-                p = await asyncio.create_subprocess_exec(
-                    *args, cwd=str(source), env=safe_env(),
+                proc = await asyncio.create_subprocess_exec(
+                    "git", *args, cwd=str(path), env=safe_env(),
                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
                 )
-                raw, _ = await asyncio.wait_for(p.communicate(), timeout=60)
-                value = raw.decode("utf-8", errors="replace").strip()
-                checks.append({"check": label, "exit_code": p.returncode, "value": value[:12000]})
+                raw, _ = await asyncio.wait_for(proc.communicate(), timeout=60)
+                return proc.returncode, raw.decode("utf-8", errors="replace").strip()
             except Exception as exc:
-                checks.append({"check": label, "error": f"{type(exc).__name__}: {exc}"})
-        sha = next((x["value"] for x in checks if x["check"] == "head" and x.get("exit_code") == 0), None)
-        diff = next((x for x in checks if x["check"] == "diff_check"), {})
-        status = "PASS" if sha and diff.get("exit_code") == 0 else "FAIL"
-        return self.record({"task": "source-integrity", "status": status, "commit_sha": sha, "checks": checks,
-                            "note": "Working-tree changes are reported, not modified."})
+                return None, f"{type(exc).__name__}: {exc}"
+
+        head_rc, head = await git_value("rev-parse", "HEAD")
+        branch_rc, branch = await git_value("branch", "--show-current")
+        status_rc, status = await git_value("status", "--porcelain", "--untracked-files=all")
+        return {
+            "path": str(path),
+            "commit_sha": head if head_rc == 0 else None,
+            "branch": branch if branch_rc == 0 else None,
+            "working_tree_status": status[:12000],
+            "working_tree_clean": status_rc == 0 and status == "",
+            "git_readable": head_rc == 0 and status_rc == 0,
+        }
+
+    async def integrity(self, source: Path) -> dict[str, Any]:
+        snapshot = await self.git_snapshot(source)
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                "git", "diff", "--check", cwd=str(source), env=safe_env(),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
+            )
+            raw, _ = await asyncio.wait_for(proc.communicate(), timeout=60)
+            diff_rc = proc.returncode
+            diff_output = raw.decode("utf-8", errors="replace").strip()
+        except Exception as exc:
+            diff_rc = None
+            diff_output = f"{type(exc).__name__}: {exc}"
+        passed = snapshot["git_readable"] and snapshot["working_tree_clean"] and diff_rc == 0
+        return self.record({
+            "task": "source-integrity",
+            "status": "PASS" if passed else "FAIL",
+            "commit_sha": snapshot["commit_sha"],
+            "branch": snapshot["branch"],
+            "working_tree_clean": snapshot["working_tree_clean"],
+            "working_tree_status": snapshot["working_tree_status"],
+            "diff_check_exit_code": diff_rc,
+            "diff_check_output": diff_output[:12000],
+            "note": "A clean, exact-SHA checkout is required; dirty or untracked files fail W0 so later waves cannot test content misattributed to HEAD.",
+        })
 
     async def flutter_project(self, workspace: Path, relative: str, task_id: str) -> dict[str, Any]:
         project = workspace / relative
@@ -214,10 +241,10 @@ class Runner:
         return self.record({"task": task_id, "status": status, "subtasks": results,
                             "lockfile": lock, "note": "All Flutter commands run in a disposable copy; source tree is not modified."})
 
-    async def go_project(self, path: Path | None) -> dict[str, Any]:
+    async def go_project(self, path: Path | None, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
         if path is None or not (path / "go.mod").is_file():
             return self.record({"task": "core-v2-go", "status": "BLOCKED",
-                                "reason": "CORE V2 PR #596 is separate from the evidence branch; pass --core-v2-dir pointing to its local checkout"})
+                                "reason": "CORE V2 Go module was not copied from a clean PR #596 checkout; expected platform/lingo-core-v2/services/api/go.mod or a module-directory input"})
         go = shutil.which("go")
         if not go:
             return self.record({"task": "core-v2-go", "status": "BLOCKED", "reason": "Go toolchain not installed"})
@@ -230,9 +257,9 @@ class Runner:
         ]:
             results.append(await self.command(f"core-v2-{suffix}", path, [go, *args], timeout=max(self.timeout, 1800), extra_env=env))
         status = "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL"
-        return self.record({"task": "core-v2-go", "status": status, "subtasks": results})
+        return self.record({"task": "core-v2-go", "status": status, "source_commit_sha": (provenance or {}).get("commit_sha"), "source_branch": (provenance or {}).get("branch"), "subtasks": results})
 
-    async def firebase_candidate(self, path: Path | None) -> dict[str, Any]:
+    async def firebase_candidate(self, path: Path | None, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
         if path is None or not path.is_dir():
             return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED",
                                 "reason": "PR #614 is separate from the evidence branch; pass --firebase-candidate-dir pointing to its local checkout"})
@@ -249,7 +276,9 @@ class Runner:
         if not results:
             return self.record({"task": "firebase-hosting-candidate", "status": "BLOCKED", "reason": "expected PR #614 builder/test files not found"})
         status = "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL"
-        return self.record({"task": "firebase-hosting-candidate", "status": status, "subtasks": results,
+        return self.record({"task": "firebase-hosting-candidate", "status": status,
+                            "source_commit_sha": (provenance or {}).get("commit_sha"),
+                            "source_branch": (provenance or {}).get("branch"), "subtasks": results,
                             "note": "These are local publication-boundary tests, not Firebase connectivity or Hosting deployment evidence."})
 
     async def recovery_contracts(self, workspace: Path) -> dict[str, Any]:
@@ -442,6 +471,10 @@ async def main_async(args: argparse.Namespace) -> int:
     if args.expected_sha and not SHA_RE.fullmatch(args.expected_sha):
         print("BLOCKED: --expected-sha must be a full lowercase 40-character SHA.", file=sys.stderr)
         return 2
+    for label, value in [("CORE V2", args.core_v2_expected_sha), ("Firebase", args.firebase_expected_sha)]:
+        if value and not SHA_RE.fullmatch(value):
+            print(f"BLOCKED: --{label.lower().replace(' ', '-')}-expected-sha must be a full lowercase 40-character SHA.", file=sys.stderr)
+            return 2
     if args.timeout < 1:
         print("BLOCKED: --timeout must be positive.", file=sys.stderr)
         return 2
@@ -461,50 +494,100 @@ async def main_async(args: argparse.Namespace) -> int:
         workspace = Path(temp) / "repo"
         copy_workspace(source, workspace)
 
-        # Optional PR worktrees are copied into the disposable workspace so
-        # package managers and test tools cannot modify the supplied checkout.
+        # Capture immutable provenance before copying either candidate. Dirty
+        # worktrees are rejected so test results cannot be attributed only to
+        # a HEAD SHA while silently including uncommitted content.
+        core_snapshot = await runner.git_snapshot(core_dir) if core_dir and core_dir.is_dir() else None
+        firebase_snapshot = await runner.git_snapshot(firebase_dir) if firebase_dir and firebase_dir.is_dir() else None
+
+        def candidate_ok(snapshot: dict[str, Any] | None, expected: str | None, module_ok: bool) -> bool:
+            return bool(snapshot and snapshot.get("git_readable") and snapshot.get("working_tree_clean")
+                        and snapshot.get("commit_sha") and module_ok
+                        and (expected is None or snapshot.get("commit_sha") == expected))
+
+        core_module = bool(core_dir and ((core_dir / "platform/lingo-core-v2/services/api/go.mod").is_file()
+                                         or (core_dir / "go.mod").is_file()))
+        core_ok = candidate_ok(core_snapshot, args.core_v2_expected_sha, core_module)
+        if core_dir is None:
+            runner.record({"task": "core-v2-source-provenance", "status": "BLOCKED",
+                           "reason": "PR #596 checkout not supplied"})
+        else:
+            runner.record({"task": "core-v2-source-provenance", "status": "PASS" if core_ok else "FAIL",
+                           **(core_snapshot or {"path": str(core_dir), "git_readable": False}),
+                           "expected_sha": args.core_v2_expected_sha, "module_present": core_module})
+        firebase_module = bool(firebase_dir and (firebase_dir / "scripts/build-firebase-public.mjs").is_file()
+                               and (firebase_dir / "scripts/test-build-firebase-public.mjs").is_file())
+        firebase_ok = candidate_ok(firebase_snapshot, args.firebase_expected_sha, firebase_module)
+        if firebase_dir is None:
+            runner.record({"task": "firebase-source-provenance", "status": "BLOCKED",
+                           "reason": "PR #614 checkout not supplied"})
+        else:
+            runner.record({"task": "firebase-source-provenance", "status": "PASS" if firebase_ok else "FAIL",
+                           **(firebase_snapshot or {"path": str(firebase_dir), "git_readable": False}),
+                           "expected_sha": args.firebase_expected_sha, "required_tests_present": firebase_module})
+
         core_candidate = None
-        if core_dir and (core_dir / "go.mod").is_file():
+        if core_ok and core_dir:
             core_candidate = workspace / "_external_candidates" / "core-v2"
             core_candidate.parent.mkdir(parents=True, exist_ok=True)
             copy_workspace(core_dir, core_candidate)
+            if (core_candidate / "platform/lingo-core-v2/services/api/go.mod").is_file():
+                core_candidate = core_candidate / "platform/lingo-core-v2/services/api"
         firebase_candidate = None
-        if firebase_dir and firebase_dir.is_dir():
+        if firebase_ok and firebase_dir:
             firebase_candidate = workspace / "_external_candidates" / "firebase-hosting"
             firebase_candidate.parent.mkdir(parents=True, exist_ok=True)
             copy_workspace(firebase_dir, firebase_candidate)
 
+        # Each wave is a real dependency gate: a non-PASS task blocks every
+        # task in later waves. Final evidence packaging still runs regardless.
         waves = [
             ("WAVE 0 — SOURCE AND BASELINE", [
-                runner.integrity(source),
+                ("source-integrity", lambda: runner.integrity(source)),
             ]),
             ("WAVE 1 — REPOSITORY / SECURITY / SERVICE CONTRACTS", [
-                runner.python_recovery(workspace),
-                runner.recovery_contracts(workspace),
-                runner.static_gates(workspace),
-                runner.security_tools(workspace),
-                runner.product_regressions(workspace),
-                runner.shell_safety_tests(workspace),
-                runner.studio_contracts(workspace),
-                runner.crimson_smoke_static(workspace),
-                runner.cloudflare_dry_run(workspace),
-                runner.devops_static(workspace),
-                runner.firebase_candidate(firebase_candidate),
-                runner.go_project(core_candidate),
+                ("recovery-unit-tests", lambda: runner.python_recovery(workspace)),
+                ("recovery-contracts", lambda: runner.recovery_contracts(workspace)),
+                ("repository-static-gates", lambda: runner.static_gates(workspace)),
+                ("security-tools", lambda: runner.security_tools(workspace)),
+                ("product-regressions", lambda: runner.product_regressions(workspace)),
+                ("shell-safety-tests", lambda: runner.shell_safety_tests(workspace)),
+                ("studio-contracts", lambda: runner.studio_contracts(workspace)),
+                ("crimson-smoke-static", lambda: runner.crimson_smoke_static(workspace)),
+                ("cloudflare-dry-run", lambda: runner.cloudflare_dry_run(workspace)),
+                ("devops-static", lambda: runner.devops_static(workspace)),
+                ("firebase-hosting-candidate", lambda: runner.firebase_candidate(firebase_candidate, firebase_snapshot)),
+                ("core-v2-go", lambda: runner.go_project(core_candidate, core_snapshot)),
             ]),
             ("WAVE 2 — MOBILE AND WEB BUILDS", [
-                runner.flutter_project(workspace, ".", "flutter-root"),
-                runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis"),
+                ("flutter-root", lambda: runner.flutter_project(workspace, ".", "flutter-root")),
+                ("flutter-oasis", lambda: runner.flutter_project(workspace, "studio-sites/games/oasis-platform/flutter", "flutter-oasis")),
             ]),
             ("WAVE 3 — PUBLIC ROUTE OBSERVATION", [
-                runner.public_probes(),
+                ("public-route-probes", lambda: runner.public_probes()),
             ]),
         ]
-        for title, coroutines in waves:
+        upstream_blocker = None
+        wave_results = []
+        for title, task_factories in waves:
             print(f"\n{title}")
-            results = await asyncio.gather(*coroutines)
+            if upstream_blocker:
+                blocked = []
+                for task_name, _factory in task_factories:
+                    blocked.append(runner.record({"task": task_name, "status": "BLOCKED",
+                                                   "reason": f"upstream wave gate not passed: {upstream_blocker}"}))
+                wave_results.append({"wave": title, "status": "BLOCKED", "tasks": [x["task"] for x in blocked]})
+                for result in blocked:
+                    print(f"  [{result['status']}] {result['task']}")
+                continue
+            results = await asyncio.gather(*(factory() for _name, factory in task_factories))
+            wave_status = "PASS" if all(x["status"] == "PASS" for x in results) else "BLOCKED"
+            wave_results.append({"wave": title, "status": wave_status,
+                                 "tasks": [{"task": x["task"], "status": x["status"]} for x in results]})
             for result in results:
                 print(f"  [{result['status']}] {result['task']}")
+            if wave_status != "PASS":
+                upstream_blocker = title
 
     g02_result: dict[str, Any]
     if g02_evidence and g02_evidence.is_file() and args.expected_sha:
@@ -541,7 +624,8 @@ async def main_async(args: argparse.Namespace) -> int:
         "source_path": str(source),
         "source_sha": next((x.get("commit_sha") for x in tasks if x["task"] == "source-integrity"), None),
         "mode": "network-enabled" if args.network_enabled else "offline",
-        "parallelism": "concurrent within each dependency-ordered wave",
+        "parallelism": "concurrent within each dependency-ordered wave; downstream waves require every task in the preceding wave to PASS",
+        "wave_results": wave_results,
         "tasks": tasks,
         "gates": gates,
         "summary": {
@@ -576,8 +660,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default="release/evidence/one-time-restoration", help="Evidence output root inside repo")
     parser.add_argument("--timeout", type=int, default=900, help="Per-command timeout in seconds")
     parser.add_argument("--network-enabled", action="store_true", help="Allow public HTTPS GET probes and dependency downloads")
-    parser.add_argument("--core-v2-dir", help="Existing local checkout/worktree for PR #596 Go implementation")
-    parser.add_argument("--firebase-candidate-dir", help="Existing local checkout/worktree for PR #614 Firebase candidate")
+    parser.add_argument("--core-v2-dir", help="Existing clean local PR #596 checkout/worktree (repository root or Go module directory)")
+    parser.add_argument("--core-v2-expected-sha", help="Optional exact PR #596 head SHA required for candidate provenance")
+    parser.add_argument("--firebase-candidate-dir", help="Existing clean local checkout/worktree for PR #614 Firebase candidate")
+    parser.add_argument("--firebase-expected-sha", help="Optional exact PR #614 head SHA required for candidate provenance")
     parser.add_argument("--g02-evidence", help="Externally captured G02 evidence JSON; never fabricated by this script")
     parser.add_argument("--expected-sha", help="Exact full commit SHA for G02 evidence correlation")
     return parser.parse_args()
