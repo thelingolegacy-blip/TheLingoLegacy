@@ -784,3 +784,14 @@ The API workflow defines a disposable PostgreSQL 16 service and sets a loopback 
 ### Decision
 
 PR #594 remains the proposed architecture baseline and PR #596 remains a non-production implementation candidate. Their source separation is clean, but the implementation is **BUILT / NOT CONNECTED / NOT CERTIFIED**. Do not provision providers, create production databases/identity, merge either draft, migrate data, or deploy.
+
+
+## 9.10 Pages custom-domain and Worker-route cross-check — 2026-11-20
+
+A final read-only cross-check was performed for the active Pages custom domain `app.thelingolegacy.com`:
+
+- Pages project `my-flutter-app` reports the custom domain as `active`.
+- The corresponding Cloudflare DNS record is a DNS-only CNAME: `app.thelingolegacy.com` → `my-flutter-app.pages.dev` (`proxied: false`).
+- None of the 27 current Workers route patterns matches `app.thelingolegacy.com`.
+
+This confirms that the active app Pages domain is not currently shadowed by one of the inspected custom Worker routes. Preserve the existing CNAME and Pages domain association; no DNS, Pages or Worker route changes were made.
