@@ -12,9 +12,9 @@
 |---|---|---|---|
 | STAGING-IDENTITY | Dedicated Firebase project, explicit Worker binding, tenant isolation | Firebase project metadata + token audience/issuer tests + Cloudflare binding readback | BLOCKED: production binding removed; staging config template/validator/bootstrap guide added; actual project unverified |
 | CI-RECOVERY | Actions jobs instantiate and execute | run ID, job ID, runner ID/name, completed steps, logs, artifacts, exact SHA | FAIL: validation run #94 / 42499930312 and minimal probe run #6 / 42499929296 both startup_failure; 0 jobs/artifacts |
-| SLOT-5X3 | 3x5 matrix, five paylines, WILD, 3/4/5 matches, volatility, integer payout | deterministic unit tests + integration tests + mathematical review | SOURCE IMPLEMENTED; theoretical RTP enumerated; GitHub execution pending |
+| SLOT-5X3 | 3x5 matrix, twenty canonical paylines, WILD, 3/4/5 matches, volatility, integer payout | deterministic unit tests + integration tests + mathematical review | SOURCE IMPLEMENTED; theoretical RTP enumerated; GitHub execution pending |
 | D1-SETTLEMENT | Atomic debit/credit, idempotency, rollback, append-only ledger, XP progression, daily reward | SQLite harness + D1 staging concurrency/rollback evidence | SOURCE UPDATED; local SQLite settlement, XP, welcome/daily grant and rollback checks passed; live D1 settlement not run |
-| CASINO-UI | Demo Coin global balance, five-line total wager, loading/error states | component tests + browser screenshots + source scan | PARTIAL: Bet/Line and Spin Cost display, five-line debit, optional authenticated adapter; browser QA pending |
+| CASINO-UI | Demo Coin global balance, 20-line Option 2 total-spin wager, loading/error states | component tests + browser screenshots + source scan | PARTIAL: Bet/Line and Spin Cost display, 20-line Option 2 total-spin debit, optional authenticated adapter; browser QA pending |
 | ASSET-SYSTEM | Lazy sprite/audio loading, retries/fallbacks, reduced-motion, audio resume | browser network-throttle tests + asset manifest audit | PARTIAL: lazy image fallback and AudioContext resume; sprite/network QA pending |
 | DEVICE-QA | keyboard, touch, gamepad, LG webOS remote focus/action behavior | automated input tests + physical/emulated webOS evidence | PARTIAL: remote directional focus wrap and Enter/OK/Select; physical TV QA pending |
 | RELEASE-EVIDENCE | full test matrix, Wrangler dry-run, security review, acceptance record | immutable evidence bundle tied to exact head SHA | PENDING |
@@ -22,11 +22,13 @@
 ## Five-reel contract
 
 - Matrix is represented as 3 rows × 5 columns.
-- Five left-to-right paylines: middle, top, bottom, descending V, ascending V.
+- Twenty canonical left-to-right paylines, using the shared preview geometry and stable order.
 - A WILD substitutes for a target symbol on a payline.
 - Only contiguous left-to-right matches of 3, 4, or 5 symbols qualify.
+- `wagerUnits` is the total stake for one spin. `lineWagerUnits = wagerUnits / activePaylines`; active payline count is 1–20 and a non-zero remainder is rejected.
+- Each winning line pays `lineWagerUnits × integer paytable multiplier`; line payouts are summed. Any approved feature multiplier applies to the total base payout; feature triggers/multipliers remain pending final approval.
 - Payouts are integer Demo Coin units. No floating point wallet arithmetic.
-- Low/medium/high distributions are explicit integer weight tables. Exact theoretical RTP from exhaustive single-line enumeration: low 72.9739%, medium 79.6260%, high 94.8766%. These are model-derived values, not live telemetry or independently executed CI evidence.
+- Low/medium/high distributions are explicit integer weight tables. Provisional theoretical RTP from exhaustive single-line enumeration (not full 20-line or feature-adjusted certification): low 72.9739%, medium 79.6260%, high 94.8766%. These are model-derived values, not live telemetry or independently executed CI evidence.
 - Server generates the outcome. Client-supplied symbols, matrix, multipliers, and payout values are never trusted.
 - Any wager debit, payout credit, and session record remain in the existing D1 atomic batch.
 
@@ -37,7 +39,7 @@
 3. Run Node syntax checks for Worker, engine, D1 service, and Firebase verifier.
 4. Run Firebase ID-token tests.
 5. Run Worker route/authentication and rate-limit tests.
-6. Run five-reel engine and D1 idempotency tests (matrix shape, all five paylines, WILD, 3/4/5 match, integer overflow rejection, volatility).
+6. Run five-reel engine and D1 idempotency tests (matrix shape, all 20 paylines, active-count stake allocation, remainder rejection, WILD, 3/4/5 match, integer overflow rejection, volatility).
 7. Run SQLite migration/ledger/rate-limit tests (idempotent migration, debit, payout, overdraft rollback, append-only ledger, one-time welcome grant, daily reward, XP progression).
 8. Run Wrangler v4 staging dry-run with `wrangler.game-engine-staging.jsonc`.
 9. Verify GitHub Actions has an instantiated job, assigned runner, completed steps, retrievable logs, and artifacts for this exact commit.
