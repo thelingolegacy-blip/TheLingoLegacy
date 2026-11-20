@@ -40,6 +40,8 @@ IGNORED = {
     ".git", ".dart_tool", ".gradle", ".idea", ".venv", "venv",
     "node_modules", "build", ".next", ".turbo", "coverage",
     "__pycache__", ".pytest_cache", ".mypy_cache", ".cache", "one-time-restoration",
+    ".env", ".env.*", ".secrets", "secrets", "*.pem", "*.key", "*.p12", "*.pfx",
+    "service-account*.json", "*credentials*.json",
 }
 SECRET_ENV = re.compile(r"(TOKEN|SECRET|PASSWORD|PRIVATE_KEY|CREDENTIAL|COOKIE|AUTH)", re.I)
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
