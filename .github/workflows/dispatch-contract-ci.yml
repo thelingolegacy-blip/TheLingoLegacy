@@ -24,13 +24,22 @@ jobs:
           git init source
           cd source
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth=1 origin "${GITHUB_REF}"
+          source_sha="${{ github.event.pull_request.head.sha || github.sha }}"
+          git fetch --depth=1 origin "$source_sha"
           git checkout --detach FETCH_HEAD
-      - name: Validate role catalog and JSON schema
+          checked_out_sha="$(git rev-parse HEAD)"
+          test "$checked_out_sha" = "$source_sha"
+          {
+            echo "source_sha=$source_sha"
+            echo "checked_out_sha=$checked_out_sha"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate role catalog and JSON schema invariants
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python3 - <<'PY
           import json
           from pathlib import Path
           roles = json.loads(Path("source/ops/dispatch/roles.json").read_text())
@@ -39,6 +48,14 @@ jobs:
           assert roles["identity_assignment"] == "UNASSIGNED"
           assert schema["$schema"].endswith("2020-12/schema")
           assert "production" not in schema["properties"]["environment"]["enum"]
+          assert schema["properties"]["cost_ceiling_usd"]["const"] == 0
+          assert schema["properties"]["permission_profile"]["enum"] == [
+              "least-privilege-read-only", "source-validation-only"
+          ]
+          assert schema["properties"]["allowed_tools"]["items"]["enum"] == [
+              "read-only-github", "read-only-cloudflare", "read-only-firebase",
+              "local-unit-tests", "static-analysis", "preview-build"
+          ]
           print("DISPATCH_ROLE_AND_SCHEMA_STATIC_CHECK=PASS")
           PY
       - name: Run fail-closed contract unit tests
