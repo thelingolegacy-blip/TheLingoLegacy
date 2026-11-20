@@ -21,6 +21,7 @@ on:
       - 'scripts/test-verify-android-api21-firebase.mjs'
       - 'scripts/build-firebase-public.mjs'
       - 'scripts/test-build-firebase-public.mjs'
+      - 'scripts/test-cloudflare-pages-preview-build.mjs'
       - 'studio-sites/games/oasis-platform/flutter/**'
       - '.github/workflows/flutter-firebase-integrity.yml'
   push:
@@ -70,6 +71,9 @@ jobs:
           flutter-version: "3.50.0"
           channel: stable
           cache: true
+
+      - name: Test Cloudflare Pages web-preview isolation
+        run: node --test scripts/test-cloudflare-pages-preview-build.mjs
 
       - name: Verify Firebase project contract
         id: firebase_contract
