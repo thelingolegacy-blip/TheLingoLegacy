@@ -1,6 +1,7 @@
 # ADR-0001: Greenfield Go + PostgreSQL platform core
 
-- Status: Proposed — provider selection intentionally deferred
+- Status: Accepted baseline — provider implementation selection intentionally deferred
+- Accepted by Program Owner: 2026-11-15
 - Date: 2026-11-15
 
 ## Context
@@ -35,6 +36,11 @@ Start with the smallest independently testable slice: one modular Go API, Postgr
 - Move all workloads to Cloudflare Workers/D1 immediately: deferred pending workload-specific compatibility and migration evidence.
 - Adopt Kubernetes or active-active multi-cloud for initial launch: deferred until scale and recovery evidence justify the operational complexity.
 - Provision a full AWS service bundle before cost/account review: rejected.
+
+
+
+## Ratified architecture boundary
+The accepted baseline is Go modular services + PostgreSQL transactional authority for migrated domains + transactional outbox, with provider-neutral interfaces. Firebase remains an existing specialist integration where justified; it is not a co-equal transactional authority for the same domain. Cloudflare remains the complementary public edge and delivery layer. Supabase is not selected as the primary authority by this ADR; it may be evaluated only as a PostgreSQL hosting/adapter option against the same workload, cost, portability and operations criteria. No provider is provisioned or migrated by this decision.
 
 ## Consequences
 Existing identities and data require controlled inventory, canonical ID mapping, account linking, checksummed migration, reconciliation and rollback rehearsal. Wallet/ledger balances, entitlements and game outcomes require domain-specific migration and independent reconciliation; they must not be treated as ordinary profile data. No provider provisioning, production identity/data changes, DNS/route changes, payment activation or deployment is authorized by this ADR.
