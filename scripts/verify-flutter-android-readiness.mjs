@@ -66,6 +66,9 @@ if (!fs.existsSync(gradlePath)) {
   const minSdk = gradle.match(/\bminSdk\s*=\s*(\d+)/);
   if (!minSdk || Number(minSdk[1]) !== 21) blockers.push('Android minSdk must remain exactly 21; found ' + (minSdk?.[1] ?? 'no explicit value'));
   if (!gradle.includes('id("com.android.application")')) blockers.push('Android application Gradle plugin is missing');
+  if (!gradle.includes('id("org.jetbrains.kotlin.android")') && !gradle.includes('id("kotlin-android")')) {
+    blockers.push('Kotlin Android Gradle plugin is missing');
+  }
   if (!gradle.includes('id("dev.flutter.flutter-gradle-plugin")')) blockers.push('Flutter Gradle plugin is missing');
   if (!gradle.includes('namespace = "com.thelingolegacy.app"')) blockers.push('Android namespace does not match com.thelingolegacy.app');
   if (!gradle.includes('applicationId = "com.thelingolegacy.app"')) blockers.push('Android applicationId does not match com.thelingolegacy.app');
