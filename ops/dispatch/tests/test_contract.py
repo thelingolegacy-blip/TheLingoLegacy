@@ -147,6 +147,17 @@ class DispatchContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "exactly zero"):
             validate_job(job)
 
+    def test_role_catalog_requires_separate_production_authorization(self):
+        import json
+        from pathlib import Path
+
+        catalog = json.loads(Path("ops/dispatch/roles.json").read_text())
+        catalog["policy"]["production_release_requires_separate_human_authorization"] = False
+        with patch("pathlib.Path.read_text", return_value=json.dumps(catalog)):
+            from ops.dispatch.contract import _load_role_catalog
+            with self.assertRaisesRegex(ContractError, "security policy is missing or unsafe"):
+                _load_role_catalog()
+
     def test_role_catalog_rejects_removed_security_restrictions(self):
         import json
         from pathlib import Path
