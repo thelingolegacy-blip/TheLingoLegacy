@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-11-20",
+  "account_id": "16cb6f247cd1b28fca864760c7269606",
+  "source": "Cloudflare Pages projects, project detail, deployments, and custom domains read-only API responses",
+  "deployment_enablement_status": "NOT_EXPOSED_IN_READBACK",
+  "projects": [
+    {
+      "name": "lingo-flutter-firebase-preview",
+      "environment": "preview-candidate",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "/",
+        "build_command": "bash scripts/cloudflare-pages-preview-build.sh",
+        "destination_dir": "build/web"
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "e056c217-7ff0-4b1b-8ce4-48907f79180b",
+        "environment": "preview",
+        "created_on": "2026-11-20T18:27:41.04043Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "skipped": true,
+        "skip_reason": "branch_config",
+        "branch": "audit/reconciled-v1-1-live-inventory-2026-11-19",
+        "commit_sha": "a0becfa83b961a7488337c09817e8b23eb3edff6"
+      },
+      "custom_domains": [],
+      "disposition": "PREVIEW_ONLY_NOT_ACCEPTED",
+      "notes": "Latest audit-branch attempt was skipped before initialization/build; no custom domain. Preview and production fail_open are true."
+    },
+    {
+      "name": "lingo-execution-center-preview",
+      "environment": "preview-candidate",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "studio-sites/execution-center",
+        "build_command": "mkdir -p dist && cp index.html dist/index.html",
+        "destination_dir": "dist"
+      },
+      "fail_open": {
+        "preview": false,
+        "production": false
+      },
+      "latest_deployment": {
+        "id": "03613a24-5e28-47b1-aa12-d01ecaecc9b4",
+        "environment": "preview",
+        "created_on": "2026-11-20T18:27:41.04043Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "skipped": true,
+        "skip_reason": "path_config",
+        "branch": "audit/reconciled-v1-1-live-inventory-2026-11-19",
+        "commit_sha": "a0becfa83b961a7488337c09817e8b23eb3edff6"
+      },
+      "custom_domains": [],
+      "disposition": "PREVIEW_ONLY_NOT_ACCEPTED",
+      "notes": "Latest audit-branch attempt was skipped before initialization/build; no custom domain. Preview and production fail_open are false."
+    },
+    {
+      "name": "lingo-legacy-github-integration-test",
+      "environment": "test",
+      "production_branch": "infra/g02-runner-recovery-clean-2026-10-09",
+      "build_config": null,
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "dd2c5956-2046-4395-bf87-fd72ea83f0ec",
+        "environment": "preview",
+        "created_on": "2026-11-06T02:07:10.253683Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "security/g02-disable-untrusted-self-hosted-lane-2026-11-05",
+        "commit_sha": "a06e2b7f891c1c65188c4d9431a1abac96e1d3e3"
+      },
+      "custom_domains": [],
+      "disposition": "TEST_ONLY",
+      "notes": "Latest successful preview is a test surface, not production or G02 acceptance."
+    },
+    {
+      "name": "thelingolegacy-static-backup",
+      "environment": "recovery",
+      "production_branch": "recovery/static-backup-2026-10-24",
+      "build_config": {
+        "root_dir": "static-site",
+        "build_command": null,
+        "destination_dir": null
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "88e177e8-79c0-4aff-8243-308f405b04fe",
+        "environment": "production",
+        "created_on": "2026-10-25T06:58:28.108841Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "recovery/static-backup-2026-10-24",
+        "commit_sha": "0c9f4c85aed17ece871fae6f515d9c8384509a2d"
+      },
+      "custom_domains": [],
+      "disposition": "HISTORICAL_PRODUCTION_DEPLOYMENT_NOT_RESTORE_TESTED",
+      "notes": "Historical Pages production deployment completed successfully; no custom domain and no restore rehearsal evidence."
+    },
+    {
+      "name": "my-flutter-app",
+      "environment": "production-surface-review",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "/",
+        "build_command": "git clone https://github.com/flutter/flutter.git -b stable --depth 1 /tmp/flutter && export PATH=/tmp/flutter/bin:$PATH && flutter pub get && flutter build web --release",
+        "destination_dir": "build/web"
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "8a5b368c-df64-4342-9fcd-2054465f2a25",
+        "environment": "production",
+        "created_on": "2026-08-30T21:44:09.86966Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "main",
+        "commit_sha": null
+      },
+      "custom_domains": [
+        {
+          "name": "app.thelingolegacy.com",
+          "status": "active"
+        }
+      ],
+      "disposition": "ACTIVE_CUSTOM_DOMAIN_REVIEW_REQUIRED",
+      "notes": "Active app.thelingolegacy.com custom domain. Last production deployment is successful but records no commit SHA. Build clones the moving Flutter stable branch at build time; toolchain is not immutably pinned. Ownership and current app source/runtime need review."
+    }
+  ]
+}
