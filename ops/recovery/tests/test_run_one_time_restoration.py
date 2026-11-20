@@ -28,6 +28,14 @@ class RestorationOrchestratorSafetyTests(unittest.TestCase):
         MODULE.copy_workspace(self.source, destination)
         self.assertEqual((destination / "README.md").read_text(encoding="utf-8"), "safe source\n")
 
+    def test_copy_workspace_excludes_common_local_credential_files(self):
+        (self.source / ".npmrc").write_text("//registry.example/:_authToken=not-a-real-token\n", encoding="utf-8")
+        (self.source / ".netrc").write_text("machine example login user password not-a-real-password\n", encoding="utf-8")
+        destination = self.root / "copy"
+        MODULE.copy_workspace(self.source, destination)
+        self.assertFalse((destination / ".npmrc").exists())
+        self.assertFalse((destination / ".netrc").exists())
+
     def test_copy_workspace_rejects_file_symlinks(self):
         target = self.root / "outside-secret.txt"
         target.write_text("not for the disposable workspace", encoding="utf-8")
