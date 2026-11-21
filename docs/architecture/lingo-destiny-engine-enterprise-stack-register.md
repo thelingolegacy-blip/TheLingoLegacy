@@ -462,10 +462,10 @@ The live site contains multiple generations of public surfaces. A route returnin
 | `/` | Apex exact-root Worker serves a candidate homepage; root source on main is a redirect to `/studio-hub/` | Keep candidate label; reconcile root Worker and main source before promotion |
 | `/studio/` | Publicly reachable operations control center exposes protected-hold, G02, billing/configuration and access-verification status | Keep read-only; review whether authentication or a public-safe status projection is required |
 | `/trust-compliance/` | Reachable trust/safety blueprint with no-cash-value language | Candidate policy reference; verify legal owner and current controls |
-| `/privacy/` | Reachable but contains outdated founder-drop and payment wording | Privacy copy refresh required before public release acceptance |
-| `/terms/` | Not accessible in the public browser check | Terms publication/route verification required |
-| `/contact/` | Reachable but serves an older generic v7 portal rather than a focused contact page | Do not use as canonical contact route; use approved mailto until replaced |
-| `/loyalty-lane-apparel/` | Reachable but serves the same older generic v7 surface | Not an accepted apparel storefront; keep commerce disabled |
+| `/privacy/` | Reachable policy page covering public products, founder drops, child/youth experiences and payments | Legal owner review required to confirm wording matches current checkout, data flows and child-safety controls |
+| `/terms/` | GitHub source exists; current public browser fetch returned a cache miss | Availability remains unverified; do not claim the page is missing or link it as accepted until a fresh route check succeeds |
+| `/contact/` | Reachable dedicated Contact HQ page with focused play, shop, story, support and partnership paths | Safe to use as the canonical contact route after source/Worker provenance is correlated |
+| `/loyalty-lane-apparel/` | Reachable dedicated launch storefront with a 12-product rack, displayed prices, email-backed order requests and a separate founder digital-drop checkout | Keep the directory link gated until inventory, supplier counts, pricing, fulfillment and family/character-name privacy are reconciled; route existence alone does not authorize commerce |
 | `/lane/` | Reachable source-only Studio surface; explicitly says production promotion remains gated | May be linked as a source-only preview with clear status |
 | `/media/` | Reachable source-only Studio surface; explicitly says production promotion remains gated | May be linked as a source-only preview with clear status |
 | `/studio-sites/` | Reachable generic universe portal; includes identifiable character/family references | Privacy review required under #476; do not link publicly until cleared |
@@ -479,8 +479,8 @@ The live site contains multiple generations of public surfaces. A route returnin
 - Use explicit `PREVIEW`, `SOURCE ONLY`, `PLANNED`, or `BLOCKED` labels; never infer production readiness from route existence.
 - Disable any product surface with unresolved privacy, legal, payment, identity, content-rights or routing concerns.
 - Avoid star symbols in canonical product names and remove obsolete generic v7 shells from canonical navigation.
-- Replace the old contact page with the approved contact email until a dedicated route is reviewed.
-- Keep the privacy policy visible but mark its refresh as required; do not claim terms acceptance while the Terms route is unverified.
+- Use the dedicated Contact HQ route; keep direct email available as a secondary path.
+- Keep the privacy policy visible with owner/legal review pending; do not claim terms acceptance while the Terms route is unverified.
 - Do not publish personal/family details from development portals or story references without explicit privacy approval.
 
 The route-aware canonical directory proposal in PR #640 applies these rules: eight public portfolio cards, separately permissioned LINGOworld service domains, shared platform engines, and disabled links for unverified or privacy-sensitive destinations.
@@ -488,9 +488,9 @@ The route-aware canonical directory proposal in PR #640 applies these rules: eig
 
 ### Source versus live-runtime distinction
 
-GitHub main contains dedicated source pages at `contact/index.html`, `loyalty-lane-apparel/index.html`, and `terms/index.html`. The public browser responses for Contact and Apparel still return an older generic v7 shell, while the Terms route was not accessible. This is a source/runtime provenance mismatch, not proof that the dedicated source pages are missing. The live Worker must not be promoted until the exact current source commit, uploaded asset manifest, Worker version, route and browser response are correlated.
+GitHub main contains dedicated source pages at `contact/index.html`, `loyalty-lane-apparel/index.html`, and `terms/index.html`. A fresh public browser check now confirms that Contact and Apparel both serve dedicated pages rather than the older generic v7 shell. The exact uploaded source commit, asset manifest, Worker version and route are still not correlated, so this is not yet a deployment-provenance pass. The Terms source exists, but its public route remains unverified after a browser cache miss.
 
-The main Privacy source still contains founder/access and commerce-related wording that requires owner/legal review; do not silently rewrite legal commitments as part of a UI repair.
+The Privacy source and live page include founder-drop, child/youth and payment wording. Obtain owner/legal confirmation that it matches actual checkout, analytics, data retention and child-safety practices; do not silently rewrite legal commitments as part of a UI repair.
 
 
 ## 17. Safe preview deployment readiness — read-only 2026-11-21
