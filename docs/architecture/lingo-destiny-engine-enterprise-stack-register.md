@@ -322,3 +322,73 @@ All Studio actions are read-only by default. Any later write action must be a na
 - Studio staging Worker settings show observability enabled with query-string redaction, persistent invocation logs, and **zero regular bindings**. It has no custom zone route. This supports the read-only staging-control-plane classification, but does not prove that every UI function or provider adapter is live.
 - Render's only service has one current `live` deployment for commit `c6ab81c34a0521ed72937b6a7fcf618a47b62038`, publishing the static `render-staging` directory. Its build command is an echo/no-compilation command; this is not a backend build or production API deployment.
 - The current public apex page identifies itself as a candidate experience and says destination activation depends on verified routes. Public reachability of the homepage must not be confused with a production-ready account, wallet, commerce, game, or creator experience.
+
+
+## 13. World-engine and game-development architecture
+
+The LINGO World Engine is a reusable platform capability for creating, simulating, operating and safely evolving original game worlds. It is a technical foundation shared by LINGOarcade, LINGOslots and future world experiences; it is not a replacement for each product's ownership, brand or release lifecycle.
+
+### Runtime architecture
+
+```text
+WORLD BUILDER / CONTENT AUTHORING
+  ├─ versioned world schemas and rulesets
+  ├─ scene graphs, zones, maps and points of interest
+  ├─ procedural generation with deterministic seeds
+  ├─ asset catalog, rights, provenance and localization
+  └─ accessibility and content-safety checks
+              |
+              v
+WORLD SIMULATION / GAME SERVICES
+  ├─ deterministic simulation and replay
+  ├─ server-authoritative sessions and game rules
+  ├─ player progression and entitlements
+  ├─ matchmaking, persistence and event contracts
+  └─ anti-cheat, moderation and abuse controls
+              |
+              v
+RUNTIME ADAPTERS
+  ├─ Unity: 3D worlds, physics and richer native clients
+  ├─ Web: lightweight 2D, previews and browser experiences
+  └─ Flutter: mobile shell, account and companion surfaces
+              |
+              v
+LIVE OPERATIONS
+  ├─ events, seasons and feature flags
+  ├─ telemetry, SLOs and crash diagnostics
+  ├─ support, moderation and incident workflows
+  └─ rollback and versioned content promotion
+```
+
+### World-definition contract
+
+Every world or scene package should have:
+- immutable `world_id`, semantic `world_version`, content hash and owning product;
+- deterministic generation seed and generator/ruleset version where procedural generation is used;
+- map/scene bounds, zones, points of interest, spawn rules and entity/component schema;
+- asset IDs with source hash, creator/rights, allowed use, privacy class and localization;
+- gameplay rules, progression, difficulty, accessibility, moderation and age/content classification;
+- API/event compatibility range, save-data schema version, migration and rollback notes.
+
+### Simulation and multiplayer invariants
+
+- Clients render and submit intents; trusted server-side services validate state transitions and rewards.
+- Use fixed-step or otherwise explicitly deterministic simulation where replay or competitive fairness requires it.
+- Persist authoritative session transitions with idempotency and correlation IDs; define retry, reconnect, timeout and duplicate-event behavior.
+- Multiplayer state, inventory, achievements and leaderboards require server-side ownership checks, anti-cheat signals and moderation controls.
+- Use event sourcing or immutable journals for high-value progression/economy events where auditability is required; do not make local browser storage authoritative.
+- Separate player/game data from workforce, property, hospitality and infrastructure operational records.
+
+### Geospatial and infrastructure boundaries
+
+Real-world GIS, roads, lighting, water and utility telemetry may inform fictionalized world design only through approved, minimized and rights-cleared datasets. Never expose precise infrastructure asset coordinates, operational telemetry, employee information, customer records or safety-sensitive control details to public game clients. Infrastructure digital-twin or operational systems remain separate products with jurisdiction-scoped roles, audit trails and incident controls.
+
+### Content and release pipeline
+
+`WORLD SCHEMA → CONTENT AUTHORING → RIGHTS/SAFETY REVIEW → DETERMINISTIC FIXTURES → CLIENT BUILD → CONTRACT/PLAYTEST QA → PREVIEW → ACCEPTANCE → AUTHORIZED RELEASE`
+
+Promote world content independently from runtime code where compatibility allows. Pin asset manifests and world versions to each build. Maintain rollback to the prior known-good world package. Never promote unreviewed procedural content or external assets directly into production.
+
+### Economy and safety
+
+All demo/game currencies remain fictional, non-transferable and non-redeemable unless a separate approved business/legal design explicitly changes the policy. No cash wagering, cash-out, prize redemption, or client-authoritative balance mutation is part of the World Engine baseline.
