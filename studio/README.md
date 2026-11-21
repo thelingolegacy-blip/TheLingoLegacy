@@ -60,7 +60,7 @@ The consolidated source includes a deterministic surface-integrity checker at `s
 
 The registry defines 22 Studio modules and current provider-readiness classifications for GitHub, Cloudflare, Flutter, Firebase, Supabase, Render, and Google AI Studio. It records only observed/source-backed state and includes evidence requirements for every module.
 
-`studio/enterprise-module-registry.schema.json` defines the JSON Schema contract. This is a registry foundation, not a claim that all 12 modules are implemented or that providers are fully integrated.
+`studio/enterprise-module-registry.schema.json` defines the JSON Schema contract. This is a registry foundation, not a claim that all 22 modules are implemented or that providers are fully integrated.
 
 Default authority is read-only. No secret values, provider credentials, production mutation, autonomous merge/deploy, billing, wallet/reward mutation, or access grants are allowed by this registry. Unknown state fails closed.
 
