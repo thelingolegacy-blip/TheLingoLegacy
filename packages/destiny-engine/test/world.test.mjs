@@ -46,6 +46,24 @@ test('world validation detects content tampering through its fingerprint', () =>
   assert.ok(result.errors.includes('worldHash does not match world content'));
 });
 
+test('water biome tiles are always non-walkable', () => {
+  let world = null;
+  let waterTile = null;
+  for (let index = 0; index < 32 && !waterTile; index += 1) {
+    world = makeWorld('water-validation-' + index);
+    for (const row of world.map) {
+      waterTile = row.find(tile => tile.biome === 'water');
+      if (waterTile) break;
+    }
+  }
+  assert.ok(waterTile, 'expected a water tile in the bounded seed sample');
+  const changed = structuredClone(world);
+  changed.map[waterTile.y][waterTile.x].walkable = true;
+  const result = validateWorldDefinition(changed);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.includes('water tiles must be non-walkable'));
+});
+
 test('generator rejects invalid bounds and unbounded point counts', () => {
   assert.throws(() => generateWorld({ worldId: 'bad', worldVersion: '1.0.0', seed: 'x', width: 3, height: 8 }), /width/);
   assert.throws(() => generateWorld({ worldId: 'bad', worldVersion: '1.0.0', seed: 'x', width: 8, height: 8, poiCount: 300 }), /poiCount/);
