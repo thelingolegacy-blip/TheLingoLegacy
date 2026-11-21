@@ -26,7 +26,7 @@ cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
 echo "LINGO_STAGE=android_wrapper_generation"
 rm -rf /tmp/lingo_legacy_android_scaffold
 flutter create /tmp/lingo_legacy_android_scaffold --project-name lingo_legacy --org com.thelingolegacy --platforms android --no-pub
-for spec in "gradlew:android/gradlew" "gradlew.bat:android/gradlew.bat" "gradle-wrapper.jar:android/gradle/wrapper/gradle-wrapper.jar"; do
+for spec in "gradlew:gradlew" "gradlew.bat:gradlew.bat" "gradle-wrapper.jar:gradle/wrapper/gradle-wrapper.jar"; do
   label="${spec%%:*}"
   source_path="/tmp/lingo_legacy_android_scaffold/android/${spec#*:}"
   test -s "$source_path"
