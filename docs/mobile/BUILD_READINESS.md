@@ -33,3 +33,9 @@
 4. Configure protected Android release signing; verify AAB signing and upload readiness.
 5. Verify iOS signing/provisioning and physical-device build.
 6. Exercise authentication, database, storage, analytics, privacy and offline behavior against staging.
+## Isolated preview deployment
+
+- Cloudflare Pages project: `lingo-flutter-firebase-preview`.
+- Preview branch: `fix/flutter-offline-preview-and-release-signing-guard`.
+- The project has no custom domain; it serves only its `pages.dev` hostname.
+- Production deployments are explicitly disabled. This branch is allowlisted for preview builds only.
