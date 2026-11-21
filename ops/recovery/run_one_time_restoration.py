@@ -193,9 +193,13 @@ def copy_workspace_verified(source: Path, destination: Path) -> str:
 def valid_redirect_target(source_url: str, location: str) -> bool:
     source = urlparse(source_url)
     target = urlparse(urljoin(source_url, location))
+    try:
+        target_port = target.port
+    except ValueError:
+        return False
     return (target.scheme == "https"
             and target.hostname == source.hostname
-            and target.port in (None, 443)
+            and target_port in (None, 443)
             and target.username is None
             and target.password is None)
 
