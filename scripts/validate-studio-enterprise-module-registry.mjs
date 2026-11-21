@@ -21,7 +21,8 @@ const requiredDomainScopes = {
   'hospitality-operations': ['hospitality:read'],
   'transport-infrastructure': ['transport:read'],
   'street-lighting-operations': ['lighting:read'],
-  'water-wastewater-operations': ['utilities:read'],
+  'water-distribution-operations': ['water:read'],
+  'wastewater-drainage-operations': ['wastewater:read'],
   'world-engine-studio': ['world:read'],
   'game-liveops-studio': ['gameops:read'],
 };
