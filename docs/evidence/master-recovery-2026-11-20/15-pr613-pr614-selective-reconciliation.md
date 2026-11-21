@@ -5,7 +5,7 @@
 ## Current comparison
 
 - PR #613: 43 changed paths; 1,929 additions / 88 deletions.
-- PR #614: 41 changed paths; 2,733 additions / 95 deletions.
+- PR #614: 44 changed paths; 2,988 additions / 95 deletions.
 - Shared paths: **37**.
 - Shared paths with byte-identical patch text: **23**.
 - Shared paths with differing patch text: **14**.
@@ -52,15 +52,24 @@ Use PR #614 as the preferred security/publication-boundary baseline for selectiv
 | `scripts/verify-flutter-firebase.mjs` | Prefer explicit staging identity, production rejection and a clearly separated disconnected-placeholder mode. Contract test must match the selected behavior exactly. |
 | `test/widget_test.dart` | Consolidate desktop, 360x800/375x812 mobile, preview-only account disclosure and Firebase-disconnected assertions without duplicate brittle tests. |
 
-## Critical unresolved contradiction — Android wrapper
+## Critical unresolved contradiction — Android wrapper (corrected 2026-11-21)
 
-The current #614 Android readiness validator requires all of these to exist in the checked-out tree: `gradle-wrapper.jar`, `gradlew`, and `gradlew.bat`. The current candidate branch does not contain them. The #613 `android/.gitignore` explicitly ignores all three. #613's workflow attempts to generate the Android scaffold in-place using `flutter create . --platforms=android --no-pub`; #614's preview script deliberately generates only the web scaffold in a temporary directory and does not create Android wrapper files.
+The earlier statement that the current #614 branch lacked the Android project scaffold and wrapper files was based on querying Groovy `.gradle` filenames. The current project uses Kotlin DSL filenames. Exact-head readback confirms:
+- Both #613 and #614 contain `android/settings.gradle.kts`, `android/build.gradle.kts`, and `android/app/build.gradle.kts`.
+- #613 does not contain `android/gradlew`, `android/gradlew.bat`, or `android/gradle/wrapper/gradle-wrapper.jar`.
+- #614 contains all three wrapper paths. The JAR's Git blob SHA is `9fa581f7838ae3322a75b33868832aa9e14124fd`; this is not a SHA-256 digest.
+- #614's wrapper properties point to Gradle 9.5.0's `-all.zip` distribution but omit `distributionSha256Sum`.
 
-Therefore:
-- The current #614 Android readiness gate will correctly report BLOCKED against its current checkout; no APK build has been demonstrated by the present source.
-- Do not claim Android readiness PASS based only on source scaffold, wrapper properties, or prior preview notes.
-- Preferred next experiment: generate the Android wrapper/scaffold using the exact pinned Flutter 3.50.0 SDK in a disposable clean checkout or temporary project; copy only the intended, version-matched generated wrapper artifacts if that is the agreed repository policy; verify their provenance and executable bits; then run the readiness validator and `flutter build apk --debug`.
-- Do not fabricate a JAR, hand-author wrapper scripts, or run `flutter create .` against a working or credentialed checkout without a reviewed overwrite diff.
+Therefore the Android project scaffold is present in source, but wrapper integrity and buildability remain **UNVERIFIED**:
+1. Compute the tracked JAR's SHA-256 from its exact binary bytes and compare it to Gradle's official 9.5.0 wrapper-JAR checksum (`497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7`). Do not confuse the Git blob SHA with SHA-256.
+2. Add the official Gradle 9.5.0 distribution SHA-256 as `distributionSha256Sum` before executing the wrapper.
+3. Inspect the tracked wrapper scripts and executable mode; do not infer file mode from text contents.
+4. Verify Android Gradle Plugin, Kotlin plugin and JDK compatibility against Gradle 9.5.0.
+5. Only after those checks, run the readiness validator and `flutter build apk --debug` in a disposable unprivileged environment.
+
+The PR #614 test helper also creates a synthetic ZIP-like JAR and minimal scripts inside a temporary fixture. That is test-fixture behavior; it neither proves nor disproves the authenticity of the separately tracked binary JAR.
+
+Do not fabricate a JAR, hand-author wrapper scripts, or run an unverified wrapper. The current source scaffold does not establish a successful APK build.
 
 ## Other acceptance caveats
 
