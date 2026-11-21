@@ -69,8 +69,8 @@ import re, sys
 value = sys.argv[1].strip()
 if not value:
     print("UNAVAILABLE")
-elif value.startswith(("https://", "http://")):
-    value = re.sub(r"^(https?://)[^/@]+@", r"\1[REDACTED]@", value)
+elif re.match(r"^[A-Za-z][A-Za-z0-9+.-]*://", value):
+    value = re.sub(r"^([A-Za-z][A-Za-z0-9+.-]*://)[^/@]+@", r"\1[REDACTED]@", value)
     print(value.split("?", 1)[0].split("#", 1)[0])
 elif re.match(r"^[^@]+@[^:]+:.+$", value):
     print("[REDACTED]@" + value.split("@", 1)[1])
