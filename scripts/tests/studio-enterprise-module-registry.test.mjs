@@ -9,7 +9,7 @@ const registry = JSON.parse(fs.readFileSync(fileURLToPath(registryPath), 'utf8')
 
 test('canonical Studio enterprise registry passes its contract', () => {
   assert.deepEqual(validateRegistry(registry), []);
-  assert.equal(registry.modules.length, 21);
+  assert.equal(registry.modules.length, 22);
 });
 
 test('duplicate module identifiers fail closed', () => {
@@ -38,7 +38,8 @@ test('sensitive operational domains retain separate permission scopes', () => {
     ['hospitality-operations', 'hospitality:read'],
     ['transport-infrastructure', 'transport:read'],
     ['street-lighting-operations', 'lighting:read'],
-    ['water-wastewater-operations', 'utilities:read'],
+    ['water-distribution-operations', 'water:read'],
+    ['wastewater-drainage-operations', 'wastewater:read'],
     ['world-engine-studio', 'world:read'],
     ['game-liveops-studio', 'gameops:read'],
   ]) {
@@ -50,7 +51,7 @@ test('sensitive operational domains retain separate permission scopes', () => {
 });
 
 test('infrastructure domains require jurisdiction, GIS and asset evidence', () => {
-  for (const id of ['residential-property-operations','hospitality-operations','transport-infrastructure','street-lighting-operations','water-wastewater-operations']) {
+  for (const id of ['residential-property-operations','hospitality-operations','transport-infrastructure','street-lighting-operations','water-distribution-operations','wastewater-drainage-operations']) {
     const module = registry.modules.find(item => item.id === id);
     assert.ok(module.requiredEvidence.includes('jurisdiction'));
     assert.ok(module.requiredEvidence.includes('GISReference'));
