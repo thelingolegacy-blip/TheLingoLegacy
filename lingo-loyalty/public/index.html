@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171316">
+<title>LINGOloyalty | Wallet Preview</title>
+<style>
+:root{color-scheme:dark;--bg:#100e11;--panel:#1b171b;--line:#342b31;--ink:#f8f3f5;--muted:#b8aeb4;--red:#d52b45;--gold:#d7b879}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0,#351720 0,transparent 35%),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(100% - 28px,760px);margin:0 auto;padding:28px 0 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:13px;letter-spacing:.18em;font-weight:800}.brand span{color:var(--red)}.status{border:1px solid #70513a;color:var(--gold);border-radius:999px;padding:5px 10px;font-size:11px;letter-spacing:.12em}
+h1{font-size:clamp(32px,7vw,52px);line-height:1.02;letter-spacing:-.045em;margin:38px 0 10px}.sub{color:var(--muted);max-width:570px;margin:0 0 24px}.hero{background:linear-gradient(140deg,#2b1a22,#1b171b 62%);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 18px 60px #0005}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.balance{font-size:clamp(44px,12vw,70px);font-weight:800;letter-spacing:-.06em;margin:8px 0 0}.balance small{font-size:16px;letter-spacing:0;color:var(--muted);font-weight:600}.note{font-size:13px;color:var(--muted);margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.tile,.activity{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}.tile strong{display:block;font-size:27px;margin-top:8px}.tile span,.activity p{color:var(--muted);font-size:13px}.section{margin-top:28px}.section h2{font-size:18px;margin:0 0 12px}.activity{display:flex;justify-content:space-between;align-items:center;gap:12px}.empty{color:var(--muted);font-size:14px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.action{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:var(--red);color:white}.action.secondary{background:transparent;border:1px solid var(--line);color:var(--ink)}
+footer{margin-top:28px;color:#968a91;font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+@media(max-width:480px){main{padding-top:20px}.grid{grid-template-columns:1fr}.hero{padding:20px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><div class="brand">LINGO<span>legacy</span> / LOYALTY</div><div class="status">STAGING PREVIEW</div></header>
+  <h1>Your loyalty.<br> Your lane.</h1>
+  <p class="sub">One rewards view for LINGOlegacy, Loyalty Lane and participating LINGO experiences. This preview uses sample zero balances and is not connected to a live account.</p>
+  <section class="hero" aria-label="LINGOcoin balance preview">
+    <div class="eyebrow">LINGOcoins · promotional points</div>
+    <div class="balance">0 <small>coins</small></div>
+    <div class="note">Non-cash loyalty points · no cash value or cash withdrawal</div>
+  </section>
+  <section class="grid" aria-label="Separate game balance">
+    <div class="tile"><span>GAME CREDITS</span><strong>0</strong><span>Non-transferable gameplay units</span></div>
+    <div class="tile"><span>PARTNER OFFERS</span><strong>0</strong><span>Offers appear after merchant approval</span></div>
+  </section>
+  <section class="section">
+    <h2>Recent activity</h2>
+    <div class="activity"><div><strong>No activity yet</strong><p>Verified rewards and game events will appear here after secure account connection.</p></div><span aria-hidden="true">—</span></div>
+  </section>
+  <div class="actions">
+    <a class="action" href="https://vercel-store-f0dc9593.myshopify.com/collections/loyalty-lane-apparel">Explore Loyalty Lane</a>
+    <span class="action secondary" aria-disabled="true">Game connections pending</span>
+  </div>
+  <footer>Preview only. No rewards have been issued, no purchases are linked to points, and no merchant redemption is active. Account authentication, reward verification, game services and merchant agreements must pass review before activation.</footer>
+</main>
+</body>
+</html>
