@@ -27,6 +27,8 @@ test('wildcard homepage uses the canonical portfolio and route-safety rules', ()
   assert.match(home, /Privacy · owner review pending/);
   assert.match(home, /Terms availability unverified/);
   assert.match(home, /No live operational, payroll, guest, property or utility records are exposed/);
+  assert.match(home, /flagship public-discovery candidate/);
+  assert.doesNotMatch(home, /public discovery experience and selected previews are available/);
   assert.doesNotMatch(home, /LINGOarena|LINGOreads|Duolingo|Kotton’s Code/);
 });
 
