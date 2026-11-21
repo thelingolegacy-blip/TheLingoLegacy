@@ -61,7 +61,7 @@ async function load(){
   let status=p.status,detail=p.evidence;
   if(p.id==='github'){status=gh?'LIVE_VERIFIED':'UNKNOWN';detail=gh?'Public GitHub repository endpoint responded; default branch '+(gh.default_branch||'unknown')+'. Authenticated GitHub connector is separately available in the operator session.':'Public repository metadata probe failed; GitHub connector state is not inferred.'}
   if(p.id==='cloudflare'){status=s?'LIVE_VERIFIED':'UNKNOWN';detail=s?'Same-origin Cloudflare Worker runtime status endpoint responded; production remains release-locked.':'Worker status endpoint unavailable; Cloudflare control-plane health is unknown.'}
-  if(p.id==='supabase')detail=p.evidence+' This is a session-observed connector snapshot, not a browser-side API probe.';
+  if(p.id==='supabase'){status='SESSION_OBSERVED';detail=p.evidence+' This is a session-observed connector snapshot, not a browser-side API probe.';}
   if(p.id==='render')detail=p.evidence+' No service inventory was queried pending explicit workspace selection.';
   if(p.id==='firebase')detail=p.evidence+' No Firebase browser or server credential is configured here.';
   if(p.id==='flutter')detail=p.evidence+' Native build evidence must come from a verified CI/build artifact.';
