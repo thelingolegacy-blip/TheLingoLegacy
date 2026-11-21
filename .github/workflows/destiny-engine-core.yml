@@ -1,5 +1,6 @@
 name: Destiny Engine Core
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "packages/destiny-engine/**"
