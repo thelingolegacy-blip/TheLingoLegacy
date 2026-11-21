@@ -26,6 +26,7 @@ export function createSimulationState(world, actors = []) {
   if (!Array.isArray(actors) || actors.length > MAX_ACTORS) throw new RangeError('actors must be an array of at most 64 entries');
 
   const ids = new Set();
+  const occupiedPositions = new Set();
   const entities = actors.map(actor => {
     if (!actor || typeof actor.id !== 'string' || !/^[a-z0-9-]{1,64}$/.test(actor.id)) {
       throw new TypeError('actor id must be lowercase kebab-case');
@@ -33,6 +34,9 @@ export function createSimulationState(world, actors = []) {
     if (ids.has(actor.id)) throw new TypeError('actor IDs must be unique');
     ids.add(actor.id);
     assertPosition(world, actor.x, actor.y);
+    const position = actor.x + ',' + actor.y;
+    if (occupiedPositions.has(position)) throw new TypeError('actors cannot occupy the same tile');
+    occupiedPositions.add(position);
     return { id: actor.id, x: actor.x, y: actor.y, status: 'active' };
   });
 
@@ -67,6 +71,8 @@ export function applySimulationCommand(state, world, command) {
   const actor = state.entities.find(entity => entity.id === command.actorId);
   if (!actor || actor.status !== 'active') throw new TypeError('active actor was not found');
   assertPosition(world, command.to && command.to.x, command.to && command.to.y);
+  const occupant = state.entities.find(entity => entity.id !== actor.id && entity.status === 'active' && entity.x === command.to.x && entity.y === command.to.y);
+  if (occupant) throw new RangeError('destination tile is occupied');
   const distance = Math.abs(command.to.x - actor.x) + Math.abs(command.to.y - actor.y);
   if (distance !== 1) throw new RangeError('move command must target one orthogonally adjacent tile');
 
