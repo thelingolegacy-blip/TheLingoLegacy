@@ -15,15 +15,21 @@ concurrency:
 
 jobs:
   hosted-canary:
-    name: ubuntu-latest zero-uses canary
-    runs-on: ubuntu-latest
+    name: ${{ matrix.runner }} zero-uses canary
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-24.04
+          - ubuntu-22.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 3
     steps:
       - name: Prove hosted job instantiation
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p canary-evidence
           {
             echo "schema=lingo-hosted-canary-zero-uses-v1"
             echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -36,12 +42,12 @@ jobs:
             echo "runner_os=${RUNNER_OS}"
             echo "runner_arch=${RUNNER_ARCH}"
             echo "github_actions=${GITHUB_ACTIONS}"
-          } | tee canary-evidence/identity.txt
+          } | tee canary-identity.txt
 
           test -n "${RUNNER_NAME:-}"
           test "${RUNNER_OS}" = "Linux"
           test "${GITHUB_ACTIONS}" = "true"
-          echo "ZERO_UNDERSCORE_USES_CANARY=PASS" | tee -a canary-evidence/identity.txt
+          echo "ZERO_UNDERSCORE_USES_CANARY=PASS"
 
       - name: Preserve evidence in job summary
         if: always()
@@ -50,6 +56,7 @@ jobs:
           {
             echo "## Hosted zero-uses canary"
             echo
+            echo "- Runner label: ${{ matrix.runner }}"
             echo "- Run: ${GITHUB_RUN_ID}"
             echo "- Attempt: ${GITHUB_RUN_ATTEMPT}"
             echo "- Commit: ${GITHUB_SHA}"
