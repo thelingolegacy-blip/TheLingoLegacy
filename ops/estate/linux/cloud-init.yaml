@@ -1,0 +1,36 @@
+#cloud-config
+# Baseline only: intentionally does not register a GitHub Actions runner.
+# Supply SSH keys through the compute provider's secure instance-creation controls.
+package_update: true
+package_upgrade: true
+packages:
+  - ca-certificates
+  - curl
+  - git
+  - jq
+  - python3
+  - tar
+  - gzip
+  - unzip
+  - chrony
+  - unattended-upgrades
+write_files:
+  - path: /etc/sysctl.d/90-lingo-runner.conf
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Reduce exposure of kernel pointer information and restrict unprivileged dmesg.
+      kernel.kptr_restrict = 2
+      kernel.dmesg_restrict = 1
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root:root
+    permissions: '0644'
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+runcmd:
+  - [sysctl, --system]
+  - [systemctl, enable, --now, chrony]
+  - [install, -d, -o, root, -g, root, -m, '0755', /opt/lingo]
+  - [install, -d, -o, root, -g, root, -m, '0750', /var/lib/lingo-g02]
+final_message: "LINGO Linux baseline ready. Runner registration intentionally not performed; follow the reviewed host rebuild runbook."
