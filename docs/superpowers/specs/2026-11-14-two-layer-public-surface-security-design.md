@@ -110,3 +110,8 @@ Record workflow run IDs, job results, commit SHA, test output, and artifact refe
 ## Review notes
 
 The current repository has no root `package.json` at the inspected path. CI should therefore invoke Node's built-in test runner directly rather than assuming npm scripts exist. The existing Actions startup-failure pattern means workflow execution may remain blocked independently of the quality of the changes.
+
+
+## Implementation update — 2026-11-21
+
+The current rebased implementation candidate is PR #635 on branch `security/two-layer-public-surface-repair-main-2026-11-21`, based directly on main `b9d7a25d0d79c8405c4b1ec6fb0803f4029198f7`. The implementation adds the shared restricted-path policy, Worker-first routing, static publication exclusions, manifest reconciliation, and focused Node tests. This design document remains a historical specification; the PR is source-only and does not deploy the active Worker. Hosted Actions execution is still unverified, and production remains on the previously protected Worker version.
