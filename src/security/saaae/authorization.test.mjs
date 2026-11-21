@@ -7,6 +7,7 @@ const principal = {
   tenantIds: ["tenant-a"], roles: ["operator"], attributes: {}
 };
 const trusted = {
+  authenticatedUid: "user-1",
   principal,
   action: "wallet.read",
   resource: { id: "wallet-1", type: "wallet", tenantId: "tenant-a", productDomain: "LINGOlegacy", attributes: {} },
@@ -89,4 +90,11 @@ test("authorization audit receives correlation ID but never raw request credenti
   assert.equal(auditRecord.requestId, "server-request-01");
   assert.equal(Object.hasOwn(auditRecord, "request"), false);
   assert.equal(JSON.stringify(auditRecord).includes("Bearer"), false);
+});
+
+test("trusted principal context must bind to authenticated identity", async () => {
+  const result = await authorizeServerRequest(dependencies({
+    resolveTrustedContext: async () => ({ ...trusted, authenticatedUid: "attacker-uid" })
+  }));
+  assert.equal(result.reason, "TRUSTED_CONTEXT_INVALID_OR_IDENTITY_MISMATCH");
 });
