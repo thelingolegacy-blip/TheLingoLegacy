@@ -1,0 +1,74 @@
+# Tests
+
+## Test 1 - Load the live experience contract [sanity]
+Viewport: desktop
+Covers: dynamic experience contract, App Registry, runtime media bindings
+Description: Verifies a registered world resolves a live experience contract rather than relying on a frontend-only definition.
+
+Steps:
+1. Open the Studio Registry
+2. Open a registered world
+3. Refresh the Studio
+
+Expected: The world remains available and its experience data is rendered from the live runtime.
+
+## Test 2 - Change worlds and retain dynamic media state
+Viewport: desktop
+Covers: experience switching, dynamic background/media runtime, realtime studio state
+Description: Verifies changing between registered worlds uses runtime-controlled experience state.
+
+Steps:
+1. Open the Registry
+2. Select a different registered world
+3. Return to the original world
+
+Expected: Each world resolves its own experience identity and media presentation without a hardcoded page replacement.
+
+## Test 3 - Exercise Tap Stitch from a game or commerce surface
+Viewport: desktop
+Covers: Tap Stitch event pipeline, canonical events, game/commerce experience integration
+Description: Verifies an interaction records through the canonical event pipeline.
+
+Steps:
+1. Open the That’s My Lingo ⭐️ experience or Loyalty Lane surface
+2. Activate a Tap Stitch interaction
+3. Return to the Studio view
+
+Expected: The interaction is accepted by the runtime event pipeline and the experience remains responsive.
+
+## Test 4 - Verify governed media health recovery
+Viewport: desktop
+Covers: media health endpoint, three-failure threshold, freeze protection, automated recovery cron, predecessor activation, realtime rollback, audit events
+Description: Verifies a failing published media version is frozen after the governed threshold and the automated monitor restores the latest approved and published predecessor.
+
+Steps:
+1. Open a media asset with an active version and an approved, published predecessor
+2. Submit three failed health checks for the active version
+3. Confirm the asset reports FROZEN / FAILED state
+4. Allow the automated health monitor to run
+5. Return to the asset view
+
+Expected: The failed version remains preserved for audit, the approved predecessor becomes ACTIVE and HEALTHY, the rollback is propagated to realtime subscribers, and an ASSET_ROLLED_BACK audit event is present.
+
+## Test 5 - Reject malformed media health input on mobile
+Viewport: mobile
+Covers: media health validation, backend error response, invalid-write guardrail, mobile runtime behavior
+Description: Verifies health state cannot be changed without the required version and identity fields.
+
+QA Faults:
+```json
+[
+  {
+    "method": "POST",
+    "path": "/api/media/health/asset-01",
+    "status": 400,
+    "body_json": { "error": "version_id, app_id, universe_id and ok are required" }
+  }
+]
+```
+
+Steps:
+1. Trigger a media health check without the required fields
+2. Observe the returned validation error
+
+Expected: The health write is rejected and the existing media runtime state remains unchanged.
