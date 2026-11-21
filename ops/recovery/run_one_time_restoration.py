@@ -788,7 +788,7 @@ async def main_async(args: argparse.Namespace) -> int:
     print("Mode: local tests/builds + optional public GET probes; production activation disabled.")
     with tempfile.TemporaryDirectory(prefix="lingo-recovery-") as temp:
         workspace = Path(temp) / "repo"
-        root_before = await runner.git_snapshot(source)
+        root_before = await runner.git_snapshot(source, out)
         if (not root_before.get("git_readable") or not root_before.get("working_tree_clean")
                 or root_before.get("commit_sha") != args.source_expected_sha):
             print("BLOCKED: root source checkout is not clean at --source-expected-sha.", file=sys.stderr)
@@ -798,7 +798,7 @@ async def main_async(args: argparse.Namespace) -> int:
         except (OSError, ValueError) as exc:
             print(f"BLOCKED: source workspace cannot be copied safely: {exc}", file=sys.stderr)
             return 2
-        root_after = await runner.git_snapshot(source)
+        root_after = await runner.git_snapshot(source, out)
         if (not root_after.get("git_readable") or not root_after.get("working_tree_clean")
                 or root_after.get("commit_sha") != args.source_expected_sha
                 or root_after.get("commit_sha") != root_before.get("commit_sha")):
