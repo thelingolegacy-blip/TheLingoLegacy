@@ -6,7 +6,7 @@ const html = readFileSync(new URL('../../thats-my-lingo/index.html', import.meta
 const visible = html
   .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
   .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
-  .replace(/<!--[\\s\\S]*?-->/g, ' ')
+  .replace(/<!--[\s\S]*?-->/g, ' ')
   .replace(/<[^>]*>/g, ' ')
   .replace(/\s+/g, ' ');
 
