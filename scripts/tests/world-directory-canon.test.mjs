@@ -7,7 +7,7 @@ const pagePath = new URL('../../worlds/index.html', import.meta.url);
 const html = fs.readFileSync(fileURLToPath(pagePath), 'utf8');
 const realmCards = [...html.matchAll(/<article class="realm-card"[\s\S]*?<h3>(.*?)<\/h3>[\s\S]*?<\/article>/g)];
 const realmTitles = realmCards.map(match => match[1]);
-const forbiddenRoutes = /href="\/(?:studio|terms|studio-sites|thats-my-lingo|kottons-code|library|loyalty-lane-cycles|studio\/lingo-ai)[^"]*"/;
+const forbiddenRoutes = /href="\/(?:studio|terms|studio-sites|thats-my-lingo|casino|kottons-code|library|loyalty-lane-cycles|studio\/lingo-ai)[^"]*"/;
 
 test('wildcard homepage uses the canonical portfolio and route-safety rules', () => {
   const home = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
