@@ -208,3 +208,107 @@ These can be reconciled only by recording a single owner-approved decision with 
 7. Reconcile #514 dispatch lifecycle with #602's dispatch envelope and #511 execution router; retain one canonical event/state contract.
 8. Only after source reconciliation, execute available local/preview tests and attach evidence. GitHub Actions startup failure remains a separate infrastructure blocker and cannot be replaced by source assertions.
 
+
+
+## 12. Live provider and platform inventory — read-only snapshot 2026-11-21
+
+This section records provider reads performed during the ignition review. It does not grant deployment or mutation authority.
+
+### GitHub
+- Canonical repository `thelingolegacy-blip/TheLingoLegacy` is public, active, default branch `main`; connected identity has admin/push permissions.
+- PR #638 is open, draft, mergeable, documentation-only; it has not been merged.
+- PR #614 is open/draft and non-mergeable; its description explicitly keeps Firebase staging identity unconfigured and publication quarantined. Current-head Android wrapper JAR checksum differs from the official Gradle 9.5.0 wrapper checksum; do not execute it.
+- PR #632 is open/draft and mergeable, but overlaps five source paths with #614. It has no verified native device build in its current acceptance evidence.
+- PR #602 is open/draft and stacked on PR #548; it explicitly has no current-head GitHub Actions run and no hosted validator execution.
+- PR #548 remains open/draft/non-mergeable; its Cloudflare exact-root Worker version 3 is preview-only and browser QA is outstanding.
+- PR #511 remains open/draft; it is the master registry candidate, not a live authoritative merged registry.
+- PR #515 remains open/draft/non-mergeable; its Supabase-primary backend decision conflicts with the undecided identity/backend ADR in #511. Do not treat it as accepted.
+- Hosted GitHub Actions remains a blocker: latest observed startup failure occurs before job allocation; no jobs/steps/logs/artifacts means no CI pass or G02 proof.
+- A zero-third-party-action hosted canary trigger commit exists on the dedicated recovery branch, but the immediate status read returned no commit checks. This is not evidence of a successful run.
+
+### Cloudflare
+- Account and zone: one connected account; `thelingolegacy.com` zone is active on the Free Website plan.
+- Live inventory: 10 Worker scripts, 27 Worker routes, and 34 DNS records.
+- Production wildcard apex and www routes point to `thelingolegacyv-5`; an exact bare-apex root route points to `lingo-flagship-root`. The two Workers have distinct behavior; source-of-truth drift and route normalization are documented as decision-required. Do not change these routes during this workstream.
+- `lingo-studio-control-center-staging` exists as an unrouted staging Worker with no regular bindings shown in the inventory. Historical evidence (2026-11-04) records read-only `/healthz` and `/api/v1/platform/status` checks, but this session could not retrieve those workers.dev endpoints through the web inspection surface. Treat that historical evidence as dated, not as a fresh runtime check.
+- `lingo-ecosystem-atlas` is routed at `atlas.thelingolegacy.com/*`; `lingo-static-backup-proxy` is routed at `launch.thelingolegacy.com/*`.
+- DNS includes `admin.thelingolegacy.com` pointing to `admin-thelingolegacy.firebaseapp.com`, and `app.thelingolegacy.com` pointing to `my-flutter-app.pages.dev`. DNS targets alone do not prove the Firebase project, Pages deployment, Flutter app, or route is healthy.
+- Cloudflare account metadata reports `enforce_twofactor=false`. This is a P1 account-security gap: enable/enforce MFA through the owner-approved account security process, confirm at least two recovery methods/admin continuity, then re-read account settings. No account setting was changed.
+- Zone `security_level` is `medium`; this is not a complete WAF, bot, rate-limit, Access, or application security audit.
+- No route, DNS, Worker, secret, or account setting was modified.
+
+### Supabase
+- Connected organization `thelingolegacy`; one project `zoksxavxmgnkrthselek`, status `ACTIVE_HEALTHY`, region `us-west-2`, PostgreSQL 17.6.1.121.
+- Live schema inventory returned no application tables in `public`; no migration records and no Edge Functions were returned.
+- Security, performance, and health advisor queries each returned zero lints.
+- Interpretation: healthy provider/database shell, not yet an implemented LINGO application backend. Empty app schema means no verified LINGO identity, wallet, ledger, tenant, product, or workforce domain services. Zero lints does not prove application security when the application schema and functions are absent.
+- Do not create production schema or select this project as the transactional authority until the #511/#515 ADR and owner-approved data-domain map are accepted.
+
+### Render
+- One workspace, `My Workspace`.
+- One non-suspended static site, `lingo-legacy-platform-ops-preview`, linked to the canonical GitHub repository and recovery branch.
+- Auto-deploy is off; service is a starter static site publishing `render-staging`; no Render backend service, worker, database, or production API was returned in this workspace inventory.
+- Its IP allowlist is `0.0.0.0/0` (“everywhere”): it is publicly reachable at the network layer. Keep it synthetic/demo-only; do not place operational secrets, sensitive evidence, customer records, or privileged controls there. Add authentication/Access protection before any sensitive operational use.
+- Do not provision paid Render services as a substitute for the existing Cloudflare/Firebase/Supabase architecture without a cost and ownership decision.
+
+### Flutter and Firebase
+- Current main source contains placeholder Firebase options and no approved production/staging project identity. The existing PR #614 documents a quarantined Hosting builder, per-platform placeholder validation, Flutter 3.50.0 pin, Android scaffold and release signing disabled.
+- PR #614 documents an earlier successful Cloudflare Pages preview for an older commit only; it does not qualify the current head. The current branch's Gradle wrapper JAR mismatch is a hard execution stop. Replace from official Gradle distribution and verify wrapper JAR checksum before any Android build.
+- PR #632 supplies a focused offline-preview and unsigned-release safety candidate. Reconcile with #614; do not merge both or activate Firebase by populating guessed configuration.
+- The DNS records for Firebase/Pages do not substitute for Firebase Console project ownership, authorized app registrations, service configuration, rules, App Check, Hosting allowlist review, or device testing.
+- No Firebase provider connector is available in this session. Firebase project status, Hosting deployments, Auth providers, rules, App Check, Crashlytics, FCM, and billing were not independently inspected. Mark each UNKNOWN until checked in the authorized Firebase Console/CLI.
+
+### Google AI Studio and LINGOstudio
+- The repository already contains `docs/google-ai-studio-lingo-workstream.md`, `studio/google-ai-studio-build-prompt.md`, and a read-only Studio Control Center concept. Google AI Studio is designated for prototype/build-mode work and Gemini experimentation, not as a production deployment authority or G02 repair mechanism.
+- No Google AI Studio connector/account state is available in this session. Project ownership, Build mode import, Gemini key configuration, model availability, quotas, and generated app deployment are UNKNOWN.
+- LINGOstudio should become the unified creator/developer/operations workspace, not a privileged bypass. Its module map must cover: portfolio/product registry; visual/site/game studio; AI prompt/model workbench; source and PR explorer; build/test evidence; provider inventory; environment and release gates; design system/assets; content/lore/media pipeline; approvals/audit trail; incident/recovery console; and documentation/runbooks.
+- LINGOstudio operating modes: Observe, Analyze, Design, Build (isolated branch only), Test, Propose, Verify. No autonomous merge, deploy, secret rotation, billing, wallet/reward, access grant, or production activation.
+- Integrations use provider adapters and scoped tokens on server-side only. The UI must distinguish LIVE VERIFIED, HISTORICAL EVIDENCE, SOURCE-DECLARED, DEMO, BLOCKED, and UNKNOWN; every metric/status shows source and observed-at timestamp.
+- Required Studio platform services: SSO/MFA; RBAC + resource/tenant ABAC; audit log; secret reference vault (never reveal values); environment registry; signed build artifacts/SBOM/provenance; evidence store; cost/usage controls; backup/restore drills; incident/runbook center; accessibility and mobile/tablet responsive UI.
+- Never place Gemini keys or other provider credentials in client bundles, prompts, Git, Flutter assets, public Pages output, logs, or screenshots.
+
+## 13. Prioritized gaps to close before a live experience
+
+| Priority | Gap | Acceptance evidence |
+|---|---|---|
+| P0 | GitHub Actions startup failure / G02 | Hosted jobs instantiated; all required steps, runner identity, logs and artifacts correlated to commit/run |
+| P0 | Firebase project and publication boundary | Owner-approved staging project ID, app registrations, App Check/rules, non-empty explicit asset allowlist, no credentials in output, verified test deployment |
+| P0 | Production route/root/www parity | Approved route map, apex/www/query-path tests, exact Worker attribution, preview QA and rollback evidence |
+| P0 | Flutter Android integrity | Trusted wrapper JAR checksum, clean Flutter 3.50.0 analyze/tests, Android build, no debug signing, unsigned/release signing gate verified |
+| P0 | Supabase backend decision | Signed ADR selecting identity issuer and one transactional authority; app schema migrations, RLS policies, negative cross-tenant tests, backup/restore evidence |
+| P1 | Cloudflare account MFA | Account-level two-factor enforcement enabled and recovery/admin continuity verified |
+| P1 | Render preview exposure | Authentication or Cloudflare Access; synthetic-only data; no sensitive evidence; preview network boundary documented |
+| P1 | Google AI Studio readiness | Authorized project/import, server-only Gemini secret, quota/cost controls, isolated output branch, generated-code review |
+| P1 | LINGOstudio completion | Unified module registry and read-only integration health; evidence viewer; proposal/approval ledger; audit trail; responsive/accessibility QA |
+| P1 | Observability and recovery | SLOs, structured logs, alert routing, privacy retention, RPO/RTO, restore rehearsal and incident ownership |
+| P1 | Enterprise compliance | Data classification, retention, deletion, residency, consent, vendor inventory, DPIA/security review where applicable, accessibility and legal reviews by jurisdiction |
+
+## 14. LINGOstudio target module contract
+
+The Studio is the operating cockpit for building and understanding the ecosystem, with a clear separation between control plane and product runtimes.
+
+- **Studio Home:** portfolio health, today's build queue, blocker count, release calendar, and live/preview distinction.
+- **World & Product Registry:** canonical IDs, owners, repos, routes, runtime, data class, dependency graph, launch state.
+- **Visual Studio:** web/mobile/page layouts, brand tokens, component library, preview links, accessibility checks.
+- **Game Studio:** Unity/web project registry, game design documents, assets, deterministic test fixtures, server-authoritative rules and game QA.
+- **AI Studio:** Google AI Studio/Gemini prototype handoff, prompt library, model adapter catalog, eval datasets, redaction and cost budgets.
+- **Code Studio:** GitHub branch/PR/diff, code owners, CI results, dependency/SBOM and security evidence.
+- **Backend Studio:** API contracts, identity, Supabase/Firebase project inventory, schema/migration review, RLS/rules test evidence.
+- **Cloud Studio:** Cloudflare Worker/route/DNS inventory, Render preview services, environment/binding metadata; no secret values.
+- **Media & Library Studio:** books, characters, scripts, audio/video, rights, provenance and publishing approvals.
+- **Operations Studio:** workforce, property, hospitality, transportation/infrastructure asset domains with strict tenant/jurisdiction roles.
+- **Release & Trust Center:** gate state, evidence provenance, approvals, incident response, audit trail, rollback and recovery.
+- **Finance/Commerce readiness:** provider configuration status only; real payment, payroll, wallet, sweepstakes and rewards actions remain disabled until separate approval.
+
+All Studio actions are read-only by default. Any later write action must be a narrowly scoped, separately authorized workflow with confirmation, audit event, idempotency, rollback plan, and post-action verification.
+
+## 15. 150-minute ignition sprint revised for observed reality
+
+1. **0–20 min — Security and provenance:** preserve current main/LKG; record exact GitHub and provider snapshots; account MFA decision; no production changes.
+2. **20–45 min — Stack and ownership:** reconcile #511 registry, #602 realms, #515 backend ADR; name domain owners and data classifications.
+3. **45–75 min — P0 app safety:** reconcile #614/#632; stop unsafe wrapper execution; verify Firebase staging project ownership and publication allowlist; test no-secret output.
+4. **75–100 min — Cloudflare and Render:** reconcile apex/root/www ownership; protect Render preview; establish staging route matrix and read-only probes.
+5. **100–125 min — LINGOstudio:** consolidate module registry and provider readiness into the existing Studio Control Center; keep all controls read-only.
+6. **125–150 min — Evidence and closeout:** run available safe local/preview tests, attach exact evidence, update #517, retain all blockers that lack provider/host/runtime proof.
+
+**Completion statement:** This register is a current architecture and provider-readiness snapshot. It does not mean the ecosystem is fully built, all providers are connected, or a live release is approved. The next release candidate must earn each gate with correlated evidence.
