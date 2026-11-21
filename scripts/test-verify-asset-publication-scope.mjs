@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const validator = fileURLToPath(new URL('./verify-asset-publication-scope.mjs', import.meta.url));
 const requiredExclusions = [
   '.github/', '.git/', '.wrangler/', 'config/', 'docs/', 'ops/', 'scripts/',
-  'tests/', 'node_modules/', '.env*', '*.env', '*.md', '*.mjs', '*.cjs',
+  'tests/', 'packages/', 'node_modules/', '.env*', '*.env', '*.md', '*.mjs', '*.cjs',
   '*.sh', '*.py', '*.yml', '*.yaml', '*.toml', '*.jsonc', '*.lock', '*.map',
   'worker.js', 'wrangler.jsonc', 'android/', 'ios/', 'lib/', 'infra/', 'cloudflare/',
   'diagnostics/', 'integration-os/', 'admin-command-center/', 'economy-command-center/',
