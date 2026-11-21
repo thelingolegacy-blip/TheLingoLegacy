@@ -1,4 +1,4 @@
-import { digestCanonicalJson } from "./canonical.mjs";
+import { canonicalizeJson, digestCanonicalJson } from "./canonical.mjs";
 
 const REQUIRED_FIELDS = [
   "approvalId", "requestId", "requesterPrincipalId", "approverPrincipalId",
@@ -17,6 +17,15 @@ function parseTime(value) {
   return Number.isFinite(time) ? time : NaN;
 }
 
+export function canonicalApprovalPayload(approval) {
+  if (!approval || typeof approval !== "object" || Array.isArray(approval)) {
+    throw new TypeError("APPROVAL_SCHEMA_INVALID");
+  }
+  const { signature, ...unsigned } = approval;
+  if (!nonEmpty(signature)) throw new TypeError("APPROVAL_SIGNATURE_MISSING");
+  return canonicalizeJson(unsigned);
+}
+
 export async function bindApprovalPayload(payload, cryptoImpl = globalThis.crypto) {
   return digestCanonicalJson(payload, cryptoImpl);
 }
@@ -26,8 +35,9 @@ export async function bindApprovalPayload(payload, cryptoImpl = globalThis.crypt
  *
  * The store adapter MUST implement consumeAtomically as a durable, transactional
  * compare-and-set on approval status and nonce. A process-local map is not valid.
- * The signatureVerifier MUST verify a canonical signed envelope against an
- * independently pinned approver key; key selection must not come from the record.
+ * The signatureVerifier MUST verify canonicalApprovalPayload(approval) against
+ * an independently pinned approver key. The record keyId is only a lookup hint;
+ * the adapter must compare it to trusted server-side key configuration.
  */
 export async function verifyAndConsumeApproval({
   approval,
@@ -45,7 +55,7 @@ export async function verifyAndConsumeApproval({
     return reject("APPROVAL_SCHEMA_INVALID");
   }
   if (!expected || typeof expected !== "object" || !requester || !nonEmpty(requester.id)
-    || !nonEmpty(requester.type)) return reject("EXECUTION_CONTEXT_INVALID");
+    || !["human", "service", "agent"].includes(requester.type)) return reject("EXECUTION_CONTEXT_INVALID");
   if (!nonEmpty(approval.approvalId) || !nonEmpty(approval.requestId)
     || !nonEmpty(approval.requesterPrincipalId) || !nonEmpty(approval.approverPrincipalId)
     || approval.approverPrincipalType !== "human"
