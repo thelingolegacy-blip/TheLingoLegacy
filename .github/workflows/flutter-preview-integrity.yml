@@ -1,0 +1,55 @@
+name: Flutter Offline Preview Integrity
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'scripts/cloudflare-pages-preview-build.sh'
+      - '.github/workflows/flutter-preview-integrity.yml'
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'scripts/cloudflare-pages-preview-build.sh'
+      - '.github/workflows/flutter-preview-integrity.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-preview-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate the web platform shell when absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f web/index.html ]]; then
+            flutter create --platforms=web .
+          fi
+      - name: Resolve Flutter packages
+        run: flutter pub get
+      - name: Run Flutter tests
+        run: flutter test
+      - name: Build web preview
+        run: flutter build web --release
+      - name: Verify build output
+        run: test -s build/web/index.html
