@@ -1,0 +1,315 @@
+{
+  "registry": "LINGOlegacy Ecosystem Registry",
+  "audit_date": "2026-10-30",
+  "repository": "thelingolegacy-blip/TheLingoLegacy",
+  "registry_branch": "audit/registry-verification-2026-10-30",
+  "release_authority": "HOLD",
+  "status_vocabulary": [
+    "INSTALLED",
+    "CONNECTED",
+    "CONFIGURED",
+    "DEPLOYED",
+    "EXECUTED",
+    "ACCEPTED",
+    "UNVERIFIED",
+    "BLOCKED"
+  ],
+  "integrations": [
+    {
+      "provider": "GitHub",
+      "state": "CONNECTED",
+      "evidence": {
+        "installation_id": 140995100,
+        "account": "thelingolegacy-blip",
+        "repository": "thelingolegacy-blip/TheLingoLegacy",
+        "repository_selection": "all"
+      }
+    },
+    {
+      "provider": "AppDeploy",
+      "state": "DEPLOYED",
+      "evidence": {
+        "application_count": 15,
+        "latest_audited_studio_hub": "lingo-legacy-studio-hub-nhda3b",
+        "latest_qa_frontend_errors": 0,
+        "latest_qa_network_errors": 0
+      }
+    },
+    {
+      "provider": "Shopify",
+      "state": "CONNECTED",
+      "evidence": {
+        "store": "Loyalty Lane",
+        "domain": "vercel-store-f0dc9593.myshopify.com",
+        "plan": "Advanced",
+        "currency": "USD",
+        "product_count": 15,
+        "active_products": 15,
+        "inventory_zero_products_present": true
+      }
+    },
+    {
+      "provider": "Cloudflare",
+      "state": "CONNECTED_PRODUCTION_PROTECTED",
+      "evidence": {
+        "main_worker": "thelingolegacyv-5",
+        "main_worker_production_version": 137,
+        "main_worker_latest_uploaded_version": 177,
+        "root_worker": "lingo-flagship-root",
+        "root_worker_production_version": 1,
+        "root_worker_latest_uploaded_version": 2,
+        "production_mutations": 0
+      }
+    },
+    {
+      "provider": "Render",
+      "state": "WORKSPACE_CONFIRMED_SERVICE_INVENTORY_UNRESOLVED",
+      "evidence": {
+        "workspace_name": "My Workspace",
+        "workspace_id": "tea-dbiev1gae00c738hk28g",
+        "services_created": 0,
+        "user_explicit_confirmation": true,
+        "service_inventory_call_returned_null": true,
+        "provisioning_state": "NOT_PROVISIONED",
+        "reason": "Explicit workspace ID used on each inventory request. PostgreSQL and Key Value inventories returned no instances; services API returned null. No root render.yaml, Dockerfile, or Compose specification found in inspected main paths. No resource created."
+      }
+    },
+    {
+      "provider": "Firebase",
+      "state": "PROJECT_IDENTITY_CONFLICT_RUNTIME_UNVERIFIED",
+      "evidence": {
+        "declared_flutter_packages": [
+          "firebase_core",
+          "firebase_database",
+          "firebase_auth",
+          "firebase_storage",
+          "firebase_analytics"
+        ],
+        "project_credentials_verified": false,
+        "live_runtime_verified": false,
+        "project_name": "Flutter AI Playground",
+        "project_id": "flutter-ai-playground-e9ad0",
+        "project_number": "6714975920",
+        "console_access_confirmed_by_user_screenshot": true,
+        "registered_web_apps": [
+          "Flutter AI Playground",
+          "Flutter AI Playground Web"
+        ],
+        "registered_web_app_count": 2,
+        "authentication_firestore_storage_rules_verified": false,
+        "repository_default_project_id": "lingo-legacy-production",
+        "repository_verifier_expected_project_id": "lingo-legacy-production",
+        "console_project_id": "flutter-ai-playground-e9ad0",
+        "project_identity_conflict": true,
+        "deploy_blocked_pending_mapping": true
+      },
+      "connector_plugin": {
+        "available": true,
+        "connected": false,
+        "connection_handoff_offered": true,
+        "requires_user_connection": true
+      }
+    },
+    {
+      "provider": "AppleAppStore",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "signed_build_verified": false,
+        "store_approval_verified": false
+      }
+    },
+    {
+      "provider": "GooglePlay",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "signed_build_verified": false,
+        "store_approval_verified": false
+      }
+    },
+    {
+      "provider": "LGwebOS",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "platform_build_verified": false,
+        "device_test_verified": false
+      }
+    },
+    {
+      "provider": "SamsungTizen",
+      "state": "NOT_CERTIFIED",
+      "evidence": {
+        "platform_build_verified": false,
+        "device_test_verified": false
+      }
+    }
+  ],
+  "g02": {
+    "state": "BLOCKED",
+    "canonical_labels": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "lingo-g02"
+    ],
+    "pr417_head": "b7d273a5c69c93f5b8d8b4db6b6bec9ee6ba3de1",
+    "main_branch_has_runner_id_context": true,
+    "pr417_branch_removes_runner_id_context": true,
+    "jobs_api_runner_id_required": true,
+    "latest_inspected_runs_had_jobs": 0,
+    "latest_inspected_runs_had_artifacts": 0,
+    "acceptance_note": "PR #417 remains draft/unmerged; main source still contains runner.id context. Three latest inspected runs ended startup_failure with zero jobs and zero artifacts.",
+    "latest_inspected_runs": [
+      {
+        "workflow": "Crimson Smoke UI — static validation",
+        "run_id": 41123563640,
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "workflow": "G02 Runner Image Build (no publish)",
+        "run_id": 41123565091,
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      },
+      {
+        "workflow": "Lingo Legacy Static CI",
+        "run_id": 41123562275,
+        "conclusion": "startup_failure",
+        "jobs": 0,
+        "artifacts": 0
+      }
+    ]
+  },
+  "appdeploy_app_ids": [
+    "lingo-legacy-studio-hub-nhda3b",
+    "lingo-legacy-master-project-plan-rkh6r6",
+    "hello-the-lingo-legacy-ois1rj",
+    "that-s-my-lingo-casino-studio-2xntye",
+    "lingo-legacy-universe-rpekc0",
+    "the-lingo-legacy-y67ewl",
+    "obsidian-closet-design-studio-zk6va7",
+    "jersey-shore-the-undead-l4h5ea",
+    "the-lingo-legacy-hq-vhjt6i",
+    "kotton-s-code-cartoon-studio-509py3",
+    "loyalty-lane-community-hub-zb39n2",
+    "lingo-legacy-verification-bridge-wwagn2",
+    "lingo-ai-sonic-boom-2030-7plgl2",
+    "crazy-weasels-0j3ujc",
+    "lingo-traveltm-uyd57n"
+  ],
+  "product_families": [
+    "LINGOlegacy",
+    "LINGOlane",
+    "LINGOslots",
+    "LINGOarcade",
+    "LINGOlibrary",
+    "LINGOmedia",
+    "LINGOworld",
+    "LegacyXclub"
+  ],
+  "constraints": {
+    "merge_prs": false,
+    "promote_workers": false,
+    "change_dns_routes": false,
+    "change_secrets": false,
+    "change_billing": false,
+    "activate_ai": false,
+    "activate_payments": false,
+    "activate_real_money_wagering": false,
+    "production_release": "HOLD"
+  },
+  "cloudflare_deployment_targets": {
+    "root": {
+      "worker": "thelingolegacyv-5",
+      "entrypoint": "worker.js",
+      "routes": [
+        "thelingolegacy.com/*",
+        "www.thelingolegacy.com/*"
+      ],
+      "environment": "production"
+    },
+    "studio": {
+      "worker": "lingo-legacy-studio-build",
+      "entrypoint": "cloudflare/studio-worker.js",
+      "environment": "isolated-non-production",
+      "workers_dev_enabled": true,
+      "workers_dev_url": "https://lingo-legacy-studio-build.thelingolegacy.workers.dev/",
+      "preview_urls_enabled": false,
+      "production_routes": false,
+      "bindings": [],
+      "secrets": [],
+      "version_id": "65fcf071-3fce-4b81-ab4f-117c6f06b3cf",
+      "deployment_id": "237e48a2-3f80-40fa-b6ba-9f4371da206b",
+      "source_branch": "audit/registry-verification-2026-10-30",
+      "source_commit": "856aa0410e18426d24f508c9edb62c8d11cd5203",
+      "observability_enabled": true,
+      "persisted_invocation_logs": true,
+      "query_string_redaction": true,
+      "health_endpoint": "/api/health",
+      "health_payload_contract": {
+        "status": "ok",
+        "production": false,
+        "aiConnected": false,
+        "mode": "demo"
+      },
+      "public_http_probe": "NOT_VERIFIED",
+      "note": "Cloudflare API confirms script, deployment allocation, workers.dev enablement and settings. External HTTP response/body has not yet been independently retrieved."
+    },
+    "reconciliation": "keep separate; no promotion or route mutation",
+    "account_inventory": {
+      "inspected_at": "2026-10-30",
+      "account_id": "16cb6f247cd1b28fca864760c7269606",
+      "scripts": [
+        "thelingolegacyv-5",
+        "lingo-flagship-root",
+        "thelingolegacy-web-recovery-preview",
+        "lingo-static-backup-proxy"
+      ],
+      "configured_studio_worker": "lingo-legacy-studio-build",
+      "configured_studio_worker_exists": true,
+      "studio_worker_get_status": 200,
+      "studio_worker_error_code": null,
+      "flagship_worker": {
+        "production_version": 137,
+        "latest_uploaded_version": 177,
+        "latest_uploaded_is_production": false,
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "firebase_binding": false,
+        "secret_names": []
+      },
+      "root_worker": {
+        "production_version": 1,
+        "latest_uploaded_version": 2,
+        "latest_uploaded_is_production": false,
+        "latest_uploaded_preview_only": true,
+        "bindings": [],
+        "secret_names": []
+      },
+      "recovery_preview": {
+        "deployed_version": 20,
+        "observability_enabled": true,
+        "persisted_invocation_logs": true,
+        "query_string_redaction": true,
+        "bindings": [
+          "ASSETS"
+        ],
+        "secret_names": []
+      },
+      "live_probe": {
+        "paths": [
+          "/healthz",
+          "/api/v1/runtime"
+        ],
+        "status": "NOT_VERIFIED",
+        "reason": "Available web retrieval path could not fetch these endpoints; this is not a pass/fail result."
+      },
+      "studio_worker_deployment_id": "237e48a2-3f80-40fa-b6ba-9f4371da206b"
+    }
+  }
+}
