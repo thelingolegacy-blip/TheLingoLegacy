@@ -43,7 +43,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 IGNORED = {
     ".git", ".dart_tool", ".gradle", ".idea", ".venv", "venv",
@@ -93,7 +93,7 @@ def safe_env(extra: dict[str, str] | None = None, home_dir: Path | None = None) 
     env.setdefault("PATH", os.defpath)
     env.setdefault("CI", "1")
     if extra:
-        unexpected = set(extra) - (SAFE_ENV_KEYS | {"TEST_DATABASE_URL"})
+        unexpected = set(extra) - (SAFE_ENV_KEYS | {"TEST_DATABASE_URL", "LINGO_FIREBASE_STAGING_PROJECT_ID"})
         if unexpected:
             raise ValueError("unsupported child environment keys: " + ", ".join(sorted(unexpected)))
         env.update(extra)
@@ -144,15 +144,50 @@ def resolve_output_root(source: Path, output_dir: str) -> Path:
     return resolved
 
 
+COPY_IGNORES = (*IGNORED, "*.log", "static-gate-results.json")
+
+
+def workspace_manifest_sha256(root: Path) -> str:
+    """Hash every regular file that copy_workspace would preserve, by path and bytes."""
+    digest = hashlib.sha256()
+    for current, directories, files in os.walk(root, followlinks=False):
+        current_path = Path(current)
+        directories[:] = sorted(name for name in directories
+                                if not any(fnmatch.fnmatch(name, pattern) for pattern in COPY_IGNORES))
+        for name in sorted(files):
+            if any(fnmatch.fnmatch(name, pattern) for pattern in COPY_IGNORES):
+                continue
+            path = current_path / name
+            if path.is_symlink() or not path.is_file():
+                raise ValueError(f"workspace contains a non-regular file: {path.relative_to(root).as_posix()}")
+            relative = path.relative_to(root).as_posix().encode("utf-8")
+            digest.update(len(relative).to_bytes(8, "big"))
+            digest.update(relative)
+            file_digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    file_digest.update(chunk)
+            digest.update(file_digest.digest())
+    return digest.hexdigest()
+
+
 def copy_workspace(source: Path, destination: Path) -> None:
     symlinks = find_workspace_symlinks(source)
     if symlinks:
         raise ValueError("workspace contains symlinks; refusing to preserve or follow them: " + ", ".join(symlinks[:20]))
-    shutil.copytree(
-        source, destination,
-        ignore=shutil.ignore_patterns(*IGNORED, "*.log", "static-gate-results.json"),
-        symlinks=False,
-    )
+    shutil.copytree(source, destination,
+                    ignore=shutil.ignore_patterns(*COPY_IGNORES), symlinks=False)
+
+
+def copy_workspace_verified(source: Path, destination: Path) -> str:
+    """Copy only when source is stable across the copy and destination matches it."""
+    before = workspace_manifest_sha256(source)
+    copy_workspace(source, destination)
+    after = workspace_manifest_sha256(source)
+    copied = workspace_manifest_sha256(destination)
+    if before != after or before != copied:
+        raise ValueError("workspace changed during copy or copied content does not match the attested source manifest")
+    return before
 
 
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
@@ -284,8 +319,9 @@ class Runner:
             "git_readable": head_rc == 0 and status_rc == 0,
         }
 
-    async def integrity(self, source: Path) -> dict[str, Any]:
+    async def integrity(self, source: Path, expected_sha: str) -> dict[str, Any]:
         snapshot = await self.git_snapshot(source, self.out)
+        sha_matches = snapshot.get("commit_sha") == expected_sha
         try:
             proc = await asyncio.create_subprocess_exec(
                 "git", "diff", "--check", cwd=str(source), env=safe_env(home_dir=self.home),
@@ -297,11 +333,13 @@ class Runner:
         except Exception as exc:
             diff_rc = None
             diff_output = f"{type(exc).__name__}: {exc}"
-        passed = snapshot["git_readable"] and snapshot["working_tree_clean"] and diff_rc == 0
+        passed = snapshot["git_readable"] and snapshot["working_tree_clean"] and sha_matches and diff_rc == 0
         return self.record({
             "task": "source-integrity",
             "status": "PASS" if passed else "FAIL",
             "commit_sha": snapshot["commit_sha"],
+            "expected_sha": expected_sha,
+            "expected_sha_matches": sha_matches,
             "branch": snapshot["branch"],
             "working_tree_clean": snapshot["working_tree_clean"],
             "working_tree_status": snapshot["working_tree_status"],
@@ -499,7 +537,8 @@ class Runner:
         if staging_id:
             results.append(await self.command("firebase-staging-project-contract", path,
                                               [node, "scripts/verify-flutter-firebase.mjs"],
-                                              timeout=max(self.timeout, 600)))
+                                              timeout=max(self.timeout, 600),
+                                              extra_env={"LINGO_FIREBASE_STAGING_PROJECT_ID": staging_id}))
         statuses = [x["status"] for x in results]
         status = "FAIL" if "FAIL" in statuses else ("BLOCKED" if "BLOCKED" in statuses else "PASS")
         return self.record({"task": "firebase-hosting-candidate", "status": status,
@@ -662,24 +701,38 @@ print("CRIMSON_SMOKE_STATIC=PASS")
             req = urllib.request.Request(url, headers={"User-Agent": "LINGO-Recovery-Evidence/1.0"}, method="GET")
             try:
                 with opener.open(req, timeout=20) as response:
-                    results.append({"url": url, "status": response.status, "final_url": response.geturl()})
+                    results.append({"url": url, "status": response.status, "final_url": response.geturl(),
+                                    "location": response.headers.get("Location")})
             except urllib.error.HTTPError as exc:
-                results.append({"url": url, "status": exc.code, "final_url": exc.geturl(), "error": "HTTPError"})
+                results.append({"url": url, "status": exc.code, "final_url": exc.geturl(),
+                                "location": exc.headers.get("Location"), "error": "HTTPError"})
             except Exception as exc:
                 results.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
         accepted = []
+        redirect_statuses = {301, 302, 303, 307, 308}
         for index, result in enumerate(results):
             status = result.get("status")
-            # The apex is expected to serve the homepage directly. www and app
-            # may redirect, but redirects are recorded and never followed here.
+            source_url = urlparse(PROBES[index])
+            location = result.get("location")
+            redirect_ok = False
+            if status in redirect_statuses and location:
+                target = urlparse(urljoin(PROBES[index], location))
+                redirect_ok = (target.scheme == "https"
+                               and target.hostname == source_url.hostname
+                               and target.port in (None, 443)
+                               and target.username is None
+                               and target.password is None)
             if index == 0:
-                accepted.append(status == 200)
+                ok = status == 200
+                result["expectation"] = "HTTP 200"
             else:
-                accepted.append(status in {200, 301, 302, 307, 308})
-            result["expectation"] = "HTTP 200" if index == 0 else "HTTP 200 or redirect"
+                ok = status == 200 or (status in redirect_statuses and redirect_ok)
+                result["expectation"] = "HTTP 200 or same-host HTTPS redirect"
+            result["redirect_target_valid"] = redirect_ok if status in redirect_statuses else None
+            accepted.append(ok)
         acceptable = len(accepted) == len(PROBES) and all(accepted)
         return self.record({"task": "public-route-probes", "status": "PASS" if acceptable else "FAIL",
-                            "probes": results, "note": "Unauthenticated HTTPS GET only; redirects are not followed; no mutation."})
+                            "probes": results, "note": "Unauthenticated HTTPS GET only; redirects are not followed; redirect targets must remain HTTPS on the original hostname; no mutation."})
 
     async def security_tools(self, workspace: Path) -> dict[str, Any]:
         scanner = shutil.which("gitleaks")
@@ -694,6 +747,9 @@ async def main_async(args: argparse.Namespace) -> int:
     source = Path(args.repo_root).resolve()
     if not (source / ".git").exists() or not (source / "ops/recovery").is_dir():
         print("BLOCKED: run from a Git checkout containing ops/recovery.", file=sys.stderr)
+        return 2
+    if not args.source_expected_sha or not SHA_RE.fullmatch(args.source_expected_sha):
+        print("BLOCKED: --source-expected-sha must be supplied as a full lowercase 40-character SHA.", file=sys.stderr)
         return 2
     if args.expected_sha and not SHA_RE.fullmatch(args.expected_sha):
         print("BLOCKED: --expected-sha must be a full lowercase 40-character SHA.", file=sys.stderr)
@@ -728,7 +784,7 @@ async def main_async(args: argparse.Namespace) -> int:
     with tempfile.TemporaryDirectory(prefix="lingo-recovery-") as temp:
         workspace = Path(temp) / "repo"
         try:
-            copy_workspace(source, workspace)
+            copy_workspace_verified(source, workspace)
         except (OSError, ValueError) as exc:
             print(f"BLOCKED: source workspace cannot be copied safely: {exc}", file=sys.stderr)
             return 2
@@ -791,20 +847,20 @@ async def main_async(args: argparse.Namespace) -> int:
         if core_ok and core_dir:
             core_candidate = workspace / "_external_candidates" / "core-v2"
             core_candidate.parent.mkdir(parents=True, exist_ok=True)
-            copy_workspace(core_dir, core_candidate)
+            copy_workspace_verified(core_dir, core_candidate)
             if (core_candidate / "platform/lingo-core-v2/services/api/go.mod").is_file():
                 core_candidate = core_candidate / "platform/lingo-core-v2/services/api"
         firebase_candidate = None
         if firebase_ok and firebase_dir:
             firebase_candidate = workspace / "_external_candidates" / "firebase-hosting"
             firebase_candidate.parent.mkdir(parents=True, exist_ok=True)
-            copy_workspace(firebase_dir, firebase_candidate)
+            copy_workspace_verified(firebase_dir, firebase_candidate)
 
         # Each wave is a real dependency gate: a non-PASS task blocks every
         # task in later waves. Final evidence packaging still runs regardless.
         waves = [
             ("WAVE 0 — SOURCE AND BASELINE", [
-                ("source-integrity", lambda: runner.integrity(source)),
+                ("source-integrity", lambda: runner.integrity(source, args.source_expected_sha)),
             ]),
             ("WAVE 1 — REPOSITORY / SECURITY / SERVICE CONTRACTS", [
                 ("recovery-unit-tests", lambda: runner.python_recovery(workspace)),
@@ -928,6 +984,8 @@ async def main_async(args: argparse.Namespace) -> int:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", default=".", help="Existing local Git checkout (default: current directory)")
+    parser.add_argument("--source-expected-sha", required=True,
+                        help="Required exact 40-character SHA for the root source checkout")
     parser.add_argument("--output-dir", default="release/evidence/one-time-restoration", help="Evidence output root inside repo")
     parser.add_argument("--timeout", type=int, default=900, help="Per-command timeout in seconds")
     parser.add_argument("--isolated-host-confirmed", action="store_true",
