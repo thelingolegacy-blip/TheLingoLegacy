@@ -1,0 +1,242 @@
+name: LINGO Build and Test Matrix
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_flutter:
+        description: "Run Flutter dependency, analyzer, and unit tests when Flutter project exists"
+        required: true
+        default: true
+        type: boolean
+      run_cloudflare_dry_run:
+        description: "Run Wrangler deployment dry-run only (never deploy)"
+        required: true
+        default: true
+        type: boolean
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/**"
+      - "ops/**"
+      - "scripts/**"
+      - "worker.js"
+      - "wrangler.jsonc"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "studio-sites/**"
+      - "**/*.sh"
+      - "**/*.bash"
+      - "**/*.js"
+      - "**/*.mjs"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+  push:
+    branches:
+      - recovery/build-test-matrix-2026-10-24
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-build-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repository-shell:
+    name: Bash syntax and ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install ShellCheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+      - name: Validate tracked shell scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' -t files < <(git ls-files -z -- '*.sh' '*.bash')
+          if (( ${#files[@]} == 0 )); then
+            echo "No tracked shell scripts; nothing to validate."
+            exit 0
+          fi
+          for file in "${files[@]}"; do
+            echo "bash -n: $file"
+            bash -n "$file"
+          done
+          shellcheck -x "${files[@]}"
+
+  javascript-static:
+    name: JavaScript syntax and studio validator
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check canonical Worker syntax
+        run: node --check worker.js
+      - name: Check tracked MJS syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' -t files < <(git ls-files -z -- '*.mjs')
+          for file in "${files[@]}"; do
+            echo "node --check: $file"
+            node --check "$file"
+          done
+      - name: Validate studio design baseline when present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f studio-sites/scripts/validate-studio.mjs ]; then
+            node studio-sites/scripts/validate-studio.mjs
+          else
+            echo "Studio validator not present; explicit skip."
+          fi
+
+  workflow-yaml:
+    name: Workflow YAML syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parse repository workflow YAML
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check PyYAML
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          files = sorted(Path(".github/workflows").glob("*.yml"))
+          files += sorted(Path(".github/workflows").glob("*.yaml"))
+          if not files:
+              raise SystemExit("No workflow YAML files found")
+          failures = []
+          for path in files:
+              try:
+                  yaml.safe_load(path.read_text(encoding="utf-8"))
+                  print(f"YAML_PARSE=PASS file={path}")
+              except Exception as exc:
+                  failures.append((path, exc))
+                  print(f"YAML_PARSE=FAIL file={path}: {exc}")
+          if failures:
+              raise SystemExit(f"{len(failures)} workflow YAML file(s) failed parsing")
+          print(f"WORKFLOW_YAML_FILES={len(files)}")
+          PY
+
+  cloudflare-dry-run:
+    name: Cloudflare Wrangler dry-run (no publish)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name != 'workflow_dispatch' || inputs.run_cloudflare_dry_run
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate Wrangler config and build plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f wrangler.jsonc
+          test -f worker.js
+          npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+
+  flutter-checks:
+    name: Flutter analyze and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: github.event_name != 'workflow_dispatch' || inputs.run_flutter
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Flutter
+        if: hashFiles('pubspec.yaml') != ''
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve Flutter dependencies
+        if: hashFiles('pubspec.yaml') != ''
+        run: flutter pub get
+      - name: Analyze Flutter project
+        if: hashFiles('pubspec.yaml') != ''
+        run: flutter analyze
+      - name: Run Flutter unit/widget tests
+        if: hashFiles('pubspec.yaml') != ''
+        run: flutter test
+      - name: Record explicit skip if no Flutter manifest
+        if: hashFiles('pubspec.yaml') == ''
+        run: echo "FLUTTER_CHECKS=SKIPPED_NO_PUBSPEC"
+
+  evidence:
+    name: Build/test summary
+    if: always()
+    needs:
+      - repository-shell
+      - javascript-static
+      - workflow-yaml
+      - cloudflare-dry-run
+      - flutter-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Record gate results
+        env:
+          SHELL_RESULT: ${{ needs.repository-shell.result }}
+          JS_RESULT: ${{ needs.javascript-static.result }}
+          YAML_RESULT: ${{ needs.workflow-yaml.result }}
+          CLOUDFLARE_RESULT: ${{ needs.cloudflare-dry-run.result }}
+          FLUTTER_RESULT: ${{ needs.flutter-checks.result }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "# LINGO Build/Test Summary"
+            echo
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Run: $GITHUB_RUN_ID"
+            echo "- Shell syntax + ShellCheck: $SHELL_RESULT"
+            echo "- JavaScript + studio validation: $JS_RESULT"
+            echo "- Workflow YAML parsing: $YAML_RESULT"
+            echo "- Cloudflare Wrangler dry-run (no publish): $CLOUDFLARE_RESULT"
+            echo "- Flutter analyze/tests: $FLUTTER_RESULT"
+            echo "- Production deployment: NOT INCLUDED"
+          } | tee "$RUNNER_TEMP/build-test-summary.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-build-test-summary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/build-test-summary.md
+          if-no-files-found: warn
+          retention-days: 14
