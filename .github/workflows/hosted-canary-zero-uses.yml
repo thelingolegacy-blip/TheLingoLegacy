@@ -2,6 +2,9 @@ name: Hosted Canary Zero Uses
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - recovery/hosted-canary-zero-uses-push-2026-11-21
 
 permissions:
   contents: read
