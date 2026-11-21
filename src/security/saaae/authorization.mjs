@@ -14,7 +14,8 @@ export async function authorizeServerRequest({
   resolveTrustedContext,
   loadPolicy,
   auditDecision,
-  now = new Date()
+  now = new Date(),
+  requestId = globalThis.crypto?.randomUUID?.()
 } = {}) {
   const indeterminate = (reason, policyVersion = null) => ({
     decision: AUTHORIZATION_DECISIONS.INDETERMINATE,
@@ -23,13 +24,13 @@ export async function authorizeServerRequest({
     matchedRuleIds: []
   });
 
-  if (typeof auditDecision !== "function") {
+  if (typeof auditDecision !== "function" || typeof requestId !== "string" || !requestId) {
     return indeterminate("AUTHORIZATION_AUDIT_UNAVAILABLE");
   }
 
   const record = async (decision, details = {}) => {
     try {
-      const persisted = await auditDecision({ request, decision, ...details });
+      const persisted = await auditDecision({ requestId, decision, ...details });
       return persisted?.committed === true
         ? decision
         : indeterminate("AUTHORIZATION_AUDIT_UNAVAILABLE", decision.policyVersion);
@@ -55,16 +56,16 @@ export async function authorizeServerRequest({
       reason: "AUTHENTICATION_REQUIRED",
       policyVersion: null,
       matchedRuleIds: []
-    }, { identity: null });
+    }, { actorPrincipalId: null, actorPrincipalType: null });
   }
 
   let trusted;
   try { trusted = await resolveTrustedContext({ identity, request }); }
   catch {
-    return record(indeterminate("TRUSTED_CONTEXT_UNAVAILABLE"), { identity });
+    return record(indeterminate("TRUSTED_CONTEXT_UNAVAILABLE"), { actorPrincipalId: identity.uid, actorPrincipalType: "unknown" });
   }
   if (!trusted || !trusted.principal || !trusted.action || !trusted.resource || !trusted.context) {
-    return record(indeterminate("TRUSTED_CONTEXT_INVALID"), { identity });
+    return record(indeterminate("TRUSTED_CONTEXT_INVALID"), { actorPrincipalId: identity.uid, actorPrincipalType: "unknown" });
   }
 
   let policy;
@@ -76,7 +77,15 @@ export async function authorizeServerRequest({
       context: trusted.context
     });
   } catch {
-    return record(indeterminate("POLICY_UNAVAILABLE"), { identity, ...trusted });
+    return record(indeterminate("POLICY_UNAVAILABLE"), {
+      actorPrincipalId: trusted.principal.id,
+      actorPrincipalType: trusted.principal.type,
+      action: trusted.action,
+      resourceId: trusted.resource.id,
+      tenantId: trusted.resource.tenantId,
+      productDomain: trusted.resource.productDomain,
+      environment: trusted.context.environment
+    });
   }
 
   const decision = evaluateAuthorization({
@@ -88,5 +97,13 @@ export async function authorizeServerRequest({
     now
   });
 
-  return record(decision, { identity, ...trusted });
+  return record(decision, {
+    actorPrincipalId: trusted.principal.id,
+    actorPrincipalType: trusted.principal.type,
+    action: trusted.action,
+    resourceId: trusted.resource.id,
+    tenantId: trusted.resource.tenantId,
+    productDomain: trusted.resource.productDomain,
+    environment: trusted.context.environment
+  });
 }
