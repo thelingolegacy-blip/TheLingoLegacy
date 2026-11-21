@@ -64,6 +64,7 @@ test('LINGOworld operations domains are separately presented', () => {
   const section = html.match(/<section class="section" id="world-operations">([\s\S]*?)<\/section>/)?.[1];
   assert.ok(section, 'missing LINGOworld operations section');
   assert.equal((section.match(/<article class="architecture-card"/g) || []).length, 8);
+  assert.match(html, /organizers promoters managers residential property homes hotels hospitality roads transportation infrastructure street lighting water distribution flow wastewater drainage sewer flow/);
   for (const name of ['Workforce Operations','HR & Payroll','Residential Property','Hotels & Hospitality','Roads & Transportation','Street & Road Lighting','Water Distribution & Flow Monitoring','Wastewater, Drainage & Sewer Flow']) {
     assert.match(section, new RegExp(name));
   }
