@@ -162,6 +162,20 @@ For every product, record: owner; canonical source path/repository; exact branch
 - Browser/device, end-to-end, security, backup/restore, rollback and independent acceptance are incomplete for multiple products.
 - Payments, wallet value, sweepstakes and wagering remain disabled pending their own gates.
 
+## 6A. Fresh Cloudflare live-provider readback (2026-11-21)
+
+Read-only Cloudflare API calls in this session authenticated successfully and returned one account and one active zone for `thelingolegacy.com`. No Cloudflare mutation was performed.
+
+- Account contains **10 Worker scripts**; zone status is `active`, not paused.
+- Zone route inventory returns **27 routes**. The apex wildcard `thelingolegacy.com/*` maps to `thelingolegacyv-5`; a separate exact-root route `thelingolegacy.com/` maps to `lingo-flagship-root`. `www.thelingolegacy.com/*` maps to `thelingolegacyv-5`. Six integration-configurations path variants map to `lingo-integration-config-404`. Preserve this split while reviewing route precedence and path coverage; do not consolidate or retarget by assumption.
+- `thelingolegacyv-5` latest uploaded version observed is **378**, ID `cf7059ef-a9af-47f0-8f9f-49c5a3cad759`, created `2026-11-21T18:33:17Z`. Its most recent deployment readback still reports **100% on version** `2d161fa5-598f-4998-ada8-7ac4c72c3461`, deployment ID `ecd71a70-e476-4318-92a7-35249ced360b`, created `2026-10-25T16:21:58Z`. This is a material uploaded-versus-active deployment drift. Upload is not deployment; do not activate version 378 until source, asset boundary, compatibility, health and rollback are accepted.
+- `lingo-flagship-root` has deployment `31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3` at 100% on version `658acd1a-997b-45cd-b8fc-e59c59b26b45`, created `2026-10-25T16:38:23Z`.
+- A distinct `thelingolegacy-web` Worker exists. Its latest returned deployment is `e4fd09e9-1b0d-4ffb-88bb-81f84fab5782`, 100% on version `58fe63ed-dc52-48d9-b12c-cfea4bc36c8d`, created `2026-11-19T22:28:34Z`. This does not establish that the private web repository is fully integrated or that the public user journeys pass.
+- Cloudflare Pages currently lists five projects: `lingo-flutter-firebase-preview`, `lingo-execution-center-preview`, `lingo-legacy-github-integration-test`, `thelingolegacy-static-backup`, and `my-flutter-app`. The `my-flutter-app` project currently specifies a build command that clones Flutter stable at build time and a root directory of `/`; this needs source/provenance and environment review before treating it as a trusted release path. The project named preview is not itself proof of preview isolation.
+- The Pages list API rejected explicit pagination parameters in this account context; the successful unparameterized list returned the five projects above. This is a connector/API query limitation, not evidence that more projects do not exist.
+
+**Cloudflare acceptance status:** INVENTORY PARTIAL / DEPLOYMENT PROVENANCE GAP. The readback establishes configured resources and selected deployment pointers only. It does not establish request-level route behavior, binding health, secrets correctness, end-to-end application behavior, current error rates, backup/restore, or rollback readiness. Those remain separate gates.
+
 ## 7. Evidence schema and status vocabulary
 
 Every evidence record must include: workstream; product/system; repository; branch; source SHA; file/PR/issue; command/test; timestamp; environment; run/job ID; runner identity; artifact ID and checksum; provider resource/deployment/version ID; URL/route; observed result; reviewer; rollback reference.
