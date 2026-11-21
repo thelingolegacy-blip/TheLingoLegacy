@@ -98,7 +98,28 @@
               "minimum": 0,
               "maximum": 4
             }
-          }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "biome": {
+                    "const": "water"
+                  }
+                },
+                "required": [
+                  "biome"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "walkable": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          ]
         }
       }
     },
