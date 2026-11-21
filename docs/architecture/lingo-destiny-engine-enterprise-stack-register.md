@@ -415,3 +415,39 @@ The read-only zone route response contained 27 routes. The exact-root route is m
 - A successful source PR or preview upload is not proof of active route content. Acceptance requires exact GitHub commit → uploaded Worker version → deployment ID → route → public response correlation.
 
 No Worker upload, deployment, route, DNS, traffic percentage, or production configuration was changed during this snapshot.
+
+
+## 15. Canonical portfolio taxonomy — required reconciliation for PR #602
+
+The 14 records in PR #602 are useful as an inventory of product and platform nodes, but they must not all be presented as 14 equivalent public-facing brands. Preserve the records and dependencies while classifying them against the approved portfolio canon.
+
+### Public-facing portfolio groups
+
+1. `LINGOlegacy` — flagship identity, account experience, community and discovery.
+2. `LINGOlane` — Loyalty Lane designs/promotions, apparel and Laundry-Cycle.
+3. `LINGOslots` — That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions and Cashman Lingo Mania.
+4. `LINGOarcade` — Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead.
+5. `LINGOlibrary` — KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends.
+6. `LINGOmedia` — Rise of Zavione P1/P2 and associated media/publishing.
+7. `LINGOworld` — LINGOai, askLINGO, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge and LINGOdonations; it also owns the separately permissioned workforce, property, hospitality and infrastructure service domains.
+8. `LegacyXclub` — membership and community experiences.
+
+`LINGOlegacy_MASTER` is the governance and enterprise-control root, not another public product. It owns the portfolio canon, legal/brand records, engineering, releases and archives.
+
+### Shared platform capabilities (not new public portfolios)
+
+- LINGOstudio: internal creator, engineering, asset, operations and release workspace.
+- LINGOcore: shared API, event, service-registry and SDK foundation.
+- LINGOidentity / LINGO ID: shared identity and authorization capability.
+- LINGOwallet / Universal Legacy Wallet: shared ledger capability, disabled until legal/finance/security acceptance.
+- LINGOshield: a LINGOworld product/service with shared security, monitoring and incident-response capabilities; do not duplicate it as a separate public realm.
+
+### PR #602 classification changes required
+
+- Reclassify `LINGOcampus` as a LINGOworld subproduct, not a separate top-level portfolio.
+- Reclassify `LINGOstudio`, `LINGOcore`, `LINGOidentity` and `LINGOwallet` as shared platform capabilities, not peer public realms.
+- Keep `LINGOshield` in the LINGOworld product family while its security/incident functions remain shared services.
+- Retain the 14 inventory records if they are needed for dependencies and implementation tracking, but add an explicit `node_type` such as `public_portfolio`, `subproduct`, or `shared_platform_service`.
+- Ensure product display names and subproduct membership match this canon. Never silently rename historical records or create duplicate public identities to satisfy an implementation registry.
+
+This preserves the useful detail in PR #602 while preventing internal service boundaries from becoming accidental new brands or conflicting product hierarchies.
