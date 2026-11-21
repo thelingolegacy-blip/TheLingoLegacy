@@ -2,6 +2,8 @@ name: Studio Enterprise Module Registry
 on:
   pull_request:
     paths:
+      - "studio/index.html"
+      - "worker.js"
       - "studio/enterprise-module-registry.json"
       - "studio/enterprise-module-registry.schema.json"
       - "scripts/validate-studio-enterprise-module-registry.mjs"
@@ -10,6 +12,8 @@ on:
   push:
     branches: ["main"]
     paths:
+      - "studio/index.html"
+      - "worker.js"
       - "studio/enterprise-module-registry.json"
       - "studio/enterprise-module-registry.schema.json"
       - "scripts/validate-studio-enterprise-module-registry.mjs"
