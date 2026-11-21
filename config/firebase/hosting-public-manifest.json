@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "1.0",
+  "status": "QUARANTINED",
+  "purpose": "Firebase Hosting publication is intentionally disabled until a customer-facing route set and Firebase staging identity are independently reviewed.",
+  "files": []
+}
