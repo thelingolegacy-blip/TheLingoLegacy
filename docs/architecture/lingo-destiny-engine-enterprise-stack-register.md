@@ -512,3 +512,6 @@ Keep PR #640 source-only until a dedicated preview path is explicitly approved. 
 2. If the existing Worker is already GitHub-connected, verify its current build settings and preview model before enabling any new configuration.
 
 Do not repurpose `my-flutter-app`, do not alter the active production Worker, and do not switch an existing Worker to a new preview model without explicit owner approval; that transition may be irreversible. A preview deployment must be noindex, use no production secrets/data, and remain isolated from production routes and traffic.
+
+
+Water distribution/flow monitoring and wastewater/drainage/sewer-flow monitoring are distinct LINGOworld modules with separate permission scopes; neither inherits the other's utility telemetry or control records.
