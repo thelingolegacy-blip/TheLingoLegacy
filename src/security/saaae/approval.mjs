@@ -106,7 +106,16 @@ export async function verifyAndConsumeApproval({
   }
 
   let signatureValid = false;
-  try { signatureValid = await signatureVerifier(approval); } catch { return reject("APPROVAL_SIGNATURE_CHECK_FAILED"); }
+  let signedPayload;
+  try {
+    signedPayload = canonicalApprovalPayload(approval);
+    signatureValid = await signatureVerifier({
+      payload: signedPayload,
+      signature: approval.signature,
+      keyId: approval.keyId,
+      approverPrincipalId: approval.approverPrincipalId
+    });
+  } catch { return reject("APPROVAL_SIGNATURE_CHECK_FAILED"); }
   if (signatureValid !== true) return reject("APPROVAL_SIGNATURE_INVALID");
 
   let approverStillAuthorized = false;
