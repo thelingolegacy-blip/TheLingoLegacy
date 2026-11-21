@@ -146,6 +146,14 @@ test("allow rules without a principal selector invalidate the policy", () => {
   assert.equal(result.reason, "POLICY_UNAVAILABLE_OR_INVALID");
 });
 
+test("duplicate policy rule identifiers invalidate the policy", () => {
+  const rule = allowPolicy.rules[0];
+  const policy = { ...allowPolicy, rules: [rule, { ...rule }] };
+  const result = evaluateAuthorization({ principal, action: "wallet.read", resource, context, policy });
+  assert.equal(result.decision, "INDETERMINATE");
+  assert.equal(result.reason, "POLICY_UNAVAILABLE_OR_INVALID");
+});
+
 test("malformed conditions fail closed rather than matching", () => {
   const policy = {
     ...allowPolicy,
