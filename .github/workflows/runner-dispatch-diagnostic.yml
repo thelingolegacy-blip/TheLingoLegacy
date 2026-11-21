@@ -1,16 +1,29 @@
 name: G02 Self-Hosted Runner Sentinel
 
 on:
+  # Deliberately manual: do not enqueue jobs on every push while G02 is being provisioned.
   workflow_dispatch:
-  push:
-    branches: [main]
+    inputs:
+      incident_reference:
+        description: "Required incident or recovery checkpoint reference"
+        required: true
+        type: string
+      confirm_runner:
+        description: "Confirm this run targets the dedicated lingo-legacy-g02 runner"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
-  actions: read
+
+concurrency:
+  group: g02-runner-sentinel
+  cancel-in-progress: false
 
 jobs:
   runner-sentinel:
+    if: ${{ inputs.confirm_runner == true && inputs.incident_reference != '' }}
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 5
     steps:
@@ -21,6 +34,7 @@ jobs:
           RUNNER_OS: ${{ runner.os }}
           RUNNER_ARCH: ${{ runner.arch }}
           RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          INCIDENT_REFERENCE: ${{ inputs.incident_reference }}
           GITHUB_SHA_VALUE: ${{ github.sha }}
           GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
           GITHUB_RUN_ATTEMPT_VALUE: ${{ github.run_attempt }}
@@ -32,6 +46,7 @@ jobs:
             printf 'run_id=%s\n' "$GITHUB_RUN_ID_VALUE"
             printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT_VALUE"
             printf 'job=%s\n' "$GITHUB_JOB_VALUE"
+            printf 'incident_reference=%s\n' "$INCIDENT_REFERENCE"
             printf 'runner_name=%s\n' "$RUNNER_NAME"
             printf 'runner_os=%s\n' "$RUNNER_OS"
             printf 'runner_arch=%s\n' "$RUNNER_ARCH"
@@ -43,6 +58,7 @@ jobs:
           test "$RUNNER_OS" = "Linux"
           test "$RUNNER_ARCH" = "X64"
           test -n "$GITHUB_SHA_VALUE"
+          test -n "$INCIDENT_REFERENCE"
           printf 'platform_check=PASS\n' >> g02-evidence/runner-evidence.txt
           cat g02-evidence/runner-evidence.txt
 
