@@ -4,7 +4,19 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  try {
+    final options = DefaultFirebaseOptions.currentPlatform;
+    if (hasUsableFirebaseOptions(options)) {
+      await Firebase.initializeApp(options: options);
+    } else {
+      debugPrint('Firebase is not configured. Starting the offline preview.');
+    }
+  } catch (error, stackTrace) {
+    debugPrint('Firebase initialization unavailable; starting the offline preview: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+
   runApp(const LingoLegacyApp());
 }
 
