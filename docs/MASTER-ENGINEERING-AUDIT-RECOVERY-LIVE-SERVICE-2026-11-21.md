@@ -35,7 +35,7 @@ A component is **RUNNING** only after its accepted source SHA is correlated to a
 | Repository / system | Intended responsibility | Required evidence before integration |
 |---|---|---|
 | `thelingolegacy-blip/TheLingoLegacy` | Canonical governance, public/runtime Worker source, portfolio registry, operational docs and recovery control | main SHA, PR lineage, workflow evidence, route/runtime mapping |
-| `thelingolegacy-blip/TheLingoLegacy-Web` | Separate private Next.js/React/TypeScript + OpenNext/Cloudflare web application | live repo read, main SHA, package/build contract, workflows, preview and deployment provenance |
+| `thelingolegacy-blip/TheLingoLegacy-Web` | Separate private Next.js/React/TypeScript + OpenNext/Cloudflare web application; current main SHA observed: `84a4d65282aef3c6fec7149d8aaa6f13402165da` | live repo read, main SHA, package/build contract, workflows, preview and deployment provenance |
 | Cloudflare | Edge Worker/Pages runtime, DNS/routes, assets, security and observability | current resource inventory, active version/deployment IDs, bindings, routes, build triggers, logs and probes |
 | Firebase / Supabase / other data providers | Identity, data, storage and API services according to a single-authority decision | exact project identity, environment, schema/rules, auth mapping, backups, restore and integration tests |
 | Flutter / iOS / Android | Mobile clients and device distribution | reproducible build, static/unit/integration tests, device QA, auth/deep-link/offline behavior |
@@ -142,6 +142,13 @@ For every product, record: owner; canonical source path/repository; exact branch
 - PR #640 (canonical portfolio/world directory) is draft and explicitly says Node regression tests/workflow are authored but not executed; public links are disabled where route/privacy verification is incomplete.
 - Recent Actions runs include IDs `44941902126`, `44941900973`, `44941900065`, `44941899121` and earlier runs; the observed conclusions are `startup_failure`. This is an admission/startup blocker, not evidence of test failures or passes.
 - The repository currently has a large branch inventory; branch names alone do not establish useful or mergeable work. Compare ancestry and diffs before consolidation.
+
+### Private web implementation repository — fresh read-only check
+- `thelingolegacy-blip/TheLingoLegacy-Web` is reachable as a private repository; default branch `main`; main HEAD observed: `84a4d65282aef3c6fec7149d8aaa6f13402165da`.
+- Recent Actions runs in this repository also show `startup_failure` before usable job evidence; examples include `44941701315` and `44941697410` on head `0d914cda0da60a26f3f496ca82347e5f2b9a8914`. CI is therefore blocked in both repositories, not only the public control repository.
+- Open PR #49 is non-draft and mergeable at the API metadata layer, head `0d914cda0da60a26f3f496ca82347e5f2b9a8914`, base main `84a4d65282aef3c6fec7149d8aaa6f13402165da`; it includes Cloudflare Worker target alignment and public-copy/demo-safety changes. It is **not accepted for merge** while required CI is unexecuted and source/runtime/preview evidence remains incomplete.
+- PR #46 (hosted/staging verification) is draft and currently reported non-mergeable; PR #43 (Supabase foundation) is draft and non-mergeable; PR #42 (private-site reconstruction) is draft. PR descriptions are design/source claims, not independent runtime evidence.
+- Cloudflare has a distinct `thelingolegacy-web` Worker with a deployment pointer, but that does not prove the private app repository's accepted SHA, build artifact, Worker upload provenance, or full end-to-end journey is correlated. Establish that mapping before integration or cutover.
 
 ### Publication and runtime configuration
 - Main `wrangler.jsonc` names Worker `thelingolegacyv-5`, entrypoint `worker.js`, compatibility date `2026-09-01`, and routes for apex and www.
