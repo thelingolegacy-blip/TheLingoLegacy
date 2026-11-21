@@ -5,6 +5,7 @@ import { bindApprovalPayload, verifyAndConsumeApproval } from "./approval.mjs";
 const now = new Date("2026-11-21T18:00:00.000Z");
 const payload = { amount: 50, currency: "DOUGH", destination: "wallet-2" };
 const expectedBase = {
+  requestId: "request-001",
   operation: "wallet.transfer",
   resourceId: "wallet-1",
   tenantId: "tenant-a",
@@ -67,6 +68,11 @@ test("changed payload is rejected", async () => {
   const { args } = await fixture();
   args.expected = { ...args.expected, payload: { ...payload, amount: 500 } };
   assert.equal((await verifyAndConsumeApproval(args)).reason, "APPROVAL_PAYLOAD_MISMATCH");
+});
+test("approval must match the exact request identifier", async () => {
+  const { args } = await fixture();
+  args.expected = { ...args.expected, requestId: "request-002" };
+  assert.equal((await verifyAndConsumeApproval(args)).reason, "APPROVAL_REQUEST_ID_MISMATCH");
 });
 test("changed operation is rejected", async () => {
   const { args } = await fixture();
