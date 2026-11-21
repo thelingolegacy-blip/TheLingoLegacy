@@ -1,7 +1,19 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
+  static bool get isConfigured {
+    final configurations = <FirebaseOptions>[web, android, ios, macos];
+    return configurations.every((options) =>
+        options.apiKey.isNotEmpty &&
+        options.appId.isNotEmpty &&
+        options.messagingSenderId.isNotEmpty &&
+        !options.apiKey.startsWith('YOUR_') &&
+        !options.appId.startsWith('YOUR_') &&
+        !options.messagingSenderId.startsWith('YOUR_'));
+  }
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) return web;
     switch (defaultTargetPlatform) {
@@ -24,28 +36,28 @@ class DefaultFirebaseOptions {
     apiKey: 'YOUR_WEB_API_KEY',
     appId: 'YOUR_WEB_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    authDomain: 'lingo-legacy-production.firebaseapp.com',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    authDomain: 'lingo-staging-not-configured.firebaseapp.com',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'YOUR_ANDROID_API_KEY',
     appId: 'YOUR_ANDROID_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'YOUR_IOS_API_KEY',
     appId: 'YOUR_IOS_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
     iosBundleId: 'com.thelingolegacy.app',
   );
 
@@ -53,9 +65,8 @@ class DefaultFirebaseOptions {
     apiKey: 'YOUR_MACOS_API_KEY',
     appId: 'YOUR_MACOS_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'lingo-legacy-production',
-    databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
-    storageBucket: 'lingo-legacy-production.appspot.com',
-    macOsBundleId: 'com.thelingolegacy.app',
+    projectId: 'lingo-staging-not-configured',
+    databaseURL: 'https://lingo-staging-not-configured-default-rtdb.firebaseio.com',
+    storageBucket: 'lingo-staging-not-configured.appspot.com',
   );
 }

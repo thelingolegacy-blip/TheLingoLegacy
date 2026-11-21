@@ -2,11 +2,31 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'integration_test/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'scripts/**'
+      - 'studio-sites/games/oasis-platform/flutter/**'
+      - 'docs/android-api21-firebase-compatibility.md'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.firebaserc'
+      - 'firebase.json'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
+      - 'test/**'
+      - 'integration_test/**'
       - 'android/**'
       - 'ios/**'
+      - 'scripts/**'
+      - 'studio-sites/games/oasis-platform/flutter/**'
+      - 'docs/android-api21-firebase-compatibility.md'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - '.firebaserc'
@@ -28,7 +48,7 @@ jobs:
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.50.0'
           cache: true
 
       - name: Verify Firebase project contract
@@ -37,7 +57,22 @@ jobs:
           set -euo pipefail
           test -f .firebaserc
           test -f lib/firebase_options.dart
+          node --test scripts/test-verify-flutter-firebase.mjs
           node scripts/verify-flutter-firebase.mjs
+
+      - name: Verify Android API 21 Firebase compatibility
+        run: |
+          node --test scripts/test-verify-android-api21-firebase.mjs
+          node scripts/verify-android-api21-firebase.mjs
+
+      - name: Generate ephemeral Android Gradle wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter create . --platforms=android --no-pub
+          test -f android/gradlew
+          test -f android/gradle/wrapper/gradle-wrapper.jar
+          test -f android/gradle/wrapper/gradle-wrapper.properties
 
       - name: Flutter dependencies
         run: flutter pub get
@@ -54,8 +89,17 @@ jobs:
       - name: Flutter Android debug build
         run: flutter build apk --debug
 
+      - name: Verify quarantined Firebase Hosting publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test scripts/test-build-firebase-public.mjs
+          node scripts/build-firebase-public.mjs
+          test -f build/firebase-public/404.html
+          test "$(find build/firebase-public -type f | wc -l)" -eq 1
+
       - name: Firebase hosting configuration check
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+          node -e "const f=require('./firebase.json'); if(f.hosting?.public !== 'build/firebase-public') process.exit(1); console.log('Firebase Hosting points only to the generated quarantined allowlist output.')"
