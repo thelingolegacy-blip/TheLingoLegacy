@@ -105,6 +105,7 @@ export function validateWorldDefinition(world) {
         if (!tile || tile.x !== x || tile.y !== y) errors.push('tile coordinates must match map position');
         if (!tile || !BIOMES.includes(tile.biome)) errors.push('tile biome is invalid');
         if (!tile || typeof tile.walkable !== 'boolean') errors.push('tile walkable must be boolean');
+        if (tile && tile.biome === 'water' && tile.walkable === true) errors.push('water tiles must be non-walkable');
         if (!tile || !isIntegerInRange(tile.elevation, 0, 4)) errors.push('tile elevation must be an integer from 0 to 4');
       }
     }
