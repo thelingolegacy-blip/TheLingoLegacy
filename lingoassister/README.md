@@ -65,6 +65,18 @@ This module is pure logic. It does not:
 
 Integrations must provide authenticated adapters, authorization enforcement, durable audit storage, evidence provenance checks, and independently reviewable test output. Do not add credentials to repository files.
 
+## Incident journal adapter (local-only foundation)
+
+`incident-journal.mjs` provides a Node.js JSONL append-only journal with schema checks, unique event IDs, sequence validation, and a SHA-256 hash chain. Its companion tests cover append/read behavior, invalid input, duplicate IDs, tampering, and removed/reordered records.
+
+Run the journal tests with:
+
+```sh
+node --test lingoassister/incident-journal.test.mjs
+```
+
+This is a **single-writer local file adapter**, not a multi-user durable service. The hash chain is tamper-evident, not tamper-proof. It does not authenticate evidence sources, encrypt data, implement access control or retention, coordinate multiple writers, back up records, or authorize actions. Do not store secrets or sensitive user data in this journal. A production adapter still requires an approved persistent backend, least-privilege identity, append-only access policy, backup/restore verification, retention controls, and authenticated source provenance.
+
 ## Next implementation gates
 
 1. **G01 — Core tests:** Node test suite passes and the diff is reviewed.
