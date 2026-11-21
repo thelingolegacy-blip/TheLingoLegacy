@@ -1,68 +1,67 @@
-# Lingo Legacy Empire — Sovereign Production Core
+# The Lingo Legacy — Sovereign Ecosystem
 
-> **Authoritative Source of Truth:** `thelingolegacy-blip/TheLingoLegacy` (`main` branch)  
-> **Sovereign Runtime:** Cloudflare Edge Workers & Pages  
-> **Status:** Production promotion fail-closed; studio completion remains subject to acceptance evidence  
+> **Canonical source:** `thelingolegacy-blip/TheLingoLegacy` (`main`)  
+> **Public flagship:** https://thelingolegacy.com/  
+> **Intended production edge:** Cloudflare Workers / Pages  
+> **Release posture:** PROTECTED HOLD — last-known-good preserved
 
----
+## Mission
 
-## 🏛️ Ecosystem Architecture
-The Lingo Legacy Empire is consolidated under a single, authoritative, studio-grade infrastructure:
-- **`thelingolegacy.com` & `www`**: Master Hub & Game Floor (*That's My Lingo*)
-- **`apparel.thelingolegacy.com`**: Loyalty Lane Apparel Studio & Stripe Gateway
-- **`arena.thelingolegacy.com`**: LINGOarena Virtual Arcade & Casino Floor
-- **`reads.thelingolegacy.com`**: LINGOreads Virtual Theater & Literary Hallway
-- **`media.thelingolegacy.com`**: LINGOmedia Sonic Branding & Mixtape Nexus
-- **`ai.thelingolegacy.com`**: AskLINGO ⭐️ AI Omni-Oracle Neural Core
+The Lingo Legacy is a connected creative and technology ecosystem. Its realms retain distinct identities while sharing governed capabilities for identity, APIs, data, events, assets, creation, operations, security, recovery and release.
 
----
+## Portfolio canon
 
-## ⚡ Deployment Pipeline
-All deployments are managed natively via Cloudflare Edge Workers and GitHub Actions. Legacy hosting providers such as Vercel are retired and are not part of the production architecture.
+- **LINGOlegacy** — flagship identity, account and discovery experience.
+- **LINGOlane** — Loyalty Lane Apparel, Loyalty Lane Cycle, and Designs & Promotions capabilities.
+- **LINGOslots** — That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions, and Cashman Lingo Mania.
+- **LINGOarcade** — Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly, and Jersey Shore: The Undead.
+- **LINGOlibrary** — Kotton’s Code, The Block I Grew Up On, Say It Again, Dice Shift Hotel, and Legacy Legends.
+- **LINGOmedia** — music, film and creator production, including Rise of Zavione.
+- **LINGOworld** — LINGOai, askLINGO, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge and LINGOdonations.
+- **LegacyXclub** — planned member community and shared-culture experiences.
 
----
+## Shared engines and control systems
 
-## 🧱 Runtime Contract
-The production surface is dynamic-runtime-first. The Cloudflare Worker controls runtime headers, edge HTML transformation, platform context, health, manifest, status, checkout, beacon APIs, and asset delivery.
+- **LINGOcore / Stack Engine:** service contracts, APIs, events, configuration, feature gates, health and readiness.
+- **LINGOidentity / LINGO ID:** authentication, authorization, account lifecycle, consent and recovery.
+- **Universal Legacy Wallet:** future rewards and virtual-credit architecture; real-value transfers and redemption remain disabled.
+- **LINGOstudio:** design, engineering, game, book, media and asset-production workflows.
+- **Master Control Plane:** portfolio registry, service inventory, monitoring, approvals, evidence and release authority.
+- **Recovery & Dispatch:** event, schedule, webhook and manual triggers; incident routing, job ownership, retries, runbooks and audit history.
+- **LINGOshield:** security, privacy, trust, abuse prevention and resilience.
 
-Production authority:
+## Technology and provider boundaries
 
-`GitHub → GitHub Actions gates → Cloudflare Worker → dynamic runtime/API → Cloudflare assets → canonical domain`
+- **GitHub** is the canonical source of truth and review/evidence history.
+- **Cloudflare** is the intended public edge and DNS/Worker authority. Existing route scopes and deployed versions must be reconciled before any production change.
+- **Firebase** is retained only for explicitly verified legacy or product-specific capabilities. Project identity, publication boundaries and client configuration remain under reconciliation.
+- **Flutter** is the mobile target; toolchain, lockfiles and release signing must be reproducible before distribution.
+- **Web** uses standards-based HTML/CSS/JavaScript today; Next.js/React and Go/PostgreSQL are proposed CORE V2 candidates, not blanket production defaults.
+- **Unity** remains a target for selected game builds where appropriate.
+- **AppDeploy** is a staging/build/preview surface. A deployed preview is not production certification.
+- **Vercel retirement/cutover is not yet certified.** Do not detach domains or delete projects until Cloudflare provenance, route ownership, rollback and cutover acceptance are documented.
 
-The canonical Worker is `thelingolegacyv-5`; its entrypoint is `worker.js`, configuration is `wrangler.jsonc`, and compatibility date is `2026-09-01`. Keep this identity synchronized with the Cloudflare deployment metadata and the release-configuration consistency gate.
+## Release and recovery contract
 
-The separate Studio build-validation Worker is `lingo-legacy-studio-build`; its entrypoint is `cloudflare/studio-worker.js`, configuration is `cloudflare/wrangler.toml`, and compatibility date is `2026-10-04`. Its GitHub workflow is dry-run-only and pins Wrangler major version 4. It is not the apex/www production Worker.
+`DESIGNED → BUILT → TESTED → CONNECTED → CERTIFIED → PRODUCTION`
 
----
+Each state requires evidence. Source creation or a deployment label is not proof of acceptance.
 
-## 🔎 Verification Contract
-A successful build alone never marks production LIVE. Repository state, CI evidence, Worker deployment, domain routing, backend bindings, observability, safety controls, and live probes must agree.
+Current controls:
+- GitHub Actions job startup remains blocked; recent attempts have failed before jobs were created.
+- G02 remains FAIL / UNVERIFIED; do not activate the protected self-hosted runner as a workaround.
+- Main branch protection and required release checks require restoration and verification.
+- Production deployment, DNS/route mutation, payment activation, identity cutover, last-known-good replacement and production promotion remain blocked pending separate evidence and release approval.
+- No paid cloud resources or recurring commitments without explicit cost/account/region approval.
+- Virtual game credits remain non-cash and non-redeemable; real-money gameplay and cash-out are disabled.
 
-Required runtime probes include:
+## Public website
 
-- `/api/v1/platform/gates`
-- `/api/v1/platform/modules`
+- `/` — flagship discovery landing page.
+- `/worlds/` — canonical realm directory.
+- `/studio/` — creative studio entry point.
+- `/trust-compliance/` — trust and safety.
+- `/community-guidelines/` — community expectations.
+- `/privacy/`, `/terms/`, `/contact/` — public policy and support.
 
-- `/healthz`
-- `/api/v1/runtime`
-- `/api/v1/platform/manifest`
-- `/api/v1/platform/status`
-- `/api/v1/site/context`
-
----
-
-## 🧭 Studio Platform Completion
-
-The platform surface is organized across flagship, Loyalty Lane World, LINGOslots / That’s My Lingo, rewards, Lingo ID, Universal Legacy Wallet architecture, askLINGO, commerce, Legacy Club, media, Studio, documentation, and governance. Virtual/demo gameplay and presentation layers are separated from real-value transaction and prize activation.
-
-Production state is evidence-driven:
-
-`EVIDENCE → VERIFICATION → ACCEPTANCE → AUTHORITY → TRANSITION`
-
-Current release authority: `G02 = FAIL / UNVERIFIED`, `FAIL-CLOSED = ACTIVE`, `MUTATION FREEZE = ACTIVE`, `LKG = PROTECTED`, downstream promotion/activation = `BLOCKED`.
-
-## 🛡️ Production Gate
-
-`RECONCILE → FIX → VERIFY → REVIEW → QA → PUSH → DEPLOY → VERIFY LIVE`
-
-The production gate is fail-closed. No live production sign-off is valid without successful live verification evidence.
+See `docs/operations/flagship-homepage-build-2026-11-15.md` for the current website build scope and acceptance checklist.

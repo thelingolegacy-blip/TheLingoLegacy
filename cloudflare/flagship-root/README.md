@@ -35,3 +35,15 @@ Before using this file for any future deployment:
 5. Obtain independent release acceptance and explicit production promotion authorization.
 
 Do not add this Worker to the catch-all configuration or change the exact-root route as a shortcut.
+
+
+## 2026-11-11 route-repair candidate
+
+A preview candidate was prepared from the current recovered source with the following bounded changes:
+
+- Repoint catalog cards to existing canonical GitHub pages for Loyalty Lane Apparel, Kotton's Code, That’s My Lingo, LINGOmedia, LINGOlibrary, Loyalty Lane Cycles, Loyalty Lane Designs, Doughboys Oasis vertical slice, LINGOworld, and LINGO Nexus.
+- Preserve planned/disabled placeholders for wallet, identity, marketplace, cinema, and investment destinations until their service gates pass.
+- Replace the whole-site "candidate experience" footer wording with an accurate statement that the public discovery portal is live while destination activation remains staged.
+- Clarify that only routes and integrations which pass production verification are eligible for activation.
+
+This update is source-only on the review branch. It has not been uploaded to Cloudflare or promoted. Preview and route QA are required before any production change.
