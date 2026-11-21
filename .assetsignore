@@ -8,6 +8,7 @@ config/
 docs/
 ops/
 scripts/
+packages/
 tests/
 node_modules/
 coverage/
