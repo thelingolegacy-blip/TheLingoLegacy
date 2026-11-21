@@ -3,7 +3,7 @@ import { digestCanonicalJson } from "./canonical.mjs";
 export const AUDIT_GENESIS_HASH = "0".repeat(64);
 
 const REQUIRED_EVENT_FIELDS = [
-  "eventId", "schemaVersion", "occurredAt", "actorPrincipalId", "actorPrincipalType",
+  "eventId", "schemaVersion", "actorPrincipalId", "actorPrincipalType",
   "eventType", "action", "resourceId", "tenantId", "productDomain", "environment",
   "requestId", "authorizationDecision", "policyVersion", "outcome"
 ];
@@ -12,7 +12,7 @@ function isNonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto) {
+export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto, serverNow = new Date()) {
   if (!event || typeof event !== "object" || Array.isArray(event)
     || REQUIRED_EVENT_FIELDS.some(field => !isNonEmpty(event[field]))) {
     throw new TypeError("AUDIT_EVENT_SCHEMA_INVALID");
@@ -33,11 +33,11 @@ export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HA
  * changed, it must return committed:false without writing so the caller can
  * reload the head and rebuild the envelope. No update/delete API is exposed.
  */
-export async function appendAuditEvent({ writer, event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto } = {}) {
+export async function appendAuditEvent({ writer, event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto, serverNow = new Date() } = {}) {
   if (!writer || typeof writer.appendAtomically !== "function") {
     throw new Error("AUDIT_WRITER_UNAVAILABLE");
   }
-  const envelope = await createAuditEnvelope(event, previousHash, cryptoImpl);
+  const envelope = await createAuditEnvelope(event, previousHash, cryptoImpl, serverNow);
   const result = await writer.appendAtomically(envelope, previousHash);
   if (!result || result.committed !== true || !Number.isSafeInteger(result.sequence) || result.sequence < 1
     || (result.hash !== undefined && result.hash !== envelope.hash)) {
