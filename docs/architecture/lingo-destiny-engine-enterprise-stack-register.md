@@ -491,3 +491,24 @@ The route-aware canonical directory proposal in PR #640 applies these rules: eig
 GitHub main contains dedicated source pages at `contact/index.html`, `loyalty-lane-apparel/index.html`, and `terms/index.html`. The public browser responses for Contact and Apparel still return an older generic v7 shell, while the Terms route was not accessible. This is a source/runtime provenance mismatch, not proof that the dedicated source pages are missing. The live Worker must not be promoted until the exact current source commit, uploaded asset manifest, Worker version, route and browser response are correlated.
 
 The main Privacy source still contains founder/access and commerce-related wording that requires owner/legal review; do not silently rewrite legal commitments as part of a UI repair.
+
+
+## 17. Safe preview deployment readiness — read-only 2026-11-21
+
+The canonical homepage/directory PR is source-ready for review, but no dedicated isolated web preview pipeline is currently confirmed.
+
+Observed Cloudflare Pages projects:
+- `lingo-flutter-firebase-preview`: Flutter-oriented path filters (`lib/**`, `pubspec.yaml`, related mobile files) and preview branch patterns that do not include the current `feat/canonical-world-directory-and-operations-2026-11-21` branch. It will not build this web change.
+- `lingo-execution-center-preview`: restricted to its own execution-center branch and `studio-sites/execution-center/**`; not a flagship web preview.
+- `lingo-legacy-github-integration-test` and `thelingolegacy-static-backup`: deployments disabled.
+- `my-flutter-app`: separate production-branch project with an app subdomain; do not repurpose for the public web preview.
+
+A read-only Workers Builds list request returned not-found; no GitHub Workers Builds connection for `thelingolegacyv-5` was verified. The existing uploaded Worker preview versions (main Worker v378 and exact-root v3) are not sufficient evidence of a branch-specific preview URL or of PR #640 content.
+
+### Safe next step
+
+Keep PR #640 source-only until a dedicated preview path is explicitly approved. Preferred options:
+1. Create a separate, no-custom-domain Worker preview project with static assets and no production bindings, connected only to the approved preview branch; or
+2. If the existing Worker is already GitHub-connected, verify its current build settings and preview model before enabling any new configuration.
+
+Do not repurpose `my-flutter-app`, do not alter the active production Worker, and do not switch an existing Worker to a new preview model without explicit owner approval; that transition may be irreversible. A preview deployment must be noindex, use no production secrets/data, and remain isolated from production routes and traffic.
