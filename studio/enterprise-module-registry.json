@@ -380,6 +380,56 @@
         "assetRegistry"
       ],
       "route": null
+    },
+    {
+      "id": "world-engine-studio",
+      "name": "World Builder & Simulation Studio",
+      "scope": "World schemas, procedural generation, scene graphs, GIS/map overlays, deterministic simulation, environment presets, asset lineage and Unity/web runtime adapters.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "world:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "dataClassification",
+        "auditTrail",
+        "worldSchema",
+        "assetRights",
+        "simulationTests",
+        "contentSafety",
+        "runtimeAdapter"
+      ],
+      "route": null
+    },
+    {
+      "id": "game-liveops-studio",
+      "name": "Game Live Operations",
+      "scope": "Game sessions, progression, matchmaking, event schedules, feature flags, anti-cheat, moderation, telemetry and rollback controls; read-only operations visibility.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "gameops:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "dataClassification",
+        "auditTrail",
+        "sessionContract",
+        "antiCheatTests",
+        "moderationPolicy",
+        "telemetryRedaction",
+        "rollbackEvidence"
+      ],
+      "route": null
     }
   ],
   "providerReadiness": [
