@@ -78,6 +78,12 @@ export async function onRequestGet() {
     firebaseConfig: settledError(firebase),
     firebaseProjectAlias: settledError(firebaserc)
   };
+  for (const [source, error] of Object.entries(errors)) {
+    if (error) probeResults.push({
+      path: "github:" + source, status: null, ok: false, error,
+      note: "GitHub source request failed; this is not an empty or successful result"
+    });
+  }
   const mainCommit = settledValue(main);
   const workflowRuns = settledValue(runs);
   return new Response(JSON.stringify({
@@ -90,8 +96,10 @@ export async function onRequestGet() {
         html_url: mainCommit.html_url
       } : null,
       runs: workflowRuns?.workflow_runs || [],
-      pullRequests: prPage?.items || [],
+      pullRequests: (prPage?.items || []).slice(0, 30),
       pullRequestInventory: {
+        totalOpenPullRequestsObserved: prPage?.items?.length || 0,
+        dashboardRows: Math.min(prPage?.items?.length || 0, 30),
         pagesRead: prPage?.pagesRead || 0,
         pageSize: PR_PAGE_SIZE,
         maxPages: MAX_PR_PAGES,
