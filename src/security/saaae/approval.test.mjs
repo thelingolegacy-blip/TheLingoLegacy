@@ -126,3 +126,17 @@ test("unapproved record is rejected", async () => {
   const { args } = await fixture({ status: "pending" });
   assert.equal((await verifyAndConsumeApproval(args)).reason, "APPROVAL_NOT_APPROVED");
 });
+
+test("signature verifier receives canonical unsigned payload and pinned-key metadata", async () => {
+  const { args } = await fixture();
+  let verificationInput;
+  args.signatureVerifier = async input => {
+    verificationInput = input;
+    return input.keyId === "pinned-human-key-02";
+  };
+  const result = await verifyAndConsumeApproval(args);
+  assert.equal(result.ok, true);
+  assert.equal(typeof verificationInput.payload, "string");
+  assert.equal(verificationInput.payload.includes('"requestId":"request-001"'), true);
+  assert.equal(verificationInput.payload.includes('"signature"'), false);
+});
