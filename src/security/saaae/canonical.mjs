@@ -17,12 +17,30 @@ export function canonicalizeJson(value) {
     return JSON.stringify(value);
   }
   if (Array.isArray(value)) {
-    return "[" + value.map(item => canonicalizeJson(item)).join(",") + "]";
+    const ownKeys = Reflect.ownKeys(value);
+    if (ownKeys.some(key => typeof key === "symbol")
+      || ownKeys.some(key => key !== "length" && (!/^(0|[1-9]\\d*)$/.test(key) || Number(key) >= value.length))) {
+      throw new TypeError("UNSUPPORTED_ARRAY_PROPERTY");
+    }
+    const items = [];
+    for (let index = 0; index < value.length; index += 1) {
+      if (!Object.hasOwn(value, index)) throw new TypeError("SPARSE_ARRAY_UNSUPPORTED");
+      items.push(canonicalizeJson(value[index]));
+    }
+    return "[" + items.join(",") + "]";
   }
   if (!isPlainObject(value)) throw new TypeError("UNSUPPORTED_CANONICAL_VALUE");
-  const keys = Object.keys(value).sort();
+  const ownKeys = Reflect.ownKeys(value);
+  if (ownKeys.some(key => typeof key === "symbol")) throw new TypeError("SYMBOL_KEY_UNSUPPORTED");
+  const keys = ownKeys.sort();
   if (keys.some(key => ["__proto__", "prototype", "constructor"].includes(key))) {
     throw new TypeError("UNSAFE_OBJECT_KEY");
+  }
+  for (const key of keys) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor?.enumerable || !Object.hasOwn(descriptor, "value")) {
+      throw new TypeError("ACCESSOR_OR_NON_ENUMERABLE_PROPERTY_UNSUPPORTED");
+    }
   }
   return "{" + keys.map(key => JSON.stringify(key) + ":" + canonicalizeJson(value[key])).join(",") + "}";
 }
