@@ -1,0 +1,22 @@
+name = "lingo-asset-registry-api"
+main = "worker.mjs"
+compatibility_date = "2026-10-31"
+workers_dev = true
+
+[assets]
+directory = "../../studio-sites/asset-registry"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lingo-asset-registry"
+database_id = "REPLACE_WITH_NEW_STAGING_DATABASE_ID"
+migrations_dir = "migrations"
+
+[vars]
+ACCESS_TEAM_DOMAIN = "https://REPLACE_WITH_TEAM.cloudflareaccess.com"
+ACCESS_AUD = "REPLACE_WITH_CLOUDFLARE_ACCESS_APPLICATION_AUD"
+# Configure these comma-separated email allowlists as encrypted Worker secrets
+# or protected environment variables. Never commit real identities here.
+# REGISTRY_ADMINS, REGISTRY_REVIEWERS, REGISTRY_CREATORS
