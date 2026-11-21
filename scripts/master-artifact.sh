@@ -62,7 +62,7 @@ cd -- "$REPO_ROOT"
 printf '[1/9] Capturing repository baseline...\n'
 HEAD_SHA="$(git rev-parse HEAD)"
 BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
-DIRTY_COUNT="$(git status --porcelain=v1 --untracked-files=all | wc -l | tr -d ' ')"
+DIRTY_COUNT="$(git status --porcelain=v1 --untracked-files=all -- . ":(exclude)artifacts/master-$TIMESTAMP" | wc -l | tr -d ' ')"
 ORIGIN_RAW="$(git remote get-url origin 2>/dev/null || true)"
 ORIGIN_SAFE="$(python3 - "$ORIGIN_RAW" <<'PY'
 import re, sys
@@ -94,7 +94,7 @@ PY
   fi
 } > "$ARTIFACT_DIR/01-baseline.txt"
 printf '%s\n' "$HEAD_SHA" > "$ARTIFACT_DIR/HEAD.sha"
-git status --porcelain=v1 --untracked-files=all > "$ARTIFACT_DIR/git-status.porcelain"
+git status --porcelain=v1 --untracked-files=all -- . ":(exclude)artifacts/master-$TIMESTAMP" > "$ARTIFACT_DIR/git-status.porcelain"
 git log -5 --date=iso-strict --format='%H %ad %s' > "$ARTIFACT_DIR/git-log-recent.txt"
 
 # 2. PR inventory seed — explicitly not a live GitHub query.
@@ -185,7 +185,7 @@ jobs:
       - name: Upload evidence artifact
         uses: actions/upload-artifact@v4
         with:
-          name: actions-startup-canary-$GITHUB_RUN_ID
+          name: actions-startup-canary
           path: evidence/
           if-no-files-found: error
           retention-days: 30
