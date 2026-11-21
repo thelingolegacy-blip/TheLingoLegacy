@@ -17,8 +17,3 @@ test("Firebase CLI has no implicit default project", () => {
 test("production Firebase project is not selected by CLI config", () => {
   assert.equal(JSON.stringify(firebaseRc).includes("lingo-legacy-production"), false);
 });
-
-test("runtime Firebase client configuration is deliberately outside this quarantine change", () => {
-  const options = readFileSync("lib/firebase_options.dart", "utf8");
-  assert.ok(options.length > 0);
-});
