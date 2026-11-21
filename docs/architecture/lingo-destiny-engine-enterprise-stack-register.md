@@ -527,3 +527,19 @@ A fresh read-only Cloudflare API query reconfirmed the active `thelingolegacy.co
 4. `www` and apex `/integration-configurations` paths have more-specific overrides to `lingo-integration-config-404`.
 
 The exact-root route and wildcard routes are separate active routing rules, not one interchangeable deployment. The `atlas` and `launch` hostnames also remain separately routed. This API recheck confirms route ownership only; it does not independently re-prove active deployment version, homepage content parity, www redirect behavior, TLS, or end-user journeys. No route, DNS, Worker, or traffic mutation was made.
+
+
+## 18. Destiny Engine runtime seed — source declaration 2026-11-21
+
+A separate implementation branch now contains the first reusable code package: `packages/destiny-engine`, private package `@lingolegacy/destiny-engine@0.1.0`.
+
+Implemented source contracts:
+- Deterministic seeded 2D world generation with bounded map dimensions, biomes and unique points of interest.
+- Versioned World Definition JSON Schema and runtime validation.
+- Stable FNV-1a fingerprint for deterministic regression/replay comparison (explicitly not a cryptographic signature).
+- Pure fixed-tick simulation state transitions.
+- Orthogonal movement validation, non-walkable water boundaries, bounded actors/command history and idempotent command IDs.
+- 13 Node built-in test cases authored; no third-party runtime dependencies.
+- `packages/` added to `.assetsignore`, the asset-scope validator and its regression suite, so engine source/schema/tests/package metadata cannot be served as public static assets.
+
+Registry disposition: `world-engine-studio` is now `SOURCE_DECLARED`; `game-liveops-studio` remains `PLANNED`. The engine is not integrated into any game, not deployed, not multiplayer-authoritative, and not connected to identity, wallet, payments, real GIS or operational telemetry. Hosted CI remains unverified because GitHub Actions startup failed before job creation; source assertions passed, but the 13 tests have not executed in CI.
