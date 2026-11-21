@@ -1,0 +1,149 @@
+name: Flutter Native Bootstrap and Debug Builds
+
+on:
+  pull_request:
+    paths:
+      - 'pubspec.yaml'
+      - 'lib/**'
+      - 'assets/**'
+      - 'test/**'
+      - 'scripts/prepare-flutter-native-bootstrap.mjs'
+      - '.github/workflows/flutter-native-bootstrap.yml'
+  push:
+    branches:
+      - mobile/flutter-preview-bootstrap-2026-11-09
+    paths:
+      - '.github/workflows/flutter-native-bootstrap.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-native-bootstrap-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-debug-build:
+    name: Generate native runners and build (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-android-linux-desktop
+            os: ubuntu-latest
+          - platform: ios-macos
+            os: macos-latest
+          - platform: windows
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Linux desktop dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate clean native platform runners
+        shell: bash
+        run: flutter create --project-name=app --org=com.thelingolegacy --platforms=android,ios,macos,windows,linux build/native-bootstrap
+
+      - name: Copy canonical Flutter app sources into generated runners
+        run: node scripts/prepare-flutter-native-bootstrap.mjs
+
+      - name: Initialize evidence bundle
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          mkdir -p build/evidence
+          {
+            echo "commit=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "platform=${{ matrix.platform }}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            date -u +"timestamp_utc=%Y-%m-%dT%H:%M:%SZ"
+          } | tee build/evidence/run-metadata.txt
+          flutter --version 2>&1 | tee build/evidence/flutter-version.log
+          dart --version 2>&1 | tee build/evidence/dart-version.log
+
+      - name: Resolve dependencies
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter pub get 2>&1 | tee build/evidence/pub-get.log
+
+      - name: Analyze Dart source
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter analyze 2>&1 | tee build/evidence/flutter-analyze.log
+
+      - name: Run widget and unit tests
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter test --reporter expanded 2>&1 | tee build/evidence/flutter-test.log
+
+      - name: Build Android debug APK and Linux desktop
+        if: runner.os == 'Linux'
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build apk --debug 2>&1 | tee build/evidence/android-debug-build.log
+          flutter build linux --debug 2>&1 | tee build/evidence/linux-debug-build.log
+
+      - name: Build iOS simulator and macOS debug apps
+        if: runner.os == 'macOS'
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build ios --simulator --debug 2>&1 | tee build/evidence/ios-simulator-build.log
+          flutter build macos --debug 2>&1 | tee build/evidence/macos-debug-build.log
+
+      - name: Build Windows debug app
+        if: runner.os == 'Windows'
+        working-directory: build/native-bootstrap
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build windows --debug 2>&1 | tee build/evidence/windows-debug-build.log
+
+      - name: Upload generated native projects and build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lingo-native-bootstrap-${{ matrix.platform }}-${{ github.run_id }}
+          path: |
+            build/native-bootstrap/android/
+            build/native-bootstrap/ios/
+            build/native-bootstrap/macos/
+            build/native-bootstrap/windows/
+            build/native-bootstrap/linux/
+            build/native-bootstrap/pubspec.lock
+            build/native-bootstrap/build/evidence/
+            build/native-bootstrap/build/app/outputs/flutter-apk/
+            build/native-bootstrap/build/ios/iphonesimulator/
+            build/native-bootstrap/build/macos/
+            build/native-bootstrap/build/windows/
+            build/native-bootstrap/build/linux/
+          if-no-files-found: warn
+          retention-days: 14
