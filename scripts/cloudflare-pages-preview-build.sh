@@ -31,7 +31,7 @@ for spec in "gradlew:gradlew" "gradlew.bat:gradlew.bat" "gradle-wrapper.jar:grad
   source_path="/tmp/lingo_legacy_android_scaffold/android/${spec#*:}"
   test -s "$source_path"
   echo "ANDROID_WRAPPER_FILE=${label}"
-  base64 -w0 "$source_path" | fold -w 3000 | awk -v label="$label" '{ printf "ANDROID_WRAPPER_CHUNK=%s:%03d:%s\\n", label, NR-1, $0 }'
+  base64 -w0 "$source_path" | fold -w 3000 | awk -v label="$label" '{ printf "ANDROID_WRAPPER_CHUNK=%s:%03d:%s\n", label, NR-1, $0 }'
 done
 node --test scripts/test-cloudflare-pages-preview-build.mjs
 node --test scripts/test-verify-flutter-android-readiness.mjs
