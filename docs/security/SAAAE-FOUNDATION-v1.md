@@ -146,7 +146,7 @@ The review branch adds:
 
 This is pure policy logic only. It does not authenticate the principal, load trusted roles or memberships, persist policy decisions, create/consume approvals, write audit records, enforce revocation against a live identity store, or wrap a real protected operation. A trusted server-side adapter and per-operation enforcement point remain required.
 
-A local isolated Node harness exercised the ten targeted decision cases successfully. The repository aggregate test command and hosted CI have not yet been run for this branch; no runtime or production integration is claimed.
+A local isolated Node harness exercised the eleven targeted decision cases successfully. The repository aggregate test command and hosted CI have not yet been run for this branch; no runtime or production integration is claimed.
 
 ### 3.5 Idempotency and replay defense
 
