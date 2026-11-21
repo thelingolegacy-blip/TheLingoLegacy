@@ -2,6 +2,9 @@ name: Hosted Canary Zero Uses
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - recovery/hosted-canary-push-once-2026-11-21
 
 permissions:
   contents: read
@@ -38,7 +41,7 @@ jobs:
           test -n "${RUNNER_NAME:-}"
           test "${RUNNER_OS}" = "Linux"
           test "${GITHUB_ACTIONS}" = "true"
-          echo "ZERO_UNDERSCORE_USES_CANARY=PASS" | tee -a canary-evidence/identity.txt
+          echo "ZERO_USES_CANARY=PASS" | tee -a canary-evidence/identity.txt
 
       - name: Preserve evidence in job summary
         if: always()
@@ -52,5 +55,5 @@ jobs:
             echo "- Commit: ${GITHUB_SHA}"
             echo "- Runner OS: ${RUNNER_OS}"
             echo "- Runner name present: $([ -n "${RUNNER_NAME:-}" ] && echo yes || echo no)"
-            echo "- Acceptance marker: ZERO_UNDERSCORE_USES_CANARY=PASS"
+            echo "- Acceptance marker: ZERO_USES_CANARY=PASS"
           } >> "${GITHUB_STEP_SUMMARY}"
