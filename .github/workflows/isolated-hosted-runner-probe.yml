@@ -2,6 +2,12 @@ name: Isolated Hosted Runner Probe
 
 on:
   workflow_dispatch:
+    inputs:
+      purpose:
+        description: Short reason for this non-deploying hosted-runner probe
+        required: true
+        default: hosted-runner-recovery
+        type: string
 
 permissions:
   contents: none
@@ -15,40 +21,151 @@ jobs:
     name: Verify hosted runner can instantiate and execute
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      actions: read
+    env:
+      PROBE_PURPOSE: ${{ inputs.purpose }}
     steps:
       - name: Capture minimal runner evidence
         shell: bash
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
+          mkdir -p ci-hosted-runner-evidence
           test -n "${RUNNER_NAME:-}"
           test "${RUNNER_OS:-}" = "Linux"
           test "${RUNNER_ARCH:-}" = "X64"
-          echo "RUNNER_NAME=$RUNNER_NAME"
-          echo "RUNNER_OS=$RUNNER_OS"
-          echo "RUNNER_ARCH=$RUNNER_ARCH"
-          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
-          echo "GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
-          echo "GITHUB_SHA=$GITHUB_SHA"
-          echo "=== UTC ==="
-          date -u +%FT%TZ
-          echo "=== OS ==="
-          uname -a
-          cat /etc/os-release
-          echo "=== Toolchain ==="
-          node --version
-          npm --version
-          git --version
-          echo "=== Disk ==="
-          df -h
-          echo "=== Memory ==="
-          free -h
           {
-            echo "## Isolated hosted-runner probe"
-            echo "- Runner: ${RUNNER_NAME}"
-            echo "- OS/architecture: ${RUNNER_OS}/${RUNNER_ARCH}"
-            echo "- Run: ${GITHUB_RUN_ID}"
-            echo "- Commit: ${GITHUB_SHA}"
-            echo "- Result: **HOSTED_RUNNER_JOB_EXECUTED**"
-            echo "- Scope: no checkout, external actions, secrets, network calls, artifacts, or production access."
-          } >> "$GITHUB_STEP_SUMMARY"
-          echo "HOSTED_RUNNER_JOB_EXECUTED=true"
+            echo "schema=lingo-hosted-runner-probe-v2"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "workflow=$GITHUB_WORKFLOW"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "job=$GITHUB_JOB"
+            echo "commit_sha=$GITHUB_SHA"
+            echo "ref=$GITHUB_REF"
+            echo "event=$GITHUB_EVENT_NAME"
+            echo "runner_name=$RUNNER_NAME"
+            echo "runner_os=$RUNNER_OS"
+            echo "runner_arch=$RUNNER_ARCH"
+            echo "purpose=$PROBE_PURPOSE"
+            echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee ci-hosted-runner-evidence/execution-identity.txt
+          {
+            echo "kernel=$(uname -sr)"
+            echo "machine=$(uname -m)"
+            echo "python=$(python3 --version 2>&1)"
+            echo "git=$(git --version 2>&1 || true)"
+          } | tee ci-hosted-runner-evidence/host-facts.txt
+          echo "HOSTED_RUNNER_JOB_EXECUTED=true" | tee ci-hosted-runner-evidence/execution-result.txt
+
+      - name: Capture provider-observed job, runner and step identity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.error, urllib.request
+          root = pathlib.Path("ci-hosted-runner-evidence")
+          api = os.environ["GITHUB_API_URL"].rstrip("/")
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          url = f"{api}/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100"
+          request = urllib.request.Request(url, headers={
+              "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          })
+          with urllib.request.urlopen(request, timeout=20) as response:
+              payload = json.loads(response.read())
+          runner_name = os.environ["RUNNER_NAME"]
+          matches = [
+              job for job in payload.get("jobs", [])
+              if job.get("runner_name") == runner_name
+              and int(job.get("run_id", -1)) == int(run_id)
+          ]
+          if len(matches) != 1:
+              raise SystemExit(f"Expected exactly one provider job for runner {runner_name}; found {len(matches)}")
+          job = matches[0]
+          record = {
+              "schema": "lingo-hosted-runner-provider-evidence-v2",
+              "repository": repo,
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "run_id": int(run_id),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "ref": os.environ["GITHUB_REF"],
+              "event": os.environ["GITHUB_EVENT_NAME"],
+              "job_id": job.get("id"),
+              "job_name": job.get("name"),
+              "job_status_at_capture": job.get("status"),
+              "job_conclusion_at_capture": job.get("conclusion"),
+              "runner_id": job.get("runner_id"),
+              "runner_name": job.get("runner_name"),
+              "runner_group_id": job.get("runner_group_id"),
+              "runner_group_name": job.get("runner_group_name"),
+              "labels": job.get("labels", []),
+              "steps": job.get("steps", []),
+              "html_url": job.get("html_url"),
+              "logs_url_present": bool(job.get("logs_url")),
+              "purpose": os.environ["PROBE_PURPOSE"],
+              "scope": "GitHub-hosted runner smoke test only; not G02 qualification or production acceptance"
+          }
+          (root / "provider-job-record.json").write_text(json.dumps(record, indent=2) + "\n")
+          if not isinstance(record["job_id"], int) or record["job_id"] <= 0:
+              raise SystemExit("Provider did not return a positive job ID")
+          if not isinstance(record["runner_id"], int) or record["runner_id"] <= 0:
+              raise SystemExit("Provider did not return a positive runner ID")
+          if not record["runner_name"]:
+              raise SystemExit("Provider did not return a runner name")
+          if not isinstance(record["steps"], list) or not record["steps"]:
+              raise SystemExit("Provider did not return instantiated steps")
+          print(json.dumps({
+              "job_id": record["job_id"],
+              "runner_id": record["runner_id"],
+              "runner_name": record["runner_name"],
+              "runner_group_name": record["runner_group_name"],
+              "step_count": len(record["steps"]),
+              "logs_url_present": record["logs_url_present"]
+          }, indent=2))
+          PY
+
+      - name: Generate evidence checksums and run manifest
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib
+          root = pathlib.Path("ci-hosted-runner-evidence")
+          record_path = root / "provider-job-record.json"
+          record = json.loads(record_path.read_text()) if record_path.exists() else {}
+          manifest = {
+              "schema": "lingo-ci-evidence-manifest-v2",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "ref": os.environ["GITHUB_REF"],
+              "event": os.environ["GITHUB_EVENT_NAME"],
+              "job_id": record.get("job_id"),
+              "runner_id": record.get("runner_id"),
+              "runner_name": record.get("runner_name", os.environ.get("RUNNER_NAME")),
+              "provider_steps_observed": len(record.get("steps", [])),
+              "provider_logs_url_present": record.get("logs_url_present", False),
+              "evidence_scope": "hosted-runner availability probe; not application tests, G02 acceptance, or release certification",
+              "captured_utc": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()
+          }
+          (root / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+          PY
+          (cd ci-hosted-runner-evidence && sha256sum *.txt *.json > SHA256SUMS)
+
+      - name: Upload hosted-runner evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lingo-hosted-runner-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-hosted-runner-evidence/
+          if-no-files-found: error
+          retention-days: 14
