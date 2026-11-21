@@ -68,6 +68,14 @@ test('missing Worker-first restricted path routing fails closed', (t) => {
   assert.match(result.stderr, /assets\.run_worker_first missing restricted path pattern: \/auth0-details\*/);
 });
 
+test('missing packages source exclusion fails closed', (t) => {
+  const root = makeRoot(requiredExclusions.filter((entry) => entry !== 'packages/'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /missing required exclusion: packages\\//);
+});
+
 test('missing sensitive root-file exclusion fails closed', (t) => {
   const root = makeRoot(requiredExclusions.filter((entry) => entry !== '.firebaserc'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
