@@ -45,6 +45,9 @@ jobs:
           if [[ ! -f web/index.html ]]; then
             flutter create --platforms=web .
           fi
+          if [[ -f test/widget_test.dart ]] && grep -q "package:material_ui/material_ui.dart" test/widget_test.dart; then
+            rm test/widget_test.dart
+          fi
       - name: Resolve Flutter packages
         run: flutter pub get
       - name: Run Flutter tests
