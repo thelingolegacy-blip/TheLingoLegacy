@@ -56,6 +56,5 @@ class DefaultFirebaseOptions {
     projectId: 'lingo-legacy-production',
     databaseURL: 'https://lingo-legacy-production-default-rtdb.firebaseio.com',
     storageBucket: 'lingo-legacy-production.appspot.com',
-    macOSBundleId: 'com.thelingolegacy.app',
   );
 }
