@@ -68,7 +68,7 @@ test("missing audit adapter prevents authorization", async () => {
   const args = dependencies();
   delete args.auditDecision;
   const result = await authorizeServerRequest(args);
-  assert.equal(result.reason, "AUTHORIZATION_DEPENDENCY_UNAVAILABLE");
+  assert.equal(result.reason, "AUTHORIZATION_AUDIT_UNAVAILABLE");
 });
 test("cross-tenant resource context is denied and audited", async () => {
   const result = await authorizeServerRequest(dependencies({
