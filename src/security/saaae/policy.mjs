@@ -30,7 +30,8 @@ function isStringArray(value) {
 }
 
 function isJsonScalar(value) {
-  return value === null || ["string", "number", "boolean"].includes(typeof value);
+  return value === null || typeof value === "string" || typeof value === "boolean"
+    || (typeof value === "number" && Number.isFinite(value));
 }
 
 function validAttributeMap(value) {
@@ -84,10 +85,13 @@ function validRule(rule) {
   if (rule.effect === "allow"
     && !["principalIds", "principalTypes", "roles"].some(key => rule[key]?.length)) return false;
 
-  if (!validAttributeMap(rule.conditions?.principalAttributes)
-    || !validAttributeMap(rule.conditions?.resourceAttributes)
-    || !validAttributeMap(rule.conditions?.contextAttributes)) return false;
-  if (rule.conditions !== undefined && !isRecord(rule.conditions)) return false;
+  if (rule.conditions !== undefined) {
+    if (!isRecord(rule.conditions)
+      || Object.keys(rule.conditions).some(key => !["principalAttributes", "resourceAttributes", "contextAttributes"].includes(key))
+      || !validAttributeMap(rule.conditions.principalAttributes)
+      || !validAttributeMap(rule.conditions.resourceAttributes)
+      || !validAttributeMap(rule.conditions.contextAttributes)) return false;
+  }
 
   for (const key of ["notBefore", "expiresAt"]) {
     if (rule[key] !== undefined && (!nonEmptyString(rule[key]) || Number.isNaN(Date.parse(rule[key])))) return false;
