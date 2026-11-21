@@ -490,7 +490,7 @@
       "id": "supabase",
       "provider": "Supabase",
       "status": "LIVE_VERIFIED",
-      "evidence": "Authorized Supabase connector observed project ACTIVE_HEALTHY (PostgreSQL 17.6); public schema has 0 tables, database has 0 migrations, and security, performance and health advisor checks returned 0 lints. Browser-side adapter is not configured; connector observation is not a website endpoint.",
+      "evidence": "Authorized Supabase connector observed project ACTIVE_HEALTHY (PostgreSQL 17.6); 0 public application tables, 0 project migrations, 0 Edge Functions, and 0 security/performance/health advisor lints. Built-in auth/storage/realtime system schemas are present. Browser-side adapter is not configured; connector observation is not a website endpoint.",
       "writeAuthority": false
     },
     {
