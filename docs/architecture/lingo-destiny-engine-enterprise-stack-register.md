@@ -515,3 +515,15 @@ Do not repurpose `my-flutter-app`, do not alter the active production Worker, an
 
 
 Water distribution/flow monitoring and wastewater/drainage/sewer-flow monitoring are distinct LINGOworld modules with separate permission scopes; neither inherits the other's utility telemetry or control records.
+
+
+### 2026-11-21 live API route recheck
+
+A fresh read-only Cloudflare API query reconfirmed the active `thelingolegacy.com` zone and all 27 Worker routes across the account's 10 Worker scripts. The flagship route precedence is:
+
+1. `thelingolegacy.com/` → exact-root `lingo-flagship-root`.
+2. `thelingolegacy.com/*` → wildcard `thelingolegacyv-5` for all other apex paths.
+3. `www.thelingolegacy.com/*` → `thelingolegacyv-5`.
+4. `www` and apex `/integration-configurations` paths have more-specific overrides to `lingo-integration-config-404`.
+
+The exact-root route and wildcard routes are separate active routing rules, not one interchangeable deployment. The `atlas` and `launch` hostnames also remain separately routed. This API recheck confirms route ownership only; it does not independently re-prove active deployment version, homepage content parity, www redirect behavior, TLS, or end-user journeys. No route, DNS, Worker, or traffic mutation was made.
