@@ -460,6 +460,7 @@ The live site contains multiple generations of public surfaces. A route returnin
 | Public path | Browser observation | Release disposition |
 |---|---|---|
 | `/` | Apex exact-root Worker serves a candidate homepage; root source on main is a redirect to `/studio-hub/` | Keep candidate label; reconcile root Worker and main source before promotion |
+| `/living-universe/` | Reachable cinematic gateway with theme, audio/FX controls and a connected world map; its nested links include admin/control-center, identity/account, game, commerce and child-story routes | Preserve as a separate cinematic gateway candidate; do not replace it with the directory; audit every nested route and authentication/privacy boundary before adding it to canonical navigation |
 | `/studio/` | Publicly reachable, noindex operations control center exposes protected-hold, G02, billing/configuration and access-verification status; noindex is not access control | Keep read-only; verify no sensitive information is exposed and require authentication or a public-safe status projection before any privileged actions |
 | `/trust-compliance/` | Reachable trust/safety blueprint with no-cash-value language | Candidate policy reference; verify legal owner and current controls |
 | `/privacy/` | Reachable policy page covering public products, founder drops, child/youth experiences and payments | Legal owner review required to confirm wording matches current checkout, data flows and child-safety controls |
