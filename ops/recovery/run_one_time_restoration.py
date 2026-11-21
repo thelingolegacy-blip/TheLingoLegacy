@@ -6,11 +6,11 @@ machine-readable evidence bundle, and never deploys, activates, merges, changes
 DNS, provisions services, enables payments, starts runners, or deletes backups.
 
 Usage:
-  python3 ops/recovery/run_one_time_restoration.py
-  python3 ops/recovery/run_one_time_restoration.py --network-enabled
-  python3 ops/recovery/run_one_time_restoration.py --core-v2-dir /path/to/pr596
-  python3 ops/recovery/run_one_time_restoration.py --firebase-candidate-dir /path/to/pr614
-  python3 ops/recovery/run_one_time_restoration.py --g02-evidence /secure/g02.json --expected-sha <40-char-sha>
+  python3 ops/recovery/run_one_time_restoration.py --source-expected-sha <40-char-sha>
+  python3 ops/recovery/run_one_time_restoration.py --source-expected-sha <40-char-sha> --network-enabled
+  python3 ops/recovery/run_one_time_restoration.py --source-expected-sha <40-char-sha> --core-v2-dir /path/to/pr596 --core-v2-expected-sha <40-char-sha>
+  python3 ops/recovery/run_one_time_restoration.py --source-expected-sha <40-char-sha> --firebase-candidate-dir /path/to/pr614 --firebase-expected-sha <40-char-sha>
+  python3 ops/recovery/run_one_time_restoration.py --source-expected-sha <40-char-sha> --g02-evidence /secure/g02.json --expected-sha <40-char-sha>
 
 Network-enabled mode adds only fixed-host public HTTPS GET probes in this
 process; it does NOT sandbox child-process egress. The host must enforce
