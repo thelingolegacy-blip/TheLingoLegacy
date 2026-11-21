@@ -465,14 +465,14 @@
       "id": "supabase",
       "provider": "Supabase",
       "status": "LIVE_VERIFIED",
-      "evidence": "Project ACTIVE_HEALTHY; no public app tables, migrations or Edge Functions",
+      "evidence": "Authorized Supabase connector observed project ACTIVE_HEALTHY (PostgreSQL 17.6); public schema has 0 tables, database has 0 migrations, and security, performance and health advisor checks returned 0 lints. Browser-side adapter is not configured; connector observation is not a website endpoint.",
       "writeAuthority": false
     },
     {
       "id": "render",
       "provider": "Render",
       "status": "PREVIEW_ONLY",
-      "evidence": "One public static operations preview; no backend service observed",
+      "evidence": "Render connector lists one available workspace; service inventory was not queried because workspace selection requires explicit user confirmation. Existing evidence identifies a public static operations preview only.",
       "writeAuthority": false
     },
     {
