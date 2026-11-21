@@ -29,7 +29,7 @@ A reserved payload URL can become live only after these controls exist:
 - Backend stack: Caddy, Postgres, Redis, object storage.
 - Flutter app layer: app events, user actions, sync.
 - Firebase: function, auth, Firestore bridge contracts if still connected.
-- Avalon Cultural Systems: registry, membership, events.
+- THE PRESTIGIOUS HOUSE OF DUSSE: current house identity and reserved house-operations contracts. Historical House of Avalon payload material is archived separately; no legal status is implied or transferred.
 - Code Crew: missions, profiles, operations.
 - Peaches’ Mystery Keys: key and spotlight contracts.
 
