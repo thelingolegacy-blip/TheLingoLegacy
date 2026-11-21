@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { generateWorld, validateWorldDefinition } from '../src/index.mjs';
 
 function makeWorld(seed = 'destiny-seed-01') {
@@ -12,6 +14,16 @@ function makeWorld(seed = 'destiny-seed-01') {
     poiCount: 12,
   });
 }
+
+test('world schema is parseable and versioned with strict tile properties', () => {
+  const schemaPath = new URL('../schema/world-definition.schema.json', import.meta.url);
+  const schema = JSON.parse(fs.readFileSync(fileURLToPath(schemaPath), 'utf8'));
+  assert.equal(schema.properties.schemaVersion.const, '1.0.0');
+  assert.equal(schema.properties.generatorVersion.const, '0.1.0');
+  assert.equal(schema.additionalProperties, false);
+  assert.equal(schema.properties.map.items.items.additionalProperties, false);
+  assert.equal(schema.properties.map.items.items.allOf[0].then.properties.walkable.const, false);
+});
 
 test('same seed and generator version produce the same world and fingerprint', () => {
   const first = makeWorld();
