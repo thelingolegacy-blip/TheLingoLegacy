@@ -52,3 +52,14 @@ No production routing is changed by this registry alone.
 ## Source integrity
 
 The consolidated source includes a deterministic surface-integrity checker at `studio/runtime/surface-integrity.js` and a GitHub Actions workflow at `.github/workflows/studio-surface-integrity.yml`. The checker validates surface entrypoints, shared runtime files, adapter linkage, surface identity, route registration, and manifest registration. Its result is source-integrity evidence only and never infers production state.
+
+
+## Enterprise module and provider registry
+
+`studio/enterprise-module-registry.json` is the Studio control-plane capability catalog. It is intentionally distinct from `studio/surface-contracts.json` (product surface/entrypoint contracts) and `studio/production-feature-manifest.json` (runtime feature flags).
+
+The registry defines 12 Studio modules and current provider-readiness classifications for GitHub, Cloudflare, Flutter, Firebase, Supabase, Render, and Google AI Studio. It records only observed/source-backed state and includes evidence requirements for every module.
+
+`studio/enterprise-module-registry.schema.json` defines the JSON Schema contract. This is a registry foundation, not a claim that all 12 modules are implemented or that providers are fully integrated.
+
+Default authority is read-only. No secret values, provider credentials, production mutation, autonomous merge/deploy, billing, wallet/reward mutation, or access grants are allowed by this registry. Unknown state fails closed.
