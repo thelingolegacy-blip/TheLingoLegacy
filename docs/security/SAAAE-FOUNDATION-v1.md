@@ -146,7 +146,23 @@ The review branch adds:
 
 This is pure policy logic only. It does not authenticate the principal, load trusted roles or memberships, persist policy decisions, create/consume approvals, write audit records, enforce revocation against a live identity store, or wrap a real protected operation. A trusted server-side adapter and per-operation enforcement point remain required.
 
-A local isolated Node harness exercised the eleven targeted decision cases successfully. The repository aggregate test command and hosted CI have not yet been run for this branch; no runtime or production integration is claimed.
+A local isolated Node harness previously exercised the eleven original policy-decision cases successfully. Since then, additional tests have been authored, bringing the targeted test suite to 51 cases; those additional suites have NOT RUN. The repository aggregate test command and hosted CI have not been run for this branch; no runtime or production integration is claimed.
+
+### 3.7 Initial approval, audit, idempotency, and server-boundary primitives
+
+The review branch now adds:
+
+- `src/security/saaae/canonical.mjs`: deterministic JSON canonicalization and SHA-256 digest helpers; rejects unsupported and non-finite values.
+- `src/security/saaae/authorization.mjs`: server-side request boundary that calls trusted authentication, server-side context resolution, policy loading, and mandatory durable audit-decision callback. It never treats client role/tenant fields as authoritative and will not return ALLOW when the audit callback is unavailable or unconfirmed.
+- `src/security/saaae/approval.mjs`: exact request/operation/resource/tenant/domain/environment/policy/payload binding; human approver requirement; optional separation of duties; expiry checks; signature-verifier hook; execution-time approver revalidation; and durable atomic single-use consumption contract.
+- `src/security/saaae/audit.mjs`: canonical hash-linked audit envelopes, atomic chain-head compare-and-set append contract, independent chain verification, and a separately signed checkpoint verification hook.
+- `src/security/saaae/idempotency.mjs`: durable atomic claim/completion contract scoped to principal, tenant, operation, resource, key, and payload digest; exact replay, in-progress, and payload-conflict outcomes.
+- Targeted Node test files for each primitive. There are 51 authored targeted test cases across policy, canonicalization, authorization, approvals, audit, and idempotency.
+- `docs/security/SAAAE-DURABLE-ADAPTER-CONTRACTS-v1.md`: required transactional storage behavior and integration boundaries.
+
+These are enforcement primitives and adapter contracts, not completed durable adapters. Signature verification, trusted role/membership resolution, transactional stores, signed checkpoint key custody, and actual protected-operation integration remain injected dependencies that must be independently implemented and verified.
+
+The initial eleven policy-decision cases were previously exercised in an isolated local Node harness. The newly authored canonicalization, authorization, approval, audit, and idempotency test suites have not been run in a repository checkout or hosted CI. The aggregate `npm test` remains NOT RUN for this branch.
 
 ### 3.5 Idempotency and replay defense
 
