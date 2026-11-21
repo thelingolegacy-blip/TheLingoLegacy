@@ -1,0 +1,65 @@
+name: G02 Offline Evidence Tooling CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/g02/**'
+      - '.github/workflows/g02-offline-validation.yml'
+  push:
+    branches:
+      - 'recovery/g02-execution-boundary-classifier-2026-11-01'
+    paths:
+      - 'scripts/g02/**'
+      - '.github/workflows/g02-offline-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-offline-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-validation:
+    name: Classifier and evidence-manifest tests (GitHub-hosted)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: false
+
+      - name: Compile G02 offline tools
+        run: |
+          python -m py_compile \
+            scripts/g02/classify-execution-boundary.py \
+            scripts/g02/build-evidence-manifest.py
+
+      - name: Run classifier and manifest regression suites
+        run: |
+          python -m unittest discover \
+            -s scripts/g02/tests \
+            -p 'test_*.py' \
+            -v
+
+      - name: Record validation boundary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## G02 Offline Tooling CI'
+            echo '- Runner: GitHub-hosted ubuntu-latest'
+            echo '- Scope: offline Python tests and syntax compilation only'
+            echo '- No G02 self-hosted runner dispatch'
+            echo '- No runner registration, host access, secrets, deployment, or production mutation'
+            echo '- Passing this workflow does not establish G02 execution or release acceptance'
+          } >> "$GITHUB_STEP_SUMMARY"
