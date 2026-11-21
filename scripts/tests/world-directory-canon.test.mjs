@@ -8,6 +8,19 @@ const html = fs.readFileSync(fileURLToPath(pagePath), 'utf8');
 const realmCards = [...html.matchAll(/<article class="realm-card"[\s\S]*?<h3>(.*?)<\/h3>[\s\S]*?<\/article>/g)];
 const realmTitles = realmCards.map(match => match[1]);
 
+test('wildcard homepage uses the same canonical portfolio and route-safety rules', () => {
+  const home = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+  const cards = [...home.matchAll(/<article class="realm-card"[\\s\\S]*?<h3>(.*?)<\\/h3>[\\s\\S]*?<\\/article>/g)].map(match => match[1]);
+  assert.deepEqual(cards, ['LINGOlegacy','LINGOlane','LINGOslots','LINGOarcade','LINGOlibrary','LINGOmedia','LINGOworld','LegacyXclub']);
+  assert.doesNotMatch(home, /href="\\/(?:studio|contact|terms|studio-sites|thats-my-lingo|kottons-code|library|loyalty-lane-cycles|studio\\/lingo-ai)[^"]*"/);
+  assert.match(home, /href="https:\\/\\/thelingolegacy\\.com\\/"/);
+  assert.match(home, /World Builder & Simulation/);
+  assert.match(home, /Game Live Operations/);
+  assert.match(home, /Workforce & HR\\/payroll/);
+  assert.match(home, /KottonsCode/);
+  assert.doesNotMatch(home, /LINGOarena|LINGOreads|Duolingo|Kotton’s Code/);
+});
+
 test('directory exposes exactly the eight canonical public portfolios', () => {
   assert.deepEqual(realmTitles, [
     'LINGOlegacy',
