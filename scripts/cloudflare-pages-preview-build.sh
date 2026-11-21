@@ -23,12 +23,8 @@ cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
 
 # Generate the missing Gradle wrapper from the exact pinned Flutter SDK.
 # Export it as chunked base64 evidence so it can be committed without binary corruption.
-echo "LINGO_STAGE=android_wrapper_generation"
-rm -rf /tmp/lingo_legacy_android_scaffold
-flutter create /tmp/lingo_legacy_android_scaffold --project-name lingo_legacy --org com.thelingolegacy --platforms android --no-pub
-source_path="/tmp/lingo_legacy_android_scaffold/android/gradle/wrapper/gradle-wrapper.jar"
-test -s "$source_path"
-echo "ANDROID_WRAPPER_JAR_TAIL_88=$(base64 -w0 "$source_path" | tail -c 88)"
+# Android Gradle wrapper assets are committed in source. The readiness verifier below
+# validates the tracked files; this web preview does not generate or export binaries.
 node --test scripts/test-cloudflare-pages-preview-build.mjs
 node --test scripts/test-verify-flutter-android-readiness.mjs
 echo "LINGO_STAGE=android_readiness"
