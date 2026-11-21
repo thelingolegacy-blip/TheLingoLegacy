@@ -110,6 +110,27 @@ test('movement must advance exactly one tick and one adjacent tile', () => {
   }), /orthogonally adjacent/);
 });
 
+test('actors cannot overlap and movement cannot enter an occupied tile', () => {
+  const world = makeWorld();
+  const [start, occupied] = findWalkablePair(world);
+  assert.throws(() => createSimulationState(world, [
+    { id: 'player-one', ...start },
+    { id: 'player-two', ...start },
+  ]), /same tile/);
+
+  const state = createSimulationState(world, [
+    { id: 'player-one', ...start },
+    { id: 'player-two', ...occupied },
+  ]);
+  assert.throws(() => applySimulationCommand(state, world, {
+    commandId: 'move-occupied',
+    actorId: 'player-one',
+    type: 'move',
+    tick: 1,
+    to: occupied,
+  }), /destination tile is occupied/);
+});
+
 test('water tiles are not traversable', () => {
   let pair = null;
   let world = null;
