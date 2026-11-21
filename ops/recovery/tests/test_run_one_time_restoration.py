@@ -113,5 +113,46 @@ class RestorationOrchestratorSafetyTests(unittest.TestCase):
         self.assertIsNone(handler.redirect_request(None, None, 302, "Found", {}, "https://other.example/"))
 
 
+    def test_verified_copy_records_matching_manifest(self):
+        destination = self.root / "verified-copy"
+        digest = MODULE.copy_workspace_verified(self.source, destination)
+        self.assertEqual(digest, MODULE.workspace_manifest_sha256(destination))
+        self.assertEqual(digest, MODULE.workspace_manifest_sha256(self.source))
+
+    def test_verified_copy_rejects_source_change_during_copy(self):
+        destination = self.root / "raced-copy"
+        original_copy = MODULE.copy_workspace
+
+        def copy_then_mutate(source, target):
+            original_copy(source, target)
+            (source / "README.md").write_text("changed during copy\\n", encoding="utf-8")
+
+        with patch.object(MODULE, "copy_workspace", side_effect=copy_then_mutate):
+            with self.assertRaisesRegex(ValueError, "changed during copy"):
+                MODULE.copy_workspace_verified(self.source, destination)
+
+    def test_firebase_staging_identity_is_only_added_when_explicitly_scoped(self):
+        with patch.dict(os.environ, {"LINGO_FIREBASE_STAGING_PROJECT_ID": "staging-project"}, clear=False):
+            inherited = MODULE.safe_env()
+            scoped = MODULE.safe_env({"LINGO_FIREBASE_STAGING_PROJECT_ID": "staging-project"})
+        self.assertNotIn("LINGO_FIREBASE_STAGING_PROJECT_ID", inherited)
+        self.assertEqual(scoped["LINGO_FIREBASE_STAGING_PROJECT_ID"], "staging-project")
+
+    def test_redirect_policy_accepts_same_host_https_only(self):
+        self.assertTrue(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "/home"))
+        self.assertTrue(MODULE.valid_redirect_target("https://app.thelingolegacy.com/", "https://app.thelingolegacy.com/login"))
+        self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "https://evil.example/"))
+        self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "http://www.thelingolegacy.com/"))
+        self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "https://user@www.thelingolegacy.com/"))
+
+    def test_root_source_expected_sha_is_required_by_cli(self):
+        with patch("sys.argv", ["runner"]):
+            with self.assertRaises(SystemExit):
+                MODULE.parse_args()
+        with patch("sys.argv", ["runner", "--source-expected-sha", "a" * 40]):
+            args = MODULE.parse_args()
+        self.assertEqual(args.source_expected_sha, "a" * 40)
+
+
 if __name__ == "__main__":
     unittest.main()
