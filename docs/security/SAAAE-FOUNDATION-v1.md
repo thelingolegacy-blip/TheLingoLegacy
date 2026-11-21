@@ -136,6 +136,10 @@ Integrity and retention:
 
 For operations that mutate protected state, authorization and audit intent must be durably committed before the side effect. Prefer a transactional outbox or equivalent atomic pattern. If the system cannot guarantee durable audit intent and later outcome reconciliation, it must not execute the protected operation. A post-execution audit write alone is insufficient because a storage outage could otherwise leave an untraceable side effect.
 
+### 3.5 Idempotency and replay defense
+
+Every mutating request must carry or receive a server-issued idempotency key scoped to principal, tenant, operation, and resource. Store the request digest and terminal outcome durably. Reuse with a different payload is rejected; exact replay returns the prior outcome and does not repeat the side effect. Approval nonce consumption and action idempotency are separate controls.
+
 ### 3.6 Initial pure policy evaluator
 
 The review branch adds:
@@ -146,7 +150,7 @@ The review branch adds:
 
 This is pure policy logic only. It does not authenticate the principal, load trusted roles or memberships, persist policy decisions, create/consume approvals, write audit records, enforce revocation against a live identity store, or wrap a real protected operation. A trusted server-side adapter and per-operation enforcement point remain required.
 
-A local isolated Node harness previously exercised the eleven original policy-decision cases successfully. Since then, additional tests have been authored, bringing the targeted test suite to 51 cases; those additional suites have NOT RUN. The repository aggregate test command and hosted CI have not been run for this branch; no runtime or production integration is claimed.
+A local isolated Node harness previously exercised the eleven original policy-decision cases successfully. Since then, additional tests have been authored, bringing the targeted test suite to 59 cases; those additional suites have NOT RUN. The repository aggregate test command and hosted CI have not been run for this branch; no runtime or production integration is claimed.
 
 ### 3.7 Initial approval, audit, idempotency, and server-boundary primitives
 
