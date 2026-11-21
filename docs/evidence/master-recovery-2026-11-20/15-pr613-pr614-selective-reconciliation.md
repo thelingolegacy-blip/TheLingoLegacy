@@ -54,22 +54,23 @@ Use PR #614 as the preferred security/publication-boundary baseline for selectiv
 
 ## Critical unresolved contradiction — Android wrapper (corrected 2026-11-21)
 
-The earlier statement that the current #614 branch lacked the Android project scaffold and wrapper files was based on querying Groovy `.gradle` filenames. The current project uses Kotlin DSL filenames. Exact-head readback confirms:
+The earlier statement that the current #614 branch lacked the Android project scaffold and wrapper files was based on querying Groovy `.gradle` paths. The current project uses Kotlin DSL filenames. Exact-head readback confirms:
 - Both #613 and #614 contain `android/settings.gradle.kts`, `android/build.gradle.kts`, and `android/app/build.gradle.kts`.
 - #613 does not contain `android/gradlew`, `android/gradlew.bat`, or `android/gradle/wrapper/gradle-wrapper.jar`.
-- #614 contains all three wrapper paths. The JAR's Git blob SHA is `9fa581f7838ae3322a75b33868832aa9e14124fd`; this is not a SHA-256 digest.
-- #614's wrapper properties point to Gradle 9.5.0's `-all.zip` distribution but omit `distributionSha256Sum`.
+- #614 contains all three wrapper paths. The JAR's Git blob SHA is `9fa581f7838ae3322a75b33868832aa9e14124fd`.
+- A PR #614 comment reports the current 47,250-byte JAR's SHA-256 as `6ea8ab3ed93d661ee701ff35e50df349320803eef7b2bcd7a149e9d95d4db3d4`. This does **not** match Gradle's official Gradle 9.5.0 wrapper-JAR checksum `497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7`. Treat the tracked wrapper JAR as untrusted; do not execute it. Reconcile its provenance or replace it from an official trusted distribution and independently verify the digest.
+- #614's wrapper properties now include the official Gradle 9.5.0 complete distribution checksum `a3c4ba4aca8f0075688b9c5b18939fd28e8cb4357c227da5c1d9f38343791439`, added in commit `54e2cb8171a8cb1a3135838056c92f99df4fbaf1`. This protects the distribution download but does not make the mismatched JAR trustworthy.
+- The PR #614 test helper creates a synthetic ZIP-like JAR and minimal wrapper scripts inside a temporary fixture. That fixture does not prove or disprove the provenance of the tracked binary JAR.
+- The wrapper distribution URL remains Gradle 9.5.0 `-all.zip`. The complete distribution checksum is pinned, but wrapper execution remains prohibited until JAR verification is resolved.
 
-Therefore the Android project scaffold is present in source, but wrapper integrity and buildability remain **UNVERIFIED**:
-1. Compute the tracked JAR's SHA-256 from its exact binary bytes and compare it to Gradle's official 9.5.0 wrapper-JAR checksum (`497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7`). Do not confuse the Git blob SHA with SHA-256.
-2. Add the official Gradle 9.5.0 distribution SHA-256 as `distributionSha256Sum` before executing the wrapper.
-3. Inspect the tracked wrapper scripts and executable mode; do not infer file mode from text contents.
-4. Verify Android Gradle Plugin, Kotlin plugin and JDK compatibility against Gradle 9.5.0.
-5. Only after those checks, run the readiness validator and `flutter build apk --debug` in a disposable unprivileged environment.
+Therefore the Android project scaffold is source-present, but Android build readiness remains **BLOCKED**:
+1. Resolve the wrapper JAR checksum mismatch using an official Gradle-published JAR or a trusted generated wrapper and independently compare its SHA-256.
+2. Verify the distribution checksum pin and wrapper script executable mode.
+3. Verify Android Gradle Plugin, Kotlin plugin and JDK compatibility against Gradle 9.5.0.
+4. Resolve Dart SDK constraints and complete asset/font reference inventory.
+5. Only after the above, run dependency resolution, analyzer, tests, Android readiness and a debug APK build in a disposable unprivileged environment.
 
-The PR #614 test helper also creates a synthetic ZIP-like JAR and minimal scripts inside a temporary fixture. That is test-fixture behavior; it neither proves nor disproves the authenticity of the separately tracked binary JAR.
-
-Do not fabricate a JAR, hand-author wrapper scripts, or run an unverified wrapper. The current source scaffold does not establish a successful APK build.
+Do not execute the current wrapper, fabricate a replacement, or infer successful APK build from source presence. The current source scaffold does not establish a successful APK build.
 
 ## Other acceptance caveats
 
