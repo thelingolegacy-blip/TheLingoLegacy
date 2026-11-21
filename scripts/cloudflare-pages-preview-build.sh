@@ -24,6 +24,12 @@ if [[ ! -f web/index.html ]]; then
   flutter create --platforms=web .
 fi
 
+# Flutter's default template creates an unrelated sample widget test. Remove
+# only that known generated sample; repository-authored tests are preserved.
+if [[ -f test/widget_test.dart ]] && grep -q "package:material_ui/material_ui.dart" test/widget_test.dart; then
+  rm test/widget_test.dart
+fi
+
 flutter pub get
 flutter test
 flutter build web --release
