@@ -1,0 +1,4 @@
+import { json } from '@appdeploy/sdk';
+import { readRuntime } from './runtime-fabric';
+type ModuleRecord={id?:string;no?:number|string;title?:string;category?:string;status?:string;line?:string;monetization?:string};
+export async function getAppRegistry(){const runtime=await readRuntime('studio','global');const state=(runtime?.state??{}) as {modules?:ModuleRecord[]};const modules=Array.isArray(state.modules)?state.modules:[];const apps=modules.slice(0,16).map((module,index)=>({app_id:`app-${String(module.no??index+1).padStart(2,'0')}`,universe_id:module.id?String(module.id):`universe-${index+1}`,experience_id:module.id?String(module.id):`experience-${index+1}`,name:module.title??`Lingo World ${index+1}`,category:module.category??'WORLD',status:module.status??'LIVE',line:module.line??'',monetization:module.monetization??'EXPERIENCE'}));return json({version:1,count:apps.length,apps});}
