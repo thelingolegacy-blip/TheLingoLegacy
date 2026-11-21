@@ -78,3 +78,15 @@ test("cross-tenant resource context is denied and audited", async () => {
   }));
   assert.equal(result.decision, "DENY");
 });
+
+test("authorization audit receives correlation ID but never raw request credentials", async () => {
+  let auditRecord;
+  const result = await authorizeServerRequest(dependencies({
+    requestId: "server-request-01",
+    auditDecision: async record => { auditRecord = record; return { committed: true }; }
+  }));
+  assert.equal(result.decision, "ALLOW");
+  assert.equal(auditRecord.requestId, "server-request-01");
+  assert.equal(Object.hasOwn(auditRecord, "request"), false);
+  assert.equal(JSON.stringify(auditRecord).includes("Bearer"), false);
+});
