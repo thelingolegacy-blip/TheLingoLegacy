@@ -15,6 +15,10 @@
 - Cloudflare Pages uses `scripts/cloudflare-pages-preview-build.sh` to install the stable Flutter SDK in the ephemeral build workspace, generate the missing web shell, run Flutter tests, and build `build/web`.
 - The preview is browse-only and offline when Firebase options remain placeholders.
 
+## Web compatibility note
+
+- The current Firebase web plugins still include legacy JavaScript interop dependencies. The preview build therefore uses Flutter's standard JavaScript compiler with `--no-wasm-dry-run`; WebAssembly output is not claimed.
+
 ## Android
 
 - The app module previously selected the debug signing certificate for release builds. That has been removed.
