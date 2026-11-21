@@ -1,0 +1,259 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Proposed tracking identifiers only; not GitHub runner IDs, host IDs, credentials, agent IDs, or proof of registration.",
+  "canonical_runner_name_proposal": "runner-lingo-legacy-g02-prod-01",
+  "safety_status": "UNREGISTERED_UNVERIFIED",
+  "production_authorization": "NONE",
+  "entries": [
+    {
+      "proposed_tracking_id": "8f4b2c1e7a0d935f",
+      "sequence": 1,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "3a9c5d2f8e1b4607",
+      "sequence": 2,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "c17e4b9a2d8f5310",
+      "sequence": 3,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "6d2f8a1c9e4b7035",
+      "sequence": 4,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "9b1e7c3a5d8f2460",
+      "sequence": 5,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "2f5a8c1e4b7d9036",
+      "sequence": 6,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "4c9e2b8a1d7f3560",
+      "sequence": 7,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "7a3d1c5f8e2b9460",
+      "sequence": 8,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "1e6f9a2c4b8d7350",
+      "sequence": 9,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "5c8a3d1e7f2b4960",
+      "sequence": 10,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "0d4b7c2a5e9f1836",
+      "sequence": 11,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "8e2f6a1c4b7d3950",
+      "sequence": 12,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "3c9b4e2a1d8f7056",
+      "sequence": 13,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "6a1d8c2e4b7f9350",
+      "sequence": 14,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "9f3c5b2a1e7d8460",
+      "sequence": 15,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "2d8e1a4c7b5f9036",
+      "sequence": 16,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "4b7f3c2a1e8d9650",
+      "sequence": 17,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "1c5a8e2d4b7f9360",
+      "sequence": 18,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "7e2b6d1c4a8f3950",
+      "sequence": 19,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "3f9a4c2e1b7d8560",
+      "sequence": 20,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "5d1f8b2a4c7e9360",
+      "sequence": 21,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "8a4e2c1d7f3b9056",
+      "sequence": 22,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "2c7b5a1e4d8f9360",
+      "sequence": 23,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "6f3d9c2a1b7e4850",
+      "sequence": 24,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    },
+    {
+      "proposed_tracking_id": "9e1b7f2a4c8d3650",
+      "sequence": 25,
+      "intended_use": "G02 recovery correlation only; assign to a host, workflow, agent, or bot only through a separately approved mapping record.",
+      "github_runner_id": null,
+      "host_identity": null,
+      "agent_or_bot_identity": null,
+      "workflow_run_id": null,
+      "status": "UNASSIGNED_UNVERIFIED"
+    }
+  ]
+}

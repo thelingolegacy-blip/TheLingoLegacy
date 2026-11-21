@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/runner-signal.schema.json",
+  "title": "LINGO Studio Runner Signal",
+  "description": "Structured non-secret lifecycle signal for CI jobs, runners, agent tasks, and evidence artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_type", "event_id", "timestamp_utc", "repository", "commit_sha", "correlation_id", "result"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_type": {
+      "type": "string",
+      "enum": ["workflow.queued", "runner.heartbeat", "job.claimed", "job.started", "step.started", "step.completed", "sentinel.executed", "artifact.created", "artifact.verified", "job.completed", "job.failed", "job.cancelled", "agent.evaluation.completed"]
+    },
+    "event_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "timestamp_utc": { "type": "string", "format": "date-time" },
+    "repository": { "type": "string", "minLength": 3 },
+    "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{7,64}$" },
+    "workflow_run_id": { "type": ["string", "null"] },
+    "job_id": { "type": ["string", "null"] },
+    "runner_id": { "type": ["integer", "null"], "minimum": 1 },
+    "runner_name": { "type": ["string", "null"] },
+    "step_name": { "type": ["string", "null"] },
+    "correlation_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "artifact": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["name", "sha256"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "result": { "type": "string", "enum": ["ok", "failed", "blocked", "cancelled", "unknown"] },
+    "reason_code": { "type": ["string", "null"] },
+    "duration_ms": { "type": ["integer", "null"], "minimum": 0 }
+  }
+}
