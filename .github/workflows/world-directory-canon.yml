@@ -2,6 +2,7 @@ name: Canonical World Directory
 on:
   pull_request:
     paths:
+      - "index.html"
       - "worlds/index.html"
       - "assets/flagship-home.css"
       - "assets/flagship-home.js"
