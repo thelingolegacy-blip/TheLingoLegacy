@@ -451,3 +451,36 @@ The 14 records in PR #602 are useful as an inventory of product and platform nod
 - Ensure product display names and subproduct membership match this canon. Never silently rename historical records or create duplicate public identities to satisfy an implementation registry.
 
 This preserves the useful detail in PR #602 while preventing internal service boundaries from becoming accidental new brands or conflicting product hierarchies.
+
+
+## 16. Public route and legal-surface QA — read-only 2026-11-21
+
+The live site contains multiple generations of public surfaces. A route returning HTTP content is not sufficient for acceptance; verify product identity, content safety, privacy, navigation, accessibility and current source provenance.
+
+| Public path | Browser observation | Release disposition |
+|---|---|---|
+| `/` | Apex exact-root Worker serves a candidate homepage; root source on main is a redirect to `/studio-hub/` | Keep candidate label; reconcile root Worker and main source before promotion |
+| `/studio/` | Publicly reachable operations control center exposes protected-hold, G02, billing/configuration and access-verification status | Keep read-only; review whether authentication or a public-safe status projection is required |
+| `/trust-compliance/` | Reachable trust/safety blueprint with no-cash-value language | Candidate policy reference; verify legal owner and current controls |
+| `/privacy/` | Reachable but contains outdated founder-drop and payment wording | Privacy copy refresh required before public release acceptance |
+| `/terms/` | Not accessible in the public browser check | Terms publication/route verification required |
+| `/contact/` | Reachable but serves an older generic v7 portal rather than a focused contact page | Do not use as canonical contact route; use approved mailto until replaced |
+| `/loyalty-lane-apparel/` | Reachable but serves the same older generic v7 surface | Not an accepted apparel storefront; keep commerce disabled |
+| `/lane/` | Reachable source-only Studio surface; explicitly says production promotion remains gated | May be linked as a source-only preview with clear status |
+| `/media/` | Reachable source-only Studio surface; explicitly says production promotion remains gated | May be linked as a source-only preview with clear status |
+| `/studio-sites/` | Reachable generic universe portal; includes identifiable character/family references | Privacy review required under #476; do not link publicly until cleared |
+| `/kottons-code/` | Reachable but exposes identifiable family/minor details | Release-blocking privacy issue #476; keep directory link disabled |
+| `/thats-my-lingo/` | Reachable older public experience with dollar-style jackpot presentation and founder/payment marketing copy | Keep disabled until PR #639 is accepted, preview-tested and deployed through an authorized release |
+| `/loyalty-lane-cycles/`, `/library/`, `/studio-sites/lingoslots/`, `/studio-sites/lingoarcade/`, `/studio/lingo-ai/`, Doughboys vertical-slice path | Not accessible in the public browser check | Do not expose as active links; require route and browser verification |
+
+### Public experience policy
+
+- A directory card may link only to a route whose current content, route owner and privacy posture have been verified.
+- Use explicit `PREVIEW`, `SOURCE ONLY`, `PLANNED`, or `BLOCKED` labels; never infer production readiness from route existence.
+- Disable any product surface with unresolved privacy, legal, payment, identity, content-rights or routing concerns.
+- Avoid star symbols in canonical product names and remove obsolete generic v7 shells from canonical navigation.
+- Replace the old contact page with the approved contact email until a dedicated route is reviewed.
+- Keep the privacy policy visible but mark its refresh as required; do not claim terms acceptance while the Terms route is unverified.
+- Do not publish personal/family details from development portals or story references without explicit privacy approval.
+
+The route-aware canonical directory proposal in PR #640 applies these rules: eight public portfolio cards, separately permissioned LINGOworld service domains, shared platform engines, and disabled links for unverified or privacy-sensitive destinations.
