@@ -82,3 +82,16 @@ These permission labels describe required authorization scopes; they do not gran
 ### World engineering and game live operations
 
 The Studio catalog also separates the **World Builder & Simulation Studio** (world schemas, procedural generation, scene graphs, GIS overlays, deterministic simulation, asset lineage and Unity/web adapters) from **Game Live Operations** (sessions, progression, matchmaking, events, anti-cheat, moderation, telemetry and rollback). Both remain planned and read-only until their runtime contracts and test evidence are accepted.
+
+
+
+### Dashboard integration — 2026-11-21
+
+The Studio dashboard now loads the canonical 21-module catalog from `/studio/enterprise-module-registry.json` and renders each module's declared readiness, scope and read-only boundary. It no longer substitutes the legacy 21-name runtime module array for the enterprise capability catalog.
+
+The provider panel deliberately separates evidence classes:
+- **Live browser probes:** the same-origin Cloudflare Worker status/gate APIs and the public GitHub repository metadata endpoint. The Worker CSP permits only the exact `https://api.github.com` origin for this additional read-only probe.
+- **Session-observed connector evidence:** Supabase project health and advisor/table/migration results retrieved through the authorized ChatGPT connector. This is displayed as a timestamped evidence snapshot, not falsely represented as a browser-side endpoint.
+- **Not yet browser-integrated:** Firebase, Flutter native builds, Render service inventory, and Google AI Studio. Render service discovery requires the operator to explicitly confirm a workspace before inventory is queried. No provider secrets are embedded in the page.
+
+The dashboard remains a public-reachable, noindex preview, not an authenticated enterprise control plane. It exposes only public-safe provider metadata and release-lock state. Authenticated provider APIs, secret-backed adapters, audit persistence and any mutation capability require a separately designed, authenticated server-side boundary. No production Worker deployment is implied by this source change.
