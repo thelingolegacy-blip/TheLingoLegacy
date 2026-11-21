@@ -484,3 +484,10 @@ The live site contains multiple generations of public surfaces. A route returnin
 - Do not publish personal/family details from development portals or story references without explicit privacy approval.
 
 The route-aware canonical directory proposal in PR #640 applies these rules: eight public portfolio cards, separately permissioned LINGOworld service domains, shared platform engines, and disabled links for unverified or privacy-sensitive destinations.
+
+
+### Source versus live-runtime distinction
+
+GitHub main contains dedicated source pages at `contact/index.html`, `loyalty-lane-apparel/index.html`, and `terms/index.html`. The public browser responses for Contact and Apparel still return an older generic v7 shell, while the Terms route was not accessible. This is a source/runtime provenance mismatch, not proof that the dedicated source pages are missing. The live Worker must not be promoted until the exact current source commit, uploaded asset manifest, Worker version, route and browser response are correlated.
+
+The main Privacy source still contains founder/access and commerce-related wording that requires owner/legal review; do not silently rewrite legal commitments as part of a UI repair.
