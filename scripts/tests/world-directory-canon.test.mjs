@@ -51,8 +51,8 @@ test('internal services remain out of the public portfolio card list', () => {
 test('LINGOworld operations domains are separately presented', () => {
   const section = html.match(/<section class="section" id="world-operations">([\s\S]*?)<\/section>/)?.[1];
   assert.ok(section, 'missing LINGOworld operations section');
-  assert.equal((section.match(/<article class="architecture-card"/g) || []).length, 7);
-  for (const name of ['Workforce Operations','HR & Payroll','Residential Property','Hotels & Hospitality','Roads & Transportation','Street & Road Lighting','Water & Wastewater']) {
+  assert.equal((section.match(/<article class="architecture-card"/g) || []).length, 8);
+  for (const name of ['Workforce Operations','HR & Payroll','Residential Property','Hotels & Hospitality','Roads & Transportation','Street & Road Lighting','Water Distribution & Flow Monitoring','Wastewater, Drainage & Sewer Flow']) {
     assert.match(section, new RegExp(name));
   }
   assert.match(section, /tenant and jurisdiction boundaries/);
