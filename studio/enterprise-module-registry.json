@@ -173,7 +173,7 @@
     {
       "id": "operations-studio",
       "name": "Operations Studio",
-      "scope": "Workforce, property, hospitality, transport and infrastructure asset domains with tenant/jurisdiction boundaries",
+      "scope": "Read-only portfolio overview of separately permissioned workforce, residential property, hospitality, transport, street-lighting and water/wastewater modules; no shared access to underlying domain records.",
       "status": "PLANNED",
       "permissions": [
         "studio:read"
@@ -218,6 +218,166 @@
         "observedAt",
         "confidence",
         "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "workforce-operations",
+      "name": "Workforce Operations",
+      "scope": "Organizers, promoters, managers, scheduling, time records, role assignments and approvals; tenant-scoped workforce data with separate HR/payroll access.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "workforce:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "dataClassification",
+        "auditTrail"
+      ],
+      "route": null
+    },
+    {
+      "id": "hr-payroll",
+      "name": "HR & Payroll",
+      "scope": "Restricted HR records, compensation, payroll, tax, timekeeping and payroll approvals; least-privilege access, retention and audit controls.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "hr:read",
+        "payroll:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "dataClassification",
+        "auditTrail",
+        "retentionPolicy",
+        "approvalEvidence"
+      ],
+      "route": null
+    },
+    {
+      "id": "residential-property-operations",
+      "name": "Residential Property Operations",
+      "scope": "Homes and residential property portfolios, occupancy, maintenance, work orders, inspections, asset registries and GIS references; tenant and jurisdiction scoped.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "property:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference"
+      ],
+      "route": null
+    },
+    {
+      "id": "hospitality-operations",
+      "name": "Hospitality Operations",
+      "scope": "Hotels and lodging operations, room inventory, reservations, housekeeping, facilities and service workflows; guest and staff records remain separately scoped.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "hospitality:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference"
+      ],
+      "route": null
+    },
+    {
+      "id": "transport-infrastructure",
+      "name": "Road & Transportation Infrastructure",
+      "scope": "Roads, transport assets, condition inspections, traffic/route operations and infrastructure work orders; jurisdiction and GIS controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "transport:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry"
+      ],
+      "route": null
+    },
+    {
+      "id": "street-lighting-operations",
+      "name": "Street & Road Lighting",
+      "scope": "Street-light assets, poles, circuits, outage status, maintenance schedules, inspections and energy telemetry; utility/operator scopes remain distinct.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "lighting:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry"
+      ],
+      "route": null
+    },
+    {
+      "id": "water-wastewater-operations",
+      "name": "Water, Wastewater & Drainage",
+      "scope": "Water distribution, flow monitoring, wastewater, drainage, sewer-flow telemetry, utility assets and incident records; safety, jurisdiction and GIS controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "utilities:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry"
       ],
       "route": null
     }
