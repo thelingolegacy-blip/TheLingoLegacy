@@ -14,8 +14,11 @@ function isNonEmpty(value) {
 
 export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto) {
   if (!event || typeof event !== "object" || Array.isArray(event)
-    || REQUIRED_EVENT_FIELDS.some(field => !isNonEmpty(String(event[field] ?? "")))) {
+    || REQUIRED_EVENT_FIELDS.some(field => !isNonEmpty(event[field]))) {
     throw new TypeError("AUDIT_EVENT_SCHEMA_INVALID");
+  }
+  if (!Number.isFinite(Date.parse(event.occurredAt)) || !/(Z|[+-]\\d{2}:\\d{2})$/.test(event.occurredAt)) {
+    throw new TypeError("AUDIT_TIMESTAMP_INVALID");
   }
   if (!/^[a-f0-9]{64}$/.test(previousHash)) throw new TypeError("AUDIT_PREVIOUS_HASH_INVALID");
   const immutableEvent = structuredClone(event);
@@ -24,17 +27,20 @@ export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HA
 }
 
 /**
- * Durable adapter contract: appendAtomically must be append-only, assign a
- * monotonic sequence, and atomically persist the event and integrity metadata.
- * No update/delete API is exposed to application callers.
+ * Durable adapter contract: appendAtomically(envelope, expectedPreviousHash)
+ * must compare the current chain head with expectedPreviousHash and atomically
+ * append the event, integrity metadata, and monotonic sequence. If the head
+ * changed, it must return committed:false without writing so the caller can
+ * reload the head and rebuild the envelope. No update/delete API is exposed.
  */
 export async function appendAuditEvent({ writer, event, previousHash = AUDIT_GENESIS_HASH, cryptoImpl = globalThis.crypto } = {}) {
   if (!writer || typeof writer.appendAtomically !== "function") {
     throw new Error("AUDIT_WRITER_UNAVAILABLE");
   }
   const envelope = await createAuditEnvelope(event, previousHash, cryptoImpl);
-  const result = await writer.appendAtomically(envelope);
-  if (!result || result.committed !== true || !Number.isSafeInteger(result.sequence) || result.sequence < 1) {
+  const result = await writer.appendAtomically(envelope, previousHash);
+  if (!result || result.committed !== true || !Number.isSafeInteger(result.sequence) || result.sequence < 1
+    || (result.hash !== undefined && result.hash !== envelope.hash)) {
     throw new Error("AUDIT_APPEND_NOT_DURABLY_CONFIRMED");
   }
   return { ...envelope, sequence: result.sequence };
