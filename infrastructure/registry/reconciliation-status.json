@@ -66,6 +66,47 @@
         "review and separately approve the recommended apex route normalization",
         "run Spades emulator suite and application typecheck/build"
       ]
+    },
+    {
+      "id": 4,
+      "name": "cloudflare-pages-worker-deployment-provenance",
+      "status": "PARTIAL",
+      "completed": [
+        "live 27-route Worker inventory reconciled against current provider API",
+        "thelingolegacyv-5 latest upload v367 distinguished from active deployed v137",
+        "lingo-flagship-root latest upload v3 distinguished from active deployed v1",
+        "all five actual Cloudflare Pages projects inventoried with branch/build/deployment/fail_open/custom-domain metadata",
+        "active app.thelingolegacy.com custom domain identified on separate my-flutter-app Pages project",
+        "launch backup route mapped to lingo-static-backup-proxy; two uploaded versions found but deployment records absent"
+      ],
+      "remaining": [
+        "verify launch backup proxy runtime and active version without changing routes",
+        "confirm owner and intended disposition of app.thelingolegacy.com and my-flutter-app",
+        "pin Flutter SDK and source commit for my-flutter-app before any future reproducible rebuild",
+        "resolve Worker upload-versus-deployed-version drift only through reviewed staging and approved release plan",
+        "perform authorized restore rehearsal and integrity verification for static backup"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "private-enterprise-workspace-reconciliation",
+      "status": "PARTIAL",
+      "completed": [
+        "GitHub account repository search returned 39 repositories; the prior canonical registry contained 38",
+        "previously omitted private repository Lingo-enterprise identified and verified by repository ID 1459419679",
+        "main branch remains README-only; foundation PR #1, CircleCI PR #3, and integration documentation PR #5 remain draft and unmerged",
+        "enterprise repository branch API reports protected=false for all five observed branches",
+        "rulesets endpoint returned HTTP 403 due GitHub plan restriction; effective ruleset protection remains unverified",
+        "CircleCI configuration exists on a draft branch, but no CircleCI project/pipeline evidence is present in the controlling issue"
+      ],
+      "remaining": [
+        "review PR #1 foundation charter, architecture, threat model, secrets policy, and product registry",
+        "resolve GitHub hosted Actions startup failure for the private enterprise repo",
+        "verify authorized CircleCI project connection and real hosted pipeline evidence before treating PR #3 as verified",
+        "obtain authorized GitHub branch governance review and establish required human review/check rules",
+        "reconcile PR #5 repository inventory and migration plan against current 39-repository source inventory",
+        "keep all source imports and authority transfers blocked until history-preserving import rehearsal, independent builds, rollback proof, and owner approvals"
+      ]
     }
   ],
   "branch": "feature/wave-00-2-ezca-registry",
@@ -112,7 +153,7 @@
       "rerun_attempted_once": true
     }
   },
-  "last_updated": "2026-11-11",
+  "last_updated": "2026-11-20",
   "branches": {
     "canonical_registry": "feature/wave-00-2-ezca-registry",
     "spades_security": "security/wallet-ledger-client-write-lockdown",
@@ -138,5 +179,67 @@
       "head_sha": "a692f00e858e5cf85bdba9cd76251eee0c83746c",
       "mergeable": true
     }
-  ]
+  ],
+  "infrastructure_observation": {
+    "observed_at": "2026-11-20",
+    "pages_projects_file": "infrastructure/registry/pages-projects.json",
+    "worker_upload_deployment_drift": {
+      "thelingolegacyv-5": {
+        "uploaded_version": 367,
+        "active_version": 137
+      },
+      "lingo-flagship-root": {
+        "uploaded_version": 3,
+        "active_version": 1
+      }
+    },
+    "backup_proxy": {
+      "script": "lingo-static-backup-proxy",
+      "uploaded_versions": 2,
+      "deployment_records": 0,
+      "runtime": "UNVERIFIED"
+    },
+    "active_pages_custom_domain": {
+      "domain": "app.thelingolegacy.com",
+      "project": "my-flutter-app",
+      "deployment_commit_sha": "MISSING"
+    }
+  },
+  "enterprise_repository": {
+    "name": "thelingolegacy-blip/Lingo-enterprise",
+    "repository_id": 1459419679,
+    "visibility": "PRIVATE",
+    "default_branch": "main",
+    "main_sha": "601d72ca7d1be2bc5a47915319c5f49c4a33f5c1",
+    "main_tree": "README-only",
+    "observed_branches": [
+      "main",
+      "enterprise/foundation-baseline",
+      "ci/circleci-hosted-verification",
+      "circleci-project-setup",
+      "integration/monorepo-foundation"
+    ],
+    "branch_protection": "API reports protected=false on all five branches; rulesets endpoint inaccessible (403)",
+    "pull_requests": [
+      {
+        "number": 1,
+        "head": "458ab06a2e9f85ab22e0ba3a838d8a0400b7d655",
+        "state": "OPEN_DRAFT",
+        "purpose": "foundation baseline"
+      },
+      {
+        "number": 3,
+        "head": "72d70c313f174b179261bfcbf949d69c1f7c048b",
+        "state": "OPEN_DRAFT_STACKED_ON_PR_1",
+        "purpose": "CircleCI hosted verification"
+      },
+      {
+        "number": 5,
+        "head": "ee489569e3ecbd3239dadbdbe6a9687615c2f0fd",
+        "state": "OPEN_DRAFT",
+        "purpose": "documentation-only monorepo integration"
+      }
+    ],
+    "source_of_truth_transfer": "NOT_AUTHORIZED_OR_PERFORMED"
+  }
 }

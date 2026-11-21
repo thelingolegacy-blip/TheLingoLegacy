@@ -1,0 +1,259 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-11-20",
+  "account_id": "16cb6f247cd1b28fca864760c7269606",
+  "source": "Cloudflare Pages projects, project detail, deployments, and custom domains read-only API responses",
+  "deployment_enablement_status": "NOT_EXPOSED_IN_READBACK",
+  "projects": [
+    {
+      "name": "lingo-flutter-firebase-preview",
+      "environment": "preview-candidate",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "/",
+        "build_command": "bash scripts/cloudflare-pages-preview-build.sh",
+        "destination_dir": "build/web"
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "8cbddb25-33e4-42f2-9aae-3a42fb3c4e13",
+        "environment": "preview",
+        "created_on": "2026-11-20T19:16:24.078862Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "all_stages_idle": true,
+        "skipped": false,
+        "branch": "audit/reconciled-v1-1-live-inventory-2026-11-19",
+        "commit_sha": "f90c132f9db5d987373c5fae557746fddee395d5",
+        "trigger": "github:push",
+        "branch_is_allowlisted": false
+      },
+      "custom_domains": [],
+      "disposition": "PREVIEW_QUEUED_NOT_STARTED",
+      "notes": "Latest audit-branch attempt was skipped before initialization/build; no custom domain. Preview and production fail_open are true. A later push to the same audit branch created deployment 8cbddb25-33e4-42f2-9aae-3a42fb3c4e13; all five stages remain idle and no build has started. This branch is not in the configured preview allowlist, so do not count this as a build or deployment.",
+      "source": {
+        "provider": "github",
+        "owner": "thelingolegacy-blip",
+        "repo": "TheLingoLegacy",
+        "repo_id": 1279436411,
+        "production_branch": "main",
+        "deployments_enabled": true,
+        "production_deployments_enabled": false,
+        "preview_deployment_setting": "custom",
+        "preview_branch_includes": [
+          "recovery/actions-startup-probe-2026-11-16",
+          "recovery/firebase-hosting-quarantine-boundary",
+          "ops/website-live-readiness-2026-11-11"
+        ],
+        "path_includes": [
+          "*"
+        ]
+      },
+      "previous_deployment": {
+        "id": "e056c217-7ff0-4b1b-8ce4-48907f79180b",
+        "created_on": "2026-11-20T18:27:41.04043Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "skipped": true,
+        "skip_reason": "branch_config"
+      }
+    },
+    {
+      "name": "lingo-execution-center-preview",
+      "environment": "preview-candidate",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "studio-sites/execution-center",
+        "build_command": "mkdir -p dist && cp index.html dist/index.html",
+        "destination_dir": "dist"
+      },
+      "fail_open": {
+        "preview": false,
+        "production": false
+      },
+      "latest_deployment": {
+        "id": "994a1fec-575f-4854-a67a-51aab22e7c9a",
+        "environment": "preview",
+        "created_on": "2026-11-20T19:16:24.078862Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "all_stages_idle": true,
+        "skipped": false,
+        "branch": "audit/reconciled-v1-1-live-inventory-2026-11-19",
+        "commit_sha": "f90c132f9db5d987373c5fae557746fddee395d5",
+        "trigger": "github:push",
+        "branch_is_allowlisted": false,
+        "path_is_included": false
+      },
+      "custom_domains": [],
+      "disposition": "PREVIEW_QUEUED_NOT_STARTED",
+      "notes": "Latest audit-branch attempt was skipped before initialization/build; no custom domain. Preview and production fail_open are false. A later push to the same audit branch created deployment 994a1fec-575f-4854-a67a-51aab22e7c9a; all five stages remain idle and no build has started. The branch is not in the configured preview allowlist and the changed paths are outside the configured execution-center path include, so do not count this as a build or deployment.",
+      "source": {
+        "provider": "github",
+        "owner": "thelingolegacy-blip",
+        "repo": "TheLingoLegacy",
+        "repo_id": 1279436411,
+        "production_branch": "main",
+        "deployments_enabled": true,
+        "production_deployments_enabled": false,
+        "preview_deployment_setting": "custom",
+        "preview_branch_includes": [
+          "feat/execution-center-hq-preview-2026-11-19"
+        ],
+        "path_includes": [
+          "studio-sites/execution-center/**"
+        ]
+      },
+      "previous_deployment": {
+        "id": "03613a24-5e28-47b1-aa12-d01ecaecc9b4",
+        "created_on": "2026-11-20T18:27:41.04043Z",
+        "stage": "queued",
+        "stage_status": "idle",
+        "skipped": true,
+        "skip_reason": "path_config"
+      }
+    },
+    {
+      "name": "lingo-legacy-github-integration-test",
+      "environment": "test",
+      "production_branch": "infra/g02-runner-recovery-clean-2026-10-09",
+      "build_config": null,
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "dd2c5956-2046-4395-bf87-fd72ea83f0ec",
+        "environment": "preview",
+        "created_on": "2026-11-06T02:07:10.253683Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "security/g02-disable-untrusted-self-hosted-lane-2026-11-05",
+        "commit_sha": "a06e2b7f891c1c65188c4d9431a1abac96e1d3e3"
+      },
+      "custom_domains": [],
+      "disposition": "TEST_ONLY",
+      "notes": "Latest successful preview is a test surface, not production or G02 acceptance. Provider project configuration explicitly reports deployments_enabled=false and production_deployments_enabled=false.",
+      "source": {
+        "provider": "github",
+        "owner": "thelingolegacy-blip",
+        "repo": "TheLingoLegacy",
+        "repo_id": 1279436411,
+        "production_branch": "infra/g02-runner-recovery-clean-2026-10-09",
+        "deployments_enabled": false,
+        "production_deployments_enabled": false,
+        "preview_deployment_setting": "none",
+        "path_includes": [
+          "*"
+        ]
+      }
+    },
+    {
+      "name": "thelingolegacy-static-backup",
+      "environment": "recovery",
+      "production_branch": "recovery/static-backup-2026-10-24",
+      "build_config": {
+        "root_dir": "static-site",
+        "build_command": null,
+        "destination_dir": null
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "88e177e8-79c0-4aff-8243-308f405b04fe",
+        "environment": "production",
+        "created_on": "2026-10-25T06:58:28.108841Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "recovery/static-backup-2026-10-24",
+        "commit_sha": "0c9f4c85aed17ece871fae6f515d9c8384509a2d"
+      },
+      "custom_domains": [],
+      "disposition": "HISTORICAL_PRODUCTION_DEPLOYMENT_NOT_RESTORE_TESTED",
+      "notes": "Historical Pages production deployment completed successfully; no custom domain and no restore rehearsal evidence. DNS CNAME launch.thelingolegacy.com is proxied to the Pages.dev hostname and the Worker route points to lingo-static-backup-proxy. The Pages project has no custom-domain association; exact-domain Access application lookup returned no match. Do not assume the Access bypass application is attached to this hostname. Provider project configuration explicitly reports deployments_enabled=false and production_deployments_enabled=false; preserve this historical deployment as evidence only.",
+      "dns_aliases": [
+        {
+          "type": "CNAME",
+          "name": "launch.thelingolegacy.com",
+          "target": "thelingolegacy-static-backup.pages.dev",
+          "proxied": true,
+          "ttl": 1,
+          "comment": "Public static recovery site via dedicated Cloudflare Worker route."
+        }
+      ],
+      "worker_route": {
+        "pattern": "launch.thelingolegacy.com/*",
+        "script": "lingo-static-backup-proxy"
+      },
+      "access_application_exact_domain_match": "NOT_FOUND_IN_READ_ONLY_QUERY",
+      "source": {
+        "provider": "github",
+        "owner": "thelingolegacy-blip",
+        "repo": "TheLingoLegacy",
+        "repo_id": 1279436411,
+        "production_branch": "recovery/static-backup-2026-10-24",
+        "deployments_enabled": false,
+        "production_deployments_enabled": false,
+        "preview_deployment_setting": "none",
+        "path_includes": [
+          "*"
+        ]
+      }
+    },
+    {
+      "name": "my-flutter-app",
+      "environment": "production-surface-review",
+      "production_branch": "main",
+      "build_config": {
+        "root_dir": "/",
+        "build_command": "git clone https://github.com/flutter/flutter.git -b stable --depth 1 /tmp/flutter && export PATH=/tmp/flutter/bin:$PATH && flutter pub get && flutter build web --release",
+        "destination_dir": "build/web"
+      },
+      "fail_open": {
+        "preview": true,
+        "production": true
+      },
+      "latest_deployment": {
+        "id": "8a5b368c-df64-4342-9fcd-2054465f2a25",
+        "environment": "production",
+        "created_on": "2026-08-30T21:44:09.86966Z",
+        "stage": "deploy",
+        "stage_status": "success",
+        "skipped": false,
+        "branch": "main",
+        "commit_sha": null
+      },
+      "custom_domains": [
+        {
+          "name": "app.thelingolegacy.com",
+          "status": "active"
+        }
+      ],
+      "disposition": "ACTIVE_CUSTOM_DOMAIN_REVIEW_REQUIRED",
+      "notes": "Active app.thelingolegacy.com custom domain. Last production deployment is successful but records no commit SHA. Build clones the moving Flutter stable branch at build time; toolchain is not immutably pinned. Ownership and current app source/runtime need review. Project readback does not return a source repository connection or deployment-enable flags; the latest successful production deployment is attributed to branch main but has no commit SHA or commit message.",
+      "dns_aliases": [
+        {
+          "type": "CNAME",
+          "name": "app.thelingolegacy.com",
+          "target": "my-flutter-app.pages.dev",
+          "proxied": false,
+          "ttl": 1,
+          "comment": "Pages custom domain"
+        }
+      ],
+      "source": {
+        "status": "NOT_RETURNED_IN_PROJECT_READBACK",
+        "provider": null,
+        "repository": null
+      },
+      "deployment_enablement_status": "NOT_EXPOSED_IN_READBACK"
+    }
+  ]
+}
