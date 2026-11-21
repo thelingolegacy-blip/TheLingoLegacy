@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/destiny-world-definition-1.0.0.json",
+  "title": "LINGO Destiny World Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "worldId",
+    "worldVersion",
+    "generatorVersion",
+    "seed",
+    "dimensions",
+    "map",
+    "pointsOfInterest",
+    "worldHash"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "worldId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "worldVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "generatorVersion": {
+      "const": "0.1.0"
+    },
+    "seed": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 128
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 128
+        }
+      }
+    },
+    "map": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 128,
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 128,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y",
+            "biome",
+            "walkable",
+            "elevation"
+          ],
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "biome": {
+              "enum": [
+                "urban",
+                "green",
+                "water",
+                "industrial"
+              ]
+            },
+            "walkable": {
+              "type": "boolean"
+            },
+            "elevation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        }
+      }
+    },
+    "pointsOfInterest": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "label",
+          "x",
+          "y"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^poi-[0-9]{3}$"
+          },
+          "type": {
+            "enum": [
+              "plaza",
+              "market",
+              "station",
+              "garden",
+              "workshop"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "x": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "y": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "worldHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}$"
+    }
+  }
+}
