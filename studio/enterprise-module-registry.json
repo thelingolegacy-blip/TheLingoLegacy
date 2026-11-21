@@ -386,7 +386,7 @@
       "id": "world-engine-studio",
       "name": "World Builder & Simulation Studio",
       "scope": "World schemas, procedural generation, scene graphs, GIS/map overlays, deterministic simulation, environment presets, asset lineage and Unity/web runtime adapters.",
-      "status": "PLANNED",
+      "status": "SOURCE_DECLARED",
       "permissions": [
         "studio:read",
         "world:read"
