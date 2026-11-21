@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { appendAuditEvent, createAuditEnvelope, verifyAuditChain, AUDIT_GENESIS_HASH } from "./audit.mjs";
+import { appendAuditEvent, createAuditEnvelope, verifyAuditChain, verifyAuditCheckpoint, AUDIT_GENESIS_HASH } from "./audit.mjs";
 
 const base = {
   eventId: "event-001",
@@ -65,4 +65,35 @@ test("confirmed append returns server-assigned sequence", async () => {
     writer: { appendAtomically: async () => ({ committed: true, sequence: 7 }) }
   });
   assert.equal(stored.sequence, 7);
+});
+
+test("signed checkpoint anchors the verified chain head", async () => {
+  const first = await createAuditEnvelope(base);
+  const chainResult = await verifyAuditChain([{ ...first, sequence: 1 }]);
+  const checkpoint = { sequence: 1, headHash: first.hash, keyId: "audit-key-01", signature: "signature" };
+  const result = await verifyAuditCheckpoint({
+    checkpoint, expectedKeyId: "audit-key-01", chainResult,
+    signatureVerifier: async ({ expectedKeyId }) => expectedKeyId === "audit-key-01"
+  });
+  assert.equal(result.ok, true);
+});
+test("checkpoint signature failure is detected", async () => {
+  const first = await createAuditEnvelope(base);
+  const chainResult = await verifyAuditChain([{ ...first, sequence: 1 }]);
+  const checkpoint = { sequence: 1, headHash: first.hash, keyId: "audit-key-01", signature: "bad" };
+  const result = await verifyAuditCheckpoint({
+    checkpoint, expectedKeyId: "audit-key-01", chainResult,
+    signatureVerifier: async () => false
+  });
+  assert.equal(result.reason, "AUDIT_CHECKPOINT_SIGNATURE_INVALID");
+});
+test("checkpoint cannot be substituted for another chain head", async () => {
+  const first = await createAuditEnvelope(base);
+  const chainResult = await verifyAuditChain([{ ...first, sequence: 1 }]);
+  const checkpoint = { sequence: 1, headHash: "f".repeat(64), keyId: "audit-key-01", signature: "signature" };
+  const result = await verifyAuditCheckpoint({
+    checkpoint, expectedKeyId: "audit-key-01", chainResult,
+    signatureVerifier: async () => true
+  });
+  assert.equal(result.reason, "AUDIT_CHECKPOINT_INVALID");
 });
