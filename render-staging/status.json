@@ -1,0 +1,12 @@
+{
+  "status": "restricted-preview",
+  "environment": "staging",
+  "mode": "public-presentation-only",
+  "operationalTelemetry": "not-published",
+  "infrastructureInventory": "not-published",
+  "securityFindings": "not-published",
+  "runnerMetadata": "not-published",
+  "releaseEvidence": "not-published",
+  "productionAdministration": false,
+  "updatedAt": "2026-11-02"
+}

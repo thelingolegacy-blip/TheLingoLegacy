@@ -1,0 +1,28 @@
+name: Platform operations preview validation
+on:
+  pull_request:
+    paths:
+      - "render-staging/**"
+      - "docs/inventory/**"
+      - "cloudflare/world-engine-staging-worker.js"
+      - "firebase.json"
+      - "scripts/verify-firebase-hosting-public-dir.mjs"
+      - "scripts/test-platform-ops-preview.mjs"
+      - ".github/workflows/platform-ops-preview-validation.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify Firebase hosting boundary
+        run: node scripts/verify-firebase-hosting-public-dir.mjs
+      - name: Verify platform operations preview
+        run: node scripts/test-platform-ops-preview.mjs
+      - name: Syntax check staging Worker
+        run: node --check cloudflare/world-engine-staging-worker.js
