@@ -359,13 +359,13 @@
       "route": null
     },
     {
-      "id": "water-wastewater-operations",
-      "name": "Water, Wastewater & Drainage",
-      "scope": "Water distribution, flow monitoring, wastewater, drainage, sewer-flow telemetry, utility assets and incident records; safety, jurisdiction and GIS controls required.",
+      "id": "water-distribution-operations",
+      "name": "Water Distribution & Flow Monitoring",
+      "scope": "Water distribution networks, pressure and flow monitoring, reservoirs, pumps, valves, utility assets and incidents; jurisdiction, GIS, privacy and safety controls required.",
       "status": "PLANNED",
       "permissions": [
         "studio:read",
-        "utilities:read"
+        "water:read"
       ],
       "writeAuthority": false,
       "requiredEvidence": [
@@ -377,7 +377,8 @@
         "dataClassification",
         "auditTrail",
         "GISReference",
-        "assetRegistry"
+        "assetRegistry",
+        "telemetrySafety"
       ],
       "route": null
     },
@@ -428,6 +429,30 @@
         "moderationPolicy",
         "telemetryRedaction",
         "rollbackEvidence"
+      ],
+      "route": null
+    },
+    {
+      "id": "wastewater-drainage-operations",
+      "name": "Wastewater, Drainage & Sewer Flow",
+      "scope": "Wastewater systems, stormwater and drainage networks, sewer-flow telemetry, treatment assets, incidents and maintenance; jurisdiction, GIS, privacy and safety controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "wastewater:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry",
+        "telemetrySafety"
       ],
       "route": null
     }
