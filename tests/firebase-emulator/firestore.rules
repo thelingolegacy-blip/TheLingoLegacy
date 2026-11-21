@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/profile/{document=**} {
+      allow read, write: if owns(userId);
+    }
+
+    // Wallet and economy state are server-owned. Client access is read-only
+    // for the matching user; Admin SDK access must be authorized separately.
+    match /wallets/{userId} {
+      allow read: if owns(userId);
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

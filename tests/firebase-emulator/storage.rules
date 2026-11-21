@@ -1,0 +1,51 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function validImage(maxBytes) {
+      return request.resource != null
+        && request.resource.size > 0
+        && request.resource.size <= maxBytes
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    function validDocument(maxBytes) {
+      return request.resource != null
+        && request.resource.size > 0
+        && request.resource.size <= maxBytes
+        && request.resource.contentType != null
+        && (
+          request.resource.contentType == 'application/pdf'
+          || request.resource.contentType.matches('image/.*')
+        );
+    }
+
+    match /users/{userId}/avatar.png {
+      allow read: if true;
+      allow create, update: if owns(userId) && validImage(5 * 1024 * 1024);
+      allow delete: if owns(userId);
+    }
+
+    match /documents/{userId}/{fileName} {
+      allow read: if owns(userId);
+      allow create, update: if owns(userId) && validDocument(10 * 1024 * 1024);
+      allow delete: if owns(userId);
+    }
+
+    match /products/{productId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

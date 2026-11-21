@@ -1,0 +1,96 @@
+name: Firebase Emulator Tests (Isolated)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'firebase.emulator.json'
+      - 'tests/firebase-emulator/**'
+      - '.github/workflows/firebase-emulator-tests.yml'
+      - 'pubspec.yaml'
+      - 'lib/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-emulator-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  emulator-tests:
+    name: Auth, Firestore, and Storage emulator tests
+    # Test-only GitHub-hosted runner. This workflow has no deploy permissions
+    # and does not replace or weaken the canonical G02 self-hosted runner gate.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FIREBASE_PROJECT_ID: demo-lingo-legacy-emulator
+      GCLOUD_PROJECT: demo-lingo-legacy-emulator
+      FIREBASE_EMULATOR_HUB: 127.0.0.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Java for Firebase emulators
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Enforce demo project isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$FIREBASE_PROJECT_ID" = "demo-lingo-legacy-emulator"
+          test "$GCLOUD_PROJECT" = "$FIREBASE_PROJECT_ID"
+          if grep -R --exclude='README.md' --exclude='*.yml' --exclude='*.yaml' -n 'lingo-legacy-production' tests/firebase-emulator firebase.emulator.json; then
+            echo "Production project ID must not appear in emulator test configuration."
+            exit 1
+          fi
+          node -e "const c=require('./firebase.emulator.json'); if(c.emulators?.ui?.enabled !== false) process.exit(1); if(!c.firestore?.rules || !c.storage?.rules) process.exit(1); console.log('EMULATOR_CONFIG_ISOLATION=PASS')"
+
+      - name: Install isolated test dependencies
+        run: npm install --prefix tests/firebase-emulator --ignore-scripts --no-audit --no-fund
+
+      - name: Run Firebase emulator tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/firebase-emulator
+          set +e
+          npx --yes firebase-tools@13.35.1 emulators:exec --config firebase.emulator.json --project demo-lingo-legacy-emulator --only auth,firestore,storage "npm test --prefix tests/firebase-emulator" 2>&1 | tee release/evidence/firebase-emulator/emulator-test.log
+          test_status=${PIPESTATUS[0]}
+          set -e
+          echo "EMULATOR_TEST_EXIT_CODE=${test_status}" > release/evidence/firebase-emulator/test-status.txt
+          exit "$test_status"
+
+      - name: Record Cloud Functions coverage boundary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/evidence/firebase-emulator
+          if [ -f backend/functions/package.json ] && { [ -f backend/functions/index.js ] || [ -f backend/functions/lib/index.js ]; }; then
+            echo "FUNCTIONS_SOURCE=PRESENT" > release/evidence/firebase-emulator/functions-coverage.txt
+            echo "FUNCTIONS_TESTS=BLOCKED_NO_VERIFIED_FUNCTION_TEST_ENTRYPOINT" >> release/evidence/firebase-emulator/functions-coverage.txt
+          else
+            echo "FUNCTIONS_SOURCE=NOT_FOUND" > release/evidence/firebase-emulator/functions-coverage.txt
+            echo "FUNCTIONS_TESTS=BLOCKED_NO_PRODUCT_FUNCTIONS_SOURCE" >> release/evidence/firebase-emulator/functions-coverage.txt
+          fi
+          echo "PRODUCTION_DEPLOYMENT=NOT_REQUESTED" >> release/evidence/firebase-emulator/functions-coverage.txt
+          cat release/evidence/firebase-emulator/functions-coverage.txt
+
+      - name: Upload emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: firebase-emulator-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release/evidence/firebase-emulator/
+          if-no-files-found: error
+          retention-days: 30
