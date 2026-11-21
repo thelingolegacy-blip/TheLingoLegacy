@@ -22,6 +22,8 @@ const requiredDomainScopes = {
   'transport-infrastructure': ['transport:read'],
   'street-lighting-operations': ['lighting:read'],
   'water-wastewater-operations': ['utilities:read'],
+  'world-engine-studio': ['world:read'],
+  'game-liveops-studio': ['gameops:read'],
 };
 
 export function validateRegistry(registry) {
@@ -30,7 +32,7 @@ export function validateRegistry(registry) {
   if (registry.schema !== 'lingo-studio-enterprise-module-registry') errors.push('invalid registry schema identifier');
   if (registry.mode !== 'read-only-until-separately-authorized') errors.push('registry must remain read-only');
   if (registry.productionMutation !== false) errors.push('productionMutation must be false');
-  if (!Array.isArray(registry.statusVocabulary) || new Set(registry.statusVocabulary).size !== registry.statusVocabulary.length) errors.push('statusVocabulary must be a unique array');
+  if (!Array.isArray(registry.statusVocabulary) || new Set(registry.statusVocabulary).size !== registry.statusVocabulary.length || registry.statusVocabulary.some(status => !allowedStatuses.has(status)) || [...allowedStatuses].some(status => !registry.statusVocabulary.includes(status))) errors.push('statusVocabulary must contain the complete unique allowed status set');
   if (!Array.isArray(registry.modules) || registry.modules.length === 0) errors.push('modules must be a non-empty array');
   if (!Array.isArray(registry.providerReadiness) || registry.providerReadiness.length === 0) errors.push('providerReadiness must be a non-empty array');
 
@@ -44,6 +46,7 @@ export function validateRegistry(registry) {
     if (!allowedStatuses.has(module.status)) errors.push(`module ${module.id} has unknown status`);
     if (module.writeAuthority !== false) errors.push(`module ${module.id} must not have write authority`);
     if (!Array.isArray(module.permissions) || module.permissions.length === 0 || new Set(module.permissions).size !== module.permissions.length) errors.push(`module ${module.id} permissions must be non-empty and unique`);
+    if ((module.permissions || []).some(permission => /:write$/.test(permission))) errors.push(`module ${module.id} cannot declare write scopes`);
     const evidence = new Set(module.requiredEvidence || []);
     for (const item of requiredEvidence) if (!evidence.has(item)) errors.push(`module ${module.id} missing required evidence: ${item}`);
     if (module.route !== null && (typeof module.route !== 'string' || !module.route.startsWith('/'))) errors.push(`module ${module.id} route must be null or an absolute path`);
@@ -61,6 +64,7 @@ export function validateRegistry(registry) {
   const providerIds = new Set();
   for (const provider of registry.providerReadiness || []) {
     if (!provider || typeof provider !== 'object') { errors.push('provider entry must be an object'); continue; }
+    if (!/^[a-z0-9-]+$/.test(provider.id || '') || !provider.provider || !provider.evidence) errors.push('provider entry requires a valid id, name and evidence');
     if (providerIds.has(provider.id)) errors.push(`duplicate provider id: ${provider.id}`);
     providerIds.add(provider.id);
     if (!allowedStatuses.has(provider.status)) errors.push(`provider ${provider.id} has unknown status`);
