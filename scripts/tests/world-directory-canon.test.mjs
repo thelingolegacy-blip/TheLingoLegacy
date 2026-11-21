@@ -55,6 +55,7 @@ test('world-engine and live-operations capabilities are listed as shared systems
 
 test('unsafe or unverified destination links remain disabled', () => {
   assert.doesNotMatch(html, /href="\/(?:studio-sites|thats-my-lingo|kottons-code|library|loyalty-lane-cycles|studio\/lingo-ai)[^"]*"/);
+  assert.doesNotMatch(html, /href="\\/(?:studio|contact|terms)\\/"/);
   assert.match(html, /Game routes pending public-surface verification/);
   assert.match(html, /Arcade destinations pending route and privacy QA/);
   assert.match(html, /Library destinations pending privacy review/);
