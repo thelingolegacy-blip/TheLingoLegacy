@@ -46,6 +46,35 @@ export async function appendAuditEvent({ writer, event, previousHash = AUDIT_GEN
   return { ...envelope, sequence: result.sequence };
 }
 
+export async function verifyAuditCheckpoint({
+  checkpoint, expectedKeyId, signatureVerifier, chainResult
+} = {}) {
+  if (!checkpoint || typeof checkpoint !== "object"
+    || !Number.isSafeInteger(checkpoint.sequence) || checkpoint.sequence < 1
+    || !/^[a-f0-9]{64}$/.test(checkpoint.headHash || "")
+    || !isNonEmpty(checkpoint.keyId) || !isNonEmpty(checkpoint.signature)
+    || !isNonEmpty(expectedKeyId) || checkpoint.keyId !== expectedKeyId
+    || chainResult?.ok !== true || checkpoint.sequence !== chainResult.verified
+    || checkpoint.headHash !== chainResult.headHash
+    || typeof signatureVerifier !== "function") {
+    return { ok: false, reason: "AUDIT_CHECKPOINT_INVALID" };
+  }
+  const signed = {
+    schemaVersion: "saaae.audit-checkpoint.v1",
+    sequence: checkpoint.sequence,
+    headHash: checkpoint.headHash,
+    keyId: checkpoint.keyId
+  };
+  try {
+    const valid = await signatureVerifier({ payload: signed, signature: checkpoint.signature, expectedKeyId });
+    return valid === true
+      ? { ok: true, reason: "AUDIT_CHECKPOINT_VALID" }
+      : { ok: false, reason: "AUDIT_CHECKPOINT_SIGNATURE_INVALID" };
+  } catch {
+    return { ok: false, reason: "AUDIT_CHECKPOINT_VERIFICATION_UNAVAILABLE" };
+  }
+}
+
 export async function verifyAuditChain(events, cryptoImpl = globalThis.crypto) {
   if (!Array.isArray(events)) return { ok: false, reason: "AUDIT_CHAIN_NOT_ARRAY", verified: 0 };
   let previousHash = AUDIT_GENESIS_HASH;
