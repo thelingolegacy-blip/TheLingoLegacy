@@ -64,8 +64,12 @@ export async function authorizeServerRequest({
   catch {
     return record(indeterminate("TRUSTED_CONTEXT_UNAVAILABLE"), { actorPrincipalId: identity.uid, actorPrincipalType: "unknown" });
   }
-  if (!trusted || !trusted.principal || !trusted.action || !trusted.resource || !trusted.context) {
-    return record(indeterminate("TRUSTED_CONTEXT_INVALID"), { actorPrincipalId: identity.uid, actorPrincipalType: "unknown" });
+  if (!trusted || !trusted.principal || !trusted.action || !trusted.resource || !trusted.context
+    || trusted.authenticatedUid !== identity.uid) {
+    return record(indeterminate("TRUSTED_CONTEXT_INVALID_OR_IDENTITY_MISMATCH"), {
+      actorPrincipalId: identity.uid,
+      actorPrincipalType: "unknown"
+    });
   }
 
   let policy;
