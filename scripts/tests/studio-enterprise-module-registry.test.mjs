@@ -9,7 +9,7 @@ const registry = JSON.parse(fs.readFileSync(fileURLToPath(registryPath), 'utf8')
 
 test('canonical Studio enterprise registry passes its contract', () => {
   assert.deepEqual(validateRegistry(registry), []);
-  assert.equal(registry.modules.length, 19);
+  assert.equal(registry.modules.length, 21);
 });
 
 test('duplicate module identifiers fail closed', () => {
@@ -39,6 +39,8 @@ test('sensitive operational domains retain separate permission scopes', () => {
     ['transport-infrastructure', 'transport:read'],
     ['street-lighting-operations', 'lighting:read'],
     ['water-wastewater-operations', 'utilities:read'],
+    ['world-engine-studio', 'world:read'],
+    ['game-liveops-studio', 'gameops:read'],
   ]) {
     const module = registry.modules.find(item => item.id === id);
     assert.ok(module, `missing ${id}`);
@@ -54,4 +56,11 @@ test('infrastructure domains require jurisdiction, GIS and asset evidence', () =
     assert.ok(module.requiredEvidence.includes('GISReference'));
     assert.ok(module.requiredEvidence.includes('assetRegistry'));
   }
+});
+
+test('world and live-operations modules require simulation and trust evidence', () => {
+  const world = registry.modules.find(item => item.id === 'world-engine-studio');
+  const liveops = registry.modules.find(item => item.id === 'game-liveops-studio');
+  for (const evidence of ['worldSchema','assetRights','simulationTests','contentSafety','runtimeAdapter']) assert.ok(world.requiredEvidence.includes(evidence));
+  for (const evidence of ['sessionContract','antiCheatTests','moderationPolicy','telemetryRedaction','rollbackEvidence']) assert.ok(liveops.requiredEvidence.includes(evidence));
 });
