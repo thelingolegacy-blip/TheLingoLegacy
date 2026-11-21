@@ -144,6 +144,7 @@ class RestorationOrchestratorSafetyTests(unittest.TestCase):
         self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "https://evil.example/"))
         self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "http://www.thelingolegacy.com/"))
         self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "https://user@www.thelingolegacy.com/"))
+        self.assertFalse(MODULE.valid_redirect_target("https://www.thelingolegacy.com/", "https://www.thelingolegacy.com:invalid/"))
 
     def test_root_source_expected_sha_is_required_by_cli(self):
         with patch("sys.argv", ["runner"]):
