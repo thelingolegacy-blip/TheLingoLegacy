@@ -3,10 +3,10 @@ import { evaluateAuthorization, AUTHORIZATION_DECISIONS } from "./policy.mjs";
 /**
  * Server-side authorization boundary for a protected request.
  *
- * authenticate must verify the incoming credential. resolveTrustedContext must
- * load principal roles, memberships, tenant/product/resource ownership and
- * delegation from trusted server-side records. Client claims are not authority.
- * auditDecision must durably append every decision before an ALLOW is returned.
+ * authenticate verifies the incoming credential. resolveTrustedContext loads
+ * principal roles, memberships, tenant/product/resource ownership and delegation
+ * from trusted server-side records. auditDecision durably appends every outcome.
+ * Client claims are never authoritative.
  */
 export async function authorizeServerRequest({
   request,
@@ -16,54 +16,70 @@ export async function authorizeServerRequest({
   auditDecision,
   now = new Date()
 } = {}) {
-  const denied = (reason, policyVersion = null) => ({
+  const indeterminate = (reason, policyVersion = null) => ({
     decision: AUTHORIZATION_DECISIONS.INDETERMINATE,
     reason,
     policyVersion,
     matchedRuleIds: []
   });
 
+  if (typeof auditDecision !== "function") {
+    return indeterminate("AUTHORIZATION_AUDIT_UNAVAILABLE");
+  }
+
+  const record = async (decision, details = {}) => {
+    try {
+      const persisted = await auditDecision({ request, decision, ...details });
+      return persisted?.committed === true
+        ? decision
+        : indeterminate("AUTHORIZATION_AUDIT_UNAVAILABLE", decision.policyVersion);
+    } catch {
+      return indeterminate("AUTHORIZATION_AUDIT_UNAVAILABLE", decision.policyVersion);
+    }
+  };
+
   if (typeof authenticate !== "function"
     || typeof resolveTrustedContext !== "function"
-    || typeof loadPolicy !== "function"
-    || typeof auditDecision !== "function") {
-    return denied("AUTHORIZATION_DEPENDENCY_UNAVAILABLE");
+    || typeof loadPolicy !== "function") {
+    return record(indeterminate("AUTHORIZATION_DEPENDENCY_UNAVAILABLE"));
   }
 
   let identity;
   try { identity = await authenticate(request); }
-  catch { return denied("AUTHENTICATION_UNAVAILABLE"); }
+  catch {
+    return record(indeterminate("AUTHENTICATION_UNAVAILABLE"));
+  }
   if (!identity || identity.ok !== true || typeof identity.uid !== "string" || !identity.uid) {
-    const result = {
+    return record({
       decision: AUTHORIZATION_DECISIONS.DENY,
       reason: "AUTHENTICATION_REQUIRED",
       policyVersion: null,
       matchedRuleIds: []
-    };
-    try {
-      const persisted = await auditDecision({ identity: null, decision: result, request });
-      if (persisted?.committed !== true) return denied("AUTHORIZATION_AUDIT_UNAVAILABLE");
-    } catch { return denied("AUTHORIZATION_AUDIT_UNAVAILABLE"); }
-    return result;
+    }, { identity: null });
   }
 
   let trusted;
   try { trusted = await resolveTrustedContext({ identity, request }); }
-  catch { return denied("TRUSTED_CONTEXT_UNAVAILABLE"); }
+  catch {
+    return record(indeterminate("TRUSTED_CONTEXT_UNAVAILABLE"), { identity });
+  }
   if (!trusted || !trusted.principal || !trusted.action || !trusted.resource || !trusted.context) {
-    return denied("TRUSTED_CONTEXT_INVALID");
+    return record(indeterminate("TRUSTED_CONTEXT_INVALID"), { identity });
   }
 
   let policy;
-  try { policy = await loadPolicy({
-    principal: trusted.principal,
-    action: trusted.action,
-    resource: trusted.resource,
-    context: trusted.context
-  }); }
-  catch { return denied("POLICY_UNAVAILABLE"); }
+  try {
+    policy = await loadPolicy({
+      principal: trusted.principal,
+      action: trusted.action,
+      resource: trusted.resource,
+      context: trusted.context
+    });
+  } catch {
+    return record(indeterminate("POLICY_UNAVAILABLE"), { identity, ...trusted });
+  }
 
-  const result = evaluateAuthorization({
+  const decision = evaluateAuthorization({
     principal: trusted.principal,
     action: trusted.action,
     resource: trusted.resource,
@@ -72,20 +88,5 @@ export async function authorizeServerRequest({
     now
   });
 
-  try {
-    const persisted = await auditDecision({
-      identity,
-      principal: trusted.principal,
-      action: trusted.action,
-      resource: trusted.resource,
-      context: trusted.context,
-      decision: result,
-      request
-    });
-    if (persisted?.committed !== true) return denied("AUTHORIZATION_AUDIT_UNAVAILABLE", result.policyVersion);
-  } catch {
-    return denied("AUTHORIZATION_AUDIT_UNAVAILABLE", result.policyVersion);
-  }
-
-  return result;
+  return record(decision, { identity, ...trusted });
 }
