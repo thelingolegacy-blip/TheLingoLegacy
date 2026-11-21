@@ -1,0 +1,288 @@
+{
+  "schema": "lingo-studio-enterprise-module-registry",
+  "version": "1.0.0",
+  "sourceAuthority": "thelingolegacy-blip/TheLingoLegacy@main",
+  "registryAuthority": "GitHub reviewed commits",
+  "runtimeAuthority": "Cloudflare Workers",
+  "observedAt": "2026-11-21",
+  "mode": "read-only-until-separately-authorized",
+  "productionMutation": false,
+  "statusVocabulary": [
+    "LIVE_VERIFIED",
+    "HISTORICAL_EVIDENCE",
+    "SOURCE_DECLARED",
+    "PREVIEW_ONLY",
+    "BLOCKED",
+    "PLANNED",
+    "UNKNOWN"
+  ],
+  "modules": [
+    {
+      "id": "studio-home",
+      "name": "Studio Home",
+      "scope": "Portfolio health, blocker queue, build calendar, environment overview",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "portfolio-registry",
+      "name": "World & Product Registry",
+      "scope": "Canonical IDs, owners, repos, dependencies, routes, data classification and release state",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "visual-studio",
+      "name": "Visual Studio",
+      "scope": "Web/mobile layouts, design tokens, component library, previews, accessibility checks",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "game-studio",
+      "name": "Game Studio",
+      "scope": "Unity/web game projects, game design docs, assets, deterministic fixtures and gameplay QA",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "ai-studio",
+      "name": "AI Studio",
+      "scope": "Google AI Studio/Gemini handoff, prompt library, model adapters, evals, redaction and cost budgets",
+      "status": "HISTORICAL_EVIDENCE",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "code-studio",
+      "name": "Code Studio",
+      "scope": "GitHub branches, PRs, diffs, code owners, CI, dependency/SBOM and security evidence",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "backend-studio",
+      "name": "Backend Studio",
+      "scope": "Identity contracts, Firebase/Supabase projects, schemas, migrations, RLS/rules and test evidence",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "cloud-studio",
+      "name": "Cloud Studio",
+      "scope": "Cloudflare Workers/routes/DNS and Render previews, bindings metadata and environment inventory",
+      "status": "LIVE_VERIFIED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "media-library-studio",
+      "name": "Media & Library Studio",
+      "scope": "Books, characters, scripts, audio/video, rights, provenance and publishing approvals",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "operations-studio",
+      "name": "Operations Studio",
+      "scope": "Workforce, property, hospitality, transport and infrastructure asset domains with tenant/jurisdiction boundaries",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "release-trust-center",
+      "name": "Release & Trust Center",
+      "scope": "Gate states, evidence provenance, approvals, incident response, audit trail, rollback and recovery",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "commerce-readiness",
+      "name": "Finance & Commerce Readiness",
+      "scope": "Provider configuration status, price/webhook readiness and non-operative commerce controls",
+      "status": "BLOCKED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    }
+  ],
+  "providerReadiness": [
+    {
+      "id": "github",
+      "provider": "GitHub",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Canonical repository and PR metadata read successfully",
+      "writeAuthority": false
+    },
+    {
+      "id": "cloudflare",
+      "provider": "Cloudflare",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Active zone, 10 Workers, 27 routes and 34 DNS records inventoried read-only",
+      "writeAuthority": false
+    },
+    {
+      "id": "flutter",
+      "provider": "Flutter",
+      "status": "SOURCE_DECLARED",
+      "evidence": "Flutter recovery candidates exist; current-head native build not verified",
+      "writeAuthority": false
+    },
+    {
+      "id": "firebase",
+      "provider": "Firebase",
+      "status": "BLOCKED",
+      "evidence": "No approved project identity or Firebase provider inspection; publication allowlist remains quarantined",
+      "writeAuthority": false
+    },
+    {
+      "id": "supabase",
+      "provider": "Supabase",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Project ACTIVE_HEALTHY; no public app tables, migrations or Edge Functions",
+      "writeAuthority": false
+    },
+    {
+      "id": "render",
+      "provider": "Render",
+      "status": "PREVIEW_ONLY",
+      "evidence": "One public static operations preview; no backend service observed",
+      "writeAuthority": false
+    },
+    {
+      "id": "google-ai-studio",
+      "provider": "Google AI Studio",
+      "status": "HISTORICAL_EVIDENCE",
+      "evidence": "Repository workstream and Build prompt exist; account/project and Gemini secret configuration not verified",
+      "writeAuthority": false
+    }
+  ],
+  "globalControls": {
+    "defaultMode": "read-only",
+    "productionMutation": "DENY",
+    "secretValues": "NEVER_DISPLAY",
+    "clientProviderCredentials": "PROHIBITED",
+    "autonomousMerge": "DENY",
+    "autonomousDeploy": "DENY",
+    "autonomousBilling": "DENY",
+    "autonomousWalletOrRewardMutation": "DENY",
+    "autonomousAccessGrant": "DENY",
+    "unknownState": "FAIL_CLOSED"
+  }
+}
