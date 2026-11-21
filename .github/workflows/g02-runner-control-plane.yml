@@ -1,0 +1,131 @@
+name: G02 Self-Hosted Runner Control Plane
+
+# Safety: never schedule this workflow on pull_request or push. This repository may
+# receive untrusted contributions. Run only by explicit workflow_dispatch after
+# an administrator has reviewed the host and enabled the repository variable.
+on:
+  workflow_dispatch:
+    inputs:
+      authorization_reference:
+        description: "Issue/approval reference authorizing one diagnostic run"
+        required: true
+        type: string
+      run_sentinel:
+        description: "Execute the non-destructive runner sentinel"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g02-runner-control-plane
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: Validate explicit diagnostic authorization
+    runs-on: ubuntu-latest
+    outputs:
+      authorized: ${{ steps.guard.outputs.authorized }}
+    steps:
+      - id: guard
+        shell: bash
+        env:
+          REF: ${{ inputs.authorization_reference }}
+          ENABLED: ${{ vars.LINGO_G02_SENTINEL_ENABLED }}
+          RUN_SENTINEL: ${{ inputs.run_sentinel }}
+          REF_NAME: ${{ github.ref }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          test "$EVENT" = "workflow_dispatch"
+          test "$REF_NAME" = "refs/heads/main"
+          test "$ENABLED" = "true"
+          test "$RUN_SENTINEL" = "true"
+          test -n "$REF"
+          # Prevent multiline output injection and require a trackable issue/PR reference.
+          [[ "$REF" =~ ^(https://github\.com/thelingolegacy-blip/TheLingoLegacy/(issues|pull)/[0-9]+|#[0-9]+)$ ]]
+          echo "authorized=true" >> "$GITHUB_OUTPUT"
+          echo "G02_DISPATCH_GUARD=PASS"
+
+  sentinel:
+    name: Execute canonical G02 sentinel
+    needs: guard
+    if: needs.guard.outputs.authorized == 'true'
+    # This job will remain queued until a real runner with all four labels is online.
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 10
+    steps:
+      - name: Capture runner assignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          {
+            echo "captured_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "hostname=$(hostname)"
+            echo "kernel=$(uname -sr)"
+            echo "architecture=$(uname -m)"
+            echo "runner_name=${RUNNER_NAME:-}"
+            echo "runner_os=${RUNNER_OS:-}"
+            echo "runner_arch=${RUNNER_ARCH:-}"
+            echo "runner_temp=${RUNNER_TEMP:-}"
+            echo "github_run_id=${GITHUB_RUN_ID:-}"
+            echo "github_run_attempt=${GITHUB_RUN_ATTEMPT:-}"
+            echo "github_job=${GITHUB_JOB:-}"
+            echo "github_sha=${GITHUB_SHA:-}"
+            echo "github_ref=${GITHUB_REF:-}"
+          } | tee evidence/runner-context.txt
+          test -n "${RUNNER_NAME:-}"
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          test -n "${GITHUB_RUN_ID:-}"
+          test -n "${GITHUB_SHA:-}"
+
+      - name: Non-destructive host checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "=== OS ==="
+            cat /etc/os-release
+            echo "=== DISK ==="
+            df -h /
+            echo "=== MEMORY ==="
+            free -h
+            echo "=== TIME ==="
+            date -u --iso-8601=seconds
+            echo "=== NETWORK ==="
+            curl --fail --silent --show-error --location --connect-timeout 5 --max-time 15 -o /dev/null -w 'github_api_http=%{http_code}\n' https://api.github.com/
+          } | tee evidence/host-checks.txt
+
+      - name: Sentinel assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${RUNNER_NAME}" = "lingo-legacy-g02"
+          test "${RUNNER_OS}" = "Linux"
+          test "${RUNNER_ARCH}" = "X64"
+          grep -q '^ID=ubuntu$' /etc/os-release
+          grep -q '^VERSION_ID="24.04"$' /etc/os-release
+          echo "G02_SENTINEL_EXIT_CODE=0" | tee evidence/sentinel-result.txt
+
+      - name: Hash evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          find evidence -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > evidence/SHA256SUMS
+          cat evidence/SHA256SUMS
+
+      - name: Upload runner evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g02-runner-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 14
