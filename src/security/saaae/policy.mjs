@@ -166,7 +166,8 @@ export function evaluateAuthorization({ principal, action, resource, context, po
 
   if (!isRecord(policy) || !nonEmptyString(policy.version)
     || policy.status !== "active" || !Array.isArray(policy.rules)
-    || policy.rules.some(rule => !validRule(rule))) {
+    || policy.rules.some(rule => !validRule(rule))
+    || new Set(policy.rules.map(rule => rule.id)).size !== policy.rules.length) {
     return indeterminate("POLICY_UNAVAILABLE_OR_INVALID", isRecord(policy) ? policy.version ?? null : null);
   }
 
