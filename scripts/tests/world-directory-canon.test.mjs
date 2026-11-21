@@ -21,6 +21,8 @@ test('directory exposes exactly the eight canonical public portfolios', () => {
   ]);
   assert.doesNotMatch(realmTitles.join(' '), /[⭐★✦]/);
   assert.doesNotMatch(html, /LINGOarena|LINGOreads|Duolingo/);
+  assert.match(html, /KottonsCode/);
+  assert.doesNotMatch(html, /Kotton’s Code/);
 });
 
 test('internal services remain out of the public portfolio card list', () => {
