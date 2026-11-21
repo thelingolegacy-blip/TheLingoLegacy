@@ -1,0 +1,65 @@
+# Workload isolation baseline for LINGOassist, LINGOassister and LINGOassisthem.
+# Supply reviewed, immutable image references through the environment.
+# This file intentionally exposes no host ports and grants no Docker socket.
+services:
+  lingoassist:
+    image: ${LINGOASSIST_IMAGE:?Set LINGOASSIST_IMAGE to a reviewed immutable image}
+    profiles: ["assistants"]
+    init: true
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: ["ALL"]
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    networks: [lingoassist_net]
+
+  lingoassister:
+    image: ${LINGOASSISTER_IMAGE:?Set LINGOASSISTER_IMAGE to a reviewed immutable image}
+    profiles: ["assistants"]
+    init: true
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: ["ALL"]
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    networks: [lingoassister_net]
+
+  lingoassisthem:
+    image: ${LINGOASSISTHEM_IMAGE:?Set LINGOASSISTHEM_IMAGE to a reviewed immutable image}
+    profiles: ["assistants"]
+    init: true
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: ["ALL"]
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    networks: [lingoassisthem_net]
+
+networks:
+  lingoassist_net:
+    name: lingoassist-isolated
+    internal: true
+  lingoassister_net:
+    name: lingoassister-isolated
+    internal: true
+  lingoassisthem_net:
+    name: lingoassisthem-isolated
+    internal: true
