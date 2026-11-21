@@ -34,3 +34,4 @@ The repository-level workflow also runs the public-asset exclusion validator. Th
 4. Flutter companion/mobile presentation adapter.
 5. Server-authoritative persistence, multiplayer sessions, replay storage and anti-cheat.
 6. Separate product integration contracts for LINGOarcade, LINGOslots and future worlds.
+7. Feed versioned generated-world data into the existing Living Universe Engine as a presentation layer after its nested route, privacy and access boundaries are audited.
