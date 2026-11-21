@@ -1,0 +1,103 @@
+{
+  "status": "IMPORTED_SNAPSHOT_PENDING_INDEPENDENT_REVIEW",
+  "app": {
+    "id": "hello-the-lingo-legacy-ois1rj",
+    "name": "Hello The Lingo Legacy",
+    "url": "https://hello-the-lingo-legacy-ois1rj.v2.appdeploy.ai/",
+    "deployment_status": "ready",
+    "last_valid_version": "1793389793355"
+  },
+  "source": {
+    "provider": "AppDeploy",
+    "snapshot_version": "1793389793355",
+    "captured_on": "2026-11-21",
+    "paths": [
+      {
+        "path": "backend/app-registry.ts",
+        "line_count": 5,
+        "bytes": 897
+      },
+      {
+        "path": "backend/experience-contract.ts",
+        "line_count": 6,
+        "bytes": 568
+      },
+      {
+        "path": "backend/experience-contracts.ts",
+        "line_count": 5,
+        "bytes": 2550
+      },
+      {
+        "path": "backend/index.ts",
+        "line_count": 87,
+        "bytes": 3447
+      },
+      {
+        "path": "backend/media-recovery.ts",
+        "line_count": 89,
+        "bytes": 6470
+      },
+      {
+        "path": "backend/realtime-subscribers.ts",
+        "line_count": 8,
+        "bytes": 2190
+      },
+      {
+        "path": "backend/runtime-fabric.ts",
+        "line_count": 81,
+        "bytes": 2576
+      },
+      {
+        "path": "cron.json",
+        "line_count": 8,
+        "bytes": 137
+      },
+      {
+        "path": "package.json",
+        "line_count": 26,
+        "bytes": 611
+      },
+      {
+        "path": "tests/tests.txt",
+        "line_count": 74,
+        "bytes": 3035
+      }
+    ]
+  },
+  "observed_runtime": {
+    "checked_on": "2026-11-21",
+    "cron": "media-health-monitor",
+    "handler": "automatedHealthMonitor",
+    "schedule": "*/5 * * * * UTC",
+    "last_run": 1795287055,
+    "last_status": "success",
+    "failure_count": 0,
+    "historical_backend_error": {
+      "timestamp": 1794887729466,
+      "error": "HTTP 503 AppDatabaseGatewayUnavailable",
+      "classification": "historical_retained_error"
+    },
+    "latest_frontend_error": {
+      "timestamp": 1795284351243,
+      "error": "Request aborted",
+      "classification": "historical_retained_error"
+    },
+    "followup_query": "No newer frontend or backend errors returned after latest frontend error timestamp."
+  },
+  "validation": {
+    "source_file_comparison": "10/10 source/config/test inventory files matched the identified AppDeploy snapshot in the original export branch.",
+    "secret_literal_pattern_scan": "NO_MATCHES_IN_LIMITED_PATTERN_SCAN",
+    "tests_inventory": "tests/tests.txt is descriptive text, not an executable test suite",
+    "build_or_tests": "NOT_RUN",
+    "runtime_acceptance": "NOT_VERIFIED",
+    "authorization_review": "OPEN — see issue #468"
+  },
+  "safety": {
+    "archive_location": "ops/appdeploy-snapshots/hello-the-lingo-legacy",
+    "current_assetsignore_excludes_ops": true,
+    "no_secrets_exported": true,
+    "no_deployment": true,
+    "no_provider_mutation": true,
+    "production_hold": true
+  }
+}
