@@ -136,6 +136,18 @@ Integrity and retention:
 
 For operations that mutate protected state, authorization and audit intent must be durably committed before the side effect. Prefer a transactional outbox or equivalent atomic pattern. If the system cannot guarantee durable audit intent and later outcome reconciliation, it must not execute the protected operation. A post-execution audit write alone is insufficient because a storage outage could otherwise leave an untraceable side effect.
 
+### 3.6 Initial pure policy evaluator
+
+The review branch adds:
+
+- `src/security/saaae/policy.mjs`: deterministic RBAC/ABAC policy evaluation with explicit `ALLOW`, `DENY`, and `INDETERMINATE` outcomes; default deny; explicit-deny precedence; tenant/product-domain boundary checks; exact attribute matching; rule validity windows; and fail-closed handling of malformed policy.
+- `src/security/saaae/policy.test.mjs`: targeted cases for scoped allow, default deny, explicit deny precedence, tenant mismatch, inactive principal, unavailable policy, ABAC conditions, expired rules, broad/invalid allow rules, and malformed condition namespaces.
+- `package.json`: adds `test:saaae` and includes it in the aggregate `npm test` script.
+
+This is pure policy logic only. It does not authenticate the principal, load trusted roles or memberships, persist policy decisions, create/consume approvals, write audit records, enforce revocation against a live identity store, or wrap a real protected operation. A trusted server-side adapter and per-operation enforcement point remain required.
+
+A local isolated Node harness exercised the ten targeted decision cases successfully. The repository aggregate test command and hosted CI have not yet been run for this branch; no runtime or production integration is claimed.
+
 ### 3.5 Idempotency and replay defense
 
 Every mutating request must carry or receive a server-issued idempotency key scoped to principal, tenant, operation, and resource. Store the request digest and terminal outcome durably. Reuse with a different payload is rejected; exact replay returns the prior outcome and does not repeat the side effect. Approval nonce consumption and action idempotency are separate controls.
@@ -256,4 +268,4 @@ Acceptance requires all applicable tests to pass, test provenance to be independ
 
 SAAAE is not complete until every protected server operation is covered by a tested enforcement point; policy decisions fail closed; required approvals are durable and bound to the exact action; distributed replay is prevented; audit intent and outcome are tamper-evident and independently verifiable; and each product domain passes its own integration and acceptance gates.
 
-**Current status:** Architecture baseline proposed. Implementation, durable persistence, cross-domain enforcement, hosted security tests, and independent certification remain unverified.
+**Current status:** Architecture baseline and initial pure policy evaluator are present on the review branch. The evaluator has not yet been integrated with trusted identity/resource adapters or live protected operations. Durable approvals, append-only audit persistence, cross-domain enforcement, repository/hosted test execution, and independent certification remain unverified.
