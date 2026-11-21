@@ -12,12 +12,14 @@ test('wildcard homepage uses the same canonical portfolio and route-safety rules
   const home = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
   const cards = [...home.matchAll(/<article class="realm-card"[\s\S]*?<h3>(.*?)<\/h3>[\s\S]*?<\/article>/g)].map(match => match[1]);
   assert.deepEqual(cards, ['LINGOlegacy','LINGOlane','LINGOslots','LINGOarcade','LINGOlibrary','LINGOmedia','LINGOworld','LegacyXclub']);
-  assert.doesNotMatch(home, /href="\/(?:studio|contact|terms|studio-sites|thats-my-lingo|kottons-code|library|loyalty-lane-cycles|studio\/lingo-ai)[^"]*"/);
+  assert.doesNotMatch(home, /href="\/(?:studio|terms|studio-sites|thats-my-lingo|kottons-code|library|loyalty-lane-cycles|studio\/lingo-ai)[^"]*"/);
   assert.match(home, /href="https:\/\/thelingolegacy\.com\/"/);
   assert.match(home, /World Builder & Simulation/);
   assert.match(home, /Game Live Operations/);
   assert.match(home, /Workforce & HR\/payroll/);
   assert.match(home, /KottonsCode/);
+  assert.match(home, /href="\\/contact\\/"/);
+  assert.match(home, /Apparel storefront: inventory\\/privacy review pending/);
   assert.doesNotMatch(home, /LINGOarena|LINGOreads|Duolingo|Kotton’s Code/);
 });
 
@@ -72,7 +74,9 @@ test('unsafe or unverified destination links remain disabled', () => {
   assert.match(html, /Game routes pending public-surface verification/);
   assert.match(html, /Arcade destinations pending route and privacy QA/);
   assert.match(html, /Library destinations pending privacy review/);
+  assert.match(html, /Apparel storefront: inventory\\/privacy review pending/);
+  assert.match(html, /Cycle route: not yet verified/);
   assert.match(html, /mailto:hello@thelingolegacy\.com/);
-  assert.match(html, /Privacy · refresh pending/);
-  assert.match(html, /Terms publication pending/);
+  assert.match(html, /Privacy · owner review pending/);
+  assert.match(html, /Terms availability unverified/);
 });
