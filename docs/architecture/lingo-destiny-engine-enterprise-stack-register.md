@@ -170,3 +170,41 @@ This register does not authorize production deployment, DNS/Worker route changes
 - Keep the new PR draft until owners review the domain boundaries and existing artifacts.
 - Use the current main baseline `bf7990f0916fa0d0f16bc34b468ccac066bf6b68` for this documentation proposal; rebase only after checking for intervening main changes.
 - Update issue #517 with exact evidence and blockers; keep G02 and production fail-closed.
+
+
+## 11. Outstanding proposal overlap and decision register
+
+The following are active proposals, not accepted runtime implementations. Compare and integrate them deliberately; do not merge competing branches as independent complete solutions.
+
+| Existing work | Existing value | Overlap / conflict | Recommended disposition |
+|---|---|---|---|
+| PR #511 — master registry | Machine-readable master product registry, dependency graph, Cloudflare route inventory, plugin registry, validation, ADR-002 | Its identity/backend ADR explicitly says provider selection is NOT APPROVED; overlaps at governance/registry level with PR #602 | Treat #511 as the master inventory/dependency and integration registry candidate. Validate current product names, route facts and file paths before acceptance. |
+| PR #602 — 14-realm ecosystem | 14-realm registry, realm-by-realm stack matrix, dispatch contracts, schemas, validators and worlds directory | `worlds/index.html` overlaps directly with PR #548; its stack matrix overlaps conceptually (not necessarily by path) with #511 and this high-level register | Treat #602 as the detailed realm catalog and dispatch candidate. Reconcile its world-directory UI with #548 before combining. Do not create another realm registry. |
+| PR #515 — Supabase-primary backend | Detailed Supabase/PostgreSQL target architecture with Firebase compatibility and migration stages | Conflicts in decision status with #511 ADR-002, which explicitly leaves identity and transactional authority undecided | Keep Supabase as a candidate architecture, not a ratified provider decision. Complete project ownership/data inventory and a named owner decision before schema/migrations. |
+| PR #548 — flagship navigation | Homepage, README, route catalog, exact-root Worker source and preview version 3 | Shares `worlds/index.html` with #602 and `scripts/cloudflare-pages-preview-build.sh` with #614; public preview browser QA and Actions remain incomplete | Prefer #548 as the flagship shell/navigation base after source reconciliation; integrate #602's 14-realm directory rather than overwriting either branch. Keep Worker version 3 preview-only until QA and promotion approval. |
+| PR #614 — Firebase/mobile recovery | Quarantined Firebase publication builder, Flutter pins, Android scaffold, lockfiles, preview script and readiness tests | Shares five paths with #632: `android/app/build.gradle`, `lib/firebase_options.dart`, `lib/main.dart`, `pubspec.yaml`, `scripts/cloudflare-pages-preview-build.sh`. Current branch also records a wrapper-JAR checksum mismatch; do not execute that JAR. | Treat #614 as the broader Firebase publication-boundary and mobile recovery candidate, but rebase/reconcile it against current main and #632 file-by-file. Do not merge either wholesale. Replace/verify wrapper JAR from official trusted source first. |
+| PR #632 — mobile offline preview | Placeholder-safe Firebase startup, offline preview, debug-signing removal and mobile integrity workflow | Direct file overlap with #614; branch description says Android root Gradle scaffold/wrapper absent, while #614 branch includes them | Treat #632 as a focused current-main mobile safety candidate. Compare actual source semantics against #614; preserve the safest compatible changes in one integrated PR. |
+| PR #513 — demo-only public surfaces | Payment-free/demo wording and controls for public game/drop surfaces | Overlaps with the merged Option 2 demo work in #630 and flagship/homepage navigation work in #548 | Re-audit current main before carrying any changes; do not reintroduce superseded demo logic or stale checkout copy. |
+| PR #514 — LLG Dispatch | Dispatch center, worker lifecycle, evidence ledger and activation waves | Conceptual overlap with #602 dispatch routes and #511 execution router | Reconcile schemas, naming, event ownership and approvals. Keep one dispatch envelope/state machine; no fleet activation. |
+
+### Stack decision conflict — backend and identity
+
+Two draft proposals describe different decision states:
+
+- PR #511 ADR-002: `NOT DECIDED`; compares Firebase Auth + Firebase data, Supabase Auth + PostgreSQL, Firebase Auth + Supabase PostgreSQL, and preview/mock-only.
+- PR #515: states Supabase PostgreSQL is the primary transactional backend target while retaining Firebase Auth compatibility/specialist services.
+- PR #602: describes a Go API + PostgreSQL core slice while still listing Firebase app data where appropriate.
+
+These can be reconciled only by recording a single owner-approved decision with exact provider account/project IDs, identity issuer/audience, domain ownership, migration/rollback, cost, privacy and security evidence. Until then, the implementation rule is: no dual-primary writes, no production schema migration, and no provider-specific production activation. The architecture preference for PostgreSQL transactions does not by itself select Supabase as the provider.
+
+### Recommended integration sequence
+
+1. Refresh current main and all PR head/base SHAs; inventory exact overlapping paths and branch ancestry.
+2. Resolve the backend/identity ADR first; do not merge #515 as an approved decision while #511 ADR-002 remains open.
+3. Reconcile #511 master registry with #602 realm registry; assign which file is authoritative for product IDs, dependencies, routes, integrations and realm metadata.
+4. Integrate #548 flagship shell with #602's 14-realm directory in a single reviewed branch; preserve #548 exact-root preview as preview-only.
+5. Resolve #614/#632 shared mobile files in one rebased branch; reject execution of the mismatched Gradle wrapper JAR until verified.
+6. Re-audit #513 against merged #630 and current public surfaces; close or supersede only with exact path/source evidence.
+7. Reconcile #514 dispatch lifecycle with #602's dispatch envelope and #511 execution router; retain one canonical event/state contract.
+8. Only after source reconciliation, execute available local/preview tests and attach evidence. GitHub Actions startup failure remains a separate infrastructure blocker and cannot be replaced by source assertions.
+
