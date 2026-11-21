@@ -47,7 +47,16 @@
     "statusVocabulary": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "LIVE_VERIFIED",
+          "HISTORICAL_EVIDENCE",
+          "SOURCE_DECLARED",
+          "PREVIEW_ONLY",
+          "BLOCKED",
+          "PLANNED",
+          "UNKNOWN"
+        ]
       },
       "uniqueItems": true
     },
@@ -79,22 +88,37 @@
             "type": "string"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "LIVE_VERIFIED",
+              "HISTORICAL_EVIDENCE",
+              "SOURCE_DECLARED",
+              "PREVIEW_ONLY",
+              "BLOCKED",
+              "PLANNED",
+              "UNKNOWN"
+            ]
           },
           "permissions": {
             "type": "array",
+            "minItems": 1,
             "items": {
-              "type": "string"
-            }
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
           },
           "writeAuthority": {
             "const": false
           },
           "requiredEvidence": {
             "type": "array",
+            "minItems": 4,
             "items": {
-              "type": "string"
-            }
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
           },
           "route": {
             "type": [
@@ -125,7 +149,16 @@
             "type": "string"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "LIVE_VERIFIED",
+              "HISTORICAL_EVIDENCE",
+              "SOURCE_DECLARED",
+              "PREVIEW_ONLY",
+              "BLOCKED",
+              "PLANNED",
+              "UNKNOWN"
+            ]
           },
           "evidence": {
             "type": "string"
@@ -134,7 +167,8 @@
             "const": false
           }
         }
-      }
+      },
+      "minItems": 1
     },
     "globalControls": {
       "type": "object",
