@@ -1,7 +1,10 @@
+import { isRestrictedPublicPath } from './cloudflare/security/restricted-public-paths.mjs';
+
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 const BEACON_ZONES = new Set(['full-entity-simulcast','outer-crown-all','nyc-crown-zone','delaware-crown-zone','new-jersey-crown-zone']);
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT = 5;
+const MAX_BEACON_BODY_BYTES = 2048;
 // Bound per-isolate memory use. This is defense in depth, not a substitute for
 // a shared Cloudflare rate-limit rule across Worker isolates.
 const RATE_BUCKET_MAX = 10000;
@@ -67,7 +70,58 @@ function json(body, status = 200, request, env) {
 }
 
 function requestOrigin(request) { return new URL(request.url).origin; }
-async function parseJson(request) { try { return await request.json(); } catch { return {}; } }
+
+async function parseJson(request) {
+  const contentType = String(request.headers.get('content-type') || '').split(';', 1)[0].trim().toLowerCase();
+  if (contentType !== 'application/json') {
+    return { ok: false, status: 415, error: 'Content-Type must be application/json.' };
+  }
+  const contentLength = request.headers.get('content-length');
+  if (contentLength !== null) {
+    if (!/^\\d+$/.test(contentLength)) {
+      return { ok: false, status: 400, error: 'Invalid Content-Length.' };
+    }
+    if (Number(contentLength) > MAX_BEACON_BODY_BYTES) {
+      return { ok: false, status: 413, error: 'Request body is too large.' };
+    }
+  }
+  if (!request.body) return { ok: false, status: 400, error: 'A JSON request body is required.' };
+
+  const reader = request.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_BEACON_BODY_BYTES) {
+        await reader.cancel();
+        return { ok: false, status: 413, error: 'Request body is too large.' };
+      }
+      chunks.push(value);
+    }
+  } catch {
+    return { ok: false, status: 400, error: 'Request body could not be read.' };
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  let value;
+  try {
+    value = JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return { ok: false, status: 400, error: 'Request body must contain valid JSON.' };
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { ok: false, status: 400, error: 'JSON request body must be an object.' };
+  }
+  return { ok: true, value };
+}
 async function createCheckout(request, env) {
   // Payment processing is deliberately unavailable during the no-billing launch phase.
   // Keep the endpoint fail-closed so stale clients cannot create a checkout session.
@@ -80,11 +134,11 @@ async function createCheckout(request, env) {
 
 function normalizePhone(value = '') { return String(value).replace(/[\s().-]/g, '').trim(); }
 function normalizeSource(value = '') { return String(value || 'beacon-alert-form').replace(/[^a-z0-9 _.-]/gi, '').slice(0, 80) || 'beacon-alert-form'; }
-function clientKey(request, phone) {
+function clientKey(request) {
   // Cloudflare supplies this edge-derived address. Do not trust X-Forwarded-For:
-  // clients can spoof it to rotate rate-limit keys.
-  const ip = String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
-  return `${ip}:${phone}`;
+  // clients can spoof it to rotate rate-limit keys. Key by IP, not IP+phone, so
+  // callers cannot evade the per-isolate cap by changing phone numbers.
+  return String(request.headers.get('cf-connecting-ip') || '').trim().slice(0, 64) || 'unknown';
 }
 function isRateLimited(key) {
   const now = Date.now();
@@ -124,11 +178,17 @@ async function sendBeacon(payload, env) {
 
 async function beaconAlerts(request, env) {
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405, request, env);
-  const body = await parseJson(request); const phone = normalizePhone(body.phone); const zone = String(body.zone || '').trim(); const source = normalizeSource(body.source); const consent = body.consent === true || body.consent === 'true' || body.consent === 'on';
+  const parsed = await parseJson(request);
+  if (!parsed.ok) return json({ ok: false, error: parsed.error }, parsed.status, request, env);
+  const body = parsed.value;
+  const phone = normalizePhone(body.phone);
+  const zone = String(body.zone || '').trim();
+  const source = normalizeSource(body.source);
+  const consent = body.consent === true || body.consent === 'true' || body.consent === 'on';
   if (!PHONE_RE.test(phone)) return json({ ok: false, error: 'Enter a phone number in E.164 format.' }, 400, request, env);
   if (!BEACON_ZONES.has(zone)) return json({ ok: false, error: 'Unknown beacon alert zone.' }, 400, request, env);
   if (!consent) return json({ ok: false, error: 'Consent is required before starting text alerts.' }, 400, request, env);
-  if (isRateLimited(clientKey(request, phone))) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
+  if (isRateLimited(clientKey(request))) return json({ ok: false, error: 'Too many beacon alert requests. Try again later.' }, 429, request, env);
   const payload = { phone, zone, source, message: alertMessage(zone, source), consent: true, createdAt: new Date().toISOString() };
   const result = await sendBeacon(payload, env);
   if (!result) return json({ ok: true, staged: true, message: 'Beacon alert validated but no delivery provider is configured.' }, 202, request, env);
@@ -201,6 +261,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
+      if (isRestrictedPublicPath(request.url)) return json({ ok: false, error: 'Not found.' }, 404, request, env);
       if (request.method === 'OPTIONS') return withSecurityHeaders(new Response(null, { status: 204 }), request, env);
       if (url.hostname === `www.${String(env.CANONICAL_DOMAIN || 'thelingolegacy.com').trim().toLowerCase()}`) {
         const canonical = new URL(request.url);
