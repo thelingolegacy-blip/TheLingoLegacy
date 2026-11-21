@@ -19,7 +19,7 @@ export function canonicalizeJson(value) {
   if (Array.isArray(value)) {
     const ownKeys = Reflect.ownKeys(value);
     if (ownKeys.some(key => typeof key === "symbol")
-      || ownKeys.some(key => key !== "length" && (!/^(0|[1-9]\\d*)$/.test(key) || Number(key) >= value.length))) {
+      || ownKeys.some(key => key !== "length" && (!/^(0|[1-9]\d*)$/.test(key) || Number(key) >= value.length))) {
       throw new TypeError("UNSUPPORTED_ARRAY_PROPERTY");
     }
     const items = [];
