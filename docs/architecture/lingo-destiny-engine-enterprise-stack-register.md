@@ -392,3 +392,26 @@ Promote world content independently from runtime code where compatibility allows
 ### Economy and safety
 
 All demo/game currencies remain fictional, non-transferable and non-redeemable unless a separate approved business/legal design explicitly changes the policy. No cash wagering, cash-out, prize redemption, or client-authoritative balance mutation is part of the World Engine baseline.
+
+
+## 14. Cloudflare live-route provenance — read-only snapshot 2026-11-21
+
+The public root and the remaining site paths are served by different Worker route matches. This must be treated as an explicit release dependency.
+
+| Host/path | Route owner | Active traffic evidence | Preview evidence | Release interpretation |
+|---|---|---|---|---|
+| `thelingolegacy.com/` exact root | `lingo-flagship-root` | Deployment version 1 at 100%; deployed 2026-10-25 | Version 3 references PR #548 and is marked preview-capable | The current live homepage is not the same as main's `index.html`; the exact-root Worker intercepts it. |
+| `thelingolegacy.com/*` subpaths | `thelingolegacyv-5` | Version 137 (ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`) at 100%; deployed 2026-10-25 | Latest uploaded version 378 is preview-capable, not active traffic | Current subpages can lag current main source even when newer preview versions exist. |
+| `www.thelingolegacy.com/*` | `thelingolegacyv-5` | Same active main Worker deployment | Same preview-only versions | Verify apex/www parity before accepting flagship release. |
+| `atlas.thelingolegacy.com/*` | `lingo-ecosystem-atlas` | Separate Worker deployment at 100% | Version inventory exists | Treat atlas as a separate runtime, not a route alias for the flagship. |
+
+The read-only zone route response contained 27 routes. The exact-root route is more specific than the apex wildcard and intentionally resolves to a separate Worker. The latest version 378 on the main Worker is annotated as a preview upload; it does not change active traffic. The exact-root version 3 is annotated as PR #548 preview and also does not change active traffic.
+
+### Source/runtime parity findings
+
+- Current GitHub main `index.html` is a noindex redirect to `/studio-hub/`; the apex root Worker serves the public homepage instead. Therefore main's root HTML cannot be assumed to be the live apex homepage.
+- Live `/worlds/`, `/thats-my-lingo/`, and `/kottons-code/` responses are served by the existing site Worker route and must be validated against the exact uploaded Worker version and asset manifest.
+- The live That’s My Lingo response contains older monetization-style copy while current main has safer Demo Coin language. The live Kotton’s Code response retains a privacy issue tracked by #476.
+- A successful source PR or preview upload is not proof of active route content. Acceptance requires exact GitHub commit → uploaded Worker version → deployment ID → route → public response correlation.
+
+No Worker upload, deployment, route, DNS, traffic percentage, or production configuration was changed during this snapshot.
