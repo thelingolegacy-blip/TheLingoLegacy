@@ -58,7 +58,7 @@ The consolidated source includes a deterministic surface-integrity checker at `s
 
 `studio/enterprise-module-registry.json` is the Studio control-plane capability catalog. It is intentionally distinct from `studio/surface-contracts.json` (product surface/entrypoint contracts) and `studio/production-feature-manifest.json` (runtime feature flags).
 
-The registry defines 21 Studio modules and current provider-readiness classifications for GitHub, Cloudflare, Flutter, Firebase, Supabase, Render, and Google AI Studio. It records only observed/source-backed state and includes evidence requirements for every module.
+The registry defines 22 Studio modules and current provider-readiness classifications for GitHub, Cloudflare, Flutter, Firebase, Supabase, Render, and Google AI Studio. It records only observed/source-backed state and includes evidence requirements for every module.
 
 `studio/enterprise-module-registry.schema.json` defines the JSON Schema contract. This is a registry foundation, not a claim that all 12 modules are implemented or that providers are fully integrated.
 
@@ -74,7 +74,7 @@ The registry exposes separate read-only module boundaries for:
 - hotel and hospitality operations;
 - roads and transportation infrastructure;
 - street and road lighting;
-- water distribution, wastewater, drainage and sewer-flow monitoring.
+- water distribution/flow monitoring and wastewater, drainage and sewer-flow monitoring as separate modules.
 
 These permission labels describe required authorization scopes; they do not grant runtime access. Each module remains planned until its owner, tenant/jurisdiction model, data classification, GIS/asset registry, audit evidence, retention and negative authorization tests are accepted. HR/payroll must not inherit general workforce, game, community or property access.
 
