@@ -32,7 +32,7 @@ fi
 
 flutter pub get
 flutter test
-flutter build web --release
+flutter build web --release --no-wasm-dry-run
 
 test -s build/web/index.html
 printf 'LINGO_FLUTTER_WEB_PREVIEW_BUILD=PASS\n'
