@@ -312,3 +312,13 @@ All Studio actions are read-only by default. Any later write action must be a na
 6. **125–150 min — Evidence and closeout:** run available safe local/preview tests, attach exact evidence, update #517, retain all blockers that lack provider/host/runtime proof.
 
 **Completion statement:** This register is a current architecture and provider-readiness snapshot. It does not mean the ecosystem is fully built, all providers are connected, or a live release is approved. The next release candidate must earn each gate with correlated evidence.
+
+
+### Additional runtime and transport controls observed
+
+- Cloudflare zone transport settings: minimum TLS version `1.3`; `always_use_https=on`; `automatic_https_rewrites=on`; zone security level `medium`.
+- Account-level two-factor enforcement remains `false`, so strong edge transport does not resolve administrator account hardening.
+- The Studio staging Worker has a current deployment record with 100% of that Worker deployment assigned to version `8d05879b-db31-43d3-ae10-7f2abc91246a`. This percentage is isolated to the staging Worker; it is not production traffic.
+- Studio staging Worker settings show observability enabled with query-string redaction, persistent invocation logs, and **zero regular bindings**. It has no custom zone route. This supports the read-only staging-control-plane classification, but does not prove that every UI function or provider adapter is live.
+- Render's only service has one current `live` deployment for commit `c6ab81c34a0521ed72937b6a7fcf618a47b62038`, publishing the static `render-staging` directory. Its build command is an echo/no-compilation command; this is not a backend build or production API deployment.
+- The current public apex page identifies itself as a candidate experience and says destination activation depends on verified routes. Public reachability of the homepage must not be confused with a production-ready account, wallet, commerce, game, or creator experience.
