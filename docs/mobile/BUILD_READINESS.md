@@ -7,6 +7,7 @@
 - `.firebaserc` currently has no default project.
 - `firebase.json` is empty.
 - `lib/firebase_options.dart` still contains `YOUR_*` placeholders.
+- The offline preview intentionally keeps only `firebase_core`; Auth, Realtime Database, Storage, Analytics, Provider, HTTP, persistence, and connectivity SDKs are deferred until a real staging project and app flows are implemented.
 - The app may start in offline preview mode, but this does not connect Firebase Auth, Realtime Database, Storage, Analytics, or any production identity service.
 - Do not replace placeholders with invented project IDs or credentials. Configure a dedicated staging Firebase project and obtain the real FlutterFire options before accepting backend integration.
 
