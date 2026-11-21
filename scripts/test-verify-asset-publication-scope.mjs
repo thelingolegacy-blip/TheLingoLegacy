@@ -73,7 +73,7 @@ test('missing packages source exclusion fails closed', (t) => {
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const result = runValidator(root);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /missing required exclusion: packages\\//);
+  assert.match(result.stderr, /missing required exclusion: packages\//);
 });
 
 test('missing sensitive root-file exclusion fails closed', (t) => {
