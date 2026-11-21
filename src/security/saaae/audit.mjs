@@ -17,7 +17,7 @@ export async function createAuditEnvelope(event, previousHash = AUDIT_GENESIS_HA
     || REQUIRED_EVENT_FIELDS.some(field => !isNonEmpty(event[field]))) {
     throw new TypeError("AUDIT_EVENT_SCHEMA_INVALID");
   }
-  if (!Number.isFinite(Date.parse(event.occurredAt)) || !/(Z|[+-]\\d{2}:\\d{2})$/.test(event.occurredAt)) {
+  if (!Number.isFinite(Date.parse(event.occurredAt)) || !/(Z|[+-]\d{2}:\d{2})$/.test(event.occurredAt)) {
     throw new TypeError("AUDIT_TIMESTAMP_INVALID");
   }
   if (!/^[a-f0-9]{64}$/.test(previousHash)) throw new TypeError("AUDIT_PREVIOUS_HASH_INVALID");
