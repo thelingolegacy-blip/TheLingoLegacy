@@ -42,7 +42,7 @@ trap on_error ERR
 die() { printf 'FATAL: %s\n' "$*" >&2; exit 1; }
 require_command() { command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"; }
 
-for command_name in git python3 sha256sum find sort wc tr date; do
+for command_name in git python3 sha256sum find sort xargs wc tr date; do
   require_command "$command_name"
 done
 
