@@ -51,8 +51,14 @@ done
 [[ -n "$(git -C "$REPO_ROOT" rev-parse --verify HEAD 2>/dev/null)" ]] || die "Cannot resolve repository HEAD."
 [[ ! -L "$ARTIFACT_ROOT" ]] || die "Refusing symlinked artifacts directory."
 mkdir -p -- "$ARTIFACT_ROOT"
+ARTIFACT_ROOT_REAL="$(cd -- "$ARTIFACT_ROOT" && pwd -P)"
+[[ "$ARTIFACT_ROOT_REAL" == "$REPO_ROOT/artifacts" ]] || die "Resolved artifact root escapes repository root."
+[[ ! -L "$ARTIFACT_DIR" ]] || die "Refusing symlinked artifact output directory."
 [[ ! -e "$ARTIFACT_DIR" ]] || die "Refusing to overwrite existing artifact directory: $ARTIFACT_DIR"
 mkdir -- "$ARTIFACT_DIR"
+[[ ! -L "$ARTIFACT_DIR" ]] || die "Artifact output unexpectedly became a symlink."
+ARTIFACT_DIR_REAL="$(cd -- "$ARTIFACT_DIR" && pwd -P)"
+[[ "$ARTIFACT_DIR_REAL" == "$ARTIFACT_ROOT_REAL/master-$TIMESTAMP" ]] || die "Resolved artifact output escapes artifact root."
 
 printf '=== LINGO Master Artifact Generator ===\n'
 printf 'Timestamp : %s\nOutput    : %s\n\n' "$TIMESTAMP" "$ARTIFACT_DIR"
@@ -63,7 +69,12 @@ printf '[1/9] Capturing repository baseline...\n'
 HEAD_SHA="$(git rev-parse HEAD)"
 BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
 DIRTY_COUNT="$(git status --porcelain=v1 --untracked-files=all -- . ":(exclude)artifacts/master-$TIMESTAMP" | wc -l | tr -d ' ')"
-ORIGIN_RAW="$(git remote get-url origin 2>/dev/null || true)"
+if ORIGIN_RAW="$(git remote get-url origin 2>/dev/null)"; then
+  ORIGIN_CAPTURE_STATUS="PASS"
+else
+  ORIGIN_RAW=""
+  ORIGIN_CAPTURE_STATUS="UNAVAILABLE"
+fi
 ORIGIN_SAFE="$(python3 - "$ORIGIN_RAW" <<'PY'
 import re, sys
 value = sys.argv[1].strip()
@@ -82,6 +93,7 @@ PY
   printf '# Repository Baseline\n\n'
   printf -- '- Generated UTC: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   printf -- '- Repository root: %s\n' "$REPO_ROOT"
+  printf -- '- Origin capture status: %s\n' "$ORIGIN_CAPTURE_STATUS"
   printf -- '- Origin (credentials/query redacted): %s\n' "$ORIGIN_SAFE"
   printf -- '- Branch: %s\n' "$BRANCH_NAME"
   printf -- '- HEAD: %s\n' "$HEAD_SHA"
@@ -116,6 +128,13 @@ GitHub before making decisions.
 | 617 | Release governance preview | Reconcile; no release authority implied |
 | 618 | GitHub-hosted Actions canary | Reconcile; no successful run assumed |
 | 619 | Master recovery audit | Preserve evidence and review history |
+| 620 | Master artifact generator | This generator PR; draft/review/runtime validation required |
+
+PR #615 is the separate restoration orchestrator. Do not merge its execution
+responsibilities into this generator. Reconcile only its inspectable outputs,
+preserving the exact source commit, run/job IDs, artifact names, and SHA-256
+hashes. The generator does not execute, dispatch, or substitute for the
+orchestrator.
 
 No merge, close, retarget, branch deletion, or workflow dispatch is performed.
 Source presence, draft status, mergeability, or an issue comment is not runtime
@@ -268,6 +287,8 @@ cat > "$ARTIFACT_DIR/05-acceptance-matrix.json" <<EOF
   "generated_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "issue": 612,
   "overall": "UNVERIFIED",
+  "evidence_package_status": "INCOMPLETE",
+  "generator_exit_disposition": "2_AFTER_INTEGRITY_VERIFICATION_WHILE_REQUIRED_EVIDENCE_IS_MISSING",
   "release_disposition": "PROTECTED HOLD",
   "g02": "FAIL / UNVERIFIED",
   "g03_g11": "BLOCKED / HELD",
@@ -286,6 +307,8 @@ cat > "$ARTIFACT_DIR/05-acceptance-matrix.json" <<EOF
   "canary_template": "PRESENT_NOT_EXECUTED",
   "runtime_ci_evidence": "NOT_CAPTURED",
   "provider_inventory": "NOT_CAPTURED",
+  "orchestrator_pr615_evidence": "NOT_INGESTED_OR_RECONCILED",
+  "required_execution_evidence": "INCOMPLETE",
   "production_promotion": "NOT_AUTHORIZED"
 }
 EOF
@@ -313,6 +336,36 @@ Firebase, Actions, mobile build services, or other providers.
 
 No empty evidence directory, template, source file, screenshot, HTTP response, or
 provider status is treated as proof of completion.
+EOF
+
+cat > "$ARTIFACT_DIR/07-orchestrator-reconciliation.md" <<'EOF'
+# PR #615 Restoration Orchestrator — Evidence Reconciliation Contract
+
+PR #615 remains a separate draft restoration orchestrator. This generator does
+not import, execute, dispatch, or modify that orchestrator.
+
+At package-generation time, reconcile the latest PR #615 head against GitHub.
+Record the exact head SHA and, for each supplied evidence item:
+- originating workflow/run/job identifiers and attempt;
+- exact source commit SHA and PR/branch provenance;
+- artifact name, download timestamp, and SHA-256;
+- test/build/provider operation scope and whether it was read-only;
+- status using PASS, FAIL, UNVERIFIED, BLOCKED, or NOT_AUTHORIZED;
+- reviewer and review timestamp, when applicable.
+
+Do not treat orchestrator source code, a successful process exit, empty
+directories, or operator assertions as execution evidence. Do not overwrite
+or normalize original artifacts. Preserve originals byte-for-byte and record
+any derived/reconciled copy as a separate file with its own hash.
+
+Current generator behavior: no PR #615 artifacts are ingested. Therefore this
+reconciliation is **UNVERIFIED**, and required execution evidence remains
+**INCOMPLETE**. The master artifact generator must return exit code 2 after
+integrity verification while this condition remains true.
+
+PR #615 and this generator remain independently reviewable. Evidence may be
+cross-referenced in Issue #612 only after source SHA and artifact hashes are
+independently checked.
 EOF
 
 cat > "$ARTIFACT_DIR/README.md" <<EOF
@@ -343,11 +396,14 @@ cat > "$ARTIFACT_DIR/README.md" <<EOF
 ## Integrity and interpretation
 The manifest enumerates every package file except itself and SHA256SUMS.
 SHA256SUMS includes the manifest and all other package files except itself.
-The generator verifies both before reporting success.
+The generator verifies both before reporting package integrity. Because this
+local-only generator does not ingest the required hosted CI, provider, product,
+security, or independent-review evidence, the evidence package is deliberately
+marked INCOMPLETE and the script exits with status 2 after integrity checks.
+Exit status 0 is reserved for a future run in which every required evidence
+gate is populated and independently validated.
 
-A successful generator exit means only that this local package was generated
-and integrity-checked. It does not mean GitHub Actions, product builds, staging,
-security, or release acceptance passed.
+A verified checksum set proves package integrity, not release acceptance.
 
 ## Usage
 \`\`\`bash
@@ -383,6 +439,13 @@ cat > "$REPORT" <<EOF
 - Hosted canary: **template only; not dispatched**
 - CI logs, run IDs, job IDs, downloadable artifacts: **not captured**
 - Production/provider changes: **none performed by this generator**
+
+## Evidence completeness
+- Package integrity: verified only if the final manifest and checksum gates pass.
+- Required execution evidence: **INCOMPLETE**.
+- PR #615 orchestrator evidence: **NOT INGESTED / UNVERIFIED**.
+- Expected exit status: **2** after package integrity verification.
+- Exit status 0 is prohibited while required evidence remains incomplete.
 
 ## Required next evidence
 1. Obtain current GitHub main/settings/PR readback.
@@ -475,10 +538,12 @@ PY
   sha256sum --check --strict SHA256SUMS
 )
 
-printf '\n=== Master Artifact package generated and integrity-verified ===\n'
+printf '\n=== Master Artifact package integrity verified ===\n'
 printf 'Location : %s\n' "$ARTIFACT_DIR"
 printf 'Manifest : %s\n' "$MANIFEST"
 printf 'Checksums: %s\n' "$CHECKSUMS"
 printf 'Report   : %s\n' "$REPORT"
-printf '\nPackage integrity PASS does not change any acceptance status.\n'
+printf '\nEVIDENCE PACKAGE: INCOMPLETE — required execution evidence is missing.\n'
+printf 'Exit status: 2 (integrity verified; acceptance evidence incomplete).\n'
 printf 'Production remains PROTECTED HOLD; G02 remains FAIL / UNVERIFIED.\n'
+exit 2
