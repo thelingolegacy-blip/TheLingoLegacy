@@ -1,0 +1,31 @@
+# PROPOSAL ONLY — do not apply until supervisor implementation and security review pass.
+# Render service type/runtime are immutable after creation; review before provisioning.
+services:
+  - type: worker
+    name: lingo-legacy-g02
+    runtime: docker
+    region: ohio
+    plan: starter
+    dockerfilePath: ./ops/github-runner/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: off
+    maxShutdownDelaySeconds: 300
+    envVars:
+      - key: GITHUB_APP_ID
+        sync: false
+      - key: GITHUB_APP_INSTALLATION_ID
+        sync: false
+      - key: GITHUB_APP_PRIVATE_KEY
+        sync: false
+      - key: GITHUB_REPOSITORY
+        value: thelingolegacy-blip/TheLingoLegacy
+      - key: RUNNER_NAME
+        value: lingo-legacy-g02
+      - key: RUNNER_LABELS
+        value: self-hosted,linux,x64,lingo-g02
+      - key: GITHUB_API_URL
+        value: https://api.github.com
+# BLOCKED: current Dockerfile/entrypoint expects a static RUNNER_TOKEN and performs
+# one ephemeral registration. Replace with a reviewed supervisor before applying.
+# Verify Render worker disk, runtime, restart, and networking constraints first.
+# This is not a deployable or validated Blueprint.
