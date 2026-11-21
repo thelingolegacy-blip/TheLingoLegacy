@@ -20,6 +20,8 @@ test('directory exposes exactly the eight canonical public portfolios', () => {
     'LegacyXclub',
   ]);
   assert.doesNotMatch(realmTitles.join(' '), /[⭐★✦]/);
+  assert.match(html, /href="https:\/\/thelingolegacy\.com\/"/);
+  assert.doesNotMatch(html, /href="\/"/);
   assert.doesNotMatch(html, /LINGOarena|LINGOreads|Duolingo/);
   assert.match(html, /KottonsCode/);
   assert.doesNotMatch(html, /Kotton’s Code/);
