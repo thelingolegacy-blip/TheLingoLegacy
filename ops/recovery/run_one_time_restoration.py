@@ -190,6 +190,16 @@ def copy_workspace_verified(source: Path, destination: Path) -> str:
     return before
 
 
+def valid_redirect_target(source_url: str, location: str) -> bool:
+    source = urlparse(source_url)
+    target = urlparse(urljoin(source_url, location))
+    return (target.scheme == "https"
+            and target.hostname == source.hostname
+            and target.port in (None, 443)
+            and target.username is None
+            and target.password is None)
+
+
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
@@ -716,12 +726,7 @@ print("CRIMSON_SMOKE_STATIC=PASS")
             location = result.get("location")
             redirect_ok = False
             if status in redirect_statuses and location:
-                target = urlparse(urljoin(PROBES[index], location))
-                redirect_ok = (target.scheme == "https"
-                               and target.hostname == source_url.hostname
-                               and target.port in (None, 443)
-                               and target.username is None
-                               and target.password is None)
+                redirect_ok = valid_redirect_target(PROBES[index], location)
             if index == 0:
                 ok = status == 200
                 result["expectation"] = "HTTP 200"
