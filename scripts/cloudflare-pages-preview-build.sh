@@ -7,7 +7,10 @@ set -Eeuo pipefail
 FLUTTER_ROOT="${FLUTTER_ROOT:-/tmp/flutter}"
 if ! command -v flutter >/dev/null 2>&1; then
   if [[ ! -x "$FLUTTER_ROOT/bin/flutter" ]]; then
-    rm -rf "$FLUTTER_ROOT"
+    if [[ -e "$FLUTTER_ROOT" ]]; then
+      echo "Flutter root exists but has no executable: $FLUTTER_ROOT" >&2
+      exit 1
+    fi
     git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$FLUTTER_ROOT"
   fi
   export PATH="$FLUTTER_ROOT/bin:$PATH"
