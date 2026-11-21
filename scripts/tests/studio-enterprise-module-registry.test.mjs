@@ -65,3 +65,33 @@ test('world and live-operations modules require simulation and trust evidence', 
   for (const evidence of ['worldSchema','assetRights','simulationTests','contentSafety','runtimeAdapter']) assert.ok(world.requiredEvidence.includes(evidence));
   for (const evidence of ['sessionContract','antiCheatTests','moderationPolicy','telemetryRedaction','rollbackEvidence']) assert.ok(liveops.requiredEvidence.includes(evidence));
 });
+
+const dashboardPath = new URL('../../studio/index.html', import.meta.url);
+const dashboard = fs.readFileSync(fileURLToPath(dashboardPath), 'utf8');
+const workerPath = new URL('../../worker.js', import.meta.url);
+const worker = fs.readFileSync(fileURLToPath(workerPath), 'utf8');
+
+test('Studio dashboard consumes the canonical registry rather than the runtime product list', () => {
+  assert.match(dashboard, /\/studio\/enterprise-module-registry\.json/);
+  assert.match(dashboard, /registry\.modules\.map/);
+  assert.match(dashboard, /registry\.providerReadiness/);
+  assert.match(dashboard, /Module registration is not proof/);
+});
+
+test('Studio dashboard separates live probes from connector-only observations', () => {
+  assert.match(dashboard, /api\.github\.com\/repos\/thelingolegacy-blip\/TheLingoLegacy/);
+  assert.match(dashboard, /\/api\/v1\/platform\/status/);
+  assert.match(dashboard, /session-observed connector snapshot/);
+  assert.match(dashboard, /workspace selection/);
+  assert.match(dashboard, /No credentials are requested or displayed/);
+});
+
+test('GitHub metadata probe is narrowly permitted by the Worker CSP', () => {
+  assert.match(worker, /connect-src 'self' https:\/\/api\.github\.com/);
+  assert.doesNotMatch(worker, /connect-src[^;]*\*/);
+});
+
+test('dashboard never embeds provider credentials and has valid script closure', () => {
+  assert.match(dashboard, /<\/script><\/body><\/html>$/);
+  assert.doesNotMatch(dashboard, /(?:ghp_|github_pat_|sk-[A-Za-z0-9]{12,}|sb_secret_|AIza[0-9A-Za-z_-]{20,})/);
+});
