@@ -161,16 +161,13 @@ The review branch now adds:
 - `src/security/saaae/approval.mjs`: exact request/operation/resource/tenant/domain/environment/policy/payload binding; human approver requirement; optional separation of duties; expiry checks; signature-verifier hook; execution-time approver revalidation; and durable atomic single-use consumption contract.
 - `src/security/saaae/audit.mjs`: canonical hash-linked audit envelopes, atomic chain-head compare-and-set append contract, independent chain verification, and a separately signed checkpoint verification hook.
 - `src/security/saaae/idempotency.mjs`: durable atomic claim/completion contract scoped to principal, tenant, operation, resource, key, and payload digest; exact replay, in-progress, and payload-conflict outcomes.
-- Targeted Node test files for each primitive. There are 51 authored targeted test cases across policy, canonicalization, authorization, approvals, audit, and idempotency.
+- Targeted Node test files for each primitive. There are 59 authored targeted test cases across policy, canonicalization, authorization, approvals, audit, and idempotency.
 - `docs/security/SAAAE-DURABLE-ADAPTER-CONTRACTS-v1.md`: required transactional storage behavior and integration boundaries.
 
 These are enforcement primitives and adapter contracts, not completed durable adapters. Signature verification, trusted role/membership resolution, transactional stores, signed checkpoint key custody, and actual protected-operation integration remain injected dependencies that must be independently implemented and verified.
 
 The initial eleven policy-decision cases were previously exercised in an isolated local Node harness. The newly authored canonicalization, authorization, approval, audit, and idempotency test suites have not been run in a repository checkout or hosted CI. The aggregate `npm test` remains NOT RUN for this branch.
 
-### 3.5 Idempotency and replay defense
-
-Every mutating request must carry or receive a server-issued idempotency key scoped to principal, tenant, operation, and resource. Store the request digest and terminal outcome durably. Reuse with a different payload is rejected; exact replay returns the prior outcome and does not repeat the side effect. Approval nonce consumption and action idempotency are separate controls.
 
 ## 4. Mandatory execution lifecycle
 
@@ -288,4 +285,4 @@ Acceptance requires all applicable tests to pass, test provenance to be independ
 
 SAAAE is not complete until every protected server operation is covered by a tested enforcement point; policy decisions fail closed; required approvals are durable and bound to the exact action; distributed replay is prevented; audit intent and outcome are tamper-evident and independently verifiable; and each product domain passes its own integration and acceptance gates.
 
-**Current status:** Architecture baseline and initial pure policy evaluator are present on the review branch. The evaluator has not yet been integrated with trusted identity/resource adapters or live protected operations. Durable approvals, append-only audit persistence, cross-domain enforcement, repository/hosted test execution, and independent certification remain unverified.
+**Current status:** Architecture baseline, RBAC/ABAC evaluator, audited server authorization boundary, exact-action approval verification contract, tamper-evident audit chain/checkpoint primitives, and durable idempotency contract are present on the review branch. Durable Firebase adapters, project/IAM integration, live protected-operation enforcement, 48 newly authored tests, repository/hosted test execution, cross-domain rollout, and independent certification remain unverified.
