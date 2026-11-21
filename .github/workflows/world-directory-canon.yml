@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: canonical-world-directory-\${{ github.ref }}
+  group: canonical-world-directory-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
