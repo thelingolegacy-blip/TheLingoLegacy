@@ -788,10 +788,21 @@ async def main_async(args: argparse.Namespace) -> int:
     print("Mode: local tests/builds + optional public GET probes; production activation disabled.")
     with tempfile.TemporaryDirectory(prefix="lingo-recovery-") as temp:
         workspace = Path(temp) / "repo"
+        root_before = await runner.git_snapshot(source)
+        if (not root_before.get("git_readable") or not root_before.get("working_tree_clean")
+                or root_before.get("commit_sha") != args.source_expected_sha):
+            print("BLOCKED: root source checkout is not clean at --source-expected-sha.", file=sys.stderr)
+            return 2
         try:
             copy_workspace_verified(source, workspace)
         except (OSError, ValueError) as exc:
             print(f"BLOCKED: source workspace cannot be copied safely: {exc}", file=sys.stderr)
+            return 2
+        root_after = await runner.git_snapshot(source)
+        if (not root_after.get("git_readable") or not root_after.get("working_tree_clean")
+                or root_after.get("commit_sha") != args.source_expected_sha
+                or root_after.get("commit_sha") != root_before.get("commit_sha")):
+            print("BLOCKED: root source checkout changed during snapshot/copy; no checks will run.", file=sys.stderr)
             return 2
 
         # Capture immutable provenance before copying either candidate. Dirty
@@ -852,14 +863,38 @@ async def main_async(args: argparse.Namespace) -> int:
         if core_ok and core_dir:
             core_candidate = workspace / "_external_candidates" / "core-v2"
             core_candidate.parent.mkdir(parents=True, exist_ok=True)
-            copy_workspace_verified(core_dir, core_candidate)
-            if (core_candidate / "platform/lingo-core-v2/services/api/go.mod").is_file():
+            try:
+                copy_workspace_verified(core_dir, core_candidate)
+                core_after_copy = await runner.git_snapshot(core_dir)
+                if (not core_after_copy.get("working_tree_clean")
+                        or core_after_copy.get("commit_sha") != core_snapshot.get("commit_sha")
+                        or core_after_copy.get("commit_sha") != args.core_v2_expected_sha):
+                    raise ValueError("CORE V2 candidate Git provenance changed during copy")
+                runner.record({"task": "core-v2-copy-integrity", "status": "PASS",
+                               "source_commit_sha": core_after_copy["commit_sha"],
+                               "manifest_sha256": workspace_manifest_sha256(core_candidate)})
+            except (OSError, ValueError) as exc:
+                core_candidate = None
+                runner.record({"task": "core-v2-copy-integrity", "status": "FAIL", "reason": str(exc)})
+            if core_candidate and (core_candidate / "platform/lingo-core-v2/services/api/go.mod").is_file():
                 core_candidate = core_candidate / "platform/lingo-core-v2/services/api"
         firebase_candidate = None
         if firebase_ok and firebase_dir:
             firebase_candidate = workspace / "_external_candidates" / "firebase-hosting"
             firebase_candidate.parent.mkdir(parents=True, exist_ok=True)
-            copy_workspace_verified(firebase_dir, firebase_candidate)
+            try:
+                copy_workspace_verified(firebase_dir, firebase_candidate)
+                firebase_after_copy = await runner.git_snapshot(firebase_dir)
+                if (not firebase_after_copy.get("working_tree_clean")
+                        or firebase_after_copy.get("commit_sha") != firebase_snapshot.get("commit_sha")
+                        or firebase_after_copy.get("commit_sha") != args.firebase_expected_sha):
+                    raise ValueError("Firebase candidate Git provenance changed during copy")
+                runner.record({"task": "firebase-copy-integrity", "status": "PASS",
+                               "source_commit_sha": firebase_after_copy["commit_sha"],
+                               "manifest_sha256": workspace_manifest_sha256(firebase_candidate)})
+            except (OSError, ValueError) as exc:
+                firebase_candidate = None
+                runner.record({"task": "firebase-copy-integrity", "status": "FAIL", "reason": str(exc)})
 
         # Each wave is a real dependency gate: a non-PASS task blocks every
         # task in later waves. Final evidence packaging still runs regardless.
