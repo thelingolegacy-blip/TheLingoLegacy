@@ -30,6 +30,16 @@ function findWalkablePair(world) {
   throw new Error('test world has no adjacent walkable tiles');
 }
 
+function findDistantWalkable(world, start) {
+  for (let y = 0; y < world.dimensions.height; y += 1) {
+    for (let x = 0; x < world.dimensions.width; x += 1) {
+      if (!world.map[y][x].walkable) continue;
+      if (Math.abs(x - start.x) + Math.abs(y - start.y) > 1) return { x, y };
+    }
+  }
+  return null;
+}
+
 function findWalkableWaterPair(world) {
   for (let y = 0; y < world.dimensions.height; y += 1) {
     for (let x = 0; x < world.dimensions.width; x += 1) {
@@ -89,12 +99,14 @@ test('movement must advance exactly one tick and one adjacent tile', () => {
     tick: 2,
     to: destination,
   }), /exactly one simulation step/);
+  const distant = findDistantWalkable(world, start);
+  assert.ok(distant, 'test world must contain a non-adjacent walkable destination');
   assert.throws(() => applySimulationCommand(state, world, {
     commandId: 'move-teleport',
     actorId: 'player-one',
     type: 'move',
     tick: 1,
-    to: { x: (start.x + 3) % world.dimensions.width, y: start.y },
+    to: distant,
   }), /orthogonally adjacent/);
 });
 
