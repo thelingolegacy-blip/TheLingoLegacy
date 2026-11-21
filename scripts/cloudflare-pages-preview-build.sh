@@ -26,13 +26,9 @@ cp -a /tmp/lingo_legacy_web_scaffold/web/. web/
 echo "LINGO_STAGE=android_wrapper_generation"
 rm -rf /tmp/lingo_legacy_android_scaffold
 flutter create /tmp/lingo_legacy_android_scaffold --project-name lingo_legacy --org com.thelingolegacy --platforms android --no-pub
-for spec in "gradlew:gradlew" "gradlew.bat:gradlew.bat" "gradle-wrapper.jar:gradle/wrapper/gradle-wrapper.jar"; do
-  label="${spec%%:*}"
-  source_path="/tmp/lingo_legacy_android_scaffold/android/${spec#*:}"
-  test -s "$source_path"
-  echo "ANDROID_WRAPPER_FILE=${label}"
-  base64 -w0 "$source_path" | fold -w 3000 | awk -v label="$label" '{ printf "ANDROID_WRAPPER_CHUNK=%s:%03d:%s\n", label, NR-1, $0 }'
-done
+source_path="/tmp/lingo_legacy_android_scaffold/android/gradle/wrapper/gradle-wrapper.jar"
+test -s "$source_path"
+echo "ANDROID_WRAPPER_JAR_TAIL_88=$(base64 -w0 "$source_path" | tail -c 88)"
 node --test scripts/test-cloudflare-pages-preview-build.mjs
 node --test scripts/test-verify-flutter-android-readiness.mjs
 echo "LINGO_STAGE=android_readiness"
