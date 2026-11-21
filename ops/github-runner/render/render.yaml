@@ -1,0 +1,24 @@
+services:
+  - type: worker
+    name: lingo-g02-render-ephemeral-runner
+    runtime: docker
+    region: ohio
+    plan: 1c-2g
+    numInstances: 1
+    autoDeployTrigger: off
+    dockerfilePath: ops/github-runner/render/Dockerfile
+    dockerContext: ops/github-runner/render
+    maxShutdownDelaySeconds: 300
+    envVars:
+      - key: GITHUB_REPOSITORY
+        value: thelingolegacy-blip/TheLingoLegacy
+      - key: RUNNER_NAME_PREFIX
+        value: lingo-g02-render
+      - key: RUNNER_LABELS
+        value: self-hosted,linux,x64,lingo-g02-render
+      - key: GITHUB_APP_ID
+        sync: false
+      - key: GITHUB_APP_INSTALLATION_ID
+        sync: false
+      - key: GITHUB_APP_PRIVATE_KEY_B64
+        sync: false
