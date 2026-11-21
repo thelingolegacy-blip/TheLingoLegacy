@@ -1,0 +1,5 @@
+schema=lingo-hosted-canary-trigger-v1
+purpose=Trigger the exact-branch zero-uses GitHub-hosted runner canary.
+branch=recovery/hosted-canary-zero-uses-push-2026-11-21
+base_sha=4afcd27793a8543c90bf42aefd9af1e359cfa02b
+production_effects=none
