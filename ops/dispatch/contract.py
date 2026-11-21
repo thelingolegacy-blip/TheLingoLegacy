@@ -118,12 +118,12 @@ def _load_role_catalog() -> dict[str, str]:
             raise ContractError(f"role {role_id!r} has an invalid permission list")
         if len(set(permissions)) != len(permissions) or set(permissions) - ALLOWED_ROLE_PERMISSIONS:
             raise ContractError(f"role {role_id!r} contains duplicate or unapproved permissions")
-        if not isinstance(restricted, list) or not restricted or not all(
+        if not isinstance(restricted, list) or not all(
             isinstance(rule, str) and rule.strip() for rule in restricted
         ):
             raise ContractError(f"role {role_id!r} has an invalid restriction list")
         required_restrictions = REQUIRED_ROLE_RESTRICTIONS.get(role_id)
-        if required_restrictions is None or not required_restrictions.issubset(set(restricted)):
+        if not restricted or required_restrictions is None or not required_restrictions.issubset(set(restricted)):
             raise ContractError(f"role {role_id!r} is missing required security restrictions")
         if role_id in roles:
             raise ContractError(f"role catalog contains duplicate role {role_id!r}")
