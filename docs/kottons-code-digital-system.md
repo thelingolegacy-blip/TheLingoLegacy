@@ -13,7 +13,7 @@ KottonsCode is the pet legacy studio surface for The Lingo Legacy: Industrial No
 
 1. Home: cinematic hero, decode CTA, explainer, characters, how-it-works, story teasers, Loyalty Lane capture.
 2. Episodes / Stories: cover grid, episode hero, summary, emotional theme, Legacy Code takeaway.
-3. About / Lore: KottonsCode origin, character bios, Avalon / Legacy / community connection.
+3. About / Lore: KottonsCode origin, character bios, THE PRESTIGIOUS HOUSE OF DUSSE / Legacy / community connection; historical House of Avalon material remains archived separately.
 4. Resources / Blog: pets, emotional wellness, loyalty, family, community, behind the scenes.
 5. Contact / Collaborate: partnerships, press kit, social links.
 
