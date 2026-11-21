@@ -20,9 +20,9 @@
 | [#611](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/611) | `feat/dispatch-contract-v1-2026-11-16` | `f779686eec42d10be0fbc8a2ac436304edc86e45` | Open / draft / unmerged | 4 |
 | [#613](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/613) | `recovery/actions-startup-probe-2026-11-16` | `09028483c78da0df9804a27cfcf2c0a44ffd6c32` | Open / draft / unmerged | 43 |
 | [#614](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/614) | `recovery/firebase-hosting-quarantine-boundary` | `7574ad6308f048547a604bd2ace22cab05dc1ef9` | Open / draft / unmerged | 41 |
-| [#615](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/615) | `audit/reconciled-v1-1-live-inventory-2026-11-19` | `b266d375e70a048899f32d4681fa0f920feee349` | Open / draft / unmerged | 10 |
+| [#615](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/615) | `audit/reconciled-v1-1-live-inventory-2026-11-19` | `272bff018c17f358a95d26bd847ab4e6306aa627` | Open / draft / unmerged | 10 |
 | [#618](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/618) | `recovery/hosted-canary-zero-uses-2026-11-20` | `0340b1f3cfae66ac11ad7a1da85bcb92a56ce85a` | Open / draft / unmerged | 1 |
-| [#619](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/619) | `recovery/master-recovery-evidence-2026-11-20` | `6c4cbad70ba86f446d5df3e3bb420aa03efcbe4b` | Open / draft / unmerged | 14 |
+| [#619](https://github.com/thelingolegacy-blip/TheLingoLegacy/pull/619) | `recovery/master-recovery-evidence-2026-11-20` | `abb2923671b0c911bcada04e72f64caba065c5da` | Open / draft / unmerged | 15 |
 
 All four PRs target the same observed main baseline. No merge was performed.
 
@@ -50,6 +50,17 @@ All four PRs target the same observed main baseline. No merge was performed.
 - It does not deploy, merge, mutate DNS/Cloudflare/Firebase, provision services, enable payments, start runners, or delete backups.
 - **Execution was not attempted.** The README explicitly requires a disposable unprivileged VM/container, no provider credentials, no SSH agent, no host mounts or privileged sockets, and host-enforced deny-by-default egress. The `--isolated-host-confirmed` option is only an operator attestation and does not enforce isolation. Network-enabled mode limits the orchestrator's own probes but does not sandbox child-process egress. This environment has not established those host controls or clean local checkouts, so running the orchestrator here would be unsafe and would not create valid acceptance evidence.
 - The script's local secret scan is BLOCKED when `gitleaks` is absent; it deliberately does not download/install a scanner. A local scan would not substitute for independent SAST/SCA, SBOM/provenance, threat-model, and security review.
+
+## PR #615 orchestrator repair follow-up
+
+- Latest PR #615 source head: `272bff018c17f358a95d26bd847ab4e6306aa627`.
+- Corrected the earlier review record: exact `--core-v2-expected-sha` and `--firebase-expected-sha` candidate gates were already present. The missing requirement was the root checkout's expected SHA.
+- Added required `--source-expected-sha`; root checkout cleanliness and HEAD are checked before and after source copying.
+- Added deterministic SHA-256 manifests across root and candidate copies, checked before/after the copy and against the copied workspace; candidate Git HEAD/cleanliness is rechecked after copy.
+- Passed `LINGO_FIREBASE_STAGING_PROJECT_ID` only to the Firebase identity-validator child process.
+- Public redirect probes now capture `Location` and reject cross-host, HTTP downgrade, embedded credentials, malformed ports, and non-default ports. Redirects remain unfollowed.
+- Added regression tests for the above contracts and updated README/CLI examples. The changes are source-level only.
+- Current-head Actions runs 44848252241, 44848253114, 44848251106, and 44848250035 all ended `startup_failure`; their latest-attempt jobs arrays are empty. Python compilation and unit tests have not executed. No orchestrator execution was attempted.
 
 ## Verified versus unverified
 
@@ -81,8 +92,10 @@ All four PRs target the same observed main baseline. No merge was performed.
 - `11-g02-workflow-quarantine-review.md`
 - `12-worker-first-static-routing.md`
 - `13-static-asset-root-inventory.md`
+- `../14-orchestrator-provenance-and-copy-repairs.md`
 
 ## Change log
 
 - 2026-11-20: added current PR heads, #574/#589 quarantine inventory, G02 workflow quarantine review, Worker-first static routing correction, and a measured top-level static-asset inventory.
 - 2026-11-20: created this evidence record on isolated branch `recovery/master-recovery-evidence-2026-11-20`. No main-branch change, PR merge, workflow dispatch, runner action, provider mutation, deployment, payment activation, or production operation was performed.
+- 2026-11-20: recorded PR #615's exact-SHA, copy-manifest, Firebase environment-scoping, and redirect-destination source repairs; current-head Actions still fail before job creation.
