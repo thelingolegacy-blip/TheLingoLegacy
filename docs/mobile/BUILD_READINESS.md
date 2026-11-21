@@ -10,6 +10,11 @@
 - The app may start in offline preview mode, but this does not connect Firebase Auth, Realtime Database, Storage, Analytics, or any production identity service.
 - Do not replace placeholders with invented project IDs or credentials. Configure a dedicated staging Firebase project and obtain the real FlutterFire options before accepting backend integration.
 
+## Web preview build
+
+- Cloudflare Pages uses `scripts/cloudflare-pages-preview-build.sh` to install the stable Flutter SDK in the ephemeral build workspace, generate the missing web shell, run Flutter tests, and build `build/web`.
+- The preview is browse-only and offline when Firebase options remain placeholders.
+
 ## Android
 
 - The app module previously selected the debug signing certificate for release builds. That has been removed.
