@@ -1,7 +1,7 @@
 # askLINGO v2.0 — Parallel Build Execution Plan
 
 **Status:** Workstream orchestration baseline / no runtime activation
-**Source:** `feat/asklingo-v2-foundation-2026-11-21@d0e8fe4264cc4dd6059ad0b4175c240050e2085b`
+**Source:** `feat/asklingo-v2-foundation-2026-11-21@748c438f0952a98e6f49e0481a9484e071b889f3`
 **Execution branch:** `feat/asklingo-v2-parallel-build-2026-11-21`
 **Release posture:** Development-first; staging only after prerequisites; production HOLD unchanged.
 
@@ -69,8 +69,12 @@ Each workstream must deliver: owner/maintainer, current-state inventory, source 
 
 ## Current verified baseline
 
-- Existing v2 foundation PR #644 is open and draft, based on main SHA `3fe099eb11329cc333ffa5a1ea36affcd0375343`, head SHA `d0e8fe4264cc4dd6059ad0b4175c240050e2085b`, with 12 added documentation files and zero deletions.
+- Foundation PR #644 is open/draft against main SHA `3fe099eb11329cc333ffa5a1ea36affcd0375343`, latest inspected head `748c438f0952a98e6f49e0481a9484e071b889f3`, with 38 changed files, 2,463 additions, and 2 deletions.
+- PR #645 is stacked on #644. PRs #646 and #647 are parallel executable slices stacked on #645; they remain draft and unmerged.
+- PR #646 includes the default-deny SAAAE kernel; action-digest canonicalization was hardened against `__proto__`, cycles, and sparse arrays, with targeted isolated regression checks (3/3). Full PR suite and hosted CI remain unverified.
+- PR #647 includes the agent capability registry; duplicate scope keys now use an unambiguous JSON tuple, with a targeted delimiter-injection regression check (1/1). Full PR suite and hosted CI remain unverified.
+- Latest inspected foundation Actions runs failed at startup before job creation; do not count them as test passes.
+- Isolated Cloudflare staging D1 and disabled Worker scaffold have been provisioned; D1 schema applied and verified. Firebase Auth remains blocked pending Firebase plugin connection and a dedicated project. See PR #644 `docs/asklingo-v2/23-STAGING-PROVISIONING.md`.
 - Existing service contract states no production askLINGO query endpoint, no verified provider, no active Firebase Auth, and no approved conversation persistence.
 - Existing facade authenticates then intentionally returns `ASKLINGO_DISABLED`; preserve this behavior.
-- No application tests or deployments were run for the architecture foundation.
-- G02 remains BLOCKED/UNVERIFIED; production promotion remains on HOLD; last-known-good remains protected.
+- G02 remains FAIL / UNVERIFIED; G03–G11 remain held; production promotion remains on HOLD; last-known-good remains protected.

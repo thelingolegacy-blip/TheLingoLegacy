@@ -45,3 +45,8 @@ The files in this directory are additive architecture documents on a feature bra
 - Inspect all relevant model, identity, policy, and connector code before runtime implementation.
 - Verify current production Worker routes/bindings through authorized read-only evidence before any runtime claim.
 - Record the exact reviewed base SHA and all file-level provenance in the PR.
+
+
+## Additional legacy voice/books branch assessment
+
+See [15 — Legacy voice branch assessment](15-LEGACY-VOICE-BRANCH-ASSESSMENT.md). The historical branch is 53 commits ahead and 732 behind current main and is not safe to merge as a whole. It contains the 13-mode JSON registry, browser/Flutter WebRTC clients, Worker realtime-token and response handlers, and seven-book audio manifest. The inspected handlers lack visible server-side identity, scoped authorization, SAAAE approval, durable audit, and shared rate limiting; they also set `ask_lingo: true` on that historical branch. These are preserved as historical source only. The canonical mode vocabulary and WebRTC direction are reconciled into v2 documents; the old runtime routes and provider-specific model identifiers are not transplanted. All seven book narration states remain pending.
