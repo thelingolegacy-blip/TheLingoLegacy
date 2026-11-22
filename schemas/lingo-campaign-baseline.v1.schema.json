@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/lingo-campaign-baseline.v1.schema.json",
+  "title": "LINGO 31-name Campaign Baseline",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "baseline_id",
+    "authority",
+    "status",
+    "counting_rule",
+    "total_count",
+    "families",
+    "nested_operating_lines_not_separately_counted",
+    "alias_and_history_rules",
+    "unclassified_outside_baseline",
+    "reconciliation_constraints"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "baseline_id": {
+      "const": "LINGO_CAMPAIGN_BASELINE_31"
+    },
+    "authority": {
+      "const": "LINGOlegacy_MASTER"
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counting_rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "total_count": {
+      "const": 31
+    },
+    "families": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": [
+          "family",
+          "count",
+          "entries"
+        ],
+        "properties": {
+          "family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "entries": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "kind"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9-]+$"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "kind": {
+                  "enum": [
+                    "portfolio_brand",
+                    "product",
+                    "media_property",
+                    "independent_brand"
+                  ]
+                },
+                "display_name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "nested_operating_lines_not_separately_counted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "parent"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          },
+          "canonical_name": {
+            "type": "boolean"
+          },
+          "route": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alias_and_history_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "minProperties": 2
+      }
+    },
+    "unclassified_outside_baseline": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "reconciliation_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,28 @@
+name: LINGO Campaign Baseline Validation
+
+on:
+  pull_request:
+    paths:
+      - "config/lingo-campaign-baseline.v1.json"
+      - "schemas/lingo-campaign-baseline.v1.schema.json"
+      - "scripts/validate-lingo-campaign-baseline.v1.mjs"
+      - ".github/workflows/lingo-campaign-baseline-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-campaign-baseline-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate 31-name baseline
+        run: node scripts/validate-lingo-campaign-baseline.v1.mjs

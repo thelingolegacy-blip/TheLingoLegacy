@@ -1,0 +1,396 @@
+{
+  "schemaVersion": "1.0.0",
+  "inventoryId": "cloudflare-thelingolegacy-com-routes",
+  "observedAt": "2026-11-08T23:00:00Z",
+  "zone": "thelingolegacy.com",
+  "zoneId": "91c3f6315fb3ca132b22744721103f88",
+  "accountId": "16cb6f247cd1b28fca864760c7269606",
+  "source": "Cloudflare API read-only inventory; live route, DNS, Worker script and deployment queries",
+  "routes": [
+    {
+      "id": "e478916a164849768adecb4634c4f24d",
+      "pattern": "launch.thelingolegacy.com/*",
+      "script": "lingo-static-backup-proxy"
+    },
+    {
+      "id": "41e8d027e8cd4cb19d21df7143a2c25e",
+      "pattern": "thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "64ce4e50bdfa4484beb4f2f820d266f1",
+      "pattern": "theriseofzavione.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "1f4d8394e69043fba5c3bcb2dc04e2d6",
+      "pattern": "thats-my-lingo.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "a3c33421f6694bd0a04e4180e0c9888f",
+      "pattern": "sparkling-rain.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "414c106665e04dfc89600fedbd34c59b",
+      "pattern": "therealzavione.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "7c9fe938bbd24aa3bdac93dbccf1162b",
+      "pattern": "lingo.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "0e0c499429d44d78b2b4dba4769c3cca",
+      "pattern": "cyber.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "8a39eba626494e4fb2799158c9f071a3",
+      "pattern": "solar.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "6ff510d5bf494906bf2fdaff85e960aa",
+      "pattern": "drip.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "ad97c3bfddd94fc1b9aff2416690d1b6",
+      "pattern": "site.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "937726206e724ae99a6ef0361d81c79e",
+      "pattern": "luxe.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "2b89bfd2136e49e096b2982c073ac93d",
+      "pattern": "web.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "342481f6b45f4c3eaa71de9c0864e88f",
+      "pattern": "hub.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "c861b5b2158745f2bcfbfdca9778c325",
+      "pattern": "www.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "758a6e7cb6df484dba125cb00d07178a",
+      "pattern": "v4.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "6dc5c03089044fbeaa155f962228d8cf",
+      "pattern": "v3.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "1867af4757344eb2b41a24ccffbbbc2a",
+      "pattern": "ai.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "04e6903aedf14510b58b34b57df699e1",
+      "pattern": "thelingolegacy.com/",
+      "script": "lingo-flagship-root"
+    },
+    {
+      "id": "0369657937f34d16bc5d529407ad2783",
+      "pattern": "blog.thelingolegacy.com/*",
+      "script": "thelingolegacyv-5"
+    },
+    {
+      "id": "cc917f80e69d470281cc6347ee8c0195",
+      "pattern": "atlas.thelingolegacy.com/*",
+      "script": "lingo-ecosystem-atlas"
+    }
+  ],
+  "findings": [
+    {
+      "id": "apex-overlap",
+      "status": "specificity-documented-smoke-test-required",
+      "detail": "Cloudflare route matching documentation states the most specific matching route wins. The exact thelingolegacy.com/ route is more specific than thelingolegacy.com/* for the apex root request, so the root Worker should win for /. Verify with live HTTP smoke tests for /, /index.html, and nested paths before relying on the behavior."
+    },
+    {
+      "id": "www-route",
+      "status": "observed",
+      "detail": "www.thelingolegacy.com/* is assigned to thelingolegacyv-5"
+    },
+    {
+      "id": "wildcard-worker-version",
+      "status": "verified-active-deployment-version-drift",
+      "detail": "Live deployment API identifies active version 2d161fa5-598f-4998-ada8-7ac4c72c3461 for thelingolegacyv-5 (100% traffic); registry version-detail evidence resolves this to v137 while latest uploaded version is v270. Root Worker active version is v1 while latest uploaded is v2. Keep active versions protected pending source/build provenance and smoke validation."
+    },
+    {
+      "id": "no-route-mutation",
+      "status": "preserved",
+      "detail": "No route or DNS records were changed during this inventory"
+    },
+    {
+      "id": "apex-test-net-origin",
+      "status": "verified-proxied-test-net-origin-target",
+      "detail": "Current read-only Cloudflare DNS inventory (2026-11-09) confirms the apex A record is configured as proxied with origin target 192.0.2.0, within RFC 5737 TEST-NET-1. This is the Cloudflare zone's configured origin target, not a claim about the public DNS answer. The main Worker source uses its ASSETS binding for non-API requests and has no generic origin fetch; the exact-root Worker is a separate route and its active source/version still needs verification. Keep DNS unchanged until the exact-root Worker, route fallback behavior, and a real origin decision are independently verified."
+    },
+    {
+      "id": "active-worker-deployments",
+      "status": "verified",
+      "detail": "Cloudflare List Worker Deployments contract states first deployment is latest actively serving traffic. Active deployment and 100% version split IDs captured for the four routed Workers in this inventory."
+    },
+    {
+      "id": "dns-record-inventory",
+      "status": "verified",
+      "detail": "Live Cloudflare DNS list returned 33 records for the zone; no DNS writes performed."
+    },
+    {
+      "id": "wrangler-live-route-drift",
+      "status": "verified-drift-requires-review",
+      "detail": "wrangler.jsonc declares 2 routes, while the live zone assigns 18 routes to thelingolegacyv-5. 16 live primary Worker routes are not represented in wrangler.jsonc. A Wrangler deploy or route reconciliation must not be run until ownership and intended preservation of these additional subdomain routes are established."
+    },
+    {
+      "id": "candidate-worker-versions-not-promoted",
+      "status": "verified-protected-candidate",
+      "detail": "Primary Worker v270 alias feat-lingo-master-registry-wave0-2026-11-08 and root Worker v2 alias lingo-root-asklingo-preview are uploaded but not active. Root v2 is explicitly annotated Preview only. Keep active v137/v1 serving until candidate source, assets, bindings, route smoke and rollback are independently accepted."
+    },
+    {
+      "id": "apex-worker-origin-fallback-source-review",
+      "status": "main-worker-source-uses-assets-binding-no-generic-origin-fetch",
+      "detail": "Read-only review of main worker.js at main commit f3916fe6658845d08c3727da1caecdf4b24387ca confirms non-API requests on thelingolegacyv-5 path are served through env.ASSETS.fetch(request); no generic origin fetch fallback is present in that source. The apex exact-root route is assigned to a separate lingo-flagship-root Worker and its source was not verified in this check. The proxied apex A record remains TEST-NET-1 192.0.2.0. Do not change it or assume it is harmless: verify exact-root Worker behavior, route coverage, error/fallback behavior, and a real origin decision before any DNS change."
+    },
+    {
+      "id": "cloudflare-access-bypass-audit-2026-11-09",
+      "status": "14-app-inventory-8-shared-bypass-3-explicit-public-1-all-workers-restricted",
+      "detail": "Read-only account query on 2026-11-09 found 14 Access applications. All Workers has allow-only policies (account members and explicit operator email). Eight legacy/preview per-worker applications still share the reusable bypass-everyone policy; three new non-reusable public apps cover the resilience fallback, public website routes, and public root. Four legacy apps also contain email_domain matchers whose domain field is a full email address. No policy was changed; owners must classify each destination before any access mutation."
+    }
+  ],
+  "totals": {
+    "routes": 21,
+    "workersWithRoutes": 4,
+    "dnsRecordsObserved": 34,
+    "workerScriptsObserved": 11
+  },
+  "activeDeployments": {
+    "thelingolegacyv-5": {
+      "deploymentId": "ecd71a70-e476-4318-92a7-35249ced360b",
+      "versionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T16:21:58.131638Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-flagship-root": {
+      "deploymentId": "31ccefbb-ddf4-4a62-974b-3ee9d0bc81d3",
+      "versionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T16:38:23.673538Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-static-backup-proxy": {
+      "deploymentId": "738c80e8-f535-4712-9339-e8b495152c89",
+      "versionId": "a60ca6d2-fc20-4bf8-8e42-cb4a4b3b9708",
+      "trafficPercent": 100,
+      "createdOn": "2026-10-25T07:27:06.441272Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    },
+    "lingo-ecosystem-atlas": {
+      "deploymentId": "6dfd9de7-c594-4cce-8b24-4cb6c2868bc7",
+      "versionId": "367586a9-f3c9-4fa4-838e-38c3014575d2",
+      "trafficPercent": 100,
+      "createdOn": "2026-11-02T19:00:22.900269Z",
+      "status": "first deployment in API response; active serving traffic per Cloudflare endpoint contract"
+    }
+  },
+  "wranglerReconciliation": {
+    "configPath": "wrangler.jsonc",
+    "configuredRouteCount": 2,
+    "configuredRoutes": [
+      "thelingolegacy.com/*",
+      "www.thelingolegacy.com/*"
+    ],
+    "livePrimaryWorkerRouteCount": 18,
+    "livePrimaryWorkerRoutes": [
+      "thelingolegacy.com/*",
+      "theriseofzavione.thelingolegacy.com/*",
+      "thats-my-lingo.thelingolegacy.com/*",
+      "sparkling-rain.thelingolegacy.com/*",
+      "therealzavione.thelingolegacy.com/*",
+      "lingo.thelingolegacy.com/*",
+      "cyber.thelingolegacy.com/*",
+      "solar.thelingolegacy.com/*",
+      "drip.thelingolegacy.com/*",
+      "site.thelingolegacy.com/*",
+      "luxe.thelingolegacy.com/*",
+      "web.thelingolegacy.com/*",
+      "hub.thelingolegacy.com/*",
+      "www.thelingolegacy.com/*",
+      "v4.thelingolegacy.com/*",
+      "v3.thelingolegacy.com/*",
+      "ai.thelingolegacy.com/*",
+      "blog.thelingolegacy.com/*"
+    ],
+    "liveRoutesNotDeclaredInWrangler": [
+      "theriseofzavione.thelingolegacy.com/*",
+      "thats-my-lingo.thelingolegacy.com/*",
+      "sparkling-rain.thelingolegacy.com/*",
+      "therealzavione.thelingolegacy.com/*",
+      "lingo.thelingolegacy.com/*",
+      "cyber.thelingolegacy.com/*",
+      "solar.thelingolegacy.com/*",
+      "drip.thelingolegacy.com/*",
+      "site.thelingolegacy.com/*",
+      "luxe.thelingolegacy.com/*",
+      "web.thelingolegacy.com/*",
+      "hub.thelingolegacy.com/*",
+      "v4.thelingolegacy.com/*",
+      "v3.thelingolegacy.com/*",
+      "ai.thelingolegacy.com/*",
+      "blog.thelingolegacy.com/*"
+    ],
+    "configuredRoutesNotObservedOnPrimaryWorker": [],
+    "status": "drift-requires-review"
+  },
+  "versionEvidence": {
+    "thelingolegacyv-5": {
+      "active": {
+        "version": 137,
+        "versionId": "2d161fa5-598f-4998-ada8-7ac4c72c3461",
+        "createdOn": "2026-10-25T14:04:26.30168Z",
+        "source": "wrangler",
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "alias": "security-lingo-shield-agent-access-control"
+      },
+      "latestUploaded": {
+        "version": 270,
+        "versionId": "d17ceee2-d8ab-4c30-8b8a-b8f87bd5f398",
+        "createdOn": "2026-11-08T23:43:25.726089Z",
+        "source": "wrangler",
+        "bindings": [
+          "ASSETS",
+          "CANONICAL_DOMAIN",
+          "PUBLIC_SITE_URL"
+        ],
+        "alias": "feat-lingo-master-registry-wave0-2026-11-08"
+      },
+      "disposition": "latest upload is not active; preserve active v137 until candidate source and route smoke tests are accepted"
+    },
+    "lingo-flagship-root": {
+      "active": {
+        "version": 1,
+        "versionId": "658acd1a-997b-45cd-b8fc-e59c59b26b45",
+        "createdOn": "2026-10-25T16:38:23.673538Z",
+        "source": "api",
+        "bindings": [],
+        "alias": "lingo-flagship-root-2026-10-25"
+      },
+      "latestUploaded": {
+        "version": 2,
+        "versionId": "1009da37-9128-44c2-9853-f277eb791c31",
+        "createdOn": "2026-10-30T10:04:45.91884Z",
+        "source": "api",
+        "bindings": [],
+        "alias": "lingo-root-asklingo-preview",
+        "message": "Preview only: crimson flagship theme, dedicated studio links, universal askLINGO and root PWA."
+      },
+      "disposition": "latest upload is preview-only and not active; preserve active v1 until candidate acceptance"
+    },
+    "lingo-static-backup-proxy": {
+      "active": {
+        "version": 2,
+        "versionId": "a60ca6d2-fc20-4bf8-8e42-cb4a4b3b9708",
+        "source": "api",
+        "bindings": []
+      }
+    },
+    "lingo-ecosystem-atlas": {
+      "active": {
+        "version": 2,
+        "versionId": "367586a9-f3c9-4fa4-838e-38c3014575d2",
+        "source": "api",
+        "bindings": []
+      }
+    }
+  },
+  "sourceReview": {
+    "mainWorkerSource": {
+      "path": "worker.js",
+      "commit": "f3916fe6658845d08c3727da1caecdf4b24387ca",
+      "observedBehavior": "ASSETS binding serves non-API paths; no generic origin fetch in inspected source",
+      "scope": "main Worker only; exact-root Worker not source-verified"
+    }
+  },
+  "dnsRefresh": {
+    "observedAt": "2026-11-09",
+    "count": 34,
+    "apexA": {
+      "name": "thelingolegacy.com",
+      "content": "192.0.2.0",
+      "proxied": true,
+      "modifiedOn": "2026-10-11T15:19:03.719523Z",
+      "interpretation": "configured proxied origin target; not a verified public DNS answer or verified real origin"
+    },
+    "wwwCname": {
+      "name": "www.thelingolegacy.com",
+      "content": "thelingolegacy.com",
+      "proxied": true,
+      "modifiedOn": "2026-10-11T15:15:23.571094Z"
+    },
+    "additionalProxiedAAAA": [
+      "resilience.thelingolegacy.com",
+      "studio-preview.thelingolegacy.com"
+    ],
+    "noDnsMutation": true
+  },
+  "accessPolicyAudit": {
+    "observedAt": "2026-11-09",
+    "accessApplicationCount": 14,
+    "allWorkersApplication": {
+      "policyDisposition": "allow-only",
+      "allowedPrincipals": [
+        "Cloudflare account members",
+        "explicit operator email"
+      ],
+      "bypassEveryonePolicy": false
+    },
+    "reusablePublicBypassApplications": [
+      "thats-my-lingo - Cloudflare Workers",
+      "sparkling-rain-29a3 - Cloudflare Workers",
+      "thelingolegacyv5 - Cloudflare Workers",
+      "thelingolegacy - Cloudflare Workers",
+      "legacyweb1 - Cloudflare Workers",
+      "nextjs-lingolegacy - Cloudflare Workers",
+      "thelingolegacy-v2 - Cloudflare Workers",
+      "thelingolegacy-v3 - Cloudflare Workers"
+    ],
+    "nonReusablePublicBypassApplications": [
+      "LINGO Resilience Gateway — Public Static Fallback",
+      "LINGO Public Website Routes — thelingolegacyv-5",
+      "LINGO Public Website Root — lingo-flagship-root"
+    ],
+    "additionalAccountMemberOnlyApplications": [
+      "thelingolegacyv4 - Cloudflare Workers",
+      "astro-blog-starter-template - Cloudflare Workers"
+    ],
+    "malformedEmailDomainMatchers": {
+      "affectedApplications": [
+        "thelingolegacy - Cloudflare Workers",
+        "legacyweb1 - Cloudflare Workers",
+        "nextjs-lingolegacy - Cloudflare Workers",
+        "thelingolegacy-v2 - Cloudflare Workers"
+      ],
+      "observedValueType": "email_domain matcher whose domain value is a full email address",
+      "disposition": "review and replace with exact-email matcher only after app owner confirms intended access; no mutation made"
+    },
+    "riskDisposition": "The public website and resilience fallback apps are explicitly named public; eight legacy/preview apps still share a reusable bypass-everyone policy and require destination-by-destination owner classification. Do not remove the shared policy globally because it affects multiple applications.",
+    "noPolicyMutation": true
+  }
+}

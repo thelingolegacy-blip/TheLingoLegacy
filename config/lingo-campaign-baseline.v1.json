@@ -1,0 +1,263 @@
+{
+  "schema_version": "1.0.0",
+  "baseline_id": "LINGO_CAMPAIGN_BASELINE_31",
+  "authority": "LINGOlegacy_MASTER",
+  "status": "owner-established-taxonomy-baseline",
+  "counting_rule": "Count the 31 individual campaign identities/products listed below. Family headings are taxonomy containers and are not counted, except LINGOlane itself is one of the 31. LINGOlegacy_MASTER and LINGOlegacy are governance/flagship platform layers and are not counted.",
+  "total_count": 31,
+  "families": [
+    {
+      "family": "LINGOlane",
+      "count": 1,
+      "entries": [
+        {
+          "id": "lingolane",
+          "name": "LINGOlane",
+          "kind": "portfolio_brand"
+        }
+      ]
+    },
+    {
+      "family": "LINGOslots",
+      "count": 5,
+      "entries": [
+        {
+          "id": "thats-my-lingo",
+          "name": "That’s My Lingo",
+          "kind": "product"
+        },
+        {
+          "id": "spades-is-my-lingo",
+          "name": "Spades Is My Lingo",
+          "kind": "product"
+        },
+        {
+          "id": "uhno-lingo-u-no",
+          "name": "Uhno Lingo U-No",
+          "kind": "product"
+        },
+        {
+          "id": "cashman-lingo-mania",
+          "name": "Cashman Lingo Mania",
+          "kind": "product"
+        },
+        {
+          "id": "lingo-lions-eruptions",
+          "name": "Lingo Lions Eruptions",
+          "kind": "product"
+        }
+      ]
+    },
+    {
+      "family": "LINGOarcade",
+      "count": 5,
+      "entries": [
+        {
+          "id": "tricias-escape",
+          "name": "Tricias Escape",
+          "kind": "product"
+        },
+        {
+          "id": "doughboys-oasis",
+          "name": "Doughboys Oasis",
+          "kind": "product"
+        },
+        {
+          "id": "crazy-weasols",
+          "name": "Crazy Weasols",
+          "kind": "product"
+        },
+        {
+          "id": "silly-in-philly",
+          "name": "Silly in Philly",
+          "kind": "product"
+        },
+        {
+          "id": "jersey-shore-the-undead",
+          "name": "Jersey Shore: The Undead",
+          "kind": "product"
+        }
+      ]
+    },
+    {
+      "family": "LINGOlibrary",
+      "count": 5,
+      "entries": [
+        {
+          "id": "kottonscode",
+          "name": "KottonsCode",
+          "kind": "product",
+          "display_name": "Kotton’s Code"
+        },
+        {
+          "id": "the-block-i-grew-up-on",
+          "name": "The Block I Grew Up On",
+          "kind": "product"
+        },
+        {
+          "id": "say-it-again",
+          "name": "Say It Again",
+          "kind": "product"
+        },
+        {
+          "id": "dice-shift-hotel",
+          "name": "Dice Shift Hotel",
+          "kind": "product"
+        },
+        {
+          "id": "legacy-legends",
+          "name": "Legacy Legends",
+          "kind": "product"
+        }
+      ]
+    },
+    {
+      "family": "LINGOmedia",
+      "count": 2,
+      "entries": [
+        {
+          "id": "rise-of-zavione-p1",
+          "name": "Rise of Zavione P1",
+          "kind": "media_property"
+        },
+        {
+          "id": "rise-of-zavione-p2",
+          "name": "Rise of Zavione P2",
+          "kind": "media_property"
+        }
+      ]
+    },
+    {
+      "family": "LINGOworld",
+      "count": 11,
+      "entries": [
+        {
+          "id": "lingoai",
+          "name": "LINGOai",
+          "kind": "product"
+        },
+        {
+          "id": "asklingo",
+          "name": "askLINGO",
+          "kind": "product"
+        },
+        {
+          "id": "lingoboom",
+          "name": "LINGOboom",
+          "kind": "product"
+        },
+        {
+          "id": "lingotravel",
+          "name": "LINGOtravel",
+          "kind": "product"
+        },
+        {
+          "id": "lingocampus",
+          "name": "LINGOcampus",
+          "kind": "product"
+        },
+        {
+          "id": "lingosupport",
+          "name": "LINGOsupport",
+          "kind": "product"
+        },
+        {
+          "id": "lingowifi",
+          "name": "LINGOwifi",
+          "kind": "product"
+        },
+        {
+          "id": "lingovoice",
+          "name": "LINGOvoice",
+          "kind": "product"
+        },
+        {
+          "id": "lingoshield",
+          "name": "LINGOshield",
+          "kind": "product"
+        },
+        {
+          "id": "lingolounge",
+          "name": "LINGOlounge",
+          "kind": "product"
+        },
+        {
+          "id": "lingodonations",
+          "name": "LINGOdonations",
+          "kind": "product"
+        }
+      ]
+    },
+    {
+      "family": "Independent",
+      "count": 2,
+      "entries": [
+        {
+          "id": "legacyxclub",
+          "name": "LegacyXclub",
+          "kind": "independent_brand"
+        },
+        {
+          "id": "the-prestigious-house-of-dusse",
+          "name": "THE PRESTIGIOUS HOUSE OF DUSSE",
+          "kind": "independent_brand"
+        }
+      ]
+    }
+  ],
+  "nested_operating_lines_not_separately_counted": [
+    {
+      "name": "Loyalty Lane Apparel",
+      "parent": "LINGOlane"
+    },
+    {
+      "name": "Loyalty Lane Cycle",
+      "parent": "LINGOlane",
+      "canonical_name": true,
+      "route": "/loyalty-lane-cycles/"
+    },
+    {
+      "name": "Designs & Promotions",
+      "parent": "LINGOlane"
+    }
+  ],
+  "alias_and_history_rules": [
+    {
+      "canonical": "Loyalty Lane Cycle",
+      "aliases": [
+        "Laundry-Cycle",
+        "LaneCycle"
+      ],
+      "rule": "Preserve aliases in historical/source mappings; do not replace the canonical product name."
+    },
+    {
+      "canonical": "KottonsCode",
+      "display_name": "Kotton’s Code",
+      "rule": "Preserve source spelling while mapping to the canonical portfolio key."
+    },
+    {
+      "historical_name": "FameMoneyFortune",
+      "alternate_historical_name": "Fame, Money and Fortune",
+      "in_baseline": false,
+      "rule": "Preserve as a historical/original project name; do not count as a new campaign entry without an owner decision."
+    },
+    {
+      "historical_name": "House of Avalon",
+      "current_identity": "THE PRESTIGIOUS HOUSE OF DUSSE",
+      "rule": "Keep historical House of Avalon materials in a separate archive; do not merge or transfer legal status."
+    }
+  ],
+  "unclassified_outside_baseline": [
+    "Bulldog Legacy Bridge",
+    "Events by the Lane",
+    "Zay Zay’s Water Ice",
+    "Sonic Boom"
+  ],
+  "reconciliation_constraints": [
+    "Do not delete, merge, or silently rename any registry record.",
+    "Do not infer that Sonic Boom is an alias of LINGOboom.",
+    "Keep the 31-name campaign taxonomy distinct from the broader Wave 0 product inventory.",
+    "Crosswalk each campaign entry to repository paths, routes, assets, owner, project record, runtime and evidence only when source-backed.",
+    "Unmapped or inaccessible source records remain UNVERIFIED, not PASS."
+  ]
+}

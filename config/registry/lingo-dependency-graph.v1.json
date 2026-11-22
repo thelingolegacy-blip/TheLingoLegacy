@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0.0",
+  "graphId": "lingo-legacy-dependency-graph",
+  "status": "baseline-inventory",
+  "nodes": [
+    {
+      "id": "github-source",
+      "type": "source",
+      "status": "connected"
+    },
+    {
+      "id": "master-registry",
+      "type": "control",
+      "dependsOn": [
+        "github-source"
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "cloudflare-edge",
+      "type": "runtime",
+      "dependsOn": [
+        "github-source",
+        "master-registry"
+      ],
+      "status": "route-reconciliation"
+    },
+    {
+      "id": "firebase-foundation",
+      "type": "identity-data",
+      "dependsOn": [
+        "master-registry"
+      ],
+      "status": "runtime-unverified"
+    },
+    {
+      "id": "api-contracts",
+      "type": "contract",
+      "dependsOn": [
+        "master-registry",
+        "firebase-foundation"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "lingo-id",
+      "type": "identity",
+      "dependsOn": [
+        "firebase-foundation",
+        "api-contracts"
+      ],
+      "status": "gated"
+    },
+    {
+      "id": "wallet-ledger",
+      "type": "financial-ledger",
+      "dependsOn": [
+        "lingo-id",
+        "api-contracts"
+      ],
+      "status": "gated"
+    },
+    {
+      "id": "lingo-coins",
+      "type": "economy",
+      "dependsOn": [
+        "wallet-ledger",
+        "api-contracts"
+      ],
+      "status": "gated"
+    },
+    {
+      "id": "web-surfaces",
+      "type": "application",
+      "dependsOn": [
+        "cloudflare-edge",
+        "api-contracts"
+      ],
+      "status": "staging"
+    },
+    {
+      "id": "flutter-mobile",
+      "type": "application",
+      "dependsOn": [
+        "firebase-foundation",
+        "api-contracts",
+        "lingo-id"
+      ],
+      "status": "source-present-build-unverified"
+    },
+    {
+      "id": "game-engines",
+      "type": "runtime",
+      "dependsOn": [
+        "api-contracts",
+        "lingo-id",
+        "lingo-coins"
+      ],
+      "status": "staging-or-planned"
+    },
+    {
+      "id": "product-worlds",
+      "type": "experience",
+      "dependsOn": [
+        "web-surfaces",
+        "game-engines"
+      ],
+      "status": "staged"
+    },
+    {
+      "id": "release-certification",
+      "type": "release-gate",
+      "dependsOn": [
+        "github-source",
+        "cloudflare-edge",
+        "firebase-foundation",
+        "api-contracts",
+        "lingo-id",
+        "wallet-ledger",
+        "lingo-coins",
+        "web-surfaces",
+        "flutter-mobile",
+        "game-engines",
+        "product-worlds"
+      ],
+      "status": "blocked"
+    }
+  ],
+  "rules": [
+    "Dependencies must be verified before dependent activation",
+    "Staging readiness does not imply production readiness",
+    "No direct client writes to authoritative wallet or reward balances",
+    "Production remains protected until all critical gates pass"
+  ]
+}
