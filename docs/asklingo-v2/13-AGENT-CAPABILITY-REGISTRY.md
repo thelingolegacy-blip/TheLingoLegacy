@@ -2,7 +2,7 @@
 
 ## Delivered
 - Pure registration validation for active agent identity, bound service identity, tenant, expiry, and non-empty scoped capability records.
-- Duplicate capability rejection and exact tenant matching.
+- Duplicate capability rejection using an unambiguous JSON tuple key, plus exact tenant matching.
 - Server-side authorization helper requiring an active service identity bound to the registered agent.
 - Exact tenant/product/resource type/resource ID/operation/environment matching; no wildcard, inherited, or ambient capability.
 - Node test suite runnable independently with `node --test scripts/tests/agent-capability-registry.test.mjs`.
