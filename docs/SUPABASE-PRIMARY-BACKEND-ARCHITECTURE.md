@@ -1,15 +1,17 @@
-# LINGO Supabase-primary backend architecture
+# LINGO PostgreSQL / Supabase backend option assessment
 
 ## Status and authority
 
-- Decision: Supabase is the primary target for transactional application data and shared backend capabilities.
+- Status: candidate-provider assessment; NOT an accepted primary-backend decision.
+- Governing architecture: ADR-0001 in PR #594 establishes provider-neutral Go services and PostgreSQL transactional authority per migrated domain, while deferring provider implementation selection. That ADR explicitly states Supabase is not selected as the primary authority.
+- Candidate option: Supabase may be evaluated as a PostgreSQL hosting and adapter option against workload fit, cost, security, data residency, portability, restore, and operations requirements.
 - Identity transition: Firebase Auth remains the compatibility identity provider until account mapping and token/RLS tests pass.
 - Specialist services: retain Firebase products that are materially better suited to their role.
 - Edge and delivery: Cloudflare remains the authoritative edge, routing, and public asset layer.
 - Source of truth: GitHub repositories and reviewed migrations.
-- Release state: PROTECTED HOLD. This document and related pull requests do not authorize production migration, deployment, DNS changes, or Firebase removal.
+- Release state: PROTECTED HOLD. This document and related pull requests do not authorize provider selection, provisioning, production migration, deployment, DNS changes, or Firebase removal.
 
-This is a staged architecture decision, not a claim that the connected Supabase project is already a populated LINGO application backend. The inspected project currently has no LINGO application tables, migration history, or Edge Functions.
+This document preserves a possible Supabase implementation design, not an accepted provider decision. The inspected Supabase project currently has no LINGO application tables, migration history, or Edge Functions.
 
 ## Target service map
 
@@ -26,9 +28,9 @@ GitHub remains source, migrations, CI, reviews, evidence, and release provenance
 
 ## Responsibility boundaries
 
-### Supabase — primary application backend
+### Supabase — candidate PostgreSQL hosting and application adapter
 
-Use PostgreSQL as the system of record for relational and transactional LINGO data. Evaluate these domains as independently versioned schemas/modules before implementation:
+If Supabase is selected after the required provider review, use its PostgreSQL service as the system of record for explicitly migrated relational and transactional LINGO domains. Evaluate these domains as independently versioned schemas/modules before implementation:
 
 - Identity mapping and profile preferences.
 - Roles, permissions, entitlements, and account-level settings.
@@ -39,7 +41,7 @@ Use PostgreSQL as the system of record for relational and transactional LINGO da
 - Content metadata and cross-world relationships.
 - AI orchestration configuration, task metadata, and audit events.
 
-Use Supabase Auth when a new identity flow is ready, or integrate existing Firebase Auth tokens as a third-party provider after validating issuer, audience, role claims, and restrictive RLS boundaries. Do not assume Firebase UIDs and Supabase user UUIDs are interchangeable; use an explicit identity mapping.
+Only if Supabase is selected, evaluate Supabase Auth when a new identity flow is ready, or integrate existing Firebase Auth tokens as a third-party provider after validating issuer, audience, role claims, and restrictive RLS boundaries. Do not assume Firebase UIDs and Supabase user UUIDs are interchangeable; use an explicit identity mapping.
 
 ### Firebase — retained specialist and compatibility layer
 
@@ -81,7 +83,7 @@ Wallet and Lingo Coin balances must never be client-authoritative. The implement
 ## Environment and configuration policy
 
 - Keep development, preview, and production configuration separate.
-- Prefer local Supabase development for schema iteration before provisioning additional hosted environments.
+- If Supabase is selected, prefer local Supabase development for schema iteration before provisioning additional hosted environments.
 - Do not create paid projects or branches without reviewing the quoted cost and obtaining approval.
 - Store only SUPABASE_URL and the publishable key in public-capable runtime configuration.
 - Store secret/service-role keys only in trusted server-side secret stores; never commit them.
@@ -97,7 +99,7 @@ Wallet and Lingo Coin balances must never be client-authoritative. The implement
 - Publish domain ownership and API contracts before DDL.
 
 ### Phase 1 — safe connectivity
-- Add server-only Supabase configuration and a non-sensitive connectivity probe.
+- If Supabase is selected, add server-only configuration and a non-sensitive connectivity probe.
 - Configure preview-only environment variables.
 - Verify build, type-check, preview runtime, and secret non-disclosure.
 - Do not move user data or create application tables in this phase.
@@ -159,3 +161,8 @@ Required evidence includes:
 - Flutter/Unity data adapters: NOT IMPLEMENTED.
 - Firebase Auth bridge: NOT CONFIGURED.
 - Production cutover: NOT AUTHORIZED.
+
+
+## Reconciliation note — 2026-11-22
+
+This document is retained as a candidate Supabase implementation option, not the governing platform decision. The provider-neutral ADR in PR #594 is the current architecture baseline and explicitly defers provider selection. The live Supabase project inspection found no LINGO application tables, migrations, or Edge Functions; no schema, function, secret, identity, or application traffic was provisioned by this reconciliation. Do not describe Supabase as the primary LINGO backend until a superseding architecture decision is approved and implemented with evidence.
