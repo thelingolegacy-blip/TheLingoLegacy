@@ -1,8 +1,8 @@
 # askLINGO v2.0 — Cloudflare Infrastructure Inventory
 
-**Inspection type:** Read-only account/resource inventory  
+**Inspection type:** Initial read-only inventory followed by separately authorized staging provisioning  
 **Date:** 2026-11-21/22 UTC inspection window  
-**Mutation status:** No resources created, modified, deployed, or deleted.
+**Mutation status:** Staging-only D1 and disabled Worker scaffold created; no production resources changed.
 
 ## Worker inventory
 
@@ -43,19 +43,19 @@ Four D1 databases were listed:
 | `world-engine-db` | 0 |
 | `lingo-production` | 0 |
 
-No askLINGO-specific D1 database was identified. The zero-table result is a current inventory observation, not a claim that no data exists in other services or external stores.
+No askLINGO-specific D1 database existed during the initial inventory. A dedicated staging database was subsequently created as documented below.
 
 ## Decision
 
 - Do not bind askLINGO to an existing production Worker.
 - Do not repurpose the read-only Studio Control Center staging Worker.
 - Do not attach askLINGO to game, loyalty, or production D1 databases.
-- A dedicated, isolated staging environment remains a prerequisite for runtime acceptance.
-- Identity, policy/grant store, approval store, audit sink, and idempotency semantics must be selected and reviewed before resource provisioning.
+- A dedicated, isolated staging D1 database and disabled Worker scaffold have now been provisioned.
+- Firebase staging identity and tested policy/grant, approval-consumption, audit-ingestion and idempotency adapters remain prerequisites for runtime acceptance.
 
 ## Scope and privacy
 
-This inspection read account and Worker/D1 metadata only. It did not retrieve secret values, inspect user data, run SQL, change Worker settings, alter routes, provision databases, or deploy code.
+The initial inventory read account and Worker/D1 metadata only. It did not retrieve secret values or inspect user data. Subsequent staging-only provisioning and D1 migration execution are separately recorded below; production settings/routes/secrets were not changed.
 
 
 ## 2026-11-22 authorized askLINGO staging changes
