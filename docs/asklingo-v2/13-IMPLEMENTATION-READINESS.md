@@ -99,3 +99,12 @@ At the latest inspected foundation-branch commit, GitHub Actions run IDs `449680
 ### Integration and release posture
 
 No PR was merged, no branch was force-updated, and no production or staging infrastructure was changed. The public facade remains disabled. The dedicated askLINGO staging identity, Worker, persistent approval/audit stores, provider decision, shared rate limiting, web/mobile/voice integration, and independent security/privacy acceptance remain outstanding. Production remains NOT ENABLED; G02 remains FAIL / UNVERIFIED; downstream release gates remain held.
+
+
+## 2026-11-22 isolated staging provisioning
+- Cloudflare D1 `asklingo-v2-staging-20261122` created in US jurisdiction, ENAM primary, read replication disabled.
+- Dedicated Worker `asklingo-v2-staging` uploaded with D1 binding; workers.dev and preview URLs explicitly disabled; no routes; observability off; no provider secrets.
+- Worker scaffold is fail-closed only (health diagnostic returns 503; all other paths 404); it is not an active askLINGO runtime.
+- Migration source `migrations/asklingo-staging/0001_initial.sql` defines identity bindings, exact-scope grants, approvals, append-only audit, rate limits, and idempotency; no conversation content tables.
+- Firebase Auth provisioning is blocked: no Firebase/Google Cloud project-management connector or authorized Admin API action is available. No alternate identity provider was substituted.
+- D1 schema migration execution, Firebase Auth, trusted server adapters, atomic approval consumption, rate limiting, runtime tests, and end-to-end acceptance remain pending. See [staging provisioning record](23-STAGING-PROVISIONING.md).
