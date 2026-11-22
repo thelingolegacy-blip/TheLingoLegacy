@@ -1,0 +1,143 @@
+# LECS release-gate policy
+# Proposed baseline. A gate passes only with current, attributable evidence.
+policy_version: "1.0"
+policy_id: "LECS-REL-001"
+effective_date: "2026-11-13"
+default_disposition: "BLOCK"
+source_of_truth:
+  repository: "thelingolegacy-blip/TheLingoLegacy"
+  branch_protection_required: true
+evidence_states:
+  - PROPOSED
+  - IMPLEMENTED
+  - TESTED
+  - VERIFIED
+  - DEPLOYED
+  - ACCEPTED
+release_gates:
+  - id: G0
+    name: Scope and ownership
+    required:
+      - approved_release_request
+      - product_owner
+      - service_owner
+      - change_record
+      - environment_and_artifact_identity
+  - id: G1
+    name: Requirements and design
+    required:
+      - critical_requirements_traceable
+      - acceptance_criteria_defined
+      - architecture_and_api_compatibility_review
+      - threat_model_current
+      - privacy_and_data_classification_review
+  - id: G2
+    name: Source and build integrity
+    required:
+      - protected_branch_review
+      - reproducible_build_or_documented_build_provenance
+      - dependency_and_license_review
+      - secret_scan_pass
+      - sbom_or_dependency_inventory
+      - build_artifact_digest
+  - id: G3
+    name: Automated and manual verification
+    required:
+      - unit_tests_pass
+      - integration_tests_pass
+      - end_to_end_tests_pass_for_critical_flows
+      - accessibility_checks_pass_where_applicable
+      - browser_and_device_smoke_pass_where_applicable
+      - test_jobs_created_and_completed
+      - logs_and_artifacts_retained
+  - id: G4
+    name: Security and privacy
+    required:
+      - no_unresolved_critical_or_high_exploitable_vulnerability
+      - authorization_and_tenant_isolation_tests_pass
+      - secrets_not_exposed
+      - encryption_and_retention_controls_verified
+      - security_owner_acceptance
+  - id: G5
+    name: Data, RAG and AI
+    applies_when: "release uses data pipelines, retrieval, models, prompts, agents or MCP tools"
+    required:
+      - source_rights_and_purpose_approved
+      - data_quality_and_freshness_checks_pass
+      - retrieval_acl_and_deletion_tests_pass
+      - model_prompt_and_tool_versions_recorded
+      - evaluation_suite_pass
+      - human_approval_for_consequential_tool_actions
+      - model_provider_data_policy_approved
+  - id: G6
+    name: Performance, reliability and recovery
+    required:
+      - load_test_meets_approved_slo
+      - capacity_and_rate_limits_configured
+      - monitoring_and_alerts_verified
+      - backup_restore_test_current_for_stateful_services
+      - rollback_or_forward_recovery_rehearsed
+      - incident_runbook_and_owner_present
+  - id: G7
+    name: Cost and cloud governance
+    required:
+      - resource_owner_and_cost_tags_present
+      - cost_estimate_and_budget_approved
+      - quotas_and_budget_alerts_configured
+      - paid_resources_explicitly_authorized
+      - nonproduction_ttl_and_shutdown_policy_present
+  - id: G8
+    name: Deployment safety
+    required:
+      - target_environment_and_artifact_digest_confirmed
+      - staged_rollout_plan
+      - health_checks_and_stop_conditions_configured
+      - last_known_good_preserved
+      - rollback_operator_and_authority_confirmed
+  - id: G9
+    name: Production acceptance
+    required:
+      - product_owner_acceptance
+      - service_owner_operational_acceptance
+      - security_owner_acceptance_where_applicable
+      - release_manager_evidence_review
+      - post_release_observation_window_defined
+      - user_support_and_communications_ready_where_applicable
+decision_rules:
+  pass: "Every applicable required item has current evidence and the authorized reviewer accepts it."
+  fail: "Any required check fails or a critical risk remains unresolved."
+  unknown: "Missing, stale, inaccessible, uncorrelated or incomplete evidence."
+  unknown_behavior: "BLOCK"
+  startup_failure_behavior: "BLOCK"
+  zero_job_behavior: "BLOCK"
+  missing_runner_identity_behavior: "BLOCK for runner-dependent checks"
+  mergeable_pr_behavior: "NOT evidence of test success or production readiness"
+  draft_pr_behavior: "NOT eligible for production release"
+  override:
+    may_waive: "Only explicitly approved non-critical operational criteria where policy permits."
+    may_not_waive:
+      - authentication_or_authorization
+      - tenant_isolation
+      - legal_or_privacy_obligations
+      - critical_security_findings
+      - required_audit_evidence
+      - data_rights_or_consent
+      - rollback_for_irreversible_change
+      - missing_test_execution_evidence
+    approvals:
+      - requester
+      - independent_authorized_approver
+    max_duration_minutes: 30
+    automatic_expiry: true
+    immutable_audit_required: true
+promotion:
+  production_requires: "G0 through G9 all applicable gates PASS"
+  deployment_strategy: "staged"
+  preserve_last_known_good: true
+  stop_on:
+    - critical_security_alert
+    - authorization_regression
+    - data_integrity_failure
+    - SLO_breach
+    - budget_cap_breach
+    - error_rate_guardrail_breach
