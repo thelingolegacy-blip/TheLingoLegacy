@@ -177,3 +177,33 @@ This section records a fresh read-only inspection. It does not claim that source
 - That's My Lingo: **source implementation and game-math artifacts exist; backend architecture reconciliation and deterministic test evidence open**.
 - Kotton's Code: **duplicate/near-duplicate repository identity unresolved; studio/family acceptance open**.
 - Production: **protected hold; no promotion performed**.
+
+
+## 8. Repository and PR reconciliation checkpoint — 2026-11-22
+
+### Canonical product directories
+
+The canonical repository currently contains these product directories:
+- `loyalty-lane-cycles/` — one `index.html` preview surface.
+- `loyalty-lane-apparel/` — one `index.html` preview surface.
+- `thats-my-lingo/` — one `index.html` surface plus `tml-preview-engine.mjs`.
+- `kottons-code/` — one `index.html` plus separate book, episode, game, educator, coloring-page, and wireframe/content directories.
+
+These directories are canonical portfolio surfaces, not proof of full production applications. The Cycle product has no separate repository in the current connected repository inventory; preserve its canonical directory and reconcile any AppDeploy/source artifacts into it only through an evidence-backed migration.
+
+### Separate repositories and active pull requests
+
+| Product | Repository / PR | Latest observed disposition |
+|---|---|---|
+| Loyalty Lane Apparel | `thelingolegacy-blip/Loyaltylaneapparel` PR #1 | Open; feature branch synchronized with latest main using merge commit `389cf950318284c20abb6bde53809f98d7b12b08`; ahead 5 / behind 0; mergeable. Prior build run `34143693684` failed; old job steps/logs are unavailable and no new workflow run was returned after synchronization. |
+| That's My Lingo | `thelingolegacy-blip/THATS-MY-LINGO` PRs #25, #22, #17, #4, #1 | All open; branches are 32, 39, 47, 71, and 75 commits behind main respectively (each also has a small ahead count). Their changes overlap heavily in `index.html`; some add assets and privacy/sweepstakes/studio documents not present on main. Do not merge or close blindly. Preserve each branch's unique assets, compare against current main, and consolidate into a single reviewed branch before integration. PR #1 contains a `vercel.json` change; this does not authorize Vercel use or deployment. |
+| Kotton's Code | `thelingolegacy-blip/kottens-code-engine` PR #1 | Open/draft; feature branch synchronized with latest main using merge commit `540cc0d3cf4d3f59743cc6a16275384a1e3d8ecd`; ahead 18 / behind 0; mergeable. Prior CI run `32684463192` failed; its old job steps/logs are unavailable and no new workflow run was returned after synchronization. |
+| Kotton's Code Studio | `thelingolegacy-blip/Kotton-code-engine` | Separate public repository with its own history and studio-OS README; no open PR at inspection. Preserve it as a distinct source until its role and overlap with the narrative engine are reconciled. |
+
+### Safety and integration notes
+
+- Apparel's new shell remains a client-side preview. Its checkout handler displays a handoff notice only; it does not process payment. The PR must not be represented as live Shopify commerce. Inventory and unit-cost values in the client data are sample/static fields until verified against an authoritative provider.
+- That's My Lingo remains virtual-only. The open PRs do not establish a production backend, real-money wagering, live sweepstakes, or payment readiness. Preserve Demo Coins as non-redeemable virtual values.
+- Kotton's Code PR includes default-deny Firestore rules (`allow read, write: if false`) and no live credentials. Its `wrangler.toml` currently names `kottons-code-engine` and sets `KOTTONS_ENV = "production"`; this is a deployment-risk configuration mismatch for an unaccepted draft. Do not run `wrangler deploy` or bind a production route. Before any staging deployment, change the Worker name/environment to an explicitly isolated staging target and verify no production route or resource is affected.
+- Two Kotton repositories exist with distinct histories and apparent studio-versus-narrative roles. Do not merge or delete either repository without a provenance and ownership reconciliation.
+- No product PR in this checkpoint is approved for merge, public release, payment activation, or production promotion. The branch synchronizations above are non-force feature-branch updates only.
