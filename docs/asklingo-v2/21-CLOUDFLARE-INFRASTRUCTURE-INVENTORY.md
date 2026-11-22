@@ -56,3 +56,11 @@ No askLINGO-specific D1 database was identified. The zero-table result is a curr
 ## Scope and privacy
 
 This inspection read account and Worker/D1 metadata only. It did not retrieve secret values, inspect user data, run SQL, change Worker settings, alter routes, provision databases, or deploy code.
+
+
+## 2026-11-22 authorized askLINGO staging changes
+- Created D1 `asklingo-v2-staging-20261122` (US jurisdiction, ENAM primary, read replication disabled), ID `e041e690-2a45-4c82-8b46-6e012d739972`.
+- Uploaded Worker `asklingo-v2-staging`, attached D1 binding `ASKLINGO_DB`, tagged staging/disabled/no-inference, and disabled workers.dev and preview URLs. No routes. No production resource changed.
+- Worker is fail-closed scaffold only, not an application runtime. The diagnostic route returns 503; other paths return 404.
+- No Firebase project could be provisioned from the available connected tools. Firebase Auth remains a named blocker; no substitution.
+- Full details: [23-STAGING-PROVISIONING.md](23-STAGING-PROVISIONING.md).
