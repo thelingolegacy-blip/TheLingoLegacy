@@ -17,8 +17,7 @@ Use CircleCI's **GitHub Actions workflow support (Preview)** to run the existing
 
 1. The repository owner opens CircleCI and creates/selects the organization.
 2. Connect GitHub Cloud through the CircleCI GitHub App and authorize access to **only** `thelingolegacy-blip/TheLingoLegacy`.
-3. Add a pipeline using the existing GitHub Actions workflow file as the config source:
-   ` .github/workflows/flutter-firebase-integrity.yml `
+3. Add a pipeline using the existing GitHub Actions workflow file as the config source: `.github/workflows/flutter-firebase-integrity.yml`.
 4. Set the CircleCI trigger to **PR opened or pushed to** (or the equivalent PR-only trigger). Do not use all-pushes for the initial trial.
 5. Do not add GitHub/Firebase/Cloudflare/payment secrets. The current workflow is intended to run as a non-deploying validation job.
 6. Run one controlled test on an isolated draft PR. Inspect the actual CircleCI job list, every step, and raw logs—not only the overall green/red status.
