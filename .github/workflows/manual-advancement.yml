@@ -111,7 +111,7 @@ jobs:
           RATIONALE: ${{ inputs.rationale }}
           CONFIRMATION: ${{ inputs.confirmation }}
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          AUTHORIZED_APPROVERS: ${{ vars.LINGO_APPROVER_LOGINS }}
         run: bash ops/manual-control/validate-transition.sh
 
       - name: Test transition validator
