@@ -150,3 +150,18 @@ func TestProfileWriteFailsClosedWhenDatabaseMissing(t *testing.T) {
 		t.Fatalf("expected 503, got %d", recorder.Code)
 	}
 }
+
+func TestProfileAggregateIDIsUnambiguousAndPseudonymous(t *testing.T) {
+	// These pairs collide under the previous issuer + "|" + subject encoding.
+	first := profileAggregateID("issuer|segment", "subject")
+	second := profileAggregateID("issuer", "segment|subject")
+	if first == second {
+		t.Fatal("distinct issuer/subject pairs must have distinct aggregate IDs")
+	}
+	if len(first) != 64 || len(second) != 64 {
+		t.Fatalf("aggregate IDs must be SHA-256 hex digests, got %q and %q", first, second)
+	}
+	if first != profileAggregateID("issuer|segment", "subject") {
+		t.Fatal("aggregate ID must be deterministic")
+	}
+}
