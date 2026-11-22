@@ -79,6 +79,10 @@ The query endpoint is read/answer-only by default. It does not execute tools, mu
 
 No conversation persistence by default. Requests and responses must not be written to durable conversation storage until the retention/consent/deletion/age/privacy review is approved. Operational logs must be minimized and must not include credentials or full sensitive message bodies by default.
 
+## Isolated validation implementation
+
+`src/ai/v2/request.mjs` implements strict schema validation for the proposed request body, including canonical mode resolution, surface/locale checks, bounded message length, rejection of unknown fields, and rejection of client-supplied identity, scope, approval, tool, conversation, or arbitrary context fields. It is not wired to a Worker route and does not authenticate a user or authorize product data access.
+
 ## Current implementation status
 
-Not implemented in the current production Worker. The existing askLINGO facade remains disabled and the site-context feature flag remains false. This contract is a design artifact only.
+The query endpoint is not implemented in the current production Worker. The existing askLINGO facade remains disabled and the site-context feature flag remains false. This contract is a design artifact only.
