@@ -8,7 +8,6 @@ on:
       - "scripts/tests/ask-lingo-modes.test.mjs"
       - "scripts/tests/ask-lingo-agents.test.mjs"
       - "scripts/tests/ask-lingo-request.test.mjs"
-      - "scripts/tests/ask-lingo-request.test.mjs"
       - "package.json"
       - ".github/workflows/asklingo-v2-policy.yml"
 

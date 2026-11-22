@@ -29,7 +29,7 @@ At the inspected `main` source:
 | B08 | No voice provider/session broker | Provider-neutral session design and staging tests | NOT IMPLEMENTED |
 | B09 | No conversation persistence policy approval | Consent, retention, deletion, age-appropriate controls and privacy review | BLOCKED / OFF |
 | B10 | No independent security acceptance | Threat model, abuse cases, code review and evidence | NOT RUN |
-| B11 | Hosted CI result for the v2 policy suite | Latest inspected foundation-branch runs 44968046838, 44968046027, 44968045281, 44968044464, and 44968043725 ended `startup_failure` before job creation; zero steps | BLOCKED — no hosted CI execution evidence |
+| B11 | Hosted CI result for the v2 policy suite | Latest inspected foundation-branch runs 44969912132, 44969910037, 44969911063, 44969907816, and 44969908990 ended `startup_failure` before job creation; zero steps | BLOCKED — no hosted CI execution evidence |
 | B12 | Historical voice branch contains an unsafe runtime proposal | Separate review of branch head `893f2d3974d302a672b848078c8c060916b5d6bd`; 53 ahead / 732 behind main | PRESERVED / NOT MERGEABLE AS A WHOLE |
 | B13 | Full portfolio registry reconciliation | Compare routing taxonomy with the authoritative complete portfolio register | PENDING |
 | B14 | Dedicated staging identity and callable runtime not ready | D1 and disabled Worker scaffold provisioned; Firebase staging project, identity adapter, routes and runtime acceptance still required | PARTIAL — infrastructure only |
@@ -46,7 +46,7 @@ At the inspected `main` source:
 - Proposed query API contract with strict request schema and no conversation ID while persistence is disabled.
 - Local `node --check` on all four new runtime modules and all four test files: PASS.
 - Local `npm run test:asklingo`: 29 tests passed, 0 failed.
-- Latest inspected foundation-branch Actions runs 44968046838 / 046027 / 045281 / 044464 / 043725 all ended `startup_failure` with zero jobs; CI is not a pass.
+- Latest inspected foundation-branch Actions runs 44969912132 / 910037 / 911063 / 907816 / 908990 all ended `startup_failure` with zero jobs; CI is not a pass.
 - Parallel PRs #645–#647 are stacked on the foundation branch. The digest canonicalization and delimiter-collision findings on #646/#647 have code/test fixes and targeted isolated regression checks, but full branch suites and hosted CI remain outstanding. See [parallel PR reconciliation](22-PARALLEL-PR-RECONCILIATION.md).
 
 The local test result covers only the isolated policy primitive. It does not validate the complete repository suite, Worker integration, persistence adapters, or production security.
@@ -78,7 +78,7 @@ The following stacked/parallel pull requests were inspected after the initial fo
 
 | PR | Branch relationship | Scope | Observed state |
 |---|---|---|---|
-| #644 | base: `main` | Canonical architecture, 4 isolated v2 modules, tests, workflow, 24 numbered askLINGO docs plus index, staging schema and Worker source/config | OPEN / DRAFT; 38 files; 2,459 additions; 2 deletions |
+| #644 | base: `main` | Canonical architecture, 4 isolated v2 modules, tests, workflow, 24 numbered askLINGO docs plus index, staging schema and Worker source/config | OPEN / DRAFT; 38 files; 2,463 additions; 2 deletions |
 | #645 | base: #644 head branch | 17-workstream execution plan | OPEN / DRAFT; 1 additive document |
 | #646 | base: #645 head branch | SAAAE policy kernel and tests | OPEN / DRAFT; 4 files; local test result reported as 11/11; no hosted CI pass |
 | #647 | base: #645 head branch | Agent capability registry and tests | OPEN / DRAFT; 3 files; local test result reported as 6/6; no hosted CI pass |
@@ -94,7 +94,7 @@ The initial findings have code/test changes on their respective branches, but in
 
 ### Current hosted validation evidence
 
-At the latest inspected foundation-branch commit, GitHub Actions run IDs `44968046838`, `44968046027`, `44968045281`, `44968044464`, and `44968043725` all completed with `startup_failure`. Each failed before a job was created; no steps or test evidence were produced. This is a repository runner/startup blocker, not a passing test result. Local test evidence remains limited to the individual reported suites; full repository `npm test` and hosted CI acceptance are still outstanding.
+At the latest inspected foundation-branch commit before the workflow path-filter cleanup, GitHub Actions run IDs `44969912132`, `44969910037`, `44969911063`, `44969907816`, and `44969908990` all completed with `startup_failure`. Each failed before a job was created; no steps or test evidence were produced. This is a repository runner/startup blocker, not a passing test result. Local test evidence remains limited to the individual reported suites; full repository `npm test` and hosted CI acceptance are still outstanding.
 
 ### Integration and release posture
 
