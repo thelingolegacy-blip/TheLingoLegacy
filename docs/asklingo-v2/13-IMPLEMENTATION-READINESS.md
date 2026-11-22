@@ -40,7 +40,7 @@ At the inspected `main` source:
 - Voice/WebRTC architecture and legacy branch security assessment.
 - Product-domain routing and provider-neutral persistence/adapter contracts.
 - Isolated default-deny policy primitive and deterministic action-digest / approval-snapshot validation.
-- Canonical 13-mode runtime registry, explicit operating-state resolver, and v2 master system prompt.
+- Canonical 13-mode runtime registry, explicit operating-state resolver, v2 master system prompt, and 12-agent registry with execution disabled.
 - Proposed query API contract with strict request schema and no conversation ID while persistence is disabled.
 - Local `node --check` on the new module and test file: PASS.
 - Local `npm run test:asklingo`: 10 tests passed, 0 failed.
