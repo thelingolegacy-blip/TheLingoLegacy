@@ -10,7 +10,71 @@
       "zone_name": "thelingolegacy.com"
     },
     {
+      "pattern": "theriseofzavione.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "thats-my-lingo.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "sparkling-rain.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "therealzavione.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "lingo.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "cyber.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "solar.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "drip.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "site.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "luxe.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "web.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "hub.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
       "pattern": "www.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "v4.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "v3.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "ai.thelingolegacy.com/*",
+      "zone_name": "thelingolegacy.com"
+    },
+    {
+      "pattern": "blog.thelingolegacy.com/*",
       "zone_name": "thelingolegacy.com"
     }
   ],
