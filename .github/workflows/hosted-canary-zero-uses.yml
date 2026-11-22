@@ -1,0 +1,66 @@
+name: Hosted Canary Zero Uses
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - recovery/hosted-canary-zero-uses-push-2026-11-21
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-canary-zero-uses-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosted-canary:
+    name: ${{ matrix.runner }} zero-uses canary
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-24.04
+          - ubuntu-22.04
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 3
+    steps:
+      - name: Prove hosted job instantiation
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "schema=lingo-hosted-canary-zero-uses-v1"
+            echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "sha=${GITHUB_SHA}"
+            echo "ref=${GITHUB_REF}"
+            echo "runner_name=${RUNNER_NAME}"
+            echo "runner_os=${RUNNER_OS}"
+            echo "runner_arch=${RUNNER_ARCH}"
+            echo "github_actions=${GITHUB_ACTIONS}"
+          } | tee canary-identity.txt
+
+          test -n "${RUNNER_NAME:-}"
+          test "${RUNNER_OS}" = "Linux"
+          test "${GITHUB_ACTIONS}" = "true"
+          echo "ZERO_UNDERSCORE_USES_CANARY=PASS"
+
+      - name: Preserve evidence in job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Hosted zero-uses canary"
+            echo
+            echo "- Runner label: ${{ matrix.runner }}"
+            echo "- Run: ${GITHUB_RUN_ID}"
+            echo "- Attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Runner OS: ${RUNNER_OS}"
+            echo "- Runner name present: $([ -n "${RUNNER_NAME:-}" ] && echo yes || echo no)"
+            echo "- Acceptance marker: ZERO_UNDERSCORE_USES_CANARY=PASS"
+          } >> "${GITHUB_STEP_SUMMARY}"

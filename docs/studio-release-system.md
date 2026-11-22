@@ -38,7 +38,7 @@ For the first 48 hours after production deploy:
 - Review only approved no-cost traffic signals unless paid telemetry is enabled later.
 - Use manual QA and approved no-cost checks unless paid performance telemetry is enabled later.
 - Check Vercel deployment status and runtime logs if errors are reported.
-- Log every issue with its world: HQ, AI Lab, Wallet, XP Engine, Games, Apparel, Media Hub, or Avalon Identity.
+- Log every issue with its world: HQ, AI Lab, Wallet, XP Engine, Games, Apparel, Media Hub, or THE PRESTIGIOUS HOUSE OF DUSSE identity.
 
 ## Iteration rules
 

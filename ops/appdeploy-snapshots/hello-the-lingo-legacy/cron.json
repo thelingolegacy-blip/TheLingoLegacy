@@ -1,0 +1,8 @@
+[
+  {
+    "name": "media-health-monitor",
+    "cron": "*/5 * * * *",
+    "handler": "automatedHealthMonitor",
+    "timezone": "UTC"
+  }
+]

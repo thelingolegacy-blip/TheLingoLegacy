@@ -2,8 +2,6 @@ name: G02 Self-Hosted Runner Sentinel
 
 on:
   workflow_dispatch:
-  push:
-    branches: [infra/g02-runner-recovery-clean-2026-10-09]
 
 permissions:
   contents: read
@@ -11,6 +9,8 @@ permissions:
 
 jobs:
   runner-sentinel:
+    # PROTECTED HOLD: prevent all runner allocation pending separate G02 acceptance.
+    if: false
     runs-on: [self-hosted, linux, x64, lingo-g02]
     timeout-minutes: 10
     steps:
@@ -38,7 +38,7 @@ jobs:
           GITHUB_SHA_VALUE: ${{ github.sha }}
         run: |
           set -euo pipefail
-          trap 'rc=$?; printf "G02_FORENSIC_EXIT_STATUS=%s\\n" "$rc"; exit "$rc"' EXIT
+          trap 'rc=$?; printf "G02_FORENSIC_EXIT_STATUS=%s\n" "$rc"; exit "$rc"' EXIT
 
           test "$RUNNER_NAME" = "lingo-legacy-g02"
           test "$RUNNER_OS" = "Linux"
@@ -110,7 +110,7 @@ jobs:
           } | tee g02-evidence/host-diagnostics.txt
 
       - name: Upload G02 execution evidence artifact
-        if: always()
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: g02-execution-evidence-${{ github.run_id }}

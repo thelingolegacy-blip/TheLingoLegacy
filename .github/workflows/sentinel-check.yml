@@ -17,7 +17,8 @@ concurrency:
 
 jobs:
   sentinel-verify:
-    if: ${{ inputs.confirm_staging_only == 'STAGING' }}
+    # PROTECTED HOLD: no staging or production runner allocation is authorized.
+    if: ${{ false && inputs.confirm_staging_only == 'STAGING' }}
     runs-on: [self-hosted, linux, x64, lingo-legacy-g02-staging]
     timeout-minutes: 10
     env:

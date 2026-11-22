@@ -1,0 +1,37 @@
+{
+  "archive_status": "HISTORICAL_ARCHIVE",
+  "archived_on": "2026-11-21",
+  "source": {
+    "repository": "thelingolegacy-blip/TheLingoLegacy",
+    "branch": "main",
+    "commit": "1a60e2314cb3f9b5e3efe648ade83121080cb7b2",
+    "path": "config/payload/matrix.json",
+    "blob_sha": "ed34bdfd4e9aad76414936f6874b60001ac0e33e"
+  },
+  "preservation_note": "Verbatim historical House of Avalon payload definition. The original description's nonprofit wording is retained only as historical source text and is not proof of current legal status. No corporate, nonprofit, charitable, tax, asset, contract, or permission status is transferred to THE PRESTIGIOUS HOUSE OF DUSSE. The reserved /avalon paths were not active endpoints.",
+  "record": {
+    "id": "avalon",
+    "name": "Avalon Cultural Systems",
+    "description": "Nonprofit OS payload contracts for registry, membership, and events.",
+    "payloads": [
+      {
+        "label": "Avalon Registry Payload",
+        "url": "/avalon/payload/registry",
+        "method": "POST",
+        "state": "reserved"
+      },
+      {
+        "label": "Avalon Membership Payload",
+        "url": "/avalon/payload/membership",
+        "method": "POST",
+        "state": "reserved"
+      },
+      {
+        "label": "Avalon Event Payload",
+        "url": "/avalon/payload/event",
+        "method": "POST",
+        "state": "reserved"
+      }
+    ]
+  }
+}
