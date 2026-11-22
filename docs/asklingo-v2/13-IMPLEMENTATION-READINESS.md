@@ -108,3 +108,11 @@ No PR was merged, no branch was force-updated, and no production or staging infr
 - Migration source `migrations/asklingo-staging/0001_initial.sql` defines identity bindings, exact-scope grants, approvals, append-only audit, rate limits, and idempotency; no conversation content tables.
 - Firebase Auth provisioning is blocked: no Firebase/Google Cloud project-management connector or authorized Admin API action is available. No alternate identity provider was substituted.
 - D1 schema migration execution, Firebase Auth, trusted server adapters, atomic approval consumption, rate limiting, runtime tests, and end-to-end acceptance remain pending. See [staging provisioning record](23-STAGING-PROVISIONING.md).
+
+
+### Provisioning verification update — 2026-11-22
+- Applied migration `0001_initial.sql` successfully to the dedicated staging D1 database.
+- Verified six application tables, five secondary indexes, two append-only audit triggers, and zero rows in all six application tables.
+- Worker source and Wrangler configuration are now committed under `workers/asklingo-v2-staging/`; the config pins the D1 binding and explicitly disables workers.dev and preview URLs.
+- Re-read Cloudflare metadata: worker subdomain disabled, preview URLs disabled, no routes reported, observability off, no inference/provider binding, and no records in the D1 tables.
+- Firebase Auth remains blocked pending connection to the Firebase plugin/project and project-level authorization. The Firebase plugin is available in ChatGPT's plugin directory; no Firebase project has yet been created.
