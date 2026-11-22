@@ -20,9 +20,9 @@ At the inspected `main` source:
 | ID | Blocker | Required evidence | State |
 |---|---|---|---|
 | B01 | Staging identity provider not verified | Separate staging project/config, real token verification tests, revocation strategy | BLOCKED |
-| B02 | Persistent grant/policy source not implemented | Reviewed schema, owner, read/write boundary, revocation semantics | BLOCKED |
-| B03 | Persistent approval store absent | Atomic single-use consume, digest binding, expiry, revocation, separation of duties | BLOCKED |
-| B04 | Durable audit sink absent | Append-only/tamper-evident storage, retention, access policy, failure tests | BLOCKED |
+| B02 | Persistent grant/policy adapter not implemented | Reviewed schema exists in staging D1; trusted read/write adapter, revocation enforcement and tests | BLOCKED — schema only |
+| B03 | Approval lifecycle adapter not implemented | Staging D1 approvals table exists; atomic single-use consume, digest/scope binding, expiry, revocation and separation-of-duties tests | BLOCKED — schema only |
+| B04 | Audit ingestion and operations not implemented | Staging D1 append-only table/triggers exist; authenticated ingestion, access policy, retention, export/restore and failure tests | BLOCKED — schema only |
 | B05 | No askLINGO inference provider selected | Data-processing, privacy, safety, latency, availability, cost and exit review | BLOCKED |
 | B06 | No shared/global rate limit for askLINGO | Cross-isolate rate limiting and abuse tests | BLOCKED |
 | B07 | No production query route | Separately reviewed server implementation and contract tests | NOT IMPLEMENTED |
@@ -32,7 +32,7 @@ At the inspected `main` source:
 | B11 | Hosted CI result for the v2 policy suite | Latest inspected foundation-branch runs 44968046838, 44968046027, 44968045281, 44968044464, and 44968043725 ended `startup_failure` before job creation; zero steps | BLOCKED — no hosted CI execution evidence |
 | B12 | Historical voice branch contains an unsafe runtime proposal | Separate review of branch head `893f2d3974d302a672b848078c8c060916b5d6bd`; 53 ahead / 732 behind main | PRESERVED / NOT MERGEABLE AS A WHOLE |
 | B13 | Full portfolio registry reconciliation | Compare routing taxonomy with the authoritative complete portfolio register | PENDING |
-| B14 | Dedicated isolated staging runtime/data store not identified | Read-only Cloudflare inventory: 10 Worker scripts, no askLINGO Worker; only staging Worker is tagged read-only; four D1 databases report zero tables | BLOCKED — no suitable askLINGO staging target |
+| B14 | Dedicated staging identity and callable runtime not ready | D1 and disabled Worker scaffold provisioned; Firebase staging project, identity adapter, routes and runtime acceptance still required | PARTIAL — infrastructure only |
 
 ## Implemented in this branch so far
 
@@ -40,7 +40,7 @@ At the inspected `main` source:
 - Canonical 13-mode registry reconciled from preserved source material.
 - Voice/WebRTC architecture and legacy branch security assessment.
 - Product-domain routing and provider-neutral persistence/adapter contracts.
-- Read-only Cloudflare inventory confirms no dedicated askLINGO staging Worker or populated D1 target; existing Studio Control Center staging is tagged read-only and was not repurposed.
+- Initial read-only Cloudflare inventory confirmed no dedicated askLINGO target; the existing Studio Control Center staging Worker was preserved. A separate askLINGO D1 database and disabled Worker scaffold were subsequently provisioned under explicit user approval.
 - Isolated default-deny policy primitive, deterministic action-digest / approval-snapshot validation, and strict query request validation.
 - Canonical 13-mode runtime registry, explicit operating-state resolver, v2 master system prompt, and 12-agent registry with execution disabled.
 - Proposed query API contract with strict request schema and no conversation ID while persistence is disabled.
@@ -55,8 +55,8 @@ The local test result covers only the isolated policy primitive. It does not val
 
 1. Complete additive specifications and source reconciliation.
 2. Add isolated, provider-neutral policy primitives and deterministic unit tests.
-3. Define persistent adapter contracts and storage schema without binding production data.
-4. Establish a separately configured staging identity and isolated data store.
+3. Define persistent adapter contracts and storage schema without binding production data — staging schema now applied; adapters remain.
+4. Establish a separately configured Firebase staging identity — dedicated D1 and disabled Worker scaffold now exist.
 5. Implement a staging-only API route behind a server-side disabled-by-default flag.
 6. Integrate a provider only after cost, data, privacy, and security approval.
 7. Add shared rate limiting, abuse controls, and durable audit.
@@ -69,7 +69,7 @@ The local test result covers only the isolated policy primitive. It does not val
 
 Do not bypass the disabled facade, change `ask_lingo: false`, alter production Worker routes/bindings, enable the sentinel, provision paid resources, persist conversations, or deploy to production as a shortcut around a blocker.
 
-A missing staging identity, approval store, audit sink, or policy source means protected execution remains DENIED. A passing local unit test proves only the tested local primitive.
+A missing verified staging identity or tested policy, approval-consumption, audit-ingestion, and rate-limit adapters means protected execution remains DENIED. A passing local unit test proves only the tested local primitive.
 
 
 ## 2026-11-22 parallel workstream reconciliation
@@ -78,7 +78,7 @@ The following stacked/parallel pull requests were inspected after the initial fo
 
 | PR | Branch relationship | Scope | Observed state |
 |---|---|---|---|
-| #644 | base: `main` | Canonical architecture, 4 isolated v2 modules, tests, workflow, 23 askLINGO docs/index, package test wiring | OPEN / DRAFT; 33 files; 2,111 additions; 2 deletions |
+| #644 | base: `main` | Canonical architecture, 4 isolated v2 modules, tests, workflow, 24 numbered askLINGO docs plus index, staging schema and Worker source/config | OPEN / DRAFT; 38 files; 2,459 additions; 2 deletions |
 | #645 | base: #644 head branch | 17-workstream execution plan | OPEN / DRAFT; 1 additive document |
 | #646 | base: #645 head branch | SAAAE policy kernel and tests | OPEN / DRAFT; 4 files; local test result reported as 11/11; no hosted CI pass |
 | #647 | base: #645 head branch | Agent capability registry and tests | OPEN / DRAFT; 3 files; local test result reported as 6/6; no hosted CI pass |
@@ -98,7 +98,7 @@ At the latest inspected foundation-branch commit, GitHub Actions run IDs `449680
 
 ### Integration and release posture
 
-No PR was merged, no branch was force-updated, and no production or staging infrastructure was changed. The public facade remains disabled. The dedicated askLINGO staging identity, Worker, persistent approval/audit stores, provider decision, shared rate limiting, web/mobile/voice integration, and independent security/privacy acceptance remain outstanding. Production remains NOT ENABLED; G02 remains FAIL / UNVERIFIED; downstream release gates remain held.
+No PR was merged and no branch was force-updated. A dedicated staging D1 database and disabled Worker scaffold were provisioned; no production infrastructure changed. The public facade remains disabled. Firebase staging identity, tested persistent adapters, provider decision, shared rate limiting, web/mobile/voice integration, and independent security/privacy acceptance remain outstanding. Production remains NOT ENABLED; G02 remains FAIL / UNVERIFIED; downstream release gates remain held.
 
 
 ## 2026-11-22 isolated staging provisioning
@@ -106,8 +106,8 @@ No PR was merged, no branch was force-updated, and no production or staging infr
 - Dedicated Worker `asklingo-v2-staging` uploaded with D1 binding; workers.dev and preview URLs explicitly disabled; no routes; observability off; no provider secrets.
 - Worker scaffold is fail-closed only (health diagnostic returns 503; all other paths 404); it is not an active askLINGO runtime.
 - Migration source `migrations/asklingo-staging/0001_initial.sql` defines identity bindings, exact-scope grants, approvals, append-only audit, rate limits, and idempotency; no conversation content tables.
-- Firebase Auth provisioning is blocked: no Firebase/Google Cloud project-management connector or authorized Admin API action is available. No alternate identity provider was substituted.
-- D1 schema migration execution, Firebase Auth, trusted server adapters, atomic approval consumption, rate limiting, runtime tests, and end-to-end acceptance remain pending. See [staging provisioning record](23-STAGING-PROVISIONING.md).
+- Firebase Auth provisioning is blocked pending user connection to the available Firebase plugin and authorization to a dedicated staging project. No alternate identity provider was substituted.
+- D1 schema migration applied and verified; Firebase Auth, trusted server adapters, atomic approval consumption, rate limiting, runtime tests, and end-to-end acceptance remain pending. See [staging provisioning record](23-STAGING-PROVISIONING.md).
 
 
 ### Provisioning verification update — 2026-11-22
