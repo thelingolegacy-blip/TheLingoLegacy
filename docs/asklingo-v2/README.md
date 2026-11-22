@@ -30,11 +30,14 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 17. [Persistence and adapter contracts](16-PERSISTENCE-AND-ADAPTER-CONTRACT.md)
 18. [Product-domain routing](17-PRODUCT-DOMAIN-ROUTING.md)
 19. [Delivery ledger](18-DELIVERY-LEDGER.md)
+20. [Master system prompt](19-MASTER-SYSTEM-PROMPT.md)
+21. [Query API contract](20-QUERY-API-CONTRACT.md)
 
 ## Executable foundation
 
 - `src/ai/v2/policy.mjs`: isolated default-deny policy evaluator, deterministic action digest, and approval snapshot validator.
-- `scripts/tests/ask-lingo-governance.test.mjs`: local deterministic security tests.
+- `src/ai/v2/modes.mjs`: canonical 13-mode registry and explicit operating-state resolver; unknown modes are rejected.
+- `scripts/tests/ask-lingo-governance.test.mjs` and `scripts/tests/ask-lingo-modes.test.mjs`: deterministic policy and mode tests.
 - Run: `npm run test:asklingo` (Node.js 20+).
 
 The policy primitive is not wired to the production Worker, persistent grants, an atomic approval store, a durable audit sink, or an inference provider. It is not a production authorization boundary.
