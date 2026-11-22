@@ -34,6 +34,7 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 21. [Query API contract](20-QUERY-API-CONTRACT.md)
 22. [Cloudflare infrastructure inventory](21-CLOUDFLARE-INFRASTRUCTURE-INVENTORY.md)
 23. [Parallel PR reconciliation and security review](22-PARALLEL-PR-RECONCILIATION.md)
+24. [Isolated staging provisioning record](23-STAGING-PROVISIONING.md)
 
 ## Executable foundation
 
