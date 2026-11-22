@@ -139,14 +139,21 @@ export async function verifyAndConsumeApproval({
       nonce: approval.nonce,
       consumedAt: new Date(nowMs).toISOString(),
       expectedBinding: {
+        requestId: approval.requestId,
         requesterPrincipalId: approval.requesterPrincipalId,
+        approverPrincipalId: approval.approverPrincipalId,
+        approverPrincipalType: approval.approverPrincipalType,
         operation: approval.operation,
         resourceId: approval.resourceId,
         tenantId: approval.tenantId,
         productDomain: approval.productDomain,
         environment: approval.environment,
         payloadDigest: approval.payloadDigest,
-        policyVersion: approval.policyVersion
+        policyVersion: approval.policyVersion,
+        issuedAt: approval.issuedAt,
+        expiresAt: approval.expiresAt,
+        keyId: approval.keyId,
+        signature: approval.signature
       }
     });
   } catch { return reject("APPROVAL_CONSUMPTION_UNAVAILABLE"); }
