@@ -1,0 +1,75 @@
+openapi: 3.1.0
+info:
+  title: LINGO CORE V2 Profile API
+  version: 0.1.0
+  description: Non-production profile API. Accepts OIDC ID tokens validated against the configured issuer and client audience. Profiles are keyed by verified issuer plus subject; client-supplied identity fields are never accepted.
+servers:
+  - url: http://localhost:8080
+security:
+  - bearerAuth: []
+paths:
+  /healthz:
+    get:
+      security: []
+      summary: Process liveness
+      responses:
+        "200":
+          description: Process is alive
+  /readyz:
+    get:
+      security: []
+      summary: PostgreSQL readiness
+      responses:
+        "200":
+          description: Database is ready
+        "503":
+          description: Database is unavailable
+  /v1/me/profile:
+    get:
+      summary: Read the authenticated user's profile
+      responses:
+        "200":
+          description: Profile for the verified issuer and subject
+        "401":
+          description: Missing or invalid OIDC ID token
+        "404":
+          description: Profile does not exist
+        "503":
+          description: Identity verifier or database unavailable
+    put:
+      summary: Create or update the authenticated user's profile
+      description: Writes the profile and profile.updated outbox event in one PostgreSQL transaction. Event delivery is not implemented by this API slice.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [display_name]
+              properties:
+                display_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 80
+      responses:
+        "200":
+          description: Profile and outbox event committed atomically
+        "400":
+          description: Invalid JSON or unknown fields
+        "413":
+          description: Request body exceeds the 4 KiB limit
+        "415":
+          description: Content-Type must be application/json
+        "401":
+          description: Missing or invalid OIDC ID token
+        "422":
+          description: Invalid profile data
+        "503":
+          description: Identity verifier or database unavailable
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
