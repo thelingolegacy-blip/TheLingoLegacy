@@ -109,3 +109,5 @@ No PR was merged and no branch was force-updated. A dedicated staging D1 databas
 - Worker source and Wrangler configuration are now committed under `workers/asklingo-v2-staging/`; the config pins the D1 binding and explicitly disables workers.dev and preview URLs.
 - Re-read Cloudflare metadata: worker subdomain disabled, preview URLs disabled, no routes reported, observability off, no inference/provider binding, and no records in the D1 tables.
 - Firebase Auth remains blocked pending connection to the Firebase plugin/project and project-level authorization. The Firebase plugin is available in ChatGPT's plugin directory; no Firebase project has yet been created.
+
+- Local Worker scaffold validation: `node --check` PASS; behavior checks PASS (health diagnostic returns 503 with disabled flags; query and root paths return 404; 3 assertions). This is not a Cloudflare-hosted request test because the subdomain/previews remain disabled.
