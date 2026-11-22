@@ -34,3 +34,8 @@ No execution integration is included in this primitive. A future orchestrator mu
 - No durable audit sink is connected.
 - No agent or worker is enabled to execute actions.
 - Unit tests do not certify the policy as production-ready.
+
+
+## Query request validation
+
+`src/ai/v2/request.mjs` strictly validates the proposed read-only query envelope and rejects unknown fields, unknown modes, and client-supplied identity/scope/approval/tool/context fields. This is input validation only; it is not authentication or authorization.
