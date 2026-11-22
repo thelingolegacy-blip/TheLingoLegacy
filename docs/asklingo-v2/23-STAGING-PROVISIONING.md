@@ -26,7 +26,7 @@ The Worker currently exposes no public endpoint. Its code contains a diagnostic 
 
 Source of truth: `migrations/asklingo-staging/0001_initial.sql`.
 
-The migration creates staging-only tables for:
+The migration was applied successfully and verified against D1. Six application tables, five secondary indexes, and two audit immutability triggers are present. All six application tables currently contain zero rows. The migration creates staging-only tables for:
 - Firebase-authenticated principal bindings (identity records only; no passwords or tokens)
 - exact-scope staging grants
 - approval records with separation-of-duties constraints and single-consumption fields
@@ -34,7 +34,13 @@ The migration creates staging-only tables for:
 - rate-limit buckets
 - idempotency keys
 
-No conversation/message content is stored. The schema alone does not implement atomic approval consumption, authorization middleware, audit ingestion, rate limiting, retention, or trusted identity verification. Those require tested Worker adapters and transaction-safe application code before activation.
+No conversation/message content is stored. The schema alone does not implement atomic approval consumption, authorization middleware, audit ingestion, distributed rate limiting, retention, or trusted identity verification. Those require tested Worker adapters and transaction-safe application code before activation.
+
+## Worker source-of-truth
+
+- `workers/asklingo-v2-staging/src/index.mjs` is the source file for the uploaded fail-closed Worker scaffold.
+- `workers/asklingo-v2-staging/wrangler.toml` pins the staging D1 binding and explicitly sets `workers_dev = false` and `preview_urls = false`.
+- The Worker has no configured route, secret, or provider binding. The uploaded script is a disabled scaffold, not a callable service.
 
 ## Firebase Authentication — BLOCKED
 
@@ -50,7 +56,7 @@ Required next steps:
 
 ## Activation gate
 
-**STAGING INFRASTRUCTURE: PARTIAL / VERIFIED FOR CLOUDFLARE RESOURCES ONLY**  
+**CLOUDFLARE STAGING INFRASTRUCTURE: PROVISIONED / VERIFIED (DISABLED SCAFFOLD)**  
 **FIREBASE AUTH: BLOCKED**  
 **ASKLINGO QUERY/EXECUTION: DISABLED**  
 **PRODUCTION: UNCHANGED / NOT ENABLED**
