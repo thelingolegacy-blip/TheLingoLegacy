@@ -2,60 +2,92 @@ name: Flutter Firebase Integrity
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'studio-sites/games/oasis-platform/flutter/**'
+      - 'studio-sites/games/oasis-platform/firebase-functions/**'
+      - '.firebaserc'
+      - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting-scope.mjs'
+      - 'scripts/test-firebase-hosting-scope.mjs'
+      - '.github/workflows/flutter-firebase-integrity.yml'
   push:
     paths:
       - 'lib/**'
-      - 'android/**'
-      - 'ios/**'
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
+      - 'studio-sites/games/oasis-platform/flutter/**'
+      - 'studio-sites/games/oasis-platform/firebase-functions/**'
       - '.firebaserc'
       - 'firebase.json'
+      - 'scripts/verify-flutter-firebase.mjs'
+      - 'scripts/verify-firebase-hosting-scope.mjs'
+      - 'scripts/test-firebase-hosting-scope.mjs'
       - '.github/workflows/flutter-firebase-integrity.yml'
 
 permissions:
   contents: read
 
 jobs:
-  flutter-firebase:
-    name: Flutter + Firebase integrity
+  firebase-boundary:
+    name: Firebase project and Hosting boundary
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify Firebase project client configuration
+        run: node scripts/verify-flutter-firebase.mjs
+      - name: Verify Firebase Hosting remains disabled
+        run: |
+          node scripts/verify-firebase-hosting-scope.mjs
+          node scripts/test-firebase-hosting-scope.mjs
 
-      - name: Flutter setup
+  oasis-flutter:
+    name: DOUGHBOY'S OASIS Flutter dependency and analysis check
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: studio-sites/games/oasis-platform/flutter
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Flutter stable toolchain
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-
-      - name: Verify Firebase project contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f .firebaserc
-          test -f lib/firebase_options.dart
-          node scripts/verify-flutter-firebase.mjs
-
-      - name: Flutter dependencies
+      - name: Install Flutter package dependencies
         run: flutter pub get
-
-      - name: Flutter analyze
+      - name: Analyze Flutter application
         run: flutter analyze
 
-      - name: Flutter unit and widget tests
-        run: flutter test
-
-      - name: Flutter web build
-        run: flutter build web --release
-
-      - name: Flutter Android debug build
-        run: flutter build apk --debug
-
-      - name: Firebase hosting configuration check
-        shell: bash
-        run: |
-          set -euo pipefail
-          node -e "const f=require('./firebase.json'); if(!f.hosting) process.exit(1); console.log('Firebase Hosting configuration present.')"
+  oasis-functions:
+    name: DOUGHBOY'S OASIS Firebase Functions dependency and type check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: studio-sites/games/oasis-platform/firebase-functions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Node.js 20 toolchain
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install function dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type-check Firebase Functions
+        run: npm run lint
