@@ -105,31 +105,49 @@ export async function createActionDigest(descriptor) {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
-function canonicalize(value) {
+function canonicalize(value, ancestors = new WeakSet()) {
   if (value === undefined) throw new TypeError('Action descriptor contains undefined');
-  if (Array.isArray(value)) return value.map(canonicalize);
-  if (value && typeof value === 'object') {
+  if (value === null || typeof value !== 'object') {
+    if (typeof value === 'number' && !Number.isFinite(value)) {
+      throw new TypeError('Action descriptor contains a non-finite number');
+    }
+    if (typeof value === 'bigint' || typeof value === 'function' || typeof value === 'symbol') {
+      throw new TypeError('Action descriptor contains a non-JSON value');
+    }
+    return value;
+  }
+
+  if (ancestors.has(value)) throw new TypeError('Action descriptor contains a cycle');
+  ancestors.add(value);
+  try {
+    if (Array.isArray(value)) {
+      const output = [];
+      for (let index = 0; index < value.length; index += 1) {
+        if (!Object.hasOwn(value, index)) {
+          throw new TypeError('Action descriptor contains a sparse array');
+        }
+        output.push(canonicalize(value[index], ancestors));
+      }
+      return output;
+    }
+
     const prototype = Object.getPrototypeOf(value);
     if (prototype !== Object.prototype && prototype !== null) {
       throw new TypeError('Action descriptor must contain plain objects');
     }
-    const output = {};
+    // A null prototype preserves special own keys such as "__proto__" as data.
+    const output = Object.create(null);
     for (const key of Object.keys(value).sort()) {
       const item = value[key];
       if (item === undefined || typeof item === 'function' || typeof item === 'symbol') {
         throw new TypeError('Action descriptor contains a non-JSON value');
       }
-      output[key] = canonicalize(item);
+      output[key] = canonicalize(item, ancestors);
     }
     return output;
+  } finally {
+    ancestors.delete(value);
   }
-  if (typeof value === 'number' && !Number.isFinite(value)) {
-    throw new TypeError('Action descriptor contains a non-finite number');
-  }
-  if (typeof value === 'bigint' || typeof value === 'function' || typeof value === 'symbol') {
-    throw new TypeError('Action descriptor contains a non-JSON value');
-  }
-  return value;
 }
 
 function isRecord(value) {
