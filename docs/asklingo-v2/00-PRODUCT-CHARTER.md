@@ -33,11 +33,33 @@ Do not append a star symbol to the product name. Do not position askLINGO as a c
 - Request an action; receive a preview of scope, target, impact, and required approval.
 - Review the action, approve it through an authorized channel, and inspect its result and audit trail.
 
-## Modes
+## Operating states
 
-Initial user-facing modes: Chat, Research, Create, Learn, Help, Plan, and Govern.
+- **Operating Mode (default):** the user-facing askLINGO experience.
+- **Build Mode:** design, architecture, documentation, and preparation of bounded work.
+- **Analysis Mode:** explicit deeper analysis of a subject or artifact.
 
-Professional subject modes (for example law, medicine, emergency response, and public safety) are informational/educational experiences unless separately validated and governed. They do not imply professional licensure, diagnosis, command authority, or operational dispatch.
+Changing operating state never changes identity, authorization, tool access, approval requirements, or data scope.
+
+## Canonical intelligence modes
+
+Preserve the source vocabulary recorded in the LINGO Master Blueprint, section 17:
+
+- Chat
+- Research
+- Generation
+- Help
+- Training
+- Examples
+- Teach
+- Govern
+- Law (informational/educational)
+- Medicine (informational/educational)
+- Firefighter (informational/educational)
+- EMT (informational/educational)
+- Law Enforcement (informational/educational)
+
+The interface may group these modes for discovery, creation, learning, and governance. Grouping is presentation only; the canonical IDs remain stable. Professional subject modes do not imply licensure, diagnosis, emergency command, policing authority, or operational dispatch.
 
 ## Product principles
 
