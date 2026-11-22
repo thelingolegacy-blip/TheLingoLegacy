@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "lingo-enterprise-capability-registry",
+  "status": "PROPOSED",
+  "authoritative": false,
+  "updated_at": "2026-11-14",
+  "source_of_truth": "thelingolegacy-blip/TheLingoLegacy",
+  "governance": {
+    "master_control": "proposed",
+    "lecs": {
+      "existing_reference": "PR #557",
+      "status": "DRAFT_UNVERIFIED"
+    },
+    "lkis": {
+      "architecture_reference": "PR #562",
+      "runtime_reference": "PR #565",
+      "operationalization_issue": "#566",
+      "status": "DRAFT_UNVERIFIED"
+    },
+    "surface_matrix": "existing_artifacts_require_reconciliation",
+    "enterprise_control_tower": "existing_artifacts_require_reconciliation"
+  },
+  "release_posture": {
+    "g02": "FAIL_UNVERIFIED",
+    "g03_g11": "HELD",
+    "last_known_good": "PROTECTED",
+    "production_promotion": "BLOCKED",
+    "runner_activation": "BLOCKED_PENDING_HOST_AND_TOKEN_REMEDIATION"
+  },
+  "capabilities": [
+    {"id":"cap-intelligence","name":"Intelligence","layer":"L03","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-architecture","name":"Architecture","layer":"L00-L01","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-engineering","name":"Engineering","layer":"L11","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-education","name":"Education","layer":"L13","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-automation","name":"Automation","layer":"L06-L10","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-security","name":"Security","layer":"L02-L09","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-data","name":"Data","layer":"L07","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-quality","name":"Quality","layer":"L10-L12","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-infrastructure","name":"Infrastructure","layer":"L06-L08","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-operations","name":"Operations","layer":"L10-L12","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-growth","name":"Growth","layer":"L01-L13","state":"PROPOSED","owner":"TBD","evidence":[]},
+    {"id":"cap-lifecycle","name":"Lifecycle","layer":"L11-L12","state":"PROPOSED","owner":"TBD","evidence":[]}
+  ],
+  "divisions": [
+    {"id":"lingolegacy","name":"LINGOlegacy","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingolane","name":"LINGOlane","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingoslots","name":"LINGOslots","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingoarcade","name":"LINGOarcade","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingolibrary","name":"LINGOlibrary","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingomedia","name":"LINGOmedia","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"lingoworld","name":"LINGOworld","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"},
+    {"id":"legacyxclub","name":"LegacyXclub","state":"ONBOARDING_REQUIRED","source_inventory":[],"owner":"TBD"}
+  ],
+  "platform_roles": [
+    {"id":"github","name":"GitHub","intended_role":"source_of_truth_and_change_control","live_connection":"UNVERIFIED"},
+    {"id":"cloudflare","name":"Cloudflare","intended_role":"authoritative_edge","live_connection":"UNVERIFIED"},
+    {"id":"firebase","name":"Firebase","intended_role":"identity_and_data_platform","live_connection":"UNVERIFIED"},
+    {"id":"hosting","name":"Hosting providers","intended_role":"application_delivery","live_connection":"UNVERIFIED"},
+    {"id":"ai-providers","name":"AI providers","intended_role":"model_inference_adapters","live_connection":"UNVERIFIED"},
+    {"id":"monitoring","name":"Monitoring providers","intended_role":"telemetry_and_alerting","live_connection":"UNVERIFIED"}
+  ],
+  "connections": [],
+  "storage_destinations": [],
+  "automation_jobs": [],
+  "acceptance_policy": {
+    "unknown_is_not_pass": true,
+    "knowledge_verification_is_separate_from_release_approval": true,
+    "no_production_mutation_without_exact_scope_approval": true,
+    "no_runner_activation_without_verified_host_and_token_remediation": true,
+    "no_merge_when_required_ci_is_missing_or_startup_failed": true
+  }
+}

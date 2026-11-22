@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/enterprise-capability-registry-1.0.0.json",
+  "title": "LINGO Enterprise Capability Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_id", "status", "authoritative", "updated_at", "source_of_truth", "governance", "release_posture", "capabilities", "divisions", "platform_roles", "connections", "storage_destinations", "automation_jobs", "acceptance_policy"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "registry_id": {"const": "lingo-enterprise-capability-registry"},
+    "status": {"enum": ["PROPOSED", "IN_REVIEW", "APPROVED", "OPERATIONAL", "DEPRECATED"]},
+    "authoritative": {"type": "boolean"},
+    "updated_at": {"type": "string", "format": "date"},
+    "source_of_truth": {"type": "string", "minLength": 1},
+    "governance": {"type": "object"},
+    "release_posture": {"type": "object"},
+    "capabilities": {"type": "array", "items": {"$ref": "#/$defs/capability"}},
+    "divisions": {"type": "array", "items": {"$ref": "#/$defs/division"}},
+    "platform_roles": {"type": "array", "items": {"$ref": "#/$defs/platformRole"}},
+    "connections": {"type": "array", "items": {"$ref": "#/$defs/connection"}},
+    "storage_destinations": {"type": "array", "items": {"$ref": "#/$defs/storageDestination"}},
+    "automation_jobs": {"type": "array", "items": {"$ref": "#/$defs/automationJob"}},
+    "acceptance_policy": {"type": "object"}
+  },
+  "$defs": {
+    "evidenceRef": {"type": "object", "additionalProperties": false, "required": ["kind", "reference", "status"], "properties": {"kind": {"type": "string"}, "reference": {"type": "string"}, "status": {"enum": ["UNVERIFIED", "PENDING", "PASS", "FAIL", "BLOCKED"]}, "captured_at": {"type": "string", "format": "date-time"}, "digest": {"type": "string"}}},
+    "capability": {"type": "object", "additionalProperties": false, "required": ["id", "name", "layer", "state", "owner", "evidence"], "properties": {"id": {"type": "string", "pattern": "^cap-[a-z0-9-]+$"}, "name": {"type": "string"}, "layer": {"type": "string"}, "state": {"enum": ["PROPOSED", "IN_REVIEW", "IMPLEMENTED_UNVERIFIED", "VERIFIED", "OPERATIONAL", "DEPRECATED"]}, "owner": {"type": "string"}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidenceRef"}}}},
+    "division": {"type": "object", "additionalProperties": false, "required": ["id", "name", "state", "source_inventory", "owner"], "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "state": {"enum": ["ONBOARDING_REQUIRED", "INVENTORY_IN_PROGRESS", "IN_REVIEW", "ONBOARDED", "BLOCKED"]}, "source_inventory": {"type": "array", "items": {"type": "string"}}, "owner": {"type": "string"}}},
+    "platformRole": {"type": "object", "additionalProperties": false, "required": ["id", "name", "intended_role", "live_connection"], "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "intended_role": {"type": "string"}, "live_connection": {"enum": ["UNVERIFIED", "DISCONNECTED", "CONNECTED_UNVERIFIED", "VERIFIED", "DEGRADED", "BLOCKED"]}}},
+    "connection": {"type": "object", "additionalProperties": false, "required": ["id", "source_id", "target_id", "direction", "purpose", "protocol", "auth_reference", "owner", "state", "health_check", "failure_behavior", "evidence"], "properties": {"id": {"type": "string"}, "source_id": {"type": "string"}, "target_id": {"type": "string"}, "direction": {"enum": ["OUTBOUND", "INBOUND", "BIDIRECTIONAL"]}, "purpose": {"type": "string"}, "protocol": {"type": "string"}, "contract_version": {"type": "string"}, "auth_reference": {"type": "string", "description": "Reference to a secret/identity manager entry; never store credentials here."}, "data_classification": {"type": "string"}, "owner": {"type": "string"}, "state": {"enum": ["PROPOSED", "CONFIGURED_UNVERIFIED", "VERIFIED", "DEGRADED", "DISABLED", "BLOCKED"]}, "health_check": {"type": "string"}, "failure_behavior": {"type": "string"}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidenceRef"}}}},
+    "storageDestination": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "owner", "classification", "retention_policy", "restore_test_state"], "properties": {"id": {"type": "string"}, "kind": {"enum": ["DATABASE", "OBJECT_STORAGE", "BACKUP", "ARCHIVE", "QUARANTINE", "CONTAINER_VOLUME", "FILE_STORE"]}, "owner": {"type": "string"}, "classification": {"type": "string"}, "retention_policy": {"type": "string"}, "restore_test_state": {"enum": ["NOT_TESTED", "PASS", "FAIL", "BLOCKED"]}}},
+    "automationJob": {"type": "object", "additionalProperties": false, "required": ["id", "purpose", "schedule", "autonomy_tier", "owner", "state", "approval_policy"], "properties": {"id": {"type": "string"}, "purpose": {"type": "string"}, "schedule": {"type": "string"}, "autonomy_tier": {"enum": ["A0_OBSERVE", "A1_PREPARE", "A2_TEST", "A3_CONTROLLED_REPAIR", "A4_PRODUCTION_CHANGE"]}, "owner": {"type": "string"}, "state": {"enum": ["PROPOSED", "CONFIGURED_UNVERIFIED", "ENABLED", "DEGRADED", "DISABLED", "BLOCKED"]}, "approval_policy": {"type": "string"}}}
+  }
+}
