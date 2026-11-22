@@ -39,6 +39,7 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 - `src/ai/v2/modes.mjs`: canonical 13-mode registry and explicit operating-state resolver; unknown modes are rejected.
 - `src/ai/v2/agents.mjs`: 12 bounded specialist-agent definitions; all tools and execution privileges remain disabled.
 - `src/ai/v2/request.mjs`: strict query-request validation; rejects unknown fields and unregistered modes.
+- `src/ai/v2/request.mjs`: strict query-request validation; rejects unknown fields and unregistered modes.
 - `scripts/tests/ask-lingo-governance.test.mjs`, `scripts/tests/ask-lingo-modes.test.mjs`, `scripts/tests/ask-lingo-agents.test.mjs`, and `scripts/tests/ask-lingo-request.test.mjs`: deterministic policy, mode, agent, and request validation tests.
 - Run: `npm run test:asklingo` (Node.js 20+).
 
