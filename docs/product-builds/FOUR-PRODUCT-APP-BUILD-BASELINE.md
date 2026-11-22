@@ -143,3 +143,37 @@ Five isolated AppDeploy previews were re-inventoried. Their latest stored snapsh
 5. **Shared platform:** verify Firebase/Auth/Firestore project identity and rules, Lingo ID integration, SAAAE policy enforcement, secrets provenance, monitoring, backup/restore, rollback, mobile/desktop acceptance, and commit-to-build-to-deployment correlation.
 
 **Current release decision:** preview-only / production not ready. PR #648 remains draft and unmerged. Production DNS/Worker changes, live payments, sweepstakes, child accounts, and production promotion remain protected. No milestone is considered complete until its source commit and reproducible acceptance evidence are attached.
+
+
+## 7. Follow-up verification checkpoint — 2026-11-21
+
+This section records a fresh read-only inspection. It does not claim that source ports, application integrations, or production acceptance are complete.
+
+### Canonical source and repository findings
+- The canonical `TheLingoLegacy` repository is accessible with admin/push permissions; its default branch is `main`. The current readiness PR remains open, draft, and unmerged.
+- Loyalty Lane Cycle's canonical route exists at `loyalty-lane-cycles/index.html` in `TheLingoLegacy`. A separate repository named `loyalty-lane-cycles` was not found in the accessible repository search; keep the canonical route as the source candidate pending a wider exact inventory.
+- `Loyaltylaneapparel` exists, but its current default-branch tree contains only `README.md` and two documentation files. It is not a complete standalone commerce implementation. The README defines the intended one-shell application and Flutter/Firebase/Cloudflare integration contracts.
+- `THATS-MY-LINGO` contains a static game implementation, game-math module, documentation, and a quality-gates workflow. Its README explicitly describes the default app as static/browser-local and non-wagering; this is distinct from the AppDeploy preview's backend behavior. Reconcile the two implementations before choosing a production architecture.
+- `kottens-code-engine` currently contains only a short README and one stack-contract document. It is not the full Cartoon Studio implementation. A similarly named `Kotton-code-engine` repository also exists and must be compared before consolidating or renaming anything.
+- No blind import or overwrite is authorized. Each source must be compared by commit, file inventory, asset provenance, runtime assumptions, and last-known-good reference.
+
+### Backend provider verification
+- The connected Supabase project `zoksxavxmgnkrthselek` is `ACTIVE_HEALTHY`, running PostgreSQL 17.
+- The `public` schema currently returns zero tables. Security and health advisors returned zero lints. This means there is no verified application schema in this project yet; zero lints is not proof that the four applications are secured or integrated.
+- Before creating shared tables, define product-scoped schemas/ownership, tenant boundaries, role claims in trusted app metadata, RLS policies, audit immutability, idempotent ledgers, and retention rules. Never expose service-role credentials to clients.
+- Supabase's current changelog includes a 2026-10-30 enforcement change: new tables are not automatically exposed through the Data API; explicitly configure grants/exposure and RLS. CLI v3 is local-first and confirms hosted changes. Pin the toolchain and require explicit review for hosted mutations.
+
+### Provider and release blockers reconfirmed
+- Shopify API remains unavailable with `operation_not_allowed`; merchant recovery is required before catalog/inventory/checkout work can be verified.
+- Stripe remains test-mode only per the existing readiness evidence. No live payment or payout operation was performed.
+- Production Firebase credentials/linkage remain unverified; a repository `.firebaserc` file alone is not proof of a production project connection.
+- AppDeploy has three linked accounts with the same display name. Do not write to or deploy through an ambiguous account until the intended link is identified. Existing previews remain evidence only.
+
+### Updated disposition
+- Source reconciliation: **in progress; not accepted**.
+- Supabase platform: **project healthy, application schema absent in public**.
+- Cycle: **canonical static route found; server-backed member/ledger acceptance open**.
+- Apparel: **dedicated repo is documentation-only; Shopify blocked**.
+- That's My Lingo: **source implementation and game-math artifacts exist; backend architecture reconciliation and deterministic test evidence open**.
+- Kotton's Code: **duplicate/near-duplicate repository identity unresolved; studio/family acceptance open**.
+- Production: **protected hold; no promotion performed**.
