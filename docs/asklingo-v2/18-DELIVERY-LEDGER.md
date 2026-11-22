@@ -18,7 +18,7 @@ This ledger records milestone state from inspected source and attributable test 
 |---|---|---|---|
 | M00 | Preserve and inspect existing assets | Current runtime contract, facade, UI, historical branches, Library source artifacts inventoried | PARTIALLY COMPLETE — remaining branch/library inventory |
 | M01 | Canonical product and system architecture | Product charter, architecture, agent registry, identity, SAAAE, memory, API, UX, operations, release docs | DRAFT COMPLETE |
-| M02 | Canonical modes and voice architecture | Reconcile 13 source modes, operating states, WebRTC/session-broker requirements | DRAFT COMPLETE |
+| M02 | Canonical modes and voice architecture | Reconcile 13 source modes, operating states, WebRTC/session-broker requirements, mode resolver, and master system prompt | DRAFT COMPLETE |
 | M03 | Historical branch reconciliation | Assess old voice/books branch and retain reusable requirements without unsafe transplant | COMPLETE FOR INSPECTED BRANCH |
 | M04 | Policy primitive | Exact-scope default-deny evaluator, action digest, approval snapshot validator | IMPLEMENTED / LOCAL TESTED |
 | M05 | Persistent grant and approval adapters | Authoritative grants, atomic approval consumption, revocation, idempotency | BLOCKED — storage and staging identity not selected |
