@@ -40,6 +40,7 @@ export function evaluateAuthorization(input, nowMs = Date.now()) {
 
   const policyVersion = nonEmpty(policy.version) ? policy.version : null;
   if (policy.available !== true || !policyVersion) return DENY('POLICY_UNAVAILABLE', policyVersion);
+  if (typeof policy.requireApproval !== 'boolean') return DENY('POLICY_CONFIGURATION_INVALID', policyVersion);
   if (!nonEmpty(subject.id) || subject.status !== 'active') return DENY('IDENTITY_INACTIVE', policyVersion);
   if (revocation.status !== 'clear') return DENY('REVOCATION_UNVERIFIED', policyVersion);
 
@@ -105,8 +106,13 @@ export async function createActionDigest(descriptor) {
 }
 
 function canonicalize(value) {
+  if (value === undefined) throw new TypeError('Action descriptor contains undefined');
   if (Array.isArray(value)) return value.map(canonicalize);
   if (value && typeof value === 'object') {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new TypeError('Action descriptor must contain plain objects');
+    }
     const output = {};
     for (const key of Object.keys(value).sort()) {
       const item = value[key];
