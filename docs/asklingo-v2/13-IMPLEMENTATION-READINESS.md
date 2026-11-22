@@ -11,7 +11,8 @@ At the inspected `main` source:
 - The facade has an in-memory per-isolate rate bucket; this is not a global rate limit.
 - `src/auth/firebase-id-token.mjs` verifies Firebase token signatures, but the service contract reports Firebase project/app configuration as placeholders and not verified for production.
 - `wrangler.jsonc` identifies the Worker entrypoint and production routes; this v2 work does not change it.
-- Root `package.json` has Node test scripts for the existing slot engine and TML preview engine. It has no askLINGO test command yet.
+- Root `package.json` now includes `test:asklingo` and the aggregate `npm test` runs the askLINGO policy tests after the existing suites.
+- `.github/workflows/asklingo-v2-policy.yml` adds a read-only hosted Ubuntu pull-request check for the repository test suite. It does not use the dedicated G02 runner and does not change G02.
 - The staging sentinel workflow is intentionally disabled by an unconditional false guard while protected hold is active.
 
 ## Blockers before isolated runtime acceptance
@@ -28,6 +29,7 @@ At the inspected `main` source:
 | B08 | No voice provider/session broker | Provider-neutral session design and staging tests | NOT IMPLEMENTED |
 | B09 | No conversation persistence policy approval | Consent, retention, deletion, age-appropriate controls and privacy review | BLOCKED / OFF |
 | B10 | No independent security acceptance | Threat model, abuse cases, code review and evidence | NOT RUN |
+| B11 | Hosted CI result for the new policy suite pending | PR check-run/job/step result correlated to this branch SHA | PENDING / NOT VERIFIED |
 
 ## Safe implementation sequence
 
