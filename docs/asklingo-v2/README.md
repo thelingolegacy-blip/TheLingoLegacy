@@ -26,6 +26,7 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 13. [Voice and multimodal architecture](12-VOICE-AND-MULTIMODAL.md)
 14. [Implementation readiness](13-IMPLEMENTATION-READINESS.md)
 15. [Policy primitive contract](14-POLICY-PRIMITIVE-CONTRACT.md)
+16. [Legacy voice branch assessment](15-LEGACY-VOICE-BRANCH-ASSESSMENT.md)
 
 ## Executable foundation
 
