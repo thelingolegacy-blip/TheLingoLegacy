@@ -1,0 +1,42 @@
+name: LKIS Runtime Tests
+
+on:
+  pull_request:
+    paths:
+      - "platform/lkis/**"
+      - "config/knowledge/knowledge-record.schema.json"
+  push:
+    branches:
+      - "architecture/lingo-command-control-centers-v1"
+    paths:
+      - "platform/lkis/**"
+      - "config/knowledge/knowledge-record.schema.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lkis-runtime-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lkis-runtime:
+    name: LKIS schema, API, and storage tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: platform/lkis
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify Node runtime
+        run: |
+          node --version
+          npm --version
+      - name: Static syntax checks
+        run: npm run check
+      - name: LKIS unit and API tests
+        run: npm test

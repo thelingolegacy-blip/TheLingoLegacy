@@ -1,0 +1,53 @@
+name: LKIS Actions Startup Smoke
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "platform/lkis/**"
+      - ".github/workflows/lkis-startup.yml"
+  push:
+    branches:
+      - "architecture/lingo-command-control-centers-v1"
+    paths:
+      - "platform/lkis/**"
+      - ".github/workflows/lkis-startup.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lkis-startup-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosted-runner-startup:
+    name: Hosted runner startup and LKIS validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Confirm hosted runner allocation
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_ARCH: ${{ runner.arch }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          test -n "$RUNNER_NAME"
+          printf 'runner=%s os=%s arch=%s run_id=%s attempt=%s commit=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH" "$RUN_ID" "$RUN_ATTEMPT" "$COMMIT_SHA"
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Confirm Node and npm
+        run: |
+          node --version
+          npm --version
+      - name: Validate LKIS source syntax
+        working-directory: platform/lkis
+        run: npm run check
+      - name: Execute LKIS tests
+        working-directory: platform/lkis
+        run: npm test
