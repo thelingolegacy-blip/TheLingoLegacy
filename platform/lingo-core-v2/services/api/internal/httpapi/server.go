@@ -2,6 +2,8 @@ package httpapi
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -26,6 +28,12 @@ type Profile struct {
 	Subject     string    `json:"-"`
 	DisplayName string    `json:"display_name"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func profileAggregateID(issuer, subject string) string {
+	canonical, _ := json.Marshal([2]string{issuer, subject})
+	digest := sha256.Sum256(canonical)
+	return hex.EncodeToString(digest[:])
 }
 
 type API struct {
@@ -174,13 +182,13 @@ func (a *API) putProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload, err := json.Marshal(map[string]string{
-		"issuer": identity.Issuer, "subject": identity.Subject, "display_name": profile.DisplayName,
+		"display_name": profile.DisplayName,
 	})
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "event_encode_failed"})
 		return
 	}
-	aggregateID := identity.Issuer + "|" + identity.Subject
+	aggregateID := profileAggregateID(identity.Issuer, identity.Subject)
 	_, err = tx.Exec(r.Context(), `
 		INSERT INTO lingo_outbox_events (aggregate_type, aggregate_id, event_type, schema_version, payload)
 		VALUES ('profile', $1, 'profile.updated', 1, $2::jsonb)
