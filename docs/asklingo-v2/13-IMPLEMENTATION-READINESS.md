@@ -29,7 +29,22 @@ At the inspected `main` source:
 | B08 | No voice provider/session broker | Provider-neutral session design and staging tests | NOT IMPLEMENTED |
 | B09 | No conversation persistence policy approval | Consent, retention, deletion, age-appropriate controls and privacy review | BLOCKED / OFF |
 | B10 | No independent security acceptance | Threat model, abuse cases, code review and evidence | NOT RUN |
-| B11 | Hosted CI result for the new policy suite pending | PR check-run/job/step result correlated to this branch SHA | PENDING / NOT VERIFIED |
+| B11 | Hosted CI result for the new policy suite | PR run 44966884187 ended `startup_failure`; GitHub returned zero jobs and no steps | BLOCKED — no CI execution evidence |
+| B12 | Historical voice branch contains an unsafe runtime proposal | Separate review of branch head `893f2d3974d302a672b848078c8c060916b5d6bd`; 53 ahead / 732 behind main | PRESERVED / NOT MERGEABLE AS A WHOLE |
+| B13 | Full portfolio registry reconciliation | Compare routing taxonomy with the authoritative complete portfolio register | PENDING |
+
+## Implemented in this branch so far
+
+- Additive architecture and governance documentation under `docs/asklingo-v2/`.
+- Canonical 13-mode registry reconciled from preserved source material.
+- Voice/WebRTC architecture and legacy branch security assessment.
+- Product-domain routing and provider-neutral persistence/adapter contracts.
+- Isolated default-deny policy primitive and deterministic action-digest / approval-snapshot validation.
+- Local `node --check` on the new module and test file: PASS.
+- Local `npm run test:asklingo`: 10 tests passed, 0 failed.
+- GitHub Actions askLINGO policy run 44966884187: startup_failure, zero jobs, no step evidence; CI result is not a pass.
+
+The local test result covers only the isolated policy primitive. It does not validate the complete repository suite, Worker integration, persistence adapters, or production security.
 
 ## Safe implementation sequence
 
