@@ -32,6 +32,7 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 19. [Delivery ledger](18-DELIVERY-LEDGER.md)
 20. [Master system prompt](19-MASTER-SYSTEM-PROMPT.md)
 21. [Query API contract](20-QUERY-API-CONTRACT.md)
+22. [Cloudflare infrastructure inventory](21-CLOUDFLARE-INFRASTRUCTURE-INVENTORY.md)
 
 ## Executable foundation
 
