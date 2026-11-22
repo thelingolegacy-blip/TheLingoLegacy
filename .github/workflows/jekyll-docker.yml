@@ -61,6 +61,8 @@ jobs:
 
       - name: Run Worker rate-limit regression tests
         run: node scripts/tests/worker-rate-limit.test.mjs
+      - name: Verify G02 wrapper and sentinel contract
+        run: node scripts/verify-g02-wrapper-contract.mjs
 
       - name: Sanitize retired provider surface
         if: ${{ always() && steps.checkout.outcome == 'success' && steps.setup-node.outcome == 'success' }}
