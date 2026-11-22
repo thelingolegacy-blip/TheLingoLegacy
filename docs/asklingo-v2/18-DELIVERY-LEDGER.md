@@ -30,6 +30,13 @@ This ledger records milestone state from inspected source and attributable test 
 | M11 | Security, privacy, and recovery acceptance | Independent threat review, adversarial tests, retention/deletion, restore exercises | NOT RUN |
 | M12 | Release candidate and production gates | Independent acceptance, G02 and downstream gates, explicit deployment/activation authorization | BLOCKED / NOT AUTHORIZED |
 
+## Infrastructure evidence
+
+- Read-only Cloudflare inventory found 10 Worker scripts and no dedicated askLINGO staging Worker.
+- Existing `lingo-studio-control-center-staging` is explicitly tagged `read-only`; it was not repurposed.
+- Four listed D1 databases each report zero tables; none is an askLINGO-specific persistent store.
+- No secrets, routes, bindings, settings, databases, or deployments were changed.
+
 ## Test evidence
 
 - Local syntax checks: `node --check` on all four new runtime modules and all four test files — PASS.
@@ -41,7 +48,7 @@ This ledger records milestone state from inspected source and attributable test 
 
 ## Blocking dependencies
 
-1. A separately configured staging identity issuer/project and verified token lifecycle.
+1. A dedicated isolated staging Worker/environment and separately configured staging identity issuer/project.
 2. A selected persistence platform with atomic approval consumption and durable audit semantics.
 3. Independent approval for any provider, data processing, retention, and cost ceiling.
 4. A shared rate-limit and abuse-control design.
