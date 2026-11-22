@@ -20,7 +20,7 @@ D1 database ID: `e041e690-2a45-4c82-8b46-6e012d739972`
 Worker upload deployment ID: `33d8f27e52724b63b673fd2a06eccf81`  
 Worker version tag: `b23f6acf5f194570bcc3e5cf2961750a`
 
-The Worker currently exposes no public endpoint. Its code contains a diagnostic `/_health` response with HTTP 503 and returns 404 for all other paths. Since the workers.dev subdomain and previews are disabled and no routes are attached, no external request path was enabled. The Worker is not an askLINGO runtime and does not authenticate, query, persist, invoke tools, or execute actions.
+The Worker currently exposes no public endpoint. Its code contains a diagnostic `/_health` response with HTTP 503 and returns 404 for all other paths. Since the workers.dev subdomain and previews are disabled and no routes are attached, no external request path was enabled. The Worker is not an askLINGO runtime and does not authenticate, query, persist, invoke tools, or execute actions. Local Node validation passed syntax checks and three behavior assertions: diagnostic returns 503 with disabled flags; query and root paths return 404. No hosted request probe was performed because all public entrypoints are disabled.
 
 ## Database migration 0001
 
