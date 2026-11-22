@@ -32,6 +32,7 @@ At the inspected `main` source:
 | B11 | Hosted CI result for the new policy suite | Latest askLINGO run 44967750236 on source head `dc5a07ca9a0065d3bae29e369b0f6e7941e55ab0` ended `startup_failure`; GitHub returned zero jobs and no steps | BLOCKED — no CI execution evidence |
 | B12 | Historical voice branch contains an unsafe runtime proposal | Separate review of branch head `893f2d3974d302a672b848078c8c060916b5d6bd`; 53 ahead / 732 behind main | PRESERVED / NOT MERGEABLE AS A WHOLE |
 | B13 | Full portfolio registry reconciliation | Compare routing taxonomy with the authoritative complete portfolio register | PENDING |
+| B14 | Dedicated isolated staging runtime/data store not identified | Read-only Cloudflare inventory: 10 Worker scripts, no askLINGO Worker; only staging Worker is tagged read-only; four D1 databases report zero tables | BLOCKED — no suitable askLINGO staging target |
 
 ## Implemented in this branch so far
 
@@ -39,6 +40,7 @@ At the inspected `main` source:
 - Canonical 13-mode registry reconciled from preserved source material.
 - Voice/WebRTC architecture and legacy branch security assessment.
 - Product-domain routing and provider-neutral persistence/adapter contracts.
+- Read-only Cloudflare inventory confirms no dedicated askLINGO staging Worker or populated D1 target; existing Studio Control Center staging is tagged read-only and was not repurposed.
 - Isolated default-deny policy primitive, deterministic action-digest / approval-snapshot validation, and strict query request validation.
 - Canonical 13-mode runtime registry, explicit operating-state resolver, v2 master system prompt, and 12-agent registry with execution disabled.
 - Proposed query API contract with strict request schema and no conversation ID while persistence is disabled.
