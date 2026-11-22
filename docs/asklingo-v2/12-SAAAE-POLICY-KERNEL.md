@@ -7,7 +7,7 @@
 - Active subject/grant checks, grant validity windows, explicit policy availability/version, and an explicit approval-policy flag.
 - Revocation must be affirmatively clear; unknown or unavailable revocation state denies.
 - When policy requires approval: requester/approver separation, exact action-digest match, exact scope match, expiry, and unconsumed approved state are required.
-- A deterministic SHA-256 action-descriptor digest helper.
+- A deterministic SHA-256 action-descriptor digest helper using prototype-safe canonical objects, cycle detection, and sparse-array rejection.
 - Node test coverage integrated into the repository's npm test script.
 
 ## Deliberate limitations
@@ -20,7 +20,7 @@ The kernel is not wired into handleAskLingoRequest; the public facade remains di
 
 evaluateAuthorization(input, nowMs) returns only ALLOW or DENY with a stable reason and policy version. Missing or malformed inputs, missing policy flags, scope drift, stale grants, uncertain revocation, and invalid approval state deny. Scope matching is exact; wildcard grants and implicit inheritance are not supported.
 
-createActionDigest(descriptor) canonicalizes plain JSON-compatible objects by sorting object keys and hashes the resulting UTF-8 JSON with SHA-256. The caller must include every material effect and target in the descriptor and validate it against an authoritative action schema before approval.
+createActionDigest(descriptor) canonicalizes plain JSON-compatible objects by sorting object keys, preserving special keys such as `__proto__` as data, rejecting cycles and sparse arrays, and hashing the resulting UTF-8 JSON with SHA-256. The caller must include every material effect and target in the descriptor and validate it against an authoritative action schema before approval.
 
 ## Validation
 
