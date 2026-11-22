@@ -1,0 +1,623 @@
+{
+  "schemaVersion": "1.0.0",
+  "authority": {
+    "sourceRepository": "thelingolegacy-blip/TheLingoLegacy",
+    "sourceBranch": "main",
+    "productionMutationPolicy": "frozen"
+  },
+  "generatedAt": "2026-11-13T13:05:00Z",
+  "resources": [
+    {
+      "id": "src.github.thelingolegacy",
+      "name": "TheLingoLegacy canonical repository",
+      "category": "source_repository",
+      "purpose": "Canonical source and change history for the flagship infrastructure",
+      "provider": "GitHub",
+      "authoritativeReference": "https://github.com/thelingolegacy-blip/TheLingoLegacy",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [],
+      "lifecycleState": "active",
+      "integrationState": "verified",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "README.md declares this repository and main as source authority",
+        "EMS issue #550"
+      ],
+      "secretReferences": [],
+      "recovery": {
+        "primaryRoute": "GitHub main with protected review",
+        "restoreRunbook": "docs/ems/FOUNDATION-OPERATIONS-CENTERS.md"
+      }
+    },
+    {
+      "id": "ci.github.actions",
+      "name": "GitHub Actions workflows",
+      "category": "ci_pipeline",
+      "purpose": "Build, test, security checks and evidence generation",
+      "provider": "GitHub Actions",
+      "authoritativeReference": "https://github.com/thelingolegacy-blip/TheLingoLegacy/actions",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
+      "evidence": [
+        "Latest PR #553 head 2dfe07d520a4ed3339b7d7276697826aa2c9d625: runs 43324222049 (Static CI, ubuntu-24.04), 43324220094 (G02 image build, ubuntu-latest), and 43324218182 (Crimson UI, ubuntu-latest) all ended startup_failure; jobs and artifacts endpoints each returned empty arrays.",
+        "Repeated startup_failure with zero jobs across three different PR heads and both ubuntu-latest and ubuntu-24.04; no steps executed, so no source tests or build results exist.",
+        "GitHub official status page currently reports Actions operational and no incidents on Nov 12; Nov 11 multi-product Actions incident was resolved at 21:21 UTC. No provider-wide incident is currently confirmed as root cause; repo/account Actions policy, quota, billing, or service-side job provisioning remain to be isolated.",
+        "Workflow file .github/workflows/isolated-hosted-runner-probe.yml provides a minimal no-checkout, no-secret, no-network workflow_dispatch diagnostic, but the available GitHub connection exposes no workflow-dispatch action.",
+        "Registry commit b8db9dfb4e226fa8dfa80f32afa23b7621827804 triggered latest PR checks 43328616393 (Crimson UI), 43328614503 (Static CI) and 43328612532 (G02 image build); all again ended startup_failure with zero jobs and zero artifacts."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "runner.g02",
+      "name": "LINGO G02 self-hosted runner",
+      "category": "runner",
+      "purpose": "Canonical self-hosted release evidence execution",
+      "provider": "GitHub Actions",
+      "authoritativeReference": "docs/ems/FOUNDATION-OPERATIONS-CENTERS.md",
+      "environment": "unknown",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "ci.github.actions"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "Dedicated G02 jobs require [self-hosted, linux, x64, lingo-g02] and assert runner name lingo-legacy-g02, Linux/X64, runner_id>0, job correlation, commit correlation, and evidence artifact.",
+        "No runner registration or activation performed; credential-exposure remediation and uniqueness check remain prerequisites.",
+        "The latest Actions startup failures occurred before any jobs existed, so they provide no evidence about G02 runner health. G02 remains FAIL / UNVERIFIED."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "edge.cloudflare",
+      "name": "Cloudflare edge and Worker runtime",
+      "category": "edge",
+      "purpose": "Intended DNS, routing, Worker runtime and public asset delivery",
+      "provider": "Cloudflare",
+      "authoritativeReference": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-13T13:05:00Z",
+      "evidence": [
+        "Cloudflare account subdomain is thelingolegacy; workers.dev is enabled for both staging control-center and flagship Worker.",
+        "Production main Worker deployment is version 137 (100%) under deployment ecd71a70-e476-4318-92a7-35249ced360b; latest uploaded version 305 is preview-only and unpromoted.",
+        "The current uploaded flagship Worker source-map sourcesContent matches canonical GitHub main worker.js byte-for-byte under an FNV-1a comparison (8b8ff92d); this proves uploaded-source parity only, not active deployment version 137 parity.",
+        "Active version 137 metadata confirms fetch handler, ASSETS binding, CANONICAL_DOMAIN and PUBLIC_SITE_URL bindings, and edge security-header configuration.",
+        "Cloudflare telemetry on 2026-11-12 returned zero invocation events for lingo-studio-control-center-staging; staging source code statically contains /healthz, GET/HEAD-only handling, noindex, security headers and productionMutation:false, but live HTTP runtime is unverified.",
+        "A production Worker telemetry aggregation for 2026-11-12 returned a 404 response bucket with count 640 (sample interval 10); inspected samples were scanner probes for common secrets, config, admin and framework paths and returned 404. No successful end-user route check was established from those samples.",
+        "Runtime probe attempt through the available Cloudflare execution sandbox was blocked before reaching origin by sandbox outbound-network policy; production/staging origin HTTP response remains unobserved through this path.",
+        "Read-only Cloudflare API inventory on 2026-11-13: thelingolegacyv-5 has 308 uploaded versions; latest versions 308 (EMS control-center wave) and 307 (Doughboys Oasis wave) are preview candidates with has_preview=true. They are not the active production deployment.",
+        "Read-only deployment inventory confirms production deployment ecd71a70-e476-4318-92a7-35249ced360b still assigns 100% traffic to version ID 2d161fa5-598f-4998-ada8-7ac4c72c3461 (version 137). No production promotion or route mutation was performed.",
+        "Read-only route inventory confirms thelingolegacyv-5 serves thelingolegacy.com/* and multiple subdomain routes; lingo-flagship-root separately serves the exact apex path thelingolegacy.com/. Preserve this route split pending full route precedence and browser QA."
+      ],
+      "secretReferences": [],
+      "recovery": {
+        "restoreRunbook": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md"
+      }
+    },
+    {
+      "id": "domain.thelingolegacy",
+      "name": "thelingolegacy.com and www",
+      "category": "domain",
+      "purpose": "Canonical public domain and flagship routes",
+      "provider": "Cloudflare",
+      "authoritativeReference": "docs/release/2026-11-04-cloudflare-production-cutover-runbook.md",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "Canonical main index.html redirects to /studio-hub/; all 13 local destination links and 7 local image assets referenced by studio-hub/index.html resolve against the 778-entry main Git tree.",
+        "The public homepage was fetched previously, but a direct HTTP probe of /studio-hub/ from the current runtime-check path was inaccessible; runtime parity remains unverified.",
+        "Cloudflare production telemetry samples for 2026-11-12 contained 404 responses for common scanner probes; this is not evidence that normal user routes return 200. A route-by-route external probe matrix remains required."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "hosting.firebase",
+      "name": "Firebase Hosting",
+      "category": "hosting",
+      "purpose": "Firebase hosting and assigned application delivery",
+      "provider": "Firebase",
+      "authoritativeReference": "firebase.json",
+      "environment": "production",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "main firebase.json parses but Hosting public is '.', with ignores limited to firebase.json, firebase.client.json, hidden files and node_modules. This leaves repository paths such as config/, docs/, scripts/, ops/, lib/, worker.js and wrangler.jsonc outside the declared ignore set if a root deploy is run.",
+        "PRs #539 and #545 both change public to build/web; #545 is based on current main and remains a draft review candidate, not approved or merged.",
+        "No Firebase Hosting build, emulator test, deploy or live HTTP parity check was executed. Keep Firebase deploy blocked until Flutter web output and artifact boundary are verified."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "firebase.project",
+      "name": "Firebase project identity",
+      "category": "identity",
+      "purpose": "Backend identity and application services for assigned LINGO capabilities",
+      "provider": "Firebase",
+      "authoritativeReference": ".firebaserc and Firebase app configuration",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "hosting.firebase"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "Repository .firebaserc selects lingo-legacy-production.",
+        "lib/firebase_options.dart contains nine distinct placeholder types across web, Android, iOS and macOS API key/app ID fields plus messaging sender ID placeholders; scripts/verify-flutter-firebase.mjs will fail closed.",
+        "Firebase project existence, app registrations, Auth providers, App Check, Firestore/Storage rules, indexes, FCM, backups and project IAM were not verified because no connected Firebase provider session is available.",
+        "Firebase connector is available for user connection; no credentials were invented and no Firebase writes or deploys occurred."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "app.flutter",
+      "name": "Flutter mobile application",
+      "category": "application",
+      "purpose": "Cross-platform LINGO mobile application",
+      "provider": "Flutter",
+      "authoritativeReference": "pubspec.yaml and lib/",
+      "environment": "development",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "firebase.project"
+      ],
+      "lifecycleState": "blocked",
+      "integrationState": "blocked",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "Flutter/Firebase workflow exists and defines flutter pub get, flutter analyze, flutter test, Flutter web release build, Android debug build and Firebase hosting configuration check.",
+        "The workflow has not produced a job or step result in the current diagnostic window; no Flutter test/build pass is claimed.",
+        "Firebase option placeholders block the repository integrity verifier; actual Firebase app config and project registration are prerequisites."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.main.admin",
+      "name": "Admin Command Center",
+      "category": "control_center",
+      "purpose": "Portfolio command navigation and studio work lanes",
+      "provider": "Repository static application",
+      "authoritativeReference": "admin-command-center/index.html",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing UI scaffold found; provider-backed status not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.studio.os",
+      "name": "Studio OS Control Center",
+      "category": "control_center",
+      "purpose": "Creative operations and studio controls",
+      "provider": "Repository static application",
+      "authoritativeReference": "studio-os/index.html",
+      "environment": "portfolio",
+      "criticality": "medium",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing UI scaffold found; automation and provider integration not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.trust",
+      "name": "Trust and Compliance Center",
+      "category": "control_center",
+      "purpose": "Safety policy, moderation, reports, privacy and release safeguards",
+      "provider": "Repository static application",
+      "authoritativeReference": "trust-compliance/index.html",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Safety blueprint and UI found; live report queue and moderation integrations not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.economy",
+      "name": "Economy Command Center",
+      "category": "control_center",
+      "purpose": "Recommendation-only demo economy and abuse monitoring",
+      "provider": "Repository static application",
+      "authoritativeReference": "economy-command-center/index.html",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Existing shell describes recommendation-only operation; no live wallet writes authorized"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.integration",
+      "name": "Integration OS",
+      "category": "control_center",
+      "purpose": "Integration inventory and provider connection workflows",
+      "provider": "Repository static application",
+      "authoritativeReference": "integration-os/",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T23:24:29.935Z",
+      "evidence": [
+        "config/integration/front-back-stack.json explicitly sets liveBackendWrites=false, livePayments=false, liveExternalServiceCalls=false; Firebase app backend status is contract_only.",
+        "config/integrations/external-services.json keeps external services gated and sets runnerGate FAIL, productionDeployment BLOCKED and activation BLOCKED.",
+        "Studio production feature manifest has production=false; identity, telemetry, commerce and other capabilities are shared/boundary/contract-only rather than certified live integrations.",
+        "Doughboys Oasis has source-level Firebase callable functions for a demo wallet and idempotent catalog purchases plus Firestore rules denying client writes, but functions lack visible enforceAppCheck:true configuration and are not wired into root firebase.json; no deploy or emulator evidence exists.",
+        "Live product integration remains deliberately disabled pending Firebase project access, App Check, rules, API contract, environment isolation, idempotency and end-to-end acceptance."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.release",
+      "name": "Release Center",
+      "category": "release_system",
+      "purpose": "Release evidence, gates, staging, rollback and acceptance",
+      "provider": "GitHub plus deployment providers",
+      "authoritativeReference": "ops/recovery/ and docs/release/",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "ci.github.actions",
+        "edge.cloudflare",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "scaffold_only",
+      "lastVerifiedAt": "2026-11-12T00:00:00Z",
+      "evidence": [
+        "Release evidence and runbooks exist; unified provider-backed release console not verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "obs.platform",
+      "name": "Platform observability",
+      "category": "observability",
+      "purpose": "Logs, metrics, traces, alerts, SLOs and incident signals",
+      "provider": "Not yet confirmed",
+      "authoritativeReference": "To be assigned",
+      "environment": "unknown",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "ci.github.actions"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "No authoritative observability integration confirmed in this inventory"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "backup.platform",
+      "name": "Platform backup and restore",
+      "category": "backup",
+      "purpose": "Recover source, configuration, artifacts and data",
+      "provider": "Not yet confirmed",
+      "authoritativeReference": "To be assigned",
+      "environment": "disaster_recovery",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "firebase.project"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Backup inventory and restore proof remain required; no successful restore evidence asserted"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "center.sonic-boom-nexus",
+      "name": "Sonic Boom Nexus",
+      "category": "control_center",
+      "purpose": "Cross-cutting orchestration for engines, analytics, diagnostics/recovery, triggers, dispatch, permissions, release gates, dependencies and audit history",
+      "provider": "LINGO-owned control plane",
+      "authoritativeReference": "docs/ops/FOUNDATION-CENTERS-INTEGRATION-ARCHITECTURE.md",
+      "environment": "portfolio",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "src.github.thelingolegacy",
+        "ci.github.actions",
+        "center.release",
+        "obs.platform"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Architecture concept identified in prior LINGO platform planning; runtime implementation not yet located and verified"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "app.loyaltylane.cycles.hubs",
+      "name": "Loyalty Lane Cycles hub network",
+      "category": "application",
+      "purpose": "Three service hubs covering Philadelphia sections and Cumberland County",
+      "provider": "LINGO-owned service network",
+      "authoritativeReference": "To be assigned after official hub identities are approved",
+      "environment": "portfolio",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "center.main.admin",
+        "center.trust"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "unknown",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Three hubs required across Philadelphia sections and Cumberland County; official names, addresses, hours and service boundaries remain unconfirmed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "api.loyaltylane.beacon",
+      "name": "Loyalty Lane Beacon Alerts",
+      "category": "api",
+      "purpose": "Location-routed contact intake, staff notification, acknowledgment, assignment, escalation and resolution",
+      "provider": "LINGO-owned integration",
+      "authoritativeReference": "To be assigned after approved hub registry and service contract",
+      "environment": "development",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "app.loyaltylane.cycles.hubs",
+        "center.trust",
+        "obs.platform"
+      ],
+      "lifecycleState": "planned",
+      "integrationState": "blocked",
+      "lastVerifiedAt": null,
+      "evidence": [
+        "Feature-flagged and not live; requires official hub names/addresses/hours/boundaries, privacy controls, retries, duplicate detection, audit and fallback routing"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.atlas",
+      "name": "LINGO Ecosystem Atlas Worker",
+      "category": "worker",
+      "purpose": "Atlas subdomain request handling",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "atlas.thelingolegacy.com/*",
+      "environment": "production",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Cloudflare reports deployed version 2 at 100% traffic; route atlas.thelingolegacy.com/*; live request probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-root",
+      "name": "LINGO Flagship Root Worker",
+      "category": "worker",
+      "purpose": "Exact-root homepage routing",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "thelingolegacy.com/",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 1 has a 100% deployment; version 3 is a PR #548 preview-only navigation repair and is not promoted; root route only; live request probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-site-preview",
+      "name": "LINGO Flagship Site Preview Worker",
+      "category": "worker",
+      "purpose": "Isolated noindex flagship preview",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-flagship-site-preview",
+      "environment": "staging",
+      "criticality": "medium",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 2 deployed at 100%; no custom route; live preview probe not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.resilience-gateway",
+      "name": "LINGO Resilience Gateway Worker",
+      "category": "worker",
+      "purpose": "Isolated resilience gateway",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-resilience-gateway",
+      "environment": "staging",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 1 deployed at 100%; no custom route; no live failover exercise performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.static-backup-proxy",
+      "name": "LINGO Static Backup Proxy Worker",
+      "category": "worker",
+      "purpose": "Static recovery backup on launch subdomain",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "launch.thelingolegacy.com/*",
+      "environment": "disaster_recovery",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 2 deployed at 100% on launch subdomain; restoration and content-integrity drill not performed"
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.studio-control-center-staging",
+      "name": "LINGO Studio Control Center Staging Worker",
+      "category": "worker",
+      "purpose": "Staging control-center route and catalog validation",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "lingo-studio-control-center-staging",
+      "environment": "staging",
+      "criticality": "high",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "center.studio.os"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T23:25:03.021Z",
+      "evidence": [
+        "Cloudflare deployment e7f61ccd-9b3f-44e3-879b-9b2b11a864a2 confirms version 8d05879b-db31-43d3-ae10-7f2abc91246a at 100% on the isolated staging Worker",
+        "Worker subdomain is enabled; no custom route or production routing change was made; script settings show no bindings and observability enabled with persistent invocation logs",
+        "Cloudflare usage query returned no staging-service event row in the queried window; this is not a successful runtime health check",
+        "External HTTP GET probes to the workers.dev root and /healthz could not be completed by the available fetch path; runtime HTTP health remains unverified",
+        "Outbound HTTPS probes from the Cloudflare connector execution sandbox to staging workers.dev and the production domain were explicitly blocked by the tool network policy (sandbox-generated 403 'requests ... are not allowed'); these are not origin HTTP responses and do not establish Worker health."
+      ],
+      "secretReferences": []
+    },
+    {
+      "id": "worker.flagship-production",
+      "name": "LINGO Legacy Multi-route Production Worker",
+      "category": "worker",
+      "purpose": "Main flagship website and product subdomain routes",
+      "provider": "Cloudflare Workers",
+      "authoritativeReference": "thelingolegacy.com/* and configured product subdomains",
+      "environment": "production",
+      "criticality": "critical",
+      "owner": "unassigned",
+      "dependencies": [
+        "edge.cloudflare",
+        "ci.github.actions",
+        "hosting.firebase"
+      ],
+      "lifecycleState": "active",
+      "integrationState": "configured_unverified",
+      "lastVerifiedAt": "2026-11-12T22:44:26Z",
+      "evidence": [
+        "Version 137 is the currently recorded 100% deployment; latest uploaded version 305 is an unpromoted preview candidate from operations work; 18 route patterns recorded; no live health probe or release acceptance"
+      ],
+      "secretReferences": []
+    }
+  ],
+  "notes": [
+    "This is an initial evidence-qualified registry, not a complete inventory of all 38 previously observed repositories or every provider resource.",
+    "Timestamps indicate the registry snapshot date, not proof of live verification unless the evidence explicitly says so.",
+    "Never store secret values in this registry.",
+    "Refresh stale/unknown provider state before operational decisions.",
+    "Sonic Boom Nexus is the intended cross-cutting orchestration layer; do not imply an operational runtime until its implementation and telemetry are verified.",
+    "Loyalty Lane Cycles requires three hubs across Philadelphia sections and Cumberland County. Beacon remains feature-flagged until official hub locations, hours and boundaries are approved.",
+    "Cloudflare account inventory on 2026-11-12 identified seven Worker scripts. Deployment percentages and routes are provider metadata; no HTTP health probe was performed.",
+    "Cloudflare Workers readback on 2026-11-12: isolated Studio Control Center staging version 7 is deployed at 100%, workers.dev subdomain enabled, bindings empty, observability enabled; external HTTP health remains unverified and the queried usage window returned no staging event row.",
+    "GitHub Actions readback on PR #553 head: three ubuntu-latest workflow runs ended startup_failure with zero instantiated jobs. This is not a code-test failure; no workflow steps or artifacts were produced.",
+    "Firebase Hosting PR #539 and PR #545 propose the same one-line public-directory change to build/web. PR #545 is based on the current main SHA and carries the clearer Firebase-placeholder and staging safeguards; treat it as the preferred review candidate, not as approved or merged. Both remain open pending exact-head CI and Firebase configuration."
+  ]
+}
