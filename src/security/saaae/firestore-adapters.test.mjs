@@ -66,11 +66,28 @@ test("Firestore approval adapter consumes an exact approved binding once", async
     approvalId: "approval-1", expectedStatus: "approved", nonce: "nonce-1",
     consumedAt: "2026-11-21T00:00:00.000Z",
     expectedBinding: {
-      requesterPrincipalId: "user-1", operation: "oasis.purchase", resourceId: "item-1",
+      requestId: "request-1",
+      requesterPrincipalId: "user-1",
+      approverPrincipalId: "human-2",
+      approverPrincipalType: "human",
+      operation: "oasis.purchase", resourceId: "item-1",
       tenantId: "tenant-1", productDomain: "lingoarcade", environment: "staging",
-      payloadDigest: "c".repeat(64), policyVersion: "v1"
+      payloadDigest: "c".repeat(64), policyVersion: "v1",
+      issuedAt: "2026-11-21T00:00:00.000Z",
+      expiresAt: "2026-11-22T00:00:00.000Z",
+      keyId: "pinned-human-key-2",
+      signature: "signed-envelope"
     }
   };
+  assert.equal(await approvalStore.consumeAtomically({
+    ...args,
+    expectedBinding: { ...args.expectedBinding, approverPrincipalId: "attacker" }
+  }), false);
+  assert.equal(await approvalStore.consumeAtomically({
+    ...args,
+    expectedBinding: { ...args.expectedBinding, expiresAt: "2099-01-01T00:00:00.000Z" }
+  }), false);
+  assert.equal(records.get("security/saaae_v1/approvals/approval-1").status, "approved");
   assert.equal(await approvalStore.consumeAtomically(args), true);
   assert.equal(await approvalStore.consumeAtomically(args), false);
   assert.equal(records.get("security/saaae_v1/approvals/approval-1").status, "consumed");
