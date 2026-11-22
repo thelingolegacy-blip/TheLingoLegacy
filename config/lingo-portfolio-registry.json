@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "lingo-legacy-master-portfolio",
+  "as_of": "2026-11-14",
+  "source_of_truth": "https://github.com/thelingolegacy-blip/TheLingoLegacy",
+  "production_edge": "cloudflare",
+  "release_disposition": "PROTECTED_HOLD",
+  "production_promotion_authorized": false,
+  "gates": {
+    "G02": "FAIL_UNVERIFIED",
+    "G03_G11": "BLOCKED"
+  },
+  "entities": [
+    {"id":"LL-HQ","name":"The Lingo Legacy HQ","group":"LINGOlegacy","priority":"P0","status":"PUBLIC_CANDIDATE","production_accepted":false},
+    {"id":"LL-TML","name":"That’s My Lingo","group":"LINGOslots","priority":"P0","status":"VIRTUAL_DEMO_CANDIDATE","real_value_enabled":false,"registered_play_enabled":false},
+    {"id":"LL-Arcade","name":"LINGOarcade","group":"LINGOarcade","priority":"P1","status":"PLANNED"},
+    {"id":"LL-Slots","name":"LINGOslots","group":"LINGOslots","priority":"P1","status":"PARTIAL"},
+    {"id":"LL-Apparel","name":"Loyalty Lane Apparel","group":"LINGOlane","priority":"P0","status":"COMMERCE_NOT_ACCEPTED","checkout_enabled":false},
+    {"id":"LL-KOTTONS","name":"KOTTONSCODE","group":"LINGOlibrary","priority":"P1","status":"CONTENT_REVIEW_REQUIRED"},
+    {"id":"LL-Nexus","name":"LINGO Nexus","group":"LINGOworld","priority":"P1","status":"PLANNED"},
+    {"id":"LL-Media","name":"LINGOmedia","group":"LINGOmedia","priority":"P1","status":"IN_DEVELOPMENT"},
+    {"id":"LL-Library","name":"LINGOlibrary","group":"LINGOlibrary","priority":"P2","status":"IN_DEVELOPMENT"},
+    {"id":"LL-Cinema","name":"Virtual Cinema","group":"LINGOworld","priority":"P2","status":"PLANNED"},
+    {"id":"LL-AI","name":"askLINGO / LINGOai","group":"LINGOworld","priority":"P0","status":"INTEGRATIONS_UNVERIFIED"},
+    {"id":"LL-ID","name":"LINGO ID","group":"LINGOlegacy","priority":"P0","status":"UI_PREVIEW_AUTH_UNVERIFIED"},
+    {"id":"LL-Wallet","name":"Universal Legacy Wallet","group":"LINGOlegacy","priority":"P0","status":"STAGING_PREVIEW_ONLY"},
+    {"id":"LL-Marketplace","name":"Creator Marketplace","group":"LINGOworld","priority":"P2","status":"PLANNED","payouts_enabled":false},
+    {"id":"LL-Community","name":"Community Laundromat Hub","group":"LINGOworld","priority":"P2","status":"PLANNED"},
+    {"id":"LL-Oasis","name":"Doughboys Oasis","group":"LINGOarcade","priority":"P2","status":"IN_DEVELOPMENT"},
+    {"id":"LL-World","name":"LINGOworld","group":"LINGOworld","priority":"P1","status":"ARCHITECTURE"},
+    {"id":"LL-Services","name":"Business & Services","group":"LINGOlegacy_MASTER","priority":"P2","status":"PLANNED"},
+    {"id":"LL-Support","name":"Support Center","group":"LINGOworld","priority":"P1","status":"PLANNED"},
+    {"id":"LL-Club","name":"LegacyXclub","group":"LegacyXclub","priority":"P1","status":"PLANNED"}
+  ],
+  "global_controls": {
+    "payments": "DISABLED",
+    "cashout": "DISABLED",
+    "real_value_rewards": "DISABLED",
+    "g02_runner_activation": "PROHIBITED_PENDING_EVIDENCE",
+    "last_known_good": "PROTECTED",
+    "production_mutations": "FROZEN"
+  }
+}
