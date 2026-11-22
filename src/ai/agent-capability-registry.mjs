@@ -16,7 +16,7 @@ export function validateAgentRegistration(agent, nowMs = Date.now()) {
   for (const capability of agent.capabilities) {
     if (!record(capability) || !FIELDS.every((field) => text(capability[field]))) return deny('AGENT_CAPABILITY_SCOPE_INCOMPLETE');
     if (capability.tenantId !== agent.tenantId) return deny('AGENT_TENANT_SCOPE_MISMATCH');
-    const key = FIELDS.map((field) => capability[field]).join('\u001f');
+    const key = JSON.stringify(FIELDS.map((field) => capability[field]));
     if (seen.has(key)) return deny('AGENT_CAPABILITY_DUPLICATE');
     seen.add(key);
   }
