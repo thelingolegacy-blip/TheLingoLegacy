@@ -117,3 +117,16 @@ Each asset gets a manifest entry and rights evidence. AI-generated assets must b
 
 ## 9. Finalization boundary
 The design baseline below is intentionally detailed enough to guide implementation, but "finalized" for production requires creator/canon approval, content ratings, legal review where needed, and executable acceptance evidence. These documents do not mean the games are fully implemented or deployed.
+
+
+## 10. LLG Tech Corps architecture alignment
+
+This game bible is governed by the shared [GDeveloper Game Development Execution Standard](GAME-DEVELOPMENT-EXECUTION-STANDARD.md) and the [LINGO MASTER Architecture & Governance Standard](../docs/LLG-MASTER-ARCHITECTURE-STANDARD.md).
+
+GDeveloper is the Game Developer discipline within LLG Tech Corps Software Engineering. Each title retains its own canon, engine/platform decision, asset rights, audience, data boundary and acceptance evidence. Shared identity, save, progression, media, telemetry and AI services are accessed only through approved versioned contracts.
+
+AI assistance is optional and routed through the LLG-owned gateway. Player data is not shared with model providers by default. Provider credentials never enter game clients. AI-generated assets require provenance, rights and human quality review.
+
+Engine choice is title-specific (Unity, Unreal Engine 5 or an appropriate web engine). The portfolio does not force one engine or one platform across all games.
+
+Current governance remains PROTECTED HOLD: G02 FAIL / UNVERIFIED; downstream release gates held. This section aligns planning standards only and does not authorize game release, production deployment, monetization, sweepstakes or provider activation.
