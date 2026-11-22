@@ -47,3 +47,9 @@ test('denies malformed requests and invalid agent records', () => {
   assert.equal(authorizeAgentCapability(agent(), service, null, NOW).reason, 'REQUEST_SCOPE_INCOMPLETE');
   assert.equal(authorizeAgentCapability(null, service, capability, NOW).reason, 'INVALID_AGENT_RECORD');
 });
+
+test('does not treat delimiter-containing distinct capability tuples as duplicates', () => {
+  const first = { ...capability, productId: 'product\\u001fsegment', resourceType: 'resource' };
+  const second = { ...capability, productId: 'product', resourceType: 'segment\\u001fresource' };
+  assert.equal(validateAgentRegistration(agent({ capabilities: [first, second] }), NOW).decision, 'ALLOW');
+});
