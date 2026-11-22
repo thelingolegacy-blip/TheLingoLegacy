@@ -39,11 +39,11 @@ At the inspected `main` source:
 - Canonical 13-mode registry reconciled from preserved source material.
 - Voice/WebRTC architecture and legacy branch security assessment.
 - Product-domain routing and provider-neutral persistence/adapter contracts.
-- Isolated default-deny policy primitive and deterministic action-digest / approval-snapshot validation.
+- Isolated default-deny policy primitive, deterministic action-digest / approval-snapshot validation, and strict query request validation.
 - Canonical 13-mode runtime registry, explicit operating-state resolver, v2 master system prompt, and 12-agent registry with execution disabled.
 - Proposed query API contract with strict request schema and no conversation ID while persistence is disabled.
-- Local `node --check` on all three new runtime modules and all three test files: PASS.
-- Local `npm run test:asklingo`: 20 tests passed, 0 failed.
+- Local `node --check` on all four new runtime modules and all four test files: PASS.
+- Local `npm run test:asklingo`: 29 tests passed, 0 failed.
 - Latest GitHub Actions askLINGO policy run 44967512863: `startup_failure`, zero jobs, no step evidence; CI result is not a pass.
 
 The local test result covers only the isolated policy primitive. It does not validate the complete repository suite, Worker integration, persistence adapters, or production security.
