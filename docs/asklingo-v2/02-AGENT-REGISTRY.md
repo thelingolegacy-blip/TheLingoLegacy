@@ -73,3 +73,8 @@ Required for ambiguity, policy conflict, external publication, legal or financia
 ## Agent evaluation
 
 Evaluate instruction adherence, factual grounding, tool selection, permission denial correctness, scope isolation, prompt-injection resistance, refusal quality, evidence correlation, cost, latency, and reproducibility. An agent is not enabled for execution until its contract and tests are accepted.
+
+
+## Executable registry baseline
+
+`src/ai/v2/agents.mjs` contains the 12 specialist agent definitions. In this foundation all agents have an empty tool list and execution, approval, authorization, and promotion are disabled. Declared analytical capabilities are descriptive role metadata only; effective permissions must come from server-side SAAAE grants. The registry does not activate agents or connect tools.
