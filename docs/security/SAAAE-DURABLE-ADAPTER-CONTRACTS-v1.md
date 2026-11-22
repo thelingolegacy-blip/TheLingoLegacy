@@ -58,7 +58,7 @@ Adapter requirements:
 8. Never let a client or agent write the authoritative approver identity or approval status.
 9. Verify the signature using a pinned trusted key configuration; the record's `keyId` is not itself a trust anchor.
 
-A Firestore implementation may use a transaction that reads the approval and nonce marker, then atomically updates/creates both. It must use server-side Firebase Admin credentials with separately reviewed least-privilege access. Firestore rules alone do not protect Admin SDK calls.
+The review branch now includes `firestore-adapters.mjs`, which transactionally compares and consumes the approval record. It stores the consumed state on the approval record; a separate nonce-marker collection and trusted issuance/signature-verification workflow remain follow-up requirements. It must use server-side Firebase Admin credentials with separately reviewed least-privilege access. Firestore rules alone do not protect Admin SDK calls.
 
 ## 4. AuditWriter contract
 
@@ -89,7 +89,7 @@ Adapter requirements:
 8. Define retention, backup, restore, legal hold, access review, and alerting for chain breaks or sequence gaps.
 9. An unavailable or uncertain audit append blocks a protected side effect.
 
-A hash chain without a separately protected signed checkpoint is not sufficient against an attacker who can rewrite the entire chain. Firestore Admin SDK access is privileged and bypasses Firestore Security Rules; a Firestore-only design must therefore document IAM separation, privileged operator controls, independent checkpoints, and backup/restore protections. An immutable retention store may be appropriate, but must be selected only after project, cost, retention, and compliance review.
+The review-branch Firestore adapter uses one global chain head as a first integration primitive; tenant/product partitioning, a separate nonce-marker collection, and independent signed-checkpoint export are not yet implemented. A hash chain without a separately protected signed checkpoint is not sufficient against an attacker who can rewrite the entire chain. Firestore Admin SDK access is privileged and bypasses Firestore Security Rules; a Firestore-only design must therefore document IAM separation, privileged operator controls, independent checkpoints, and backup/restore protections. An immutable retention store may be appropriate, but must be selected only after project, cost, retention, and compliance review.
 
 ## 5. IdempotencyStore contract
 
@@ -167,4 +167,4 @@ Existing code should be extended rather than replaced:
 
 ## 8. Verification status
 
-The adapter contracts are specified but no durable Firebase/Firestore implementation has been connected. No live Firebase project, IAM configuration, deployed function, audit store, approval store, or idempotency store has been inspected or certified. This document must not be cited as evidence that durable enforcement is operational.
+The review branch contains a dependency-injected Firestore Admin SDK adapter implementation at `src/security/saaae/firestore-adapters.mjs` and three fake-Firestore tests. The implementation and tests are authored but NOT RUN or runtime-verified. No approved non-production Firebase project is identified; no live Firebase project, IAM configuration, deployed function, audit store, approval store, or idempotency store has been inspected or certified. The adapter currently uses a single global audit chain head and does not implement independent signed-checkpoint export or a separate nonce-marker collection. This document must not be cited as evidence that durable enforcement is operational.
