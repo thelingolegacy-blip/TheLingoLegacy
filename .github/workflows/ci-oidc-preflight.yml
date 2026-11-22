@@ -1,0 +1,81 @@
+name: LINGO CI OIDC Identity Preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: lingo-ci-oidc-preflight
+  cancel-in-progress: false
+
+jobs:
+  verify-github-oidc:
+    name: Verify short-lived GitHub Actions identity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Request and validate GitHub OIDC claims
+        shell: bash
+        env:
+          EXPECTED_REPOSITORY: thelingolegacy-blip/TheLingoLegacy
+          EXPECTED_AUDIENCE: lingo-ci-preflight
+          EXPECTED_REF: refs/heads/main
+          EXPECTED_REPOSITORY_ID: "1279436411"
+          EXPECTED_SUBJECT: repo:thelingolegacy-blip/TheLingoLegacy:ref:refs/heads/main
+          EXPECTED_WORKFLOW_REF: thelingolegacy-blip/TheLingoLegacy/.github/workflows/ci-oidc-preflight.yml@refs/heads/main
+        run: |
+          set -euo pipefail
+          : "${ACTIONS_ID_TOKEN_REQUEST_URL:?GitHub OIDC endpoint unavailable}"
+          : "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:?GitHub OIDC request credential unavailable}"
+
+          response="$(curl --fail --silent --show-error \
+            --get "${ACTIONS_ID_TOKEN_REQUEST_URL}" \
+            --data-urlencode "audience=${EXPECTED_AUDIENCE}" \
+            --header "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}")"
+          token="$(printf '%s' "$response" | jq -er '.value')"
+          test -n "$token"
+
+          export OIDC_TOKEN="$token"
+          python - <<'PY'
+          import base64
+          import json
+          import os
+
+          token = os.environ["OIDC_TOKEN"]
+          parts = token.split(".")
+          if len(parts) != 3:
+              raise SystemExit("OIDC token is not a JWT")
+          payload = parts[1] + "=" * (-len(parts[1]) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          expected = {
+              "iss": "https://token.actions.githubusercontent.com",
+              "aud": os.environ["EXPECTED_AUDIENCE"],
+              "repository": os.environ["EXPECTED_REPOSITORY"],
+              "repository_id": os.environ["EXPECTED_REPOSITORY_ID"],
+              "sub": os.environ["EXPECTED_SUBJECT"],
+              "ref": os.environ["EXPECTED_REF"],
+              "workflow_ref": os.environ["EXPECTED_WORKFLOW_REF"],
+              "event_name": "workflow_dispatch",
+          }
+          failures = [key for key, value in expected.items() if claims.get(key) != value]
+          if failures:
+              raise SystemExit("OIDC claim validation failed: " + ", ".join(failures))
+
+          safe_keys = (
+              "iss", "aud", "repository", "repository_id", "repository_owner",
+              "sub", "ref", "ref_type", "event_name", "workflow", "workflow_ref",
+              "job_workflow_ref", "runner_environment", "run_id", "run_attempt",
+              "sha", "actor_id",
+          )
+          safe = {key: claims[key] for key in safe_keys if key in claims}
+          print("GITHUB_OIDC_CLAIM_PREFLIGHT=PASS")
+          print(json.dumps(safe, sort_keys=True, indent=2))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as out:
+              out.write("## LINGO GitHub OIDC preflight\n\n")
+              out.write("**Result:** PASS — GitHub issued a short-lived token and repository, ref, workflow, audience and event claims matched. The workflow parses claims but does not perform signature verification; the external identity provider must verify the JWT signature, issuer and audience.\n\n")
+              out.write("```json\n" + json.dumps(safe, sort_keys=True, indent=2) + "\n```\n")
+          PY
+          unset OIDC_TOKEN token response
