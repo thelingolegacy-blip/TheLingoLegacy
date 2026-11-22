@@ -27,6 +27,8 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 14. [Implementation readiness](13-IMPLEMENTATION-READINESS.md)
 15. [Policy primitive contract](14-POLICY-PRIMITIVE-CONTRACT.md)
 16. [Legacy voice branch assessment](15-LEGACY-VOICE-BRANCH-ASSESSMENT.md)
+17. [Persistence and adapter contracts](16-PERSISTENCE-AND-ADAPTER-CONTRACT.md)
+18. [Product-domain routing](17-PRODUCT-DOMAIN-ROUTING.md)
 
 ## Executable foundation
 
