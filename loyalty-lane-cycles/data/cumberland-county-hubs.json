@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0.0",
+  "region": "Cumberland County, NJ, USA",
+  "targetHubCount": 9,
+  "targetOperatingHours": "24 hours a day, 7 days a week",
+  "releaseStatus": "candidate-only",
+  "note": "These are public-directory research candidates, not approved Loyalty Lane Cycles partners or confirmed 24/7 locations. Confirm identity, current hours, accessibility, owner consent, site security, zoning, insurance, and operating agreement before publication as active hubs.",
+  "cities": [
+    {
+      "city": "Vineland",
+      "targetCount": 3,
+      "hubs": [
+        {
+          "id": "vineland-01",
+          "name": "Boulevard Laundromat",
+          "address": "574 NW Blvd, Vineland, NJ 08360, USA",
+          "phone": "+1-856-696-1761",
+          "listedHours": "Daily 6:00 AM–9:00 PM (directory listing)",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/vineland"
+        },
+        {
+          "id": "vineland-02",
+          "name": "Delsea Laundromat and Dry Cleaners",
+          "address": "1185 S Delsea Dr #6207, Vineland, NJ 08360, USA",
+          "phone": "+1-856-696-8287",
+          "listedHours": "Daily 7:00 AM–9:00 PM (directory listings vary)",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/vineland"
+        },
+        {
+          "id": "vineland-03",
+          "name": "Main Laundromat",
+          "address": "44 S Main Rd, Vineland, NJ 08361, USA",
+          "phone": "+1-856-392-2516",
+          "listedHours": "Daily 6:00 AM–9:00 PM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://www.superpages.com/vineland-nj/dry-cleaners-laundries"
+        }
+      ]
+    },
+    {
+      "city": "Millville",
+      "targetCount": 3,
+      "hubs": [
+        {
+          "id": "millville-01",
+          "name": "Ripicon South Laundromat",
+          "address": "1003 W Main St, Millville, NJ 08332, USA",
+          "phone": null,
+          "listedHours": "Daily 4:30 AM–9:00 PM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/millville"
+        },
+        {
+          "id": "millville-02",
+          "name": "Millville Coin Laundromat",
+          "address": "317 N 2nd St, Millville, NJ 08332, USA",
+          "phone": "+1-856-300-5007",
+          "listedHours": "Weekdays 6:30 AM–9:00 PM; weekends 6:00 AM–9:00 PM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/millville"
+        },
+        {
+          "id": "millville-03",
+          "name": "Lakeview Laundromat",
+          "address": "411 Sharp St, Millville, NJ 08332, USA",
+          "phone": "+1-856-825-1554",
+          "listedHours": "Daily 7:00 AM–9:00 PM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/millville"
+        }
+      ]
+    },
+    {
+      "city": "Bridgeton",
+      "targetCount": 3,
+      "hubs": [
+        {
+          "id": "bridgeton-01",
+          "name": "Family Laundromat",
+          "address": "146 Irving Ave, Bridgeton, NJ 08302, USA",
+          "phone": "+1-856-451-3833",
+          "listedHours": "Directory reports 24 hours Friday and Saturday; other days require confirmation",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://www.google.com/maps/search/?api=1&query=Family+Laundromat+146+Irving+Ave+Bridgeton+NJ"
+        },
+        {
+          "id": "bridgeton-02",
+          "name": "My Heart Laundry",
+          "address": "26 Cornwell Dr, Bridgeton, NJ 08302, USA",
+          "phone": "+1-856-451-4400",
+          "listedHours": "Daily 5:00 AM–12:00 AM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/bridgeton"
+        },
+        {
+          "id": "bridgeton-03",
+          "name": "Bank Street Laundromat",
+          "address": "382 Bank St, Bridgeton, NJ 08302, USA",
+          "phone": "+1-856-455-8050",
+          "listedHours": "Weekdays 7:00 AM–9:00 PM; weekends 6:00 AM–9:00 PM",
+          "status": "candidate-unverified",
+          "targetHours": "24/7",
+          "source": "https://laundromatnear.me/laundromats/nj/bridgeton"
+        }
+      ]
+    }
+  ]
+}
