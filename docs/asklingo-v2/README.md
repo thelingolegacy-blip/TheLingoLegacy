@@ -29,6 +29,7 @@ This directory adds the v2.0 architecture without replacing or silently rewritin
 16. [Legacy voice branch assessment](15-LEGACY-VOICE-BRANCH-ASSESSMENT.md)
 17. [Persistence and adapter contracts](16-PERSISTENCE-AND-ADAPTER-CONTRACT.md)
 18. [Product-domain routing](17-PRODUCT-DOMAIN-ROUTING.md)
+19. [Delivery ledger](18-DELIVERY-LEDGER.md)
 
 ## Executable foundation
 
