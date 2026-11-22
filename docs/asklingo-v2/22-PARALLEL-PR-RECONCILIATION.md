@@ -16,10 +16,10 @@ Do not merge these out of order. #645 is stacked on #644; #646 and #647 are para
 
 ### Independent code-review findings
 
-- **#646 — action-digest canonicalization:** the canonicalizer builds ordinary objects and assigns arbitrary keys. A `__proto__` property can mutate the output prototype and be omitted by JSON serialization, potentially making distinct action descriptors hash to identical canonical bytes. Add prototype-safe serialization and regression tests for top-level/nested `__proto__`; add deterministic cycle rejection. A review comment was posted (review ID `6009244396`). The PR's own documentation correctly states that approval consumption must still be atomic and server-side.
-- **#647 — capability duplicate key:** joining six arbitrary scope strings with U+001F is ambiguous when a field contains that delimiter. Replace with an unambiguous tuple encoding and add a delimiter-injection regression test. A review comment was posted (review ID `6009244459`). Server-side identity attestation, tenant binding, revocation, and authoritative registry loading remain future adapter requirements.
+- **#646 — action-digest canonicalization:** fixed on the PR branch with null-prototype canonical objects, `__proto__` preservation, cycle detection, sparse-array rejection, and regression tests. Targeted isolated Node regression checks passed 3/3; this is not a full PR-suite or hosted CI pass. Follow-up review comment: `7071852441`. Atomic approval consumption and trusted server adapters remain mandatory.
+- **#647 — capability duplicate key:** fixed on the PR branch with unambiguous JSON tuple encoding and a delimiter-injection regression test. Targeted isolated Node regression check passed 1/1; this is not a full PR-suite or hosted CI pass. Follow-up review comment: `7071852721`. Workload identity attestation, tenant binding, revocation, and authoritative registry loading remain future adapter requirements.
 
-These comments are review findings, not accepted fixes. Both PRs remain unapproved for integration until addressed and re-reviewed.
+The initial findings have code/test changes on their respective branches, but independent re-review, complete branch test suites, and hosted CI evidence are still outstanding. Neither PR is approved for integration.
 
 ### Current hosted validation evidence
 
