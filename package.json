@@ -5,7 +5,7 @@
   "scripts": {
     "test:slot": "node --test scripts/tests/server-slot-engine.test.mjs",
     "test:tml-preview": "node --test scripts/tests/tml-preview-engine.test.mjs",
-    "test:asklingo": "node --test scripts/tests/ask-lingo-governance.test.mjs scripts/tests/ask-lingo-modes.test.mjs scripts/tests/ask-lingo-agents.test.mjs",
+    "test:asklingo": "node --test scripts/tests/ask-lingo-governance.test.mjs scripts/tests/ask-lingo-modes.test.mjs scripts/tests/ask-lingo-agents.test.mjs scripts/tests/ask-lingo-request.test.mjs",
     "test": "npm run test:slot && npm run test:tml-preview && npm run test:asklingo"
   },
   "engines": {
