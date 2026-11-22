@@ -44,7 +44,7 @@ No conversation/message content is stored. The schema alone does not implement a
 
 ## Firebase Authentication — BLOCKED
 
-No Firebase/Google Cloud project-management connector or authorized Firebase Admin API action is available in the connected tools for this session. No Firebase project was created, no provider was substituted, and no production Firebase project/settings were changed.
+The Firebase plugin is available in the ChatGPT plugin directory but is not currently connected in this session. No Firebase project was created, no provider was substituted, and no production Firebase project/settings were changed. User action is required to connect the Firebase plugin and authorize a dedicated staging project.
 
 Required next steps:
 1. Provision a dedicated Firebase project or staging tenant under the user's Google Cloud organization.
