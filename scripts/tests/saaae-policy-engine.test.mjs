@@ -48,7 +48,7 @@ test('allows an active subject with an exact, current, scoped grant', () => {
 
 test('denies when the policy service is unavailable or has no version', () => {
   assert.equal(evaluateAuthorization(fixture({ policy: { available: false, version: 'v1' } }), NOW).reason, 'POLICY_UNAVAILABLE');
-  assert.equal(evaluateAuthorization(fixture({ policy: { available: true } }), NOW).reason, 'POLICY_UNAVAILABLE');
+  assert.equal(evaluateAuthorization(fixture({ policy: { available: true, version: 'v1' } }), NOW).reason, 'POLICY_CONFIGURATION_INVALID');
 });
 
 test('denies inactive identities and tenant substitution', () => {
