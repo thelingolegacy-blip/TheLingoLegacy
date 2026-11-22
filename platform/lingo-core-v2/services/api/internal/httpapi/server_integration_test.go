@@ -141,12 +141,20 @@ func TestPostgresProfileIsolationAndTransactionalOutbox(t *testing.T) {
 		t.Fatalf("expected two committed outbox events, got %d", outbox)
 	}
 
-	var issuer string
-	if err := pool.QueryRow(context.Background(), "SELECT payload->>'issuer' FROM lingo_outbox_events ORDER BY occurred_at, id LIMIT 1").Scan(&issuer); err != nil {
+	var uniqueAggregates int
+	if err := pool.QueryRow(context.Background(), "SELECT count(DISTINCT aggregate_id) FROM lingo_outbox_events WHERE event_type = 'profile.updated'").Scan(&uniqueAggregates); err != nil {
 		t.Fatal(err)
 	}
-	if issuer == "" {
-		t.Fatal("outbox payload must retain the verified issuer")
+	if uniqueAggregates != 2 {
+		t.Fatalf("expected two distinct pseudonymous aggregate IDs, got %d", uniqueAggregates)
+	}
+
+	var rawIdentityFields int
+	if err := pool.QueryRow(context.Background(), "SELECT count(*) FROM lingo_outbox_events WHERE payload ? 'issuer' OR payload ? 'subject'").Scan(&rawIdentityFields); err != nil {
+		t.Fatal(err)
+	}
+	if rawIdentityFields != 0 {
+		t.Fatalf("outbox payload must not duplicate raw identity fields, found %d", rawIdentityFields)
 	}
 
 	var response Profile
