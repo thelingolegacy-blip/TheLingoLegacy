@@ -1,0 +1,33 @@
+name: askLINGO v2 Policy Tests
+
+on:
+  pull_request:
+    paths:
+      - "src/ai/v2/**"
+      - "scripts/tests/ask-lingo-governance.test.mjs"
+      - "package.json"
+      - ".github/workflows/asklingo-v2-policy.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asklingo-v2-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  policy-tests:
+    name: Isolated askLINGO policy tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Verify Node.js runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version
+          node -e "if (Number(process.versions.node.split('.')[0]) < 20) process.exit(1)"
+      - name: Run repository test suite
+        run: npm test
