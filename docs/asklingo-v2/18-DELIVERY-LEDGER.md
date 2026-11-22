@@ -34,7 +34,7 @@ This ledger records milestone state from inspected source and attributable test 
 
 - Local syntax checks: `node --check src/ai/v2/policy.mjs` and `node --check scripts/tests/ask-lingo-governance.test.mjs` — PASS.
 - Local policy tests: `npm run test:asklingo` — 10 passed, 0 failed.
-- GitHub Actions run 44966884187 — `startup_failure`, zero jobs, no steps; NOT PASS.
+- Latest GitHub Actions askLINGO run 44967350718 on head `5698f0614b221c31db5493990d98835ca588806d` — `startup_failure`, zero jobs, no steps; other observed repository workflows on the same head also failed startup with zero jobs; NOT PASS.
 - Full repository `npm test` — NOT RUN in this execution.
 - Worker integration and live probes — NOT RUN.
 - Production deployment — NOT AUTHORIZED and NOT RUN.
