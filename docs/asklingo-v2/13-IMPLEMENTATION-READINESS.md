@@ -47,7 +47,7 @@ At the inspected `main` source:
 - Local `node --check` on all four new runtime modules and all four test files: PASS.
 - Local `npm run test:asklingo`: 29 tests passed, 0 failed.
 - Latest inspected foundation-branch Actions runs 44968046838 / 046027 / 045281 / 044464 / 043725 all ended `startup_failure` with zero jobs; CI is not a pass.
-- Parallel PRs #645–#647 are stacked on the foundation branch; #646 and #647 received code-review comments for digest canonicalization and delimiter-collision issues. See [parallel PR reconciliation](22-PARALLEL-PR-RECONCILIATION.md).
+- Parallel PRs #645–#647 are stacked on the foundation branch. The digest canonicalization and delimiter-collision findings on #646/#647 have code/test fixes and targeted isolated regression checks, but full branch suites and hosted CI remain outstanding. See [parallel PR reconciliation](22-PARALLEL-PR-RECONCILIATION.md).
 
 The local test result covers only the isolated policy primitive. It does not validate the complete repository suite, Worker integration, persistence adapters, or production security.
 
@@ -87,10 +87,10 @@ Do not merge these out of order. #645 is stacked on #644; #646 and #647 are para
 
 ### Independent code-review findings
 
-- **#646 — action-digest canonicalization:** the canonicalizer builds ordinary objects and assigns arbitrary keys. A `__proto__` property can mutate the output prototype and be omitted by JSON serialization, potentially making distinct action descriptors hash to identical canonical bytes. Add prototype-safe serialization and regression tests for top-level/nested `__proto__`; add deterministic cycle rejection. A review comment was posted (review ID `6009244396`). The PR's own documentation correctly states that approval consumption must still be atomic and server-side.
-- **#647 — capability duplicate key:** joining six arbitrary scope strings with U+001F is ambiguous when a field contains that delimiter. Replace with an unambiguous tuple encoding and add a delimiter-injection regression test. A review comment was posted (review ID `6009244459`). Server-side identity attestation, tenant binding, revocation, and authoritative registry loading remain future adapter requirements.
+- **#646 — action-digest canonicalization:** fixed on the PR branch with null-prototype canonical objects, `__proto__` preservation, cycle detection, sparse-array rejection, and regression tests. Targeted isolated Node regression checks passed 3/3; this is not a full PR-suite or hosted CI pass. Follow-up review comment: `7071852441`. Atomic approval consumption and trusted server adapters remain mandatory.
+- **#647 — capability duplicate key:** fixed on the PR branch with unambiguous JSON tuple encoding and a delimiter-injection regression test. Targeted isolated Node regression check passed 1/1; this is not a full PR-suite or hosted CI pass. Follow-up review comment: `7071852721`. Workload identity attestation, tenant binding, revocation, and authoritative registry loading remain future adapter requirements.
 
-These comments are review findings, not accepted fixes. Both PRs remain unapproved for integration until addressed and re-reviewed.
+The initial findings have code/test changes on their respective branches, but independent re-review, complete branch test suites, and hosted CI evidence are still outstanding. Neither PR is approved for integration.
 
 ### Current hosted validation evidence
 
