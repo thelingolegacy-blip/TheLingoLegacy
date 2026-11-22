@@ -1,0 +1,16 @@
+{
+  "firestore":{"rules":"firebase-functions/firestore.rules"},
+  "functions":[{
+    "source":".",
+    "codebase":"dmc",
+    "runtime":"nodejs20",
+    "predeploy":["npm --prefix \"$RESOURCE_DIR\" test"],
+    "ignore":["node_modules",".git","tests","*.md"]
+  }],
+  "emulators":{
+    "auth":{"port":9099},
+    "firestore":{"port":8080},
+    "functions":{"port":5001},
+    "ui":{"enabled":false}
+  }
+}

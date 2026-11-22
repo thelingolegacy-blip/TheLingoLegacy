@@ -1,0 +1,27 @@
+name: DMC control-core tests
+on:
+  pull_request:
+    paths:
+      - 'ai/agent-network/**'
+      - '.github/workflows/dmc-control-core.yml'
+  push:
+    branches:
+      - main
+      - feature/lingoai-agent-network-foundation
+    paths:
+      - 'ai/agent-network/**'
+      - '.github/workflows/dmc-control-core.yml'
+permissions:
+  contents: read
+jobs:
+  control-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run DMC negative authorization and contract tests
+        working-directory: ai/agent-network
+        run: npm test

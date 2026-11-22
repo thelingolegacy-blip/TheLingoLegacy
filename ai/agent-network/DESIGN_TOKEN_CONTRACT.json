@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "status": "contract_only_values_not_canonical",
+  "description": "Token structure and required measurements. Populate approved exact values only after reconciling the brand source of truth; null values must not be rendered as CSS.",
+  "color_system": {
+    "semantic_tokens": {
+      "brand_primary": null,
+      "brand_secondary": null,
+      "surface_base": null,
+      "surface_elevated": null,
+      "text_primary": null,
+      "text_muted": null,
+      "border_default": null,
+      "interactive": null,
+      "focus_ring": null,
+      "success": null,
+      "warning": null,
+      "danger": null,
+      "info": null
+    },
+    "known_directions": [
+      "Industrial Noir: near-black/charcoal, crimson, white and restrained metallic accents",
+      "Gold + Royal Purple: designated premium/legacy experiences only"
+    ],
+    "required_metadata": [
+      "exact_hex",
+      "semantic_role",
+      "contrast_pairs",
+      "contrast_results",
+      "approval_source",
+      "owner",
+      "version"
+    ]
+  },
+  "spacing": {
+    "base_unit_px": 4,
+    "scale_units": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      10,
+      12,
+      16
+    ],
+    "note": "Scale is a proposed 4-point spacing system; validate against existing design assets before adoption."
+  },
+  "responsive_test_viewports_css_px": [
+    320,
+    360,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "minimum_touch_target_css_px": 44,
+  "typography": {
+    "required": [
+      "font_family",
+      "font_size",
+      "font_weight",
+      "line_height",
+      "letter_spacing"
+    ]
+  },
+  "layout": {
+    "required": [
+      "content_max_width",
+      "breakpoints",
+      "grid_columns",
+      "gutter",
+      "page_margin",
+      "safe_area_insets"
+    ]
+  },
+  "accessibility": {
+    "contrast_standard": "WCAG 2.2 AA target",
+    "focus_visible_required": true,
+    "keyboard_navigation_required": true,
+    "reduced_motion_required": true
+  },
+  "governance": {
+    "canonical_values_require_approval": true,
+    "no_screenshot_color_sampling_as_source_of_truth": true,
+    "shared_tokens_versioned": true,
+    "world_theme_overrides_must_preserve_semantic_tokens": true
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/pipeline-work-item.schema.json",
+  "title": "LINGOlegacy Pipeline Work Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "work_item_id",
+    "project_id",
+    "stage",
+    "status",
+    "owner_agent_id",
+    "dependencies",
+    "acceptance_criteria",
+    "checkpoint_id",
+    "next_action"
+  ],
+  "properties": {
+    "work_item_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parent_work_item_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stage": {
+      "enum": [
+        "discover",
+        "define",
+        "design",
+        "build",
+        "integrate",
+        "verify",
+        "accept",
+        "release",
+        "observe",
+        "maintain"
+      ]
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "ready",
+        "active",
+        "blocked",
+        "failed",
+        "verified",
+        "accepted",
+        "released",
+        "retired"
+      ]
+    },
+    "owner_agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "collaborator_agent_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "reviewer_agent_id": {
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "affected_components": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "affected_routes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "authorized_tool_scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checkpoint_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rollback_checkpoint_id": {
+      "type": "string"
+    },
+    "blocker": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supersedes_work_item_id": {
+      "type": "string"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

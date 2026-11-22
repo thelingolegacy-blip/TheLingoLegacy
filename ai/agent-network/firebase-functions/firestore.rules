@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // DMC control records are server-managed. Clients must use authenticated
+    // callable functions; no direct client read/write bypass is permitted.
+    match /dmcApprovalRequests/{id} { allow read, write: if false; }
+    match /dmcAuditEvents/{id} { allow read, write: if false; }
+    match /dmcHandoffs/{id} { allow read, write: if false; }
+  }
+}
