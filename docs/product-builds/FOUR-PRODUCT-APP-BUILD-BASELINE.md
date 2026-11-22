@@ -102,3 +102,44 @@ Production promotion remains blocked until the exact commit, build artifact, tes
 ## 7. Explicit non-actions
 
 This work does not authorize real-money wagering, live sweepstakes, cash-equivalent game credits, production payments, legal acceptance, public child data collection, paid subscriptions, new recurring spend, destructive data migrations, production DNS/Worker changes, or production release promotion. Those remain separately gated and require verifiable service readiness and any required user/provider approvals.
+
+
+## 4A. Parallel preview and source-provenance checkpoint — 2026-11-21
+
+Five isolated AppDeploy previews were re-inventoried. Their latest stored snapshots and source inventories are recorded below. These are preview artifacts; they are **not yet reconciled source commits** in this repository.
+
+| Product surface | AppDeploy app | Snapshot | Stored files | Preview URL | Current disposition |
+|---|---|---:|---:|---|---|
+| Loyalty Lane Cycle + Community Hub | `loyalty-lane-community-hub-zb39n2` | `1795317250691` | 14 | https://loyalty-lane-community-hub-zb39n2.v2.appdeploy.ai/ | Preview ready; demo laundry only, reward issuance disabled, messages pending moderation. |
+| Loyalty Lane Apparel | `loyalty-lane-apparel-xg490y` | `1795317386132` | 9 | https://loyalty-lane-apparel-xg490y.v2.appdeploy.ai/ | Browse-only preview; Shopify catalog/checkout not connected. |
+| That's My Lingo | `that-s-my-lingo-casino-studio-2xntye` | `1795317582649` | 31 | https://that-s-my-lingo-casino-studio-2xntye.v2.appdeploy.ai/ | Preview ready; pseudonymous leaderboard hardening recorded; virtual-only economy. |
+| Kotton's Code Studio | `kotton-s-code-cartoon-studio-509py3` | `1795317254140` | 17 | https://kotton-s-code-cartoon-studio-509py3.v2.appdeploy.ai/ | Preview ready; production APIs require authenticated staff role; asset source gaps remain. |
+| Kotton's Code Family Explorer | `kotton-s-code-family-explorer-atd316` | `1795317510156` | 9 | https://kotton-s-code-family-explorer-atd316.v2.appdeploy.ai/ | Static family preview only; no child accounts, personal-data collection, messaging, or progress persistence. |
+
+### Source reconciliation disposition
+
+- GitHub remains the canonical source of truth. The five AppDeploy snapshots have been inventoried by exact app ID, snapshot ID, and stored path list.
+- No AppDeploy snapshot has been blindly copied into a production product directory. The snapshots contain AppDeploy-specific client/backend SDK imports and runtime assumptions; these must be adapted to the canonical Cloudflare/Firebase architecture and existing product contracts, not simply transplanted.
+- The preview source must be imported into an isolated reconciliation branch with provenance metadata, then reviewed file-by-file against canonical product directories and dedicated repositories. Preserve historical and last-known-good copies; resolve duplicate assets and route ownership before replacing anything.
+- The Apparel snapshot is a standalone static showroom; the Family Explorer is a static, local-interaction preview. Neither is a substitute for the canonical commerce or family-account implementation.
+- The That's My Lingo snapshot's Vite 8 package normalization must be validated against the canonical build toolchain before any port or dependency change.
+- The Cycle backend persists per-user demo state and audit/message records, but its demo coin balance is not a production financial/rewards ledger and live machine booking is not implemented.
+- The Kotton Studio's staff-only APIs are a preview implementation; owner/staff invitation, revocation, and cross-role tests still require end-to-end evidence. The four world image resources require canonical asset mapping and visual verification.
+
+### Integration and acceptance evidence
+
+- All five preview deployments previously returned ready status with zero reported frontend, network, and backend errors. This is deployment telemetry, not proof that the listed browser tests or real provider integrations have passed.
+- Shopify Admin API access remains unavailable; no live catalog, checkout, orders, fulfillment, or payment integration is accepted.
+- Stripe remains test mode; no live payments or real-value transactions are enabled.
+- Firebase production project, credentials, rules, and live linkage were not verified in this checkpoint. No production Firebase integration is claimed.
+- SAAAE requirements remain mandatory across all four product families: default-deny authorization, product/resource scope, least privilege, persistent approval evidence, audit trails, and immediate revocation.
+
+### Parallel acceptance workstreams and exit criteria
+
+1. **Loyalty Lane Cycle:** reconcile canonical source; verify authenticated member isolation, server-owned/idempotent ledger operations, branch/machine registry, booking semantics, moderation, audit completeness, and unauthorized 401/403 behavior. Keep rewards and live booking disabled until provider evidence exists.
+2. **Loyalty Lane Apparel:** reconcile canonical product catalog and visual assets; recover Shopify merchant access; validate variants/SKUs/stock/prices, checkout handoff, signed webhooks, tax/shipping, fulfillment, returns, and order privacy. Keep checkout disabled while access is unavailable.
+3. **That's My Lingo:** reconcile game source and Vite toolchain; prove deterministic reel/payout math, server-authoritative outcomes, immutable idempotent virtual wallet ledger, replay protection, rate limits, player isolation, leaderboard privacy, and responsible-play UX. Keep cash-out, purchase of Demo Coins, real-value rewards, and sweepstakes disabled.
+4. **Kotton's Code:** reconcile studio and family-preview source separately; repair/map all four world images; verify staff invitation and revocation; complete parent/guardian consent, age-appropriate controls, moderation, accessibility/audio/captions, progress deletion/export, and child-privacy review before any child-facing account release.
+5. **Shared platform:** verify Firebase/Auth/Firestore project identity and rules, Lingo ID integration, SAAAE policy enforcement, secrets provenance, monitoring, backup/restore, rollback, mobile/desktop acceptance, and commit-to-build-to-deployment correlation.
+
+**Current release decision:** preview-only / production not ready. PR #648 remains draft and unmerged. Production DNS/Worker changes, live payments, sweepstakes, child accounts, and production promotion remain protected. No milestone is considered complete until its source commit and reproducible acceptance evidence are attached.
