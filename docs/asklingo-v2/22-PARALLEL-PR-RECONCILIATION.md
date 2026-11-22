@@ -9,7 +9,7 @@ This document records the current PR topology and staging boundary. It is an evi
 | PR | Base / dependency | Scope | Current observed state |
 |---|---|---|---|
 | #643 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | SAAAE foundation and Firestore-oriented adapter/test work | OPEN / DRAFT; head `07e58381dccf3d4c03a550a2b01c7ffd38735f21`; 19 files |
-| #644 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | askLINGO v2 architecture, 4 isolated modules, focused tests, workflow, docs, staging scaffold | OPEN / DRAFT; head `923d0718348af55bb0f602d12a043785c0d45346`; 38 files |
+| #644 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | askLINGO v2 architecture, 4 isolated modules, focused tests, workflow, docs, staging scaffold | OPEN / DRAFT; 38 files; head was `7acf71ff696bdcfe2bab27ddf315af91b5f0893a` immediately before this reconciliation update |
 | #645 | stacked on #644 | 17-workstream execution plan | OPEN / DRAFT; head `33b8a144eb061d55b69c3fd3bb480454035a3ea5`; 1 document |
 | #646 | stacked on #645 | SAAAE pure policy kernel and tests | OPEN / DRAFT; head `9cb35860efe7808ce3ade1ef03725e5c58fdbf14`; 4 files |
 | #647 | stacked on #645 | Agent capability registry and tests | OPEN / DRAFT; head `2d30541e6c6ace30e35c7c9e4915d2590e8621bb`; 3 files |
@@ -57,3 +57,14 @@ This is infrastructure provisioning, not a functioning service, identity integra
 ### Release posture
 
 No merge or production promotion is authorized by this record. The public askLINGO facade remains disabled; staging remains a fail-closed scaffold; G02 remains FAIL / UNVERIFIED; production remains PROTECTED HOLD. Specification, code, provisioning, execution, evidence, independent verification, acceptance, authorization, and promotion are distinct states.
+
+
+### Additional backend inventory — 2026-11-22
+
+A separate read-only inspection of the connected Supabase account found one active project (ref `zoksxavxmgnkrthselek`, status `ACTIVE_HEALTHY`). Its `public` schema currently has zero application tables; the project reports zero migrations and zero Edge Functions. Security, performance, and health advisor queries returned no lints at inspection time. These empty advisor results are not a security certification.
+
+This Supabase project is not identified in the current askLINGO architecture as the selected backend. Do not create schema, deploy functions, or route application traffic into it until backend ownership, environment, data model, identity integration, and migration authority are explicitly reconciled. The askLINGO Cloudflare D1 staging scaffold remains a separate resource and must not be conflated with this Supabase project.
+
+### Snapshot freshness rule
+
+The #644 head SHA above is a historical pre-update checkpoint. This documentation-only commit advances the #644 branch again. For live branch heads and base relationships, query the current PR metadata; do not treat a SHA recorded inside the branch being updated as a self-updating pointer. No merge, CI pass, backend activation, or production promotion is implied by this documentation correction.
