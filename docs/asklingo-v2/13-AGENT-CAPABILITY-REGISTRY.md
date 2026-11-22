@@ -5,7 +5,7 @@
 - Duplicate capability rejection and exact tenant matching.
 - Server-side authorization helper requiring an active service identity bound to the registered agent.
 - Exact tenant/product/resource type/resource ID/operation/environment matching; no wildcard, inherited, or ambient capability.
-- Node tests integrated into npm test.
+- Node test suite runnable independently with `node --test scripts/tests/agent-capability-registry.test.mjs`.
 
 ## Limitations
 This module does not persist or enroll agents, issue credentials, validate signed workload identity, load authoritative registry records, implement delegation, execute tools, or write audit records. It accepts records only as trusted inputs from a future server-side registry adapter. Do not pass client-supplied agent or service records.
