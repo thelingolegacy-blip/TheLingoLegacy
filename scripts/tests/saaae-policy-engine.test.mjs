@@ -116,3 +116,20 @@ test('action digest rejects invalid descriptors', async () => {
   await assert.rejects(() => createActionDigest(null), TypeError);
   await assert.rejects(() => createActionDigest({ amount: Number.NaN }), TypeError);
 });
+
+test('action digest preserves top-level and nested __proto__ keys as data', async () => {
+  const first = JSON.parse('{"__proto__":{"role":"reader"},"nested":{"__proto__":{"scope":"one"}}}');
+  const second = JSON.parse('{"__proto__":{"role":"writer"},"nested":{"__proto__":{"scope":"one"}}}');
+  const third = JSON.parse('{"__proto__":{"role":"reader"},"nested":{"__proto__":{"scope":"two"}}}');
+  assert.notEqual(await createActionDigest(first), await createActionDigest(second));
+  assert.notEqual(await createActionDigest(first), await createActionDigest(third));
+});
+
+test('action digest rejects cyclic and sparse descriptors deterministically', async () => {
+  const cyclic = {};
+  cyclic.self = cyclic;
+  await assert.rejects(() => createActionDigest(cyclic), /cycle/);
+  const sparse = [];
+  sparse.length = 1;
+  await assert.rejects(() => createActionDigest({ sparse }), /sparse array/);
+});
