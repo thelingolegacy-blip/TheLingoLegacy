@@ -8,8 +8,8 @@ This document records the current PR topology and staging boundary. It is an evi
 
 | PR | Base / dependency | Scope | Current observed state |
 |---|---|---|---|
-| #643 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | SAAAE foundation and Firestore-oriented adapter/test work | OPEN / DRAFT; head `07e58381dccf3d4c03a550a2b01c7ffd38735f21`; 19 files |
-| #644 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | askLINGO v2 architecture, 4 isolated modules, focused tests, workflow, docs, staging scaffold | OPEN / DRAFT; 38 files; head was `7acf71ff696bdcfe2bab27ddf315af91b5f0893a` immediately before this reconciliation update |
+| #643 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | SAAAE foundation and Firestore-oriented adapter/test work | OPEN / DRAFT; head `dcf0f2ed49d596df55ac599850d3099e4ac58000`; 19 files |
+| #644 | `main@3fe099eb11329cc333ffa5a1ea36affcd0375343` | askLINGO v2 architecture, 4 isolated modules, focused tests, workflow, docs, staging scaffold | OPEN / DRAFT; 38 files; head was `7f9044331084831ce12f98c235d77d63b5626568` immediately before this reconciliation update |
 | #645 | stacked on #644 | 17-workstream execution plan | OPEN / DRAFT; head `33b8a144eb061d55b69c3fd3bb480454035a3ea5`; 1 document |
 | #646 | stacked on #645 | SAAAE pure policy kernel and tests | OPEN / DRAFT; head `9cb35860efe7808ce3ade1ef03725e5c58fdbf14`; 4 files |
 | #647 | stacked on #645 | Agent capability registry and tests | OPEN / DRAFT; head `2d30541e6c6ace30e35c7c9e4915d2590e8621bb`; 3 files |
@@ -21,7 +21,7 @@ All six PRs are open, draft, and unmerged at this inspection. GitHub's mergeable
 
 - **#646 — action-digest canonicalization:** the PR branch records null-prototype canonical objects, `__proto__` preservation, cycle detection, sparse-array rejection, and targeted regression checks (3/3 reported). Complete branch suite, hosted CI, persistent transactional integration, and independent security acceptance remain outstanding.
 - **#647 — capability duplicate key:** the PR branch records unambiguous JSON tuple encoding and a delimiter-injection regression check (1/1 reported). Complete branch suite, hosted CI, workload identity attestation, tenant binding, revocation, and authoritative registry integration remain outstanding.
-- **#643 — SAAAE foundation:** the PR describes pure policy, approval, audit, idempotency, and injected Firestore adapter work. Its own status records substantial authored tests not yet run and no approved non-production Firebase project, IAM proof, signing/key custody, independent audit checkpoint, or protected-operation integration. Fake adapters do not prove Firestore transaction concurrency, IAM, or restore behavior.
+- **#643 — SAAAE foundation:** the PR contains pure policy, approval, audit, idempotency, and injected Firestore adapter work. A review found a time-of-check/time-of-use gap: the transactional approval consume previously bound only a subset of the signed envelope. The branch now binds request ID, requester/approver identity and type, exact action scope, payload digest, policy version, issuance/expiry, key ID, signature, nonce, and approved status; authored regression cases reject approver and expiry substitution. The changes were fetched back and verified, but tests have not been run in this continuation. No approved non-production Firebase project, IAM proof, signing/key custody, independent audit checkpoint, or protected-operation integration is established. Fake adapters do not prove Firestore transaction concurrency, IAM, or restore behavior.
 
 Targeted regression results are author-reported evidence, not independent acceptance. No PR is approved for integration by this document.
 
@@ -68,3 +68,9 @@ This Supabase project is not identified in the current askLINGO architecture as 
 ### Snapshot freshness rule
 
 The #644 head SHA above is a historical pre-update checkpoint. This documentation-only commit advances the #644 branch again. For live branch heads and base relationships, query the current PR metadata; do not treat a SHA recorded inside the branch being updated as a self-updating pointer. No merge, CI pass, backend activation, or production promotion is implied by this documentation correction.
+
+
+### Latest SAAAE branch repair snapshot — 2026-11-22
+
+PR #643 now includes the approval-envelope compare-and-set hardening described above. Current branch head at the time of this note: `dcf0f2ed49d596df55ac599850d3099e4ac58000`. The repair is source-verified only; no local Node suite, Firestore emulator, live staging transaction, hosted CI, or independent acceptance result is claimed.
+
