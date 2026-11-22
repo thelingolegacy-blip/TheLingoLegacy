@@ -1,0 +1,39 @@
+name: LINGOmedia Creator Studio CI
+on:
+  pull_request:
+    paths:
+      - "apps/lingomedia-creator-studio/**"
+      - ".github/workflows/lingomedia-creator-studio-ci.yml"
+  push:
+    branches:
+      - "feature/lingomedia-creator-studio-zero-cost"
+    paths:
+      - "apps/lingomedia-creator-studio/**"
+      - ".github/workflows/lingomedia-creator-studio-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lingomedia-creator-studio-ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    name: Build and test Creator Studio
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/lingomedia-creator-studio
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type-check and build
+        run: npm run build
+      - name: Run unit tests
+        run: npm test
