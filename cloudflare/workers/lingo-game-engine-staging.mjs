@@ -19,7 +19,7 @@ function json(body, status = 200, headers = {}) {
 
 export function bearerTokenFromRequest(request) {
   const header = request.headers.get('authorization') || '';
-  const match = /^Bearer\\s+([^\\s]+)$/i.exec(header);
+  const match = /^Bearer\s+([^\s]+)$/i.exec(header);
   return match?.[1] || null;
 }
 
