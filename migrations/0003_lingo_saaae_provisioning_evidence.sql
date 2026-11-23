@@ -65,6 +65,44 @@ CREATE TABLE IF NOT EXISTS lingo_saaae_provisioning_audit (
 CREATE INDEX IF NOT EXISTS idx_lingo_saaae_provisioning_audit_request
   ON lingo_saaae_provisioning_audit(request_id, created_at);
 
+
+-- Requests may only enter through the pending state. Terminal/approved states
+-- require a reviewed transition and cannot be forged by the initial insert.
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_provisioning_request_initial_pending
+BEFORE INSERT ON lingo_saaae_provisioning_requests
+WHEN NEW.status <> 'pending'
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_PROVISIONING_INITIAL_STATE_MUST_BE_PENDING');
+END;
+
+-- Expired/cancelled records retain the metadata appropriate to the state
+-- from which they transitioned: pending requests have no reviewer/executor;
+-- approved requests retain reviewer evidence and have no executor evidence.
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_provisioning_terminal_state_metadata
+BEFORE UPDATE ON lingo_saaae_provisioning_requests
+WHEN NEW.status IN ('expired','cancelled')
+ AND NOT (
+   (NEW.reviewer_operator_id IS NULL AND NEW.reviewed_at IS NULL
+     AND NEW.executor_operator_id IS NULL AND NEW.executed_at IS NULL)
+   OR
+   (NEW.reviewer_operator_id IS NOT NULL AND NEW.reviewed_at IS NOT NULL
+     AND NEW.executor_operator_id IS NULL AND NEW.executed_at IS NULL)
+ )
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_PROVISIONING_TERMINAL_STATE_METADATA_INVALID');
+END;
+
+-- Audit rows must carry the exact immutable digest of their parent request.
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_provisioning_audit_digest_match
+BEFORE INSERT ON lingo_saaae_provisioning_audit
+WHEN NEW.request_digest <> (
+  SELECT request_digest FROM lingo_saaae_provisioning_requests
+  WHERE request_id = NEW.request_id
+)
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_PROVISIONING_AUDIT_DIGEST_MISMATCH');
+END;
+
 CREATE TRIGGER IF NOT EXISTS lingo_saaae_provisioning_request_binding_immutable
 BEFORE UPDATE ON lingo_saaae_provisioning_requests
 WHEN NEW.request_id IS NOT OLD.request_id
