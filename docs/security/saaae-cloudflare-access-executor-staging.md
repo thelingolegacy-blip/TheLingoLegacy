@@ -115,3 +115,7 @@ The verifier is not yet wired into a privileged Worker endpoint. The operator re
 ### Access shell provisioning record
 
 On 2026-11-23, the dedicated self-hosted Access application shell was created and immediately read back. App ID: `32ebd30f-3edf-4b42-9e59-23372bcadd59`. It is bound to the selected Cloudflare IdP and has no attached policies. The hostname has no DNS record. The shell is intentionally not usable until a reviewed executor exists and independently controlled requester/reviewer identities are confirmed. No broad, bypass, or account-member policy was attached.
+
+### Staging D1 target inspection
+
+A read-only Cloudflare D1 inspection confirmed that Wrangler's configured database `lingo-game-engine-staging-20261107` (`793ab138-7818-47c9-ad01-b319ad34a8c5`) exists in the selected account and matches the staging configuration. Its current schema contains the game foundation tables but none of the six SAAAE runtime tables and none of the provisioning evidence tables. No migration was applied. The database's Cloudflare API `version` field reports `production`, which is a D1 service version label and must not be confused with the application environment; the explicit database name and Wrangler binding identify the intended staging target. Because PR #658 remains unmerged/draft and CI startup has not succeeded, migration application remains held pending review and successful migration tests.
