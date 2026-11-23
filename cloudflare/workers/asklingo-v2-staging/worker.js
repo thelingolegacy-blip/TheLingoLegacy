@@ -67,8 +67,9 @@ export default {
     if (type !== 'application/json') return response({error:'unsupported_media_type',request_id:requestId},415,requestId,origin);
     const length = Number(request.headers.get('content-length') || 0);
     if (length > MAX_BODY_BYTES) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
-    let body; try { const raw=await request.text(); if (new TextEncoder().encode(raw).byteLength>MAX_BODY_BYTES) throw new Error('large'); body=JSON.parse(raw); }
-    catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
+    let raw; try { raw=await request.text(); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
+    if (new TextEncoder().encode(raw).byteLength>MAX_BODY_BYTES) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
+    let body; try { body=JSON.parse(raw); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
     if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.message !== 'string' || body.message.trim().length===0 || body.message.length>MAX_MESSAGE_CHARS || !['web','mobile','studio'].includes(body.surface || 'web') || (body.conversation_id !== undefined && body.conversation_id !== null))
       return response({error:'invalid_request',request_id:requestId},400,requestId,origin);
     if (!env.ASKLINGO_DB || !env.FIREBASE_PROJECT_ID) return response({error:'identity_or_database_not_configured',request_id:requestId},503,requestId,origin);
