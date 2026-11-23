@@ -39,7 +39,7 @@ export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempot
  */
 export async function playAndSettleD1Spin(db, {
   firebaseUid, gameId, idempotencyKey, ruleVersion, symbols, paytable, wagerUnits,
-  tenantId, approvalId, actionDigest, correlationId,
+  tenantId, approvalId, actionDigest, correlationId, authTime,
 }) {
   safeId(firebaseUid, 'firebaseUid');
   safeId(gameId, 'gameId');
@@ -65,9 +65,54 @@ export async function playAndSettleD1Spin(db, {
        AND approver_uid <> requester_uid
        AND EXISTS (
          SELECT 1 FROM lingo_saaae_principals p
+          WHERE p.firebase_uid = lingo_saaae_approvals.requester_uid
+            AND p.status = 'active' AND p.token_valid_after_epoch <= ?
+       )
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_tenant_memberships m
+          WHERE m.firebase_uid = lingo_saaae_approvals.requester_uid
+            AND m.tenant_id = lingo_saaae_approvals.tenant_id AND m.status = 'active'
+       )
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_grants g
+          WHERE g.firebase_uid = lingo_saaae_approvals.requester_uid
+            AND g.tenant_id = lingo_saaae_approvals.tenant_id
+            AND g.product_id = lingo_saaae_approvals.product_id
+            AND g.resource_id = lingo_saaae_approvals.resource_id
+            AND g.operation = 'spin' AND g.effect = 'allow' AND g.status = 'active'
+            AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+            AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM lingo_saaae_grants g
+          WHERE g.firebase_uid = lingo_saaae_approvals.requester_uid
+            AND g.tenant_id = lingo_saaae_approvals.tenant_id
+            AND g.product_id = lingo_saaae_approvals.product_id
+            AND g.resource_id = lingo_saaae_approvals.resource_id
+            AND g.operation = 'spin' AND g.effect = 'deny' AND g.status = 'active'
+            AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+            AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+       )
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_principals p
           WHERE p.firebase_uid = lingo_saaae_approvals.approver_uid AND p.status = 'active'
        )
-  `).bind(firebaseUid, approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest);
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_tenant_memberships m
+          WHERE m.firebase_uid = lingo_saaae_approvals.approver_uid
+            AND m.tenant_id = lingo_saaae_approvals.tenant_id AND m.status = 'active'
+       )
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_grants g
+          WHERE g.firebase_uid = lingo_saaae_approvals.approver_uid
+            AND g.tenant_id = lingo_saaae_approvals.tenant_id
+            AND g.product_id = lingo_saaae_approvals.product_id
+            AND g.resource_id = lingo_saaae_approvals.resource_id
+            AND g.operation = 'approval.approve' AND g.effect = 'allow' AND g.status = 'active'
+            AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+            AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+       )
+  `).bind(firebaseUid, approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, authTime);
 
   const sessionId = crypto.randomUUID();
   const outcome = evaluateThreeReelSpin({ symbols, paytable, wagerUnits });
