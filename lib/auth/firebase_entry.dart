@@ -145,7 +145,7 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
         );
       }
     } on FirebaseAuthException catch (error) {
-      setState(() => _error = _authMessage(error.code));
+      if (mounted) setState(() => _error = _authMessage(error.code));
     } catch (_) {
       setState(() => _error = 'The account request could not be completed. Please try again.');
     } finally {
@@ -164,7 +164,11 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       if (mounted) setState(() => _error = 'If an account exists for that address, a reset email has been sent.');
     } on FirebaseAuthException catch (error) {
-      if (mounted) setState(() => _error = _authMessage(error.code));
+      if (mounted) {
+        setState(() => _error = error.code == 'user-not-found'
+          ? 'If an account exists for that address, a reset email has been sent.'
+          : _authMessage(error.code));
+      }
     } catch (_) {
       if (mounted) setState(() => _error = 'Password reset is temporarily unavailable.');
     } finally {
