@@ -84,7 +84,7 @@ export async function authorizeD1Request(db, {
   }
 
   const windowStart = Math.floor(nowEpoch / windowSeconds) * windowSeconds;
-  const bucketKey = `${uid}:${routeKey}:${windowStart}`;
+  const bucketKey = await sha256Hex(JSON.stringify([uid, routeKey, windowStart]));
   const bucket = await db.prepare(`
     INSERT INTO lingo_saaae_rate_limit_buckets
       (bucket_key, firebase_uid, route_key, window_start_epoch, request_count)
