@@ -191,7 +191,7 @@ export default {
         const result = await playAndSettleD1Spin(env.DB, {
           firebaseUid: identity.uid, gameId: GAME_ID, idempotencyKey,
           ruleVersion: RULE_VERSION, symbols: SYMBOLS, paytable: PAYTABLE,
-          wagerUnits, tenantId, approvalId, actionDigest, correlationId,
+          wagerUnits, tenantId, approvalId, actionDigest, correlationId, authTime: identity.authTime,
         });
         return json({
           sessionId: result.session_id, reels: JSON.parse(result.reels_json),
