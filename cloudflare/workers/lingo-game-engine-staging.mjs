@@ -30,7 +30,12 @@ async function identityFromRequest(request, env) {
   }
   const token = bearerTokenFromRequest(request);
   if (!token) return { ok: false, status: 401, code: 'UNAUTHORIZED' };
-  const verified = await verifyFirebaseIdToken(token, env.FIREBASE_PROJECT_ID);
+  let verified;
+  try {
+    verified = await verifyFirebaseIdToken(token, env.FIREBASE_PROJECT_ID);
+  } catch {
+    return { ok: false, status: 503, code: 'IDENTITY_PROVIDER_UNAVAILABLE' };
+  }
   if (!verified.ok) {
     const unavailable = verified.code === 'TOKEN_VERIFICATION_UNAVAILABLE';
     return { ok: false, status: unavailable ? 503 : 401, code: unavailable ? 'IDENTITY_PROVIDER_UNAVAILABLE' : 'UNAUTHORIZED' };
