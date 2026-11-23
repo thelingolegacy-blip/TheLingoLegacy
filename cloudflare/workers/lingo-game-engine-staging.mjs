@@ -1,6 +1,6 @@
 import { verifyFirebaseIdToken } from '../../src/auth/firebase-id-token.mjs';
 import { authorizeD1Request, requestCorrelationId, sha256Hex, verifyPendingApproval } from '../../src/server/saaae-d1.mjs';
-import { playAndSettleD1Spin } from '../../src/server/d1-slot-service.mjs';
+import { findSettledD1SpinReplay, playAndSettleD1Spin } from '../../src/server/d1-slot-service.mjs';
 
 const GAME_ID = 'thats-my-lingo';
 const PRODUCT_ID = 'thats-my-lingo';
@@ -148,6 +148,20 @@ export default {
           routeKey: 'slots.spin', correlationId, requestDigest: actionDigest, rateLimit: 20,
         });
         if (!authorization.ok) return json({ error: 'FORBIDDEN', reason: authorization.reasonCode, correlationId }, 403);
+
+        const replay = await findSettledD1SpinReplay(env.DB, {
+          firebaseUid: identity.uid, gameId: GAME_ID, idempotencyKey,
+          ruleVersion: RULE_VERSION, wagerUnits,
+        });
+        if (replay) {
+          return json({
+            sessionId: replay.session_id, reels: JSON.parse(replay.reels_json),
+            wagerUnits: replay.wager_units, payoutUnits: replay.payout_units,
+            newBalanceUnits: replay.balance_after_units, replayed: true,
+            currency: 'NON_REDEEMABLE_PLAY_CREDITS', rulesVersion: replay.rule_version,
+            correlationId,
+          });
+        }
 
         const approvalValid = await verifyPendingApproval(env.DB, {
           approvalId, uid: identity.uid, tenantId, productId: PRODUCT_ID,
