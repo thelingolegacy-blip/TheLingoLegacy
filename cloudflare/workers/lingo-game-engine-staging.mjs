@@ -69,6 +69,19 @@ export default {
       if (env.ENVIRONMENT !== 'staging' || !env.DB) return json({ status: 'degraded' }, 503);
       try {
         await env.DB.prepare('SELECT 1 AS ok').first();
+        const required = await env.DB.prepare(`
+          SELECT COUNT(*) AS present
+            FROM sqlite_master
+           WHERE type = 'table' AND name IN (
+             'lingo_saaae_principals',
+             'lingo_saaae_tenant_memberships',
+             'lingo_saaae_grants',
+             'lingo_saaae_approvals',
+             'lingo_saaae_audit_events',
+             'lingo_saaae_rate_limit_buckets'
+           )
+        `).first();
+        if (required?.present !== 6) return json({ status: 'degraded', environment: 'staging' }, 503);
         return json({ status: 'ok', environment: 'staging', rulesVersion: RULE_VERSION });
       } catch {
         return json({ status: 'degraded', environment: 'staging' }, 503);
