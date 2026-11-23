@@ -41,3 +41,15 @@ test('CORS rejects an unconfigured origin', async () => {
   const r=await worker.fetch(new Request('https://staging.invalid/_health',{headers:{Origin:'https://attacker.invalid'}}),env);
   assert.equal(r.status,403);
 });
+test('configured CORS preflight is explicit and bodyless', async () => {
+  const r=await worker.fetch(new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'OPTIONS',headers:{Origin:'https://staging.thelingolegacy.com'}}),{ASKLINGO_ALLOWED_ORIGINS:'https://staging.thelingolegacy.com'});
+  assert.equal(r.status,204); assert.equal(r.headers.get('Access-Control-Allow-Origin'),'https://staging.thelingolegacy.com');
+  assert.equal(await r.text(),'');
+});
+test('query rejects client-supplied conversation identifiers and extra fields', async () => {
+  const configured={FIREBASE_PROJECT_ID:'lingo-staging-test',ASKLINGO_DB:{}};
+  for (const payload of [{message:'hello',surface:'web',conversation_id:'client-id'},{message:'hello',surface:'web',user_id:'forged'}]) {
+    const r=await worker.fetch(new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),configured);
+    assert.equal(r.status,400);
+  }
+});
