@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS lingo_saaae_audit_events (
   product_id TEXT,
   resource_id TEXT,
   operation TEXT NOT NULL,
-  decision TEXT NOT NULL CHECK (decision IN ('allow','deny','approval_required','approval_consumed','rate_limited','error')),
+  decision TEXT NOT NULL CHECK (decision IN ('allow','deny','approval_required','approval_issued','approval_consumed','rate_limited','error')),
   reason_code TEXT NOT NULL,
   request_digest TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
