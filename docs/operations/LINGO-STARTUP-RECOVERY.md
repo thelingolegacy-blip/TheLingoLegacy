@@ -74,3 +74,18 @@ A workflow record with zero jobs, no runner assignment, or no executed steps is 
 ## Completion record
 
 This change prepares the canonical bootstrap and its runbook. It is not operationally certified until a manual run produces the acceptance evidence above.
+
+
+## Initial PR-triggered diagnostic checkpoint — 2026-11-23
+
+Opening draft PR #656 caused three existing pull-request workflows to start, but each concluded `startup_failure` before job creation:
+
+| Workflow | Run ID | Conclusion | Jobs | Artifacts |
+|---|---:|---|---:|---:|
+| Crimson Smoke UI — static validation | 45251531052 | `startup_failure` | 0 | 0 |
+| Lingo Legacy Static CI | 45251529304 | `startup_failure` | 0 | 0 |
+| G02 Runner Image Build (no publish) | 45251526852 | `startup_failure` | 0 | 0 |
+
+The provider job and artifact endpoints returned empty collections for all three runs. Therefore no runner assignment, step execution, or workflow artifact is evidenced. This is consistent with the previously observed pre-job startup blocker and does not demonstrate a defect in the new bootstrap's shell steps.
+
+The bootstrap itself is manual-only and did not run as a result of opening the PR. The current GitHub integration exposes read and selected rerun operations but no workflow-dispatch action. Do not misrepresent a PR-triggered workflow as a manual bootstrap run. Preserve this checkpoint and use the repository's supported GitHub Actions manual-dispatch interface when available.
