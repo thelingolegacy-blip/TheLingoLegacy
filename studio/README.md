@@ -87,7 +87,7 @@ The Studio catalog also separates the **World Builder & Simulation Studio** (wor
 
 ### Dashboard integration — 2026-11-21
 
-The Studio dashboard now loads the canonical 21-module catalog from `/studio/enterprise-module-registry.json` and renders each module's declared readiness, scope and read-only boundary. It no longer substitutes the legacy 21-name runtime module array for the enterprise capability catalog.
+The Studio dashboard now loads the canonical 22-module catalog from `/studio/enterprise-module-registry.json` and renders each module's declared readiness, scope and read-only boundary. It no longer substitutes the legacy 21-name runtime module array for the enterprise capability catalog.
 
 The provider panel deliberately separates evidence classes:
 - **Live browser probes:** the same-origin Cloudflare Worker status/gate APIs and the public GitHub repository metadata endpoint. The Worker CSP permits only the exact `https://api.github.com` origin for this additional read-only probe.
