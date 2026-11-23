@@ -21,6 +21,8 @@ jobs:
       - name: Capture provider-assigned runner identity
         id: identity
         shell: bash
+        env:
+          RUNNER_ID: ${{ runner.id }}
         run: |
           set -euo pipefail
           test -n "${RUNNER_NAME:-}"
@@ -36,6 +38,7 @@ jobs:
             echo "job=${GITHUB_JOB}"
             echo "commit_sha=${GITHUB_SHA}"
             echo "ref=${GITHUB_REF}"
+            echo "runner_id=${RUNNER_ID}"
             echo "runner_name=${RUNNER_NAME}"
             echo "runner_os=${RUNNER_OS}"
             echo "runner_arch=${RUNNER_ARCH}"
@@ -68,6 +71,7 @@ jobs:
         if: always()
         shell: bash
         env:
+          RUNNER_ID: ${{ runner.id }}
           IDENTITY_RESULT: ${{ steps.identity.outcome }}
           BASELINE_RESULT: ${{ steps.baseline.outcome }}
         run: |
@@ -77,6 +81,7 @@ jobs:
             echo "- Run ID: ${GITHUB_RUN_ID}"
             echo "- Attempt: ${GITHUB_RUN_ATTEMPT}"
             echo "- Commit: ${GITHUB_SHA}"
+            echo "- Runner ID: ${RUNNER_ID:-not-assigned}"
             echo "- Runner: ${RUNNER_NAME:-not-assigned}"
             echo "- Platform: ${RUNNER_OS:-unknown}/${RUNNER_ARCH:-unknown}"
             echo "- Identity step: ${IDENTITY_RESULT}"
