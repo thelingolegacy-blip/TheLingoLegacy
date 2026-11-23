@@ -105,3 +105,32 @@ BEFORE DELETE ON lingo_saaae_audit_events
 BEGIN
   SELECT RAISE(ABORT, 'SAAAE_AUDIT_IS_APPEND_ONLY');
 END;
+-- Approval bindings are immutable; a consumed approval is terminal and retained.
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_approval_binding_immutable
+BEFORE UPDATE ON lingo_saaae_approvals
+WHEN NEW.approval_id IS NOT OLD.approval_id
+  OR NEW.tenant_id IS NOT OLD.tenant_id
+  OR NEW.product_id IS NOT OLD.product_id
+  OR NEW.resource_id IS NOT OLD.resource_id
+  OR NEW.operation IS NOT OLD.operation
+  OR NEW.action_digest IS NOT OLD.action_digest
+  OR NEW.requester_uid IS NOT OLD.requester_uid
+  OR NEW.approver_uid IS NOT OLD.approver_uid
+  OR NEW.expires_at IS NOT OLD.expires_at
+  OR NEW.created_at IS NOT OLD.created_at
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE');
+END;
+
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_approval_consumed_terminal
+BEFORE UPDATE ON lingo_saaae_approvals
+WHEN OLD.status = 'consumed'
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_APPROVAL_CONSUMPTION_IS_TERMINAL');
+END;
+
+CREATE TRIGGER IF NOT EXISTS lingo_saaae_approval_no_delete
+BEFORE DELETE ON lingo_saaae_approvals
+BEGIN
+  SELECT RAISE(ABORT, 'SAAAE_APPROVAL_RECORD_IS_RETAINED');
+END;
