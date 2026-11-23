@@ -92,3 +92,17 @@ test('unverified and privacy-sensitive destinations remain gated while Contact s
   assert.match(html, /Privacy · owner review pending/);
   assert.match(html, /Terms availability unverified/);
 });
+
+test('Dusse is recorded as a separate independent brand, not a ninth public portfolio', () => {
+  const section = html.match(/<section class="section" id="independent-brands">([\\s\\S]*?)<\\/section>/)?.[1];
+  assert.ok(section, 'missing independent Dusse identity section');
+  assert.match(section, /THE PRESTIGIOUS HOUSE OF DUSSE/);
+  assert.match(section, /Founder:<\\/strong> Zavione/);
+  assert.match(section, /Debut:<\\/strong> November 7, 2021/);
+  assert.match(section, /route is not verified/);
+  assert.match(section, /does not imply incorporation, nonprofit or charitable status/);
+  assert.match(section, /House of Avalon remains a separate historical archive/);
+  assert.equal(realmTitles.length, 8);
+  assert.ok(!realmTitles.includes('THE PRESTIGIOUS HOUSE OF DUSSE'));
+  assert.doesNotMatch(section, /House of Avalon.*current brand/i);
+});
