@@ -162,6 +162,7 @@ class IssuanceD1 {
   prepare(sql) {
     const db = this;
     return {
+      sql,
       args: [],
       bind(...args) { this.args = args; return this; },
       async first() {
