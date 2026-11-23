@@ -143,7 +143,7 @@ test('approval lookup rejects absent identifiers and missing records', async () 
 
 test('correlation IDs are bounded and generated when untrusted input is malformed', () => {
   const valid = new Request('https://unit.test', { headers: { 'x-correlation-id': 'corr.safe-1' } });
-  const invalid = new Request('https://unit.test', { headers: { 'x-correlation-id': 'bad value\n' } });
+  const invalid = new Request('https://unit.test', { headers: { 'x-correlation-id': 'bad value' } });
   assert.equal(requestCorrelationId(valid), 'corr.safe-1');
   assert.match(requestCorrelationId(invalid), /^[0-9a-f-]{36}$/);
 });
