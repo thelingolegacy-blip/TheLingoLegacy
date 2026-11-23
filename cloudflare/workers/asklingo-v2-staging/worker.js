@@ -11,6 +11,24 @@ function response(body, status, requestId, origin) {
   if (origin) { h.set('Access-Control-Allow-Origin', origin); h.set('Vary','Origin'); }
   return new Response(status===204 ? null : JSON.stringify(body), { status, headers:h });
 }
+async function readBodyLimited(request, maxBytes) {
+  const reader = request.body?.getReader();
+  if (!reader) return { tooLarge:false, text:'' };
+  const chunks = []; let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > maxBytes) {
+      try { await reader.cancel(); } catch {}
+      return { tooLarge:true, text:'' };
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size); let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return { tooLarge:false, text:new TextDecoder('utf-8', { fatal:true }).decode(bytes) };
+}
 function decodePart(value) {
   const normalized = value.replace(/-/g,'+').replace(/_/g,'/');
   return Uint8Array.from(atob(normalized.padEnd(Math.ceil(normalized.length/4)*4,'=')), c => c.charCodeAt(0));
@@ -67,8 +85,11 @@ export default {
     if (type !== 'application/json') return response({error:'unsupported_media_type',request_id:requestId},415,requestId,origin);
     const length = Number(request.headers.get('content-length') || 0);
     if (length > MAX_BODY_BYTES) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
-    let raw; try { raw=await request.text(); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
-    if (new TextEncoder().encode(raw).byteLength>MAX_BODY_BYTES) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
+    let raw; try {
+      const bounded = await readBodyLimited(request, MAX_BODY_BYTES);
+      if (bounded.tooLarge) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
+      raw = bounded.text;
+    } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
     let body; try { body=JSON.parse(raw); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
     if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k=>!['message','surface','conversation_id','locale'].includes(k)) || typeof body.message !== 'string' || body.message.trim().length===0 || body.message.length>MAX_MESSAGE_CHARS || !['web','mobile','studio'].includes(body.surface || 'web') || (body.locale !== undefined && (typeof body.locale!=='string' || body.locale.length>35)) || (body.conversation_id !== undefined && body.conversation_id !== null))
       return response({error:'invalid_request',request_id:requestId},400,requestId,origin);
