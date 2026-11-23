@@ -53,3 +53,9 @@ test('query rejects client-supplied conversation identifiers and extra fields', 
     assert.equal(r.status,400);
   }
 });
+
+test('configured route rejects malformed bearer tokens before database access', async () => {
+  const configured={FIREBASE_PROJECT_ID:'lingo-staging-test',FIREBASE_WEB_API_KEY:'test-public-config-key',ASKLINGO_DB:{}};
+  const r=await worker.fetch(new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer not-a-jwt'},body:JSON.stringify({message:'hello',surface:'web'})}),configured);
+  assert.equal(r.status,401); assert.equal((await r.json()).error,'unauthorized');
+});
