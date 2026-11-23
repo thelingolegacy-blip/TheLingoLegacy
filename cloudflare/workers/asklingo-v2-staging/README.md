@@ -5,7 +5,7 @@
 ## Safety behavior
 - Firebase ID tokens are signature-verified server-side against Google's Secure Token signing keys, with issuer and audience pinned to `FIREBASE_PROJECT_ID`.
 - Every request checks Firebase account status and `validSince` through the Identity Toolkit account lookup, rejecting disabled users and tokens issued before revocation.
-- A verified UID and signed `tenant_id` custom claim must map to one active `principals` row; a non-expired, non-revoked staging grant must match that exact tenant and `asklingo / assistant / query / query` scope. Client-supplied tenant IDs are rejected.
+- A verified UID and signed `tenant_id` custom claim must map to one active `principals` row; a non-expired, non-revoked staging grant must match that exact tenant and `asklingo / assistant / query / query` scope for web/mobile, or `asklingo / studio-assistant / query / query` for studio. These are distinct grants. Client-supplied tenant IDs are rejected.
 - Authenticated-principal rate limits and security audit events use the existing D1 tables. Raw tokens and message bodies are not persisted.
 - A Cloudflare edge/IP rate-limit rule for unauthenticated traffic is still a required deployment prerequisite; the D1 principal bucket cannot protect requests before identity verification.
 - Missing identity configuration, D1 binding, principal, grant, audit persistence, or provider/privacy approval fails closed.
