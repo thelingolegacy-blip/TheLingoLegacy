@@ -8,7 +8,7 @@ void main() {
       apiKey: 'YOUR_WEB_API_KEY',
       appId: 'YOUR_WEB_APP_ID',
       messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-      projectId: 'lingo-legacy-production',
+      projectId: 'YOUR_FIREBASE_PROJECT_ID',
     );
 
     expect(hasUsableFirebaseOptions(options), isFalse);
