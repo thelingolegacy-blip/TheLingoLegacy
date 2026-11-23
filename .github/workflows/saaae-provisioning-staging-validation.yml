@@ -1,0 +1,62 @@
+name: SAAAE Provisioning Staging Validation
+
+on:
+  push:
+    branches:
+      - security/saaae-cloudflare-access-executor-staging-20261123
+    paths:
+      - "src/auth/cloudflare-access-jwt.mjs"
+      - "scripts/tests/cloudflare-access-jwt.test.mjs"
+      - "src/server/saaae-d1.mjs"
+      - "scripts/tests/saaae-d1.test.mjs"
+      - "migrations/0002_lingo_saaae_staging.sql"
+      - "migrations/0003_lingo_saaae_provisioning_evidence.sql"
+      - "scripts/tests/test-lingo-saaae-migration.py"
+      - "scripts/tests/test-lingo-saaae-provisioning-migration.py"
+      - ".github/workflows/saaae-provisioning-staging-validation.yml"
+  pull_request:
+    branches:
+      - security/game-engine-saaae-staging-20261123
+    paths:
+      - "src/auth/cloudflare-access-jwt.mjs"
+      - "scripts/tests/cloudflare-access-jwt.test.mjs"
+      - "src/server/saaae-d1.mjs"
+      - "scripts/tests/saaae-d1.test.mjs"
+      - "migrations/0002_lingo_saaae_staging.sql"
+      - "migrations/0003_lingo_saaae_provisioning_evidence.sql"
+      - "scripts/tests/test-lingo-saaae-migration.py"
+      - "scripts/tests/test-lingo-saaae-provisioning-migration.py"
+      - ".github/workflows/saaae-provisioning-staging-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: saaae-provisioning-staging-validation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  staging-security-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Check Access JWT verifier syntax
+        run: node --check src/auth/cloudflare-access-jwt.mjs
+      - name: Cloudflare Access JWT verification tests
+        run: node --test scripts/tests/cloudflare-access-jwt.test.mjs
+      - name: SAAAE authorization and approval tests
+        run: node --test scripts/tests/saaae-d1.test.mjs
+      - name: SQLite SAAAE runtime migration tests
+        run: python3 scripts/tests/test-lingo-saaae-migration.py
+      - name: SQLite SAAAE provisioning evidence migration tests
+        run: python3 scripts/tests/test-lingo-saaae-provisioning-migration.py
