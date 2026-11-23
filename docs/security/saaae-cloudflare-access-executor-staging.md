@@ -100,3 +100,13 @@ Read-only inspection on 2026-11-23 confirmed:
 ## 9. Explicit non-actions
 
 This design commit does not create an Access application or policy, DNS record, Worker, D1 database, service token, secret, principal, membership, grant, or production change. It does not make PR #658 mergeable and does not declare the provisioning path operational.
+
+## 10. Implementation checkpoint — 2026-11-23
+
+A standalone verifier has been added at `src/auth/cloudflare-access-jwt.mjs`. It validates RS256 signatures against the Access issuer JWKS and checks issuer, audience, expiry, optional not-before/not-issued-in-future claims, and a non-empty subject. It returns the verified subject for lookup in a separately maintained operator registry. It does not assign roles, accept email as the identity key, or authorize provisioning.
+
+Unit tests are in `scripts/tests/cloudflare-access-jwt.test.mjs`. The five focused tests passed in a local Node 22.16.0 execution during this work session. This local result is not a GitHub Actions result and does not establish Cloudflare production/staging connectivity.
+
+A read-only validation workflow was added at `.github/workflows/saaae-provisioning-staging-validation.yml`. GitHub created push and pull-request runs, but both ended with `startup_failure` and zero jobs. No CI test steps ran and no CI artifacts were produced. Investigate the Actions startup failure before treating the branch as CI-verified.
+
+The verifier is not yet wired into a privileged Worker endpoint. The operator registry, request/review API, executor workload identity, allow-listed D1 mutation implementation, atomic provisioning transaction, Access application, policy, DNS, D1 migration application, and end-to-end staging evidence remain outstanding. Keep the executor unavailable and the production hold active.
