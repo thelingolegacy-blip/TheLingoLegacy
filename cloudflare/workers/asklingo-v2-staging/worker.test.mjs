@@ -59,3 +59,12 @@ test('configured route rejects malformed bearer tokens before database access', 
   const r=await worker.fetch(new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer not-a-jwt'},body:JSON.stringify({message:'hello',surface:'web'})}),configured);
   assert.equal(r.status,401); assert.equal((await r.json()).error,'unauthorized');
 });
+
+test('query enforces payload limit on streamed bodies without Content-Length', async () => {
+  const body=JSON.stringify({message:'x'.repeat(5000),surface:'web'});
+  const stream=new ReadableStream({start(controller){controller.enqueue(new TextEncoder().encode(body));controller.close();}});
+  const request=new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'POST',headers:{'Content-Type':'application/json'},body:stream,duplex:'half'});
+  assert.equal(request.headers.get('content-length'),null);
+  const r=await worker.fetch(request,{});
+  assert.equal(r.status,413);
+});
