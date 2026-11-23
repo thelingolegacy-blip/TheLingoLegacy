@@ -140,7 +140,7 @@
       "id": "cloud-studio",
       "name": "Cloud Studio",
       "scope": "Cloudflare Workers/routes/DNS and Render previews, bindings metadata and environment inventory",
-      "status": "LIVE_VERIFIED",
+      "status": "SOURCE_DECLARED",
       "permissions": [
         "studio:read"
       ],
