@@ -33,7 +33,7 @@ test('query route refuses to operate without identity and database configuration
   assert.equal(r.status,503); assert.equal((await r.json()).error,'identity_or_database_not_configured');
 });
 test('configured route rejects missing bearer identity', async () => {
-  const configured={FIREBASE_PROJECT_ID:'lingo-staging-test',ASKLINGO_DB:{}};
+  const configured={FIREBASE_PROJECT_ID:'lingo-staging-test',FIREBASE_WEB_API_KEY:'test-public-config-key',ASKLINGO_DB:{}};
   const r=await worker.fetch(new Request('https://staging.invalid/api/v1/ask-lingo/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'hello',surface:'web'})}),configured);
   assert.equal(r.status,401);
 });
