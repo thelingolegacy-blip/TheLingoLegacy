@@ -147,7 +147,7 @@ export default {
         if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1 || wagerUnits > MAX_WAGER_UNITS) {
           return json({ error: 'INVALID_WAGER', maxWagerUnits: MAX_WAGER_UNITS, correlationId }, 400);
         }
-        if (typeof idempotencyKey !== 'string' || idempotencyKey.length < 8 || idempotencyKey.length > 128) {
+        if (typeof idempotencyKey !== 'string' || idempotencyKey.length < 16 || idempotencyKey.length > 128) {
           return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
         }
         const resourceId = `game:${GAME_ID}`;
