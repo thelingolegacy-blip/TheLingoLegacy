@@ -116,3 +116,12 @@ GitHub Actions runs observed after the earlier commits still failed at workflow 
 The recovered canonical non-production Firebase project ID is `lingo-legacy-staging`. The repository's dedicated Wrangler staging configuration now explicitly binds `FIREBASE_PROJECT_ID=lingo-legacy-staging`, alongside `ENVIRONMENT=staging` and the existing dedicated staging D1 database.
 
 This is a source-configuration correction only. It does not change the currently deployed Cloudflare Worker binding, create or verify a Firebase project, add Firebase client API keys/app IDs, or deploy a new Worker version. The staging Worker continues to fail closed if its runtime Firebase project binding is absent or set to `lingo-legacy-production`. Before deployment, verify the Firebase project exists and is accessible, configure the same staging-only binding in Cloudflare, and run the Wrangler dry-run plus CI and integration tests. Production project configuration and production routes remain untouched.
+
+
+## Current Cloudflare inventory reconciliation — 2026-11-23
+
+The connected Cloudflare account was queried read-only on 2026-11-23. Its current Workers script inventory did **not** contain a script named `lingo-game-engine-staging`. A direct read of `/accounts/{account_id}/workers/scripts/lingo-game-engine-staging/settings` returned HTTP 404 with Cloudflare error 10007 (Worker does not exist on this account).
+
+This conflicts with the historical 2026-11-07 snapshot above. The old snapshot is retained as historical evidence, but it must not be treated as proof that the Worker currently exists or is deployed. No attempt was made to create, upload, update, or deploy a Worker. The 2026-11-23 Wrangler change only corrects the source configuration to use `FIREBASE_PROJECT_ID=lingo-legacy-staging`; it does not create a Cloudflare resource.
+
+Current disposition: staging Worker runtime binding is **not currently verifiable because the script is absent from the connected account inventory**. Reconcile whether the historical Worker was deleted, moved to another Cloudflare account, or never persisted in the currently connected account. Only after account/resource identity is resolved should the staging Worker be provisioned from reviewed source, with the dedicated D1 binding and staging Firebase project binding. Do not point it at production or attach production routes. Production configuration remains untouched.
