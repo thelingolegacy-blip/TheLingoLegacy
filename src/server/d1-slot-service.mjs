@@ -23,6 +23,15 @@ function assertSameRequest(existing, gameId, ruleVersion, wagerUnits) {
   return { ...existing, replayed: true };
 }
 
+export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempotencyKey, ruleVersion, wagerUnits }) {
+  safeId(firebaseUid, 'firebaseUid');
+  safeId(gameId, 'gameId');
+  safeId(ruleVersion, 'ruleVersion');
+  if (!validateIdempotencyKey(idempotencyKey)) throw new TypeError('idempotencyKey is invalid');
+  const prior = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
+  return prior ? assertSameRequest(prior, gameId, ruleVersion, wagerUnits) : null;
+}
+
 /**
  * Generate and persist one server-authoritative spin. Approval consumption,
  * session creation, ledger settlement and the corresponding audit event share
