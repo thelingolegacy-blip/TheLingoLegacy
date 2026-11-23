@@ -1,0 +1,66 @@
+name: Firebase and Flutter staging validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "firebase.json"
+      - "firestore.rules"
+      - "firestore.indexes.json"
+      - ".github/workflows/firebase-flutter-validation.yml"
+  push:
+    branches:
+      - "recovery/firebase-clean-replacement-20261123"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-flutter-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-validation:
+    name: Flutter dependency, format, analyze, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Install Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Record toolchain
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Check Dart formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze Flutter application
+        run: flutter analyze --fatal-infos
+
+      - name: Run Flutter tests
+        run: flutter test --reporter expanded
+
+      - name: Verify no production Firebase project is hardcoded in staging options
+        shell: bash
+        run: |
+          if grep -R --line-number --fixed-strings "lingo-legacy-production" lib/firebase_options.dart; then
+            echo "Production Firebase project ID must not be embedded in staging client options."
+            exit 1
+          fi
+          echo "No production Firebase project ID found in Flutter platform options."
