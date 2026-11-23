@@ -109,3 +109,10 @@ GitHub Actions runs observed after the earlier commits still failed at workflow 
 - Isolated Worker route regression harness: 6/6 passed. The harness used stubbed downstream Firebase/D1 modules; it verifies bearer parsing, health response behavior, fail-closed handling for absent/production Firebase project IDs, and unknown-route behavior. It is not a full integration test of Firebase signature verification or D1 settlement.
 - Full repository Node/Python suites were not executed in this runtime. A root `package.json` is absent on this branch, so the proposed `npm run check`, `npm run lint`, and `npm run build` commands are not defined here.
 - Wrangler dry-run was not executed locally because this runtime cannot resolve external package hosts to obtain Wrangler. The dry-run is now included in the GitHub Actions workflow, but GitHub has not started any job for the latest run.
+
+
+## Firebase staging isolation correction — 2026-11-23
+
+The recovered canonical non-production Firebase project ID is `lingo-legacy-staging`. The repository's dedicated Wrangler staging configuration now explicitly binds `FIREBASE_PROJECT_ID=lingo-legacy-staging`, alongside `ENVIRONMENT=staging` and the existing dedicated staging D1 database.
+
+This is a source-configuration correction only. It does not change the currently deployed Cloudflare Worker binding, create or verify a Firebase project, add Firebase client API keys/app IDs, or deploy a new Worker version. The staging Worker continues to fail closed if its runtime Firebase project binding is absent or set to `lingo-legacy-production`. Before deployment, verify the Firebase project exists and is accessible, configure the same staging-only binding in Cloudflare, and run the Wrangler dry-run plus CI and integration tests. Production project configuration and production routes remain untouched.
