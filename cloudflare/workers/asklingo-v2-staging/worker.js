@@ -41,7 +41,7 @@ async function verifyFirebaseToken(token, projectId) {
   const key = await crypto.subtle.importKey('jwk',jwk,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['verify']);
   const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,decodePart(parts[2]),new TextEncoder().encode(parts[0]+'.'+parts[1]));
   if (!valid) throw new Error('invalid_token');
-  return { uid:claims.sub, issuer:issuer };
+  return { uid:claims.sub, issuer:issuer, authTime:claims.auth_time };
 }
 async function audit(db, event) {
   await db.prepare('INSERT INTO audit_events (event_id,tenant_id,actor_principal_id,actor_type,event_type,resource_type,resource_id,action_digest,decision,correlation_id,occurred_at,metadata_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
@@ -58,8 +58,8 @@ export default {
     }
     if (origin && !allowed.has(origin)) return response({error:'origin_not_allowed',request_id:requestId},403,requestId);
     if (url.pathname === '/_health' && request.method === 'GET') {
-      const ready = Boolean(env.ASKLINGO_DB && env.FIREBASE_PROJECT_ID);
-      return response({service:'askLINGO',environment:'staging',state:'authorization_preflight_only',identity_configured:Boolean(env.FIREBASE_PROJECT_ID),database_bound:Boolean(env.ASKLINGO_DB),inference:false,conversation_persistence:false,operational_actions:false,ready_for_query:false,request_id:requestId},ready?200:503,requestId,origin);
+      const identityConfigured = Boolean(env.FIREBASE_PROJECT_ID && env.FIREBASE_WEB_API_KEY);
+      return response({service:'askLINGO',environment:'staging',state:'authorization_preflight_only',identity_configured:identityConfigured,database_bound:Boolean(env.ASKLINGO_DB),inference:false,conversation_persistence:false,operational_actions:false,ready_for_query:false,request_id:requestId},503,requestId,origin);
     }
     if (url.pathname !== '/api/v1/ask-lingo/query') return response({error:'not_found',request_id:requestId},404,requestId,origin);
     if (request.method !== 'POST') return response({error:'method_not_allowed',request_id:requestId},405,requestId,origin);
@@ -72,10 +72,22 @@ export default {
     let body; try { body=JSON.parse(raw); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
     if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k=>!['message','surface','conversation_id','locale'].includes(k)) || typeof body.message !== 'string' || body.message.trim().length===0 || body.message.length>MAX_MESSAGE_CHARS || !['web','mobile','studio'].includes(body.surface || 'web') || (body.locale !== undefined && (typeof body.locale!=='string' || body.locale.length>35)) || (body.conversation_id !== undefined && body.conversation_id !== null))
       return response({error:'invalid_request',request_id:requestId},400,requestId,origin);
-    if (!env.ASKLINGO_DB || !env.FIREBASE_PROJECT_ID) return response({error:'identity_or_database_not_configured',request_id:requestId},503,requestId,origin);
+    if (!env.ASKLINGO_DB || !env.FIREBASE_PROJECT_ID || !env.FIREBASE_WEB_API_KEY) return response({error:'identity_or_database_not_configured',request_id:requestId},503,requestId,origin);
     const auth = request.headers.get('Authorization') || ''; const match=auth.match(/^Bearer\s+(.+)$/i);
     if (!match) return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
     let identity; try { identity=await verifyFirebaseToken(match[1],String(env.FIREBASE_PROJECT_ID)); } catch (error) { const unavailable=['identity_key_service_unavailable','identity_keys_missing'].includes(error?.message); return response({error:unavailable?'identity_verification_unavailable':'unauthorized',request_id:requestId},unavailable?503:401,requestId,origin); }
+    try {
+      const statusUrl='https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(String(env.FIREBASE_WEB_API_KEY));
+      const statusResponse=await fetch(statusUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken:match[1]})});
+      if (!statusResponse.ok) {
+        const unavailable=statusResponse.status!==400 && statusResponse.status!==401;
+        return response({error:unavailable?'identity_status_check_unavailable':'unauthorized',request_id:requestId},unavailable?503:401,requestId,origin);
+      }
+      const statusBody=await statusResponse.json();
+      const account=Array.isArray(statusBody.users)?statusBody.users.find(user=>user.localId===identity.uid):null;
+      if (!account || account.disabled===true || (Number(account.validSince||0)>0 && Number(account.validSince)>identity.authTime))
+        return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
+    } catch { return response({error:'identity_status_check_unavailable',request_id:requestId},503,requestId,origin); }
     const db=env.ASKLINGO_DB; const now=Math.floor(Date.now()/1000);
     const principal=await db.prepare("SELECT principal_id,tenant_id FROM principals WHERE issuer=? AND subject=? AND status='active' LIMIT 1").bind(identity.issuer,identity.uid).first();
     if (!principal) { try { await audit(db,{requestId,type:'query.authorization_denied',decision:'deny',reason:'principal_missing',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'forbidden',request_id:requestId},403,requestId,origin); }
