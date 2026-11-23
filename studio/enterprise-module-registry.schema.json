@@ -125,6 +125,38 @@
               "string",
               "null"
             ]
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "observedAt",
+              "confidence",
+              "correlationId"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "correlationId": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }
