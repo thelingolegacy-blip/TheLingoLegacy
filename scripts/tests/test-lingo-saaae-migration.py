@@ -54,6 +54,18 @@ def main():
        requester_uid, approver_uid, expires_at)
       VALUES ('approval-1', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin',
        'sha256:request-digest', 'user-1', 'approver-1', '2099-01-01T00:00:00Z')""")
+    db.execute("""UPDATE lingo_saaae_approvals
+      SET status='consumed', consumed_at='2026-11-23T00:00:00Z', consumed_by='user-1'
+      WHERE approval_id='approval-1'""")
+    expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET status='approved' WHERE approval_id='approval-1'", (), 'SAAAE_APPROVAL_CONSUMPTION_IS_TERMINAL')
+    expect_integrity_error(db, "DELETE FROM lingo_saaae_approvals WHERE approval_id='approval-1'", (), 'SAAAE_APPROVAL_RECORD_IS_RETAINED')
+
+    db.execute("""INSERT INTO lingo_saaae_approvals
+      (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
+       requester_uid, approver_uid, status, expires_at)
+      VALUES ('approval-2', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin',
+       'sha256:request-digest-2', 'user-1', 'approver-1', 'pending', '2099-01-01T00:00:00Z')""")
+    expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET action_digest='tampered' WHERE approval_id='approval-2'", (), 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE')
 
     db.execute("""INSERT INTO lingo_saaae_audit_events
       (event_id, correlation_id, actor_uid, tenant_id, product_id, resource_id,
@@ -76,6 +88,9 @@ def main():
     print('APPROVAL_SEPARATION_OF_DUTIES=PASS')
     print('APPROVAL_CONSUMPTION_STATE=PASS')
     print('APPEND_ONLY_AUTH_AUDIT=PASS')
+    print('APPROVAL_BINDING_IMMUTABLE=PASS')
+    print('APPROVAL_CONSUMPTION_TERMINAL=PASS')
+    print('APPROVAL_RECORD_RETENTION=PASS')
     print('RATE_LIMIT_BUCKET_CONSTRAINTS=PASS')
 
 
