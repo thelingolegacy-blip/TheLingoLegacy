@@ -21,7 +21,7 @@ class TenantScopedFirestore {
   }) {
     final user = _auth.currentUser;
     if (user == null) {
-      throw StateError('A verified Firebase Authentication session is required.');
+      throw StateError('A signed-in Firebase Authentication session is required.');
     }
     _validateSegment(tenantId, 'tenantId');
     _validateSegment(productId, 'productId');
