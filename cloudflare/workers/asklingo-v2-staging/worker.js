@@ -33,7 +33,7 @@ async function verifyFirebaseToken(token, projectId) {
   if (header.alg !== 'RS256' || typeof header.kid !== 'string') throw new Error('invalid_token');
   const now = Math.floor(Date.now()/1000);
   const issuer = 'https://securetoken.google.com/' + projectId;
-  if (claims.iss !== issuer || claims.aud !== projectId || typeof claims.sub !== 'string' || claims.sub.length === 0 || claims.sub.length > 128) throw new Error('invalid_token');
+  if (claims.iss !== issuer || claims.aud !== projectId || typeof claims.sub !== 'string' || claims.sub.length === 0 || claims.sub.length > 128 || typeof claims.tenant_id !== 'string' || claims.tenant_id.length === 0 || claims.tenant_id.length > 128) throw new Error('invalid_token');
   if (!Number.isFinite(claims.exp) || claims.exp <= now || !Number.isFinite(claims.iat) || claims.iat > now+60 || now-claims.iat > 3600) throw new Error('invalid_token');
   if (!Number.isFinite(claims.auth_time) || claims.auth_time > now+60) throw new Error('invalid_token');
   const jwk = (await getSigningKeys()).find(k => k.kid === header.kid && k.kty === 'RSA' && k.use === 'sig');
@@ -41,7 +41,7 @@ async function verifyFirebaseToken(token, projectId) {
   const key = await crypto.subtle.importKey('jwk',jwk,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['verify']);
   const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,decodePart(parts[2]),new TextEncoder().encode(parts[0]+'.'+parts[1]));
   if (!valid) throw new Error('invalid_token');
-  return { uid:claims.sub, issuer:issuer, authTime:claims.auth_time };
+  return { uid:claims.sub, issuer:issuer, tenantId:claims.tenant_id, authTime:claims.auth_time };
 }
 async function audit(db, event) {
   await db.prepare('INSERT INTO audit_events (event_id,tenant_id,actor_principal_id,actor_type,event_type,resource_type,resource_id,action_digest,decision,correlation_id,occurred_at,metadata_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
@@ -89,7 +89,7 @@ export default {
         return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
     } catch { return response({error:'identity_status_check_unavailable',request_id:requestId},503,requestId,origin); }
     const db=env.ASKLINGO_DB; const now=Math.floor(Date.now()/1000);
-    const principal=await db.prepare("SELECT principal_id,tenant_id FROM principals WHERE issuer=? AND subject=? AND status='active' LIMIT 1").bind(identity.issuer,identity.uid).first();
+    const principal=await db.prepare("SELECT principal_id,tenant_id FROM principals WHERE issuer=? AND subject=? AND tenant_id=? AND status='active' LIMIT 1").bind(identity.issuer,identity.uid,identity.tenantId).first();
     if (!principal) { try { await audit(db,{requestId,type:'query.authorization_denied',decision:'deny',reason:'principal_missing',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'forbidden',request_id:requestId},403,requestId,origin); }
     const grant=await db.prepare("SELECT grant_id FROM grants WHERE principal_id=? AND tenant_id=? AND product_id='asklingo' AND resource_type=? AND resource_id='query' AND operation='query' AND environment='staging' AND status='active' AND not_before<=? AND expires_at>? AND revoked_at IS NULL LIMIT 1").bind(principal.principal_id,principal.tenant_id,'studio'===body.surface?'studio-assistant':'assistant',now,now).first();
     if (!grant) { try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.authorization_denied',decision:'deny',reason:'scoped_grant_missing',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'forbidden',request_id:requestId},403,requestId,origin); }
