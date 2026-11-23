@@ -5,7 +5,8 @@
 ## Safety behavior
 - Firebase ID tokens are verified server-side against Google's Secure Token signing keys, with issuer and audience pinned to `FIREBASE_PROJECT_ID`.
 - A verified UID must map to an active `principals` row and a non-expired, non-revoked staging grant scoped to `asklingo / assistant / query / query`.
-- Rate limits and security audit events use the existing D1 tables. Raw tokens and message bodies are not persisted.
+- Authenticated-principal rate limits and security audit events use the existing D1 tables. Raw tokens and message bodies are not persisted.
+- A Cloudflare edge/IP rate-limit rule for unauthenticated traffic is still a required deployment prerequisite; the D1 principal bucket cannot protect requests before identity verification.
 - Missing identity configuration, D1 binding, principal, grant, audit persistence, or provider/privacy approval fails closed.
 - No provider adapter, inference, conversation history, agent tools, operational actions, payment actions, or production route is enabled.
 
