@@ -1,5 +1,5 @@
 import { verifyFirebaseIdToken } from '../../src/auth/firebase-id-token.mjs';
-import { authorizeD1Request, requestCorrelationId, sha256Hex, verifyPendingApproval } from '../../src/server/saaae-d1.mjs';
+import { authorizeD1Request, issueSpinApprovalD1, requestCorrelationId, sha256Hex, verifyPendingApproval } from '../../src/server/saaae-d1.mjs';
 import { findSettledD1SpinReplay, playAndSettleD1Spin } from '../../src/server/d1-slot-service.mjs';
 
 const GAME_ID = 'thats-my-lingo';
@@ -125,6 +125,7 @@ export default {
     const routes = {
       '/api/v1/accounts/bootstrap': 'POST',
       '/api/v1/wallet/balance': 'GET',
+      '/api/v1/admin/approvals': 'POST',
       '/api/v1/slots/spin': 'POST',
     };
     const expectedMethod = routes[url.pathname];
@@ -170,6 +171,45 @@ export default {
           creditsUnits: wallet.credits_units, xpUnits: wallet.xp_units,
           currency: 'NON_REDEEMABLE_PLAY_CREDITS', correlationId,
         });
+      }
+
+      if (url.pathname === '/api/v1/admin/approvals') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'INVALID_JSON', correlationId }, 400); }
+        const requesterUid = body?.requesterUid;
+        const wagerUnits = body?.wagerUnits;
+        const idempotencyKey = body?.idempotencyKey;
+        if (typeof requesterUid !== 'string' || requesterUid.length < 1 || requesterUid.length > 128
+            || requesterUid === identity.uid) {
+          return json({ error: 'INVALID_REQUESTER', correlationId }, 400);
+        }
+        if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1 || wagerUnits > MAX_WAGER_UNITS) {
+          return json({ error: 'INVALID_WAGER', maxWagerUnits: MAX_WAGER_UNITS, correlationId }, 400);
+        }
+        if (typeof idempotencyKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(idempotencyKey)) {
+          return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
+        }
+        const resourceId = `game:${GAME_ID}`;
+        const authorization = await authorizeD1Request(env.DB, {
+          uid: identity.uid, authTime: identity.authTime, tenantId,
+          productId: PRODUCT_ID, resourceId, operation: 'approval.approve',
+          routeKey: 'admin.approvals.issue', correlationId, rateLimit: 10,
+        });
+        if (!authorization.ok) return json({ error: 'FORBIDDEN', reason: authorization.reasonCode, correlationId }, 403);
+
+        const actionDigest = await sha256Hex(JSON.stringify({
+          tenantId, productId: PRODUCT_ID, resourceId, operation: 'spin',
+          wagerUnits, idempotencyKey,
+        }));
+        const approvalId = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+        const issued = await issueSpinApprovalD1(env.DB, {
+          approvalId, requesterUid, approverUid: identity.uid,
+          approverAuthTime: identity.authTime, tenantId, productId: PRODUCT_ID,
+          resourceId, actionDigest, expiresAt, correlationId,
+        });
+        if (!issued.ok) return json({ error: 'REQUESTER_NOT_ELIGIBLE', correlationId }, 403);
+        return json({ approvalId, expiresAt, actionDigest, correlationId }, 201);
       }
 
       if (url.pathname === '/api/v1/slots/spin') {
