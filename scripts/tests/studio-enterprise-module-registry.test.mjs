@@ -95,3 +95,14 @@ test('dashboard never embeds provider credentials and has valid script closure',
   assert.match(dashboard, /<\/script><\/body><\/html>$/);
   assert.doesNotMatch(dashboard, /(?:ghp_|github_pat_|sk-[A-Za-z0-9]{12,}|sb_secret_|AIza[0-9A-Za-z_-]{20,})/);
 });
+
+
+test('LIVE_VERIFIED modules require actual correlated evidence values', () => {
+  const copy = structuredClone(registry);
+  const module = copy.modules.find(item => item.id === 'cloud-studio');
+  module.status = 'LIVE_VERIFIED';
+  delete module.evidence;
+  assert.ok(validateRegistry(copy).some(error => error.includes('LIVE_VERIFIED requires an evidence object')));
+  module.evidence = { source: 'Cloudflare API readback', observedAt: '2026-11-23T00:00:00Z', confidence: 'high', correlationId: '' };
+  assert.ok(validateRegistry(copy).some(error => error.includes('LIVE_VERIFIED evidence missing value: correlationId')));
+});
