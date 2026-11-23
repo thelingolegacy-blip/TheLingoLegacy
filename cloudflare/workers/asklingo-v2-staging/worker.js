@@ -29,7 +29,7 @@ async function getSigningKeys() {
 }
 async function verifyFirebaseToken(token, projectId) {
   const parts = token.split('.'); if (parts.length !== 3) throw new Error('invalid_token');
-  const header = decodeJson(parts[0]); const claims = decodeJson(parts[1]);
+  let header; let claims; try { header=decodeJson(parts[0]); claims=decodeJson(parts[1]); } catch { throw new Error('invalid_token'); }
   if (header.alg !== 'RS256' || typeof header.kid !== 'string') throw new Error('invalid_token');
   const now = Math.floor(Date.now()/1000);
   const issuer = 'https://securetoken.google.com/' + projectId;
@@ -75,7 +75,7 @@ export default {
     if (!env.ASKLINGO_DB || !env.FIREBASE_PROJECT_ID || !env.FIREBASE_WEB_API_KEY) return response({error:'identity_or_database_not_configured',request_id:requestId},503,requestId,origin);
     const auth = request.headers.get('Authorization') || ''; const match=auth.match(/^Bearer\s+(.+)$/i);
     if (!match) return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
-    let identity; try { identity=await verifyFirebaseToken(match[1],String(env.FIREBASE_PROJECT_ID)); } catch (error) { const unavailable=['identity_key_service_unavailable','identity_keys_missing'].includes(error?.message); return response({error:unavailable?'identity_verification_unavailable':'unauthorized',request_id:requestId},unavailable?503:401,requestId,origin); }
+    let identity; try { identity=await verifyFirebaseToken(match[1],String(env.FIREBASE_PROJECT_ID)); } catch (error) { const invalid=error?.message==='invalid_token'; return response({error:invalid?'unauthorized':'identity_verification_unavailable',request_id:requestId},invalid?401:503,requestId,origin); }
     try {
       const statusUrl='https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(String(env.FIREBASE_WEB_API_KEY));
       const statusResponse=await fetch(statusUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken:match[1]})});
@@ -89,6 +89,7 @@ export default {
         return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
     } catch { return response({error:'identity_status_check_unavailable',request_id:requestId},503,requestId,origin); }
     const db=env.ASKLINGO_DB; const now=Math.floor(Date.now()/1000);
+    try {
     const principal=await db.prepare("SELECT principal_id,tenant_id FROM principals WHERE issuer=? AND subject=? AND tenant_id=? AND status='active' LIMIT 1").bind(identity.issuer,identity.uid,identity.tenantId).first();
     if (!principal) { try { await audit(db,{requestId,type:'query.authorization_denied',decision:'deny',reason:'principal_missing',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'forbidden',request_id:requestId},403,requestId,origin); }
     const grant=await db.prepare("SELECT grant_id FROM grants WHERE principal_id=? AND tenant_id=? AND product_id='asklingo' AND resource_type=? AND resource_id='query' AND operation='query' AND environment='staging' AND status='active' AND not_before<=? AND expires_at>? AND revoked_at IS NULL LIMIT 1").bind(principal.principal_id,principal.tenant_id,'studio'===body.surface?'studio-assistant':'assistant',now,now).first();
@@ -99,5 +100,6 @@ export default {
     try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.blocked',decision:'deny',reason:'provider_and_privacy_gate_pending',surface:body.surface}); }
     catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); }
     return response({error:'service_not_enabled',code:'PROVIDER_AND_PRIVACY_GATE_PENDING',request_id:requestId},503,requestId,origin);
+    } catch { return response({error:'authorization_service_unavailable',request_id:requestId},503,requestId,origin); }
   }
 }
