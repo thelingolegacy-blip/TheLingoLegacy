@@ -174,9 +174,9 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
 
   String _authMessage(String code) => switch (code) {
     'invalid-email' => 'That email address is not valid.',
-    'user-disabled' => 'This account is disabled. Contact support.',
-    'user-not-found' || 'wrong-password' || 'invalid-credential' => 'Email or password was not recognized.',
-    'email-already-in-use' => 'An account already exists for this email. Sign in instead.',
+    // Keep account-existence and account-state errors indistinguishable.
+    'user-disabled' || 'user-not-found' || 'wrong-password' || 'invalid-credential' || 'email-already-in-use' =>
+      'The account request could not be completed with those details. Check the information and try again.',
     'weak-password' => 'Choose a stronger password with at least 8 characters.',
     'too-many-requests' => 'Too many attempts. Wait a moment and try again.',
     'network-request-failed' => 'Network unavailable. Check your connection and retry.',
