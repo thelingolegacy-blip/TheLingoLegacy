@@ -66,7 +66,9 @@ Every accepted, rejected, executed, replayed, expired, or revoked request must p
 
 The current `lingo_saaae_audit_events` decision constraint supports runtime decisions and approval issuance/consumption, but does not yet define dedicated provisioning lifecycle decision values. Before implementing this workflow, add a separately reviewed additive migration for explicit values such as `principal_provisioned`, `principal_suspended`, `principal_revoked`, `membership_provisioned`, `membership_suspended`, `membership_revoked`, `grant_issued`, `grant_revoked`, and `provisioning_denied`. Do not overload ordinary `allow` or `deny` runtime events to represent administrative state changes.
 
-The existing audit schema also lacks dedicated requester/reviewer/operator and request-ID columns. The follow-on schema must add these fields (or a normalized immutable provisioning-request table linked by request ID) before implementation. Do not silently omit this provenance.
+The existing runtime audit schema also lacks dedicated requester/reviewer/operator and request-ID columns. Migration `0003_lingo_saaae_provisioning_evidence.sql` now adds a separate staging-only request ledger and append-only provisioning audit ledger linked by request ID. It enforces initial-pending-only insertion, immutable request bindings, requester/reviewer/executor separation, valid state transitions, terminal-state metadata retention, no-delete/no-update retention, parent-request linkage, and exact request-digest matching on audit insertion. These database constraints do not authenticate operator identities; the future executor must independently authenticate each operator and bind the authenticated identity to the recorded operator ID.
+
+The schema does not itself guarantee that every state transition and its audit event are written in one transaction. The future executor must perform each request-state mutation and its corresponding audit insert in one atomic D1 batch and fail closed on audit failure. Do not treat the presence of the evidence tables as proof that a provisioning executor exists.
 
 ## 7. Credential and operator controls
 
