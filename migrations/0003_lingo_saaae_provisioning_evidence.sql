@@ -82,11 +82,13 @@ CREATE TRIGGER IF NOT EXISTS lingo_saaae_provisioning_terminal_state_metadata
 BEFORE UPDATE ON lingo_saaae_provisioning_requests
 WHEN NEW.status IN ('expired','cancelled')
  AND NOT (
-   (NEW.reviewer_operator_id IS NULL AND NEW.reviewed_at IS NULL
-     AND NEW.executor_operator_id IS NULL AND NEW.executed_at IS NULL)
+   (OLD.status = 'pending' AND NEW.reviewer_operator_id IS NULL
+     AND NEW.reviewed_at IS NULL AND NEW.executor_operator_id IS NULL
+     AND NEW.executed_at IS NULL)
    OR
-   (NEW.reviewer_operator_id IS NOT NULL AND NEW.reviewed_at IS NOT NULL
-     AND NEW.executor_operator_id IS NULL AND NEW.executed_at IS NULL)
+   (OLD.status = 'approved' AND NEW.reviewer_operator_id IS OLD.reviewer_operator_id
+     AND NEW.reviewed_at IS OLD.reviewed_at AND NEW.executor_operator_id IS NULL
+     AND NEW.executed_at IS NULL)
  )
 BEGIN
   SELECT RAISE(ABORT, 'SAAAE_PROVISIONING_TERMINAL_STATE_METADATA_INVALID');
