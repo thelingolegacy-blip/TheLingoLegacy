@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  authorizeD1Request, requestCorrelationId, sha256Hex, verifyPendingApproval,
+  authorizeD1Request, issueSpinApprovalD1, requestCorrelationId, sha256Hex, verifyPendingApproval,
 } from '../../src/server/saaae-d1.mjs';
 
 class FakeD1 {
@@ -155,4 +155,68 @@ test('request digest helper returns a stable SHA-256 hex digest', async () => {
   assert.equal(one, two);
   assert.match(one, /^[0-9a-f]{64}$/);
   assert.notEqual(one, other);
+});
+
+class IssuanceD1 {
+  constructor(issued = true) { this.issued = issued; this.batchStatements = []; this.audit = []; }
+  prepare(sql) {
+    const db = this;
+    return {
+      args: [],
+      bind(...args) { this.args = args; return this; },
+      async first() {
+        if (sql.includes('SELECT approval_id FROM lingo_saaae_approvals')) {
+          return db.issued ? { approval_id: this.args[0] } : null;
+        }
+        throw new Error('Unexpected issuance first query: ' + sql);
+      },
+      async run() {
+        if (sql.includes('INSERT INTO lingo_saaae_audit_events')) {
+          db.audit.push({ sql, args: this.args });
+          return { success: true };
+        }
+        throw new Error('Unexpected issuance run query: ' + sql);
+      },
+    };
+  }
+  async batch(statements) { this.batchStatements = statements; return []; }
+}
+
+const issuance = {
+  approvalId: 'approval-new-1', requesterUid: 'requester-1', approverUid: 'approver-1',
+  approverAuthTime: 120, tenantId: 'tenant-1', productId: 'thats-my-lingo',
+  resourceId: 'game:thats-my-lingo', actionDigest: 'a'.repeat(64),
+  expiresAt: '2026-11-23T00:05:00.000Z', correlationId: 'corr-issue',
+  nowMs: Date.parse('2026-11-23T00:00:00.000Z'),
+};
+
+test('approval issuance binds requester and approver eligibility in one D1 batch', async () => {
+  const db = new IssuanceD1(true);
+  const result = await issueSpinApprovalD1(db, issuance);
+  assert.equal(result.ok, true);
+  assert.equal(db.batchStatements.length, 2);
+  assert.match(db.batchStatements[0].sql, /approval\.approve/);
+  assert.match(db.batchStatements[0].sql, /NOT EXISTS/);
+  assert.match(db.batchStatements[1].sql, /approval_issued/);
+});
+
+test('approval issuance denies ineligible requester and writes a denial audit', async () => {
+  const db = new IssuanceD1(false);
+  const result = await issueSpinApprovalD1(db, issuance);
+  assert.equal(result.ok, false);
+  assert.equal(result.reasonCode, 'REQUESTER_NOT_ELIGIBLE_FOR_SPIN_APPROVAL');
+  assert.equal(db.audit.length, 1);
+  assert.equal(db.audit[0].args[8], 'REQUESTER_NOT_ELIGIBLE_FOR_SPIN_APPROVAL');
+});
+
+test('approval issuance rejects self-approval and excessive or malformed expiry', async () => {
+  const db = new IssuanceD1(true);
+  await assert.rejects(() => issueSpinApprovalD1(db, { ...issuance, requesterUid: issuance.approverUid }), /must differ/);
+  await assert.rejects(() => issueSpinApprovalD1(db, {
+    ...issuance, expiresAt: '2026-11-23T00:06:00.000Z',
+  }), /no more than five minutes/);
+  await assert.rejects(() => issueSpinApprovalD1(db, {
+    ...issuance, actionDigest: 'not-a-digest',
+  }), /actionDigest is invalid/);
+  assert.equal(db.batchStatements.length, 0);
 });
