@@ -24,38 +24,66 @@ function assertSameRequest(existing, gameId, ruleVersion, wagerUnits) {
 }
 
 /**
- * Generate and persist one server-authoritative spin. The result is generated
- * here from Web Crypto; never accept reels or payout values from the browser.
- * The caller must pass only a Firebase UID returned by verifyFirebaseIdToken.
- * Authorization, rate limits, wager limits, account state and game access are
- * separate mandatory checks at the API boundary.
+ * Generate and persist one server-authoritative spin. Approval consumption,
+ * session creation, ledger settlement and the corresponding audit event share
+ * one D1 batch so a failed debit or missing approval rolls the entire action back.
  */
 export async function playAndSettleD1Spin(db, {
   firebaseUid, gameId, idempotencyKey, ruleVersion, symbols, paytable, wagerUnits,
+  tenantId, approvalId, actionDigest, correlationId,
 }) {
   safeId(firebaseUid, 'firebaseUid');
   safeId(gameId, 'gameId');
   safeId(ruleVersion, 'ruleVersion');
+  safeId(tenantId, 'tenantId');
+  safeId(approvalId, 'approvalId');
+  safeId(actionDigest, 'actionDigest');
+  safeId(correlationId, 'correlationId');
   if (!validateIdempotencyKey(idempotencyKey)) throw new TypeError('idempotencyKey is invalid');
+  if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1) throw new RangeError('wagerUnits is invalid');
 
-  // Check before consuming randomness so a normal retry returns the original spin.
+  // An already-settled retry returns the original result without re-consuming approval.
   const prior = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
   if (prior) return assertSameRequest(prior, gameId, ruleVersion, wagerUnits);
 
-  const outcome = evaluateThreeReelSpin({ symbols, paytable, wagerUnits });
+  const approval = db.prepare(`
+    UPDATE lingo_saaae_approvals
+       SET status = 'consumed', consumed_at = strftime('%Y-%m-%dT%H:%M:%fZ','now'), consumed_by = ?
+     WHERE approval_id = ? AND requester_uid = ? AND tenant_id = ?
+       AND product_id = ? AND resource_id = ? AND operation = 'spin'
+       AND action_digest = ? AND status = 'approved'
+       AND expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now')
+       AND approver_uid <> requester_uid
+       AND EXISTS (
+         SELECT 1 FROM lingo_saaae_principals p
+          WHERE p.firebase_uid = lingo_saaae_approvals.approver_uid AND p.status = 'active'
+       )
+  `).bind(firebaseUid, approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest);
+
   const sessionId = crypto.randomUUID();
+  const outcome = evaluateThreeReelSpin({ symbols, paytable, wagerUnits });
   const insertSession = db.prepare(`
     INSERT INTO lingo_game_sessions
       (session_id, firebase_uid, game_id, idempotency_key, rule_version, reels_json, wager_units, payout_units, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-  `).bind(sessionId, firebaseUid, gameId, idempotencyKey, ruleVersion, JSON.stringify(outcome.reels), wagerUnits, outcome.payoutUnits);
+    SELECT ?, ?, ?, ?, ?, ?, ?, ?, 'pending'
+     WHERE EXISTS (
+       SELECT 1 FROM lingo_saaae_approvals
+        WHERE approval_id = ? AND requester_uid = ? AND tenant_id = ?
+          AND product_id = ? AND resource_id = ? AND operation = 'spin'
+          AND action_digest = ? AND status = 'consumed' AND consumed_by = ?
+     )
+  `).bind(
+    sessionId, firebaseUid, gameId, idempotencyKey, ruleVersion,
+    JSON.stringify(outcome.reels), wagerUnits, outcome.payoutUnits,
+    approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, firebaseUid,
+  );
 
   const debit = db.prepare(`
     INSERT INTO lingo_wallet_ledger (event_id, session_id, firebase_uid, event_type, delta_units)
     VALUES (?, ?, ?, 'slot_wager_debit', ?)
   `).bind(`${sessionId}:debit`, sessionId, firebaseUid, -wagerUnits);
 
-  const statements = [insertSession, debit];
+  const statements = [approval, insertSession, debit];
   if (outcome.payoutUnits > 0) {
     statements.push(db.prepare(`
       INSERT INTO lingo_wallet_ledger (event_id, session_id, firebase_uid, event_type, delta_units)
@@ -69,13 +97,21 @@ export async function playAndSettleD1Spin(db, {
        )
      WHERE session_id = ? AND firebase_uid = ? AND status = 'pending'
   `).bind(firebaseUid, sessionId, firebaseUid));
+  statements.push(db.prepare(`
+    INSERT INTO lingo_saaae_audit_events
+      (event_id, correlation_id, actor_uid, tenant_id, product_id, resource_id, operation, decision, reason_code, request_digest)
+    SELECT ?, ?, ?, ?, ?, ?, 'spin', 'approval_consumed', 'APPROVAL_CONSUMED_WITH_SETTLEMENT', ?
+     WHERE EXISTS (SELECT 1 FROM lingo_game_sessions WHERE session_id = ? AND status = 'settled')
+  `).bind(
+    crypto.randomUUID(), correlationId, firebaseUid, tenantId, gameId,
+    `game:${gameId}`, actionDigest, sessionId,
+  ));
 
   try {
-    // D1 batch executes these statements atomically. Ledger triggers apply deltas
-    // and abort the transaction if the wallet would become negative.
+    // D1 batch is atomic. If approval consumption matches zero rows, the gated
+    // session insert creates no row and the ledger FK aborts/rolls back the batch.
     await db.batch(statements);
   } catch (error) {
-    // Concurrent requests with the same idempotency key converge on one result.
     const existing = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
     if (existing) return assertSameRequest(existing, gameId, ruleVersion, wagerUnits);
     throw error;
