@@ -9,7 +9,7 @@ function response(body, status, requestId, origin) {
   const h = new Headers(headers); h.set('Content-Type','application/json; charset=utf-8');
   h.set('X-Request-ID', requestId);
   if (origin) { h.set('Access-Control-Allow-Origin', origin); h.set('Vary','Origin'); }
-  return new Response(JSON.stringify(body), { status, headers:h });
+  return new Response(status===204 ? null : JSON.stringify(body), { status, headers:h });
 }
 function decodePart(value) {
   const normalized = value.replace(/-/g,'+').replace(/_/g,'/');
@@ -70,12 +70,12 @@ export default {
     let raw; try { raw=await request.text(); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
     if (new TextEncoder().encode(raw).byteLength>MAX_BODY_BYTES) return response({error:'payload_too_large',request_id:requestId},413,requestId,origin);
     let body; try { body=JSON.parse(raw); } catch { return response({error:'invalid_json',request_id:requestId},400,requestId,origin); }
-    if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.message !== 'string' || body.message.trim().length===0 || body.message.length>MAX_MESSAGE_CHARS || !['web','mobile','studio'].includes(body.surface || 'web') || (body.conversation_id !== undefined && body.conversation_id !== null))
+    if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k=>!['message','surface','conversation_id','locale'].includes(k)) || typeof body.message !== 'string' || body.message.trim().length===0 || body.message.length>MAX_MESSAGE_CHARS || !['web','mobile','studio'].includes(body.surface || 'web') || (body.locale !== undefined && (typeof body.locale!=='string' || body.locale.length>35)) || (body.conversation_id !== undefined && body.conversation_id !== null))
       return response({error:'invalid_request',request_id:requestId},400,requestId,origin);
     if (!env.ASKLINGO_DB || !env.FIREBASE_PROJECT_ID) return response({error:'identity_or_database_not_configured',request_id:requestId},503,requestId,origin);
     const auth = request.headers.get('Authorization') || ''; const match=auth.match(/^Bearer\s+(.+)$/i);
     if (!match) return response({error:'unauthorized',request_id:requestId},401,requestId,origin);
-    let identity; try { identity=await verifyFirebaseToken(match[1],String(env.FIREBASE_PROJECT_ID)); } catch { return response({error:'unauthorized',request_id:requestId},401,requestId,origin); }
+    let identity; try { identity=await verifyFirebaseToken(match[1],String(env.FIREBASE_PROJECT_ID)); } catch (error) { const unavailable=['identity_key_service_unavailable','identity_keys_missing'].includes(error?.message); return response({error:unavailable?'identity_verification_unavailable':'unauthorized',request_id:requestId},unavailable?503:401,requestId,origin); }
     const db=env.ASKLINGO_DB; const now=Math.floor(Date.now()/1000);
     const principal=await db.prepare("SELECT principal_id,tenant_id FROM principals WHERE issuer=? AND subject=? AND status='active' LIMIT 1").bind(identity.issuer,identity.uid).first();
     if (!principal) { try { await audit(db,{requestId,type:'query.authorization_denied',decision:'deny',reason:'principal_missing',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'forbidden',request_id:requestId},403,requestId,origin); }
