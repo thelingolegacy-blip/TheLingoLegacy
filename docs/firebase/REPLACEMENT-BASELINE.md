@@ -16,13 +16,13 @@ Use Firebase Authentication and Cloud Firestore as the initial managed services.
 
 ## Flutter integration sequence
 
-1. Add and pin compatible `firebase_auth` and `cloud_firestore` dependencies alongside `firebase_core`.
-2. Generate real platform options for the confirmed development/staging Firebase project; never commit private service-account credentials.
-3. Add an Auth repository and explicit signed-out, loading, authenticated, and error states. Do not treat local UI state as identity.
-4. Add a Firestore repository that requires a verified Firebase ID token and server-enforced authorization; scope every read/write to tenant, product, resource, and operation.
-5. Keep wallets, balances, rewards, and financial transactions server-authoritative. The client must never directly set trusted balances.
-6. Implement role/attribute authorization, approval records, audit events, session revocation, and fail-closed behavior on trusted server endpoints before protected data is enabled.
-7. Test unauthenticated access, cross-tenant access, revoked sessions, least privilege, and offline/error behavior in the emulator and CI.
+1. **Implemented in this branch:** compatible `firebase_auth` and `cloud_firestore` client dependencies are declared alongside `firebase_core`.
+2. **Implemented in this branch:** a Firebase session gate, email/password sign-in and account creation, password reset, email-verification gate, session-aware sign-out, and safe offline-preview fallback.
+3. **Implemented in this branch:** a tenant/product/resource-scoped Firestore reference factory. It is not an authorization system; Firestore rules remain deny-all and no protected data operation is enabled.
+4. Generate real platform options for the confirmed development/staging Firebase project; never commit private service-account credentials.
+5. Implement and review server-side identity/role/attribute authorization, approval records, audit events, session revocation, and tenant membership policies before enabling protected reads/writes.
+6. Keep wallets, balances, rewards, and financial transactions server-authoritative. The client must never directly set trusted balances.
+7. Test unauthenticated access, cross-tenant access, revoked sessions, least privilege, email verification, password reset, and offline/error behavior in the emulator and CI.
 
 ## Deliberately not included
 
@@ -34,3 +34,4 @@ Use Firebase Authentication and Cloud Firestore as the initial managed services.
 ## Activation gates
 
 Confirm the intended Firebase project ID and environment ownership; register the actual Flutter app IDs; generate configuration using the approved FlutterFire workflow; validate emulator rules and CI; complete security review; and obtain explicit release approval before remote deployment. This branch is a reviewable replacement only. Merge and deployment remain blocked pending review and evidence.
+\n## Current validation status\n\nThe latest commit has no completed GitHub Actions jobs or artifacts. The four associated workflow runs ended with `startup_failure`; therefore dependency resolution, Flutter analysis, tests, and emulator rules are not verified. A local Flutter/Dart toolchain was not available in the execution environment. Do not interpret a successful file write or pull request creation as a passing build.\n
