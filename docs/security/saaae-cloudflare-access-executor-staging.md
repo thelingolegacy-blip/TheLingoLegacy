@@ -25,7 +25,7 @@ Before enabling the endpoint, the operator roster must contain at least two sepa
 
 ## 3. Cloudflare Access application requirements
 
-Create a dedicated self-hosted Access application only after the staging executor has a reviewed deployment target and the two-human roster is confirmed.
+A dedicated self-hosted Access application shell now exists with no attached policies. Keep it inaccessible; do not add any allow policy until the staging executor target, rollback plan, and two-human roster are independently reviewed.
 
 - Application hostname: `saaae-staging.thelingolegacy.com`
 - Team issuer: `https://morning-pine-9393.cloudflareaccess.com`
@@ -69,7 +69,7 @@ No arbitrary SQL, caller-supplied digest, caller-supplied actor identity, self-a
 - Keep production D1, Firebase, Workers, routes, and credentials unreachable from this executor.
 - Store secrets only in the runtime secret manager; GitHub stores metadata and references only, never secret values.
 - Use a separate workload identity for the executor. Do not reuse a human Access token as a service credential.
-- Do not create DNS or Access resources until the Worker target, rollback plan, and human identity roster are reviewed.
+- Do not add Access allow policies or create DNS until the Worker target, rollback plan, and human identity roster are reviewed.
 - Keep the executor unavailable until all gates in section 7 pass.
 
 ## 7. Required verification gates
@@ -92,14 +92,14 @@ Read-only inspection on 2026-11-23 confirmed:
 
 - Zone `thelingolegacy.com` is active.
 - No DNS record exists for `saaae-staging.thelingolegacy.com`.
-- No dedicated SAAAE executor Access application exists.
+- Dedicated Access application shell exists: `LINGO SAAAE Staging Privileged Executor` (`32ebd30f-3edf-4b42-9e59-23372bcadd59`), self-hosted on `saaae-staging.thelingolegacy.com`, restricted to the configured Cloudflare identity provider, 1-hour session, binding cookie enabled, HttpOnly and SameSite=Strict cookies. A follow-up GET confirmed zero attached policies. No allow policy exists.
 - Existing Access applications include public `bypass` policies for public website/fallback use; these are not reusable for the executor.
 - Existing reusable policies include single-operator email, account-member, email-domain, service-token, and public-bypass rules. None establishes an independent requester/reviewer pair.
 - Organization MFA is required and currently allows biometrics, security key, TOTP, PIV, and SSH FIDO2 key methods. MFA does not establish actor separation.
 
 ## 9. Explicit non-actions
 
-This design commit does not create an Access application or policy, DNS record, Worker, D1 database, service token, secret, principal, membership, grant, or production change. It does not make PR #658 mergeable and does not declare the provisioning path operational.
+The Access application shell is the only live Cloudflare resource created in this workstream. No Access policy, DNS record, Worker, D1 database, service token, secret, principal, membership, grant, or production change was created. The shell has no attached policies and is not an operational executor.
 
 ## 10. Implementation checkpoint — 2026-11-23
 
@@ -110,3 +110,8 @@ Unit tests are in `scripts/tests/cloudflare-access-jwt.test.mjs`. The five focus
 A read-only validation workflow was added at `.github/workflows/saaae-provisioning-staging-validation.yml`. GitHub created push and pull-request runs, but both ended with `startup_failure` and zero jobs. No CI test steps ran and no CI artifacts were produced. Investigate the Actions startup failure before treating the branch as CI-verified.
 
 The verifier is not yet wired into a privileged Worker endpoint. The operator registry, request/review API, executor workload identity, allow-listed D1 mutation implementation, atomic provisioning transaction, Access application, policy, DNS, D1 migration application, and end-to-end staging evidence remain outstanding. Keep the executor unavailable and the production hold active.
+
+
+### Access shell provisioning record
+
+On 2026-11-23, the dedicated self-hosted Access application shell was created and immediately read back. App ID: `32ebd30f-3edf-4b42-9e59-23372bcadd59`. It is bound to the selected Cloudflare IdP and has no attached policies. The hostname has no DNS record. The shell is intentionally not usable until a reviewed executor exists and independently controlled requester/reviewer identities are confirmed. No broad, bypass, or account-member policy was attached.
