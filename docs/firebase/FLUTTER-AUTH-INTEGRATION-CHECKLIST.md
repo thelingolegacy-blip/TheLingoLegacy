@@ -20,7 +20,9 @@ Scope: complete and verify the existing Flutter email/password session gate agai
 - [ ] Register the actual Flutter app identifiers in staging for each supported platform.
 - [ ] Generate and review `firebase_options.dart` using staging-only app configuration.
 - [ ] Keep production project ID, API configuration, app IDs, and credentials out of staging builds.
-- [ ] Configure build flavors/environment selection so staging cannot silently select production.
+- [x] Default Flutter target now expects `lingo-legacy-staging`; a mismatched project remains in offline preview.
+- [x] Production requires an explicit `--dart-define=FIREBASE_PROJECT_ID=lingo-legacy-production` build selection.
+- [ ] Configure and review release build flavors so only approved production release jobs can set the production define.
 - [ ] Confirm email/password provider is enabled in the staging Firebase Authentication console.
 
 ## Code review and hardening
@@ -59,5 +61,6 @@ Scope: complete and verify the existing Flutter email/password session gate agai
 
 - The implementation exists in draft PR #654.
 - The platform Firebase options are placeholders; no real staging app has been connected.
-- No Flutter/Dart toolchain execution, dependency resolution, successful CI, emulator test, or device build is confirmed.
+- A new GitHub Actions validation workflow now runs dependency resolution, Dart formatting, Flutter analysis, and tests; execution is not yet evidenced.
+- Five Firebase project-selection tests are authored, but no Flutter/Dart toolchain execution, successful CI, emulator test, or device build is confirmed.
 - This checklist records remaining work; it does not claim those checks passed.
