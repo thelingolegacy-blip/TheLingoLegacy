@@ -50,6 +50,18 @@ export function validateRegistry(registry) {
     if ((module.permissions || []).some(permission => /:write$/.test(permission))) errors.push(`module ${module.id} cannot declare write scopes`);
     const evidence = new Set(module.requiredEvidence || []);
     for (const item of requiredEvidence) if (!evidence.has(item)) errors.push(`module ${module.id} missing required evidence: ${item}`);
+    if (module.status === 'LIVE_VERIFIED') {
+      const actual = module.evidence;
+      if (!actual || typeof actual !== 'object' || Array.isArray(actual)) {
+        errors.push(`module ${module.id} LIVE_VERIFIED requires an evidence object`);
+      } else {
+        for (const item of requiredEvidence) {
+          if (typeof actual[item] !== 'string' || actual[item].trim() === '') {
+            errors.push(`module ${module.id} LIVE_VERIFIED evidence missing value: ${item}`);
+          }
+        }
+      }
+    }
     if (module.route !== null && (typeof module.route !== 'string' || !module.route.startsWith('/'))) errors.push(`module ${module.id} route must be null or an absolute path`);
   }
 
