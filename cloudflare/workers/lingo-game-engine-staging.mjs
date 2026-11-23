@@ -48,11 +48,40 @@ function tenantFromRequest(request) {
   return /^[A-Za-z0-9._:-]{1,128}$/.test(value) ? value : null;
 }
 
-async function ensureAccount(db, uid) {
+async function ensureAccount(db, uid, tenantId, authTime) {
+  const accountResource = `account:${uid}`;
+  const eligible = `
+    EXISTS (
+      SELECT 1
+        FROM lingo_saaae_principals p
+        JOIN lingo_saaae_tenant_memberships m
+          ON m.firebase_uid = p.firebase_uid AND m.tenant_id = ? AND m.status = 'active'
+        JOIN lingo_saaae_grants g
+          ON g.firebase_uid = p.firebase_uid AND g.tenant_id = m.tenant_id
+         AND g.product_id = ? AND g.resource_id = ? AND g.operation = 'account.bootstrap'
+         AND g.effect = 'allow' AND g.status = 'active'
+       WHERE p.firebase_uid = ? AND p.status = 'active' AND p.token_valid_after_epoch <= ?
+         AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+         AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+    )
+    AND NOT EXISTS (
+      SELECT 1 FROM lingo_saaae_grants d
+       WHERE d.firebase_uid = ? AND d.tenant_id = ? AND d.product_id = ?
+         AND d.resource_id = ? AND d.operation = 'account.bootstrap'
+         AND d.effect = 'deny' AND d.status = 'active'
+         AND d.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+         AND (d.expires_at IS NULL OR d.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+    )
+  `;
+  const scope = [tenantId, PRODUCT_ID, accountResource, uid, authTime,
+    uid, tenantId, PRODUCT_ID, accountResource];
   await db.batch([
-    db.prepare('INSERT OR IGNORE INTO lingo_game_accounts(firebase_uid) VALUES (?)').bind(uid),
-    db.prepare('INSERT OR IGNORE INTO lingo_game_wallets(firebase_uid) VALUES (?)').bind(uid),
-    db.prepare('INSERT OR IGNORE INTO lingo_game_progression(firebase_uid) VALUES (?)').bind(uid),
+    db.prepare(`INSERT OR IGNORE INTO lingo_game_accounts(firebase_uid) SELECT ? WHERE ${eligible}`)
+      .bind(uid, ...scope),
+    db.prepare(`INSERT OR IGNORE INTO lingo_game_wallets(firebase_uid) SELECT ? WHERE EXISTS (SELECT 1 FROM lingo_game_accounts WHERE firebase_uid = ?) AND ${eligible}`)
+      .bind(uid, uid, ...scope),
+    db.prepare(`INSERT OR IGNORE INTO lingo_game_progression(firebase_uid) SELECT ? WHERE EXISTS (SELECT 1 FROM lingo_game_accounts WHERE firebase_uid = ?) AND ${eligible}`)
+      .bind(uid, uid, ...scope),
   ]);
 }
 
@@ -121,7 +150,7 @@ export default {
 
         // Account creation is permitted only after an existing principal,
         // active tenant membership, and exact scoped bootstrap grant are verified.
-        await ensureAccount(env.DB, identity.uid);
+        await ensureAccount(env.DB, identity.uid, tenantId, identity.authTime);
         const wallet = await env.DB.prepare('SELECT credits_units, xp_units FROM lingo_game_wallets WHERE firebase_uid = ?').bind(identity.uid).first();
         if (!wallet) throw new Error('ACCOUNT_BOOTSTRAP_NOT_VERIFIED');
         return json({ status: 'account_ready', wallet, correlationId });
