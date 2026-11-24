@@ -88,6 +88,18 @@ CircleCI receives a Node 22 validation job on non-main branches. A config file i
 7. Verify deployment ID, source SHA, response headers, routes and rollback target.
 8. DNS/Worker-route failover remains a separate, explicitly authorized operation.
 
+
+## CI admission evidence for this change
+
+For head commit \`eedbe54b6ae8e7b9d19e63013b5436390867db79\`, GitHub returned four associated workflow runs, all completed with \`startup_failure\`:
+
+- \`45503584615\` — Lingo Legacy Static CI
+- \`45503582909\` — Crimson Smoke UI — static validation
+- \`45503581327\` — G02 Runner Image Build (no publish)
+- \`45503579804\` — LINGO Legacy DevOps Foundation Validation
+
+The jobs endpoint returned zero jobs for all four runs. The Static CI artifacts endpoint returned zero artifacts. No successful execution, test result, runner assignment, steps or build artifact is claimed. This is consistent with the existing job-admission blocker, not evidence that the new static verifier itself failed.
+
 ## Honest status
 
 - The canonical GitHub Actions job-admission failure is not repaired by this static-site work.
