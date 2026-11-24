@@ -178,3 +178,5 @@ The Cloudflare IdP configuration was also re-read on 2026-11-24:
 - A second independently controlled human must first be added as a genuine Cloudflare account member and then separately verified by the designated identity-verification process. Merely supplying an email address or creating another account for the same person does not satisfy the control.
 
 A read-only account-membership check returned exactly one accepted Cloudflare account member and no additional accepted reviewer. No member was added, invited, or modified. This confirms the second-human gate remains unsatisfied at the account level.
+
+The Access-to-registry authentication helper also requires an explicit `SAAAE_INDEPENDENCE_ATTESTATION_ISSUER` trust-anchor configuration. A human entry whose `attestation_issuer` does not exactly match this configured issuer is rejected; a missing trust anchor returns an unavailable/configuration failure. The trust-anchor string is not itself cryptographic proof. The configured issuer must be backed by an independently governed identity-verification process and its referenced evidence must be reviewed before the roster is populated.
