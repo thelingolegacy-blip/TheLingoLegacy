@@ -11,6 +11,7 @@ const env = {
   CLOUDFLARE_ACCESS_TEAM_DOMAIN: 'morning-pine-9393.cloudflareaccess.com',
   CLOUDFLARE_ACCESS_AUD: 'staging-access-audience',
   SAAAE_OPERATOR_REGISTRY_JSON: JSON.stringify(roster),
+  SAAAE_INDEPENDENCE_ATTESTATION_ISSUER: 'workforce-identity-authority',
 };
 const request = (token = 'signed-token') => new Request('https://staging.invalid/operator', {
   headers: token ? { 'cf-access-jwt-assertion': token } : {},
