@@ -53,8 +53,8 @@ export async function authenticateSaaaeOperator(request, env, {
   }
 
   const operator = registry.operators.find((entry) => entry.subject === verified.subject);
-  if (!operator || operator.status !== 'active') {
-    return { ok: false, status: 403, code: 'OPERATOR_NOT_REGISTERED' };
+  if (!operator || operator.status !== 'active' || operator.type !== 'human') {
+    return { ok: false, status: 403, code: 'HUMAN_OPERATOR_NOT_REGISTERED' };
   }
   return {
     ok: true,
