@@ -100,6 +100,30 @@ For head commit \`eedbe54b6ae8e7b9d19e63013b5436390867db79\`, GitHub returned fo
 
 The jobs endpoint returned zero jobs for all four runs. The Static CI artifacts endpoint returned zero artifacts. No successful execution, test result, runner assignment, steps or build artifact is claimed. This is consistent with the existing job-admission blocker, not evidence that the new static verifier itself failed.
 
+
+## Source-controlled launch proxy prepared
+
+The live Worker was uploaded directly to Cloudflare and was not represented in the canonical repository. This branch now adds:
+
+- \`cloudflare/static-backup-proxy.mjs\` — proposed replacement source. It proxies the root and deep links to the Pages standby, allows only GET/HEAD, checks the exact launch hostname and default port, rewrites Pages-origin redirects, applies noindex/security headers, and returns 502 on origin failure. It does not fall back to the primary site.
+- \`cloudflare/wrangler-static-backup.toml\` — isolated Worker configuration for the existing \`launch.thelingolegacy.com/*\` route.
+- \`scripts/tests/static-backup-proxy.test.mjs\` — focused behavior and failure-mode tests.
+- CircleCI's standby job now runs both the static verifier and proxy unit tests.
+
+The existing direct-upload Worker remains live and unchanged until a separately approved deployment. The new source is a proposed, reviewable replacement only.
+
+## Local proxy unit-test result
+
+Executed in Node.js v22.16.0:
+
+\`\`\`
+node --test scripts/tests/static-backup-proxy.test.mjs
+9 tests passed
+0 failed
+\`\`\`
+
+The suite covers Pages-root routing, deep links/query strings, redirect rewriting, non-default-port rejection, non-read-only-method rejection, unexpected-host rejection, fail-closed origin errors, security headers and HEAD behavior. This is local unit-test evidence for the proxy module, not a Cloudflare deployment or end-to-end Access test.
+
 ## Honest status
 
 - The canonical GitHub Actions job-admission failure is not repaired by this static-site work.
