@@ -12,7 +12,7 @@ Establish one canonical, low-risk starting point for diagnosing whether GitHub A
 ## Canonical bootstrap
 
 Workflow: `.github/workflows/isolated-hosted-runner-probe.yml`  
-Display name after this change: **LINGO Startup Recovery Bootstrap**  
+Display name: **LINGO Startup Recovery Bootstrap**  
 Trigger: manual `workflow_dispatch` only  
 Runner: `ubuntu-latest`  
 Permissions: `contents: none`  
@@ -22,7 +22,7 @@ Checkout: none
 Network calls: none  
 Production bindings: none
 
-The bootstrap records the provider-assigned runner identity and verifies a minimal baseline toolchain and host environment. It writes a concise acceptance record to the GitHub Actions job summary.
+The bootstrap records the documented hosted-runner name, environment, operating system and architecture, verifies a minimal baseline toolchain, and writes a correlated evidence record to the job summary and logs. GitHub's provider job ID and runner ID are not exposed through the documented runner context; retrieve both from the GitHub Jobs API after the job starts.
 
 ## Execution procedure
 
@@ -30,8 +30,8 @@ The bootstrap records the provider-assigned runner identity and verifies a minim
 2. Select **LINGO Startup Recovery Bootstrap**.
 3. Select the intended branch containing this change and run the workflow manually.
 4. Inspect the workflow run, job, step results, and job summary.
-5. Record the run ID, attempt, commit SHA, job ID, runner ID, runner name, completed steps, and conclusion from GitHub's provider API/UI.
-6. Preserve the run URL and evidence with the recovery checkpoint.
+5. Retrieve the provider job ID and runner ID from the GitHub Jobs API. Record the run ID, attempt, commit SHA, job ID, runner ID, runner name, completed steps, and conclusion.
+6. Preserve the run URL, job API response, summary and logs with the recovery checkpoint.
 
 ## Acceptance criteria
 
@@ -40,9 +40,12 @@ A hosted bootstrap is accepted only when all are true:
 - A workflow run is created and a job is instantiated.
 - The job has a positive provider-assigned job ID.
 - GitHub reports a positive runner ID and a non-empty runner name.
+- GitHub reports the runner environment as `github-hosted`, with Linux/X64 platform.
 - Both identity and baseline steps execute and complete successfully.
 - The run conclusion is successful and the summary contains `HOSTED_BOOTSTRAP_PASS`.
 - Run ID, attempt, commit SHA, job ID, and runner identity are correlated.
+
+The bootstrap intentionally does not upload an artifact. The evidence record is emitted into the job summary/logs, and provider-assigned IDs are captured from the Jobs API. Do not expect a workflow artifact for this bootstrap.
 
 A workflow record with zero jobs, no runner assignment, or no executed steps is a startup/dispatch failure—not a passing test and not evidence that the application tests failed.
 
@@ -74,7 +77,6 @@ A workflow record with zero jobs, no runner assignment, or no executed steps is 
 ## Completion record
 
 This change prepares the canonical bootstrap and its runbook. It is not operationally certified until a manual run produces the acceptance evidence above.
-
 
 ## Initial PR-triggered diagnostic checkpoint — 2026-11-23
 
