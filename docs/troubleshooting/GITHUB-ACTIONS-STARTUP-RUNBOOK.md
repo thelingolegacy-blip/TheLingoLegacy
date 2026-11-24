@@ -81,3 +81,13 @@ This is a fresh cross-repository reproduction of the pre-job admission failure. 
 
 ### Acceptance remains unchanged
 A recovery is accepted only after a new run creates a job, receives a real runner ID/name, executes diagnostic steps, exposes retrievable logs, and uploads a commit-correlated non-secret artifact. Repeat independently in Core and Web. Hosted GitHub runner success does not certify the separate G02 self-hosted runner.
+
+
+### Newest branch-head reproduction — 2026-11-24 22:xx UTC
+
+The latest observed PR heads have also reproduced the same admission failure:
+- Core PR #664 head `13104be534fb7da00ab9e33f02d18c37417e2a8d`: runs `45496801924`, `45496799549`, and `45496796655` all concluded `startup_failure`; each Jobs API response returned zero jobs and each Artifacts API response returned zero artifacts.
+- Web PR #44 head `73b6963cde03508f0ea230233aecc93843de5cbb`: run `45496807012` concluded `startup_failure`; Jobs API and Artifacts API both returned empty lists.
+- The current branch files were re-fetched after these head advances. The Figma token integration, eight portfolio entries, Core Cloudflare follow-up inventory, and integration-plan documentation remain present in their respective branches.
+
+This newer reproduction supersedes the earlier run IDs above for current-head status. The underlying root cause remains unknown; no runtime job, test step, or artifact was produced.
