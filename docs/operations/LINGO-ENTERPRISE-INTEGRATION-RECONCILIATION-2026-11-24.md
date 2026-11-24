@@ -22,7 +22,9 @@ The following facts were retrieved from GitHub on 2026-11-24:
 - Main HEAD observed: `3fe099eb11329cc333ffa5a1ea36affcd0375343`.
 - Open pull requests: **257**, retrieved across three complete GitHub API pages (100 + 100 + 57).
 - First page of branch inventory: 100 branch refs; every returned branch reported `protected: false`. This is a first-page sample, not a complete branch count.
-- Main branch reports `protected: false`. Repository branch-protection/ruleset enforcement is therefore not established by the current readback.
+- Main branch reports `protected: false` through the branch endpoint (legacy branch-protection flag).
+- A separate repository ruleset read confirms ruleset **27403956 — “Lingo - protect main”** is `active`. Its returned rules are only `deletion`, `non_fast_forward`, and `copilot_code_review` (review on push enabled; draft PR review disabled). The returned ruleset does **not** include required pull-request approvals or required status checks. Its empty include/exclude ref filters were preserved as returned; do not infer narrower coverage from the ruleset name alone.
+- Therefore a ruleset exists and is active, but the current evidence does not establish the complete merge-governance controls required for protected integration (independent approvals and required CI checks). The legacy branch endpoint and ruleset endpoint are distinct controls; do not summarize this as “no ruleset exists.”
 - The repository's `AGENTS.md` requires small reviewable changes, no routine direct commits to main, and the acceptance chain above. It also states that agents cannot authorize their own acceptance or release.
 - Repeated GitHub Actions `startup_failure` outcomes with zero jobs and zero artifacts are infrastructure/job-instantiation failures. They are not successful CI and do not prove that application tests ran.
 
