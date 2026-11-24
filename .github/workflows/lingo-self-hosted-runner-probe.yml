@@ -1,0 +1,36 @@
+name: LINGO Self-Hosted Runner Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: none
+
+concurrency:
+  group: lingo-self-hosted-runner-probe
+  cancel-in-progress: false
+
+jobs:
+  runner-probe:
+    name: Verify dedicated LINGO runner execution
+    runs-on: [self-hosted, linux, x64, lingo-g02]
+    timeout-minutes: 5
+    steps:
+      - name: Capture minimal runner evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_NAME:-}"
+          test "${RUNNER_OS:-}" = "Linux"
+          test "${RUNNER_ARCH:-}" = "X64"
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_OS=$RUNNER_OS"
+          echo "RUNNER_ARCH=$RUNNER_ARCH"
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+          echo "GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          uname -a
+          node --version
+          npm --version
+          git --version
+          echo "LINGO_G02_RUNNER_JOB_EXECUTED=true" >> "$GITHUB_STEP_SUMMARY"
