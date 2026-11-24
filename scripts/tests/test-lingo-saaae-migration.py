@@ -38,22 +38,22 @@ def main():
     # Approval records enforce separation of duties and a consistent consume state.
     expect_integrity_error(db, """INSERT INTO lingo_saaae_approvals
       (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
-       requester_uid, approver_uid, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+       requester_uid, approver_uid, approver_auth_time_epoch, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
       ('approval-self', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin', 'digest',
-       'user-1', 'user-1', '2099-01-01T00:00:00Z'))
+       'user-1', 'user-1', 100, '2099-01-01T00:00:00Z'))
     expect_integrity_error(db, """INSERT INTO lingo_saaae_approvals
       (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
-       requester_uid, approver_uid, status, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'consumed', ?)""",
+       requester_uid, approver_uid, approver_auth_time_epoch, status, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'consumed', ?)""",
       ('approval-invalid', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin', 'digest',
-       'user-1', 'approver-1', '2099-01-01T00:00:00Z'))
+       'user-1', 'approver-1', 100, '2099-01-01T00:00:00Z'))
 
     db.execute("""INSERT INTO lingo_saaae_approvals
       (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
-       requester_uid, approver_uid, expires_at)
+       requester_uid, approver_uid, approver_auth_time_epoch, expires_at)
       VALUES ('approval-1', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin',
-       'sha256:request-digest', 'user-1', 'approver-1', '2099-01-01T00:00:00Z')""")
+       'sha256:request-digest', 'user-1', 'approver-1', 100, '2099-01-01T00:00:00Z')""")
     db.execute("""UPDATE lingo_saaae_approvals
       SET status='consumed', consumed_at='2026-11-23T00:00:00Z', consumed_by='user-1'
       WHERE approval_id='approval-1'""")
@@ -62,9 +62,9 @@ def main():
 
     db.execute("""INSERT INTO lingo_saaae_approvals
       (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
-       requester_uid, approver_uid, status, expires_at)
+       requester_uid, approver_uid, approver_auth_time_epoch, status, expires_at)
       VALUES ('approval-2', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin',
-       'sha256:request-digest-2', 'user-1', 'approver-1', 'pending', '2099-01-01T00:00:00Z')""")
+       'sha256:request-digest-2', 'user-1', 'approver-1', 100, 'pending', '2099-01-01T00:00:00Z')""")
     expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET action_digest='tampered' WHERE approval_id='approval-2'", (), 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE')
     expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET approver_auth_time_epoch=1 WHERE approval_id='approval-2'", (), 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE')
     expect_integrity_error(db, "INSERT INTO lingo_saaae_approvals (approval_id, tenant_id, product_id, resource_id, operation, action_digest, requester_uid, approver_uid, approver_auth_time_epoch, expires_at) VALUES ('approval-bad-auth-time', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin', 'digest', 'user-1', 'approver-1', -1, '2099-01-01T00:00:00Z')", (), 'CHECK constraint')
