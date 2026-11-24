@@ -32,10 +32,23 @@ jobs:
                     yaml.safe_load(handle)
                 print(f"YAML_PARSE_PASS={item}")
             PY
+  verify-static-backup:
+    docker:
+      - image: cimg/node:22.16
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Verify the curated standby site
+          command: node scripts/verify-static-backup.mjs
 workflows:
   validate-non-main:
     jobs:
       - validate-devops-config:
+          filters:
+            branches:
+              ignore: main
+      - verify-static-backup:
           filters:
             branches:
               ignore: main
