@@ -51,15 +51,20 @@ test('valid registry authorizes three distinct actor identities', () => {
 });
 
 test('self-approval and human-as-executor attempts are denied', () => {
-  const registry = parseSaaaeOperatorRegistry(JSON.stringify(validRoster));
+  const dualRoleRoster = [
+    { ...validRoster[0], roles: ['requester', 'reviewer'] },
+    { ...validRoster[1], roles: ['requester', 'reviewer'] },
+    validRoster[2],
+  ];
+  const registry = parseSaaaeOperatorRegistry(JSON.stringify(dualRoleRoster));
   assert.equal(authorizeSaaaeProvisioningActors(registry, {
-    requesterSubject: validRoster[0].subject,
-    reviewerSubject: validRoster[0].subject,
-    executorSubject: validRoster[2].subject,
+    requesterSubject: dualRoleRoster[0].subject,
+    reviewerSubject: dualRoleRoster[0].subject,
+    executorSubject: dualRoleRoster[2].subject,
   }).code, 'SAAAE_ACTOR_SEPARATION_REQUIRED');
   assert.equal(authorizeSaaaeProvisioningActors(registry, {
-    requesterSubject: validRoster[0].subject,
-    reviewerSubject: validRoster[1].subject,
-    executorSubject: validRoster[1].subject,
+    requesterSubject: dualRoleRoster[0].subject,
+    reviewerSubject: dualRoleRoster[1].subject,
+    executorSubject: dualRoleRoster[1].subject,
   }).code, 'EXECUTOR_NOT_AUTHORIZED');
 });
