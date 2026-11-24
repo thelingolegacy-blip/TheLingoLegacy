@@ -49,3 +49,35 @@ Prior inspected run 45308879951 was reported with zero jobs and zero artifacts. 
 
 ## Required incident output
 Provide a timeline, exact evidence references, hypothesis matrix, confirmed/unknown cause, next discriminating test, risk and rollback plan, and independent verification result. Do not mark fixed until a subsequent comparable run passes the required acceptance criteria.
+
+
+## Incident evidence refresh — 2026-11-24
+
+### Current reproduction set
+Core repository `thelingolegacy-blip/TheLingoLegacy`, PR #664 head `f6705a3d22ce8fe04d00ed726977398211b0445e`:
+- `45494361261` — Static CI
+- `45494363413` — Crimson Smoke UI
+- `45494358311` — G02 Runner Image Build
+- All three concluded `startup_failure`; the Jobs API returned an empty job list and the Artifacts API returned an empty artifact list.
+
+Private Web repository `thelingolegacy-blip/TheLingoLegacy-Web`, PR #44 latest head `67664892cd2c86f42ea278d6938591119d0f0a66`:
+- Run `45496202532` concluded `startup_failure`.
+- The Jobs API returned an empty job list and the Artifacts API returned an empty artifact list.
+
+This is a fresh cross-repository reproduction of the pre-job admission failure. It does not identify the provider-side cause. No checkout, runtime, install, test, or G02 step executed.
+
+### Current account/authority observations relevant to G04
+- Cloudflare account-level two-factor enforcement is false.
+- Exactly one accepted Cloudflare account member is returned; that member's account-level 2FA is false.
+- The SAAAE staging privileged-executor Access application has zero attached policies.
+- These are separate G04 identity/separation-of-duties blockers, not proven causes of GitHub Actions admission failure. No settings or policies were changed.
+
+### Administrator/provider action still required
+1. Inspect GitHub account billing and included Actions compute/usage without increasing spending limits.
+2. Inspect organization and repository Actions enablement, allowed actions and runner restrictions.
+3. Inspect runner-group repository access and organization policy overrides.
+4. If those checks are clear, escalate to GitHub Support with the two repository names, the run IDs above, exact commit SHAs and the zero-job/zero-artifact API responses.
+5. Do not change workflow Node versions, runner labels, or application source as a substitute for provider-side admission diagnosis.
+
+### Acceptance remains unchanged
+A recovery is accepted only after a new run creates a job, receives a real runner ID/name, executes diagnostic steps, exposes retrievable logs, and uploads a commit-correlated non-secret artifact. Repeat independently in Core and Web. Hosted GitHub runner success does not certify the separate G02 self-hosted runner.
