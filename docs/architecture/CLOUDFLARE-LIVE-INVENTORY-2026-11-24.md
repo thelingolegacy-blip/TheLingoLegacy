@@ -148,3 +148,34 @@ The production database `lingo-production` returned legacy schema objects includ
 - Production schema privacy review: REQUIRED / NOT STARTED.
 - Data quality, row-level authorization, retention, backup/restore, and runtime enforcement: NOT VERIFIED.
 - All queries were read-only; Cloudflare reported zero changed rows and zero rows written.
+
+
+## Access executor and production Worker verification — 2026-11-24
+
+### SAAAE Access application
+
+A fresh read of the Cloudflare Access application and account-member APIs confirms:
+
+- Application `LINGO SAAAE Staging Privileged Executor` exists at `saaae-staging.thelingolegacy.com`.
+- The application currently has **zero attached Access policies**.
+- The account has **one accepted member**.
+- The returned account-member record reports account-level two-factor authentication disabled.
+- The current operator-registry implementation requires two distinct human operators (requester and reviewer) with independent attestations, plus a separate workload executor.
+
+This staging privileged-executor boundary is therefore NOT READY. Do not add permissive policies or invent operator identities. A second independently authenticated human identity, an attestation process, a distinct workload identity, and policy review are prerequisites. No Access policy, member, DNS, or Worker route was changed.
+
+### Core Worker deployment provenance
+
+The current 100% deployment for `thelingolegacyv-5` points to version 137, version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`, created 2026-10-25. This confirms the active deployment record; a newer uploaded version or source upload timestamp is not equivalent to production activation.
+
+The Worker remains the route owner for apex/www wildcard traffic. No new deployment or traffic split was performed.
+
+### Updated acceptance status
+
+- SAAAE privileged Access app existence: VERIFIED.
+- Access policy attachment: ZERO; BLOCKED.
+- Independent human requester/reviewer: NOT AVAILABLE in the current accepted-member roster.
+- Account-level 2FA: DISABLED for the sole accepted member; remediation prerequisite.
+- Separate workload executor identity: NOT VERIFIED.
+- Active Core Worker deployment version: VERIFIED as v137 at 100%.
+- Production Worker update/promotion: NOT PERFORMED.
