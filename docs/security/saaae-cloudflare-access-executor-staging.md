@@ -168,3 +168,11 @@ Distinct Access JWT subjects prove distinct authenticated accounts, not distinct
 ### Latest GitHub Actions status
 
 The expanded workflow is now configured to run all six Node test suites (Access JWT, operator registry, operator authentication, SAAAE D1 authorization/approval, and atomic settlement) plus both SQLite migration suites and syntax checks. Latest PR #659 push and pull-request attempts (runs `45296566443` and `45296571848`) ended in `startup_failure` with zero jobs. No tests ran and no pass result is claimed. This remains an Actions runner/startup blocker, not a code-test result.
+
+The Cloudflare IdP configuration was also re-read on 2026-11-24:
+
+- The selected IdP is Cloudflare with `restrict_to_account_members: true`.
+- SCIM is disabled; no SCIM user lifecycle/deprovisioning feed is available to establish workforce identity records.
+- The application has binding cookies enabled, HttpOnly cookies enabled, SameSite=`Strict`, and eager redirect cookies enabled.
+- The application audience is configured on the Access app and must be supplied to the verifier as a secret-free configuration value.
+- A second independently controlled human must first be added as a genuine Cloudflare account member and then separately verified by the designated identity-verification process. Merely supplying an email address or creating another account for the same person does not satisfy the control.
