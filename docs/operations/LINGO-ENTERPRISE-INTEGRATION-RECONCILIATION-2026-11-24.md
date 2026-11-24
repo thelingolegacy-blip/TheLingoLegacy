@@ -309,3 +309,27 @@ The public directory has a promising canonical eight-card source candidate, but 
 - An independent structural spot-check found no duplicate module IDs, unknown readiness values, write-enabled module records, declared `:write` scopes, missing baseline evidence requirements, missing required domain read scopes, or violations of the declared global read-only controls.
 - The committed test file contains **12** Node test cases. These are authored tests only; neither the committed validator nor the Node test runner has executed in CI. This spot-check is not a substitute for the JSON Schema validator, exact-head Node execution, browser QA, or independent review.
 - The Worker CSP proposal adds the narrowly scoped GitHub API origin to `connect-src`; no live Worker policy was changed.
+
+
+## 14. AppDeploy resource and runtime error recheck (2026-11-24)
+
+Read-only AppDeploy account and application checks were repeated for the Studio Hub and Hello The Lingo Legacy.
+
+### LINGO Studio Hub
+
+- App record remains deployed/ready at `https://lingo-legacy-studio-hub-nhda3b.v2.appdeploy.ai/`; this is preview status, not production certification.
+- Resource-only inventory includes `public/resources/visuals/lingoapparel-world.jpeg`, the same asset path implicated by two frontend load errors in the app's error record.
+- Therefore the finding is **not simply “asset absent from resource inventory.”** The inventory does not prove the file is correctly bound, served at the expected public URL, or decodable by the browser. A fresh controlled browser/network fetch of the exact URL and resource metadata/content-type check is still required.
+- The latest returned QA snapshot has zero frontend/network errors, but it is timestamped earlier than the two later asset errors. Treat it as stale relative to those errors.
+
+### Hello The Lingo Legacy
+
+- App record remains deployed/ready at `https://hello-the-lingo-legacy-ois1rj.v2.appdeploy.ai/`; deployment readiness does not resolve the runtime issue.
+- The error record includes a frontend aborted-request rejection and a backend `AppDatabaseGatewayUnavailable` HTTP 503 from the `media-health-monitor` cron handler.
+- The cron inventory currently reports the monitor enabled, last status `success`, and failure count `0`. This later scheduler status is useful but does not erase the earlier backend 503 or independently verify the user-facing realtime/media path.
+- The latest returned QA snapshot reports no frontend/network errors but predates the newer frontend abort. A fresh browser/realtime and backend gateway diagnostic is still required.
+
+### AppDeploy write boundary
+
+- Deployment access remains expired (`deploy_app_allowed: false`). No app source, resource binding, deployment, build, or billing action was changed.
+- Continue using GitHub as the source of truth. Do not upload or bind a replacement asset merely because an older error log names the path; first verify the exact resource bytes, serving path, and current browser request.
