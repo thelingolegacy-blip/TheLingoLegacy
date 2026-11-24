@@ -364,3 +364,10 @@ This refines the earlier overlap note: CSS/JS are byte-identical; homepage and d
 - Corrected the PR #640 branch workflow by adding `index.html` to the `push.branches: [main].paths` list. The pull-request filter, `ubuntu-latest` runner, `contents: read` permission, and `node --test scripts/tests/world-directory-canon.test.mjs` command were left unchanged.
 - Verified the updated branch workflow content contains `index.html` in both path filters. The seven authored Node test cases remain unexecuted because repository Actions startup failure prevents job creation.
 - PR #640 head is now `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`. This is a focused CI-trigger repair only; it does not authorize merging the PR or public release.
+
+
+### Exact-head CI result after the PR #640 workflow repair
+
+- Four workflows were associated with repaired PR #640 head `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`: Lingo Legacy Static CI (`45421048353`), Crimson Smoke UI (`45421045314`), Canonical World Directory (`45421042242`), and G02 Runner Image Build (no publish) (`45421038886`).
+- All four completed with `startup_failure`; each returned **zero jobs and zero artifacts**.
+- The path-filter repair is source-verified, but the canonical directory test did not execute. This confirms the repository-wide pre-job Actions blocker still affects the PR's own dedicated workflow and is not isolated to unrelated CI.
