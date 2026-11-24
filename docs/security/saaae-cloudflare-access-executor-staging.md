@@ -19,7 +19,7 @@ The executor recognizes three distinct actor classes:
 - **Reviewer:** a different authenticated human who approves or rejects that exact request.
 - **Executor:** a non-human workload identity used only by the staging executor runtime to apply the approved, allow-listed change.
 
-Requester and reviewer must resolve to distinct immutable identity subjects, not merely different display names, email aliases, sessions, MFA events, or browser profiles. The executor service identity must never be accepted as a requester or reviewer.
+Requester and reviewer must resolve to distinct immutable Access subjects AND distinct pseudonymous person references issued by an independently verified workforce identity process. Different accounts, email aliases, sessions, MFA events, or browser profiles for the same person do not constitute independence. Each human registry entry now requires a unique `person_ref`, `independence_attestation_id`, and `attestation_issuer`. The registry parser checks that these fields are present and that person references are unique; it does not cryptographically validate the external attestation itself. Therefore the roster must remain empty/unready until a separate trusted identity-verification process has verified the second person and the evidence reference has been reviewed. The executor service identity must never be accepted as a requester or reviewer.
 
 Before enabling the endpoint, the operator roster must contain at least two separately controlled human identities. The current Cloudflare inspection did not establish that such a second human identity exists. Do not infer one from the account-member policy, an email-domain policy, or the account's MFA requirement.
 
@@ -74,7 +74,8 @@ No arbitrary SQL, caller-supplied digest, caller-supplied actor identity, self-a
 
 ## 7. Required verification gates
 
-- [ ] Confirm two distinct, separately controlled Cloudflare human identities and their exact immutable subjects.
+- [ ] Independently verify two separately controlled human persons through the designated workforce identity authority; record distinct pseudonymous person references and auditable attestation IDs (different Access subjects alone are insufficient).
+- [ ] Confirm each Access subject maps to the corresponding independently verified person reference; review the attestation evidence out of band.
 - [ ] Review dedicated Access app and explicit allow policy; verify no bypass or broad policy attachment.
 - [ ] Verify JWT signature, issuer, audience, expiry, not-before, and subject checks with positive and negative fixtures.
 - [ ] Verify requester/reviewer separation and executor workload identity separation.
@@ -145,3 +146,25 @@ A standalone registry parser and actor-separation module now exists at `src/auth
 - Provisioning actor resolution requires three distinct subjects and role/type matches.
 - The registry contains no real operator subjects. It remains unready until independently controlled identities and the separate executor workload subject are supplied through reviewed server-side configuration.
 - The module is a policy foundation, not an enabled endpoint. It does not attach Access policies, create DNS, issue credentials, or enable execution.
+
+## 13. Follow-up read-only verification — 2026-11-24
+
+A fresh Cloudflare API inspection confirmed the dedicated Access application remains an isolated, default-deny shell:
+
+- Application ID: `32ebd30f-3edf-4b42-9e59-23372bcadd59`
+- Hostname: `saaae-staging.thelingolegacy.com`
+- Session duration: `1h`
+- Configured identity provider: Cloudflare
+- Attached application policies: `0`
+- DNS records for the staging hostname: `0`
+- Matching SAAAE/game-engine Worker scripts: `0`
+
+No Cloudflare resource was modified by this inspection.
+
+### Identity independence limitation
+
+Distinct Access JWT subjects prove distinct authenticated accounts, not distinct natural persons. The registry now requires a unique pseudonymous `person_ref` plus an `independence_attestation_id` and issuer reference for each human. The parser enforces presence and uniqueness, but does not verify the attestation issuer's signature or source record. A designated independent identity-verification process must validate the evidence before the server-owned roster is populated. Do not treat fabricated or self-asserted person references as proof.
+
+### Latest GitHub Actions status
+
+The expanded workflow is now configured to run all six Node test suites (Access JWT, operator registry, operator authentication, SAAAE D1 authorization/approval, and atomic settlement) plus both SQLite migration suites and syntax checks. Latest PR #659 push and pull-request attempts (runs `45296566443` and `45296571848`) ended in `startup_failure` with zero jobs. No tests ran and no pass result is claimed. This remains an Actions runner/startup blocker, not a code-test result.
