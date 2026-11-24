@@ -46,6 +46,21 @@ The standby retains a noindex response header and a canonical URL pointing to th
 
 This map defines implementation and acceptance work. It does not claim that every provider, API, account, policy or production control is operational.
 
+
+## Existing launch hostname integration — observed 2026-11-24
+
+The Cloudflare account has an existing launch endpoint; it is not a blank hostname:
+
+- DNS: \`launch.thelingolegacy.com\` is a proxied CNAME to \`thelingolegacy-static-backup.pages.dev\`.
+- Worker route: \`launch.thelingolegacy.com/*\` is assigned to \`lingo-static-backup-proxy\`.
+- Worker behavior: \`GET\` and \`HEAD\` for \`/\` and \`/index.html\` return a pinned Studio HTML asset from GitHub commit \`9eaa20fd8872b940a157f16a8bbd5ddb04371597\`; five whitelisted SVGs are pinned to that same commit. Other paths are proxied to the Pages hostname.
+- This means changing the Pages \`static-site/index.html\` alone will not change the page served at the launch hostname root. A separate Worker-source reconciliation and deployment is required.
+- An external browser probe was redirected to a Cloudflare Access login page. The hostname is therefore not confirmed as anonymously/publicly accessible. Preserve that access gate until a separate public-launch decision.
+- Pages configuration currently has deployments disabled, production deployments disabled and preview deployment setting \`none\`. This PR cannot produce a Pages preview until that configuration is separately changed.
+- The previously noted \`fail_open: true\` value was not present in the retrieved \`lingo-static-backup-proxy\` source or its script settings. Treat the exact source of that earlier flag as unresolved; do not attribute it to this Worker without further evidence.
+
+No Worker route, DNS record, Access policy, Pages setting or deployment was changed by this PR.
+
 ## Security and publishing boundaries
 
 1. Only \`static-site/\` is eligible for Pages publication. Do not change the build root to the repository root.
