@@ -371,3 +371,15 @@ This refines the earlier overlap note: CSS/JS are byte-identical; homepage and d
 - Four workflows were associated with repaired PR #640 head `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`: Lingo Legacy Static CI (`45421048353`), Crimson Smoke UI (`45421045314`), Canonical World Directory (`45421042242`), and G02 Runner Image Build (no publish) (`45421038886`).
 - All four completed with `startup_failure`; each returned **zero jobs and zero artifacts**.
 - The path-filter repair is source-verified, but the canonical directory test did not execute. This confirms the repository-wide pre-job Actions blocker still affects the PR's own dedicated workflow and is not isolated to unrelated CI.
+
+
+
+## 18. Studio enterprise registry source audit and exact-head CI status (2026-11-24)
+
+- Refreshed PR #638: `docs/destiny-engine-enterprise-stack-register-main-sync-2026-11-21`, head `a4f75223927541bdc536fe6ef3adc2ab97b271ec`; PR remains OPEN / DRAFT / UNMERGED.
+- Read the registry JSON, JSON Schema, Node validator, 12-case test file, and dedicated workflow. Static review confirms the registry's 22-module inventory and declared read-only posture; the validator enforces no write authority, no `:write` permission scopes, bounded domain scopes, required evidence fields, and deny-by-default global controls.
+- Additional validation limitation identified: the JavaScript validator checks LIVE_VERIFIED evidence values only for non-empty strings; it does not enforce the schema's `observedAt` date-time format or `confidence` enum. The schema file is present, but the dedicated workflow does not invoke a JSON Schema validator. These are validation-coverage gaps, not proof that current records are malformed. Add executable schema validation and negative tests before accepting the registry contract.
+- The test file includes 12 tests, including checks for duplicate module IDs, write authority, unknown readiness values, bounded domain scopes, dashboard source, CSP restriction, secret-pattern absence, and correlated evidence. These tests remain authored but unexecuted.
+- Six workflows are associated with the exact PR #638 head: Studio Sandbox Guard (`45092265432`), Worker Route Security (`45092266502`), G02 Runner Image Build (`45092264486`), Lingo Legacy Static CI (`45092263471`), Studio Enterprise Module Registry (`45092262526`), and Crimson Smoke UI (`45092261574`). All six concluded `startup_failure`. The dedicated registry workflow, static CI, and Crimson Smoke UI each returned zero jobs and zero artifacts.
+- This is consistent with the already observed repository-wide pre-job Actions failure. It is not a failing test report and does not establish the provider/root cause. No runner, workflow, repository setting, provider, or production configuration was changed.
+- PR #638 remains unaccepted pending executable Node and JSON Schema validation, correction of any validation findings, independent review, and evidence that the Actions jobs actually instantiate and complete.
