@@ -1,5 +1,5 @@
 const ALLOWED_ROLES = new Set(['requester', 'reviewer', 'executor']);
-const ALLOWED_FIELDS = new Set(['subject', 'type', 'status', 'roles']);
+const ALLOWED_FIELDS = new Set(['subject', 'type', 'status', 'roles', 'person_ref', 'independence_attestation_id', 'attestation_issuer']);
 const MAX_SUBJECT_LENGTH = 256;
 const MAX_REGISTRY_ENTRIES = 32;
 
@@ -24,13 +24,15 @@ export function parseSaaaeOperatorRegistry(raw) {
   }
 
   const subjects = new Set();
+  const humanPersonRefs = new Set();
   const operators = [];
   for (const entry of entries) {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)
         || Object.keys(entry).some((key) => !ALLOWED_FIELDS.has(key))) {
       return { ok: false, code: 'OPERATOR_REGISTRY_INVALID' };
     }
-    const { subject, type, status, roles } = entry;
+    const { subject, type, status, roles, person_ref: personRef,
+      independence_attestation_id: attestationId, attestation_issuer: attestationIssuer } = entry;
     if (typeof subject !== 'string' || subject.length < 1
         || subject.length > MAX_SUBJECT_LENGTH || subject.trim() !== subject
         || subjects.has(subject)) {
@@ -47,8 +49,28 @@ export function parseSaaaeOperatorRegistry(raw) {
         || (type === 'workload' && roles.some((role) => role !== 'executor'))) {
       return { ok: false, code: 'OPERATOR_REGISTRY_INVALID' };
     }
+    if (type === 'human') {
+      // person_ref is a pseudonymous identifier issued by the independently
+      // verified workforce identity process, not a caller-selected account ID.
+      if (typeof personRef !== 'string' || personRef.length < 8 || personRef.length > 256
+          || personRef.trim() !== personRef || humanPersonRefs.has(personRef)
+          || typeof attestationId !== 'string' || attestationId.length < 8 || attestationId.length > 256
+          || attestationId.trim() !== attestationId
+          || typeof attestationIssuer !== 'string' || attestationIssuer.length < 3 || attestationIssuer.length > 256
+          || attestationIssuer.trim() !== attestationIssuer) {
+        return { ok: false, code: 'OPERATOR_INDEPENDENCE_ATTESTATION_REQUIRED' };
+      }
+      humanPersonRefs.add(personRef);
+    } else if (personRef !== undefined || attestationId !== undefined || attestationIssuer !== undefined) {
+      return { ok: false, code: 'OPERATOR_REGISTRY_INVALID' };
+    }
     subjects.add(subject);
-    operators.push({ subject, type, status, roles: [...roles] });
+    operators.push({
+      subject, type, status, roles: [...roles],
+      ...(type === 'human' ? {
+        personRef, independenceAttestationId: attestationId, attestationIssuer,
+      } : {}),
+    });
   }
 
   return { ok: true, operators };
@@ -67,7 +89,9 @@ export function saaaeOperatorRegistryReadiness(registry) {
   const executor = active.find((operator) => operator.type === 'workload'
     && operator.roles.includes('executor'));
   if (humans.length < 2 || !requester || !reviewer || !executor
-      || executor.subject === requester.subject || executor.subject === reviewer.subject) {
+      || executor.subject === requester.subject || executor.subject === reviewer.subject
+      || requester.personRef === reviewer.personRef
+      || !requester.independenceAttestationId || !reviewer.independenceAttestationId) {
     return { ready: false, code: 'INDEPENDENT_OPERATOR_ROSTER_REQUIRED' };
   }
   return { ready: true, code: 'OPERATOR_REGISTRY_READY' };
