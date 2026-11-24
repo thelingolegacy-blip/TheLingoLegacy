@@ -3,8 +3,8 @@ import test from 'node:test';
 import { authenticateSaaaeOperator } from '../../src/auth/saaae-operator-auth.mjs';
 
 const roster = [
-  { subject: 'human-requester', type: 'human', status: 'active', roles: ['requester'] },
-  { subject: 'human-reviewer', type: 'human', status: 'active', roles: ['reviewer'] },
+  { subject: 'human-requester', type: 'human', status: 'active', roles: ['requester'], person_ref: 'person-proof-001', independence_attestation_id: 'attestation-proof-001', attestation_issuer: 'workforce-identity-authority' },
+  { subject: 'human-reviewer', type: 'human', status: 'active', roles: ['reviewer'], person_ref: 'person-proof-002', independence_attestation_id: 'attestation-proof-002', attestation_issuer: 'workforce-identity-authority' },
   { subject: 'workload-executor', type: 'workload', status: 'active', roles: ['executor'] },
 ];
 const env = {
