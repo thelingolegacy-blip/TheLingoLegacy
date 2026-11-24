@@ -7,7 +7,6 @@ set -Eeuo pipefail
 : "${RUNNER_TARBALL_URL:?Set RUNNER_TARBALL_URL to the official GitHub runner release tarball URL}"
 : "${RUNNER_TARBALL_SHA256:?Set RUNNER_TARBALL_SHA256 to the published SHA-256 checksum}"
 
-REPO_URL="https://github.com/thelingolegacy-blip/TheLingoLegacy"
 RUNNER_NAME="${RUNNER_NAME:-lingo-g02-$(hostname -s)}"
 RUNNER_LABELS="${RUNNER_LABELS:-lingo-g02}"
 RUNNER_USER="actions"
@@ -21,17 +20,13 @@ if [[ "$RUNNER_TARBALL_URL" != https://github.com/actions/runner/releases/downlo
   echo "Runner tarball must come from the official github.com/actions/runner release." >&2
   exit 1
 fi
-if id "$RUNNER_USER" >/dev/null 2>&1; then
-  echo "User $RUNNER_USER already exists; inspect the host before continuing." >&2
-  exit 1
-fi
-if [[ -e "$RUNNER_DIR" ]]; then
-  echo "$RUNNER_DIR already exists; refusing to overwrite." >&2
+if id "$RUNNER_USER" >/dev/null 2>&1 || [[ -e "$RUNNER_DIR" ]]; then
+  echo "Runner user or install directory already exists; inspect the host before continuing." >&2
   exit 1
 fi
 
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl tar gzip libicu70 libkrb5-3 zlib1g libssl3
+DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl tar gzip libicu-dev libkrb5-3 zlib1g libssl3
 useradd --system --create-home --home-dir "/home/$RUNNER_USER" --shell /usr/sbin/nologin "$RUNNER_USER"
 install -d -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0750 "$RUNNER_DIR"
 
@@ -60,7 +55,6 @@ rm -f "$tmp"
 cd "$RUNNER_DIR"
 ./svc.sh install "$RUNNER_USER"
 ./svc.sh start
-systemctl --no-pager --full status actions.runner.thelingolegacy-blip-TheLingoLegacy."$RUNNER_NAME".service || true
 
 echo "Runner installation attempted. Verify online status in GitHub Settings > Actions > Runners."
 echo "Security: do not run untrusted pull-request code on this runner; do not add production secrets."
