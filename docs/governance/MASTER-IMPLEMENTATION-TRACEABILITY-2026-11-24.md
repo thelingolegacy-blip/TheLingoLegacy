@@ -217,3 +217,10 @@ After the source/documentation updates, the current Core PR #664 head `c19fd0df2
 The current Web PR #44 head `73b6963cde03508f0ea230233aecc93843de5cbb` produced run `45496807012`, run #772, also `startup_failure`.
 
 All four runs were re-queried: zero jobs and zero artifacts each. The evidence therefore persists across the latest source/documentation commits; no test steps ran. This does not isolate the provider-side cause. Owner/admin billing and Actions-policy checks plus GitHub Support remain required.
+
+
+## Minimal hosted-runner diagnostic available — 2026-11-24
+
+The recovery branch contains `.github/workflows/isolated-hosted-runner-probe.yml` (blob `1152665c13e47749c18806fba281959d16b8af34`). It is a manual `workflow_dispatch` probe on `ubuntu-latest`, with `contents: none`, no checkout, no third-party actions, no secrets, no network calls, no artifacts, and no production access. It emits runner name, OS/architecture, run/commit correlation, UTC time, OS, Node/npm/Git versions, disk and memory details, and a step summary.
+
+This is the safest next admission diagnostic because it isolates hosted-runner job creation from application build/test dependencies. The connected GitHub action set exposes run inspection and rerun operations but not workflow dispatch, so this pass could verify the workflow source but could not trigger it. A repository maintainer with Actions write permission can select the recovery branch and manually run **Isolated Hosted Runner Probe** from the Actions tab. Acceptance requires a real job ID, runner identity and instantiated steps—not merely a workflow run record.
