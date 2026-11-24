@@ -29,10 +29,10 @@ jobs:
         run: |
           mkdir -p dist
           cp -R studio-sites dist/studio-sites
-          printf 'commit=%s\\n' "$GITHUB_SHA" > dist/BUILD-METADATA.txt
-          printf 'environment=preview-only\\n' >> dist/BUILD-METADATA.txt
-          printf 'production_activation=disabled\\n' >> dist/BUILD-METADATA.txt
-          printf 'source_ref=%s\\n' "$GITHUB_REF" >> dist/BUILD-METADATA.txt
+          printf 'commit=%s\n' "$GITHUB_SHA" > dist/BUILD-METADATA.txt
+          printf 'environment=preview-only\n' >> dist/BUILD-METADATA.txt
+          printf 'production_activation=disabled\n' >> dist/BUILD-METADATA.txt
+          printf 'source_ref=%s\n' "$GITHUB_REF" >> dist/BUILD-METADATA.txt
       - name: Upload immutable preview artifact
         if: success()
         uses: actions/upload-artifact@v4
