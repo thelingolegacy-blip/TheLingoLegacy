@@ -1,0 +1,196 @@
+{
+  "schema_version": "1.0.0",
+  "authority": "LINGOlegacy_MASTER",
+  "mode": "design-only-until-trigger-provisioning-and-owner-approval",
+  "dispatch_defaults": {
+    "retry_max": 3,
+    "backoff_seconds": [
+      30,
+      120,
+      600
+    ],
+    "dedupe_window_seconds": 900,
+    "include_secrets": false,
+    "include_raw_pii": false
+  },
+  "severity_routes": {
+    "SEV0": {
+      "owner": "incident-command",
+      "acknowledgement": "immediate",
+      "auto_actions": [
+        "read-only-health-check",
+        "preserve-evidence"
+      ],
+      "approval_required": [
+        "all-mutations"
+      ]
+    },
+    "SEV1": {
+      "owner": "service-owner+incident-lead",
+      "acknowledgement": "urgent",
+      "auto_actions": [
+        "read-only-health-check",
+        "synthetic-probe",
+        "open-incident-record"
+      ],
+      "approval_required": [
+        "production-mutation"
+      ]
+    },
+    "SEV2": {
+      "owner": "realm-engineering",
+      "acknowledgement": "priority",
+      "auto_actions": [
+        "read-only-health-check",
+        "preview-test",
+        "create-tracking-issue"
+      ],
+      "approval_required": [
+        "production-mutation"
+      ]
+    },
+    "SEV3": {
+      "owner": "product-backlog",
+      "acknowledgement": "normal",
+      "auto_actions": [
+        "static-analysis",
+        "documentation-check"
+      ],
+      "approval_required": [
+        "production-mutation"
+      ]
+    }
+  },
+  "triggers": [
+    {
+      "event": "github.workflow.startup_failure",
+      "severity": "SEV1",
+      "route": "ci-recovery",
+      "when": "workflow run is startup_failure or queued beyond approved threshold and has no instantiated job",
+      "action": "collect run id, commit, event and runner metadata; inspect policy; preserve last-known-good",
+      "forbidden": [
+        "activate G02",
+        "pretend test failure",
+        "rerun indefinitely"
+      ]
+    },
+    {
+      "event": "github.workflow.job.failure",
+      "severity": "SEV2",
+      "route": "code-owner",
+      "when": "job exists and a step failed",
+      "action": "collect job logs, step summary, artifact refs and commit correlation",
+      "forbidden": [
+        "promote release without full gates"
+      ]
+    },
+    {
+      "event": "github.workflow.artifact.missing",
+      "severity": "SEV2",
+      "route": "build-artifact",
+      "when": "expected artifact missing after job completion",
+      "action": "verify upload path, retention, artifact name and job completion",
+      "forbidden": [
+        "fabricate evidence"
+      ]
+    },
+    {
+      "event": "cloudflare.route.error",
+      "severity": "SEV1",
+      "route": "edge-routing",
+      "when": "verified synthetic probe records sustained 5xx/404",
+      "action": "compare active/preview versions, route and source SHA",
+      "forbidden": [
+        "automatic production promotion",
+        "DNS mutation"
+      ]
+    },
+    {
+      "event": "identity.validation.spike",
+      "severity": "SEV1",
+      "route": "identity-security",
+      "when": "issuer/audience/signature/token-type validation failures exceed service threshold",
+      "action": "fail closed and inspect provider metadata/JWKS/config drift",
+      "forbidden": [
+        "disable authentication",
+        "accept unverified tokens"
+      ]
+    },
+    {
+      "event": "database.readiness.failure",
+      "severity": "SEV1",
+      "route": "data-platform",
+      "when": "readiness probe fails for approved threshold",
+      "action": "preserve read-only/degraded behavior and inspect verified TLS/connectivity",
+      "forbidden": [
+        "automatic data repair",
+        "credential exposure"
+      ]
+    },
+    {
+      "event": "event.dead-letter.threshold",
+      "severity": "SEV2",
+      "route": "event-operations",
+      "when": "retry budget exhausted or oldest event exceeds approved SLO",
+      "action": "quarantine consumer, preserve event hash and inspect schema/idempotency",
+      "forbidden": [
+        "unbounded replay"
+      ]
+    },
+    {
+      "event": "commerce.webhook.anomaly",
+      "severity": "SEV1",
+      "route": "commerce-security",
+      "when": "signature mismatch, replay or reconciliation discrepancy",
+      "action": "quarantine event and reconcile provider state",
+      "forbidden": [
+        "mutate wallet/order balance automatically"
+      ]
+    },
+    {
+      "event": "security.privacy.incident",
+      "severity": "SEV0",
+      "route": "incident-command",
+      "when": "confirmed unauthorized access or sensitive-data exposure",
+      "action": "contain access, preserve evidence and notify authorized owner",
+      "forbidden": [
+        "delete evidence",
+        "publicly disclose personal data"
+      ]
+    },
+    {
+      "event": "backup.restore.failure",
+      "severity": "SEV1",
+      "route": "recovery-operations",
+      "when": "backup missed or restore rehearsal failed",
+      "action": "mark recovery capability unverified and block release",
+      "forbidden": [
+        "claim recovery ready"
+      ]
+    },
+    {
+      "event": "cost.budget.threshold",
+      "severity": "SEV2",
+      "route": "cost-guardrail",
+      "when": "approved budget threshold breached",
+      "action": "pause optional preview activity and notify owner",
+      "forbidden": [
+        "delete production data or resources"
+      ]
+    }
+  ],
+  "approval_gates": [
+    "production-release",
+    "dns-change",
+    "worker-promotion",
+    "identity-provider-change",
+    "credential-rotation",
+    "production-database-migration",
+    "restore-or-data-repair",
+    "payment-activation",
+    "wallet-ledger-mutation",
+    "sweepstakes-activation",
+    "G02-runner-activation",
+    "destructive-infrastructure"
+  ]
+}
