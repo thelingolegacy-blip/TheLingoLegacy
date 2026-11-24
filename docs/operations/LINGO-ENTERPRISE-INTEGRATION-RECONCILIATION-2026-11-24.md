@@ -426,3 +426,22 @@ This refines the earlier overlap note: CSS/JS are byte-identical; homepage and d
 - The accepted greenfield architecture in PR #594 ADR-0001 is provider-neutral Go modular services + PostgreSQL transactional authority per migrated domain, with OIDC identity adapter and Cloudflare edge. It explicitly defers managed-provider selection and does not select Supabase as primary authority. PR #515 is only a Supabase candidate assessment and retains Firebase Auth as compatibility identity until token/account mapping and RLS tests pass. Therefore do not designate either the discovered Supabase project or Firebase as the universal transactional authority. Keep the ADR's one-authority-per-domain rule; use the existing narrow Firebase compatibility/staging work only for the explicitly scoped auth/mobile integration while the PostgreSQL hosting/provider decision remains open.
 - Actionable source remediation status: PR #655 and downstream SAAAE branches already contain the staging-only sentinel condition. No new source edit is required to remove the hard-disable from those branches. The required next execution dependency is a real isolated staging runner with the exact staging labels and a verified host/service; no such runner/host is evidenced by the connected GitHub or Cloudflare inventory.
 - Disposition: source-level staging gate correction exists in a draft dependency chain, but no staging runtime is available to execute it. Keep the production runner, production Worker routes, and production identity/data untouched. Continue to block merge/promotion until a distinct staging runner, independent reviewer, real staging provider configuration, and passing evidence are available.
+
+
+## 23. Latest-head CI and SAAAE source review (2026-11-24)
+
+### Exact-head CI refresh
+The new PR #661 head d87ba117e0556c923a82cdd15fa17b2fe021b40c triggered three PR checks:
+- Crimson Smoke UI — static validation: run 45427312340, conclusion startup_failure.
+- Lingo Legacy Static CI: run 45427308948, conclusion startup_failure.
+- G02 Runner Image Build (no publish): run 45427306079, conclusion startup_failure.
+All three runs have zero Actions jobs. No runner identity, executed step, log, or artifact exists for this head. The reconciliation commit itself therefore has no executed CI validation.
+
+### SAAAE source-review findings in PR #659
+- The Cloudflare Access JWT verifier checks RS256, issuer, audience, subject, expiry, not-before and signature against the Access signing keys. Its in-memory JWKS cache returns a miss immediately when a previously cached key set does not contain a new kid; it does not refresh on an unknown kid until the cache expires. This is a key-rotation availability defect to correct and test before certification.
+- The operator registry checks that person_ref and independence_attestation_id are present, unique, and accompanied by a configured attestation_issuer string. It does not cryptographically verify an attestation, query an independently trusted workforce source, or validate issuer-signed proof. Therefore those string fields are not evidence that two distinct natural persons have been independently verified. The code must not be treated as satisfying the independent-human approval gate until a verifiable attestation mechanism is implemented and independently reviewed.
+- Cloudflare Access application inventory previously showed zero attached Access policies and no dedicated SAAAE staging route. The Worker source and unit tests do not establish live Access policy enforcement, route isolation, or deployment.
+- These are source-review findings, not runtime exploit demonstrations. Keep SAAAE fail-closed and do not configure an allow policy or deploy until the code review, live policy, independent identity evidence, and staging tests pass.
+
+### Current dependency disposition
+PR #654 (Firebase), #655 (staging project isolation), #658 (staging game-engine SAAAE), #659 (Cloudflare Access executor boundary), and #661 (reconciliation) remain open and draft. Their dependency bases are different; do not merge them as a single unordered batch. The source changes and test definitions remain review material until hosted CI executes and independent review is recorded.
