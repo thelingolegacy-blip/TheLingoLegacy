@@ -215,9 +215,9 @@ Source-level work and read-only infrastructure reconciliation advanced, but no a
 
 ## 9. AppDeploy portfolio and preview QA reconciliation (2026-11-24)
 
-- The primary AppDeploy account lists **18 deployed app records**, all currently reported with deployment status `ready`. This means a deployment record is available; it is not independent product acceptance or proof of production readiness.
+- The primary AppDeploy account lists **20 deployed app records**, all currently reported with deployment status `ready`. This means a deployment record is available; it is not independent product acceptance or proof of production readiness.
 - The connected AppDeploy account reports the free plan and 547.83186303 monthly credits available, with zero top-up credits. Deployment access is explicitly `deploy_app_allowed: false` because the authorization expired on 2026-07-07. No deploy, build, restore, source mutation, resource upload, or paid action was attempted.
-- Sixteen app status checks were reviewed across the portfolio. Most returned empty current frontend/backend error lists and empty network-error lists, but their QA snapshots are not uniformly current and do not replace manual browser/device/accessibility review.
+- Twenty app status checks were reviewed across the portfolio. Most returned empty current frontend/backend error lists and empty network-error lists, but their QA snapshots are not uniformly current and do not replace manual browser/device/accessibility review.
 - Two actionable QA findings remain:
   - `LINGO Studio Hub` reports two frontend resource failures for `/resources/visuals/lingoapparel-world.jpeg`; its QA snapshot also contains an eight-test advisory. The image path/resource must be reconciled against the saved source and resource inventory.
   - `Hello The Lingo Legacy` reports an aborted frontend request and one backend error in its status record. Its runtime/realtime path requires a fresh controlled diagnostic before acceptance.
