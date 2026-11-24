@@ -1,0 +1,8 @@
+name = "lingo-static-backup-proxy"
+main = "cloudflare/static-backup-proxy.mjs"
+compatibility_date = "2026-10-25"
+workers_dev = false
+
+routes = [
+  { pattern = "launch.thelingolegacy.com/*", zone_name = "thelingolegacy.com" }
+]
