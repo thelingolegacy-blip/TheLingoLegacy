@@ -186,3 +186,8 @@ The Worker remains the route owner for apex/www wildcard traffic. No new deploym
 A fresh Worker versions API read returned the latest uploaded `thelingolegacyv-5` version as **v378** (version ID `cf7059ef-a9af-47f0-8f9f-49c5a3cad759`, created 2026-11-21T18:33:17Z). The active 100% deployment remains **v137** (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`, created 2026-10-25T14:04:26Z). The 241-version gap is a verified upload/deployment drift signal, not proof that v378 is safe or should be promoted.
 
 The current v378 version must be reviewed against canonical GitHub source, preview/test evidence, bindings, route behavior, and rollback before any promotion. No promotion was performed.
+
+
+### Game-engine staging Worker presence
+
+The live Worker script inventory does **not** include `lingo-game-engine-staging`. The staging D1 database exists, and PR #655 contains a Wrangler configuration naming that Worker and binding the existing D1 database, but the Worker resource itself was not present in the account's returned 11-script inventory. No zone route points to it. Therefore the game-engine SAAAE code and migration remain source-only; there is no deployed staging Worker to health-check or exercise. Worker creation/upload/deployment remains blocked pending CI, migration review, operator readiness, and separate staging deployment approval.
