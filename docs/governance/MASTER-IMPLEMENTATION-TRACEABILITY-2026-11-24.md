@@ -205,3 +205,15 @@ Required G04 evidence for this boundary:
 - Independent security review and release-owner acceptance.
 
 **Current disposition:** G04 remains BLOCKED. The remediation document is a target specification, not proof that the source rules have been changed or deployed. The separate product rules file was not available at the expected path in the Core repository during this pass; no rule change is claimed. Keep all real-value, prize, redemption and wallet authority paths disabled until the owning repository is identified and independently verified.
+
+
+## Follow-up admission recheck — latest draft heads
+
+After the source/documentation updates, the current Core PR #664 head `c19fd0df23a2be147261cd6ebab89a9efd184704` produced three more pre-job failures:
+- Crimson Smoke UI: run `45496912921`, run #1891.
+- Lingo Legacy Static CI: run `45496910535`, run #3449.
+- G02 Runner Image Build (no publish): run `45496906994`, run #1947.
+
+The current Web PR #44 head `73b6963cde03508f0ea230233aecc93843de5cbb` produced run `45496807012`, run #772, also `startup_failure`.
+
+All four runs were re-queried: zero jobs and zero artifacts each. The evidence therefore persists across the latest source/documentation commits; no test steps ran. This does not isolate the provider-side cause. Owner/admin billing and Actions-policy checks plus GitHub Support remain required.
