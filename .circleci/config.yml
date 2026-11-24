@@ -40,7 +40,7 @@ jobs:
       - checkout
       - run:
           name: Verify curated static standby
-          command: node scripts/verify-static-backup.mjs
+          command: node scripts/verify-static-backup.mjs && node --test scripts/tests/static-backup-proxy.test.mjs
 workflows:
   validate-non-main:
     jobs:
