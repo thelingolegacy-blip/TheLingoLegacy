@@ -7,8 +7,8 @@ import {
 } from '../../src/auth/saaae-operator-registry.mjs';
 
 const validRoster = [
-  { subject: 'immutable-human-requester-001', type: 'human', status: 'active', roles: ['requester'] },
-  { subject: 'immutable-human-reviewer-002', type: 'human', status: 'active', roles: ['reviewer'] },
+  { subject: 'immutable-human-requester-001', type: 'human', status: 'active', roles: ['requester'], person_ref: 'person-proof-001', independence_attestation_id: 'attestation-proof-001', attestation_issuer: 'workforce-identity-authority' },
+  { subject: 'immutable-human-reviewer-002', type: 'human', status: 'active', roles: ['reviewer'], person_ref: 'person-proof-002', independence_attestation_id: 'attestation-proof-002', attestation_issuer: 'workforce-identity-authority' },
   { subject: 'immutable-workload-executor-003', type: 'workload', status: 'active', roles: ['executor'] },
 ];
 
@@ -23,11 +23,15 @@ test('registry rejects duplicate subjects and email-based identity fields', () =
   assert.equal(parseSaaaeOperatorRegistry(JSON.stringify(duplicate)).code, 'OPERATOR_REGISTRY_INVALID');
   const emailIdentity = [{ ...validRoster[0], email: 'reviewer@example.invalid' }];
   assert.equal(parseSaaaeOperatorRegistry(JSON.stringify(emailIdentity)).code, 'OPERATOR_REGISTRY_INVALID');
+  const sameHumanTwice = [validRoster[0], { ...validRoster[1], person_ref: validRoster[0].person_ref }];
+  assert.equal(parseSaaaeOperatorRegistry(JSON.stringify(sameHumanTwice)).code, 'OPERATOR_INDEPENDENCE_ATTESTATION_REQUIRED');
+  const noAttestation = [{ ...validRoster[0], independence_attestation_id: undefined }];
+  assert.equal(parseSaaaeOperatorRegistry(JSON.stringify(noAttestation)).code, 'OPERATOR_INDEPENDENCE_ATTESTATION_REQUIRED');
 });
 
 test('registry remains unready without two distinct human identities and workload executor', () => {
   const oneHuman = parseSaaaeOperatorRegistry(JSON.stringify([
-    { subject: 'only-human', type: 'human', status: 'active', roles: ['requester', 'reviewer'] },
+    { subject: 'only-human', type: 'human', status: 'active', roles: ['requester', 'reviewer'], person_ref: 'only-person-proof', independence_attestation_id: 'only-attestation', attestation_issuer: 'workforce-identity-authority' },
     validRoster[2],
   ]));
   assert.equal(saaaeOperatorRegistryReadiness(oneHuman).code, 'INDEPENDENT_OPERATOR_ROSTER_REQUIRED');
