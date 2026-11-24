@@ -191,3 +191,61 @@ The current v378 version must be reviewed against canonical GitHub source, previ
 ### Game-engine staging Worker presence
 
 The live Worker script inventory does **not** include `lingo-game-engine-staging`. The staging D1 database exists, and PR #655 contains a Wrangler configuration naming that Worker and binding the existing D1 database, but the Worker resource itself was not present in the account's returned 11-script inventory. No zone route points to it. Therefore the game-engine SAAAE code and migration remain source-only; there is no deployed staging Worker to health-check or exercise. Worker creation/upload/deployment remains blocked pending CI, migration review, operator readiness, and separate staging deployment approval.
+
+
+## Master reconciliation refresh — 2026-11-24 21:xx UTC
+
+This refresh was performed after the preceding inventory update. It re-queried the live Cloudflare account, zone routes, Access policy attachment, staging D1 schemas, and GitHub commit-associated workflow runs. All Cloudflare calls in this refresh were read-only.
+
+### Current GitHub execution evidence
+
+Core reconstruction head `1aeadb7f9e8a4444864450915412fd7c670528ec` still has three associated workflow runs:
+- `45489740857` — Crimson Smoke UI static validation: `startup_failure`
+- `45489738908` — Lingo Legacy Static CI: `startup_failure`
+- `45489736932` — G02 Runner Image Build (no publish): `startup_failure`
+
+The recorded Jobs API and Artifacts API responses for these runs were empty. No job steps executed. G02 remains quarantined and unverified.
+
+Web PR #50 remains open, draft, and unmerged at head `0b020cc6af9f59c48bd9aebdf242d5d8af66f06b`. Its PR description records a successful Cloudflare preview build `5bb3bc1b-7a0b-4042-995c-8de2226f998d`, with 4/4 tests and successful OpenNext/Wrangler preview build. This is branch-preview evidence only; browser/device QA is still unverified. The associated Web Actions runs `45308373515` and `45305514299` both concluded `startup_failure`. Thus preview build success does not restore or certify GitHub Actions.
+
+### Current Cloudflare reconciliation
+
+- Account Worker inventory still contains 11 scripts. `thelingolegacy-web` exists; `lingo-game-engine-staging` does not.
+- The current zone route list contains 27 routes. Apex wildcard and `www` remain routed to `thelingolegacyv-5`; no returned route targets `thelingolegacy-web` or `lingo-game-engine-staging`.
+- The `thelingolegacy-web` Worker has deployment records, but its existence/deployment record does not establish zone traffic ownership or public route readiness.
+- The SAAAE privileged-executor Access application still has zero policies.
+- The account roster still returns one accepted member. That member's account-level 2FA flag is false. The member's role is Super Administrator; this does not satisfy independent requester/reviewer separation.
+- Read-only query of game-engine staging D1 `793ab138-7818-47c9-ad01-b319ad34a8c5` returns the six game foundation tables and no SAAAE tables.
+- Read-only query of askLINGO staging D1 `e041e690-2a45-4c82-8b46-6e012d739972` confirms the six SAAAE tables: `principals`, `grants`, `approvals`, `audit_events`, `idempotency_keys`, `rate_limit_buckets`.
+- Both D1 queries report zero changed rows and zero rows written. No migration or data mutation was performed.
+
+### Updated disposition
+
+| Gate | Current status |
+|---|---|
+| Core reconstruction documentation | Source present; PR #664 draft/unmerged |
+| GitHub Actions admission | BLOCKED — startup_failure before job creation in Core and Web |
+| Web isolated preview build | PREVIEW BUILD PASS recorded for PR #50; browser/device QA outstanding |
+| Web public route ownership | NOT CONFIGURED / NOT VERIFIED |
+| Game-engine staging Worker | ABSENT |
+| Game-engine staging SAAAE schema | NOT PRESENT |
+| askLINGO staging SAAAE schema | PRESENT; runtime enforcement not certified |
+| SAAAE Access policy | ZERO; blocked |
+| Independent requester/reviewer identities | NOT ESTABLISHED |
+| Account-level 2FA | DISABLED for sole accepted member |
+| Core production Worker | Existing route owner/deployment preserved; uploaded v378 not promoted |
+| Production privacy/retention review | REQUIRED; not completed |
+| Production release | PROTECTED HOLD; NOT AUTHORIZED BY THIS DOCUMENT |
+
+### Required next actions and authority boundaries
+
+1. Repository/account owner: inspect GitHub Actions entitlement, usage/billing stop conditions, organization/repository Actions policy, and runner-group restrictions; if clear, escalate the correlated run IDs and zero-job evidence to GitHub Support.
+2. Account owner: enable 2FA and establish separately controlled requester and reviewer identities. Do not create identities or Access allow policies by inference.
+3. Security/operator owner: define and verify the distinct workload executor, operator registry, approval lifecycle, and audit enforcement before attaching any policy.
+4. Engineering: complete tests for PR #658 and review the additive migration, backup/restore path, migration ordering, and rollback before any staging D1 migration.
+5. Engineering: create and verify the staging game Worker only after CI, migration, identity, and explicit staging deployment gates pass.
+6. Web owner: reconcile Web Worker route ownership, required bindings, and independent browser/device/accessibility acceptance before any public route change.
+7. Core owner: compare uploaded `thelingolegacyv-5` v378 to canonical source, tests, bindings, route behavior, and rollback; do not promote based on upload sequence.
+8. Privacy/security reviewer: complete production schema data classification, purpose, consent, retention, deletion, access, and logging review before new integration or migration.
+
+No production deployment, route/DNS mutation, Access policy/member change, 2FA change, D1 migration, secret rotation, runner registration, billing change, or production-hold lift occurred in this refresh.
