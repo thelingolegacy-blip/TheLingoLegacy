@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "brand": "THE LINGO LEGACY",
+  "tagline": "One Legacy. Many Worlds.",
+  "purpose": "Public portfolio navigation only; this manifest does not indicate that every product or service is live.",
+  "worlds": [
+    {
+      "name": "LINGOlegacy",
+      "category": "Flagship",
+      "description": "Central home for identity, community and connected experiences.",
+      "href": "/living-universe/",
+      "availability": "portfolio"
+    },
+    {
+      "name": "LINGOlane",
+      "category": "Apparel and lifestyle",
+      "description": "Loyalty Lane Apparel, Designs & Promotions, and Laundry-Cycle.",
+      "href": "/loyalty-lane-apparel/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGOslots",
+      "category": "Games",
+      "description": "That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions and Cashman Lingo Mania.",
+      "href": "/thats-my-lingo/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGOarcade",
+      "category": "Arcade",
+      "description": "Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead.",
+      "href": null,
+      "availability": "portfolio"
+    },
+    {
+      "name": "LINGOlibrary",
+      "category": "Books and stories",
+      "description": "KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends.",
+      "href": "/kottons-code/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGOmedia",
+      "category": "Media",
+      "description": "Rise of Zavione and the creative media universe.",
+      "href": "/visual-showcase/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGOworld",
+      "category": "Digital services",
+      "description": "askLINGO, LINGOai, LINGOvoice, LINGOtravel, LINGOcampus, LINGOsupport and related services.",
+      "href": "/lingo-ai/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LegacyXclub",
+      "category": "Community",
+      "description": "Community, loyalty and creator connections.",
+      "href": "/community-guidelines/",
+      "availability": "showcase"
+    }
+  ]
+}
