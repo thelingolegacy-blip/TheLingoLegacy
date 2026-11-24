@@ -18,18 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Capture provider-assigned runner identity
+      - name: Capture hosted runner identity
         id: identity
         shell: bash
-        env:
-          RUNNER_ID: ${{ runner.id }}
         run: |
           set -euo pipefail
-          test -n "${RUNNER_ID:-}"
-          test "${RUNNER_ID}" -gt 0
           test -n "${RUNNER_NAME:-}"
           test "${RUNNER_OS:-}" = "Linux"
           test "${RUNNER_ARCH:-}" = "X64"
+          test "${RUNNER_ENVIRONMENT:-}" = "github-hosted"
           test "${GITHUB_ACTIONS:-}" = "true"
           {
             echo "schema=lingo-startup-bootstrap-v1"
@@ -40,8 +37,8 @@ jobs:
             echo "job=${GITHUB_JOB}"
             echo "commit_sha=${GITHUB_SHA}"
             echo "ref=${GITHUB_REF}"
-            echo "runner_id=${RUNNER_ID}"
             echo "runner_name=${RUNNER_NAME}"
+            echo "runner_environment=${RUNNER_ENVIRONMENT}"
             echo "runner_os=${RUNNER_OS}"
             echo "runner_arch=${RUNNER_ARCH}"
             echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -73,7 +70,6 @@ jobs:
         if: always()
         shell: bash
         env:
-          RUNNER_ID: ${{ runner.id }}
           IDENTITY_RESULT: ${{ steps.identity.outcome }}
           BASELINE_RESULT: ${{ steps.baseline.outcome }}
         run: |
@@ -83,12 +79,18 @@ jobs:
             echo "- Run ID: ${GITHUB_RUN_ID}"
             echo "- Attempt: ${GITHUB_RUN_ATTEMPT}"
             echo "- Commit: ${GITHUB_SHA}"
-            echo "- Runner ID: ${RUNNER_ID:-not-assigned}"
             echo "- Runner: ${RUNNER_NAME:-not-assigned}"
+            echo "- Runner environment: ${RUNNER_ENVIRONMENT:-unknown}"
             echo "- Platform: ${RUNNER_OS:-unknown}/${RUNNER_ARCH:-unknown}"
+            echo "- Provider job ID and runner ID: verify from the GitHub Jobs API; these identifiers are not exposed by the documented runner context."
             echo "- Identity step: ${IDENTITY_RESULT}"
             echo "- Baseline step: ${BASELINE_RESULT}"
             echo "- Scope: GitHub-hosted runner only; no checkout, secrets, external actions, network calls, writes, or production access."
+            if [ -f startup-bootstrap-evidence.txt ]; then
+              echo
+              echo "### Runner evidence record"
+              cat startup-bootstrap-evidence.txt
+            fi
             if [ "${IDENTITY_RESULT}" = "success" ] && [ "${BASELINE_RESULT}" = "success" ]; then
               echo "- Acceptance: **HOSTED_BOOTSTRAP_PASS**"
             else
