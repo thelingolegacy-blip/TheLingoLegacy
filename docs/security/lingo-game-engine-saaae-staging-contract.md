@@ -65,3 +65,8 @@ No default tenant, wildcard grant, client-side role, or Firebase-authenticated s
 - Never point this Worker at production Firebase, D1, or production routes.
 
 No live D1 migration, principal/grant provisioning, Worker upload/deployment, route change, or production mutation is authorized by this contract.
+
+
+### Approver session-revocation binding
+
+Every issued spin approval stores the approver's verified Firebase `auth_time` in the immutable `approver_auth_time_epoch` field. Settlement revalidates that timestamp against the approver principal's `token_valid_after_epoch` in the same D1 batch that consumes the approval. Raising the principal's token-valid-after threshold therefore invalidates approvals issued by older sessions. The timestamp is mandatory, non-negative, and protected by the approval-binding immutability trigger. This check complements approver principal status, active tenant membership, and the exact `approval.approve` grant check.
