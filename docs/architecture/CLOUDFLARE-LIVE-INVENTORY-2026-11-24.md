@@ -261,3 +261,27 @@ A follow-up read of commit-associated Actions runs for the latest documentation 
 The SAAAE executor branch run `45440281186` also ended in `startup_failure`, zero jobs and zero artifacts. The Firebase staging branch's three observed runs (`45242756151`, `45242754256`, `45242752163`) likewise ended before job creation with zero jobs/artifacts. The game-engine SAAAE head currently has no PR-triggered workflow runs returned by the commit lookup; absence of a returned run is not a pass.
 
 This confirms that source-level changes on unrelated branches and documentation-only commits are not reaching runner admission. Do not change application code or Node versions as a purported fix for this provider-side symptom. Account owner must inspect Actions policy/entitlement/quota/runner-group controls and escalate these run IDs to GitHub Support if no owner-side restriction explains the failure. G02 remains disabled; no rerun was attempted because there are no failed jobs to rerun.
+
+
+## Follow-up live reconciliation — 2026-11-24 (read-only)
+
+### Account identity and separation of duties
+- Cloudflare account ID: `16cb6f247cd1b28fca864760c7269606`.
+- Account settings report `enforce_twofactor=false`.
+- Accepted account-member list returns exactly one member; that member's account-level `two_factor_authentication_enabled` is false and the role is Super Administrator.
+- The staging privileged-executor Access application (`32ebd30f-3edf-4b42-9e59-23372bcadd59`) returns zero attached application policies.
+- Two-human requester/reviewer separation is therefore not currently evidenced. No member, MFA, account setting, or Access policy was changed.
+
+### Current D1 schema presence
+Read-only SQLite catalog queries returned `changes=0`, `rows_written=0`, and `changed_db=false`:
+- askLINGO staging D1 `asklingo-v2-staging-20261122` contains `principals`, `grants`, `approvals`, `audit_events`, `idempotency_keys`, and `rate_limit_buckets`. This is schema presence only; it does not prove live endpoint enforcement, provisioned identities, grants, or accepted policy behavior.
+- Game-engine staging D1 `lingo-game-engine-staging-20261107` contains the existing game tables but none of the six SAAAE tables.
+- Current Worker inventory contains `asklingo-v2-staging` but not `lingo-game-engine-staging`. The game-engine staging D1 database exists without its corresponding live staging Worker.
+
+### Production Worker upload/deployment drift
+- Latest uploaded `thelingolegacyv-5` version: v378, ID `cf7059ef-a9af-47f0-8f9f-49c5a3cad759`, uploaded 2026-11-21 18:33:17Z.
+- Active deployment remains 100% on v137, ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`, created 2026-10-25.
+- This is a 241-version-number upload/deployment gap. No conclusion is made that v378 is production-safe. Source provenance, bindings, tests, route ownership, security, observability and rollback must be reviewed before any promotion.
+
+### Mutation boundary
+All checks in this follow-up were read-only. No D1 migration/data write, Worker upload/deployment, Access policy/member/MFA change, secret operation, DNS/route change, production setting change, or billing action was performed. These observations do not authorize production promotion.
