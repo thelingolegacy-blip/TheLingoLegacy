@@ -75,7 +75,12 @@ export async function verifyCloudflareAccessJwt(token, {
 
 async function getSigningKey(kid, jwksUrl, fetchImpl, nowSeconds) {
   const cached = keyCache.get(jwksUrl);
-  if (cached && cached.expiresAt > nowSeconds) return cached.keys.get(kid) || null;
+  // A valid cache entry is usable only when it contains the requested key.
+  // An unknown kid can indicate normal Cloudflare key rotation, so refresh
+  // once instead of treating the still-fresh cache as authoritative.
+  if (cached && cached.expiresAt > nowSeconds && cached.keys.has(kid)) {
+    return cached.keys.get(kid);
+  }
 
   let response;
   try {
@@ -95,7 +100,7 @@ async function getSigningKey(kid, jwksUrl, fetchImpl, nowSeconds) {
       && (entry.use === undefined || entry.use === 'sig'))
     .map((entry) => [entry.kid, entry]));
   const cacheControl = response.headers.get('cache-control') || '';
-  const maxAge = Number(cacheControl.match(/max-age=(\d+)/i)?.[1] || 300);
+  const maxAge = Number(cacheControl.match(/max-age=(\\d+)/i)?.[1] || 300);
   keyCache.set(jwksUrl, { keys, expiresAt: nowSeconds + Math.min(Math.max(maxAge, 60), 3600) });
   return keys.get(kid) || null;
 }
