@@ -445,3 +445,23 @@ All three runs have zero Actions jobs. No runner identity, executed step, log, o
 
 ### Current dependency disposition
 PR #654 (Firebase), #655 (staging project isolation), #658 (staging game-engine SAAAE), #659 (Cloudflare Access executor boundary), and #661 (reconciliation) remain open and draft. Their dependency bases are different; do not merge them as a single unordered batch. The source changes and test definitions remain review material until hosted CI executes and independent review is recorded.
+
+
+## 24. Follow-up source remediation and exact-head CI refresh (2026-11-24)
+
+### PR #659 JWKS key-rotation correction
+- Updated `src/auth/cloudflare-access-jwt.mjs` so a still-fresh JWKS cache is reused only when it contains the requested `kid`. An unknown `kid` now causes a JWKS refresh; if refresh fails or the key remains absent, verification still fails closed.
+- Added a focused unit test in `scripts/tests/cloudflare-access-jwt.test.mjs` that primes the cache with the original key, then verifies a token signed by a newly rotated key and asserts a second JWKS fetch.
+- Source and test edits are on the existing PR #659 staging branch. Latest source-file commit: `02d8d2095f1d62651244d1fd2eb1d92db5fe3121`. The code and test were committed, but hosted CI execution and local test execution have not been evidenced. Do not mark the correction tested or certified yet.
+- The independent-human attestation gap remains open: the current registry's person and attestation fields are caller/configuration strings, not issuer-signed evidence. No trusted workforce attestation integration was invented or enabled.
+
+### PR #661 exact-head CI
+- Latest reconciliation head inspected: `69b997ce746ea0b6628a53f54e74596e427175e3`.
+- Exact-head PR checks: Crimson Smoke UI — static validation run `45427929351`, Lingo Legacy Static CI run `45427931463`, and G02 Runner Image Build (no publish) run `45427927878`; all concluded `startup_failure`.
+- No Actions jobs were instantiated for these runs. There are no provider-assigned runner IDs, executed steps, job logs, or artifacts to certify. Combined commit status returned no status entries.
+- The separate PR #659 source branch update is not a passing CI result. The available commit-run reader only reports pull-request-triggered runs; an empty result from that reader is not evidence that push-triggered validation succeeded.
+
+### Remaining release disposition
+- PRs #654, #659, and #661 remain open and draft; no merge or production deployment was performed.
+- Firebase project/app configuration, emulator execution, Flutter build/test evidence, isolated SAAAE runner provisioning, Cloudflare Access allow-policy/route enforcement, and independently verified human attestations remain unproven.
+- Production stays protected. Do not merge the stacked staging dependency chain, activate the production sentinel, attach privileged Access policies, or promote Workers until the exact staging dependencies and independent release evidence pass.
