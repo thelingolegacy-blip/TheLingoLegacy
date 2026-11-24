@@ -23,6 +23,13 @@ test('missing or malformed registry fails closed', () => {
   assert.equal(saaaeOperatorRegistryReadiness({ ok: false }).ready, false);
 });
 
+test('registry rejects a roster issued by an untrusted attestation authority', () => {
+  const result = parse(JSON.stringify(validRoster), {
+    trustedAttestationIssuer: 'untrusted-issuer',
+  });
+  assert.equal(result.code, 'OPERATOR_ATTESTATION_TRUST_ANCHOR_UNAVAILABLE');
+});
+
 test('registry rejects duplicate subjects and email-based identity fields', () => {
   const duplicate = [...validRoster, { ...validRoster[0], roles: ['reviewer'] }];
   assert.equal(parse(JSON.stringify(duplicate)).code, 'OPERATOR_REGISTRY_INVALID');
