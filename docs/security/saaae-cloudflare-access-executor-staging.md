@@ -176,3 +176,5 @@ The Cloudflare IdP configuration was also re-read on 2026-11-24:
 - The application has binding cookies enabled, HttpOnly cookies enabled, SameSite=`Strict`, and eager redirect cookies enabled.
 - The application audience is configured on the Access app and must be supplied to the verifier as a secret-free configuration value.
 - A second independently controlled human must first be added as a genuine Cloudflare account member and then separately verified by the designated identity-verification process. Merely supplying an email address or creating another account for the same person does not satisfy the control.
+
+A read-only account-membership check returned exactly one accepted Cloudflare account member and no additional accepted reviewer. No member was added, invited, or modified. This confirms the second-human gate remains unsatisfied at the account level.
