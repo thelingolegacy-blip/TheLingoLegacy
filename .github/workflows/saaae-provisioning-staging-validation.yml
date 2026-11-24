@@ -7,6 +7,8 @@ on:
     paths:
       - "src/auth/cloudflare-access-jwt.mjs"
       - "src/auth/saaae-operator-registry.mjs"
+      - "src/auth/saaae-operator-auth.mjs"
+      - "scripts/tests/saaae-operator-auth.test.mjs"
       - "scripts/tests/saaae-operator-registry.test.mjs"
       - "scripts/tests/cloudflare-access-jwt.test.mjs"
       - "src/server/saaae-d1.mjs"
@@ -24,6 +26,8 @@ on:
     paths:
       - "src/auth/cloudflare-access-jwt.mjs"
       - "src/auth/saaae-operator-registry.mjs"
+      - "src/auth/saaae-operator-auth.mjs"
+      - "scripts/tests/saaae-operator-auth.test.mjs"
       - "scripts/tests/saaae-operator-registry.test.mjs"
       - "scripts/tests/cloudflare-access-jwt.test.mjs"
       - "src/server/saaae-d1.mjs"
