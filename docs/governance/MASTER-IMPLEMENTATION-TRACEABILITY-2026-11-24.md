@@ -190,3 +190,18 @@ The following run records are tied to the current open draft PR heads and were r
 6. Re-run one minimal, least-privilege workflow. Acceptance requires a real job ID, populated runner identity, instantiated steps, retrievable logs and a correlated artifact.
 
 No configuration mutation, billing change, policy relaxation, runner registration, guard removal or production action is implied by this checklist.
+
+
+## G04 security review findings — wallet authority boundary
+
+A pre-existing remediation specification in `docs/architecture/ezca/wave-00-2-wallet-ledger-remediation.md` records an inspected Firestore rules finding: an authenticated profile owner could update client-supplied wallet/progression fields including `chips`, `sweepstakesTickets`, `level`, `xp` and `streakDays`. The remediation specification is explicitly marked **SPECIFICATION ONLY — NOT DEPLOYED**. The finding is a security acceptance blocker until the owning Spades product repository's current rules are inspected and a deny-by-default correction is implemented, emulator-tested, independently reviewed and verified against the deployed ruleset.
+
+Required G04 evidence for this boundary:
+- Current source and deployed ruleset SHA/version from the owning product repository/provider.
+- Denial tests for unauthenticated, wrong-owner and direct client writes to balance, ticket, progression-authority and ledger fields.
+- Allowlist tests for permitted cosmetic/profile fields; default-deny catch-all.
+- Server-authoritative ledger tests for idempotency, concurrency/overspend, atomic commit, rollback, replay and bounds.
+- Evidence that the client cannot create, update or delete ledger entries or authoritative balance snapshots.
+- Independent security review and release-owner acceptance.
+
+**Current disposition:** G04 remains BLOCKED. The remediation document is a target specification, not proof that the source rules have been changed or deployed. The separate product rules file was not available at the expected path in the Core repository during this pass; no rule change is claimed. Keep all real-value, prize, redemption and wallet authority paths disabled until the owning repository is identified and independently verified.
