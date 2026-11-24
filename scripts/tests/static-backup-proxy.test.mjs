@@ -38,6 +38,14 @@ test("Pages-origin redirects are rewritten to the launch hostname", async () => 
   assert.equal(response.headers.get("location"), "https://launch.thelingolegacy.com/contact/");
 });
 
+test("non-default ports are rejected without calling the origin", async () => {
+  let called = false;
+  const worker = createProxyWorker(async () => { called = true; return new Response("unexpected"); });
+  const response = await worker.fetch(request("/", "GET", "launch.thelingolegacy.com:8443"));
+  assert.equal(response.status, 421);
+  assert.equal(called, false);
+});
+
 test("non-read-only methods are rejected without calling the origin", async () => {
   let called = false;
   const worker = createProxyWorker(async () => { called = true; return new Response("unexpected"); });
