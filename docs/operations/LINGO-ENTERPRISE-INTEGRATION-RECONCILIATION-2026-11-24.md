@@ -201,3 +201,13 @@ The following checks were performed in parallel against the current draft branch
 ### Overall parallel disposition
 
 Source-level work and read-only infrastructure reconciliation advanced, but no application branch was merged, no new Worker deployed, no migration applied, no Firebase project mutated, and no production setting changed. CI remains blocked before job creation. All related PRs remain draft/unmerged and production remains under protected hold.
+
+
+## 8. Backend authority and Supabase connector reconciliation (2026-11-24)
+
+- PR #515 proposes Supabase as the primary transactional backend while retaining Firebase for identity compatibility and specialist services.
+- PR #638 explicitly states backend authority is unselected pending owner reconciliation of ADR-002 and PR #515. PR #654/#655 meanwhile implement a Firebase Auth + Firestore staging foundation, and PR #658/#659 depend on that Firebase staging identity.
+- This is an unresolved architecture decision, not a safe basis for merging or migrating data. The canonical owner must select one authoritative transactional system and define which records/services remain in Firebase before any backend schema or application data is moved.
+- Supabase project discovery returned one project, `zoksxavxmgnkrthselek`, in `us-west-2`, provider status `ACTIVE_HEALTHY`, PostgreSQL 17.6. The Edge Functions inventory returned zero functions.
+- Supabase table and migration reads failed with database authentication errors (`password authentication failed` for the connector's read-only and postgres roles). Advisor reads reported the project as hibernated. These connector errors conflict with the provider-level `ACTIVE_HEALTHY` status; they do **not** establish that the database has zero tables or migrations.
+- No Supabase schema, migration, branch, function, or project was changed. Do not create or migrate a backend until owner architecture approval, database access recovery, RLS/security review, migration plan, and exact-source CI are available.
