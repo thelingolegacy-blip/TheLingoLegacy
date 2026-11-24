@@ -113,6 +113,16 @@ export async function playAndSettleD1Spin(db, {
             AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
             AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
        )
+       AND NOT EXISTS (
+         SELECT 1 FROM lingo_saaae_grants g
+          WHERE g.firebase_uid = lingo_saaae_approvals.approver_uid
+            AND g.tenant_id = lingo_saaae_approvals.tenant_id
+            AND g.product_id = lingo_saaae_approvals.product_id
+            AND g.resource_id = lingo_saaae_approvals.resource_id
+            AND g.operation = 'approval.approve' AND g.effect = 'deny' AND g.status = 'active'
+            AND g.valid_from <= strftime('%Y-%m-%dT%H:%M:%fZ','now')
+            AND (g.expires_at IS NULL OR g.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+       )
   `).bind(firebaseUid, approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, authTime);
 
   const sessionId = crypto.randomUUID();
