@@ -383,3 +383,13 @@ This refines the earlier overlap note: CSS/JS are byte-identical; homepage and d
 - Six workflows are associated with the exact PR #638 head: Studio Sandbox Guard (`45092265432`), Worker Route Security (`45092266502`), G02 Runner Image Build (`45092264486`), Lingo Legacy Static CI (`45092263471`), Studio Enterprise Module Registry (`45092262526`), and Crimson Smoke UI (`45092261574`). All six concluded `startup_failure`. The dedicated registry workflow, static CI, and Crimson Smoke UI each returned zero jobs and zero artifacts.
 - This is consistent with the already observed repository-wide pre-job Actions failure. It is not a failing test report and does not establish the provider/root cause. No runner, workflow, repository setting, provider, or production configuration was changed.
 - PR #638 remains unaccepted pending executable Node and JSON Schema validation, correction of any validation findings, independent review, and evidence that the Actions jobs actually instantiate and complete.
+
+
+
+## 19. Explicit owner authorization for production release progression (2026-11-24)
+
+- The owner explicitly authorized lifting the protected hold for full production merges and deployments, after being asked to distinguish that scope from staging-only authorization.
+- This authorization is recorded as permission to proceed with the production release process and to perform otherwise-approved release actions when their required controls pass. It is not a waiver of required CI, security, independent review, identity, data migration, rollback, legal/compliance, or production acceptance gates.
+- Current exact-head evidence still includes Actions `startup_failure` with zero jobs/artifacts on PR #638 and #661. G02 remains FAIL / UNVERIFIED; backend authority and staging identity remain unresolved; outstanding runtime and rollback evidence remains incomplete.
+- Therefore, the authorization is active, but the production release gate is NOT YET SATISFIED. No PR was merged, no branch protection or environment rule was changed, no production deployment was initiated, and no runner/provider/production configuration was mutated in response to this authorization.
+- Next execution order: (1) restore and prove GitHub Actions job execution on exact candidate commits; (2) close source/security review findings and obtain independent review; (3) resolve identity/backend ownership and migration/restore evidence; (4) verify staging parity, smoke tests, rollback and monitoring; (5) evaluate each production PR/deployment independently against its checks and owner approvals. Do not batch-merge unrelated branches or treat the authorization as blanket approval for unreviewed code.
