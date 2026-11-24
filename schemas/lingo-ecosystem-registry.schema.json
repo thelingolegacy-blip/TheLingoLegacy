@@ -66,7 +66,8 @@
           "type",
           "status",
           "products",
-          "dependencies"
+          "dependencies",
+          "node_type"
         ],
         "properties": {
           "id": {
@@ -126,9 +127,62 @@
           },
           "owner_acceptance": {
             "type": "string"
+          },
+          "node_type": {
+            "type": "string",
+            "enum": [
+              "public_portfolio",
+              "subproduct",
+              "shared_platform_service"
+            ]
+          },
+          "parent_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "node_type": {
+                  "const": "subproduct"
+                }
+              },
+              "required": [
+                "node_type"
+              ]
+            },
+            "then": {
+              "required": [
+                "parent_id"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_type": {
+                  "enum": [
+                    "public_portfolio",
+                    "shared_platform_service"
+                  ]
+                }
+              },
+              "required": [
+                "node_type"
+              ]
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "parent_id"
+                ]
+              }
+            }
+          }
+        ]
       }
     },
     "status_definitions": {
