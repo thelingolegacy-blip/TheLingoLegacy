@@ -8,7 +8,7 @@ const MAX_REGISTRY_ENTRIES = 32;
  * cryptographically verified immutable subject; email and display names are
  * deliberately not accepted as identity keys.
  */
-export function parseSaaaeOperatorRegistry(raw) {
+export function parseSaaaeOperatorRegistry(raw, { trustedAttestationIssuer } = {}) {
   if (typeof raw !== 'string' || raw.length < 2 || raw.length > 32_768) {
     return { ok: false, code: 'OPERATOR_REGISTRY_UNAVAILABLE' };
   }
@@ -52,6 +52,11 @@ export function parseSaaaeOperatorRegistry(raw) {
     if (type === 'human') {
       // person_ref is a pseudonymous identifier issued by the independently
       // verified workforce identity process, not a caller-selected account ID.
+      if (typeof trustedAttestationIssuer !== 'string'
+          || trustedAttestationIssuer.length < 3
+          || attestationIssuer !== trustedAttestationIssuer) {
+        return { ok: false, code: 'OPERATOR_ATTESTATION_TRUST_ANCHOR_UNAVAILABLE' };
+      }
       if (typeof personRef !== 'string' || personRef.length < 8 || personRef.length > 256
           || personRef.trim() !== personRef || humanPersonRefs.has(personRef)
           || typeof attestationId !== 'string' || attestationId.length < 8 || attestationId.length > 256
