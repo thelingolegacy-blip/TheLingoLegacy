@@ -125,6 +125,16 @@ A read-only Cloudflare D1 inspection confirmed that Wrangler's configured databa
 A read-only account-members query returned exactly one accepted Cloudflare account member. The configured Cloudflare identity provider is restricted to account members, so the currently verified roster cannot supply two independent human operators. The single returned member also has the Cloudflare account-level `two_factor_authentication_enabled` flag set to false; this is distinct from the Cloudflare Access organization setting that requires MFA for Access applications. Do not infer a second operator or waive the Access MFA requirement. A separately controlled second person must be added and verified before any allow policy is attached.
 
 
+## 12. Access-to-registry authentication binding
+
+The Cloudflare Access JWT verifier is now wired to the server-owned operator registry through `src/auth/saaae-operator-auth.mjs`.
+
+- Only the `Cf-Access-Jwt-Assertion` header is accepted as the Access assertion.
+- The JWT signature, issuer, audience, expiry, not-before, and immutable subject are verified before registry lookup.
+- The verified subject must match an active registry entry; token email and caller-supplied role headers are ignored.
+- Authentication remains unavailable until the registry contains two distinct active human operators and a separate workload executor.
+- The helper is not yet attached to a deployed Worker route. No Access allow policy or executor was enabled.
+
 ## 11. Fail-closed operator registry foundation
 
 A standalone registry parser and actor-separation module now exists at `src/auth/saaae-operator-registry.mjs`, with focused tests at `scripts/tests/saaae-operator-registry.test.mjs`.
