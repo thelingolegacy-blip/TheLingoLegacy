@@ -260,3 +260,8 @@ A fresh PR metadata and complete changed-file inventory review was performed for
 6. Use #656 for the manual hosted-runner diagnostic; do not activate G02 as a workaround.
 
 This is a file-overlap and metadata review, not a merge simulation. GitHub's `mergeable` field is only a provider-reported snapshot and does not replace fetching the current merge base, reviewing the complete diff, and executing exact-head CI.
+
+
+## 12. Post-update Actions startup recheck (2026-11-24)
+
+After the merge-graph update, six newer LINGO Ecosystem Registry Validation runs were inspected: `45416184637`, `45416166572`, `45416161205`, `45416151092`, `45416143495`, and `45416138117`. All six concluded `startup_failure`; the Jobs API returned **zero jobs** and the Artifacts API returned **zero artifacts** for every run. This confirms the same pre-job startup failure signature across the registry validation workflow as well as the earlier Static CI, G02 image-build, and Crimson Smoke workflows. It still does not identify the provider-side root cause or indicate a test failure. No retry, dispatch, or runner action was taken.
