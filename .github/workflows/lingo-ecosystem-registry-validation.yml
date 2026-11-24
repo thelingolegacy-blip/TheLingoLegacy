@@ -10,6 +10,7 @@ on:
       - "scripts/validate-lingo-registry.mjs"
       - "scripts/validate-lingo-dispatch.mjs"
       - "scripts/test-validate-lingo-registry.mjs"
+      - "scripts/test-validate-lingo-dispatch.mjs"
       - ".github/workflows/lingo-ecosystem-registry-validation.yml"
   push:
     branches:
@@ -22,6 +23,7 @@ on:
       - "scripts/validate-lingo-registry.mjs"
       - "scripts/validate-lingo-dispatch.mjs"
       - "scripts/test-validate-lingo-registry.mjs"
+      - "scripts/test-validate-lingo-dispatch.mjs"
       - ".github/workflows/lingo-ecosystem-registry-validation.yml"
 
 permissions:
@@ -48,5 +50,7 @@ jobs:
         run: node --test scripts/test-validate-lingo-registry.mjs
       - name: Validate canonical realm registry
         run: node scripts/validate-lingo-registry.mjs
+      - name: Test dispatch route validator
+        run: node --test scripts/test-validate-lingo-dispatch.mjs
       - name: Validate dispatch routes
         run: node scripts/validate-lingo-dispatch.mjs
