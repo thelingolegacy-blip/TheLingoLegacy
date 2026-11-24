@@ -223,3 +223,13 @@ Source-level work and read-only infrastructure reconciliation advanced, but no a
   - `Hello The Lingo Legacy` reports an aborted frontend request and one backend error in its status record. Its runtime/realtime path requires a fresh controlled diagnostic before acceptance.
 - `That's My Lingo`, `Kotton's Code Family Explorer`, and `Loyalty Lane Apparel` have recent deployment snapshots and zero reported frontend/network errors in their returned QA records. Their product-level legal, privacy, inventory, game-math, payment, accessibility, and independent acceptance gates remain separate.
 - No AppDeploy deployment permission renewal or secret-entry action was initiated. Account owner authorization is required before further app writes; use GitHub as source of truth and export any approved AppDeploy source changes back to the canonical repository.
+
+
+## 10. Public portfolio taxonomy and stacked-PR ordering
+
+- PR #602 preserves a useful **14-node inventory**, but it is stacked on PR #548's website-readiness branch and is not a clean independent merge to `main`.
+- PR #638 recommends retaining those 14 nodes while classifying them as public portfolios, subproducts, or shared platform capabilities.
+- PR #640 provides the current eight-public-portfolio presentation: `LINGOlegacy`, `LINGOlane`, `LINGOslots`, `LINGOarcade`, `LINGOlibrary`, `LINGOmedia`, `LINGOworld`, and `LegacyXclub`. It classifies Studio, Core, Identity, and Wallet as shared platform capabilities, with Campus and Shield inside LINGOworld. This is consistent with the canonical public-brand hierarchy and should be the portfolio presentation layer; it does not delete the detailed 14-node inventory.
+- Current PR metadata: #548 remains draft and reports `mergeable: false`; #602 remains draft and targets #548's branch; #638 and #640 are draft and target `main`. No branch was rebased or merged.
+- Recommended integration order: first resolve the #548 exact-root/wildcard source and preview acceptance; then reconcile #638's enterprise taxonomy with #602's detailed registry and #640's public directory; then select one canonical registry/validator owner and remove duplicate/conflicting ownership before any merge.
+- Do not merge #602 into `main` while its base dependency is unresolved, and do not merge multiple competing registry/portfolio implementations solely to make branches appear consolidated.
