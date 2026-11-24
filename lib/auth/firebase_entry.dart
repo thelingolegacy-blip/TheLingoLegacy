@@ -147,7 +147,9 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
     } on FirebaseAuthException catch (error) {
       if (mounted) setState(() => _error = _authMessage(error.code));
     } catch (_) {
-      setState(() => _error = 'The account request could not be completed. Please try again.');
+      if (mounted) {
+        setState(() => _error = 'The account request could not be completed. Please try again.');
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
