@@ -342,3 +342,17 @@ Read-only AppDeploy account and application checks were repeated for the Studio 
 - The exact-head Crimson Smoke UI static-validation run `45418815694` completed with conclusion `startup_failure`. Its Jobs API returned **0 jobs** and its Artifacts API returned **0 artifacts**.
 - The new documentation commit therefore has no CI execution evidence. This is the same pre-job startup failure signature; it is not a documentation test failure or a successful validation.
 - No merge, deployment, runner registration, workflow dispatch, or production mutation was performed.
+
+
+## 16. Homepage branch ancestry and conflict resolution refinement (2026-11-24)
+
+A direct content and ancestry comparison refines the earlier “four-file overlap” finding:
+
+- PR #548 head is `ops/website-live-readiness-2026-11-11`; PR #640 head is `feat/canonical-world-directory-and-operations-2026-11-21`.
+- The two branches have **identical blob SHAs** for `assets/flagship-home.css` (`47c89c8d40eecbb4ac3eb6dec906423b328ac574`) and `assets/flagship-home.js` (`5ae4d5109c425c42ebc056d2d551598ed9f6ca54`). Those two files are not substantive content conflicts.
+- The two branches have different `index.html` and `worlds/index.html` blobs. These are the actual content-level reconciliation points.
+- PR #640 compares to `main` as 36 commits ahead and 0 behind, with six changed files. PR #548's branch compared to PR #640 is 64 commits ahead and 33 behind and contains a much broader set of unrelated workflow, Firebase, mobile, engine, and infrastructure changes. This branch divergence is not a safe basis for merging #548 wholesale.
+- PR #640's branch source contains a separate “THE PRESTIGIOUS HOUSE OF DUSSE” identity section, explicitly described as neither a ninth LINGO portfolio card nor a verified destination route. It includes founder display name “Zavione” and debut date “November 7, 2021.” This is a distinct public brand disclosure, not part of the eight-card LINGO taxonomy; obtain explicit brand-owner approval of the wording and date before public release.
+- Recommendation: keep #548 draft as the exact-root Worker provenance/preview evidence and do not merge its broadly diverged branch wholesale. Treat #640 as the narrower current-main-based public-directory candidate, subject to the separate Dusse disclosure approval, manual execution of its Node/workflow tests, independent browser/accessibility/security QA, and final review. Its branch being 36/0 does not waive any of those gates.
+
+This refines the earlier overlap note: CSS/JS are byte-identical; homepage and directory HTML require the focused reconciliation. No files were changed in either PR branch and no merge was performed.
