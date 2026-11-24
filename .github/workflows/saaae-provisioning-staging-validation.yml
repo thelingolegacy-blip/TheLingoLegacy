@@ -6,6 +6,8 @@ on:
       - security/saaae-cloudflare-access-executor-staging-20261123
     paths:
       - "src/auth/cloudflare-access-jwt.mjs"
+      - "src/auth/saaae-operator-registry.mjs"
+      - "scripts/tests/saaae-operator-registry.test.mjs"
       - "scripts/tests/cloudflare-access-jwt.test.mjs"
       - "src/server/saaae-d1.mjs"
       - "src/server/d1-slot-service.mjs"
@@ -21,6 +23,8 @@ on:
       - security/game-engine-saaae-staging-20261123
     paths:
       - "src/auth/cloudflare-access-jwt.mjs"
+      - "src/auth/saaae-operator-registry.mjs"
+      - "scripts/tests/saaae-operator-registry.test.mjs"
       - "scripts/tests/cloudflare-access-jwt.test.mjs"
       - "src/server/saaae-d1.mjs"
       - "src/server/d1-slot-service.mjs"
