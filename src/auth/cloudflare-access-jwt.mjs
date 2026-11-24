@@ -100,7 +100,7 @@ async function getSigningKey(kid, jwksUrl, fetchImpl, nowSeconds) {
       && (entry.use === undefined || entry.use === 'sig'))
     .map((entry) => [entry.kid, entry]));
   const cacheControl = response.headers.get('cache-control') || '';
-  const maxAge = Number(cacheControl.match(/max-age=(\\d+)/i)?.[1] || 300);
+  const maxAge = Number(cacheControl.match(/max-age=(\d+)/i)?.[1] || 300);
   keyCache.set(jwksUrl, { keys, expiresAt: nowSeconds + Math.min(Math.max(maxAge, 60), 3600) });
   return keys.get(kid) || null;
 }
