@@ -499,3 +499,31 @@ All three were inspected; each has an empty jobs array. No runner identity, exec
 
 ### Disposition
 The JWKS rotation source correction is committed, but its test has not run. CI startup is failing on both PR and push events, and no independent security approval or staging runner evidence exists. Keep the SAAAE executor disabled and all production resources protected.
+
+
+## Live execution update — 2026-11-24
+
+### CI admission
+- Latest Core recovery runs previously inspected: `45494361261`, `45494363413`, `45494358311`; all `startup_failure`, zero jobs and zero artifacts.
+- Web command-center PR #44 new-head runs `45495968646` and `45496202532`; both `startup_failure` before job creation.
+- No connected GitHub action in this session exposes workflow dispatch or runner administration. The exact admission root cause is not returned by run/job APIs. Owner/admin billing and effective Actions policy inspection plus GitHub Support escalation remain the correct next steps.
+- Do not conflate a successful Cloudflare preview with hosted GitHub Actions acceptance.
+
+### Cloudflare and SAAAE
+- Account-level two-factor enforcement is false; exactly one accepted account member is returned and that member's account-level 2FA is false.
+- SAAAE staging privileged-executor Access application has zero attached policies.
+- askLINGO staging D1 contains all six SAAAE schema tables, but schema presence does not prove runtime enforcement.
+- Game-engine staging D1 lacks the six SAAAE tables, and no `lingo-game-engine-staging` Worker is present in the live Worker inventory.
+- Production `thelingolegacyv-5` latest uploaded version is v378, while the active 100% deployment remains v137. This is drift, not deployment authorization.
+- All Cloudflare reads were non-mutating. No policy, member, MFA, D1 migration, Worker, route, DNS, secret, production setting, or billing change was made.
+
+### Design integration
+- Existing Web PR #44 was advanced rather than creating another project: Figma Enterprise Foundation tokens integrated into global CSS; command-center palette and responsive grid aligned; eight canonical portfolio entries added; migration document updated.
+- Latest branch head: `67664892cd2c86f42ea278d6938591119d0f0a66`. Source read-back passed. Actions run `45496202532` failed at startup. Screenshot comparison, browser/device QA and runtime acceptance remain open.
+
+### Current gate disposition
+- G02: FAIL / UNVERIFIED; no authorized live runner-host evidence.
+- G03: BLOCKED by Actions execution recovery.
+- G04: BLOCKED by SAAAE runtime integration, operator separation/MFA, staging migration and privacy/security acceptance.
+- G05–G11: BLOCKED; each retains independent acceptance requirements.
+- Production: protected; no promotion performed.
