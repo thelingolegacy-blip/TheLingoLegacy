@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08080b">
+  <meta name="description" content="The LINGO Legacy: one legacy, many worlds. Explore games, stories, apparel, media, technology and community.">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://thelingolegacy.com/">
+  <link rel="icon" href="/assets/lingo-legacy-crimson-mark.svg" type="image/svg+xml">
+  <title>THE LINGO LEGACY — One Legacy. Many Worlds.</title>
+  <style>
+    :root{color-scheme:dark;--bg:#08080b;--panel:#111116;--panel2:#17141a;--ink:#fff9ee;--muted:#c1b9ad;--gold:#d4af37;--gold2:#f7c84b;--red:#c41e3a;--purple:#6d42a6;--line:rgba(212,175,55,.25);--max:1160px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% 0,rgba(196,30,58,.2),transparent 38rem),radial-gradient(ellipse at 92% 18%,rgba(109,66,166,.18),transparent 34rem),linear-gradient(180deg,#09090d,#050507 70%);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+    a{color:inherit}a:focus-visible,button:focus-visible{outline:3px solid var(--gold2);outline-offset:4px}.skip{position:absolute;left:16px;top:-80px;padding:12px 16px;background:var(--gold2);color:#160d03;border-radius:10px;z-index:100;font-weight:800}.skip:focus{top:12px}
+    .wrap{width:min(var(--max),calc(100% - 36px));margin:auto}.topbar{position:sticky;top:0;z-index:20;background:rgba(8,8,11,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:950;letter-spacing:.08em}.brand img{width:40px;height:40px;object-fit:contain}.brand span{font-size:.88rem}.navlinks{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.navlinks a{font-size:.86rem;color:var(--muted);text-decoration:none}.navlinks a:hover{color:var(--gold2)}
+    .hero{min-height:690px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;padding:92px 0 76px}.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid var(--line);border-radius:999px;color:var(--gold2);font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 16px var(--red)}
+    h1{font-size:clamp(3.6rem,9vw,7.8rem);line-height:.88;letter-spacing:-.085em;text-transform:uppercase;margin:24px 0}.gold{display:block;background:linear-gradient(180deg,#fff5c8 0,#f7c84b 48%,#a66b16 100%);background-clip:text;-webkit-background-clip:text;color:transparent}.lead{max-width:620px;color:var(--muted);font-size:clamp(1.05rem,2vw,1.25rem);line-height:1.75}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:900;border:1px solid var(--line);background:rgba(255,255,255,.04)}.btn.primary{background:linear-gradient(135deg,#fff1a8,var(--gold2));color:#170e04;border:0}.btn:hover{transform:translateY(-2px);border-color:var(--gold2)}
+    .sigil{min-height:440px;position:relative;display:grid;place-items:center;border:1px solid var(--line);border-radius:42px;background:radial-gradient(circle at 50% 45%,rgba(196,30,58,.24),transparent 42%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015));box-shadow:0 32px 100px rgba(0,0,0,.42);overflow:hidden}.sigil:before,.sigil:after{content:"";position:absolute;width:72%;aspect-ratio:1;border:1px solid rgba(212,175,55,.3);border-radius:50%;animation:orbit 30s linear infinite}.sigil:after{width:54%;border-color:rgba(196,30,58,.5);animation-direction:reverse;animation-duration:22s}.sigil-core{position:relative;z-index:2;text-align:center}.sigil-core strong{display:block;font-size:clamp(4rem,10vw,7rem);line-height:1;font-weight:1000;letter-spacing:-.1em;color:var(--gold2);text-shadow:0 0 44px rgba(212,175,55,.3)}.sigil-core small{display:block;margin-top:14px;letter-spacing:.22em;font-weight:800;color:var(--muted);text-transform:uppercase}
+    section{scroll-margin-top:90px}.section{padding:72px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}.section-head h2{font-size:clamp(2.2rem,5vw,4rem);line-height:.95;letter-spacing:-.065em;text-transform:uppercase;margin:0}.section-head p{max-width:440px;color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{min-height:230px;padding:24px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(155deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:0 18px 58px rgba(0,0,0,.22);display:flex;flex-direction:column;align-items:flex-start}.card .num{color:var(--gold2);font-size:.75rem;letter-spacing:.16em;font-weight:900}.card h3{font-size:1.35rem;margin:14px 0 8px}.card p{color:var(--muted);margin:0 0 20px}.card a{margin-top:auto;color:var(--gold2);font-weight:850;text-decoration:none}.card a:hover{text-decoration:underline}.card .status{margin-top:auto;color:#d9cda9;font-size:.8rem;font-weight:800}
+    .manifest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.manifest-item{padding:20px 22px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.035)}.manifest-item strong{display:block;color:var(--gold2);margin-bottom:4px}.manifest-item span{color:var(--muted);font-size:.94rem}
+    .principle{border:1px solid var(--line);border-radius:30px;padding:34px;background:linear-gradient(120deg,rgba(196,30,58,.12),rgba(109,66,166,.12),rgba(212,175,55,.08))}.principle blockquote{margin:0;font-size:clamp(1.5rem,3vw,2.4rem);font-weight:850;line-height:1.2;letter-spacing:-.04em}.principle p{color:var(--muted);margin:14px 0 0}
+    footer{border-top:1px solid var(--line);padding:32px 0 46px;color:var(--muted);font-size:.88rem}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.foot a{color:var(--gold2);text-decoration:none}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}.reveal.visible{opacity:1;transform:none}
+    @keyframes orbit{to{transform:rotate(360deg)}}@media(max-width:850px){.hero{grid-template-columns:1fr;min-height:0;padding:76px 0 50px}.sigil{min-height:330px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{display:block}.section-head p{margin-top:12px}}@media(max-width:560px){.wrap{width:min(var(--max),calc(100% - 26px))}nav{align-items:flex-start;padding:14px 0;flex-direction:column}.navlinks{gap:12px}.navlinks a{font-size:.78rem}.grid,.manifest{grid-template-columns:1fr}.card{min-height:190px}.hero{padding-top:58px}.sigil{min-height:270px}.section{padding:54px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="The LINGO Legacy home"><img src="/assets/lingo-legacy-crimson-mark.svg" alt=""><span>THE LINGO LEGACY</span></a>
+      <div class="navlinks"><a href="#worlds">Worlds</a><a href="#foundation">The Foundation</a><a href="#principle">Our Principle</a><a href="/contact/">Connect</a></div>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <section class="hero">
+      <div class="reveal">
+        <span class="eyebrow">A world of its own</span>
+        <h1>One Legacy.<span class="gold">Many Worlds.</span></h1>
+        <p class="lead">Welcome to THE LINGO LEGACY — a connected universe of games, stories, apparel, media, technology and community. One front door. A growing family of worlds. A foundation built to protect what comes next.</p>
+        <div class="actions"><a class="btn primary" href="#worlds">Explore the worlds</a><a class="btn" href="/contact/">Connect with LINGO</a></div>
+      </div>
+      <div class="sigil reveal" role="img" aria-label="LINGO Legacy gold and crimson orbital emblem">
+        <div class="sigil-core"><strong>LINGO</strong><small>One Legacy · Many Worlds</small></div>
+      </div>
+    </section>
+    <section id="worlds" class="section">
+      <div class="section-head reveal"><h2>Explore the worlds</h2><p>Start with one destination and discover the larger portfolio as each experience is released and verified.</p></div>
+      <div class="grid">
+        <article class="card reveal"><span class="num">01 / FLAGSHIP</span><h3>LINGOlegacy</h3><p>The central home for the LINGO identity, community and connected experiences.</p><a href="/living-universe/">Explore the universe →</a></article>
+        <article class="card reveal"><span class="num">02 / APPAREL & LIFESTYLE</span><h3>LINGOlane</h3><p>Loyalty Lane Apparel, Designs & Promotions, and the Laundry-Cycle vision.</p><a href="/loyalty-lane-apparel/">Explore LINGOlane →</a></article>
+        <article class="card reveal"><span class="num">03 / GAMES</span><h3>LINGOslots</h3><p>That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No and the growing game collection.</p><a href="/thats-my-lingo/">Explore That’s My Lingo →</a></article>
+        <article class="card reveal"><span class="num">04 / ARCADE</span><h3>LINGOarcade</h3><p>Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead.</p><span class="status">Portfolio destination</span></article>
+        <article class="card reveal"><span class="num">05 / STORIES & BOOKS</span><h3>LINGOlibrary</h3><p>KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends.</p><a href="/kottons-code/">Explore KottonsCode →</a></article>
+        <article class="card reveal"><span class="num">06 / MEDIA</span><h3>LINGOmedia</h3><p>Rise of Zavione and the creative, music and storytelling universe.</p><a href="/visual-showcase/">Explore the showcase →</a></article>
+        <article class="card reveal"><span class="num">07 / DIGITAL WORLD</span><h3>LINGOworld</h3><p>askLINGO, LINGOai, LINGOvoice, LINGOtravel, LINGOcampus, LINGOsupport and more.</p><a href="/lingo-ai/">Explore LINGO AI →</a></article>
+        <article class="card reveal"><span class="num">08 / COMMUNITY</span><h3>LegacyXclub</h3><p>Community, loyalty, creator connections and ways to participate in the legacy.</p><a href="/community-guidelines/">Community guidelines →</a></article>
+        <article class="card reveal"><span class="num">09 / TRUST</span><h3>Trust & transparency</h3><p>Public-facing safety information, policies and release notes.</p><a href="/trust-compliance/">View trust information →</a></article>
+      </div>
+    </section>
+    <section id="foundation" class="section">
+      <div class="section-head reveal"><h2>Built on a stronger foundation</h2><p>The public experience stays simple. The operating model behind it is designed to scale without turning every new product into a disconnected system.</p></div>
+      <div class="manifest">
+        <div class="manifest-item reveal"><strong>One source of truth</strong><span>Canonical GitHub source, versioned portfolio registry and reviewable changes.</span></div>
+        <div class="manifest-item reveal"><strong>Security by default</strong><span>SAAAE design: default-deny access, scoped permissions, approval records and auditable actions.</span></div>
+        <div class="manifest-item reveal"><strong>Independent standby</strong><span>A separate static backup surface with its own deployment record and recovery runbook.</span></div>
+        <div class="manifest-item reveal"><strong>Evidence before release</strong><span>Build, execution, logs, artifacts, independent verification and human release authorization remain separate gates.</span></div>
+        <div class="manifest-item reveal"><strong>Connected portfolio</strong><span>Shared identity, design language, content registry and integration contracts across the approved worlds.</span></div>
+        <div class="manifest-item reveal"><strong>Safe expansion</strong><span>Payments, wallets, identity and live data stay inactive until their controls and dependencies are verified.</span></div>
+      </div>
+    </section>
+    <section id="principle" class="section">
+      <div class="principle reveal"><span class="eyebrow">The LINGO standard</span><blockquote>Launch what is safe. Complete what is unfinished. Improve what is touched. Protect what already works.</blockquote><p>Every new world should strengthen the legacy — never compromise the foundation.</p></div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><h2>The next chapter starts here</h2><p>One page is the front door. The wider ecosystem can open one verified experience at a time.</p></div>
+      <div class="actions reveal"><a class="btn primary" href="/contact/">Get in touch</a><a class="btn" href="/release-notes/">View release notes</a><a class="btn" href="/public-roadmap/">View the public roadmap</a></div>
+    </section>
+  </main>
+  <footer><div class="wrap foot"><span>© <span id="year">2026</span> THE LINGO LEGACY. All rights reserved.</span><span><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/contact/">Contact</a></span></div></footer>
+  <script>
+    document.getElementById("year").textContent=String(new Date().getFullYear());
+    const items=document.querySelectorAll(".reveal");
+    if("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}}),{threshold:.12});
+      items.forEach(item=>observer.observe(item));
+    }else{items.forEach(item=>item.classList.add("visible"));}
+  </script>
+</body>
+</html>

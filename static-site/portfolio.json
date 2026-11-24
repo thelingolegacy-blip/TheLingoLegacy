@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "brand": "THE LINGO LEGACY",
+  "tagline": "One Legacy. Many Worlds.",
+  "purpose": "Public portfolio navigation only; this manifest does not indicate that every product or service is live.",
+  "worlds": [
+    {
+      "name": "LINGOlegacy",
+      "category": "Flagship",
+      "description": "Central home for identity, community and connected experiences.",
+      "href": "/living-universe/",
+      "availability": "portfolio"
+    },
+    {
+      "name": "LINGOlane",
+      "category": "Apparel and lifestyle",
+      "description": "Loyalty Lane Apparel, Designs & Promotions, and Laundry-Cycle.",
+      "href": "/loyalty-lane-apparel/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGOslots",
+      "category": "Games",
+      "description": "That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions and Cashman Lingo Mania.",
+      "href": "/thats-my-lingo/",
+      "availability": "showcase",
+      "products": [
+        "That’s My Lingo",
+        "Spades Is My Lingo",
+        "Uhno Lingo U-No",
+        "Lingo Lions Eruptions",
+        "Cashman Lingo Mania"
+      ]
+    },
+    {
+      "name": "LINGOarcade",
+      "category": "Arcade",
+      "description": "Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead.",
+      "href": null,
+      "availability": "portfolio",
+      "products": [
+        "Tricias Escape",
+        "Doughboys Oasis",
+        "Crazy Weasols",
+        "Silly in Philly",
+        "Jersey Shore: The Undead"
+      ]
+    },
+    {
+      "name": "LINGOlibrary",
+      "category": "Books and stories",
+      "description": "KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends.",
+      "href": "/kottons-code/",
+      "availability": "showcase",
+      "products": [
+        "KottonsCode",
+        "The Block I Grew Up On",
+        "Say It Again",
+        "Dice Shift Hotel",
+        "Legacy Legends"
+      ]
+    },
+    {
+      "name": "LINGOmedia",
+      "category": "Media",
+      "description": "Rise of Zavione and the creative media universe.",
+      "href": "/visual-showcase/",
+      "availability": "showcase",
+      "products": [
+        "Rise of Zavione"
+      ]
+    },
+    {
+      "name": "LINGOworld",
+      "category": "Digital services",
+      "description": "askLINGO, LINGOai, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge and LINGOdonations.",
+      "href": "/lingo-ai/",
+      "availability": "showcase",
+      "products": [
+        "askLINGO",
+        "LINGOai",
+        "LINGOboom",
+        "LINGOtravel",
+        "LINGOcampus",
+        "LINGOsupport",
+        "LINGOwifi",
+        "LINGOvoice",
+        "LINGOshield",
+        "LINGOlounge",
+        "LINGOdonations"
+      ]
+    },
+    {
+      "name": "LegacyXclub",
+      "category": "Community",
+      "description": "Community, loyalty, creator connections and participation.",
+      "href": "/community-guidelines/",
+      "availability": "showcase"
+    },
+    {
+      "name": "LINGO ID",
+      "category": "Identity",
+      "description": "Identity and account foundations; activation depends on verified identity-provider and security controls.",
+      "href": null,
+      "availability": "planned"
+    },
+    {
+      "name": "Universal Legacy Wallet",
+      "category": "Wallet architecture",
+      "description": "Wallet and Lingo Coins architecture; no live balances, payments or transfers are represented here.",
+      "href": null,
+      "availability": "planned"
+    },
+    {
+      "name": "LINGO Nexus",
+      "category": "Platform",
+      "description": "Shared platform and integration foundations.",
+      "href": null,
+      "availability": "planned"
+    },
+    {
+      "name": "LINGO Studios",
+      "category": "Creative",
+      "description": "Creative production and studio experiences.",
+      "href": null,
+      "availability": "planned"
+    },
+    {
+      "name": "LINGO Towers",
+      "category": "Places and infrastructure",
+      "description": "Long-range property and infrastructure concept.",
+      "href": null,
+      "availability": "planned"
+    },
+    {
+      "name": "Bridged Gap",
+      "category": "Community initiative",
+      "description": "Community connection initiative.",
+      "href": null,
+      "availability": "planned"
+    }
+  ]
+}
