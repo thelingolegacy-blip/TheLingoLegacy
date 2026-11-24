@@ -3,6 +3,18 @@ import fs from "node:fs";
 import path from "node:path";
 
 const EXPECTED_REALM_COUNT = 14;
+const EXPECTED_PUBLIC_PORTFOLIO_IDS = new Set([
+  "lingo-legacy", "lingo-lane", "lingo-slots", "lingo-arcade",
+  "lingo-library", "lingo-media", "lingo-world", "legacy-x-club",
+]);
+const EXPECTED_SHARED_PLATFORM_SERVICE_IDS = new Set([
+  "lingo-studio", "lingo-core", "lingo-identity", "lingo-wallet",
+]);
+const EXPECTED_SUBPRODUCT_PARENTS = new Map([
+  ["lingo-shield", "lingo-world"],
+  ["lingo-campus", "lingo-world"],
+]);
+const NODE_TYPES = new Set(["public_portfolio", "subproduct", "shared_platform_service"]);
 const file = process.argv[2] ?? "config/lingo-ecosystem-registry.v1.json";
 const errors = [];
 let registry;
@@ -29,6 +41,7 @@ if (!Array.isArray(registry.realms) || registry.realms.length !== EXPECTED_REALM
 const realms = Array.isArray(registry.realms) ? registry.realms : [];
 const ids = new Set();
 const routes = new Set();
+const realmsById = new Map();
 for (const realm of realms) {
   if (!realm || typeof realm !== "object" || Array.isArray(realm)) {
     errors.push("Each realm must be an object");
@@ -42,6 +55,17 @@ for (const realm of realms) {
   }
   if (ids.has(realm.id)) errors.push("Duplicate realm id: " + realm.id);
   ids.add(realm.id);
+  realmsById.set(realm.id, realm);
+  if (!NODE_TYPES.has(realm.node_type)) {
+    errors.push("Unsupported node_type: " + realm.id + " = " + String(realm.node_type));
+  }
+  if (realm.node_type === "subproduct") {
+    if (typeof realm.parent_id !== "string" || !realm.parent_id.trim()) {
+      errors.push("Subproduct must declare a non-empty parent_id: " + realm.id);
+    }
+  } else if (realm.parent_id !== undefined) {
+    errors.push("Only subproducts may declare parent_id: " + realm.id);
+  }
 
   if (!Array.isArray(realm.products) || realm.products.length === 0 || realm.products.some((value) => typeof value !== "string" || !value.trim())) {
     errors.push("Realm must list at least one non-empty product: " + (realm.id ?? "unknown"));
@@ -69,6 +93,41 @@ for (const realm of realms) {
     }
   }
 }
+const publicIdsFound = new Set(realms.filter((realm) => realm?.node_type === "public_portfolio").map((realm) => realm.id));
+if (publicIdsFound.size !== EXPECTED_PUBLIC_PORTFOLIO_IDS.size) {
+  errors.push("Registry must contain exactly " + EXPECTED_PUBLIC_PORTFOLIO_IDS.size + " canonical public portfolios");
+}
+for (const id of EXPECTED_PUBLIC_PORTFOLIO_IDS) {
+  if (!publicIdsFound.has(id)) errors.push("Missing canonical public portfolio: " + id);
+}
+for (const id of publicIdsFound) {
+  if (!EXPECTED_PUBLIC_PORTFOLIO_IDS.has(id)) errors.push("Unexpected public portfolio: " + id);
+}
+const sharedIdsFound = new Set(realms.filter((realm) => realm?.node_type === "shared_platform_service").map((realm) => realm.id));
+if (sharedIdsFound.size !== EXPECTED_SHARED_PLATFORM_SERVICE_IDS.size) {
+  errors.push("Registry must contain exactly " + EXPECTED_SHARED_PLATFORM_SERVICE_IDS.size + " shared platform services");
+}
+for (const id of EXPECTED_SHARED_PLATFORM_SERVICE_IDS) {
+  if (!sharedIdsFound.has(id)) errors.push("Missing canonical shared platform service: " + id);
+}
+for (const id of sharedIdsFound) {
+  if (!EXPECTED_SHARED_PLATFORM_SERVICE_IDS.has(id)) errors.push("Unexpected shared platform service: " + id);
+}
+for (const [childId, expectedParentId] of EXPECTED_SUBPRODUCT_PARENTS) {
+  const child = realmsById.get(childId);
+  const parent = realmsById.get(expectedParentId);
+  if (!child || child.node_type !== "subproduct") {
+    errors.push("Expected canonical subproduct is missing or misclassified: " + childId);
+    continue;
+  }
+  if (child.parent_id !== expectedParentId) errors.push("Subproduct " + childId + " must belong to " + expectedParentId);
+  if (!parent || parent.node_type !== "public_portfolio") errors.push("Subproduct parent must be an existing public portfolio: " + expectedParentId);
+}
+for (const realm of realms) {
+  if (realm?.node_type === "subproduct" && !EXPECTED_SUBPRODUCT_PARENTS.has(realm.id)) {
+    errors.push("Unexpected subproduct or missing canonical parent mapping: " + realm.id);
+  }
+}
 for (const field of ["environments", "release_gates", "explicit_disabled"]) {
   if (!Array.isArray(registry[field])) errors.push(field + " must be an array");
 }
@@ -79,5 +138,8 @@ if (errors.length) {
 }
 console.log("LINGO registry validation PASSED");
 console.log("Realms:", realms.length);
+console.log("Public portfolios:", realms.filter((realm) => realm.node_type === "public_portfolio").length);
+console.log("Shared platform services:", realms.filter((realm) => realm.node_type === "shared_platform_service").length);
+console.log("Subproducts:", realms.filter((realm) => realm.node_type === "subproduct").length);
 console.log("Production realms:", realms.filter((realm) => realm.status === "production").length);
 console.log("Protected policy:", registry.production_policy);
