@@ -145,8 +145,8 @@ export async function issueSpinApprovalD1(db, {
   const insert = db.prepare(`
     INSERT INTO lingo_saaae_approvals
       (approval_id, tenant_id, product_id, resource_id, operation, action_digest,
-       requester_uid, approver_uid, status, expires_at)
-    SELECT ?, ?, ?, ?, 'spin', ?, ?, ?, 'approved', ?
+       requester_uid, approver_uid, approver_auth_time_epoch, status, expires_at)
+    SELECT ?, ?, ?, ?, 'spin', ?, ?, ?, ?, 'approved', ?
      WHERE ? <> ?
        AND EXISTS (
          SELECT 1 FROM lingo_saaae_principals p
@@ -199,7 +199,7 @@ export async function issueSpinApprovalD1(db, {
        )
   `).bind(
     approvalId, tenantId, productId, resourceId, actionDigest,
-    requesterUid, approverUid, expiresAt, requesterUid, approverUid,
+    requesterUid, approverUid, approverAuthTime, expiresAt, requesterUid, approverUid,
     requesterUid, requesterUid, tenantId,
     requesterUid, tenantId, productId, resourceId,
     requesterUid, tenantId, productId, resourceId,
