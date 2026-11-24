@@ -265,3 +265,39 @@ This is a file-overlap and metadata review, not a merge simulation. GitHub's `me
 ## 12. Post-update Actions startup recheck (2026-11-24)
 
 After the merge-graph update, six newer LINGO Ecosystem Registry Validation runs were inspected: `45416184637`, `45416166572`, `45416161205`, `45416151092`, `45416143495`, and `45416138117`. All six concluded `startup_failure`; the Jobs API returned **zero jobs** and the Artifacts API returned **zero artifacts** for every run. This confirms the same pre-job startup failure signature across the registry validation workflow as well as the earlier Static CI, G02 image-build, and Crimson Smoke workflows. It still does not identify the provider-side root cause or indicate a test failure. No retry, dispatch, or runner action was taken.
+
+
+
+## 13. Parallel branch-source verification (2026-11-24)
+
+A further source-level review inspected exact PR branch content and changed-file inventories for #548, #640, #511, #638, and #523. No merge, deployment, provider mutation, or workflow dispatch was performed.
+
+### Flagship homepage and directory — #548 / #640
+
+- Complete changed-file inventories confirm #548 and #640 both change `index.html`, `assets/flagship-home.css`, `assets/flagship-home.js`, and `worlds/index.html`. #640's branch is based on `main`; #548 remains the conflicting foundational branch. These are competing edits to the same four canonical presentation paths and must be consolidated into one reviewed file owner before merge.
+- Exact #640 branch reads returned homepage blob `07e38fd25838e321a320a46c7fdf620088f8c11b`, directory blob `2952a5f4a076383c0808c05afc96d7aa0bb9e0ac`, and shared stylesheet blob `47c89c8d40eecbb4ac3eb6dec906423b328ac574`.
+- A source-level assertion pass confirmed exactly eight canonical portfolio cards on both pages: `LINGOlegacy`, `LINGOlane`, `LINGOslots`, `LINGOarcade`, `LINGOlibrary`, `LINGOmedia`, `LINGOworld`, and `LegacyXclub`. Both pages use the canonical apex URL and Contact route; the checked forbidden/stale product routes are not linked. Responsive CSS breakpoints are present.
+- #640 authors a Node test suite and a least-privilege, path-filtered workflow. The source assertions were inspected, but the Node suite and workflow have not executed because GitHub Actions startup failures still occur before job creation.
+- #640 also adds a separate public identity record for “THE PRESTIGIOUS HOUSE OF DUSSE” containing the founder display name “Zavione” and a debut date. This is outside the eight LINGO public portfolio cards and is not established by the existing LINGO portfolio canon in this reconciliation. Keep that disclosure out of a public merge until the brand owner explicitly confirms the exact public wording and date.
+
+### Master registry and backend decision — #511
+
+- #511's ADR-002 explicitly makes no provider selection and prohibits schema migration, production configuration, account creation, data writes, and provider cutover until a named owner decision is recorded.
+- This is consistent with the unresolved Firebase/Supabase architecture boundary. Preserve the ADR as the decision record; do not infer that the presence of either provider connector authorizes a backend choice.
+
+### Enterprise registry and Studio dashboard — #638
+
+- Exact branch reads confirm a 22-module, read-only Studio registry proposal, a validator that rejects write scopes and requires evidence for `LIVE_VERIFIED`, and tests for module uniqueness, sensitive-domain scopes, dashboard data sources, CSP, and credential exclusion.
+- The PR description's statement that Supabase had zero public application tables and zero project migrations is not supported by the current recovery evidence. In this session, project discovery returned provider status `ACTIVE_HEALTHY`, but database table and migration reads failed with authentication errors; the connector evidence does not establish zero tables or migrations. Correct the PR description and any copied status statements to “not verifiable with current connector access” before acceptance.
+- #638 changes the shared `worker.js` CSP to permit `https://api.github.com` in `connect-src`. This is a source-only proposal, not a deployed policy change; review the exact browser request requirement and confirm no other page or Worker behavior is unintentionally affected before merge.
+- Its own PR description records that main advanced after the branch was created; rebase/base synchronization and rerun of the exact-head tests remain required.
+
+### Operations control room — #523
+
+- The control-room source performs same-origin HTTP probes and public GitHub metadata reads. It labels provider bindings as observations rather than proof of data integrity, and its release summary is explicitly hard-coded to remain locked/not certified even if probes respond.
+- The UI does not provide independent runtime certification, CI execution, artifact provenance, or deployment attestation. It remains a read-only presentation proposal; its own description confirms that HTML parsing, JavaScript syntax, browser, accessibility, security, integration, and load tests have not run.
+- Keep #523 behind the source/runtime evidence work and do not treat the dashboard's visual status as a release gate.
+
+### Disposition
+
+The public directory has a promising canonical eight-card source candidate, but overlapping homepage ownership, unexecuted tests, and the unconfirmed independent-brand disclosure prevent merge acceptance. The enterprise register is structurally guarded but its Supabase inventory claim needs correction and its base needs synchronization. The backend ADR remains appropriately undecided. All five PRs remain review proposals; production remains PROTECTED HOLD.
