@@ -237,3 +237,12 @@ This is the safest next admission diagnostic because it isolates hosted-runner j
 ## Web product preview truth boundary
 
 The That’s My Lingo and Kotton’s Code preview controls were made explicitly inactive/coming-soon in Web PR #44 because the referenced actions do not yet have connected game/story implementations. These are truthful UI guardrails, not playable-product acceptance. Continue to require engine implementation, authoritative server-side wallet and game state, abuse/concurrency/idempotency controls, and independent test evidence before enabling any real product action.
+
+
+## Spades wallet containment cross-repository review — 2026-11-24
+
+- Reviewed the existing Spades-is-my_Lingo PR #1 at head `d8d1b10671c5f840553ff1617d09604b40189087` (19 commits ahead, 0 behind, open/draft, mergeable=true). The PR changes the product's own `firestore.rules`, limits profile writes to cosmetic preferences, removes client-side progression sync, adds emulator tests, and documents a trusted-ledger contract. No Spades source or production rules were changed by this review.
+- The rules diff removes direct client updates to chips, sweepstakes tickets, XP, levels, streaks, active entries and deck entitlements. It also makes the default catch-all deny explicit. The browser keeps economic progression local-only. This is a meaningful fail-closed containment direction, not a deployed server-authoritative wallet.
+- Latest Spades security workflow run `44800167779` completed with conclusion `failure`; Jobs API reports one failed job but exposes `steps=null` and no logs URL. Therefore emulator tests, app build/typecheck and rule acceptance are not verified. Earlier runs also failed. Do not merge or deploy based on the current evidence.
+- Remaining acceptance: obtain retrievable job logs and real test output; run the Firestore Emulator suite; run application typecheck/build; independently review the rules and server ledger contract; implement and test the trusted ledger for atomicity, idempotency, concurrency/overspend, replay, bounds, and no redemption/conversion; separately approve any production rules deployment.
+- The Core repository's own `studio-sites/games/oasis-platform/firebase-functions/firestore.rules` is default-deny for player profiles, wallets, inventory and ledger. This is a separate Oasis schema and does not establish Spades or root Core Firebase deployment state. Root Core registry still reports deployed Firebase project/database targets as unverified and no canonical root Firestore rules file.
