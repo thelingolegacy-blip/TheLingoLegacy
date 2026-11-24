@@ -14,7 +14,9 @@ export async function authenticateSaaaeOperator(request, env, {
 } = {}) {
   if (typeof env?.CLOUDFLARE_ACCESS_TEAM_DOMAIN !== 'string'
       || typeof env?.CLOUDFLARE_ACCESS_AUD !== 'string'
-      || typeof env?.SAAAE_OPERATOR_REGISTRY_JSON !== 'string') {
+      || typeof env?.SAAAE_OPERATOR_REGISTRY_JSON !== 'string'
+      || typeof env?.SAAAE_INDEPENDENCE_ATTESTATION_ISSUER !== 'string'
+      || env.SAAAE_INDEPENDENCE_ATTESTATION_ISSUER.length < 3) {
     return { ok: false, status: 503, code: 'OPERATOR_AUTH_CONFIGURATION_UNAVAILABLE' };
   }
 
@@ -39,7 +41,9 @@ export async function authenticateSaaaeOperator(request, env, {
     };
   }
 
-  const registry = parseSaaaeOperatorRegistry(env.SAAAE_OPERATOR_REGISTRY_JSON);
+  const registry = parseSaaaeOperatorRegistry(env.SAAAE_OPERATOR_REGISTRY_JSON, {
+    trustedAttestationIssuer: env.SAAAE_INDEPENDENCE_ATTESTATION_ISSUER,
+  });
   if (!registry.ok) {
     return { ok: false, status: 503, code: registry.code };
   }
