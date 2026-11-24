@@ -527,3 +527,11 @@ The JWKS rotation source correction is committed, but its test has not run. CI s
 - G04: BLOCKED by SAAAE runtime integration, operator separation/MFA, staging migration and privacy/security acceptance.
 - G05–G11: BLOCKED; each retains independent acceptance requirements.
 - Production: protected; no promotion performed.
+
+
+### GitHub Core repository governance read
+- The connected integration can read active repository ruleset `Lingo - protect main` (ID `27403956`), enforcement `active`.
+- The returned ruleset contains deletion protection, non-fast-forward protection, and Copilot code review on push.
+- This ruleset payload contains no required-status-check rule. The separate branch-protection endpoint returned 403 / Resource not accessible by integration, so this inspection does not establish the complete effective protection configuration.
+- The private Web repository ruleset endpoint returned 403 because the current GitHub plan/connection does not expose that capability. Web branch governance remains UNVERIFIED.
+- No ruleset or branch-protection setting was changed.
