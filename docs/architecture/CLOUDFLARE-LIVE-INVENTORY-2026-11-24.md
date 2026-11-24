@@ -105,3 +105,46 @@ The `fail_open` values above are transcribed from live configuration. This docum
 - Pages deployment state for five projects: PARTIALLY VERIFIED; two latest previews explicitly skipped, one historical backup deployment success, other current app readiness not established.
 - Runtime behavior, SAAAE end-to-end enforcement, database schema/data integrity, backup restore, production traffic health, and product acceptance: NOT VERIFIED.
 - Production mutations: NONE.
+
+
+## Read-only D1 schema inspection — 2026-11-24
+
+A read-only `SELECT name, type, sql FROM sqlite_master` was executed against three databases. Cloudflare returned `changes: 0` and `rows_written: 0` for all three queries. No application records or user rows were selected.
+
+### askLINGO staging database
+
+`asklingo-v2-staging-20261122` contains the following SAAAE-oriented tables:
+
+- `principals`
+- `grants`
+- `approvals`
+- `audit_events`
+- `idempotency_keys`
+- `rate_limit_buckets`
+
+The returned DDL includes staging-only grant environment constraints, constrained principal/grant/approval states, distinct requester/approver check, approval expiry/consumption fields, and audit correlation fields. This establishes that the schema objects exist in this database; it does not prove that the deployed Worker enforces them correctly or that policy data is provisioned.
+
+### Game-engine staging database
+
+`lingo-game-engine-staging-20261107` currently returns these application tables:
+
+- `lingo_api_rate_limits`
+- `lingo_game_accounts`
+- `lingo_game_progression`
+- `lingo_game_sessions`
+- `lingo_game_wallets`
+- `lingo_wallet_ledger`
+
+The six SAAAE tables listed above were not present in this database's returned table/index inventory. This confirms the dependency described by PR #658: the game-engine SAAAE runtime cannot be accepted against this database until its migration is reviewed, safely applied to staging, and verified. No migration was applied.
+
+### Production database schema signal
+
+The production database `lingo-production` returned legacy schema objects including `users`, `sessions`, `ai_conversations`, `gps_logs`, `game_spins`, `jackpot_spins`, `leaderboard`, `submissions`, and `studio_projects`. The DDL includes fields named for email, session token, latitude/longitude, and conversation message content. This is schema-level evidence only; no rows, tokens, messages, or location values were read. It triggers a required privacy/data-retention/security review before any migration or new integration.
+
+### Updated database acceptance
+
+- askLINGO staging SAAAE table presence: VERIFIED at schema level only.
+- Game-engine staging SAAAE table presence: NOT PRESENT in returned schema; migration gate BLOCKED.
+- Production schema privacy review: REQUIRED / NOT STARTED.
+- Data quality, row-level authorization, retention, backup/restore, and runtime enforcement: NOT VERIFIED.
+- All queries were read-only; Cloudflare reported zero changed rows and zero rows written.
