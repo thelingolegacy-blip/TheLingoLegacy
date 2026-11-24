@@ -133,4 +133,19 @@ The suite covers Pages-root routing, deep links/query strings, redirect rewritin
 - Existing \`fail_open\` configuration requires security review.
 - SAAAE, identity, dynamic APIs, wallets, payments, monitoring and restore drills require their own execution evidence.
 
-**Disposition:** source preparation and reconciliation only; not accepted for public failover.
+## Latest live verification update — 2026-11-24
+
+This addendum supersedes the earlier point-in-time deployment statements above where they conflict.
+
+- Cloudflare Pages preview deployment succeeded for branch `feat/master-backed-standby-mainline-2026-11-24`, commit `ef84df2f6e3ce47d4c676f7288d96bd4a0afd734`, deployment `cfbb7cae-096c-4967-a75f-cc60eeee8763`. Queued, initialize, clone, build and deploy stages all reported success.
+- Preview URL: `https://cfbb7cae.thelingolegacy-static-backup.pages.dev`.
+- Cloudflare Pages project now has preview deployments enabled for the feature branch. Production deployments remain disabled.
+- The Pages project still names `recovery/static-backup-2026-10-24` as its production branch. Do not promote that branch.
+- Cloudflare Pages `fail_open` was verified to mean whether to fail open when deployment configuration cannot be applied. It is not an Access-policy bypass. It has now been set to `false` for both preview and production and read back as `false`.
+- The existing `launch.thelingolegacy.com/*` Worker route still points to the old direct-upload Worker, whose root response is pinned to the older Studio homepage. The proposed source-controlled proxy has not been deployed.
+- The Pages project has no custom domains attached. The main domain continues serving the existing public game-floor homepage.
+- An external browser probe could not retrieve the Pages preview; a local network probe was blocked by DNS resolution in this execution environment. Therefore live HTTP headers, routes, assets, Access behavior and visual/mobile rendering remain unverified.
+- GitHub PR #665 remains open and draft. The preview deployment does not constitute merge approval or production acceptance.
+- No DNS, Worker route, Access policy, production branch, production deployment setting, Firebase, Supabase, payment or customer-data changes were made.
+
+**Current disposition:** preview deployment confirmed; deployment configuration made fail-closed; public-site acceptance, alternate CI execution, Worker review/deployment, Access review, restore drill and production promotion remain pending.
