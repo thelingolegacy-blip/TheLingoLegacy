@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS lingo_saaae_approvals (
   action_digest TEXT NOT NULL,
   requester_uid TEXT NOT NULL,
   approver_uid TEXT NOT NULL,
-  approver_auth_time_epoch INTEGER NOT NULL DEFAULT 0 CHECK (approver_auth_time_epoch >= 0),
+  approver_auth_time_epoch INTEGER NOT NULL CHECK (approver_auth_time_epoch >= 0),
   status TEXT NOT NULL DEFAULT 'approved' CHECK (status IN ('pending','approved','rejected','consumed','expired','revoked')),
   expires_at TEXT NOT NULL,
   consumed_at TEXT,
