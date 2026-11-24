@@ -160,3 +160,44 @@ These proposals overlap but have distinct intended roles:
 **NOT MERGED. NOT DEPLOYED. NOT CERTIFIED.**
 
 This reconciliation document is a planning and evidence index. It does not change runtime configuration, production routes, Firebase resources, Cloudflare resources, secrets, payment settings, runner registration, or customer data. Open PRs and branches remain preserved pending the full reconciliation.
+
+
+## 7. Parallel application and live staging reconciliation (2026-11-24)
+
+The following checks were performed in parallel against the current draft branches and Cloudflare account. All Cloudflare database queries in this section were read-only `SELECT` statements; no resource or schema was changed.
+
+### Ecosystem registry — PR #602
+
+- Parsed the branch's registry JSON and schema JSON successfully.
+- Registry contains **14 realms**, **14 unique IDs**, and **8 unique non-null routes**.
+- Production policy remains `protected-hold`.
+- Realm readiness values remain non-production states (`live-uncertified`, `scaffolded-unverified`, `planned`, `preview-needs-independent-qa`, `planned-disabled`).
+- This was a structural parse/invariant spot-check, not execution of the committed Node validator or full JSON Schema validator in CI.
+
+### Firebase / Flutter — PRs #654 and #655
+
+- PR #654 Firestore rules are explicit deny-all (`allow read, write: if false`) pending reviewed tenant-scoped rules and emulator tests.
+- Flutter Firebase configuration requires complete options and exact project-ID match; default target is `lingo-legacy-staging`, while production requires explicit build-time opt-in.
+- Actual Firebase staging project existence/access, registered platform app IDs, Firebase credentials, Flutter dependency resolution, emulator rules tests, and GitHub Actions execution remain unverified. No Firebase project or configuration was changed.
+
+### askLINGO — PR #657 and live Cloudflare staging
+
+- Live Worker inventory includes `asklingo-v2-staging`.
+- Its Worker settings show a D1 binding `ASKLINGO_DB` to database `e041e690-2a45-4c82-8b46-6e012d739972` (`asklingo-v2-staging-20261122`).
+- A read-only `sqlite_master` inspection found the expected authorization foundation tables: `principals`, `grants`, `approvals`, `audit_events`, `idempotency_keys`, and `rate_limit_buckets`, plus Cloudflare's `_cf_KV`; append-only audit triggers and lookup indexes are present.
+- PR #657 source verifies Firebase RS256 signatures and token claims, checks disabled/revoked account state, applies scoped staging grants, rate limits, and fail-closed audit handling. It deliberately returns `503 service_not_enabled` while provider/privacy approval remains pending; inference and operational actions are not enabled.
+- No matching askLINGO-named Cloudflare Access application was returned by the account Access-app query. This does not invalidate its Firebase bearer-token model, but any additional Access front-door requirement must be specified separately.
+- No live query, conversation persistence, inference, or operational action was enabled by this inspection.
+
+### Game engine SAAAE — PRs #655, #658, #659
+
+- The dedicated game-engine D1 database `793ab138-7818-47c9-ad01-b319ad34a8c5` exists.
+- Read-only schema inspection found the existing game foundation tables and ledger/rate-limit structures, but **none** of the six `lingo_saaae_*` tables required by PR #658's migration.
+- A direct Worker-settings read for `lingo-game-engine-staging` returned Cloudflare 404 (`This Worker does not exist on your account`). The current account Worker inventory does not list that script. The existence of the D1 database is not evidence of a deployed game-engine Worker.
+- PR #655's Wrangler config specifies the staging Firebase project ID, but this source configuration is not live deployment evidence. Historical evidence in the branch records an earlier Worker binding to the production Firebase project; that historical state must not be treated as a current staging runtime.
+- PR #658 source includes scoped principal/membership/grant authorization, rate limiting, approval-bound spins, and settlement logic. Its six-table migration is not applied to the live D1 database. PR #659's Access application remains a zero-policy shell; independent operator identity and MFA requirements remain blockers.
+- Do not deploy the Worker, apply either SAAAE migration, add Access policies, or create routes until staging Firebase identity, separate reviewer identity, exact-source CI, migration tests, rollback, and explicit staging authorization are all satisfied.
+
+### Overall parallel disposition
+
+Source-level work and read-only infrastructure reconciliation advanced, but no application branch was merged, no new Worker deployed, no migration applied, no Firebase project mutated, and no production setting changed. CI remains blocked before job creation. All related PRs remain draft/unmerged and production remains under protected hold.
