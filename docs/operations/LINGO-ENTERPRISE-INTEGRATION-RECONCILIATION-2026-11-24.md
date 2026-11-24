@@ -33,7 +33,25 @@ Evidence entry points:
 - Open pull requests: https://github.com/thelingolegacy-blip/TheLingoLegacy/pulls
 - Repository agent instructions: https://github.com/thelingolegacy-blip/TheLingoLegacy/blob/main/AGENTS.md
 
-## 3. High-priority integration relationships
+## 3. Cloudflare live account snapshot (read-only, 2026-11-24)
+
+A fresh Cloudflare API read returned the following account inventory:
+
+- Account plan: Free Website; the account-level `enforce_twofactor` setting is `false`.
+- Worker inventory: **11** scripts; the previous ten-script snapshot is superseded.
+- D1 inventory: **5** databases, including `lingo-game-engine-staging-20261107` and `asklingo-v2-staging-20261122`.
+- Access inventory: **15** applications.
+- Zone Worker routes: **27**.
+- Accepted account members: **1**; the returned member's `two_factor_authentication_enabled` value is `false`.
+- The **LINGO SAAAE Staging Privileged Executor** Access application exists for `saaae-staging.thelingolegacy.com`, but its attached policy list is empty.
+- The current route inventory contains no route for `saaae-staging.thelingolegacy.com`; the existing public apex, wildcard, and www routing remain unchanged.
+- The D1 database's existence does not prove the SAAAE schema or runtime is installed. PR #659's read-only schema inspection reported no SAAAE runtime/provisioning evidence tables; no migration was applied.
+
+**Operational consequence:** privileged staging execution remains blocked. A separate operator/reviewer identity is not currently available from the accepted account-member roster; account MFA is not enforced and the sole returned member has 2FA disabled. Do not attach an Access allow policy, create a route, deploy a Worker, or apply a migration to work around these prerequisites. The account owner must establish MFA and a distinct authorized reviewer/operator identity through the provider's normal account process before this boundary can be completed.
+
+No Cloudflare account settings, members, Access policies, DNS records, Worker routes, Worker scripts, D1 schemas, or deployments were changed by this read.
+
+## 4. High-priority integration relationships
 
 ### A. Canonical portfolio, enterprise register, and public directory
 
