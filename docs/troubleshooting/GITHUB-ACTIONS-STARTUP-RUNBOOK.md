@@ -83,7 +83,7 @@ This is a fresh cross-repository reproduction of the pre-job admission failure. 
 A recovery is accepted only after a new run creates a job, receives a real runner ID/name, executes diagnostic steps, exposes retrievable logs, and uploads a commit-correlated non-secret artifact. Repeat independently in Core and Web. Hosted GitHub runner success does not certify the separate G02 self-hosted runner.
 
 
-### Newest branch-head reproduction — 2026-11-24 22:xx UTC
+### Newest branch-head reproduction — 2026-11-24
 
 The latest observed PR heads have also reproduced the same admission failure:
 - Core PR #664 head `13104be534fb7da00ab9e33f02d18c37417e2a8d`: runs `45496801924`, `45496799549`, and `45496796655` all concluded `startup_failure`; each Jobs API response returned zero jobs and each Artifacts API response returned zero artifacts.
