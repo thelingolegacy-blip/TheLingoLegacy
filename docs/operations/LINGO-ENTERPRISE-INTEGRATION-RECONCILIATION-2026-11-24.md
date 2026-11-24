@@ -301,3 +301,11 @@ A further source-level review inspected exact PR branch content and changed-file
 ### Disposition
 
 The public directory has a promising canonical eight-card source candidate, but overlapping homepage ownership, unexecuted tests, and the unconfirmed independent-brand disclosure prevent merge acceptance. The enterprise register is structurally guarded but its Supabase inventory claim needs correction and its base needs synchronization. The backend ADR remains appropriately undecided. All five PRs remain review proposals; production remains PROTECTED HOLD.
+
+
+### Additional structural spot-check — PR #638 registry
+
+- Re-read the exact #638 branch registry, validator, test file, and Worker source. The registry parses as JSON and contains **22 unique modules** and **7 provider records**.
+- An independent structural spot-check found no duplicate module IDs, unknown readiness values, write-enabled module records, declared `:write` scopes, missing baseline evidence requirements, missing required domain read scopes, or violations of the declared global read-only controls.
+- The committed test file contains **12** Node test cases. These are authored tests only; neither the committed validator nor the Node test runner has executed in CI. This spot-check is not a substitute for the JSON Schema validator, exact-head Node execution, browser QA, or independent review.
+- The Worker CSP proposal adds the narrowly scoped GitHub API origin to `connect-src`; no live Worker policy was changed.
