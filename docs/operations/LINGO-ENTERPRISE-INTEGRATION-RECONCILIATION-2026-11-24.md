@@ -233,3 +233,30 @@ Source-level work and read-only infrastructure reconciliation advanced, but no a
 - Current PR metadata: #548 remains draft and reports `mergeable: false`; #602 remains draft and targets #548's branch; #638 and #640 are draft and target `main`. No branch was rebased or merged.
 - Recommended integration order: first resolve the #548 exact-root/wildcard source and preview acceptance; then reconcile #638's enterprise taxonomy with #602's detailed registry and #640's public directory; then select one canonical registry/validator owner and remove duplicate/conflicting ownership before any merge.
 - Do not merge #602 into `main` while its base dependency is unresolved, and do not merge multiple competing registry/portfolio implementations solely to make branches appear consolidated.
+
+
+## 11. Current merge graph and file-overlap review (2026-11-24)
+
+A fresh PR metadata and complete changed-file inventory review was performed for #548, #511, #515, #523, #638, #640, and #656.
+
+### Direct merge and overlap findings
+
+- **#548** is open/draft, reports `mergeable: false`, targets `main`, and changes 19 files including `index.html`, `assets/flagship-home.css`, `assets/flagship-home.js`, and `worlds/index.html`. Its exact-root Worker and preview build changes remain the foundational flagship site work.
+- **#640** is open/draft, reports `mergeable: true`, targets `main`, and overlaps #548 on all four of those flagship presentation paths. A direct merge of both without a single chosen source-of-truth implementation would risk overwriting homepage, navigation, and /worlds/ work. Keep #640 as the canonical directory/presentation proposal; reconcile its overlapping files against #548 before either merge.
+- **#602** remains stacked on #548's branch, so its 14-realm registry and expanded /worlds/ implementation must not be merged to `main` until #548's base is resolved. It also overlaps the public directory implementation in #640. The detailed 14-node registry and eight-portfolio public presentation should be reconciled as data model vs presentation, not treated as competing replacement implementations.
+- **#511** is open/draft and targets `main`; its 28-file master registry/dependency-graph baseline includes ADR-002 and identity/wallet contracts. It is the appropriate owner for the canonical dependency graph, but its backend decision record must be reconciled with #515 and the later Firebase staging branches before it is accepted.
+- **#515** is open/draft, targets `main`, and changes only `docs/SUPABASE-PRIMARY-BACKEND-ARCHITECTURE.md`. It is an architecture proposal, not a live backend migration or deployed service. Do not treat the proposal as authority while Firebase staging is being built.
+- **#638** is open/draft, targets `main`, and changes nine files including `worker.js`, Studio registry/validator files, and `studio/index.html`. Its enterprise module registry can be reconciled with #511's dependency graph, but the Worker and Studio page must be checked against existing owners before merging.
+- **#523** is open/draft, reports `mergeable: false`, targets `main`, and adds a control-room page plus release/runbook documentation and Studio Hub. It is not a substitute for actual runtime observability, live integration, or release evidence.
+- **#656** is open/draft, targets `main`, and contains the isolated manual hosted-runner probe plus its recovery runbook. It is the canonical safe CI startup diagnostic; it must be manually dispatched by a repository owner because this connector has no dispatch action.
+
+### Recommended consolidation sequence
+
+1. Resolve the #548 exact-root/preview source and its reported mergeability conflict first.
+2. Reconcile #640's overlapping homepage and directory files with #548, preserving the canonical eight-portfolio presentation and 14-realm registry data.
+3. Reconcile #511, #638, #602 and #515 into one canonical registry/dependency/backend architecture decision, with explicit file ownership and no duplicate validators.
+4. Keep #654–#659 as dependent identity and SAAAE staging slices; do not merge dependent branches out of order.
+5. Keep #523 as a later presentation/runbook integration after real runtime telemetry is available.
+6. Use #656 for the manual hosted-runner diagnostic; do not activate G02 as a workaround.
+
+This is a file-overlap and metadata review, not a merge simulation. GitHub's `mergeable` field is only a provider-reported snapshot and does not replace fetching the current merge base, reviewing the complete diff, and executing exact-head CI.
