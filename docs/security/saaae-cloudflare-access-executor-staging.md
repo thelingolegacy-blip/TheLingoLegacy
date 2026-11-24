@@ -180,3 +180,5 @@ The Cloudflare IdP configuration was also re-read on 2026-11-24:
 A read-only account-membership check returned exactly one accepted Cloudflare account member and no additional accepted reviewer. No member was added, invited, or modified. This confirms the second-human gate remains unsatisfied at the account level.
 
 The Access-to-registry authentication helper also requires an explicit `SAAAE_INDEPENDENCE_ATTESTATION_ISSUER` trust-anchor configuration. A human entry whose `attestation_issuer` does not exactly match this configured issuer is rejected; a missing trust anchor returns an unavailable/configuration failure. The trust-anchor string is not itself cryptographic proof. The configured issuer must be backed by an independently governed identity-verification process and its referenced evidence must be reviewed before the roster is populated.
+
+The Access JWT operator-authentication helper now accepts only active human registry entries. It explicitly rejects the workload executor subject; the executor must authenticate through a separate workload-identity mechanism and cannot reuse the human Access path.
