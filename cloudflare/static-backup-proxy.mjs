@@ -19,7 +19,7 @@ export function createProxyWorker(fetchImpl = globalThis.fetch) {
     async fetch(request) {
       const incoming = new URL(request.url);
 
-      if (incoming.hostname !== STANDBY_HOST) {
+      if (incoming.hostname !== STANDBY_HOST || incoming.port !== "") {
         return errorResponse(421, "Misdirected request.");
       }
       if (request.method !== "GET" && request.method !== "HEAD") {
