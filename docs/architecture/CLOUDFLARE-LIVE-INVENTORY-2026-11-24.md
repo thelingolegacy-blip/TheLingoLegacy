@@ -179,3 +179,10 @@ The Worker remains the route owner for apex/www wildcard traffic. No new deploym
 - Separate workload executor identity: NOT VERIFIED.
 - Active Core Worker deployment version: VERIFIED as v137 at 100%.
 - Production Worker update/promotion: NOT PERFORMED.
+
+
+### Latest-upload versus active deployment drift
+
+A fresh Worker versions API read returned the latest uploaded `thelingolegacyv-5` version as **v378** (version ID `cf7059ef-a9af-47f0-8f9f-49c5a3cad759`, created 2026-11-21T18:33:17Z). The active 100% deployment remains **v137** (version ID `2d161fa5-598f-4998-ada8-7ac4c72c3461`, created 2026-10-25T14:04:26Z). The 241-version gap is a verified upload/deployment drift signal, not proof that v378 is safe or should be promoted.
+
+The current v378 version must be reviewed against canonical GitHub source, preview/test evidence, bindings, route behavior, and rollback before any promotion. No promotion was performed.
