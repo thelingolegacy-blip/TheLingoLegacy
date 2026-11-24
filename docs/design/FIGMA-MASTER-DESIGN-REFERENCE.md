@@ -3,7 +3,7 @@
 **Canonical Figma file:** [THE LINGO LEGACY — Enterprise Master Design System](https://www.figma.com/design/W5unjzxbrpKazxgiyEO8WG)  
 **Figma file key:** `W5unjzxbrpKazxgiyEO8WG`  
 **Revision:** 2026-11-24  
-**Status:** Editable design foundation created; application integration and platform QA remain open.
+**Status:** Editable design foundation created; shared token integration is present on Web draft PR #44 only; merge, runtime integration and platform QA remain open.
 
 ## Purpose
 
