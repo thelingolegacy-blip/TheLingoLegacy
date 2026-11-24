@@ -356,3 +356,11 @@ A direct content and ancestry comparison refines the earlier “four-file overla
 - Recommendation: keep #548 draft as the exact-root Worker provenance/preview evidence and do not merge its broadly diverged branch wholesale. Treat #640 as the narrower current-main-based public-directory candidate, subject to the separate Dusse disclosure approval, manual execution of its Node/workflow tests, independent browser/accessibility/security QA, and final review. Its branch being 36/0 does not waive any of those gates.
 
 This refines the earlier overlap note: CSS/JS are byte-identical; homepage and directory HTML require the focused reconciliation. No files were changed in either PR branch and no merge was performed.
+
+
+## 17. Focused CI path-filter repair on PR #640 (2026-11-24)
+
+- Static inspection of `.github/workflows/world-directory-canon.yml` found an asymmetry: the `pull_request` path filter included `index.html`, but the `push` to `main` path filter omitted it. A homepage-only update after merge could therefore fail to trigger the canonical directory regression workflow.
+- Corrected the PR #640 branch workflow by adding `index.html` to the `push.branches: [main].paths` list. The pull-request filter, `ubuntu-latest` runner, `contents: read` permission, and `node --test scripts/tests/world-directory-canon.test.mjs` command were left unchanged.
+- Verified the updated branch workflow content contains `index.html` in both path filters. The seven authored Node test cases remain unexecuted because repository Actions startup failure prevents job creation.
+- PR #640 head is now `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`. This is a focused CI-trigger repair only; it does not authorize merging the PR or public release.
