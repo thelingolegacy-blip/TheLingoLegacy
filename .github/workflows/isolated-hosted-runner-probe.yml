@@ -25,6 +25,8 @@ jobs:
           RUNNER_ID: ${{ runner.id }}
         run: |
           set -euo pipefail
+          test -n "${RUNNER_ID:-}"
+          test "${RUNNER_ID}" -gt 0
           test -n "${RUNNER_NAME:-}"
           test "${RUNNER_OS:-}" = "Linux"
           test "${RUNNER_ARCH:-}" = "X64"
