@@ -397,7 +397,7 @@ This refines the earlier overlap note: CSS/JS are byte-identical; homepage and d
 
 ## 20. Exact-head reconciliation refresh (2026-11-24)
 
-- Refreshed PR #661 head: `9b07196cfb107a0ffb3c52c763646d6ef65e32d7`. PR #661 remains OPEN / DRAFT / UNMERGED and changes only this reconciliation document. The PR has no submitted independent reviews and no inline review threads at the time of this inspection.
+- Prior inspected PR #661 head: `9b07196cfb107a0ffb3c52c763646d6ef65e32d7`; the evidence below is the exact-head result for that commit. This refresh was then committed to the same documentation-only PR as `7cc44bbb308c10f3c96e0ad6a1c0d7fcbd0f9bed`. PR #661 remains OPEN / DRAFT / UNMERGED and changes only this reconciliation document. The PR had no submitted independent reviews and no inline review threads at the time of the inspection.
 - Three workflow runs associated with this exact commit were inspected: Lingo Legacy Static CI `45425574710`, Crimson Smoke UI static validation `45425570235`, and G02 Runner Image Build (no publish) `45425572411`.
 - All three runs completed with conclusion `startup_failure`. For each run, the Jobs API returned **0 jobs** and the Artifacts API returned **0 artifacts**. No steps, runner identity, test results, or build artifacts exist for these attempts.
 - The active repository ruleset `27403956` (“Lingo - protect main”) was re-read. Its configured rules are deletion protection, non-fast-forward protection, and Copilot code review on push. It does not configure required pull-request approvals or required status checks. Its ref include/exclude arrays are empty; do not infer narrower scope from the ruleset name.
