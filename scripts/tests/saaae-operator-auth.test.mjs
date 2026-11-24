@@ -44,7 +44,15 @@ test('does not authorize an unregistered subject or trust token email', async ()
     verify: async () => ({ ok: true, subject: 'unregistered', email: 'human-reviewer@example.invalid' }),
   });
   assert.equal(result.status, 403);
-  assert.equal(result.code, 'OPERATOR_NOT_REGISTERED');
+  assert.equal(result.code, 'HUMAN_OPERATOR_NOT_REGISTERED');
+});
+
+test('Access human authentication cannot resolve the workload executor identity', async () => {
+  const result = await authenticateSaaaeOperator(request(), env, {
+    verify: async () => ({ ok: true, subject: 'workload-executor' }),
+  });
+  assert.equal(result.status, 403);
+  assert.equal(result.code, 'HUMAN_OPERATOR_NOT_REGISTERED');
 });
 
 test('invalid tokens and unavailable signing keys fail closed', async () => {
