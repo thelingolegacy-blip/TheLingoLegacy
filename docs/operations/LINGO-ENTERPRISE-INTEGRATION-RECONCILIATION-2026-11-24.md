@@ -51,7 +51,24 @@ A fresh Cloudflare API read returned the following account inventory:
 
 No Cloudflare account settings, members, Access policies, DNS records, Worker routes, Worker scripts, D1 schemas, or deployments were changed by this read.
 
-## 4. High-priority integration relationships
+## 5. GitHub Actions execution diagnosis (2026-11-24)
+
+A further read-only inspection of the latest runs on the reconciliation PR confirms:
+
+- Latest static CI run: `45413702131`, workflow path `.github/workflows/jekyll-docker.yml`, conclusion `startup_failure`.
+- Latest G02 image build run: `45413699027`, conclusion `startup_failure`.
+- Latest Crimson Smoke UI validation run: `45413696013`, conclusion `startup_failure`.
+- The preceding three runs on commit `212317788635160cf0486c1846213195f3f1b40c` failed identically.
+- All six inspected run records have no instantiated jobs and no artifacts. Therefore there are no step logs, runner identities, or test results to evaluate.
+- The static CI workflow source is syntactically structured for a single `ubuntu-24.04` hosted job with read-only contents permission; its first step captures runner identity, followed by checkout, Node 22 setup, static tests, and evidence upload. The independent hosted-runner probe is also a manual-only `ubuntu-latest` job with `contents: none`, no checkout, no actions, no secrets, and no network calls.
+- The G02 self-hosted smoke and dispatch diagnostic workflows remain guarded by `if: false`; they were not activated.
+- The GitHub integration available in this session exposes read-only run/job/artifact inspection and PR/file operations, but no workflow-dispatch operation or Actions administration endpoints. Thus it cannot initiate the isolated manual probe or inspect/repair repository runner settings from this session.
+
+**Diagnosis boundary:** evidence establishes a GitHub Actions startup failure before job creation across multiple workflows, not an application test failure. It does not establish the provider's internal cause. Do not claim the workflow YAML, runner image, hosted capacity, account policy, or repository Actions setting is the cause without a successful job or authorized provider-side diagnostics.
+
+**Next safe action:** an authorized repository administrator must dispatch `.github/workflows/isolated-hosted-runner-probe.yml` manually (or use GitHub's UI) and inspect the run's jobs. If it also ends in `startup_failure` with zero jobs, escalate the exact run IDs to GitHub Support / account administration for hosted-runner startup diagnostics. Keep all self-hosted G02 jobs disabled.
+
+## 6. High-priority integration relationships
 
 ### A. Canonical portfolio, enterprise register, and public directory
 
