@@ -123,3 +123,15 @@ A read-only Cloudflare D1 inspection confirmed that Wrangler's configured databa
 ### Cloudflare operator roster inspection
 
 A read-only account-members query returned exactly one accepted Cloudflare account member. The configured Cloudflare identity provider is restricted to account members, so the currently verified roster cannot supply two independent human operators. The single returned member also has the Cloudflare account-level `two_factor_authentication_enabled` flag set to false; this is distinct from the Cloudflare Access organization setting that requires MFA for Access applications. Do not infer a second operator or waive the Access MFA requirement. A separately controlled second person must be added and verified before any allow policy is attached.
+
+
+## 11. Fail-closed operator registry foundation
+
+A standalone registry parser and actor-separation module now exists at `src/auth/saaae-operator-registry.mjs`, with focused tests at `scripts/tests/saaae-operator-registry.test.mjs`.
+
+- Registry identity keys are cryptographically verified immutable subjects only; email addresses and display names are rejected as identity fields.
+- Duplicate subjects, unsupported roles, human-as-executor assignments, and workload-as-human assignments fail closed.
+- Readiness requires at least two distinct active human identities (requester and reviewer) plus a separate active workload executor identity.
+- Provisioning actor resolution requires three distinct subjects and role/type matches.
+- The registry contains no real operator subjects. It remains unready until independently controlled identities and the separate executor workload subject are supplied through reviewed server-side configuration.
+- The module is a policy foundation, not an enabled endpoint. It does not attach Access policies, create DNS, issue credentials, or enable execution.
