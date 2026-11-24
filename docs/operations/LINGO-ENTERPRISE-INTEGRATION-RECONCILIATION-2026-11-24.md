@@ -465,3 +465,12 @@ PR #654 (Firebase), #655 (staging project isolation), #658 (staging game-engine 
 - PRs #654, #659, and #661 remain open and draft; no merge or production deployment was performed.
 - Firebase project/app configuration, emulator execution, Flutter build/test evidence, isolated SAAAE runner provisioning, Cloudflare Access allow-policy/route enforcement, and independently verified human attestations remain unproven.
 - Production stays protected. Do not merge the stacked staging dependency chain, activate the production sentinel, attach privileged Access policies, or promote Workers until the exact staging dependencies and independent release evidence pass.
+
+
+## 25. Post-update exact-head CI result (2026-11-24)
+
+After Section 24 was committed, PR #661 advanced to head `15713d34ea80416320d3a0db87985781c7bc0ad9`. The exact-head Actions refresh returned:
+- G02 Runner Image Build (no publish): run `45440406117` — `startup_failure`.
+- Crimson Smoke UI — static validation: run `45440403385` — `startup_failure`.
+- Lingo Legacy Static CI: run `45440400925` — `startup_failure`.
+All three runs completed before job instantiation; no jobs or runner evidence were returned. Combined commit status contains no status entries. This newest reconciliation head is therefore also unvalidated by executed CI.
