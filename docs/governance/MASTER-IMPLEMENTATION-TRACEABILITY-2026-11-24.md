@@ -164,3 +164,29 @@ No product is labeled integrated merely because its name appears in a blueprint,
 - This revision adds a UTC G02 schedule and runner host diagnostics while preserving the disabled job guard.
 - Figma master design file: `https://www.figma.com/design/W5unjzxbrpKazxgiyEO8WG`.
 - No test run, runner assignment, artifact upload, live production validation, migration, deployment or launch is claimed by this document.
+
+
+## Live CI admission evidence — 2026-11-24
+
+The following run records are tied to the current open draft PR heads and were re-read from GitHub Actions. Each listed run has `status=completed`, `conclusion=startup_failure`, zero retrievable jobs, and zero artifacts:
+
+| Repository | Workflow | Run ID | Run number | Jobs | Artifacts |
+|---|---|---:|---:|---:|---:|
+| Core | Crimson Smoke UI — static validation | 45496459516 | 1886 | 0 | 0 |
+| Core | Lingo Legacy Static CI | 45496457203 | 3444 | 0 | 0 |
+| Core | G02 Runner Image Build (no publish) | 45496454593 | 1942 | 0 | 0 |
+| Web | Staging verification workflow | 45496329649 | 770 | 0 | 0 |
+
+**Interpretation:** this is direct evidence of pre-job startup failure for the listed runs. It is not evidence of a failing test, failing build step, runner-host fault, or a specific billing/policy root cause. The current evidence does not identify which organization/account/repository admission control is responsible.
+
+**Do not conflate the G02 sentinel with the other workflows:** `.github/workflows/runner-dispatch-diagnostic.yml` intentionally retains job-level `if: false`. Its scheduled/manual trigger is configured but its runner job is deliberately disabled under protection. The separate Core Static CI, Crimson Smoke UI and G02 Runner Image Build records above are the evidence that still needs provider-side admission diagnosis. The disabled sentinel itself cannot produce G02 host evidence.
+
+### Admission investigation checklist
+1. Confirm organization/account Actions billing state and included/paid usage availability without raising spend limits.
+2. Inspect organization Actions policies, allowed actions, runner group access and repository restrictions.
+3. Inspect repository Actions permissions and workflow policy for both Core and Web.
+4. Verify hosted runner availability/eligibility and any account-level enforcement or suspension notices.
+5. If all controls are clear, submit these run IDs and repository identifiers to GitHub Support for an admission-layer investigation.
+6. Re-run one minimal, least-privilege workflow. Acceptance requires a real job ID, populated runner identity, instantiated steps, retrievable logs and a correlated artifact.
+
+No configuration mutation, billing change, policy relaxation, runner registration, guard removal or production action is implied by this checklist.
