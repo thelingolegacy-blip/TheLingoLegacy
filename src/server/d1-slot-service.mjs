@@ -96,6 +96,7 @@ export async function playAndSettleD1Spin(db, {
        AND EXISTS (
          SELECT 1 FROM lingo_saaae_principals p
           WHERE p.firebase_uid = lingo_saaae_approvals.approver_uid AND p.status = 'active'
+            AND p.token_valid_after_epoch <= lingo_saaae_approvals.approver_auth_time_epoch
        )
        AND EXISTS (
          SELECT 1 FROM lingo_saaae_tenant_memberships m

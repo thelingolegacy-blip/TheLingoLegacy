@@ -197,6 +197,8 @@ test('approval issuance binds requester and approver eligibility in one D1 batch
   assert.equal(result.ok, true);
   assert.equal(db.batchStatements.length, 2);
   assert.match(db.batchStatements[0].sql, /approval\.approve/);
+  assert.match(db.batchStatements[0].sql, /approver_auth_time_epoch/);
+  assert.ok(db.batchStatements[0].args.includes(issuance.approverAuthTime));
   assert.match(db.batchStatements[0].sql, /NOT EXISTS/);
   assert.match(db.batchStatements[1].sql, /approval_issued/);
 });

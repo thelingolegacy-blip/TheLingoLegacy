@@ -66,6 +66,8 @@ def main():
       VALUES ('approval-2', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin',
        'sha256:request-digest-2', 'user-1', 'approver-1', 'pending', '2099-01-01T00:00:00Z')""")
     expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET action_digest='tampered' WHERE approval_id='approval-2'", (), 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE')
+    expect_integrity_error(db, "UPDATE lingo_saaae_approvals SET approver_auth_time_epoch=1 WHERE approval_id='approval-2'", (), 'SAAAE_APPROVAL_BINDING_IS_IMMUTABLE')
+    expect_integrity_error(db, "INSERT INTO lingo_saaae_approvals (approval_id, tenant_id, product_id, resource_id, operation, action_digest, requester_uid, approver_uid, approver_auth_time_epoch, expires_at) VALUES ('approval-bad-auth-time', 'tenant-1', 'thats-my-lingo', 'spin:user-1', 'spin', 'digest', 'user-1', 'approver-1', -1, '2099-01-01T00:00:00Z')", (), 'CHECK constraint')
 
     db.execute("""INSERT INTO lingo_saaae_audit_events
       (event_id, correlation_id, actor_uid, tenant_id, product_id, resource_id,
