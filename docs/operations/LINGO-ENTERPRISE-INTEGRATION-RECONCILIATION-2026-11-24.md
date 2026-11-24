@@ -333,3 +333,12 @@ Read-only AppDeploy account and application checks were repeated for the Studio 
 
 - Deployment access remains expired (`deploy_app_allowed: false`). No app source, resource binding, deployment, build, or billing action was changed.
 - Continue using GitHub as the source of truth. Do not upload or bind a replacement asset merely because an older error log names the path; first verify the exact resource bytes, serving path, and current browser request.
+
+
+## 15. Updated reconciliation PR CI check (2026-11-24)
+
+- The latest reconciliation branch head is `8c0e1ead834e1b169ffa7387d143c1abb352ed96`.
+- PR #661 remains open and draft. The branch is **14 commits ahead and 0 behind** `main`; the compare endpoint reports one changed file with 335 additions and no deletions.
+- The exact-head Crimson Smoke UI static-validation run `45418815694` completed with conclusion `startup_failure`. Its Jobs API returned **0 jobs** and its Artifacts API returned **0 artifacts**.
+- The new documentation commit therefore has no CI execution evidence. This is the same pre-job startup failure signature; it is not a documentation test failure or a successful validation.
+- No merge, deployment, runner registration, workflow dispatch, or production mutation was performed.
