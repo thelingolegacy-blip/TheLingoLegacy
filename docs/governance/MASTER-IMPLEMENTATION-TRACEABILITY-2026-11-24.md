@@ -224,3 +224,16 @@ All four runs were re-queried: zero jobs and zero artifacts each. The evidence t
 The recovery branch contains `.github/workflows/isolated-hosted-runner-probe.yml` (blob `1152665c13e47749c18806fba281959d16b8af34`). It is a manual `workflow_dispatch` probe on `ubuntu-latest`, with `contents: none`, no checkout, no third-party actions, no secrets, no network calls, no artifacts, and no production access. It emits runner name, OS/architecture, run/commit correlation, UTC time, OS, Node/npm/Git versions, disk and memory details, and a step summary.
 
 This is the safest next admission diagnostic because it isolates hosted-runner job creation from application build/test dependencies. The connected GitHub action set exposes run inspection and rerun operations but not workflow dispatch, so this pass could verify the workflow source but could not trigger it. A repository maintainer with Actions write permission can select the recovery branch and manually run **Isolated Hosted Runner Probe** from the Actions tab. Acceptance requires a real job ID, runner identity and instantiated steps—not merely a workflow run record.
+
+
+## Parallel recovery refresh — 2026-11-24 22:15 UTC
+
+- Core PR #664 current head remains `24255f20c62acbbf9ae0a72dc9a06be014790347`; PR is open/draft and GitHub currently reports mergeable=true. Its latest observed G02 Runner Image Build run `45497945894` is `startup_failure`; Jobs API returned zero jobs and Artifacts API returned zero artifacts. This is a pre-job admission failure, not a failed image build and not a G02 host result.
+- Web PR #44 current head is `1fd64953bf6d829c0aae47c5c7a7d33f100953e5`; the branch is 34 commits ahead and 0 behind the recorded base commit. GitHub reports `mergeable=false`, `mergeable_state=dirty`, and `rebaseable=false`. The exact conflicting paths have not been established from the available API response; do not force-update, rebase, merge, or close this branch until the conflict set is identified and reviewed.
+- Web Actions run `45498973789` was created for the latest Web head, but it completed with `startup_failure`; Jobs API returned zero jobs and Artifacts API returned zero artifacts. No workflow step executed.
+- Web PR #46 (the existing shared hosted-CI recovery PR) remains open/draft and GitHub reports mergeable=true. Its workflow definition is already shared with PR #44; it does not restore provider-side runner admission by itself.
+- These current observations supersede earlier run IDs where the same workflow head has since advanced. No successful hosted job, runner registration, G02 acceptance, build artifact, deployed preview, or production promotion is claimed.
+
+## Web product preview truth boundary
+
+The That’s My Lingo and Kotton’s Code preview controls were made explicitly inactive/coming-soon in Web PR #44 because the referenced actions do not yet have connected game/story implementations. These are truthful UI guardrails, not playable-product acceptance. Continue to require engine implementation, authoritative server-side wallet and game state, abuse/concurrency/idempotency controls, and independent test evidence before enabling any real product action.
