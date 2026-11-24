@@ -474,3 +474,28 @@ After Section 24 was committed, PR #661 advanced to head `15713d34ea80416320d3a0
 - Crimson Smoke UI — static validation: run `45440403385` — `startup_failure`.
 - Lingo Legacy Static CI: run `45440400925` — `startup_failure`.
 All three runs completed before job instantiation; no jobs or runner evidence were returned. Combined commit status contains no status entries. This newest reconciliation head is therefore also unvalidated by executed CI.
+
+
+## 26. SAAAE push-trigger validation and runner-access refresh (2026-11-24)
+
+### Push-trigger validation on the SAAAE source branch
+The repository-wide Actions API was queried directly for push-triggered runs on `security/saaae-cloudflare-access-executor-staging-20261123`. It returned 22 runs in the first page; the newest three correspond to the JWT source and test commits:
+- `45440260224` — `02d8d2095f1d62651244d1fd2eb1d92db5fe3121`, SAAAE Provisioning Staging Validation, `startup_failure`.
+- `45440183126` — `b3a3e2bd1d4797706a8c31f15df94913140cbb19`, same workflow, `startup_failure`.
+- `45440178698` — `eb680e82ac8dbb933015a6bc573f1db6684e9aab`, same workflow, `startup_failure`.
+The latest run was inspected through the run and jobs endpoints; its jobs array is empty. Therefore the JWT test suite did not execute. The workflow is configured to run Node 22 syntax checks and focused Node tests, but configuration is not execution evidence.
+
+### Latest PR #661 exact-head checks
+The exact-head Actions API query for `2203c98f38491bf0f2c1b577b5d726ad02813872` returned:
+- `45440487041` — G02 Runner Image Build (no publish), `startup_failure`.
+- `45440483025` — Crimson Smoke UI — static validation, `startup_failure`.
+- `45440479145` — Lingo Legacy Static CI, `startup_failure`.
+All three were inspected; each has an empty jobs array. No runner identity, executed steps, logs, or artifacts exist for this head.
+
+### Independent review and available action surface
+- PR #659 has no submitted review records. PR #654 has one COMMENTED review from the repository owner; that is not an independent approval.
+- The connected GitHub action catalog exposes read-only workflow/run inspection and job rerun operations, but no workflow-dispatch, Actions administration, or runner registration operation. The generic GitHub fetch surface is GET-only. No dispatch or rerun was attempted because these startup-failure runs contain no jobs to retry.
+- The SAAAE operator registry still validates configured strings for person references and attestation issuer/ID; it does not verify issuer-signed attestations or consult an independently trusted workforce identity authority. This remains a hard security gate, not a documentation-only checkbox.
+
+### Disposition
+The JWKS rotation source correction is committed, but its test has not run. CI startup is failing on both PR and push events, and no independent security approval or staging runner evidence exists. Keep the SAAAE executor disabled and all production resources protected.
