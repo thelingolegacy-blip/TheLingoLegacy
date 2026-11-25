@@ -69,8 +69,11 @@ export async function verifyAndConsumeApproval({
   if (approval.status !== "approved") return reject("APPROVAL_NOT_APPROVED");
   if (approval.requesterPrincipalId !== requester.id) return reject("APPROVAL_REQUESTER_MISMATCH");
   if (!nonEmpty(expected.requestId) || approval.requestId !== expected.requestId) return reject("APPROVAL_REQUEST_ID_MISMATCH");
-  if (approval.approverPrincipalId === approval.requesterPrincipalId
-    && expected.requireSeparationOfDuties === true) return reject("SELF_APPROVAL_FORBIDDEN");
+  // Separation of duties is a mandatory SAAAE invariant for every privileged approval.
+  // A caller-controlled flag must never disable this check by omission, false, or malformed input.
+  if (approval.approverPrincipalId === approval.requesterPrincipalId) {
+    return reject("SELF_APPROVAL_FORBIDDEN");
+  }
   if (expected.requireHumanApprover !== false && approval.approverPrincipalType !== "human") {
     return reject("HUMAN_APPROVER_REQUIRED");
   }
