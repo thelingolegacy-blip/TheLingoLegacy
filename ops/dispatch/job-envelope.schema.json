@@ -50,12 +50,32 @@
     "owner_role": {
       "type": "string",
       "minLength": 1,
-      "pattern": ".*\\S.*"
+      "pattern": ".*\\S.*",
+      "enum": [
+        "super-administrator",
+        "enterprise-administrator",
+        "security-administrator",
+        "infrastructure-administrator",
+        "engineering-administrator",
+        "operations-administrator",
+        "product-administrator",
+        "independent-auditor"
+      ]
     },
     "reviewer_role": {
       "type": "string",
       "minLength": 1,
-      "pattern": ".*\\S.*"
+      "pattern": ".*\\S.*",
+      "enum": [
+        "super-administrator",
+        "enterprise-administrator",
+        "security-administrator",
+        "infrastructure-administrator",
+        "engineering-administrator",
+        "operations-administrator",
+        "product-administrator",
+        "independent-auditor"
+      ]
     },
     "repository": {
       "type": "string",
