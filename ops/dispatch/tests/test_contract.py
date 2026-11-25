@@ -273,6 +273,18 @@ class DispatchContractTests(unittest.TestCase):
         )
         self.assertEqual(schema["properties"]["cost_ceiling_usd"]["const"], 0)
 
+    def test_schema_role_enums_match_human_role_catalog(self):
+        import json
+        from pathlib import Path
+
+        roles = json.loads(Path("ops/dispatch/roles.json").read_text())
+        schema = json.loads(Path("ops/dispatch/job-envelope.schema.json").read_text())
+        human_roles = [
+            role["id"] for role in roles["roles"]
+            if role["principal_type"] == "human"
+        ]
+        self.assertEqual(schema["properties"]["owner_role"]["enum"], human_roles)
+        self.assertEqual(schema["properties"]["reviewer_role"]["enum"], human_roles)
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
         self.assertEqual(transition("RUNNING", "VERIFYING"), "VERIFYING")
