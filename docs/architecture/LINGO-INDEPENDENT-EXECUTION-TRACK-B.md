@@ -326,3 +326,17 @@ A current-head source recheck was completed for the two previously reviewed askL
 - **PR #647:** duplicate capability detection now uses `JSON.stringify(FIELDS.map(...))` rather than delimiter joining, and a delimiter-containing tuple regression test is present. This appears to address the specific tuple-collision finding. A follow-up review comment was posted (ID `7149794143`).
 
 These are **source-level corrections with authored tests**, not verified passing test runs. Both PRs remain non-runtime helper libraries. PR #647 still relies on trusted adapters to attest, tenant-bind, revoke, and load service identities authoritatively. PR #646 still requires durable, atomic approval consumption and trusted server-side records. A successful independent test run and independent security review remain outstanding.
+
+
+## 21. Latest branch and CI admission checkpoint — 2026-11-24
+
+After the latest documentation commits, the recovery branch compares to `main` as **36 commits ahead / 0 behind**. The latest documentation commit recorded by this evidence file is `f1bdce574a1ec3a710e0180843019a21bb7e80c2`. The open PR #664 description still contains an earlier 24-commits-ahead count and older head SHA; treat that PR description as stale metadata until refreshed.
+
+Three latest workflow runs associated with the branch head were observed:
+- G02 Runner Image Build (no publish): run `45527311721` — `startup_failure`.
+- Crimson Smoke UI — static validation: run `45527313052` — `startup_failure`.
+- Lingo Legacy Static CI: run `45527310275` — `startup_failure`.
+
+The Jobs API returned zero jobs and the Artifacts API returned zero artifacts for all three. No workflow steps, tests, builds, or evidence artifacts were executed. This remains a pre-job admission failure; the underlying cause is not established by these results.
+
+The branch remains open and unmerged. No merge, deployment, runner dispatch, host registration, or production change was performed.
