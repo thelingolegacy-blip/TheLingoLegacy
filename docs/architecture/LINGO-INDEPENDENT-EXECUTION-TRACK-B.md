@@ -330,7 +330,7 @@ These are **source-level corrections with authored tests**, not verified passing
 
 ## 21. Latest branch and CI admission checkpoint — 2026-11-24
 
-After the latest documentation commits, the recovery branch compares to `main` as **36 commits ahead / 0 behind**. The latest documentation commit recorded by this evidence file is `eab0fe0f803ef164968ef78335360b54907e9ea5`. The three workflow runs listed below were associated with the immediately preceding branch head `f1bdce574a1ec3a710e0180843019a21bb7e80c2`; no successful workflow execution is claimed for the documentation-only follow-up commit. The open PR #664 description still contains an earlier 24-commits-ahead count and older head SHA; treat that PR description as stale metadata until refreshed.
+After the latest documentation commits, the recovery branch compares to `main` as **36 commits ahead / 0 behind**. The branch-head documentation snapshot at the time of this check was `057653eb908a499e8e716294d8190059f964efa7`. The three workflow runs listed below were associated with the immediately preceding branch head `f1bdce574a1ec3a710e0180843019a21bb7e80c2`; no successful workflow execution is claimed for the later documentation-only commits. The open PR #664 description still contains an earlier 24-commits-ahead count and older head SHA; treat that PR description as stale metadata until refreshed.
 
 Three latest workflow runs associated with the branch head were observed:
 - G02 Runner Image Build (no publish): run `45527311721` — `startup_failure`.
