@@ -316,3 +316,13 @@ For privileged LINGO operations, separation of duties is a mandatory invariant. 
 A review comment was posted to PR #643 (comment ID `7149781763`) requiring the unconditional/default-deny correction and regression tests for omitted, false, true, and malformed values.
 
 **Disposition:** PR #643 remains a candidate shared SAAAE foundation, not an accepted runtime authorization boundary. The shared approval default-deny issue is now an explicit blocking review item, in addition to the unverified Firebase project/IAM, approval key custody, principal/policy adapter, and protected-operation integration gates.
+
+
+## 20. askLINGO SAAAE helper regression re-review — 2026-11-24
+
+A current-head source recheck was completed for the two previously reviewed askLINGO helper PRs:
+
+- **PR #646:** the canonicalizer now uses null-prototype output objects, preserves own `__proto__` keys as data, detects cycles, and rejects sparse arrays. New regression tests cover top-level/nested `__proto__` cases and cycle/sparse-array rejection. This appears to address the specific prior canonicalization findings. A follow-up review comment was posted (ID `7149793683`).
+- **PR #647:** duplicate capability detection now uses `JSON.stringify(FIELDS.map(...))` rather than delimiter joining, and a delimiter-containing tuple regression test is present. This appears to address the specific tuple-collision finding. A follow-up review comment was posted (ID `7149794143`).
+
+These are **source-level corrections with authored tests**, not verified passing test runs. Both PRs remain non-runtime helper libraries. PR #647 still relies on trusted adapters to attest, tenant-bind, revoke, and load service identities authoritatively. PR #646 still requires durable, atomic approval consumption and trusted server-side records. A successful independent test run and independent security review remain outstanding.
