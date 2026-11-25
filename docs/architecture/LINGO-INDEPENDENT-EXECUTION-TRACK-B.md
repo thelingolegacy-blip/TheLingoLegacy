@@ -127,3 +127,30 @@ Stop admission for the affected recipe; preserve queue records and evidence. Rev
 9. Integrate accepted evidence into Master Control.
 
 **Current truth:** Architecture and schema observations are established. Track B is not deployed; no Azure runner is verified; R2 is not activated; no operations Workflow or consumer is registered; no independent Core/Web build has executed. Production remains outside scope.
+
+## 13. Live control-plane inventory addendum — 2026-11-24
+
+A fresh authenticated Cloudflare API read was performed after the initial inventory. These observations supersede earlier estimates for the resources below:
+
+| Resource | Live observation | Consequence |
+|---|---|---|
+| Worker scripts | 11 listed | Do not create a duplicate controller Worker until ownership and existing staging assets are reconciled. |
+| Queue `game-events` | Queue ID `427092cfb8644e439938b49da8b9e353`; 0 producers; 0 consumers; 86,400-second message retention | Product-domain queue; do not repurpose for operations dispatch. |
+| Queue `order-queue` | Queue ID `8abcfb33f9d24ce88eae860734d5d600`; 0 producers; 0 consumers; 86,400-second message retention | Order-domain queue; do not repurpose for operations dispatch. |
+| Workflows | 0 registered | No durable orchestration currently exists. |
+| R2 buckets | API read returned HTTP 403, error 10042: enable R2 through Cloudflare Dashboard | R2 is an activation prerequisite; no bucket or artifact store is available/verified. |
+
+The Worker inventory includes existing staging-oriented assets such as `asklingo-v2-staging`, `lingo-studio-control-center-staging`, and `lingo-unified-control-tower-preview`. Their presence is not proof that they implement the Track B controller contract, have the required bindings, or are safe to extend. Inspect their source, settings, D1 bindings, service bindings, Access integration, and deployment state before selecting any as the implementation base.
+
+The exact queue IDs and names establish that the two existing queues are not yet connected to producers or consumers. They remain reserved for their named product domains unless a separately reviewed ownership change proves otherwise. Track B should use a dedicated operations queue only after a cost/plan check, schema review, and explicit resource-creation approval.
+
+### Updated B01 result
+
+- Worker/queue/Workflow/R2 inventory: **VERIFIED as a read-only observation**.
+- D1 table inventory and schema preservation: **VERIFIED as a read-only observation** in the preceding section.
+- Queue ownership/message-schema suitability: **NOT VERIFIED**; zero producers/consumers means there is no live message contract to validate.
+- Operations Workflow and consumer: **ABSENT**.
+- R2 storage: **BLOCKED** pending account activation.
+- B01 overall: **PARTIAL**; it is not promoted to PASS because account/plan cost limits, Access policy attachment, worker binding review, and Azure resource prerequisites remain open.
+
+No queue, Worker, Workflow, R2, D1, DNS, Access policy, secret, or production resource was changed by this inventory.
