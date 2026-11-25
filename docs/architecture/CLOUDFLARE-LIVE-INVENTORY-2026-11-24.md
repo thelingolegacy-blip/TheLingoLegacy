@@ -285,3 +285,13 @@ Read-only SQLite catalog queries returned `changes=0`, `rows_written=0`, and `ch
 
 ### Mutation boundary
 All checks in this follow-up were read-only. No D1 migration/data write, Worker upload/deployment, Access policy/member/MFA change, secret operation, DNS/route change, production setting change, or billing action was performed. These observations do not authorize production promotion.
+
+## Cross-snapshot route and inventory reconciliation — 2026-11-24
+
+A prior read-only inventory preserved in draft PR #615 (`infrastructure/registry/workers.json` and `worker-bindings.json`, `observed_at: 2026-11-20`) records 10 Worker scripts and assigns the exact apex-root pattern `thelingolegacy.com/` to `lingo-flagship-root`. The newer 2026-11-24 readback above records 11 Worker scripts, includes `asklingo-v2-staging`, assigns the exact apex-root pattern to `thelingolegacyv-5`, and reports no route target for `lingo-flagship-root`.
+
+The 10-to-11 script count is consistent with the later appearance of `asklingo-v2-staging` (created 2026-11-22), but the exact-root route assignment is a material conflicting observation. Do not silently rewrite or discard the earlier snapshot. Treat the 2026-11-24 readback as the newer recorded observation, not as permission to change routing. Before any route normalization, obtain a fresh direct zone-route read and correlate the exact root, root-with-query-string, wildcard, and www requests with deployed Worker versions and response markers.
+
+The PR #615 registry validator still expects 10 scripts and its stored route map still reflects the older exact-root assignment. That validator/registry pair is historical branch evidence, not a current live acceptance source. Refresh the registry from a new direct read before relying on its count or route assertions.
+
+No route, Worker, DNS, deployment, or provider setting was changed by this reconciliation.
