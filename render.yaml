@@ -6,7 +6,6 @@ services:
     dockerfilePath: ./ops/github-runner/Dockerfile
     dockerContext: ./ops/github-runner
     autoDeploy: false
-    restartPolicy: always
     envVars:
       - key: GITHUB_URL
         value: https://github.com/thelingolegacy-blip/TheLingoLegacy
