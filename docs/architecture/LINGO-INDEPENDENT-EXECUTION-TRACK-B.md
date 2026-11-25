@@ -208,3 +208,12 @@ B03/B07 remain **BLOCKED**. Do not interpret the existence of tables, constraint
 7. Positive and negative end-to-end authorization tests through the actual controller.
 
 No rows were inserted or changed; no migration, principal bootstrap, grant, approval, or policy record was created.
+
+
+## 16. SAAAE relational integrity check — 2026-11-24
+
+Read-only `PRAGMA foreign_key_check` completed successfully and returned zero violation rows for `asklingo-v2-staging`. This is a limited relational-integrity result, not an authorization acceptance result.
+
+`PRAGMA integrity_check` was rejected by the D1 query service with SQLite authorization error `SQLITE_AUTH`; database-wide integrity status is therefore **NOT VERIFIED**. Do not interpret this permission denial as proof of corruption or proof of integrity.
+
+Combined conclusion: the six-table SAAAE schema and append-only audit triggers exist; the foreign-key check returned no violations; all six application tables contain zero rows; database-wide integrity_check was not permitted; and the privileged-executor Access app has no attached policy. SAAAE remains **NOT OPERATIONAL / NOT ACCEPTED**.
