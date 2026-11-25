@@ -1,7 +1,7 @@
 # LINGO G02 Self-Hosted GitHub Actions Runner
 
 **Repository:** `thelingolegacy-blip/TheLingoLegacy`  
-**Runner name default:** `lingo-g02-<hostname>`  
+**Runner name default:** `lingo-legacy-g02`  
 **Required labels:** `self-hosted`, `linux`, `x64`, `lingo-g02`  
 **Host baseline:** dedicated Ubuntu 22.04 or 24.04 VM  
 **Status:** bootstrap files prepared; VM provisioning, registration, online check and job execution are NOT yet confirmed.
@@ -31,7 +31,7 @@ Set these environment variables in the VM terminal, not in chat or a committed f
 - `RUNNER_TOKEN`: short-lived registration token from GitHub.
 - `RUNNER_TARBALL_URL`: official GitHub runner release tarball URL for Linux x64.
 - `RUNNER_TARBALL_SHA256`: published SHA-256 checksum for that exact archive.
-- Optional `RUNNER_NAME`: defaults to `lingo-g02-<hostname>`.
+- Optional `RUNNER_NAME`: defaults to `lingo-legacy-g02`.
 
 Then run:
 
@@ -39,7 +39,7 @@ Then run:
 sudo --preserve-env=RUNNER_TOKEN,RUNNER_TARBALL_URL,RUNNER_TARBALL_SHA256,RUNNER_NAME bash scripts/runner/install-lingo-runner.sh
 ```
 
-The script refuses to overwrite an existing runner directory/user, checks the official release URL and checksum, configures a repository-scoped runner, and installs its system service.
+The script refuses to overwrite an existing runner directory/user, checks the official release URL and checksum, invokes the runner release's dependency installer for Ubuntu LTS compatibility, configures the canonical repository-scoped runner name `lingo-legacy-g02`, and installs its system service.
 
 ## Verification
 
