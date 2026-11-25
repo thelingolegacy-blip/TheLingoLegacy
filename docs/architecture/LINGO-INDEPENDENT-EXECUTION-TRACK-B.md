@@ -154,3 +154,28 @@ The exact queue IDs and names establish that the two existing queues are not yet
 - B01 overall: **PARTIAL**; it is not promoted to PASS because account/plan cost limits, Access policy attachment, worker binding review, and Azure resource prerequisites remain open.
 
 No queue, Worker, Workflow, R2, D1, DNS, Access policy, secret, or production resource was changed by this inventory.
+
+
+## 14. Staging Worker and Access readiness review — 2026-11-24
+
+A second read-only inspection checked settings for three existing staging/control candidates and enumerated account Access applications.
+
+| Candidate | Observed bindings/settings | Track B disposition |
+|---|---|---|
+| `asklingo-v2-staging` | Tags include `staging`, `disabled`, `no-inference`; one D1 binding named `ASKLINGO_DB` to the askLINGO staging database | Preserve disabled/no-inference posture. Not a build controller; do not enable or repurpose. |
+| `lingo-studio-control-center-staging` | Tags include `staging`, `read-only`; no bindings | Read-only catalog candidate only; no operations persistence or execution binding. |
+| `lingo-unified-control-tower-preview` | Preview annotations describe an isolated read-only snapshot; no bindings | Preview evidence surface only; not a controller or executor. |
+
+The Access application named **LINGO SAAAE Staging Privileged Executor** exists for `saaae-staging.thelingolegacy.com`, but its live Access application record reports **zero attached policies**. It also has an allowed identity-provider reference and a one-hour session duration; neither substitutes for an attached allow policy. Treat the application as **not authorized for privileged execution** until a separately reviewed, least-privilege policy is attached and independently tested. No Access policy was added or changed.
+
+### Updated security gate
+
+- Existing SAAAE privileged-executor Access application: **FOUND / NOT READY**.
+- Attached Access policies: **0**.
+- Staging candidate Workers: **FOUND / NOT A TRACK B CONTROLLER**.
+- Controller authentication and SAAAE enforcement: **NOT IMPLEMENTED / NOT VERIFIED**.
+- No workload identity, VM, consumer, or privileged execution path is accepted.
+
+This is a blocking security prerequisite for B03/B07. Do not connect an Azure executor, queue consumer, or privileged Worker to this Access application until policy attachment, requester/reviewer separation, workload identity restrictions, expiry/revocation, and negative-access tests have passed.
+
+No Worker settings, Access applications/policies, bindings, routes, D1 schemas, secrets, or production resources were changed.
