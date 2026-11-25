@@ -66,6 +66,15 @@ States used here:
 | 39 Controlled Source Register | Preserve and cross-reference original source artifacts | DEFINED; this document supplements, not replaces, the source blueprint |
 | 40 Final State Statement | Blueprint-level definition vs independent runtime/live state | DEFINED; no runtime, production, or launch completion is asserted |
 
+## Brand and portfolio taxonomy reconciliation
+
+- **Current independent house identity:** [THE PRESTIGIOUS HOUSE OF DUSSE](../brand/the-prestigious-house-of-dusse.md). The canonical name is exact; founder is Zavione; debut is November 7, 2021. This is a brand-identity record, not a legal-status certificate.
+- **Historical separation:** [House of Avalon historical archive](../archive/house-of-avalon/README.md) remains preserved as a separate historical record. Do not merge, erase, or silently rename its source material. No corporate, nonprofit, charitable, tax, asset, contract, intellectual-property, or permission status transfers to DUSSE. Reserved Avalon and DUSSE payload contracts remain inactive.
+- **DUSSE taxonomy:** DUSSE is an independent brand identity, not an additional realm and not part of the historical Avalon archive. Keep it separately referenced in brand and public-facing documentation; do not force it into the 14-realm count.
+- **14-node realm taxonomy (draft PR #602):** the registry groups eight public portfolios, four shared platform capabilities (LINGOstudio, LINGOcore, LINGOidentity, LINGOwallet), and two LINGOworld subproducts (LINGOcampus, LINGOshield). Its source statuses are one live-uncertified, eight scaffolded-unverified, one preview-needs-independent-qa, three planned, and one planned-disabled. These are registry labels, not accepted product states; the PR remains unmerged and its validators have not been certified by hosted CI.
+- **Current public directory candidate (draft PR #640):** eight public portfolio cards are separated from shared platform capabilities; the eight LINGOworld operational domains are presented with distinct permission boundaries; DUSSE appears as a separate identity section. The PR remains unmerged and its Node/hosted validation has not executed.
+- **Static standby manifest (draft PR #665):** it also contains 14 worlds entries, but its taxonomy differs: eight public portfolios plus LINGO ID, Universal Legacy Wallet, LINGO Nexus, LINGO Studios, LINGO Towers, and Bridged Gap. It omits DUSSE from that manifest. Treat it as a separate standby navigation manifest, not as the canonical 14-node realm registry; reconcile its route/status references before any activation.
+- **Product acceptance rule:** each realm/product must independently prove canonical source, route ownership, build and test execution, runtime behavior, security/privacy, accessibility, browser/device acceptance, rights/ownership, operational recovery, and owner acceptance. A manifest entry, source file, preview deployment, or HTTP response does not establish product acceptance.
 ## Program and delivery hierarchy
 
 Retain the original hierarchy:
