@@ -58,8 +58,7 @@
         "infrastructure-administrator",
         "engineering-administrator",
         "operations-administrator",
-        "product-administrator",
-        "independent-auditor"
+        "product-administrator"
       ]
     },
     "reviewer_role": {
@@ -71,9 +70,7 @@
         "enterprise-administrator",
         "security-administrator",
         "infrastructure-administrator",
-        "engineering-administrator",
         "operations-administrator",
-        "product-administrator",
         "independent-auditor"
       ]
     },
