@@ -54,6 +54,9 @@ jobs:
           assert roles["status"] == "ROLE_CATALOG_ONLY"
           assert roles["identity_assignment"] == "UNASSIGNED"
           assert schema["$schema"].endswith("2020-12/schema")
+          human_roles = [role["id"] for role in roles["roles"] if role["principal_type"] == "human"]
+          assert schema["properties"]["owner_role"]["enum"] == human_roles
+          assert schema["properties"]["reviewer_role"]["enum"] == human_roles
           assert "production" not in schema["properties"]["environment"]["enum"]
           assert schema["properties"]["cost_ceiling_usd"]["const"] == 0
           assert schema["properties"]["permission_profile"]["enum"] == [
