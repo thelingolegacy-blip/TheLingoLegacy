@@ -1,0 +1,18 @@
+services:
+  - type: worker
+    name: lingo-legacy-g02-runner
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./ops/github-runner/Dockerfile
+    dockerContext: ./ops/github-runner
+    autoDeploy: false
+    restartPolicy: always
+    envVars:
+      - key: GITHUB_URL
+        value: https://github.com/thelingolegacy-blip/TheLingoLegacy
+      - key: RUNNER_NAME
+        value: lingo-legacy-g02
+      - key: RUNNER_LABELS
+        value: self-hosted,linux,x64,lingo-g02
+      - key: GH_TOKEN
+        sync: false
