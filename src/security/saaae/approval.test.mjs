@@ -97,9 +97,32 @@ test("non-human approver is rejected", async () => {
   const { args } = await fixture({ approverPrincipalType: "agent" });
   assert.equal((await verifyAndConsumeApproval(args)).reason, "APPROVAL_FIELDS_INVALID");
 });
-test("self approval is rejected when separation of duties applies", async () => {
+test("self approval is rejected when separation flag is omitted", async () => {
   const { args } = await fixture({ requesterPrincipalId: "human-02" });
   args.requester = { id: "human-02", type: "human" };
+  const { requireSeparationOfDuties: _ignored, ...expected } = args.expected;
+  args.expected = expected;
+  assert.equal((await verifyAndConsumeApproval(args)).reason, "SELF_APPROVAL_FORBIDDEN");
+});
+
+test("self approval is rejected when separation flag is false", async () => {
+  const { args } = await fixture({ requesterPrincipalId: "human-02" });
+  args.requester = { id: "human-02", type: "human" };
+  args.expected = { ...args.expected, requireSeparationOfDuties: false };
+  assert.equal((await verifyAndConsumeApproval(args)).reason, "SELF_APPROVAL_FORBIDDEN");
+});
+
+test("self approval is rejected when separation flag is true", async () => {
+  const { args } = await fixture({ requesterPrincipalId: "human-02" });
+  args.requester = { id: "human-02", type: "human" };
+  args.expected = { ...args.expected, requireSeparationOfDuties: true };
+  assert.equal((await verifyAndConsumeApproval(args)).reason, "SELF_APPROVAL_FORBIDDEN");
+});
+
+test("self approval is rejected when separation flag is malformed", async () => {
+  const { args } = await fixture({ requesterPrincipalId: "human-02" });
+  args.requester = { id: "human-02", type: "human" };
+  args.expected = { ...args.expected, requireSeparationOfDuties: "yes" };
   assert.equal((await verifyAndConsumeApproval(args)).reason, "SELF_APPROVAL_FORBIDDEN");
 });
 test("invalid signature is rejected", async () => {
