@@ -40,8 +40,11 @@ printf '%s  %s\n' "$RUNNER_TARBALL_SHA256" "$tmp" | sha256sum --check --status |
 tar -xzf "$tmp" -C "$RUNNER_DIR"
 chown -R "$RUNNER_USER:$RUNNER_USER" "$RUNNER_DIR"
 
-# Registration token is supplied only to config.sh; it is not written to this repo.
-runuser -u "$RUNNER_USER" -- env RUNNER_TOKEN="$RUNNER_TOKEN" bash -c '
+# Use the runner release’s own dependency installer for Ubuntu LTS compatibility.
+"$RUNNER_DIR/bin/installdependencies.sh"
+
+# Pass values through the process environment; never interpolate them into shell source.
+runuser -u "$RUNNER_USER" -- env RUNNER_TOKEN="$RUNNER_TOKEN" RUNNER_NAME="$RUNNER_NAME" RUNNER_LABELS="$RUNNER_LABELS" bash -c '
   cd /opt/actions-runner
   ./config.sh --unattended \
     --url "https://github.com/thelingolegacy-blip/TheLingoLegacy" \
