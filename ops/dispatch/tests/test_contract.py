@@ -273,18 +273,32 @@ class DispatchContractTests(unittest.TestCase):
         )
         self.assertEqual(schema["properties"]["cost_ceiling_usd"]["const"], 0)
 
-    def test_schema_role_enums_match_human_role_catalog(self):
+    def test_schema_role_enums_match_role_permissions(self):
         import json
         from pathlib import Path
 
         roles = json.loads(Path("ops/dispatch/roles.json").read_text())
         schema = json.loads(Path("ops/dispatch/job-envelope.schema.json").read_text())
-        human_roles = [
+        owner_permissions = {
+            "source.propose", "dispatch.propose", "infrastructure.propose",
+            "operations.propose", "portfolio.propose", "policy.propose",
+            "registry.manage", "security.manage",
+        }
+        reviewer_permissions = {"acceptance.review", "audit.read"}
+        owner_roles = [
             role["id"] for role in roles["roles"]
             if role["principal_type"] == "human"
+            and owner_permissions.intersection(role["permissions"])
         ]
-        self.assertEqual(schema["properties"]["owner_role"]["enum"], human_roles)
-        self.assertEqual(schema["properties"]["reviewer_role"]["enum"], human_roles)
+        reviewer_roles = [
+            role["id"] for role in roles["roles"]
+            if role["principal_type"] == "human"
+            and reviewer_permissions.intersection(role["permissions"])
+        ]
+        self.assertEqual(schema["properties"]["owner_role"]["enum"], owner_roles)
+        self.assertEqual(schema["properties"]["reviewer_role"]["enum"], reviewer_roles)
+        self.assertNotIn("worker", schema["properties"]["owner_role"]["enum"])
+        self.assertNotIn("worker", schema["properties"]["reviewer_role"]["enum"])
     def test_valid_lifecycle_transition(self):
         self.assertEqual(transition("PROPOSED", "READY"), "READY")
         self.assertEqual(transition("RUNNING", "VERIFYING"), "VERIFYING")
@@ -335,3 +349,4 @@ class DispatchContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
