@@ -305,3 +305,14 @@ Treat SAAAE as **one shared policy and authorization standard with domain-specif
 Do not repurpose `asklingo-v2-staging` merely because its six table names resemble an operations schema. It is currently bound to the askLINGO staging domain. Do not apply PR #658 migrations to game-engine D1 until migration tests, exact database binding, rollback, and explicit staging-migration authorization are recorded. Never apply any of these migrations to production as part of Track B.
 
 This reconciliation is read-only. No migration was applied, no table was created, and no database binding or Worker was changed.
+
+
+## 19. Shared SAAAE approval default-deny finding — 2026-11-24
+
+A further source review of PR #643 identified a fail-closed gap in `src/security/saaae/approval.mjs`: requester/approver separation is enforced only when the caller sets `expected.requireSeparationOfDuties === true`. If the caller omits the flag or passes false, a self-approved record can proceed to signature verification and atomic consumption.
+
+For privileged LINGO operations, separation of duties is a mandatory invariant. It must not depend on a caller-supplied optional boolean. The shared approval verifier must either enforce distinct requester/approver principals unconditionally or load a trusted, non-weakenable policy that defaults to deny. The verifier must also revalidate that both are distinct, active human principals immediately before durable single-use consumption.
+
+A review comment was posted to PR #643 (comment ID `7149781763`) requiring the unconditional/default-deny correction and regression tests for omitted, false, true, and malformed values.
+
+**Disposition:** PR #643 remains a candidate shared SAAAE foundation, not an accepted runtime authorization boundary. The shared approval default-deny issue is now an explicit blocking review item, in addition to the unverified Firebase project/IAM, approval key custody, principal/policy adapter, and protected-operation integration gates.
