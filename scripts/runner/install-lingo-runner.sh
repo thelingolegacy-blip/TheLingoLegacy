@@ -7,7 +7,7 @@ set -Eeuo pipefail
 : "${RUNNER_TARBALL_URL:?Set RUNNER_TARBALL_URL to the official GitHub runner release tarball URL}"
 : "${RUNNER_TARBALL_SHA256:?Set RUNNER_TARBALL_SHA256 to the published SHA-256 checksum}"
 
-RUNNER_NAME="${RUNNER_NAME:-lingo-g02-$(hostname -s)}"
+RUNNER_NAME="${RUNNER_NAME:-lingo-legacy-g02}"
 RUNNER_LABELS="${RUNNER_LABELS:-lingo-g02}"
 RUNNER_USER="actions"
 RUNNER_DIR="/opt/actions-runner"
@@ -26,7 +26,7 @@ if id "$RUNNER_USER" >/dev/null 2>&1 || [[ -e "$RUNNER_DIR" ]]; then
 fi
 
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl tar gzip libicu-dev libkrb5-3 zlib1g libssl3
+DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl tar gzip
 useradd --system --create-home --home-dir "/home/$RUNNER_USER" --shell /usr/sbin/nologin "$RUNNER_USER"
 install -d -o "$RUNNER_USER" -g "$RUNNER_USER" -m 0750 "$RUNNER_DIR"
 
