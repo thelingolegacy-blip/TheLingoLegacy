@@ -179,3 +179,32 @@ The Access application named **LINGO SAAAE Staging Privileged Executor** exists 
 This is a blocking security prerequisite for B03/B07. Do not connect an Azure executor, queue consumer, or privileged Worker to this Access application until policy attachment, requester/reviewer separation, workload identity restrictions, expiry/revocation, and negative-access tests have passed.
 
 No Worker settings, Access applications/policies, bindings, routes, D1 schemas, secrets, or production resources were changed.
+
+
+## 15. SAAAE staging data-readiness check — 2026-11-24
+
+Read-only `COUNT(*)` queries were executed separately against all six SAAAE staging tables in `asklingo-v2-staging`:
+
+| SAAAE table | Current rows |
+|---|---:|
+| `principals` | 0 |
+| `grants` | 0 |
+| `approvals` | 0 |
+| `audit_events` | 0 |
+| `idempotency_keys` | 0 |
+| `rate_limit_buckets` | 0 |
+
+The schema is present, including staging-only grant constraints, requester/approver separation checks, approval-consumption checks, lookup indexes, and append-only audit update/delete triggers. However, all six tables are empty. Therefore SAAAE is **schema-established but not operationally provisioned**: no principal, grant, approval, audit history, idempotency state, or rate-limit state is currently registered in this database.
+
+### Security gate consequence
+
+B03/B07 remain **BLOCKED**. Do not interpret the existence of tables, constraints, or triggers as active authorization enforcement. Before any privileged executor or queue consumer is connected, the implementation must establish and verify:
+1. A controlled principal bootstrap and revocation path.
+2. Least-privilege staging grants with tenant/product/resource/operation/environment scoping and expiry.
+3. Requester/reviewer separation and one-time, scope-bound approval consumption.
+4. Append-only audit writes for allow and deny decisions.
+5. Idempotency conflict and replay behavior.
+6. Rate-limit enforcement and abuse tests.
+7. Positive and negative end-to-end authorization tests through the actual controller.
+
+No rows were inserted or changed; no migration, principal bootstrap, grant, approval, or policy record was created.
