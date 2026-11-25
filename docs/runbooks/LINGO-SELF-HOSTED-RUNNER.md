@@ -66,27 +66,27 @@ If the runner behaves unexpectedly, stop and disable its service, remove it from
 The ChatGPT-connected GitHub integration does not expose repository runner registration-token creation, repository secrets, or cloud VM provisioning. Therefore these files prepare the controlled bootstrap but do not provision a VM or register a runner. A cloud provider account and a cost-approved VM are still required. The short-lived token must be generated and used locally by an authorized repository administrator.
 
 
-## DigitalOcean provisioning decision — hard $0 ceiling
+## DigitalOcean provisioning decision — approved monthly cap
 
-**Selected provider:** DigitalOcean  
-**Authorized recurring and one-time spend:** USD $0.00  
-**Provisioning status:** BLOCKED — no Droplet created and no billing action taken.
+**Selected provider:** DigitalOcean (planned; provider account access is not connected here).  
+**Authorized recurring compute ceiling:** USD $25/month maximum, all-in where taxes and mandatory fees are disclosed.  
+**Provisioning status:** BLOCKED — no Droplet creation or billing action has been performed.
 
-DigitalOcean's published Droplet pricing currently starts at $4/month. Its signup credit is promotional, expires 90 days after signup, and requires a valid payment method before Droplets can be created. A temporary credit does not satisfy a guaranteed $0 ongoing-cost ceiling. Therefore this runbook intentionally does not create a Droplet, attach a payment method, or consume promotional credit. Recheck current pricing and credit terms before any future provisioning.
+The $25/month ceiling supersedes the earlier $0 planning limit recorded in this runbook. Before provisioning, select the exact Ubuntu 24.04 x64 plan and verify its recurring total, billing cadence, taxes and mandatory fees against the cap. Do not create a Droplet if the total is unclear or exceeds $25/month. No automatic upgrades, autoscaling, additional volumes, snapshots, backups, floating IPs, or other billable add-ons are authorized without separate approval.
 
 ### Prepared DigitalOcean host profile (not deployed)
 
 - Resource name: `lingo-g02-runner-01`
 - Region: NYC3 (proposed; choose nearest available region when approved)
 - Image: Ubuntu 24.04 LTS x64
-- Size: smallest Basic plan that satisfies the current Actions runner requirements; do not create until a nonzero budget is explicitly approved
+- Size: smallest Basic plan that satisfies the current Actions runner requirements and whose verified recurring total stays within the $25/month cap
 - Access: SSH key only; no password SSH; non-root sudo operator; provider firewall permits SSH only from an explicitly approved admin IP; runner makes outbound HTTPS connections
 - Runner scope: repository-only, labels `self-hosted,linux,x64,lingo-g02`
-- Billing guard: do not create, resize, snapshot, enable backups, or reserve IP resources under the current $0 ceiling
+- Billing guard: hard cap $25/month recurring; no resizing, snapshots, backups, reserved/floating IPs, extra volumes, autoscaling, or other billable add-ons without separate approval
 
 ### Registration handoff (prepared; requires authorized local operator)
 
-1. Once a $0-cost compute allocation or a separately approved budget exists, create the dedicated Ubuntu host with the security profile above.
+1. Confirm the exact plan, region, billing cadence and all-in recurring cost are within the approved $25/month cap; then create the dedicated Ubuntu host with the security profile above.
 2. SSH to the host using its pre-registered public key and patch the OS.
 3. In the GitHub repository, open Settings → Actions → Runners → New self-hosted runner → Linux → x64. Generate a fresh repository-scoped registration token.
 4. Keep the token in the operator's local terminal environment only. Do not paste it into ChatGPT, issues, pull requests, logs, shell history, or source control.
