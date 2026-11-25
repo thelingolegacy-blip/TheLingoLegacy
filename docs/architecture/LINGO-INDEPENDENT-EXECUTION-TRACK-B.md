@@ -272,3 +272,36 @@ Continue using these existing PRs as the source of proposed work; do not fork du
 6. Execute Core and Web build/test recipes on an independently verified host and correlate all logs/artifacts to the exact source commit.
 
 No PR was merged, no policy was attached, no Worker/Workflow/queue consumer was deployed, no VM was provisioned, and no production resource was changed by this review.
+
+
+## 18. D1 schema ownership and SAAAE stack reconciliation — 2026-11-24
+
+A fresh read-only `sqlite_master` inventory enumerated every application table/view in all five existing D1 databases. This resolves an important naming/ownership ambiguity across the open SAAAE PR stack.
+
+### Live D1 table ownership
+
+| D1 database | Live application tables/views | SAAAE observation |
+|---|---:|---|
+| `asklingo-v2-staging` | 6 tables | Contains `principals`, `grants`, `approvals`, `audit_events`, `idempotency_keys`, `rate_limit_buckets`; all six currently contain zero rows. |
+| `lingo-game-engine-staging-20261107` | 6 tables | Contains game accounts, sessions, wallets, ledger, progression and API rate limits. No `lingo_saaae_*` tables are currently present. |
+| `lingo-loyalty-staging` | 4 tables + 1 view | Loyalty wallets/ledger/redemptions/rate limits; not an operations store. |
+| `world-engine-db` | 11 tables | World content, assets, versions, events, knowledge base, feature flags, audit and idempotency; not an operations store. |
+| `lingo-production` | 18 application tables | Production product data; explicitly out of scope for Track B mutations. |
+
+### Open SAAAE implementation layers
+
+- **PR #643 — SAAAE foundation:** shared policy, authorization, approval, audit, canonicalization, idempotency and adapter contracts. This is the best candidate for the reusable policy/decision core, subject to code review and adapter verification.
+- **PR #658 — game-engine staging adapter:** introduces game-engine-specific `lingo_saaae_*` tables and D1 authorization/approval code. The migration files are proposed changes only; the live game-engine D1 inventory currently has no such tables, so this migration has not been applied to that database.
+- **PR #659 — privileged provisioning identity boundary:** adds Cloudflare Access JWT verification and a separate operator roster for the administrative provisioning path. It is not a replacement for the product authorization core or the D1 approval/ledger path.
+- **PR #657 — askLINGO staging edge preflight:** has a separate Firebase-token/tenant-scoped Worker and its own staging D1 binding. Do not assume its identity model or tables are interchangeable with Cloudflare Access operator identity or the game-engine adapter.
+
+### Canonicalization decision
+
+Treat SAAAE as **one shared policy and authorization standard with domain-specific adapters**, not one shared set of tables reused across unrelated products. Keep:
+1. The shared decision/approval/audit/idempotency semantics in the common SAAAE core.
+2. Product-specific identity and resource adapters in their own staging domains.
+3. The privileged master-operations principal/approval/audit state in a dedicated operations store once the account plan, ownership, and cost are reviewed.
+
+Do not repurpose `asklingo-v2-staging` merely because its six table names resemble an operations schema. It is currently bound to the askLINGO staging domain. Do not apply PR #658 migrations to game-engine D1 until migration tests, exact database binding, rollback, and explicit staging-migration authorization are recorded. Never apply any of these migrations to production as part of Track B.
+
+This reconciliation is read-only. No migration was applied, no table was created, and no database binding or Worker was changed.
