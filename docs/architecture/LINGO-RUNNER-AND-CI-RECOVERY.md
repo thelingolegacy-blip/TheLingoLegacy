@@ -13,7 +13,7 @@ These are complementary execution paths, not interchangeable proof. A successful
 ## G02 acceptance criteria
 
 - Dedicated LINGO-controlled Ubuntu VM exists and has documented owner/cost.
-- Repository-scoped runner is online and idle with labels `self-hosted, linux, x64, lingo-g02`.
+- Repository-scoped runner is online and idle with labels `self-hosted, linux, x64, lingo-g02` and canonical runner name `lingo-legacy-g02`.
 - Manual-only probe receives a real job with nonzero runner ID.
 - Job has completed steps and retrievable logs tied to a specific run and commit SHA.
 - No production secrets or untrusted pull-request execution are enabled.
