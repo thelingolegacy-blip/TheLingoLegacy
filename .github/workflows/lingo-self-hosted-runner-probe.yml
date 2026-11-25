@@ -33,4 +33,29 @@ jobs:
           node --version
           npm --version
           git --version
-          echo "LINGO_G02_RUNNER_JOB_EXECUTED=true" >> "$GITHUB_STEP_SUMMARY"
+          evidence_dir="$RUNNER_TEMP/lingo-g02-evidence"
+          mkdir -p "$evidence_dir"
+          {
+            echo "LINGO_G02_RUNNER_JOB_EXECUTED=true"
+            echo "RUNNER_NAME=$RUNNER_NAME"
+            echo "RUNNER_OS=$RUNNER_OS"
+            echo "RUNNER_ARCH=$RUNNER_ARCH"
+            echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+            echo "GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
+            echo "GITHUB_JOB=$GITHUB_JOB"
+            echo "GITHUB_SHA=$GITHUB_SHA"
+            echo "HOSTNAME=$(hostname)"
+            echo "KERNEL=$(uname -srmo)"
+            echo "NODE=$(node --version)"
+            echo "NPM=$(npm --version)"
+            echo "GIT=$(git --version)"
+            echo "UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } | tee "$evidence_dir/runner-evidence.txt" | tee -a "$GITHUB_STEP_SUMMARY"
+          sha256sum "$evidence_dir/runner-evidence.txt" | tee "$evidence_dir/SHA256SUMS"
+      - name: Upload integrity-checked runner evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingo-g02-runner-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/lingo-g02-evidence/
+          if-no-files-found: error
+          retention-days: 14
