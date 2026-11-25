@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/finance-event-v1.schema.json",
+  "title": "LINGO Finance Event v1",
+  "description": "Provider-neutral, privacy-minimized financial event envelope. This is a contract, not authorization to process money.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "idempotency_key",
+    "source",
+    "environment",
+    "event_type",
+    "occurred_at",
+    "currency",
+    "amount_minor",
+    "product_code"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 200
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "environment": {
+      "enum": [
+        "sandbox",
+        "staging",
+        "production"
+      ]
+    },
+    "event_type": {
+      "enum": [
+        "invoice.created",
+        "invoice.finalized",
+        "payment.authorized",
+        "payment.captured",
+        "payment.failed",
+        "payment.refunded",
+        "payment.disputed",
+        "subscription.created",
+        "subscription.updated",
+        "subscription.cancelled",
+        "order.created",
+        "entitlement.granted",
+        "entitlement.revoked",
+        "settlement.received",
+        "payout.paid",
+        "vendor.cost.recorded",
+        "ledger.adjustment.requested"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "legal_entity_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 100
+    },
+    "product_code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "cost_center_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 100
+    },
+    "provider": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 80
+    },
+    "provider_object_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "amount_minor": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "fee_minor": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tax_minor": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "correlation_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "metadata": {
+      "type": "object",
+      "maxProperties": 30,
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "integer",
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  }
+}
