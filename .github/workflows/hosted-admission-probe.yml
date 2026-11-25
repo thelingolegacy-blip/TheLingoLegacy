@@ -13,8 +13,12 @@ concurrency:
 
 jobs:
   admission:
-    name: Minimal GitHub-hosted admission test
-    runs-on: ubuntu-24.04
+    name: Hosted image ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 3
     steps:
       - name: Prove hosted job allocation and shell execution
