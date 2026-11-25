@@ -10,6 +10,10 @@ set -Eeuo pipefail
 RUNNER_NAME="${RUNNER_NAME:-lingo-legacy-g02}"
 RUNNER_LABELS="${RUNNER_LABELS:-lingo-g02}"
 RUNNER_USER="actions"
+
+# Enforce the exact G02 identity and custom label; do not register a near-duplicate.
+[[ "$RUNNER_NAME" == "lingo-legacy-g02" ]] || { echo "Refusing non-canonical runner name: $RUNNER_NAME" >&2; exit 3; }
+[[ "$RUNNER_LABELS" == "lingo-g02" ]] || { echo "Refusing non-canonical runner labels: $RUNNER_LABELS" >&2; exit 3; }
 RUNNER_DIR="/opt/actions-runner"
 
 if [[ $EUID -ne 0 ]]; then
@@ -49,8 +53,8 @@ runuser -u "$RUNNER_USER" -- env RUNNER_TOKEN="$RUNNER_TOKEN" RUNNER_NAME="$RUNN
   ./config.sh --unattended \
     --url "https://github.com/thelingolegacy-blip/TheLingoLegacy" \
     --token "$RUNNER_TOKEN" \
-    --name "'"$RUNNER_NAME"'" \
-    --labels "'"$RUNNER_LABELS"'" \
+    --name "$RUNNER_NAME" \
+    --labels "$RUNNER_LABELS" \
     --work "_work"
 '
 unset RUNNER_TOKEN
