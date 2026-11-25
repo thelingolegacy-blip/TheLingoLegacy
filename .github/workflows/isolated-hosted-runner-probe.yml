@@ -2,6 +2,10 @@ name: Isolated Hosted Runner Probe
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/isolated-hosted-runner-probe.yml"
 
 permissions:
   contents: none
