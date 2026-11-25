@@ -217,3 +217,58 @@ Read-only `PRAGMA foreign_key_check` completed successfully and returned zero vi
 `PRAGMA integrity_check` was rejected by the D1 query service with SQLite authorization error `SQLITE_AUTH`; database-wide integrity status is therefore **NOT VERIFIED**. Do not interpret this permission denial as proof of corruption or proof of integrity.
 
 Combined conclusion: the six-table SAAAE schema and append-only audit triggers exist; the foreign-key check returned no violations; all six application tables contain zero rows; database-wide integrity_check was not permitted; and the privileged-executor Access app has no attached policy. SAAAE remains **NOT OPERATIONAL / NOT ACCEPTED**.
+
+
+## 17. Cross-PR execution readiness reconciliation — 2026-11-24
+
+A read-only review of the existing open recovery PRs was performed to avoid duplicating implementation and to reconcile their actual code with the live Track B blockers.
+
+### PR #659 — SAAAE Cloudflare Access privileged executor boundary
+
+Useful proposed primitives:
+- RS256 Cloudflare Access JWT signature verification and issuer/audience/time/subject checks.
+- Server-owned operator registry keyed by immutable subject, with requester/reviewer/workload role separation.
+- Fail-closed behavior for missing configuration, invalid identity, missing roster, and unavailable signing keys.
+- Tests for unregistered identities, human/workload separation, and incomplete independent rosters.
+
+Acceptance gaps confirmed against live Cloudflare:
+- The Access application currently has zero attached policies.
+- The six SAAAE D1 tables each have zero rows.
+- The proposed operator authentication reads a static `SAAAE_OPERATOR_REGISTRY_JSON` setting; the reviewed files do not establish a live D1-backed operator/grant/approval/audit runtime.
+- The registry parser checks the presence of an attestation ID and trusted issuer string; it does not retrieve or cryptographically validate the external workforce attestation.
+- Endpoint-level authorization must still enforce role, exact request digest, one-time approval, expiry, replay protection, and separate workload identity.
+
+A current-head acceptance review was posted to PR #659 (comment ID `7149731243`). **Disposition: keep unmerged and inaccessible; authentication primitives are not an accepted privileged executor.**
+
+### PR #666 — dedicated G02 self-hosted runner
+
+The current installer/runbook/probe were rechecked. Outstanding items include:
+- Runner default remains `lingo-g02-<hostname>`, not the canonical `lingo-legacy-g02`.
+- Ubuntu 24.04 dependency list still specifies `libssl3`; package compatibility is not established.
+- Probe does not upload the required downloadable evidence artifact.
+- It does not independently correlate authoritative numeric runner ID and job ID to run, logs, artifact, and exact commit.
+- Runbook's $0.00 DigitalOcean ceiling conflicts with a separate owner budget update; the exact authorized ceiling, plan price, and total billing must be reconciled before provisioning.
+- The probe is a separate manual workflow and does not supersede or bypass the protected canonical G02 sentinel.
+
+A current-head acceptance review was posted to PR #666 (comment ID `7149731854`). **Disposition: keep unmerged; no VM, token, registration, or billable resource has been created.**
+
+### PR #611 — LLG dispatch contract
+
+The current validator now checks role identifiers against the role catalog, rejects unknown roles/tools/permission profiles, and requires human owner/reviewer roles. This resolves the earlier role-catalog-only validation gap in the inspected source. However:
+- Repository/branch/commit values still require correlation to the actual source checkout or authoritative provider event.
+- Evidence references are checked for presence/shape; the completion transition does not retrieve and independently verify artifact authenticity, run/job IDs, commit, logs, or reviewer authorization.
+- The package remains a non-runtime contract validator, not a scheduler or authorization service.
+
+The prior review comments on PR #611 remain applicable for provenance and evidence-verification boundaries. **Disposition: do not grant dispatch authority or mark execution evidence accepted based on this package.**
+
+### Integration decision
+
+Continue using these existing PRs as the source of proposed work; do not fork duplicate implementations. The sequence is:
+1. Correct and independently validate the G02 installer/probe contract, but do not provision until the approved cost ceiling and exact plan total are reconciled.
+2. Finish SAAAE runtime integration with authoritative staging state, externally verified human independence attestations, an explicit least-privilege Access policy, and positive/negative end-to-end tests.
+3. Implement the Track B controller only after SAAAE and workload identity are operational.
+4. Add a dedicated operations queue and Workflow only after ownership, message schema, retention, plan limits, and cost are approved.
+5. Activate R2 and verify immutable artifact storage before claiming independent build evidence.
+6. Execute Core and Web build/test recipes on an independently verified host and correlate all logs/artifacts to the exact source commit.
+
+No PR was merged, no policy was attached, no Worker/Workflow/queue consumer was deployed, no VM was provisioned, and no production resource was changed by this review.
