@@ -128,6 +128,13 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   assert.equal(studioList.status, 200);
   assert.ok((await studioList.json()).assets.some(asset => asset.id === studioBody.asset.id));
 
+  const invalidStudio = await fetch(base + "/api/studio/assets", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name: "Bad rights", division: "LINGO", kind: "image", rights_status: "cleared" })
+  });
+  assert.equal(invalidStudio.status, 400);
+
   const unauthenticatedAudit = await fetch(base + "/api/audit/verify");
   assert.equal(unauthenticatedAudit.status, 403);
   const audit = await fetch(base + "/api/audit/verify", { headers: { authorization: `Bearer ${token}` } });
@@ -135,4 +142,10 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   const auditBody = await audit.json();
   assert.equal(auditBody.ok, true);
   assert.ok(auditBody.verified >= 2);
+
+  const auditFile = path.join(dataDir, "audit.jsonl");
+  const originalAudit = await fs.readFile(auditFile, "utf8");
+  await fs.writeFile(auditFile, originalAudit.replace('"release.created"', '"release.forged"'));
+  const tamperedAudit = await fetch(base + "/api/audit/verify", { headers: { authorization: `Bearer ${token}` } });
+  assert.equal((await tamperedAudit.json()).ok, false);
 });
