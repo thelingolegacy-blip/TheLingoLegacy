@@ -153,6 +153,18 @@
                 },
                 "require_nonempty_log": {
                   "type": "boolean"
+                },
+                "mutating": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "idempotent": {
+                  "type": "boolean"
+                },
+                "idempotency_key": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 128
                 }
               },
               "additionalProperties": false
