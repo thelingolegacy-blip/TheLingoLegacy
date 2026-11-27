@@ -1,12 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { validateProbabilityVector, evaluateVirtualDistribution } from "../math/engine.mjs";
 
 const REGISTRY = path.join(process.cwd(), "ai", "bots.json");
 const ALLOWED_TASKS = {
   "lingo://id/bot-release": ["prepare_release_draft", "review_release"],
   "lingo://id/bot-probe": ["system_snapshot"],
   "lingo://id/bot-studio": ["asset_intake_proposal"],
-  "lingo://id/bot-math": ["validate_probability_input"]
+  "lingo://id/bot-math": ["validate_probability_input", "validate_probability_vector", "evaluate_virtual_distribution"]
 };
 
 export async function executeBot({ botId, task, input = {}, context = {} }) {
@@ -33,6 +34,12 @@ export async function executeBot({ botId, task, input = {}, context = {} }) {
   if (task === "asset_intake_proposal") {
     if (typeof input.asset_name !== "string" || !input.asset_name.trim()) throw new Error("asset_name is required.");
     return { type: "asset_intake_proposal", asset_name: input.asset_name.trim(), proposed_status: "needs_owner_review", mutation_performed: false };
+  }
+  if (task === "validate_probability_vector") {
+    return { type: "probability_vector_validation", ...validateProbabilityVector(input.probabilities) };
+  }
+  if (task === "evaluate_virtual_distribution") {
+    return { type: "virtual_distribution_analysis", ...evaluateVirtualDistribution(input.outcomes) };
   }
   if (task === "validate_probability_input") {
     const probability = Number(input.probability);
