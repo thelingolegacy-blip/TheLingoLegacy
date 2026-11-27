@@ -54,6 +54,11 @@ test("evidence records are immutable-by-id and SHA-256 integrity checked", async
   const record = await evidence.readEvidence(ref.id);
   assert.equal(record.sha256, ref.sha256);
   assert.deepEqual(record.payload, { checks: 4, passed: true });
+  const evidencePath = path.join(temp, "evidence", ref.id + ".json");
+  const tampered = JSON.parse(await fs.readFile(evidencePath, "utf8"));
+  tampered.payload.passed = false;
+  await fs.writeFile(evidencePath, JSON.stringify(tampered));
+  await assert.rejects(() => evidence.readEvidence(ref.id), /integrity check failed/);
   await assert.rejects(() => evidence.readEvidence("../escape"));
 });
 
