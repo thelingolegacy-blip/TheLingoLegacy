@@ -1,10 +1,17 @@
 #!/bin/sh
 set -eu
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+cd "$ROOT"
+need_env() {
+  [ -f .env ] || { echo "Create vsm/.env from .env.example and set VSM_OWNER_TOKEN."; exit 2; }
+}
 case "${1:-help}" in
-  up) cd "$ROOT"; [ -f .env ] || { echo "Create vsm/.env from .env.example and set VSM_OWNER_TOKEN."; exit 2; }; docker compose -f docker-compose.yml up --build -d ;;
-  down) cd "$ROOT"; docker compose -f docker-compose.yml down ;;
-  status) cd "$ROOT"; docker compose -f docker-compose.yml ps; curl -fsS http://127.0.0.1:8787/api/health || true ;;
-  logs) cd "$ROOT"; docker compose -f docker-compose.yml logs -f --tail=150 ;;
-  help|*) echo "Usage: sh vsm/lingo-vsm {up|down|status|logs}" ;;
+  up) need_env; docker compose up --build -d ;;
+  down) docker compose down ;;
+  status) docker compose ps; curl -fsS http://127.0.0.1:8787/api/health || true ;;
+  logs) docker compose logs -f --tail=150 ;;
+  probe) [ -n "${2:-}" ] || { echo "Usage: sh vsm/lingo-vsm probe RELEASE_ID"; exit 2; }; curl -fsS -X POST "http://127.0.0.1:8787/api/releases/$2/probe" ;;
+  dispatch) [ "$#" -ge 4 ] || { echo "Usage: sh vsm/lingo-vsm dispatch 'Title' COMMIT_SHA [BRANCH] [TARGET]"; exit 2; }; TITLE=$2; SHA=$3; BRANCH=${4:-main}; TARGET=${5:-local-preview}; node -e 'process.stdout.write(JSON.stringify({title:process.argv[1],source:{repo:"thelingolegacy-blip/TheLingoLegacy",branch:process.argv[3],commit:process.argv[2]},target:process.argv[4]}))' "$TITLE" "$SHA" "$BRANCH" "$TARGET" | curl -fsS -H 'Content-Type: application/json' -d @- http://127.0.0.1:8787/api/releases ;;
+  accept) need_env; [ -n "${2:-}" ] || { echo "Usage: sh vsm/lingo-vsm accept RELEASE_ID"; exit 2; }; . ./.env; curl -fsS -X POST -H "Authorization: Bearer $VSM_OWNER_TOKEN" "http://127.0.0.1:8787/api/releases/$2/accept" ;;
+  help|*) echo "Usage: sh vsm/lingo-vsm {up|down|status|logs|dispatch|probe|accept}" ;;
 esac
