@@ -155,3 +155,12 @@ ALLOW_DESTRUCTIVE=true sh vsm/lingo-vsm restore BACKUP_ID
 ```
 
 The restore path stops VSM and Forge before replacing volume contents and restarts services that were running. The backup/restore utility is source-implemented but has not yet been executed against a real Docker daemon in this environment; treat it as unverified until a backup is created and a restore drill is completed. It is not an off-site backup or disaster-recovery service.
+
+
+## Backup and recovery
+
+- Create a local backup: `sh vsm/backup.sh backup`. The script stops only the VSM control and Forge services that were running, archives the three named persistent volumes, verifies SHA-256 checksums and archive readability, then restarts the services that were running.
+- Restore is destructive and requires an explicit environment flag: `ALLOW_DESTRUCTIVE=true sh vsm/backup.sh restore BACKUP_ID`. The script verifies the manifest, checksums and archive readability before stopping services and replacing volume contents.
+- Backups default to `$HOME/.local/share/lingo-vsm/backups`; set `VSM_BACKUP_DIR` to choose another local directory.
+- Backups are **not encrypted**. Keep them on an access-controlled local disk and encrypt them before off-device or cloud storage. The manifest/checksum is an integrity check, not a signed immutable backup.
+- The script does not back up source code (GitHub remains source of truth), `.env` credentials, or the optional Worker preview runtime volume. Restore does not change production services.
