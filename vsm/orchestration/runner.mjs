@@ -157,11 +157,18 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
 export function createRunController(input, options = {}) {
   const abort = new AbortController();
   let paused = false;
+  const validTrackIds = new Set(Array.isArray(input?.tracks) ? input.tracks.map(track => track?.id).filter(id => typeof id === "string") : []);
+  const pendingPausedTracks = new Set();
+  const pendingCancelledTracks = new Set();
   const control = {
     cancel: reason => abort.abort(reason || "human-cancelled"),
     pause: () => { paused = true; },
     resume: () => { paused = false; },
-
+    pauseTrack: trackId => { if (!validTrackIds.has(trackId)) return false; pendingPausedTracks.add(trackId); return true; },
+    resumeTrack: trackId => { if (!validTrackIds.has(trackId)) return false; pendingPausedTracks.delete(trackId); return true; },
+    cancelTrack: trackId => { if (!validTrackIds.has(trackId)) return false; pendingCancelledTracks.add(trackId); return true; },
+    pendingPausedTracks,
+    pendingCancelledTracks,
     get paused() { return paused; },
     get cancelled() { return abort.signal.aborted; }
   };
@@ -251,8 +258,8 @@ export async function executeRun(input, {
   let cancelled = false;
   let cancelReason = null;
   let pauseRequested = Boolean(control?.paused);
-  const pausedTracks = new Set();
-  const cancelledTracks = new Set();
+  const pausedTracks = control?.pendingPausedTracks || new Set();
+  const cancelledTracks = control?.pendingCancelledTracks || new Set();
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
