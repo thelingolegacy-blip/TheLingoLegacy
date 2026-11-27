@@ -255,7 +255,7 @@ export default {
 
         const replay = await findSettledD1SpinReplay(env.DB, {
           firebaseUid: identity.uid, gameId: GAME_ID, idempotencyKey,
-          ruleVersion: RULE_VERSION, wagerUnits,
+          ruleVersion: RULE_VERSION, rulesetDigest, wagerUnits,
         });
         if (replay) {
           return json({
@@ -281,7 +281,7 @@ export default {
 
         const result = await playAndSettleD1Spin(env.DB, {
           firebaseUid: identity.uid, gameId: GAME_ID, idempotencyKey,
-          ruleVersion: RULE_VERSION, weightedSymbols: ruleset.weightedSymbols, paytable: ruleset.paytable,
+          ruleVersion: RULE_VERSION, rulesetDigest, weightedSymbols: ruleset.weightedSymbols, paytable: ruleset.paytable,
           activePaylines: ruleset.activePaylines, wagerUnits, tenantId, approvalId, actionDigest, correlationId, authTime: identity.authTime,
         });
         return json({
