@@ -60,7 +60,7 @@ async function preflightResources(rootDir, config) {
   let cpuCount = os.availableParallelism?.() || os.cpus()?.length || 0;
   for (const cpuLimitPath of ["/sys/fs/cgroup/cpu.max"]) {
     try {
-      const [quotaRaw, periodRaw] = (await fs.readFile(cpuLimitPath, "utf8")).trim().split(/\\s+/);
+      const [quotaRaw, periodRaw] = (await fs.readFile(cpuLimitPath, "utf8")).trim().split(/\s+/);
       const quota = Number(quotaRaw);
       const period = Number(periodRaw);
       if (quotaRaw !== "max" && Number.isFinite(quota) && quota > 0 && Number.isFinite(period) && period > 0) cpuCount = Math.min(cpuCount, Math.floor(quota / period));
