@@ -33,7 +33,7 @@ function validateTrack(track, config) {
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
-    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
+    if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1000 || step.soft_timeout_ms >= (step.timeout_ms || 5 * 60_000))) throw new Error("Step soft_timeout_ms must be less than the hard timeout.");\n    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
     if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");
     if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
     if (step.id !== undefined && !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id)) throw new Error("Step id is invalid.");
@@ -236,7 +236,7 @@ export async function executeRun(input, {
     };
     signal.addEventListener("abort", abortHandler, { once: true });
     let timedOut = false;
-    const timeout = setTimeout(() => { timedOut = true; abortHandler(); }, step.timeout_ms || 5 * 60_000);
+    const timeout = setTimeout(() => { timedOut = true; abortHandler(); }, step.timeout_ms || 5 * 60_000);\n    const softTimeout = step.soft_timeout_ms ? setTimeout(() => emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "STEP_SOFT_TIMEOUT", detail: { soft_timeout_ms: step.soft_timeout_ms } }), step.soft_timeout_ms) : null;
     const result = await new Promise(resolve => {
       child.once("error", error => resolve({ code: -1, error }));
       child.once("close", (code, childSignal) => resolve({ code, signal: childSignal }));
@@ -284,7 +284,7 @@ export async function executeRun(input, {
           if (cancelled || abort.signal.aborted) throw Object.assign(new Error("Run cancelled."), { name: "AbortError" });
           while ((pauseRequested || pausedTracks.has(track.id)) && !cancelled && !abort.signal.aborted) await sleep(100);
           await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "STARTED", attempt, startedAt: now() });
-          const result = await runProcess(step, track, trackDir, trackEnv, abort.signal);
+          const remainingRetryWindow = Math.max(1000, RUN_DEFAULTS.TRANSIENT_RETRY_WINDOW_MS - (now() - stepStarted));\n          const attemptStep = transientRetries > 0 ? { ...step, timeout_ms: Math.min(step.timeout_ms || 5 * 60_000, remainingRetryWindow) } : step;\n          const result = await runProcess(attemptStep, track, trackDir, trackEnv, abort.signal);
           if (result.ok && step.require_nonempty_log && result.output_bytes === 0) {
             emptyAttempts++;
             const decision = retryDecision({ attempt: emptyAttempts, emptyLog: true, maxAttempts: config.RETRY_MAX_ATTEMPTS });
