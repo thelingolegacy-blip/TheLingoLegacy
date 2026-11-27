@@ -157,17 +157,25 @@ const server = http.createServer(async (req, res) => {
       const priorRun = await fs.access(path.join(DATA_DIR, "runs", runId)).then(() => true).catch(() => false);
       if (priorRun) return send(res, 409, { error: "A run with this ID already exists; run IDs are immutable and cannot be reused." });
       const runDirectory = path.join(DATA_DIR, "runs", runId);
+      await audit("run.started", { run_id: runId, requested_by: OWNER_IDENTITY.id, target: validatedConfig.target });
       const controller = createRunController(validatedConfig, {
         rootDir: process.cwd(),
         artifactsDir: path.join(DATA_DIR, "runs"),
         notifyOwner: async event => {
           const notification = { ...event, created_at: new Date().toISOString(), delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true };
-          await fs.writeFile(path.join(runDirectory, "owner-notification.json"), JSON.stringify(notification, null, 2) + "\n", { mode: 0o600 });
+          const notificationFile = path.join(runDirectory, "owner-notification.json");
+          const tempFile = notificationFile + "." + process.pid + ".tmp";
+          await fs.writeFile(tempFile, JSON.stringify(notification, null, 2) + "\n", { mode: 0o600 });
+          await fs.rename(tempFile, notificationFile);
+          await audit("run.owner-notification", {
+            run_id: runId, status: event.status, delivery: "LOCAL_OWNER_OUTBOX",
+            track_id: event.track_id || null,
+            secret_names: event.secret_names || event.exposed_secret_names || []
+          });
         }
       });
       activeRuns.set(runId, controller);
       controller.promise.finally(() => activeRuns.delete(runId)).catch(() => activeRuns.delete(runId));
-      await audit("run.started", { run_id: runId, requested_by: OWNER_IDENTITY.id, target: input.config.target || "local" });
       return send(res, 202, { run_id: runId, status: "STARTING", status_url: "/api/runs/" + runId, controls: ["pause", "resume", "cancel"] });
     }
     const runControlMatch = url.pathname.match(/^\/api\/runs\/([A-Za-z0-9][A-Za-z0-9._-]{2,79})\/(pause|resume|cancel)$/);
