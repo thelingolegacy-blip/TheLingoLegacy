@@ -9,12 +9,13 @@ function alive(pid) {
   try { process.kill(pid, 0); return true; }
   catch (error) { return error.code === "EPERM"; }
 }
-while (alive(parentPid)) await sleep(500);
 const runDir = path.dirname(crashFile);
-try {
-  await fs.access(path.join(runDir, "completed.json"));
-  process.exit(0);
-} catch {}
+const completedFile = path.join(runDir, "completed.json");
+while (alive(parentPid)) {
+  try { await fs.access(completedFile); process.exit(0); } catch {}
+  await sleep(500);
+}
+try { await fs.access(completedFile); process.exit(0); } catch {}
 let pids = [];
 try { pids = JSON.parse(await fs.readFile(pidFile, "utf8")); } catch {}
 const killed = [];
