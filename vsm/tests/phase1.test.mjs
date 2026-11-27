@@ -74,6 +74,10 @@ test("SAAAE policy defaults to deny and never grants production mutation", async
   assert.equal(policy.authorize(operator, "release.accept.local"), false);
   assert.equal(policy.authorize({ ...owner, status: "suspended" }, "vsm.read"), false);
   assert.equal(policy.authorize(owner, "unknown.capability"), false);
+  for (const capability of ["production.promote", "production.dns.write", "production.secret.rotate", "data.delete", "authority.hold.remove"]) assert.equal(policy.authorize(owner, capability), false);
+  for (const capability of ["release.create", "release.probe", "release.attest", "release.accept.local", "sonic_boom.configure", "bot.invoke", "evidence.read", "audit.verify"]) assert.equal(policy.authorize(owner, capability), true);
+  assert.equal(policy.authorize(operator, "release.create"), false);
+  assert.equal(policy.authorize(operator, "audit.verify"), true);
 });
 
 test("math engine validates probability vectors and calculates virtual distribution statistics", async () => {
