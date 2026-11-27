@@ -27,6 +27,7 @@ restart_services() {
   if [ "$STOPPED" -eq 1 ]; then
     [ "$VSM_WAS_RUNNING" = "1" ] && docker compose -f "$ROOT/docker-compose.yml" start vsm-control >/dev/null || true
     [ "$FORGE_WAS_RUNNING" = "1" ] && docker compose -f "$ROOT/docker-compose.yml" start lingo-forge >/dev/null || true
+    STOPPED=0
   fi
 }
 stop_services() {
@@ -44,7 +45,9 @@ case "$ACTION" in
     BACKUP_ID="$(date -u +%Y%m%dT%H%M%SZ)"
     DEST="$BACKUP_ROOT/$BACKUP_ID"
     mkdir -m 700 "$DEST"
-    trap restart_services EXIT INT TERM
+    trap restart_services EXIT
+    trap 'restart_services; exit 130' INT
+    trap 'restart_services; exit 143' TERM
     stop_services
     for volume in $VOLUMES; do
       docker volume inspect "$volume" >/dev/null 2>&1 || { echo "Required volume is missing: $volume"; exit 2; }
