@@ -1,0 +1,523 @@
+{
+  "schema": "lingo-studio-enterprise-module-registry",
+  "version": "1.0.0",
+  "sourceAuthority": "thelingolegacy-blip/TheLingoLegacy@main",
+  "registryAuthority": "GitHub reviewed commits",
+  "runtimeAuthority": "Cloudflare Workers",
+  "observedAt": "2026-11-21",
+  "mode": "read-only-until-separately-authorized",
+  "productionMutation": false,
+  "statusVocabulary": [
+    "LIVE_VERIFIED",
+    "HISTORICAL_EVIDENCE",
+    "SOURCE_DECLARED",
+    "PREVIEW_ONLY",
+    "BLOCKED",
+    "PLANNED",
+    "UNKNOWN"
+  ],
+  "modules": [
+    {
+      "id": "studio-home",
+      "name": "Studio Home",
+      "scope": "Portfolio health, blocker queue, build calendar, environment overview",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "portfolio-registry",
+      "name": "World & Product Registry",
+      "scope": "Canonical IDs, owners, repos, dependencies, routes, data classification and release state",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "visual-studio",
+      "name": "Visual Studio",
+      "scope": "Web/mobile layouts, design tokens, component library, previews, accessibility checks",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "game-studio",
+      "name": "Game Studio",
+      "scope": "Unity/web game projects, game design docs, assets, deterministic fixtures and gameplay QA",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "ai-studio",
+      "name": "AI Studio",
+      "scope": "Google AI Studio/Gemini handoff, prompt library, model adapters, evals, redaction and cost budgets",
+      "status": "HISTORICAL_EVIDENCE",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "code-studio",
+      "name": "Code Studio",
+      "scope": "GitHub branches, PRs, diffs, code owners, CI, dependency/SBOM and security evidence",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "backend-studio",
+      "name": "Backend Studio",
+      "scope": "Identity contracts, Firebase/Supabase projects, schemas, migrations, RLS/rules and test evidence",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "cloud-studio",
+      "name": "Cloud Studio",
+      "scope": "Cloudflare Workers/routes/DNS and Render previews, bindings metadata and environment inventory",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "media-library-studio",
+      "name": "Media & Library Studio",
+      "scope": "Books, characters, scripts, audio/video, rights, provenance and publishing approvals",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "operations-studio",
+      "name": "Operations Studio",
+      "scope": "Read-only portfolio overview of separately permissioned workforce, residential property, hospitality, transport, street-lighting and water/wastewater modules; no shared access to underlying domain records.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "release-trust-center",
+      "name": "Release & Trust Center",
+      "scope": "Gate states, evidence provenance, approvals, incident response, audit trail, rollback and recovery",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "commerce-readiness",
+      "name": "Finance & Commerce Readiness",
+      "scope": "Provider configuration status, price/webhook readiness and non-operative commerce controls",
+      "status": "BLOCKED",
+      "permissions": [
+        "studio:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId"
+      ],
+      "route": null
+    },
+    {
+      "id": "workforce-operations",
+      "name": "Workforce Operations",
+      "scope": "Organizers, promoters, managers, scheduling, time records, role assignments and approvals; tenant-scoped workforce data with separate HR/payroll access.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "workforce:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "dataClassification",
+        "auditTrail"
+      ],
+      "route": null
+    },
+    {
+      "id": "hr-payroll",
+      "name": "HR & Payroll",
+      "scope": "Restricted HR records, compensation, payroll, tax, timekeeping and payroll approvals; least-privilege access, retention and audit controls.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "hr:read",
+        "payroll:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "dataClassification",
+        "auditTrail",
+        "retentionPolicy",
+        "approvalEvidence"
+      ],
+      "route": null
+    },
+    {
+      "id": "residential-property-operations",
+      "name": "Residential Property Operations",
+      "scope": "Homes and residential property portfolios, occupancy, maintenance, work orders, inspections, asset registries and GIS references; tenant and jurisdiction scoped.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "property:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference"
+      ],
+      "route": null
+    },
+    {
+      "id": "hospitality-operations",
+      "name": "Hospitality Operations",
+      "scope": "Hotels and lodging operations, room inventory, reservations, housekeeping, facilities and service workflows; guest and staff records remain separately scoped.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "hospitality:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "tenantScope",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference"
+      ],
+      "route": null
+    },
+    {
+      "id": "transport-infrastructure",
+      "name": "Road & Transportation Infrastructure",
+      "scope": "Roads, transport assets, condition inspections, traffic/route operations and infrastructure work orders; jurisdiction and GIS controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "transport:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry"
+      ],
+      "route": null
+    },
+    {
+      "id": "street-lighting-operations",
+      "name": "Street & Road Lighting",
+      "scope": "Street-light assets, poles, circuits, outage status, maintenance schedules, inspections and energy telemetry; utility/operator scopes remain distinct.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "lighting:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry"
+      ],
+      "route": null
+    },
+    {
+      "id": "water-distribution-operations",
+      "name": "Water Distribution & Flow Monitoring",
+      "scope": "Water distribution networks, pressure and flow monitoring, reservoirs, pumps, valves, utility assets and incidents; jurisdiction, GIS, privacy and safety controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "water:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry",
+        "telemetrySafety"
+      ],
+      "route": null
+    },
+    {
+      "id": "world-engine-studio",
+      "name": "World Builder & Simulation Studio",
+      "scope": "World schemas, procedural generation, scene graphs, GIS/map overlays, deterministic simulation, environment presets, asset lineage and Unity/web runtime adapters.",
+      "status": "SOURCE_DECLARED",
+      "permissions": [
+        "studio:read",
+        "world:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "dataClassification",
+        "auditTrail",
+        "worldSchema",
+        "assetRights",
+        "simulationTests",
+        "contentSafety",
+        "runtimeAdapter"
+      ],
+      "route": null
+    },
+    {
+      "id": "game-liveops-studio",
+      "name": "Game Live Operations",
+      "scope": "Game sessions, progression, matchmaking, event schedules, feature flags, anti-cheat, moderation, telemetry and rollback controls; read-only operations visibility.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "gameops:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "dataClassification",
+        "auditTrail",
+        "sessionContract",
+        "antiCheatTests",
+        "moderationPolicy",
+        "telemetryRedaction",
+        "rollbackEvidence"
+      ],
+      "route": null
+    },
+    {
+      "id": "wastewater-drainage-operations",
+      "name": "Wastewater, Drainage & Sewer Flow",
+      "scope": "Wastewater systems, stormwater and drainage networks, sewer-flow telemetry, treatment assets, incidents and maintenance; jurisdiction, GIS, privacy and safety controls required.",
+      "status": "PLANNED",
+      "permissions": [
+        "studio:read",
+        "wastewater:read"
+      ],
+      "writeAuthority": false,
+      "requiredEvidence": [
+        "source",
+        "observedAt",
+        "confidence",
+        "correlationId",
+        "jurisdiction",
+        "dataClassification",
+        "auditTrail",
+        "GISReference",
+        "assetRegistry",
+        "telemetrySafety"
+      ],
+      "route": null
+    }
+  ],
+  "providerReadiness": [
+    {
+      "id": "github",
+      "provider": "GitHub",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Canonical repository and PR metadata read successfully",
+      "writeAuthority": false
+    },
+    {
+      "id": "cloudflare",
+      "provider": "Cloudflare",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Active zone, 10 Workers, 27 routes and 34 DNS records inventoried read-only",
+      "writeAuthority": false
+    },
+    {
+      "id": "flutter",
+      "provider": "Flutter",
+      "status": "SOURCE_DECLARED",
+      "evidence": "Flutter recovery candidates exist; current-head native build not verified",
+      "writeAuthority": false
+    },
+    {
+      "id": "firebase",
+      "provider": "Firebase",
+      "status": "BLOCKED",
+      "evidence": "No approved project identity or Firebase provider inspection; publication allowlist remains quarantined",
+      "writeAuthority": false
+    },
+    {
+      "id": "supabase",
+      "provider": "Supabase",
+      "status": "LIVE_VERIFIED",
+      "evidence": "Authorized Supabase connector observed project ACTIVE_HEALTHY (PostgreSQL 17.6); 0 public application tables, 0 project migrations, 0 Edge Functions, and 0 security/performance/health advisor lints. Built-in auth/storage/realtime system schemas are present. Browser-side adapter is not configured; connector observation is not a website endpoint.",
+      "writeAuthority": false
+    },
+    {
+      "id": "render",
+      "provider": "Render",
+      "status": "PREVIEW_ONLY",
+      "evidence": "Render connector lists one available workspace; service inventory was not queried because workspace selection requires explicit user confirmation. Existing evidence identifies a public static operations preview only.",
+      "writeAuthority": false
+    },
+    {
+      "id": "google-ai-studio",
+      "provider": "Google AI Studio",
+      "status": "HISTORICAL_EVIDENCE",
+      "evidence": "Repository workstream and Build prompt exist; account/project and Gemini secret configuration not verified",
+      "writeAuthority": false
+    }
+  ],
+  "globalControls": {
+    "defaultMode": "read-only",
+    "productionMutation": "DENY",
+    "secretValues": "NEVER_DISPLAY",
+    "clientProviderCredentials": "PROHIBITED",
+    "autonomousMerge": "DENY",
+    "autonomousDeploy": "DENY",
+    "autonomousBilling": "DENY",
+    "autonomousWalletOrRewardMutation": "DENY",
+    "autonomousAccessGrant": "DENY",
+    "unknownState": "FAIL_CLOSED"
+  }
+}
