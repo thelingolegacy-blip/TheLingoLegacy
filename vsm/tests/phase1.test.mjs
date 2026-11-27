@@ -92,6 +92,27 @@ test("math engine validates probability vectors and calculates virtual distribut
   assert.throws(() => math.evaluateVirtualDistribution([{ value: Number.MAX_VALUE, probability: 0.5 }, { value: -Number.MAX_VALUE, probability: 0.5 }]), /numeric range/);
 });
 
+test("Studio asset registry validates ownership metadata and source references", async () => {
+  const studio = await import("../studio/asset-registry.mjs?test-suite");
+  const asset = await studio.createStudioAsset({
+    name: "Kotton's Code character concept",
+    division: "Kotton's Code",
+    kind: "design",
+    description: "Original character concept pending owner review.",
+    tags: ["character", "concept"],
+    source_uri: "repo://TheLingoLegacy/assets/kotton",
+    rights_status: "owner_created",
+    content_sha256: "a".repeat(64)
+  }, "lingo://id/test-owner");
+  assert.match(asset.id, /^la-/);
+  assert.equal(asset.status, "proposed");
+  assert.equal(asset.rights_status, "owner_created");
+  assert.equal((await studio.listStudioAssets()).some(item => item.id === asset.id), true);
+  await assert.rejects(() => studio.createStudioAsset({ name: "X", division: "IP", kind: "design" }, "lingo://id/test-owner"), /Asset name/);
+  await assert.rejects(() => studio.createStudioAsset({ name: "Invalid source", division: "IP", kind: "image", source_uri: "file:///etc/passwd" }, "lingo://id/test-owner"), /HTTPS/);
+  await assert.rejects(() => studio.createStudioAsset({ name: "Invalid rights", division: "IP", kind: "image", rights_status: "approved" }, "lingo://id/test-owner"), /rights_status/);
+});
+
 test("Sonic Boom refuses unsafe persisted scheduler configuration", async () => {
   await fs.writeFile(path.join(temp, "sonic-boom-lane.json"), JSON.stringify({ enabled: true, owner_priority: true, max_parallel_jobs: 99 }));
   await assert.rejects(() => lane.loadLane(), /failed validation/);
