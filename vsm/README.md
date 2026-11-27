@@ -49,11 +49,14 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - `GET /api/sonic-boom` — lane state.
 - `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
 - `GET /api/bots` — declared bot registry.
-- `POST /api/bots/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.\n- `GET /api/audit/verify` — verifies the append-only audit hash chain.\n- `GET /api/evidence/:id` — owner-token protected evidence retrieval with SHA-256 integrity verification.
+- `POST /api/bots/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
+- `GET /api/audit/verify` — verifies the append-only audit hash chain.
+- `GET /api/evidence/:id` — owner-token protected evidence retrieval with SHA-256 integrity verification.
 - `GET /api/centers`
 - `GET /api/releases`
 - `POST /api/releases` — create draft package.
-- `POST /api/releases/:id/probe` — run configured public probes and persist the result as a hashed evidence record.\n- Gate attestations are also persisted as hashed, release-scoped evidence records.
+- `POST /api/releases/:id/probe` — run configured public probes and persist the result as a hashed evidence record.
+- Gate attestations are also persisted as hashed, release-scoped evidence records.
 - `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`.
 - `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS and signs the acceptance payload with the local Owner Ed25519 key.
 - Static preview: `http://127.0.0.1:8788/` serves existing repository files from the read-only mount. The Worker runtime is not emulated.
@@ -70,7 +73,11 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
 - Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
-## Local verification commands\n\nFrom the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.\n\n## Verification status
+## Local verification commands
+
+From the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.
+
+## Verification status
 
 Phase 1 source files and configuration are committed on the feature branch. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
 
