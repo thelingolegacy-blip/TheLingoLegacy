@@ -7,6 +7,7 @@ COPY identity ./identity
 COPY sonic-boom ./sonic-boom
 COPY ai ./ai
 COPY evidence ./evidence
+COPY security ./security
 COPY dashboard ./dashboard
 COPY schemas ./schemas
 COPY tests ./tests
