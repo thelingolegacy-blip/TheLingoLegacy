@@ -64,6 +64,7 @@ export function createRunConfig(input = {}) {
   for (const track of config.tracks) {
     if (!track || !/^[a-z][a-z0-9-]{1,39}$/.test(track.id || "") || ids.has(track.id)) throw new Error("Track IDs must be unique lowercase identifiers.");
     ids.add(track.id);
+    if (!Array.isArray(track.steps)) throw new Error(`Track ${track.id} must declare a steps array.`);
     const criticality = track.criticality || config.TRACK_CRITICALITY[track.id];
     if (!CRITICALITIES.has(criticality)) throw new Error(`Track ${track.id} requires criticality: critical, important, or best-effort.`);
     track.criticality = criticality;
