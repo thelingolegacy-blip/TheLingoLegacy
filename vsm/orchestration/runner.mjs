@@ -34,7 +34,8 @@ function validateTrack(track, config) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
     if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
-    if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");\n    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
+    if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");
+    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
     if (step.id !== undefined && !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id)) throw new Error("Step id is invalid.");
   }
 }
@@ -204,7 +205,7 @@ export async function executeRun(input, {
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
-    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });\n    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
+    const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });\n    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
     const append = chunk => {
