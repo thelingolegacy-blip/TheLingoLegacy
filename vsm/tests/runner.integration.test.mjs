@@ -210,6 +210,30 @@ test("staging run validates required service reachability and credentials before
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("whole-run cancellation aborts an in-flight staging network preflight", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-preflight-cancel-"));
+  let requestStarted = false;
+  try {
+    const controller = createRunController({
+      run_id: "runner-preflight-cancel-01", run_type: "staging-validation", target: "staging",
+      PREFLIGHT_NETWORK: true, RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      tracks: [{ id: "cloudflare-probe", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [] }]
+    }, {
+      rootDir,
+      environment: { PATH: process.env.PATH, CLOUDFLARE_API_TOKEN: "cloudflare-valid-token-123456" },
+      fetchImpl: async (_url, options) => new Promise((_resolve, reject) => {
+        requestStarted = true;
+        options.signal.addEventListener("abort", () => reject(new Error("cancelled")), { once: true });
+      })
+    });
+    for (let attempt = 0; attempt < 50 && !requestStarted; attempt++) await new Promise(resolve => setTimeout(resolve, 20));
+    assert.equal(requestStarted, true);
+    controller.cancel("human-cancelled");
+    const summary = await controller.promise;
+    assert.equal(summary.status, "CANCELLED");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("staging network preflight retries transient 5xx responses within its bounded window", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-network-retry-"));
   let calls = 0;
