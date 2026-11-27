@@ -140,7 +140,7 @@ const server = http.createServer(async (req, res) => {
           if (!Array.isArray(track.steps)) throw new Error("Every track requires a steps array.");
           for (const step of track.steps) {
             if (!step || !["node", "npm"].includes(step.command) || !Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) throw new Error("Run steps must use node/npm with string arguments.");
-            if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 1800000)) throw new Error("Step timeout must be 1 second to 30 minutes.");
+            if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 1800000)) throw new Error("Step timeout must be 1 second to 30 minutes.");\n            if (step.mutating === true && !validatedConfig.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");\n            if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
           }
         }
       } catch (error) { return send(res, 400, { error: error.message || "Invalid run configuration." }); }
