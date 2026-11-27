@@ -75,7 +75,11 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
 - Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
-The Docker image build automatically runs JavaScript syntax checks and the Node test suite before producing the runtime image.\n\n## Local verification commands
+The Docker image build automatically runs JavaScript syntax checks and the Node test suite before producing the runtime image.
+
+The Docker image build automatically runs JavaScript syntax checks and the Node test suite before producing the runtime image.
+
+## Local verification commands
 
 From the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.
 
