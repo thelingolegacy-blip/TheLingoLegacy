@@ -9,13 +9,14 @@ const safeId = (value, field) => {
 };
 
 const SESSION_SELECT = `
-  SELECT session_id, game_id, rule_version, reels_json, wager_units, payout_units, status, balance_after_units
+  SELECT session_id, game_id, rule_version, ruleset_digest, reels_json, wager_units, payout_units, status, balance_after_units
     FROM lingo_game_sessions
    WHERE firebase_uid = ? AND idempotency_key = ?
 `;
 
-function assertSameRequest(existing, gameId, ruleVersion, wagerUnits) {
-  if (existing.game_id !== gameId || existing.rule_version !== ruleVersion || existing.wager_units !== wagerUnits) {
+function assertSameRequest(existing, gameId, ruleVersion, rulesetDigest, wagerUnits) {
+  if (existing.game_id !== gameId || existing.rule_version !== ruleVersion
+    || existing.ruleset_digest !== rulesetDigest || existing.wager_units !== wagerUnits) {
     throw new Error('IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_REQUEST');
   }
   if (existing.status !== 'settled' || !Number.isSafeInteger(existing.balance_after_units)) {
@@ -24,13 +25,14 @@ function assertSameRequest(existing, gameId, ruleVersion, wagerUnits) {
   return { ...existing, replayed: true };
 }
 
-export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempotencyKey, ruleVersion, wagerUnits }) {
+export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempotencyKey, ruleVersion, rulesetDigest, wagerUnits }) {
   safeId(firebaseUid, 'firebaseUid');
   safeId(gameId, 'gameId');
   safeId(ruleVersion, 'ruleVersion');
+  safeId(rulesetDigest, 'rulesetDigest');
   if (!validateIdempotencyKey(idempotencyKey)) throw new TypeError('idempotencyKey is invalid');
   const prior = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
-  return prior ? assertSameRequest(prior, gameId, ruleVersion, wagerUnits) : null;
+  return prior ? assertSameRequest(prior, gameId, ruleVersion, rulesetDigest, wagerUnits) : null;
 }
 
 /**
@@ -39,12 +41,13 @@ export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempot
  * one D1 batch so a failed debit or missing approval rolls the entire action back.
  */
 export async function playAndSettleD1Spin(db, {
-  firebaseUid, gameId, idempotencyKey, ruleVersion, weightedSymbols, paytable, wagerUnits,
+  firebaseUid, gameId, idempotencyKey, ruleVersion, rulesetDigest, weightedSymbols, paytable, wagerUnits,
   activePaylines = 20, tenantId, approvalId, actionDigest, correlationId, authTime,
 }) {
   safeId(firebaseUid, 'firebaseUid');
   safeId(gameId, 'gameId');
   safeId(ruleVersion, 'ruleVersion');
+  safeId(rulesetDigest, 'rulesetDigest');
   safeId(tenantId, 'tenantId');
   safeId(approvalId, 'approvalId');
   safeId(actionDigest, 'actionDigest');
@@ -54,7 +57,7 @@ export async function playAndSettleD1Spin(db, {
 
   // An already-settled retry returns the original result without re-consuming approval.
   const prior = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
-  if (prior) return assertSameRequest(prior, gameId, ruleVersion, wagerUnits);
+  if (prior) return assertSameRequest(prior, gameId, ruleVersion, rulesetDigest, wagerUnits);
 
   const approval = db.prepare(`
     UPDATE lingo_saaae_approvals
@@ -130,8 +133,8 @@ export async function playAndSettleD1Spin(db, {
   const outcome = evaluateSpin5x3({ weightedSymbols, paytable, wagerUnits, activePaylines });
   const insertSession = db.prepare(`
     INSERT INTO lingo_game_sessions
-      (session_id, firebase_uid, game_id, idempotency_key, rule_version, reels_json, wager_units, payout_units, status)
-    SELECT ?, ?, ?, ?, ?, ?, ?, ?, 'pending'
+      (session_id, firebase_uid, game_id, idempotency_key, rule_version, ruleset_digest, reels_json, wager_units, payout_units, status)
+    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending'
      WHERE EXISTS (
        SELECT 1 FROM lingo_saaae_approvals
         WHERE approval_id = ? AND requester_uid = ? AND tenant_id = ?
@@ -139,7 +142,7 @@ export async function playAndSettleD1Spin(db, {
           AND action_digest = ? AND status = 'consumed' AND consumed_by = ?
      )
   `).bind(
-    sessionId, firebaseUid, gameId, idempotencyKey, ruleVersion,
+    sessionId, firebaseUid, gameId, idempotencyKey, ruleVersion, rulesetDigest,
     JSON.stringify(outcome.grid), wagerUnits, outcome.totalPayoutUnits,
     approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, firebaseUid,
   );
@@ -179,7 +182,7 @@ export async function playAndSettleD1Spin(db, {
     await db.batch(statements);
   } catch (error) {
     const existing = await db.prepare(SESSION_SELECT).bind(firebaseUid, idempotencyKey).first();
-    if (existing) return assertSameRequest(existing, gameId, ruleVersion, wagerUnits);
+    if (existing) return assertSameRequest(existing, gameId, ruleVersion, rulesetDigest, wagerUnits);
     throw error;
   }
 
