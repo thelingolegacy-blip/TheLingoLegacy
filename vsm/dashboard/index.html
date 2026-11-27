@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08080b">
+<title>LINGO VSM · Mission Control</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><div class="brand"><span class="mark">L</span><div><strong>LINGO VSM</strong><small>SOVEREIGN MISSION CONTROL</small></div></div><span id="systemState" class="pill">CONNECTING</span></header>
+<main>
+<section class="hero"><p class="eyebrow">THE LINGO LEGACY · RELEASE OPERATIONS</p><h1>One machine.<br><em>Every world.</em></h1><p class="sub">A local-first control plane for releases, evidence, gates and owner-authorized transitions. Production remains separate.</p></section>
+<section class="stats">
+ <article><small>CONTROL PLANE</small><b id="apiState">—</b><span>Local runtime</span></article>
+ <article><small>RELEASE PACKAGES</small><b id="releaseCount">0</b><span>Registered</span></article>
+ <article><small>AUTHORITY</small><b id="authorityState">FAIL-CLOSED</b><span>Production bridge disabled</span></article>
+</section>
+<section class="section-head"><div><p class="eyebrow">CONTROL CENTERS</p><h2>Mission systems</h2></div></section>
+<div id="centers" class="centers"></div>
+<section class="panel">
+ <div class="section-head"><div><p class="eyebrow">RELEASE DISPATCH CENTER</p><h2>Create a release package</h2></div><span class="pill neutral">LOCAL REGISTRY</span></div>
+ <form id="releaseForm">
+  <label>Release title<input name="title" required maxlength="160" placeholder="Casino floor polish + homepage improvement"></label>
+  <div class="two"><label>Source commit SHA<input name="commit" required minlength="7" maxlength="64" pattern="[a-fA-F0-9]{7,64}" placeholder="40-character Git SHA"></label><label>Branch<input name="branch" value="main" required></label></div>
+  <label>Target<select name="target"><option value="local-preview">Local preview</option><option value="staging">Staging</option><option value="production-candidate">Production candidate (no deployment)</option></select></label>
+  <button type="submit">Create release package</button>
+  <p id="formMessage" class="message">Packages start as drafts. Gates begin UNKNOWN. No deployment is triggered.</p>
+ </form>
+</section>
+<section class="panel">
+ <div class="section-head"><div><p class="eyebrow">EVIDENCE & ACCEPTANCE</p><h2>Release registry</h2></div><button id="refresh" class="secondary">Refresh</button></div>
+ <div id="releases" class="release-list"><p class="muted">Loading release registry…</p></div>
+</section>
+<footer>LINGO LEGACY · SOVEREIGN VSM · LOCAL CONTROL PLANE · PRODUCTION BRIDGE DISABLED BY DEFAULT</footer>
+</main>
+<script src="/app.js" defer></script>
+</body></html>
