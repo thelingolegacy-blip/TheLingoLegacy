@@ -5,6 +5,7 @@ import crypto from "node:crypto";
 import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./identity/identity.mjs";
 import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob } from "./sonic-boom/lane.mjs";
 import { executeBot } from "./ai/bot-worker.mjs";
+import { writeEvidence, readEvidence } from "./evidence/store.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -40,6 +41,7 @@ const OWNER_IDENTITY = await ensureOwnerIdentity();
 await loadLane();
 const releasesFile = path.join(DATA_DIR, "releases.json");
 const auditFile = path.join(DATA_DIR, "audit.jsonl");
+let auditQueue = Promise.resolve();
 
 async function readReleases() {
   try { return JSON.parse(await fs.readFile(releasesFile, "utf8")); }
@@ -50,9 +52,20 @@ async function writeReleases(items) {
   await fs.writeFile(tmp, JSON.stringify(items, null, 2) + "\n", { mode: 0o600 });
   await fs.rename(tmp, releasesFile);
 }
-async function audit(event, detail = {}) {
-  const row = { at: new Date().toISOString(), event, detail };
-  await fs.appendFile(auditFile, JSON.stringify(row) + "\n", { mode: 0o600 });
+function audit(event, detail = {}) {
+  const write = async () => {
+    let previousHash = "GENESIS";
+    try {
+      const raw = await fs.readFile(auditFile, "utf8");
+      const last = raw.trimEnd().split("\n").at(-1);
+      if (last) previousHash = JSON.parse(last).hash;
+    } catch (error) { if (error.code !== "ENOENT") throw error; }
+    const base = { at: new Date().toISOString(), event, detail, previous_hash: previousHash };
+    const hash = crypto.createHash("sha256").update(JSON.stringify(base)).digest("hex");
+    await fs.appendFile(auditFile, JSON.stringify({ ...base, hash }) + "\n", { mode: 0o600 });
+  };
+  auditQueue = auditQueue.then(write, write);
+  return auditQueue;
 }
 function send(res, status, data, headers = {}) {
   const body = JSON.stringify(data);
@@ -111,6 +124,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.1.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
+    if (req.method === "GET" && url.pathname === "/api/audit/verify") {
+      const raw = await fs.readFile(auditFile, "utf8").catch(error => error.code === "ENOENT" ? "" : Promise.reject(error));
+      let previous = "GENESIS"; let verified = 0;
+      for (const line of raw.split("\n").filter(Boolean)) { const row = JSON.parse(line); const { hash, ...base } = row; const actual = crypto.createHash("sha256").update(JSON.stringify(base)).digest("hex"); if (row.previous_hash !== previous || hash !== actual) return send(res, 200, { ok: false, verified, broken_at: verified + 1 }); previous = hash; verified++; }
+      return send(res, 200, { ok: true, verified, head: previous });
+    }
+    const evidenceMatch = url.pathname.match(/^\/api\/evidence\/(ev-[a-z0-9-]+)$/);
+    if (req.method === "GET" && evidenceMatch) { if (!auth(req)) return send(res, 401, { error: "Owner authorization required." }); const record = await readEvidence(evidenceMatch[1]); return send(res, 200, record); }
     if (req.method === "GET" && url.pathname === "/api/identity") {
       const principal = await getOwnerPrincipal();
       return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });
@@ -173,6 +194,8 @@ const server = http.createServer(async (req, res) => {
       if (!release) return send(res, 404, { error: "Release package not found." });
       const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_IDENTITY.id, attested_at: new Date().toISOString() };
       release.gates[gate] = input.decision;
+      const evidence = await writeEvidence({ releaseId: id, type: "gate-attestation", payload: attestation, createdBy: OWNER_IDENTITY.id });
+      attestation.evidence_record = evidence;
       release.evidence.gate_attestations = [...(release.evidence.gate_attestations || []), attestation];
       release.updated_at = attestation.attested_at;
       await writeReleases(releases); await audit("gate.attested", { id, ...attestation });
@@ -187,7 +210,8 @@ const server = http.createServer(async (req, res) => {
       if (action === "probe") {
         if (release.status !== "draft" && release.status !== "pending") return send(res, 409, { error: "Probes are only allowed for draft or pending packages." });
         const probes = await runProbes();
-        release.evidence.probes.push(...probes.map(p => ({ ...p, checked_at: new Date().toISOString() })));
+        const probeEvidence = await writeEvidence({ releaseId: id, type: "probe", payload: probes, createdBy: OWNER_IDENTITY.id });
+        release.evidence.probes.push({ ...probeEvidence, probe_count: probes.length, all_ok: probes.every(p => p.ok) });
         release.gates.runtime = probes.every(p => p.ok) ? "PASS" : "FAIL";
         release.updated_at = new Date().toISOString();
         await writeReleases(releases); await audit("release.probed", { id, runtime: release.gates.runtime, probe_count: probes.length });
