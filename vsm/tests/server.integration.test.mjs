@@ -148,6 +148,17 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   });
   assert.equal(productionRun.status, 423);
 
+  const invalidMutation = await fetch(base + "/api/runs", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify({ config: {
+      run_id: "api-bad-idempotency", target: "local", run_type: "local-validation",
+      ALLOW_DESTRUCTIVE: true,
+      tracks: [{ id: "mutation", criticality: "critical", steps: [{ id: "write", command: "node", args: ["-e", "process.exit(0)"], mutating: true, idempotency_key: "short" }] }]
+    } })
+  });
+  assert.equal(invalidMutation.status, 400);
+
   const startedRun = await fetch(base + "/api/runs", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
