@@ -110,3 +110,15 @@ A successful SQL apply alone is not product acceptance, release authorization, o
 ## 7. Explicit non-actions
 
 This runbook does not authorize production migration, data transfer, deletion, secret rotation, DNS changes, Worker deployment, route attachment, or lifting the G02 protected hold.
+
+
+## Migration 0004 — immutable game ruleset digest
+
+Migration `migrations/0004_lingo_game_ruleset_digest.sql` adds `ruleset_digest` to `lingo_game_sessions` without dropping or rewriting existing rows. Existing rows receive an empty value and are intentionally not eligible for replay under the new versioned 5×3 contract. New settlements persist a 64-character lowercase SHA-256 digest of the exact server-owned weighted-symbol and paytable configuration, grid geometry, and Option 2 allocation contract.
+
+Apply only after confirming the live staging schema and current Time Travel bookmark. Verify:
+- `PRAGMA table_info(lingo_game_sessions)` includes `ruleset_digest`.
+- Existing session rows remain unchanged apart from the additive default value.
+- New session writes reject malformed non-empty digests.
+- Idempotency replay returns the original settlement only when game ID, rules version, ruleset digest, wager, and idempotency key all match; changed ruleset digest must conflict.
+- No production database is a target.
