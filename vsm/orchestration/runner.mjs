@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import {
   createRunConfig, preflightSecrets, scopedTrackEnvironment, retryDecision,
   transientRetryDelayMs, createBudgetLedger, chargeBudget, structuredRunEvent,
-  RUN_DEFAULTS
+  RUN_DEFAULTS, SECRET_NAMES
 } from "./run-contract.mjs";
 
 const EXECUTABLES = new Set(["node", "npm"]);
@@ -133,7 +133,7 @@ export async function executeRun(input, {
   catch (error) { if (error.code === "EEXIST") return { run_id: config.run_id, status: "RUN_ID_CONFLICT", tracks: {} }; throw error; }
 
   const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
-  const secretValues = [...new Set(required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0).flatMap(value => {
+  const secretValues = [...new Set(SECRET_NAMES.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0).flatMap(value => {
     try {
       const parsed = JSON.parse(value);
       const privateKey = typeof parsed.private_key === "string" ? parsed.private_key : "";
@@ -141,7 +141,7 @@ export async function executeRun(input, {
     } catch { return [value]; }
   }))];
   const serializedConfig = JSON.stringify(config);
-  const exposedSecretNames = required.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value)));
+  const exposedSecretNames = SECRET_NAMES.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value) && (environment[name] === value || (aliasGroups.find(group => group.includes(name)) || [name]).some(key => environment[key] === value))));
   if (exposedSecretNames.length) {
     const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames }); securityFailure.owner_notification = "SENT"; } catch { securityFailure.owner_notification = "FAILED"; } }
