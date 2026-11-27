@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const PORT = Number(process.env.PORT || 8787);
+const PORT = Number(process.env.PORT || 8787);\nconst PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
 const HOST = process.env.HOST || "127.0.0.1";
 const DATA_DIR = process.env.VSM_DATA_DIR || path.join(process.cwd(), "data");
 const WORKSPACE = process.env.VSM_WORKSPACE || path.resolve(process.cwd(), "..");
@@ -175,3 +175,22 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => console.log(`LINGO VSM listening on http://${HOST}:${PORT}; production bridge disabled`));
+
+const previewServer = http.createServer(async (req, res) => {
+  try {
+    if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405); return res.end("Method not allowed"); }
+    const url = new URL(req.url || "/", "http://127.0.0.1");
+    const relative = decodeURIComponent(url.pathname === "/" ? "index.html" : url.pathname.slice(1));
+    const segments = relative.split(/[\\/]+/);
+    if (segments.some(part => part.startsWith(".") || ["vsm", "node_modules"].includes(part.toLowerCase()))) { res.writeHead(403); return res.end("Forbidden"); }
+    let target = path.resolve(WORKSPACE, relative);
+    if (target !== WORKSPACE && !target.startsWith(WORKSPACE + path.sep)) { res.writeHead(400); return res.end("Invalid path"); }
+    try { if ((await fs.stat(target)).isDirectory()) target = path.join(target, "index.html"); } catch {}
+    return serveFile(res, target, WORKSPACE);
+  } catch (error) {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end(error.message || "Bad request");
+  }
+});
+previewServer.listen(PREVIEW_PORT, HOST, () => console.log(`LINGO VSM static preview listening on http://${HOST}:${PREVIEW_PORT}`));
+
