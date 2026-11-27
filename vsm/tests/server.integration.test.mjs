@@ -77,6 +77,25 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   const { release } = await created.json();
   assert.equal(release.status, "draft");
 
+  const deniedProbe = await fetch(`${base}/api/releases/${release.id}/probe`, { method: "POST" });
+  assert.equal(deniedProbe.status, 403);
+  const deniedAcceptance = await fetch(`${base}/api/releases/${release.id}/accept`, { method: "POST" });
+  assert.equal(deniedAcceptance.status, 403);
+  const blockedAcceptance = await fetch(`${base}/api/releases/${release.id}/accept`, {
+    method: "POST", headers: { authorization: `Bearer ${token}` }
+  });
+  assert.equal(blockedAcceptance.status, 409);
+  const deniedLaneConfig = await fetch(base + "/api/sonic-boom", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ enabled: true, max_parallel_jobs: 2 })
+  });
+  assert.equal(deniedLaneConfig.status, 403);
+  const deniedBot = await fetch(base + "/api/bots/run", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ bot_id: "lingo://id/bot-math", task: "validate_probability_input", input: { probability: 0.5 } })
+  });
+  assert.equal(deniedBot.status, 403);
+
   const attested = await fetch(`${base}/api/releases/${release.id}/gates/security`, {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
