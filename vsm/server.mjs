@@ -188,7 +188,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/studio/assets") {
       if (!can(req, "studio.propose")) return send(res, 403, { error: "Studio asset proposal capability required." });
       const input = await bodyJson(req);
-      const asset = await createStudioAsset(input, OWNER_IDENTITY.id);
+      let asset;
+      try { asset = await createStudioAsset(input, OWNER_IDENTITY.id); }
+      catch (error) { return send(res, 400, { error: error.message || "Invalid asset metadata." }); }
       await audit("studio.asset.proposed", { asset_id: asset.id, division: asset.division, kind: asset.kind, rights_status: asset.rights_status, created_by: OWNER_IDENTITY.id });
       return send(res, 201, { asset, note: "Metadata proposal recorded. Binary upload, rights clearance and publication remain separate approvals." });
     }
