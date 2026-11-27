@@ -51,6 +51,19 @@ test("Firebase service-account private-key material is redacted from child logs"
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("rejects credentials embedded in run configuration arguments before any track starts", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-args-secret-"));
+  try {
+    const token = "ghp_test_token_must_not_be_embedded";
+    const summary = await executeRun(base([
+      { id: "bad-args", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.stdout.write('never')", token] }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH, GITHUB_TOKEN: token } });
+    assert.equal(summary.status, "SECURITY_ABORT");
+    assert.deepEqual(summary.exposed_secret_names, ["GITHUB_TOKEN"]);
+    assert.equal(summary.tracks && Object.keys(summary.tracks).length, 0);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner executes steps from the configured execution root", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
   try {
