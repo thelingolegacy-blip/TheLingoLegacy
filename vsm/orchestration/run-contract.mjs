@@ -63,7 +63,7 @@ export function createRunConfig(input = {}) {
 function validSecretValue(name, value) {
   if (typeof value !== "string" || value.trim().length === 0) return false;
   if (name === "CI_DEPLOY_KEY") return /-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(value) || /OPENSSH PRIVATE KEY/.test(value);
-  if (/[\\r\\n]/.test(value)) return false;
+  if (/[\r\n]/.test(value)) return false;
   if (name === "FIREBASE_SERVICE_ACCOUNT") {
     try {
       const parsed = JSON.parse(value);
