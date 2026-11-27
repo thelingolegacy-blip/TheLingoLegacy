@@ -43,6 +43,8 @@ redacted\
   assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_TOKEN: "firebase-token-123456" }), { ok: true, missing: [], invalid: [] });
   assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_SERVICE_ACCOUNT: firebase }), { ok: true, missing: [], invalid: [] });
   assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_SERVICE_ACCOUNT: "malformed" }), { ok: false, missing: [], invalid: ["FIREBASE_SERVICE_ACCOUNT"] });
+  const invalidPem = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "ci@lingo-stage.iam.gserviceaccount.com", private_key: "not-a-private-key" });
+  assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_SERVICE_ACCOUNT: invalidPem }), { ok: false, missing: [], invalid: ["FIREBASE_SERVICE_ACCOUNT"] });
 });
 
 test("retry policy is bounded and distinguishes transient from permanent failures", () => {
