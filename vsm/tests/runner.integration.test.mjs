@@ -176,6 +176,47 @@ test("cancelling one non-critical track yields a partial run while other tracks 
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("credential exposure in child output aborts all tracks, redacts evidence and notifies owner", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-secret-leak-"));
+  const token = "cloudflare-secret-material-123456";
+  const notifications = [];
+  try {
+    const summary = await executeRun(base([
+      { id: "leaker", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [{ id: "leak-attempt", command: "node", args: ["-e", "setTimeout(()=>process.stdout.write(process.env.CLOUDFLARE_API_TOKEN),100)"] }] },
+      { id: "parallel", criticality: "important", required_secrets: [], steps: [{ id: "wait", command: "node", args: ["-e", "setTimeout(()=>process.exit(0),5000)"] }] }
+    ]), {
+      rootDir, environment: { PATH: process.env.PATH, CLOUDFLARE_API_TOKEN: token },
+      notifyOwner: async event => notifications.push(event)
+    });
+    assert.equal(summary.status, "SECURITY_ABORT");
+    assert.equal(summary.tracks.leaker.status, "FAILED");
+    assert.equal(summary.owner_notification, "SENT");
+    assert.equal(notifications.length, 1);
+    const log = await fs.readFile(path.join(summary.artifact_directory, "tracks", "leaker", "leak-attempt.log"), "utf8");
+    assert.equal(log, "[REDACTED]");
+    assert.equal(log.includes(token), false);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
+test("credential values embedded in run configuration abort before any track starts", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-secret-config-"));
+  const token = "github-secret-material-123456";
+  const notifications = [];
+  try {
+    const summary = await executeRun(base([
+      { id: "unsafe-config", criticality: "critical", required_secrets: ["GITHUB_TOKEN"], steps: [{ command: "node", args: ["-e", token] }] }
+    ]), {
+      rootDir, environment: { PATH: process.env.PATH, GITHUB_TOKEN: token },
+      notifyOwner: async event => notifications.push(event)
+    });
+    assert.equal(summary.status, "SECURITY_ABORT");
+    assert.deepEqual(summary.exposed_secret_names, ["GITHUB_TOKEN"]);
+    assert.equal(Object.keys(summary.tracks).length, 0);
+    assert.equal(summary.owner_notification, "SENT");
+    assert.equal(notifications.length, 1);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("near-empty successful logs are rejected and retried within the attempt limit", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-near-empty-"));
   try {
