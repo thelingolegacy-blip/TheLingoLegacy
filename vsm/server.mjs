@@ -6,6 +6,7 @@ import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./iden
 import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob } from "./sonic-boom/lane.mjs";
 import { executeBot } from "./ai/bot-worker.mjs";
 import { writeEvidence, readEvidence } from "./evidence/store.mjs";
+import { authorize, policySnapshot } from "./security/policy.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -74,7 +75,7 @@ function send(res, status, data, headers = {}) {
 }
 function auth(req) {
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  return OWNER_TOKEN.length >= 32 && supplied.length === OWNER_TOKEN.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(OWNER_TOKEN));
+  return OWNER_TOKEN.length >= 32 && supplied.length === OWNER_TOKEN.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(OWNER_TOKEN)) && authorize(OWNER_IDENTITY, "vsm.read");
 }
 async function bodyJson(req) {
   let raw = "";
@@ -132,7 +133,7 @@ const server = http.createServer(async (req, res) => {
     }
     const evidenceMatch = url.pathname.match(/^\/api\/evidence\/(ev-[a-z0-9-]+)$/);
     if (req.method === "GET" && evidenceMatch) { if (!auth(req)) return send(res, 401, { error: "Owner authorization required." }); const record = await readEvidence(evidenceMatch[1]); return send(res, 200, record); }
-    if (req.method === "GET" && url.pathname === "/api/identity") {
+    if (req.method === "GET" && url.pathname === "/api/security/policy") {\n      return send(res, 200, policySnapshot());\n    }\n    if (req.method === "GET" && url.pathname === "/api/identity") {
       const principal = await getOwnerPrincipal();
       return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });
     }
