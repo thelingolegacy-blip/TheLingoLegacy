@@ -180,7 +180,15 @@ test("runner supports per-track cancellation without aborting non-critical sibli
       { id: "primary", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 500)"], timeout_ms: 5000 }] },
       { id: "optional", criticality: "best-effort", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 5000)"], timeout_ms: 7000 }] }
     ]), { rootDir, environment: { PATH: process.env.PATH } });
-    await new Promise(resolve => setTimeout(resolve, 150));
+    let optionalActive = false;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      try {
+        const state = JSON.parse(await fs.readFile(path.join(rootDir, "artifacts", "runner-test-001", "status.json"), "utf8"));
+        if (state.tracks.optional?.status === "RUNNING") { optionalActive = true; break; }
+      } catch {}
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert.equal(optionalActive, true);
     assert.equal(controller.cancelTrack("optional"), true);
     const summary = await controller.promise;
     assert.equal(summary.tracks.primary.status, "SUCCESS");
