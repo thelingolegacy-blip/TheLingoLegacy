@@ -169,12 +169,11 @@ export function chargeBudget(ledger, trackId, { toolCalls = 0, costUsd = 0, now 
 }
 export function structuredRunEvent({ runId, trackId = null, step = null, status, attempt = 1, startedAt, endedAt = Date.now(), detail = {}, secretValues = [] }) {
   const redact = (value, key = "") => {
-    if (/secret|token|password|credential|authorization/i.test(key)) return "[REDACTED]";
+    if (/(secret|token|password|credential|authorization|api[_-]?key|private[_-]?key)/i.test(key)) return "[REDACTED]";
     if (typeof value === "string") return secretValues.filter(item => typeof item === "string" && item.length > 0).reduce((text, secret) => text.split(secret).join("[REDACTED]"), value);
     if (Array.isArray(value)) return value.map(item => redact(item));
     if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, redact(item, name)]));
     return value;
   };
-  const safeDetail = redact(detail);
-  return { timestamp: new Date(endedAt).toISOString(), run_id: runId, track_id: trackId, step, status, attempt, duration_ms: startedAt === undefined ? null : Math.max(0, endedAt - startedAt), detail: safeDetail };
+  return redact({ timestamp: new Date(endedAt).toISOString(), run_id: runId, track_id: trackId, step, status, attempt, duration_ms: startedAt === undefined ? null : Math.max(0, endedAt - startedAt), detail });
 }
