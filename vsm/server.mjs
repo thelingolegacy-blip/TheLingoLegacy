@@ -75,7 +75,9 @@ function send(res, status, data, headers = {}) {
 }
 function auth(req) {
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  return OWNER_TOKEN.length >= 32 && supplied.length === OWNER_TOKEN.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(OWNER_TOKEN)) && authorize(OWNER_IDENTITY, "vsm.read");
+  const suppliedBytes = Buffer.from(supplied, "utf8");
+  const expectedBytes = Buffer.from(OWNER_TOKEN, "utf8");
+  return expectedBytes.length >= 32 && suppliedBytes.length === expectedBytes.length && crypto.timingSafeEqual(suppliedBytes, expectedBytes) && authorize(OWNER_IDENTITY, "vsm.read");
 }
 async function bodyJson(req) {
   let raw = "";
