@@ -13,6 +13,8 @@ services:
       VSM_WORKSPACE: /workspace
       VSM_OWNER_TOKEN: ${VSM_OWNER_TOKEN:?Set VSM_OWNER_TOKEN in vsm/.env}
       VSM_OWNER_NAME: ${VSM_OWNER_NAME:-Zavione}
+      LINGO_ID_HANDLE: ${LINGO_ID_HANDLE:-owner}
+      LINGO_ID_DISPLAY_NAME: ${LINGO_ID_DISPLAY_NAME:-LINGO Owner}
       VSM_PROBE_BASE_URL: ${VSM_PROBE_BASE_URL:-https://thelingolegacy.com}
     ports:
       - "127.0.0.1:8787:8787"
@@ -33,10 +35,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
-volumes:
-  vsm-data:
-    name: lingo-vsm-data
 
   lingo-forge:
     image: gitea/gitea:1.24.7-rootless
@@ -62,3 +60,10 @@ volumes:
     security_opt:
       - no-new-privileges:true
 
+volumes:
+  vsm-data:
+    name: lingo-vsm-data
+  lingo-forge-data:
+    name: lingo-forge-data
+  lingo-forge-config:
+    name: lingo-forge-config
