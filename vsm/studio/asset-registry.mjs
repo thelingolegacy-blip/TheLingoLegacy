@@ -54,13 +54,13 @@ export async function createStudioAsset(input, createdBy) {
   if (description.length > 2000) throw new Error("Description must be 2000 characters or fewer.");
   const tags = input.tags === undefined ? [] : input.tags;
   if (!Array.isArray(tags) || tags.length > 20 || tags.some(tag => typeof tag !== "string" || tag.trim().length < 1 || tag.trim().length > 32)) throw new Error("tags must contain up to 20 strings of 1–32 characters.");
-  const contentSha256 = input.content_sha256 === undefined || input.content_sha256 === "" ? null : input.content_sha256;
-  if (contentSha256 !== null && (typeof contentSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(contentSha256))) throw new Error("content_sha256 must be a 64-character hexadecimal digest.");
+  const declaredSha256 = input.declared_content_sha256 === undefined || input.declared_content_sha256 === "" ? null : input.declared_content_sha256;
+  if (declaredSha256 !== null && (typeof declaredSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(declaredSha256))) throw new Error("declared_content_sha256 must be a 64-character hexadecimal digest.");
   const sourceUri = validateSourceUri(input.source_uri);
   const record = {
     id: "la-" + Date.now().toString(36) + "-" + crypto.randomBytes(6).toString("hex"),
     name, division, kind, description, tags: tags.map(tag => tag.trim()),
-    source_uri: sourceUri, content_sha256: contentSha256?.toLowerCase() || null,
+    source_uri: sourceUri, declared_content_sha256: declaredSha256?.toLowerCase() || null,
     rights_status: rights, status: "proposed", created_by: createdBy,
     created_at: new Date().toISOString(), version: 1
   };
