@@ -42,7 +42,7 @@ docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
 
 Gitea registration is disabled and repository viewing requires sign-in. Complete the first-run setup locally and create the initial Forge administrator. Do not reuse the VSM owner token as the Forge password. Keep all credentials in a password manager.
 
-Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
+Or use the launcher from the repository root: `sh vsm/lingo-vsm doctor` for prerequisites, `sh vsm/lingo-vsm verify` for local syntax/unit/API tests plus container build and Compose validation, `sh vsm/lingo-vsm up` to start the core services, and `sh vsm/lingo-vsm worker-preview` to start the optional OpenNext/Wrangler runtime. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
 To start the real OpenNext/Cloudflare Worker-compatible local preview as well, ensure `VSM_WEB_REPO_PATH` points to the sibling `TheLingoLegacy-Web` checkout, then run `docker compose --profile worker-preview --env-file vsm/.env -f vsm/docker-compose.yml up -d`. The profile copies the Web source into a separate writable runtime volume, excludes `.env*` and `.dev.vars*`, installs the locked dependencies, builds with OpenNext and starts Wrangler Dev in staging mode. It is loopback-only on port 8790; rebuild/recreate the service after source changes. This is a local Worker runtime preview, not a production deployment or proof of production bindings.
 
@@ -89,7 +89,7 @@ The Docker image build automatically runs JavaScript syntax checks and the Node 
 
 ## Local verification commands
 
-From the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.
+From the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands are configured but have not yet been executed in the hosted repository workspace. The `verify` command runs locally and builds the VSM image; it does not start services or deploy anything.
 
 ## Verification status
 
