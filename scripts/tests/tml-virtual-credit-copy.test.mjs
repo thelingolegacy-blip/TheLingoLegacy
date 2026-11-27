@@ -50,6 +50,7 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.match(primaryGame, /Vegas Studio demo with <span>virtual-credit guardrails/);
   assert.match(primaryGame, /Active paylines: <strong id="activePaylines">20<\/strong>/);
   assert.doesNotMatch(primaryGame, /<select id="activePaylines"/);
+  assert.match(primaryGame, /Divided evenly across all 20 paylines/);
   assert.doesNotMatch(primaryGame, /social casino demo|Casino-style demo|Casino Demo|Sweepstakes-safe monetizing visuals/i);
 });
 
