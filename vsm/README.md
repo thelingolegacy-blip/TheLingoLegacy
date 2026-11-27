@@ -27,7 +27,7 @@ Local-first release control plane in the canonical repository. This is additive:
 
 `orchestration/run-contract.mjs` and `schemas/run-config.schema.json` define the initial machine-checked run policy: bounded duration (45-minute default, 90-minute absolute maximum), global tool-call cap (1,200), default estimated cost ceiling ($15), up to five uniquely identified tracks with criticality, per-track tool/cost budgets, production dry-run defaults, explicit secret-name allowlists, secret preflight, track-scoped environment construction, bounded retry decisions, and structured event redaction. The default empty-log policy allows three total attempts; transient infrastructure failures are limited to three retries and a four-minute retry window; authentication and other permanent failures do not retry.
 
-**Integration boundary:** these are validated policy primitives and tests, not yet a live five-process orchestrator. The current API does not yet run five isolated tracks, inject short-lived credentials from a platform secret store, unset process secrets on cancellation, enforce wall-clock/tool/cost budgets across external tool calls, upload retained artifacts, expose pause/resume/abort controls, or run a crash watchdog. Those controls remain mandatory before this contract can be called operational. A local-only run has no Firebase/Cloudflare credential requirement unless a selected track declares it. Secret values must never be emitted in events or artifacts.
+**Integration boundary:** the policy layer is now connected to an experimental local parallel process runner and owner-authenticated run API. It supports up to five isolated track working directories, per-track allowlisted environment injection from the parent process, credential preflight, local run-scoped events/status/summary files, 30-day local artifact pruning, bounded retry logic, estimated cost and process-launch budgets, a wall-clock watchdog, per-step timeout, and cooperative pause/resume/cancel with SIGTERM/SIGKILL escalation. Credentials are not read from `.env` by the run command and must be injected by the invoking CI/platform secret store. This is not yet a complete production orchestrator: there is no remote artifact upload, durable external watchdog, platform secret-store retrieval/short-lived token minting, reliable owner notification channel, automatic metering of third-party tool calls or actual spend, or independently tested crash recovery. Production-target runs are blocked in the API and production promotion remains disabled.
 
 ## Boot
 
@@ -57,6 +57,9 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 ## API
 
 - `GET /api/health`
+- `POST /api/runs` — owner-only, starts a local/staging-target dry-run validation plan with up to five isolated process tracks; production target is rejected.
+- `GET /api/runs/:run_id` — owner-only live status and completed summary.
+- `POST /api/runs/:run_id/pause|resume|cancel` — owner-only cooperative controls with forced process termination after the grace period.
 - `GET /api/identity` — public owner principal and local-first identity status.
 - `GET /api/session` — validates the Owner token and returns the local session capability set.
 - `GET /api/security/policy` — read-only SAAAE role/capability policy.
