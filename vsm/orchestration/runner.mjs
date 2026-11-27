@@ -137,6 +137,12 @@ export async function executeRun(input, {
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso() });
     return securityFailure;
   }
+  if (!secretCheck.ok) {
+    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, finished_at: iso() };
+    await atomicJson(path.join(runDir, "summary.json"), summary);
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "PREFLIGHT_FAILED", updated_at: iso() });
+    return summary;
+  }
   const ledger = createBudgetLedger(config, now());
   const resourceCheck = await preflightResources(rootDir, config);
   const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl) : { ok: true, results: [], skipped: true };
@@ -187,13 +193,6 @@ export async function executeRun(input, {
     control.resume = () => { pauseRequested = false; originalResume(); };
     const originalCancel = control.cancel;
     control.cancel = reason => { originalCancel(reason); cancelAll(reason || "human-cancelled"); };
-  }
-
-  if (!secretCheck.ok) {
-    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, finished_at: iso() };
-    await atomicJson(path.join(runDir, "summary.json"), summary);
-    await updateStatus("PREFLIGHT_FAILED");
-    return summary;
   }
 
   const runProcess = async (step, track, trackDir, trackEnv, signal) => {
