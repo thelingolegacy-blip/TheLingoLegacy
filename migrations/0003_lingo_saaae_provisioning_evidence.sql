@@ -7,7 +7,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS lingo_saaae_provisioning_requests (
   request_id TEXT PRIMARY KEY,
   environment TEXT NOT NULL CHECK (environment = 'staging'),
-  target_firebase_project TEXT NOT NULL,
+  target_firebase_project TEXT NOT NULL CHECK (target_firebase_project = 'lingo-legacy-staging'),
   target_firebase_uid TEXT NOT NULL,
   tenant_id TEXT NOT NULL,
   product_id TEXT NOT NULL,
