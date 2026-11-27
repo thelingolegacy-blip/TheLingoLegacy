@@ -133,15 +133,20 @@ export async function executeRun(input, {
   catch (error) { if (error.code === "EEXIST") return { run_id: config.run_id, status: "RUN_ID_CONFLICT", tracks: {} }; throw error; }
 
   const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
-  const secretValues = [...new Set(SECRET_NAMES.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0).flatMap(value => {
+  const secretKeys = [...new Set(SECRET_NAMES.flatMap(name => aliasGroups.find(group => group.includes(name)) || [name]))];
+  const secretEntries = secretKeys.flatMap(name => {
+    const value = environment[name];
+    if (typeof value !== "string" || value.length === 0) return [];
+    const fragments = [value, ...value.split(/\\r?\\n/).filter(Boolean)];
     try {
       const parsed = JSON.parse(value);
-      const privateKey = typeof parsed.private_key === "string" ? parsed.private_key : "";
-      return [value, ...(privateKey ? [privateKey, ...privateKey.split(/\r?\n/).filter(Boolean)] : [])];
-    } catch { return [value]; }
-  }))];
+      if (typeof parsed.private_key === "string") fragments.push(parsed.private_key, ...parsed.private_key.split(/\\r?\\n/).filter(Boolean));
+    } catch {}
+    return [...new Set(fragments)].map(fragment => ({ name, value: fragment }));
+  });
+  const secretValues = [...new Set(secretEntries.map(entry => entry.value))];
   const serializedConfig = JSON.stringify(config);
-  const exposedSecretNames = SECRET_NAMES.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value) && (environment[name] === value || (aliasGroups.find(group => group.includes(name)) || [name]).some(key => environment[key] === value))));
+  const exposedSecretNames = [...new Set(secretEntries.filter(entry => serializedConfig.includes(entry.value)).map(entry => entry.name))];
   if (exposedSecretNames.length) {
     const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames }); securityFailure.owner_notification = "SENT"; } catch { securityFailure.owner_notification = "FAILED"; } }
