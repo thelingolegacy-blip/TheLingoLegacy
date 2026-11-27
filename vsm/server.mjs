@@ -104,7 +104,25 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.1.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
-    if (req.method === "GET" && url.pathname === "/api/identity") {\n      const principal = await getOwnerPrincipal();\n      return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });\n    }\n    if (req.method === "GET" && url.pathname === "/api/sonic-boom") {\n      return send(res, 200, { lane: sonicBoomSnapshot(), policy: "priority and bounded concurrency only; gates remain mandatory" });\n    }\n    if (req.method === "POST" && url.pathname === "/api/sonic-boom") {\n      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });\n      const input = await bodyJson(req);\n      const lane = await configureLane(input);\n      await audit("sonic_boom.configured", { owner_id: OWNER_IDENTITY.id, lane });\n      return send(res, 200, { lane });\n    }\n    if (req.method === "GET" && url.pathname === "/api/bots") {\n      const bots = JSON.parse(await fs.readFile(path.join(process.cwd(), "ai", "bots.json"), "utf8"));\n      return send(res, 200, bots);\n    }\n    if (req.method === "GET" && url.pathname === "/api/centers") {
+    if (req.method === "GET" && url.pathname === "/api/identity") {
+      const principal = await getOwnerPrincipal();
+      return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/sonic-boom") {
+      return send(res, 200, { lane: sonicBoomSnapshot(), policy: "priority and bounded concurrency only; gates remain mandatory" });
+    }
+    if (req.method === "POST" && url.pathname === "/api/sonic-boom") {
+      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      const input = await bodyJson(req);
+      const lane = await configureLane(input);
+      await audit("sonic_boom.configured", { owner_id: OWNER_IDENTITY.id, lane });
+      return send(res, 200, { lane });
+    }
+    if (req.method === "GET" && url.pathname === "/api/bots") {
+      const bots = JSON.parse(await fs.readFile(path.join(process.cwd(), "ai", "bots.json"), "utf8"));
+      return send(res, 200, bots);
+    }
+    if (req.method === "GET" && url.pathname === "/api/centers") {
       return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "REGISTERED", phase: 0 })) });
     }
     if (req.method === "GET" && url.pathname === "/api/releases") {
@@ -157,8 +175,9 @@ const server = http.createServer(async (req, res) => {
       const missing = REQUIRED_GATES.filter(g => release.gates[g] !== "PASS");
       if (missing.length) return send(res, 409, { error: "Acceptance denied: required gates are not PASS.", blocked_gates: missing });
       if (release.target === "production-candidate") return send(res, 423, { error: "Production acceptance is disabled in Phase 0. Use the staging/preview evidence and a separately authorized promotion bridge." });
-      release.status = "accepted"; release.accepted_by = OWNER_NAME; release.accepted_at = new Date().toISOString(); release.updated_at = release.accepted_at;
-      await writeReleases(releases); await audit("release.accepted", { id, accepted_by: OWNER_NAME });
+      release.status = "accepted"; release.accepted_by = OWNER_IDENTITY.id; release.accepted_at = new Date().toISOString(); release.updated_at = release.accepted_at;
+      release.acceptance_signature = await signOwnerPayload({ release_id: id, source: release.source, target: release.target, gates: release.gates, accepted_at: release.accepted_at });
+      await writeReleases(releases); await audit("release.accepted", { id, accepted_by: OWNER_IDENTITY.id, signature_algorithm: "Ed25519" });
       return send(res, 200, { release, message: "Accepted for local workflow only. No deployment was performed." });
     }
     if (req.method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/style.css") || url.pathname.startsWith("/app.js"))) {
