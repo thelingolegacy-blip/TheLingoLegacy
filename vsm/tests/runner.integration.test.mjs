@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { spawn } from "node:child_process";
+
 import { executeRun, createRunController } from "../orchestration/runner.mjs";
 
 const base = (tracks, extra = {}) => ({
