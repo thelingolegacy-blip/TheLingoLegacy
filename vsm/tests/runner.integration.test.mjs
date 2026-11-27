@@ -146,6 +146,33 @@ test("runner rejects destructive steps unless explicitly authorized and idempote
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("cancelling one non-critical track yields a partial run while other tracks finish", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-track-cancel-"));
+  try {
+    const controller = createRunController(base([
+      { id: "optional", criticality: "best-effort", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 1000)"] }] },
+      { id: "required", criticality: "important", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.stdout.write('done')"], require_nonempty_log: true }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(controller.cancelTrack("optional"), true);
+    const summary = await controller.promise;
+    assert.equal(summary.status, "PARTIAL");
+    assert.equal(summary.tracks.optional.status, "CANCELLED");
+    assert.equal(summary.tracks.required.status, "SUCCESS");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
+test("permanent step failures emit a terminal FAILED event", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-step-fail-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "compile", criticality: "critical", required_secrets: [], steps: [{ id: "bad-build", command: "node", args: ["-e", "process.exit(7)"] }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "FAILED");
+    const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
+    assert.match(events, /"step":"bad-build","status":"FAILED"/);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner controller supports human pause, resume and cancellation", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-control-"));
   try {
