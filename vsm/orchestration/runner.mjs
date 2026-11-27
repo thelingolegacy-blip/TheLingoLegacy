@@ -20,7 +20,8 @@ function safeError(error, secretValues) {
 
 async function writeJsonAtomic(file, value) {
   const temp = file + ".tmp";
-  await fs.writeFile(temp, JSON.stringify(value, null, 2) + "\n", { mode: 0o600 });
+  await fs.writeFile(temp, JSON.stringify(value, null, 2) + "
+", { mode: 0o600 });
   await fs.rename(temp, file);
 }
 
@@ -28,6 +29,14 @@ function validateStep(step) {
   if (!step || typeof step.command !== "string" || !EXECUTABLES.has(step.command)) throw new Error("Track steps may invoke only node or npm without a shell.");
   if (!Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) throw new Error("Step args must be a string array.");
   if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
+}
+
+export function createRunController(input, options = {}) {
+  const control = { cancelled: false, paused: false, cancel: null, pause: () => { control.paused = true; }, resume: () => { control.paused = false; } };
+  const abort = new AbortController();
+  control.cancel = reason => { control.cancelled = true; abort.abort(reason || "human-cancelled"); };
+  control.promise = executeRun(input, { ...options, signal: abort.signal, control });
+  return control;
 }
 
 export async function executeRun(input, {
@@ -55,12 +64,14 @@ export async function executeRun(input, {
   let cancelled = false;
   let cancelReason = null;
   let pauseRequested = false;
+  if (control) { const pauseOriginal = control.pause; const resumeOriginal = control.resume; control.pause = () => { pauseRequested = true; pauseOriginal(); }; control.resume = () => { pauseRequested = false; resumeOriginal(); }; }
   const secretValues = required.flatMap(name => [environment[name]]).filter(value => typeof value === "string" && value.length > 0);
 
   const emit = async event => {
     const safe = structuredRunEvent({ ...event, secretValues });
     events.push(safe);
-    await fs.appendFile(path.join(runDir, "events.jsonl"), JSON.stringify(safe) + "\n", { mode: 0o600 });
+    await fs.appendFile(path.join(runDir, "events.jsonl"), JSON.stringify(safe) + "
+", { mode: 0o600 });
     await writeJsonAtomic(path.join(runDir, "status.json"), {
       run_id: config.run_id, status: ledger.status, updated_at: nowIso(),
       budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd },
@@ -112,7 +123,7 @@ export async function executeRun(input, {
           if (cancelled || controller.signal.aborted) throw new Error("Run cancelled.");
           while (pauseRequested && !cancelled) await sleep(200);
           await emit({ runId: config.run_id, trackId: track.id, step: step.id || String(index + 1), status: "STARTED", attempt, startedAt: now() });
-          const result = await runProcess(step, trackDir, trackEnv, controller.signal, config, ledger, track.id, now, emit, secretValues, trackSecrets);
+          const result = await runProcess(step, trackDir, trackEnv, controller.signal, config, ledger, track.id, now, emit, secretValues, trackSecrets, reason => cancel(reason));
           if (result.ok) {
             if (step.require_nonempty_log && result.output_bytes === 0) {
               const decision = retryDecision({ attempt, emptyLog: true, maxAttempts: config.RETRY_MAX_ATTEMPTS });
@@ -173,7 +184,7 @@ export async function executeRun(input, {
   return summary;
 }
 
-async function runProcess(step, cwd, env, signal, config, ledger, trackId, now, emit, secretValues, trackSecrets) {
+async function runProcess(step, cwd, env, signal, config, ledger, trackId, now, emit, secretValues, trackSecrets, onBudgetExceeded) {
   const started = now();
   const timeout = step.timeout_ms || 5 * 60_000;
   const child = spawn(step.command, step.args, { cwd, env, shell: false, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
@@ -188,15 +199,19 @@ async function runProcess(step, cwd, env, signal, config, ledger, trackId, now, 
   };
   child.stdout.on("data", append); child.stderr.on("data", append);
   const kill = () => { try { child.kill("SIGTERM"); } catch {} };
-  signal.addEventListener("abort", kill, { once: true });
+  let forceTimer;
+  const forceKill = () => { forceTimer = setTimeout(() => { try { child.kill("SIGKILL"); } catch {} }, RUN_DEFAULTS.CANCEL_GRACE_MS); forceTimer.unref?.(); };
+  signal.addEventListener("abort", () => { kill(); forceKill(); }, { once: true });
   let timedOut = false;
   const timer = setTimeout(() => { timedOut = true; kill(); }, timeout);
   const result = await new Promise(resolve => {
     child.once("error", error => resolve({ code: -1, error }));
     child.once("close", (code, sig) => resolve({ code, signal: sig }));
   });
-  clearTimeout(timer); signal.removeEventListener("abort", kill);
-  const safeOutput = output.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
+  clearTimeout(timer); clearTimeout(forceTimer); signal.removeEventListener("abort", kill);
+  const safeOutput = output.split(/\r?
+/).map(line => line.slice(0, 4000)).join("
+");
   await fs.writeFile(outputFile, safeOutput, { mode: 0o600 });
   const charge = chargeBudget(ledger, trackId, { toolCalls: 1, now: now() });
   if (!charge.ok) {
