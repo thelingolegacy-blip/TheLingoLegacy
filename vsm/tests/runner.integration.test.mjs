@@ -152,6 +152,32 @@ test("staging run validates required service reachability and credentials before
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("staging network preflight retries transient 5xx responses within its bounded window", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-network-retry-"));
+  let calls = 0;
+  try {
+    const summary = await executeRun({
+      run_id: "runner-stage-retry-01", run_type: "staging-validation", target: "staging",
+      PREFLIGHT_NETWORK: true, RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      tracks: [{ id: "cloudflare-probe", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [] }]
+    }, {
+      rootDir,
+      environment: { PATH: process.env.PATH, CLOUDFLARE_API_TOKEN: "cloudflare-valid-token-123456" },
+      random: () => 0,
+      fetchImpl: async () => {
+        calls++;
+        return calls === 1
+          ? { ok: false, status: 503, json: async () => ({ success: false }) }
+          : { ok: true, status: 200, json: async () => ({ success: true }) };
+      }
+    });
+    assert.equal(summary.status, "SUCCESS");
+    assert.equal(calls, 2);
+    assert.equal(summary.budget.tool_calls, 2);
+    assert.equal(summary.network_check.results[0].attempts, 2);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner persists a fail-closed status when staging network preflight is rejected", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-network-fail-"));
   try {
