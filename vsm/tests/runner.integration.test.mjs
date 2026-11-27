@@ -30,6 +30,21 @@ test("runner executes tracks in parallel with isolated environments and run-scop
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("Firebase service-account private-key material is redacted from child logs", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-firebase-secret-"));
+  const privateKey = "-----BEGIN PRIVATE KEY-----\nprivate-key-material-should-never-appear\n-----END PRIVATE KEY-----";
+  const serviceAccount = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "runner@lingo-stage.iam.gserviceaccount.com", private_key: privateKey });
+  try {
+    const summary = await executeRun(base([
+      { id: "firebase-check", criticality: "critical", required_secrets: ["FIREBASE_SERVICE_ACCOUNT"], steps: [{ id: "print-key", command: "node", args: ["-e", "process.stdout.write(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).private_key)"], require_nonempty_log: true }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH, FIREBASE_SERVICE_ACCOUNT: serviceAccount } });
+    assert.equal(summary.status, "SUCCESS");
+    const log = await fs.readFile(path.join(summary.artifact_directory, "tracks", "firebase-check", "print-key.log"), "utf8");
+    assert.equal(log, "[REDACTED]");
+    assert.equal(log.includes("private-key-material"), false);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner executes steps from the configured execution root", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
   try {
