@@ -169,6 +169,9 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   }
   assert.equal(runState?.summary?.status, "SUCCESS");
   assert.equal(runState.summary.tracks["smoke-check"].status, "SUCCESS");
+  assert.equal(runState.summary.owner_notification, "SENT");
+  assert.equal(runState.owner_notification.delivery, "LOCAL_OWNER_OUTBOX");
+  assert.equal(runState.owner_notification.requires_human_poll, true);
   const runEvents = await fs.readFile(path.join(dataDir, "runs", "api-local-run-001", "events.jsonl"), "utf8");
   assert.ok(runEvents.includes("STARTED"));
   assert.ok(runEvents.includes("SUCCESS"));
