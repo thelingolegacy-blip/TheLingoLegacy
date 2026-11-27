@@ -42,6 +42,31 @@ test("runner aborts before tracks when a required credential is missing", async 
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("staging run validates required service reachability and credentials before tracks", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-network-"));
+  const requests = [];
+  try {
+    const summary = await executeRun({
+      run_id: "runner-stage-check-01", run_type: "staging-validation", target: "staging",
+      PREFLIGHT_NETWORK: true, RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      tracks: [{ id: "cloudflare-probe", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [] }]
+    }, {
+      rootDir,
+      environment: { PATH: process.env.PATH, CLOUDFLARE_API_TOKEN: "cloudflare-valid-token-123456" },
+      fetchImpl: async (url, options) => {
+        requests.push({ url, authorization: options.headers.Authorization });
+        return { ok: true, status: 200, json: async () => ({ success: true }) };
+      }
+    });
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].url, "https://api.cloudflare.com/client/v4/user/tokens/verify");
+    assert.equal(requests[0].authorization, "Bearer cloudflare-valid-token-123456");
+    assert.equal(summary.status, "SUCCESS");
+    assert.equal(summary.budget.tool_calls, 1);
+    assert.equal(summary.secrets_used.includes("CLOUDFLARE_API_TOKEN"), true);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner enforces projected cost ceiling before invoking a step", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-budget-"));
   try {
