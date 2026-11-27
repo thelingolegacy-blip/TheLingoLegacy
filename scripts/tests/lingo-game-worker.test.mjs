@@ -10,7 +10,7 @@ function fakeDb() {
       calls.push(sql);
       return { bind() { return this; }, async first() {
         if (sql.startsWith('SELECT 1')) return { ok: 1 };
-        if (sql.includes('sqlite_master')) return { count: 6 };
+        if (sql.includes('sqlite_master')) return { present: 6 };
         return null;
       } };
     },
@@ -61,15 +61,15 @@ test('protected wallet and game routes fail closed without a Firebase bearer tok
   const DB = fakeDb();
   const response = await worker.fetch(new Request('https://staging.invalid/api/v1/wallet/balance', {
     method: 'GET', headers: {},
-  }), { DB, ENVIRONMENT: 'staging', FIREBASE_PROJECT_ID: 'lingo-legacy-production' });
+  }), { DB, ENVIRONMENT: 'staging', FIREBASE_PROJECT_ID: 'lingo-legacy-staging' });
   assert.equal(response.status, 401);
   assert.deepEqual(await response.json(), { error: 'UNAUTHORIZED' });
   assert.equal(DB.calls.length, 0);
 });
 
 
-test('staging protected routes fail closed when Firebase is unset or points at production', async () => {
-  for (const FIREBASE_PROJECT_ID of [undefined, 'lingo-legacy-production']) {
+test('staging protected routes fail closed when Firebase is unset, production, or another project', async () => {
+  for (const FIREBASE_PROJECT_ID of [undefined, 'lingo-legacy-production', 'loyalty-lane-os']) {
     const DB = fakeDb();
     const headers = { authorization: 'Bearer syntactically.valid.but.untrusted' };
     const env = { DB, ENVIRONMENT: 'staging' };
@@ -77,8 +77,8 @@ test('staging protected routes fail closed when Firebase is unset or points at p
     const response = await worker.fetch(new Request('https://staging.invalid/api/v1/wallet/balance', {
       method: 'GET', headers,
     }), env);
-    assert.equal(response.status, 401);
-    assert.deepEqual(await response.json(), { error: 'UNAUTHORIZED' });
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { error: 'STAGING_IDENTITY_NOT_CONFIGURED' });
     assert.equal(DB.calls.length, 0);
   }
 });
