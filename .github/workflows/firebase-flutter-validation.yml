@@ -9,6 +9,11 @@ on:
       - "pubspec.yaml"
       - "pubspec.lock"
       - "firebase.json"
+      - ".firebaserc"
+      - "scripts/**"
+      - "android/**"
+      - "ios/**"
+      - "macos/**"
       - "firestore.rules"
       - "firestore.indexes.json"
       - ".github/workflows/firebase-flutter-validation.yml"
@@ -56,11 +61,5 @@ jobs:
       - name: Run Flutter tests
         run: flutter test --reporter expanded
 
-      - name: Verify no production Firebase project is hardcoded in staging options
-        shell: bash
-        run: |
-          if grep -R --line-number --fixed-strings "lingo-legacy-production" lib/firebase_options.dart; then
-            echo "Production Firebase project ID must not be embedded in staging client options."
-            exit 1
-          fi
-          echo "No production Firebase project ID found in Flutter platform options."
+      - name: Verify staging-only Firebase compile-time contract
+        run: node scripts/verify-flutter-firebase.mjs
