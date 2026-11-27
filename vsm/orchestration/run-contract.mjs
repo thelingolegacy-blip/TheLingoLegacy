@@ -61,7 +61,10 @@ export function createRunConfig(input = {}) {
 }
 
 function validSecretValue(name, value) {
-  if (typeof value !== "string" || value.trim().length === 0 || /[\\r\\n]/.test(value)) return false;
+  if (typeof value !== "string" || value.trim().length === 0) return false;
+  if (name === "CI_DEPLOY_KEY") return /-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(value) || /OPENSSH PRIVATE KEY/.test(value);
+  if (/[\\r\
+]/.test(value)) return false;
   if (name === "FIREBASE_SERVICE_ACCOUNT") {
     try {
       const parsed = JSON.parse(value);
@@ -113,6 +116,7 @@ export function transientRetryDelayMs(attempt, random = Math.random) {
 
 export function retryDecision({ error, attempt, startedAt, now = Date.now(), emptyLog = false, maxAttempts = RUN_DEFAULTS.RETRY_MAX_ATTEMPTS }) {
   if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > RUN_DEFAULTS.RETRY_MAX_ATTEMPTS) throw new Error("maxAttempts cannot exceed the hard three-attempt limit.");
   if (emptyLog) return { retry: attempt < maxAttempts, reason: "empty-log", next_attempt: attempt + 1 };
   if (classifyFailure(error) !== "transient") return { retry: false, reason: "permanent-failure" };
   const retriesUsed = attempt - 1;
