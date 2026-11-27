@@ -246,6 +246,7 @@ export async function executeRun(input, {
       child.once("error", error => resolve({ code: -1, error }));
       child.once("close", (code, childSignal) => resolve({ code, signal: childSignal }));
     });
+    if (child.pid) { childPids.delete(child.pid); await atomicJson(pidFile, [...childPids]); }
     clearTimeout(timeout);
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
@@ -328,11 +329,14 @@ export async function executeRun(input, {
   };
 
   await updateStatus("RUNNING");
+  const crashWatchdog = spawn(process.execPath, [path.join(import.meta.dirname, "watchdog.mjs"), String(process.pid), pidFile, crashFile], { detached: true, stdio: "ignore", env: { PATH: environment.PATH || "" } });
+  crashWatchdog.unref();
   const watchdog = setTimeout(() => { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }, config.RUN_MAX_DURATION_MINUTES * 60_000);
   watchdog.unref?.();
   try {
     await Promise.all(config.tracks.map(runTrack));
   } finally {
+    try { crashWatchdog.kill("SIGTERM"); } catch {}
     clearTimeout(watchdog);
   }
 
