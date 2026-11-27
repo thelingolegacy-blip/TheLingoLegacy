@@ -10,7 +10,7 @@ Local-first release control plane in the canonical repository. This is additive:
 - Read-only mount of the existing repository at `/workspace`.
 - Public health probes against the configured base URL.
 - Fail-closed gate defaults.
-- Owner-token protection for state-changing API operations.
+- Owner-token protection for state-changing API operations.\n- Local LINGO ID owner principal with Ed25519 signing keys and signed release acceptance.\n- Self-hosted Gitea Forge service, loopback-only.\n- Sonic Boom priority/concurrency lane (disabled by default).\n- Read-only bot registry with proposal-only capability definitions.
 - Production promotion endpoint is intentionally not implemented.
 
 ## Boot
