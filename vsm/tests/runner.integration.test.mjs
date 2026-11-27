@@ -173,6 +173,22 @@ test("permanent step failures emit a terminal FAILED event", async () => {
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("runner supports per-track cancellation without aborting non-critical siblings", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-track-cancel-"));
+  try {
+    const controller = createRunController(base([
+      { id: "primary", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 500)"], timeout_ms: 5000 }] },
+      { id: "optional", criticality: "best-effort", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 5000)"], timeout_ms: 7000 }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    await new Promise(resolve => setTimeout(resolve, 150));
+    assert.equal(controller.cancelTrack("optional"), true);
+    const summary = await controller.promise;
+    assert.equal(summary.tracks.primary.status, "SUCCESS");
+    assert.equal(summary.tracks.optional.status, "CANCELLED");
+    assert.equal(summary.status, "PARTIAL");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner controller supports human pause, resume and cancellation", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-control-"));
   try {
