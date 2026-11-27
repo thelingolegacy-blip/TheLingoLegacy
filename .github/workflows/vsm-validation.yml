@@ -51,4 +51,5 @@ jobs:
       - name: Validate Compose model without starting services
         env:
           VSM_OWNER_TOKEN: ci-only-token-never-used-outside-validation-000000000000
+          VSM_WEB_REPO_PATH: /tmp/lingo-web-preview-not-mounted
         run: docker compose --env-file /dev/null -f vsm/docker-compose.yml config --quiet
