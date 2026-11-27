@@ -328,7 +328,11 @@ export async function executeRun(input, {
           if (result.ok && step.require_nonempty_log && result.output_bytes < minimumLogBytes) {
             emptyAttempts++;
             const decision = retryDecision({ attempt: emptyAttempts, emptyLog: true, maxAttempts: config.RETRY_MAX_ATTEMPTS });
-            if (decision.retry) { attempt++; continue; }
+            if (decision.retry) {
+              await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "RETRYING", attempt, startedAt: stepStarted, detail: { reason: "empty-log", next_attempt: attempt + 1, output_bytes: result.output_bytes } });
+              attempt++;
+              continue;
+            }
             await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "FAILED", attempt, startedAt: stepStarted, detail: { reason: "empty-log", output_bytes: result.output_bytes } });
             throw new Error("Empty-log rejection after maximum attempts.");
           }
@@ -340,6 +344,7 @@ export async function executeRun(input, {
           if (decision.retry && transientRetries < RUN_DEFAULTS.TRANSIENT_MAX_RETRIES) {
             const delay = transientRetryDelayMs(transientRetries + 1, random);
             if (now() - stepStarted + delay > RUN_DEFAULTS.TRANSIENT_RETRY_WINDOW_MS) throw result.error;
+            await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "RETRYING", attempt, startedAt: stepStarted, detail: { reason: decision.reason, next_attempt: attempt + 1, delay_ms: delay } });
             transientRetries++;
             attempt++;
             await sleep(delay);
