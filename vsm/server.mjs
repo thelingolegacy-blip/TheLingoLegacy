@@ -63,9 +63,11 @@ function validCommit(commit) { return typeof commit === "string" && /^[a-f0-9]{7
 function contentType(file) {
   return ({ ".html":"text/html; charset=utf-8", ".css":"text/css; charset=utf-8", ".js":"text/javascript; charset=utf-8", ".json":"application/json; charset=utf-8", ".svg":"image/svg+xml", ".png":"image/png", ".jpg":"image/jpeg", ".jpeg":"image/jpeg", ".webp":"image/webp", ".woff2":"font/woff2", ".ico":"image/x-icon" })[path.extname(file).toLowerCase()] || "application/octet-stream";
 }
-async function serveFile(res, file) {
+async function serveFile(res, file, root = null) {
   try {
-    const stat = await fs.stat(file);
+    const resolved = await fs.realpath(file);
+    if (root) { const realRoot = await fs.realpath(root); if (resolved !== realRoot && !resolved.startsWith(realRoot + path.sep)) throw new Error("Path outside preview root"); }
+    const stat = await fs.stat(resolved);
     if (!stat.isFile()) throw new Error("Not a file");
     res.writeHead(200, { "Content-Type": contentType(file), "Content-Length": stat.size, "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" });
     const stream = (await import("node:fs")).createReadStream(resolved);
@@ -115,6 +117,22 @@ const server = http.createServer(async (req, res) => {
       const releases = await readReleases(); releases.push(release); await writeReleases(releases); await audit("release.created", { id, target, commit: release.source.commit });
       return send(res, 201, { release });
     }
+    const gateMatch = url.pathname.match(/^\/api\/releases\/([a-z0-9-]+)\/gates\/(g02|security|static)$/);
+    if (req.method === "POST" && gateMatch) {
+      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      const [, id, gate] = gateMatch;
+      const input = await bodyJson(req);
+      if (!["PASS", "FAIL", "HOLD"].includes(input.decision) || typeof input.evidence_ref !== "string" || input.evidence_ref.trim().length < 3 || typeof input.rationale !== "string" || input.rationale.trim().length < 8) return send(res, 400, { error: "Provide PASS/FAIL/HOLD, an evidence reference, and a rationale of at least 8 characters." });
+      const releases = await readReleases();
+      const release = releases.find(x => x.id === id);
+      if (!release) return send(res, 404, { error: "Release package not found." });
+      const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_NAME, attested_at: new Date().toISOString() };
+      release.gates[gate] = input.decision;
+      release.evidence.gate_attestations = [...(release.evidence.gate_attestations || []), attestation];
+      release.updated_at = attestation.attested_at;
+      await writeReleases(releases); await audit("gate.attested", { id, ...attestation });
+      return send(res, 200, { release, attestation, note: "Owner attestation is recorded locally; evidence authenticity remains subject to review." });
+    }
     const match = url.pathname.match(/^\/api\/releases\/([a-z0-9-]+)\/(probe|accept)$/);
     if (req.method === "POST" && match) {
       const [, id, action] = match;
@@ -144,9 +162,11 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "GET" && url.pathname.startsWith("/preview/")) {
       const relative = decodeURIComponent(url.pathname.slice("/preview/".length) || "index.html");
+      const segments = relative.split(/[\\/]+/);
+      if (segments.some(part => part.startsWith(".") || ["vsm", "node_modules"].includes(part.toLowerCase()))) return send(res, 403, { error: "This path is not available through the static preview." });
       const target = path.resolve(WORKSPACE, relative);
       if (target !== WORKSPACE && !target.startsWith(WORKSPACE + path.sep)) return send(res, 400, { error: "Invalid preview path." });
-      return serveFile(res, target);
+      return serveFile(res, target, WORKSPACE);
     }
     return send(res, 404, { error: "Not found." });
   } catch (error) {
