@@ -64,7 +64,7 @@ services:
 
   worker-preview:
     profiles: ["worker-preview"]
-    image: node:22-alpine
+    image: node:22-bookworm-slim
     container_name: lingo-worker-preview
     working_dir: /runtime
     restart: "no"
