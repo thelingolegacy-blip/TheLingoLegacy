@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "status": "ROLE_CATALOG_ONLY",
+  "identity_assignment": "UNASSIGNED",
+  "policy": {
+    "default": "deny",
+    "human_identity_required": true,
+    "shared_accounts_allowed": false,
+    "privileged_mfa_required": true,
+    "production_release_requires_separate_human_authorization": true,
+    "role_assignment_requires_verified_identity": true
+  },
+  "roles": [
+    {"id":"super-administrator","principal_type":"human","permissions":["registry.read","registry.manage","dispatch.read","dispatch.manage","policy.propose","audit.read"],"restricted":["cannot_self_approve_release","cannot_bypass_release_gate"]},
+    {"id":"enterprise-administrator","principal_type":"human","permissions":["registry.read","registry.manage","dispatch.read","dispatch.manage","audit.read"],"restricted":["cannot_grant_super_administrator","cannot_approve_own_changes"]},
+    {"id":"security-administrator","principal_type":"human","permissions":["security.read","security.manage","audit.read","identity.review"],"restricted":["cannot_approve_own_security_change"]},
+    {"id":"infrastructure-administrator","principal_type":"human","permissions":["infrastructure.read","infrastructure.propose","dispatch.read","audit.read"],"restricted":["no_production_mutation_without_release_authorization"]},
+    {"id":"engineering-administrator","principal_type":"human","permissions":["source.read","source.propose","build.read","dispatch.read"],"restricted":["no_self_approval"]},
+    {"id":"operations-administrator","principal_type":"human","permissions":["operations.read","dispatch.read","dispatch.propose","audit.read"],"restricted":["no_production_mutation_without_release_authorization"]},
+    {"id":"product-administrator","principal_type":"human","permissions":["portfolio.read","portfolio.propose","acceptance.read"],"restricted":["no_release_authorization"]},
+    {"id":"independent-auditor","principal_type":"human","permissions":["audit.read","evidence.read","acceptance.review"],"restricted":["read_only"]},
+    {"id":"worker","principal_type":"service","permissions":["job.accept","job.progress","job.output"],"restricted":["no_identity_admin","no_policy_admin","no_release","no_secret_read_by_default"]}
+  ]
+}
