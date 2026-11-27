@@ -11,6 +11,9 @@ const drop = await readFile(path.join(root, "drop/index.html"), "utf8");
 const stripeScript = await readFile(path.join(root, "assets/stripe-checkout.js"), "utf8");
 const worker = await readFile(path.join(root, "worker.js"), "utf8");
 const arcade = await readFile(path.join(root, "lingoarcade/index.html"), "utf8");
+const app = await readFile(path.join(root, "app/index.html"), "utf8");
+const studioProduction = await readFile(path.join(root, "studio-production/index.html"), "utf8");
+const studioAssets = await readFile(path.join(root, "studio-assets/index.html"), "utf8");
 
 test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", () => {
   assert.equal(staticCopy, source, "static-site alias must stay byte-for-byte aligned");
@@ -31,6 +34,13 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.doesNotMatch(studioHub, /cash-value wagering/i);
   assert.match(arcade, /Vegas Studio demo game and virtual-credit progression lane/);
   assert.doesNotMatch(arcade, /Casino-style demo game/i);
+  assert.match(app, /Mobile game shell/);
+  assert.doesNotMatch(app, /Sportsbook-style|Open Casino Floor|Casino Demo/i);
+  assert.match(studioProduction, /Vegas Studio environment/);
+  assert.match(studioProduction, /No wagering, cash-out, or prize redemption/);
+  assert.doesNotMatch(studioProduction, /Casino-language is scoped/i);
+  assert.match(studioAssets, /Vegas Studio depth plate/);
+  assert.doesNotMatch(studioAssets, /Casino depth plate/);
 });
 
 test("founder drop checkout remains disabled in source and Worker", () => {
