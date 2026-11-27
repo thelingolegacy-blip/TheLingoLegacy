@@ -42,6 +42,30 @@ test("runner executes steps from the configured workspace, not the artifact dire
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("runner records a soft timeout without terminating a step", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-soft-timeout-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "soft-timeout", criticality: "critical", required_secrets: [], steps: [{ id: "wait", command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 1200)"], soft_timeout_ms: 1000, timeout_ms: 5000 }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "SUCCESS");
+    const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
+    assert.ok(events.includes("STEP_SOFT_TIMEOUT"));
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
+test("runner clears a soft timeout when a step finishes early", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-soft-timeout-clear-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "quick", criticality: "critical", required_secrets: [], steps: [{ id: "done", command: "node", args: ["-e", "process.exit(0)"], soft_timeout_ms: 2000, timeout_ms: 5000 }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "SUCCESS");
+    const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
+    assert.equal(events.includes("STEP_SOFT_TIMEOUT"), false);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner aborts before tracks when a required credential is missing", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-preflight-"));
   try {
