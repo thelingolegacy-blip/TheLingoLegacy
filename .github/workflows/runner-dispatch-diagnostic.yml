@@ -2,6 +2,9 @@ name: G02 Self-Hosted Runner Sentinel
 
 on:
   workflow_dispatch:
+  schedule:
+    # UTC: run at minute 17 every six hours; job remains protected by if: false.
+    - cron: "17 */6 * * *"
 
 permissions:
   contents: read
@@ -46,6 +49,49 @@ jobs:
           printf 'platform_check=PASS\n' >> g02-evidence/runner-evidence.txt
           cat g02-evidence/runner-evidence.txt
 
+
+      - name: Capture runner clock and dependency baseline
+        shell: bash
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+          RUNNER_OS_VALUE: ${{ runner.os }}
+          RUNNER_ARCH_VALUE: ${{ runner.arch }}
+          GITHUB_RUN_ID_VALUE: ${{ github.run_id }}
+          GITHUB_SHA_VALUE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p g02-evidence
+          out=g02-evidence/runner-host-baseline.txt
+          {
+            echo "captured_at_utc=$(date -u +%FT%TZ)"
+            echo "run_id=$GITHUB_RUN_ID_VALUE"
+            echo "commit_sha=$GITHUB_SHA_VALUE"
+            echo "runner_name=$RUNNER_NAME"
+            echo "runner_os=$RUNNER_OS_VALUE"
+            echo "runner_arch=$RUNNER_ARCH_VALUE"
+            echo "utc_clock_epoch=$(date -u +%s)"
+            if command -v timedatectl >/dev/null 2>&1; then
+              echo "ntp_sync=$(timedatectl show -p NTPSynchronized --value 2>/dev/null || echo unavailable)"
+            elif command -v chronyc >/dev/null 2>&1; then
+              echo "chrony_tracking=available"
+              chronyc tracking 2>&1 | sed -n '1,12p'
+            else
+              echo "ntp_sync=not_observable_by_available_tool"
+            fi
+            for tool in bash curl git jq sha256sum; do
+              if command -v "$tool" >/dev/null 2>&1; then echo "dependency_$tool=present"; else echo "dependency_$tool=missing"; fi
+            done
+            echo "disk_usage_start"
+            df -h "${RUNNER_TEMP:-/tmp}" 2>&1 || true
+            echo "memory_start"
+            if command -v free >/dev/null 2>&1; then free -h; else echo "memory_tool=unavailable"; fi
+            echo "dns_github_com"
+            if command -v getent >/dev/null 2>&1 && getent ahosts github.com >/dev/null 2>&1; then echo "dns_github_com=PASS"; else echo "dns_github_com=FAIL_OR_UNAVAILABLE"; fi
+            echo "https_github_com"
+            if command -v curl >/dev/null 2>&1 && curl -fsSI --max-time 10 https://github.com >/dev/null 2>&1; then echo "https_github_com=PASS"; else echo "https_github_com=FAIL_OR_UNAVAILABLE"; fi
+          } | tee "$out"
+          for tool in bash curl git jq sha256sum; do command -v "$tool" >/dev/null 2>&1; done
+
       - name: Execute G02 sentinel
         id: sentinel
         shell: bash
@@ -80,6 +126,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: g02-runner-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: g02-evidence/runner-evidence.txt
+          path: g02-evidence/
           if-no-files-found: warn
           retention-days: 14
