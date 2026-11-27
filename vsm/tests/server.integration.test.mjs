@@ -174,7 +174,7 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
     const response = await fetch(base + "/api/runs/api-local-run-001", { headers: { authorization: `Bearer ${token}` } });
     if (response.ok) {
       runState = await response.json();
-      if (runState.summary && runState.owner_notification) break;
+      if (runState.summary?.owner_notification === "SENT" && runState.owner_notification) break;
     }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
