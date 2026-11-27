@@ -232,9 +232,9 @@ export async function executeRun(input, {
   }
   const ledger = createBudgetLedger(config, now());
   const resourceCheck = await preflightResources(runDir, config);
-  const networkCheck = config.PREFLIGHT_NETWORK && resourceCheck.ok
-    ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id })
-    : { ok: resourceCheck.ok, results: [], calls: 0, warning: false, budget_exceeded: false, skipped: true };
+  const networkCheck = config.PREFLIGHT_NETWORK && resourceCheck.ok && !externalSignal?.aborted
+    ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id, signal: externalSignal })
+    : { ok: resourceCheck.ok && !externalSignal?.aborted, results: [], calls: 0, warning: false, budget_exceeded: false, cancelled: Boolean(externalSignal?.aborted), skipped: true };
   if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED" || networkCheck.cancelled) {
     const preflightStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : networkCheck.cancelled ? "CANCELLED" : "PREFLIGHT_FAILED";
@@ -513,6 +513,7 @@ export async function executeRun(input, {
     started_at: new Date(ledger.started_at_ms).toISOString(), finished_at: iso(),
     secrets_used: required.sort(),
     budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, duration_ms: now() - ledger.started_at_ms, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd },
+    resource_check: resourceCheck, network_check: networkCheck,
     tracks: Object.fromEntries(config.tracks.map(track => [track.id, { criticality: track.criticality, status: results[track.id] || "CANCELLED" }])),
     cancellation_reason: cancelReason, orchestrator_error: orchestratorError, artifact_directory: runDir,
     artifact_retention_days: RUN_DEFAULTS.ARTIFACT_RETENTION_DAYS,
