@@ -38,7 +38,7 @@ export function createRunConfig(input = {}) {
   if (!["local-validation", "staging-validation", "production-change"].includes(config.run_type)) throw new Error("Invalid run_type.");
   if (!["local", "staging", "production"].includes(target)) throw new Error("Invalid target.");
   if (!Number.isInteger(config.RUN_MAX_DURATION_MINUTES) || config.RUN_MAX_DURATION_MINUTES < 1 || config.RUN_MAX_DURATION_MINUTES > 90) throw new Error("RUN_MAX_DURATION_MINUTES must be 1–90.");
-  if (!Number.isInteger(config.RUN_MAX_TOOL_CALLS) || config.RUN_MAX_TOOL_CALLS < 1 || config.RUN_MAX_TOOL_CALLS > 1200) throw new Error("RUN_MAX_TOOL_CALLS must be 1–1200.");
+  if (!Number.isInteger(config.RUN_MAX_TOOL_CALLS) || config.RUN_MAX_TOOL_CALLS < 1) throw new Error("RUN_MAX_TOOL_CALLS must be a positive integer.");
   if (!Number.isFinite(config.RUN_MAX_COST_USD) || config.RUN_MAX_COST_USD <= 0) throw new Error("RUN_MAX_COST_USD must be greater than zero.");
   if (!Number.isInteger(config.RETRY_MAX_ATTEMPTS) || config.RETRY_MAX_ATTEMPTS < 1 || config.RETRY_MAX_ATTEMPTS > 3) throw new Error("RETRY_MAX_ATTEMPTS must be 1–3 total attempts.");
   if (config.target === "production" && !config.DRY_RUN && config.run_type !== "production-change") throw new Error("Non-dry-run production work requires run_type=production-change.");
