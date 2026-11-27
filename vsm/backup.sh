@@ -4,9 +4,9 @@ set -eu
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 cd "$ROOT"
 [ -f .env ] || { echo "Create vsm/.env before using backup/restore."; exit 2; }
-BACKUP_ROOT="\${VSM_BACKUP_DIR:-$HOME/.local/share/lingo-vsm/backups}"
-ACTION="\${1:-help}"
-BACKUP_ID="\${2:-}"
+BACKUP_ROOT="${VSM_BACKUP_DIR:-$HOME/.local/share/lingo-vsm/backups}"
+ACTION="${1:-help}"
+BACKUP_ID="${2:-}"
 VOLUMES="lingo-vsm-data lingo-forge-data lingo-forge-config"
 
 need_docker() {
@@ -62,7 +62,7 @@ case "$ACTION" in
     ;;
   restore)
     need_docker
-    [ "\${ALLOW_DESTRUCTIVE:-false}" = "true" ] || { echo "Restore is destructive. Set ALLOW_DESTRUCTIVE=true and retry."; exit 2; }
+    [ "${ALLOW_DESTRUCTIVE:-false}" = "true" ] || { echo "Restore is destructive. Set ALLOW_DESTRUCTIVE=true and retry."; exit 2; }
     safe_id
     [ -d "$BACKUP_ROOT/$BACKUP_ID" ] || { echo "Backup ID not found."; exit 2; }
     [ -f "$BACKUP_ROOT/$BACKUP_ID/MANIFEST" ] && [ -f "$BACKUP_ROOT/$BACKUP_ID/SHA256SUMS" ] || { echo "Backup manifest/checksum file missing."; exit 2; }
