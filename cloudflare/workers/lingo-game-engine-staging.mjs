@@ -142,9 +142,11 @@ export default {
            )
         `).first();
         if (required?.present !== 6) return json({ status: 'degraded', environment: 'staging' }, 503);
+        const digestColumn = await env.DB.prepare("SELECT COUNT(*) AS present FROM pragma_table_info('lingo_game_sessions') WHERE name = 'ruleset_digest'").first();
+        if (digestColumn?.present !== 1) return json({ status: 'degraded', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: Boolean(loadRulesetConfig(env)), rulesetSchemaReady: false }, 503);
         const rulesetConfigured = Boolean(loadRulesetConfig(env));
         if (!rulesetConfigured) return json({ status: 'degraded', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: false }, 503);
-        return json({ status: 'ok', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: true });
+        return json({ status: 'ok', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: true, rulesetSchemaReady: true });
       } catch {
         return json({ status: 'degraded', environment: 'staging' }, 503);
       }
