@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "policy": "proposal-only",
+  "bots": [
+    {
+      "id": "lingo://id/bot-release",
+      "name": "Release Bot",
+      "role": "release_manager",
+      "capabilities": [
+        "draft_release_package",
+        "summarize_gate_evidence"
+      ],
+      "autonomy": "propose_only"
+    },
+    {
+      "id": "lingo://id/bot-probe",
+      "name": "Probe Bot",
+      "role": "operator",
+      "capabilities": [
+        "run_allowlisted_http_probes",
+        "attach_probe_evidence"
+      ],
+      "autonomy": "read_only"
+    },
+    {
+      "id": "lingo://id/bot-studio",
+      "name": "Studio Bot",
+      "role": "studio_lead",
+      "capabilities": [
+        "organize_assets",
+        "prepare_studio_jobs"
+      ],
+      "autonomy": "propose_only"
+    },
+    {
+      "id": "lingo://id/bot-math",
+      "name": "Math Bot",
+      "role": "engineer",
+      "capabilities": [
+        "run_local_math_checks",
+        "produce_simulation_reports"
+      ],
+      "autonomy": "sandbox_only"
+    }
+  ]
+}

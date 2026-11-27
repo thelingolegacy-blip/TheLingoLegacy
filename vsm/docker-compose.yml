@@ -13,6 +13,8 @@ services:
       VSM_WORKSPACE: /workspace
       VSM_OWNER_TOKEN: ${VSM_OWNER_TOKEN:?Set VSM_OWNER_TOKEN in vsm/.env}
       VSM_OWNER_NAME: ${VSM_OWNER_NAME:-Zavione}
+      LINGO_ID_HANDLE: ${LINGO_ID_HANDLE:-owner}
+      LINGO_ID_DISPLAY_NAME: ${LINGO_ID_DISPLAY_NAME:-LINGO Owner}
       VSM_PROBE_BASE_URL: ${VSM_PROBE_BASE_URL:-https://thelingolegacy.com}
     ports:
       - "127.0.0.1:8787:8787"
@@ -34,6 +36,34 @@ services:
       retries: 3
       start_period: 10s
 
+  lingo-forge:
+    image: gitea/gitea:1.24.7-rootless
+    container_name: lingo-forge
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__server__ROOT_URL: "http://127.0.0.1:3000/"
+      GITEA__server__SSH_PORT: "2222"
+      GITEA__server__START_SSH_SERVER: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
+      GITEA__repository__DEFAULT_PRIVATE: "private"
+      GITEA__security__INSTALL_LOCK: "false"
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:2222:2222"
+    volumes:
+      - lingo-forge-data:/var/lib/gitea
+      - lingo-forge-config:/etc/gitea
+    security_opt:
+      - no-new-privileges:true
+
 volumes:
   vsm-data:
     name: lingo-vsm-data
+  lingo-forge-data:
+    name: lingo-forge-data
+  lingo-forge-config:
+    name: lingo-forge-config

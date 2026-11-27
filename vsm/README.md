@@ -1,71 +1,82 @@
-# LINGO LEGACY Sovereign VSM — Phase 0
+# LINGO LEGACY Sovereign VSM — Phase 0 + Phase 1 foundations
 
 Local-first release control plane in the canonical repository. This is additive: existing production Worker, assets, worlds and site code remain untouched.
 
-## Current Phase 0 scope
+## Implemented in source
 
 - Dockerized Node.js control API and dashboard.
 - Persistent local release registry and append-only audit events.
-- Release Package JSON Schema.
+- Release Package JSON Schema and fail-closed gate defaults.
 - Read-only mount of the existing repository at `/workspace`.
-- Public health probes against the configured base URL.
-- Fail-closed gate defaults.
-- Owner-token protection for state-changing API operations.
-- Production promotion endpoint is intentionally not implemented.
+- Public HTTP health probes against the configured base URL.
+- Owner-token protection for gate attestations, Sonic Boom configuration and release acceptance.
+- Local LINGO ID owner principal (`lingo://id/<handle>`) with an Ed25519 keypair.
+- Signed local release-acceptance envelopes; owner ID is stamped on packages and gate attestations.
+- Self-hosted Gitea Forge service in Docker Compose, with loopback-only web and SSH ports.
+- Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default.
+- Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
+- First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
+- Production promotion endpoint intentionally absent.
+
+**Implementation boundary:** LINGO ID currently bootstraps one local Owner principal and uses the existing owner bearer token for API authentication. It is not yet a full interactive session/federation system or multi-operator IAM. The Ed25519 private key is stored in the private local VSM data volume with restrictive file permissions; encrypted backup/key rotation is still required before remote or multi-host operation. Gitea is a separate private Git service; Forge SSO, GitHub/GitLab API compatibility, mirroring and protected-branch policy integration are not yet complete. The bot worker executes a small allowlist of deterministic local tasks; no model host, arbitrary tool execution, or autonomous privileged action is enabled. Sonic Boom's queue module is implemented and configurable, but is not yet wired into every center's job execution.
 
 ## Boot
 
 1. Run `cp vsm/.env.example vsm/.env` from the repository root.
-2. Replace `VSM_OWNER_TOKEN` with a unique random secret of at least 32 characters.
+2. Replace `VSM_OWNER_TOKEN` with a unique random secret of at least 32 characters. Set `LINGO_ID_HANDLE` to the desired 2–32 character owner handle before first boot; it becomes the local root identity.
 3. From the repository root run:
 
 ```sh
 docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
 ```
 
-4. Open http://127.0.0.1:8787 for Mission Control and http://127.0.0.1:8788 for the isolated static preview of the existing repository site.
+4. Open:
+   - Mission Control: http://127.0.0.1:8787
+   - Existing repository static preview: http://127.0.0.1:8788
+   - LINGO Forge (Gitea first-run setup): http://127.0.0.1:3000
+   - Forge SSH: 127.0.0.1:2222
+
+Gitea registration is disabled and repository viewing requires sign-in. Complete the first-run setup locally and create the initial Forge administrator. Do not reuse the VSM owner token as the Forge password. Keep all credentials in a password manager.
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
-The dashboard currently creates draft release packages. Owner gate attestations and acceptance use the bearer token at the API layer. The local API is loopback-bound by Compose; do not expose it publicly.
+The local API is loopback-bound by Compose; do not expose it publicly.
 
 ## API
 
 - `GET /api/health`
+- `GET /api/identity` — public owner principal and local-first identity status.
+- `GET /api/sonic-boom` — lane state.
+- `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
+- `GET /api/bots` — declared bot registry.
+- `POST /api/bots/:bot-id/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
 - `GET /api/centers`
 - `GET /api/releases`
 - `POST /api/releases` — create draft package.
 - `POST /api/releases/:id/probe` — run configured public probes.
-- `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`; requires decision, evidence reference and rationale.
-- `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS.
-- Static preview: `http://127.0.0.1:8788/` serves the existing repository files from the read-only mount with root-relative assets. The Worker runtime is not emulated in Phase 0.
+- `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`.
+- `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS and signs the acceptance payload with the local Owner Ed25519 key.
+- Static preview: `http://127.0.0.1:8788/` serves existing repository files from the read-only mount. The Worker runtime is not emulated.
 
 ## Safety invariants
 
 - No production deployment, DNS change, route mutation, secret rotation or data migration.
-- No production promotion API exists in Phase 0.
+- No production promotion API exists.
 - G02, security and static gates start UNKNOWN; runtime only passes after probe evidence.
 - Acceptance is impossible unless all required gates explicitly PASS.
+- Local acceptance is not production authorization or a deployment.
 - The VSM data volume is separate from the source repository.
-- API port is bound to host loopback only by Compose.
-- Do not expose this service to a public interface or reverse proxy.
+- API, Forge web and Forge SSH ports are bound to host loopback only by Compose.
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
+- Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
-## Phase 0 exit criteria
+## Verification status
 
-- Docker image builds and healthcheck passes.
-- Dashboard loads on localhost.
-- Existing site can be viewed via `/preview/`.
-- Draft package can be created and persisted.
-- Probe results are timestamped and attached to a package.
-- Acceptance refuses while any gate is UNKNOWN/FAIL/HOLD.
+Phase 1 source files and configuration are committed on the feature branch. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
 
-## Roadmap
+## Next implementation waves
 
-Phase 1: real local Worker emulator, static bundle preview, CLI, richer evidence browser and local G02 authority review.
-
-Phase 2: center adapters, SAAAE policy model, staging-only Firebase and Cloudflare read-only inventory, reproducible test runner.
-
-Phase 3: signed acceptance records, PR generation, staging deployment bridge and rollback evidence.
-
-Phase 4: production bridge only after explicit separate authorization, threat model, secrets management, tested rollback and independent acceptance.
+- Phase 1 completion: execute Node tests and Docker/Compose checks; connect the scheduler to an audited job API; wire dashboard identity/lane status; validate Forge setup and backup.
+- Phase 2: full SAAAE policy enforcement, multi-operator LINGO ID sessions, Forge mirroring/protected branches, local Worker-compatible runtime, mathematical validation gates, and studio asset registry.
+- Phase 3: local model host, constrained bot workers, art/audio/math/motion pipelines, evidence-native studio dispatch, and staging-only promotion bridge.
+- Phase 4: encrypted backup/recovery, observability/cost guardrails, threat model, tested rollback and independently accepted production bridge. Production authority remains separately gated.

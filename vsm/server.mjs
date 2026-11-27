@@ -2,6 +2,44 @@ import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./identity/identity.mjs";
+import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob } from "./sonic-boom/lane.mjs";
+import { executeBot } from "./ai/bot-worker.mjs";
+
+const PORT = Number(process.env.PORT || 8787);
+const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
+const HOST = process.env.HOST || "127.0.0.1";
+const DATA_DIR = process.env.VSM_DATA_DIR || path.join(process.cwd(), "data");
+const WORKSPACE = process.env.VSM_WORKSPACE || path.resolve(process.cwd(), "..");
+const OWNER_TOKEN = process.env.VSM_OWNER_TOKEN || "";
+const OWNER_NAME = process.env.VSM_OWNER_NAME || "Owner";
+const PROBE_BASE_URL = (process.env.VSM_PROBE_BASE_URL || "https://thelingolegacy.com").replace(/\/$/, "");
+const REQUIRED_GATES = ["g02", "security", "static", "runtime"];
+const CENTERS = [
+  ["release-dispatch", "Release Dispatch Center", "Release packages, evidence, acceptance and promotion records."],
+  ["execution", "Execution & Orchestration Center", "Local jobs, build orchestration and preview dispatch."],
+  ["g02-authority", "G02 Gate & Authority Center", "Fail-closed release authority and Last Known Good protection."],
+  ["troubleshooting", "Troubleshooting & Evidence Center", "Probe history, logs, artifacts and diagnostics."],
+  ["security-saaae", "Security & SAAAE Center", "Role catalog, privileged boundaries and audit enforcement."],
+  ["infrastructure-truth", "Infrastructure Truth Center", "Cloudflare inventory, route map and configuration drift."],
+  ["observability", "Observability & Cost Center", "Health probes, telemetry, rate limits and cost guardrails."],
+  ["identity", "LINGO ID Center", "Local-first identity, key-backed owner acceptance and role foundations."],
+  ["forge", "LINGO Forge", "Private self-hosted Git service; federation and mirrors are future work."],
+  ["studio-command", "LINGO Studio Command", "Creative cockpit, asset registry and versioned world canon."],
+  ["art-visual-forge", "Art & Visual Forge", "Image, concept, UI and procedural visual pipelines."],
+  ["sonic-boom-audio", "Sonic Boom Audio Center", "Audio generation, sound design and spatial audio pipeline."],
+  ["math-simulation", "Mathematical Skills & Simulation Center", "Probability, economy, balance and simulation validation."],
+  ["motion-cinematic", "Motion & Cinematic Studio", "Timeline, camera, particles and cinematic export."],
+  ["lingoai", "LINGOai Core / askLINGO", "Local bot worker registry and policy-constrained orchestration."],
+  ["economy", "Economy & Commerce Center", "Virtual wallet simulation and isolated commerce testing."],
+  ["world-matrix", "World Matrix & Game Systems", "Game worlds, progression, game engines and release-linked assets."]
+];port http from "node:http";
+import fs from "node:fs/promises";
+import path from "node:path";
+import crypto from "node:crypto";
+import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./identity/identity.mjs";
+import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob } from "./sonic-boom/lane.mjs";
+import { executeBot } from "./ai/bot-worker.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -27,6 +65,8 @@ const CENTERS = [
 ];
 
 await fs.mkdir(DATA_DIR, { recursive: true });
+const OWNER_IDENTITY = await ensureOwnerIdentity();
+await loadLane();
 const releasesFile = path.join(DATA_DIR, "releases.json");
 const auditFile = path.join(DATA_DIR, "audit.jsonl");
 
@@ -100,6 +140,39 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.1.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
+    if (req.method === "GET" && url.pathname === "/api/identity") {
+      const principal = await getOwnerPrincipal();
+      return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/sonic-boom") {
+      return send(res, 200, { lane: sonicBoomSnapshot(), policy: "priority and bounded concurrency only; gates remain mandatory" });
+    }
+    if (req.method === "POST" && url.pathname === "/api/sonic-boom") {
+      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      const input = await bodyJson(req);
+      const lane = await configureLane(input);
+      await audit("sonic_boom.configured", { owner_id: OWNER_IDENTITY.id, lane });
+      return send(res, 200, { lane });
+    }
+    if (req.method === "GET" && url.pathname === "/api/bots") {
+      const bots = JSON.parse(await fs.readFile(path.join(process.cwd(), "ai", "bots.json"), "utf8"));
+      return send(res, 200, bots);
+    }
+    const botRun = url.pathname.match(/^\/api\/bots\/(lingo:\/\/id\/bot-[a-z]+)\/run$/);
+    if (req.method === "POST" && botRun) {
+      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      const input = await bodyJson(req);
+      const botId = botRun[1];
+      const result = await submitLaneJob({ owner: true, kind: "bot:" + botId, run: () => executeBot({
+        botId, task: input.task, input: input.input || {},
+        context: {
+          getRelease: async id => (await readReleases()).find(item => item.id === id),
+          getStatus: async () => ({ service: "lingo-vsm", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, sonic_boom: sonicBoomSnapshot() })
+        }
+      }) });
+      await audit("bot.executed", { bot_id: botId, owner_id: OWNER_IDENTITY.id, task: input.task, mutation_performed: false });
+      return send(res, 200, { bot_id: botId, invoked_by: OWNER_IDENTITY.id, result, note: "Deterministic local worker; no model inference or privileged mutation performed." });
+    }
     if (req.method === "GET" && url.pathname === "/api/centers") {
       return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "REGISTERED", phase: 0 })) });
     }
@@ -114,7 +187,7 @@ const server = http.createServer(async (req, res) => {
       const target = ["local-preview", "staging", "production-candidate"].includes(input.target) ? input.target : "local-preview";
       const now = new Date().toISOString();
       const id = "rp-" + now.slice(0,10).replaceAll("-","") + "-" + crypto.randomBytes(4).toString("hex");
-      const release = { id, title: input.title.trim(), source: { repo: "thelingolegacy-blip/TheLingoLegacy", branch: input.source.branch.trim(), commit: input.source.commit.toLowerCase() }, artifacts: [], target, status: "draft", gates: { g02:"UNKNOWN", security:"UNKNOWN", static:"UNKNOWN", runtime:"UNKNOWN" }, evidence: { probes:[], tests:[], logs:[], screenshots:[] }, accepted_by:null, accepted_at:null, created_at:now, updated_at:now };
+      const release = { id, title: input.title.trim(), source: { repo: "thelingolegacy-blip/TheLingoLegacy", branch: input.source.branch.trim(), commit: input.source.commit.toLowerCase() }, artifacts: [], target, status: "draft", gates: { g02:"UNKNOWN", security:"UNKNOWN", static:"UNKNOWN", runtime:"UNKNOWN" }, evidence: { probes:[], tests:[], logs:[], screenshots:[] }, accepted_by:null, accepted_at:null, owner_id:OWNER_IDENTITY.id, created_at:now, updated_at:now };
       const releases = await readReleases(); releases.push(release); await writeReleases(releases); await audit("release.created", { id, target, commit: release.source.commit });
       return send(res, 201, { release });
     }
@@ -127,7 +200,7 @@ const server = http.createServer(async (req, res) => {
       const releases = await readReleases();
       const release = releases.find(x => x.id === id);
       if (!release) return send(res, 404, { error: "Release package not found." });
-      const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_NAME, attested_at: new Date().toISOString() };
+      const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_IDENTITY.id, attested_at: new Date().toISOString() };
       release.gates[gate] = input.decision;
       release.evidence.gate_attestations = [...(release.evidence.gate_attestations || []), attestation];
       release.updated_at = attestation.attested_at;
@@ -153,8 +226,9 @@ const server = http.createServer(async (req, res) => {
       const missing = REQUIRED_GATES.filter(g => release.gates[g] !== "PASS");
       if (missing.length) return send(res, 409, { error: "Acceptance denied: required gates are not PASS.", blocked_gates: missing });
       if (release.target === "production-candidate") return send(res, 423, { error: "Production acceptance is disabled in Phase 0. Use the staging/preview evidence and a separately authorized promotion bridge." });
-      release.status = "accepted"; release.accepted_by = OWNER_NAME; release.accepted_at = new Date().toISOString(); release.updated_at = release.accepted_at;
-      await writeReleases(releases); await audit("release.accepted", { id, accepted_by: OWNER_NAME });
+      release.status = "accepted"; release.accepted_by = OWNER_IDENTITY.id; release.accepted_at = new Date().toISOString(); release.updated_at = release.accepted_at;
+      release.acceptance_signature = await signOwnerPayload({ release_id: id, source: release.source, target: release.target, gates: release.gates, accepted_at: release.accepted_at });
+      await writeReleases(releases); await audit("release.accepted", { id, accepted_by: OWNER_IDENTITY.id, signature_algorithm: "Ed25519" });
       return send(res, 200, { release, message: "Accepted for local workflow only. No deployment was performed." });
     }
     if (req.method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/style.css") || url.pathname.startsWith("/app.js"))) {
