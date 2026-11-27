@@ -78,10 +78,10 @@ services:
       - -lc
       - >-
         mkdir -p /runtime &&
-        tar -C /source-web --exclude=.git --exclude=node_modules --exclude=.next --exclude=.open-next -cf - . |
+        tar -C /source-web --exclude=.git --exclude=node_modules --exclude=.next --exclude=.open-next --exclude='.env*' --exclude='.dev.vars*' -cf - . |
         tar -C /runtime -xf - &&
         npm ci --no-audit --no-fund &&
-        npm run cf:preview -- --ip 0.0.0.0 --port 8790
+        npm run cf:preview -- --ip 0.0.0.0 --port 8790 --var ENVIRONMENT:staging
     ports:
       - "127.0.0.1:8790:8790"
     volumes:
