@@ -14,6 +14,7 @@ const arcade = await readFile(path.join(root, "lingoarcade/index.html"), "utf8")
 const app = await readFile(path.join(root, "app/index.html"), "utf8");
 const studioProduction = await readFile(path.join(root, "studio-production/index.html"), "utf8");
 const studioAssets = await readFile(path.join(root, "studio-assets/index.html"), "utf8");
+const primaryGame = await readFile(path.join(root, "thats-my-lingo/index.html"), "utf8");
 
 test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", () => {
   assert.equal(staticCopy, source, "static-site alias must stay byte-for-byte aligned");
@@ -40,7 +41,12 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.match(studioProduction, /No wagering, cash-out, or prize redemption/);
   assert.doesNotMatch(studioProduction, /Casino-language is scoped/i);
   assert.match(studioAssets, /Vegas Studio depth plate/);
-  assert.doesNotMatch(studioAssets, /Casino depth plate/);
+  assert.doesNotMatch(studioAssets, /Casino depth plate|Jackpot|Star Gate/);
+  assert.match(studioAssets, /Diamond/);
+  assert.match(studioAssets, /Demo Bonus/);
+  assert.match(primaryGame, /That’s My Lingo Vegas Studio Mode: a virtual-credit demo/);
+  assert.match(primaryGame, /Vegas Studio demo with <span>virtual-credit guardrails/);
+  assert.doesNotMatch(primaryGame, /social casino demo|Casino-style demo|Casino Demo|Sweepstakes-safe monetizing visuals/i);
 });
 
 test("founder drop checkout remains disabled in source and Worker", () => {
