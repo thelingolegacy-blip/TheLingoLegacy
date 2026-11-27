@@ -99,12 +99,7 @@ export function createRunController(input, options = {}) {
     cancel: reason => abort.abort(reason || "human-cancelled"),
     pause: () => { paused = true; },
     resume: () => { paused = false; },
-    pauseTrack: () => false,
-    resumeTrack: () => false,
-    cancelTrack: () => false,
-    pauseTrack: () => false,
-    resumeTrack: () => false,
-    cancelTrack: () => false,
+
     get paused() { return paused; },
     get cancelled() { return abort.signal.aborted; }
   };
@@ -294,6 +289,7 @@ export async function executeRun(input, {
             emptyAttempts++;
             const decision = retryDecision({ attempt: emptyAttempts, emptyLog: true, maxAttempts: config.RETRY_MAX_ATTEMPTS });
             if (decision.retry) { attempt++; continue; }
+            await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "FAILED", attempt, startedAt: stepStarted, detail: { reason: "empty-log", output_bytes: result.output_bytes } });
             throw new Error("Empty-log rejection after maximum attempts.");
           }
           if (result.ok) {
@@ -309,6 +305,7 @@ export async function executeRun(input, {
             await sleep(delay);
             continue;
           }
+          await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "FAILED", attempt, startedAt: stepStarted, detail: { error: redactText(result.error?.message || "Step failed", secretValues), failure_class: decision.reason } });
           throw result.error;
         }
       }
@@ -348,6 +345,7 @@ export async function executeRun(input, {
 
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
   const anyFailed = Object.values(results).some(value => value === "FAILED");
+  const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
   const finalStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
     cancelReason === "run-duration-exceeded" ? "FAILED" :
