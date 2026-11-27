@@ -165,7 +165,7 @@ test("runner clears a soft timeout when a step finishes early", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-soft-timeout-clear-"));
   try {
     const summary = await executeRun(base([
-      { id: "quick", criticality: "critical", required_secrets: [], steps: [{ id: "done", command: "node", args: ["-e", "process.exit(0)"], soft_timeout_ms: 2000, timeout_ms: 5000 }] }
+      { id: "quick", criticality: "critical", required_secrets: [], steps: [{ id: "done", command: "node", args: ["-e", "process.exit(0)"], soft_timeout_ms: 2000, timeout_ms: 5000, require_nonempty_log: false }] }
     ]), { rootDir, environment: { PATH: process.env.PATH } });
     assert.equal(summary.status, "SUCCESS");
     const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
@@ -273,7 +273,7 @@ test("runner rejects destructive steps unless explicitly authorized and idempote
       { id: "unsafe", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.exit(0)"], mutating: true }] }
     ]), { rootDir, environment: { PATH: process.env.PATH } }), /ALLOW_DESTRUCTIVE/);
     const summary = await executeRun(base([
-      { id: "safe-mutation", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.exit(0)"], mutating: true, idempotent: true }] }
+      { id: "safe-mutation", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.exit(0)"], mutating: true, idempotent: true, require_nonempty_log: false }] }
     ], { ALLOW_DESTRUCTIVE: true }), { rootDir, environment: { PATH: process.env.PATH } });
     assert.equal(summary.status, "SUCCESS");
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
@@ -343,7 +343,7 @@ test("step emits a soft-timeout warning before its hard timeout", async () => {
     ]), { rootDir, environment: { PATH: process.env.PATH } });
     assert.equal(summary.status, "SUCCESS");
     const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
-    assert.match(events, /"status":"STEP_TIMEOUT_WARNING"/);
+    assert.match(events, /"status":"STEP_SOFT_TIMEOUT"/);
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
@@ -392,7 +392,7 @@ test("runner supports per-track cancellation without aborting non-critical sibli
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-track-cancel-"));
   try {
     const controller = createRunController(base([
-      { id: "primary", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 500)"], timeout_ms: 5000 }] },
+      { id: "primary", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 500)"], timeout_ms: 5000, require_nonempty_log: false }] },
       { id: "optional", criticality: "best-effort", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 5000)"], timeout_ms: 7000 }] }
     ]), { rootDir, environment: { PATH: process.env.PATH } });
     let optionalActive = false;
