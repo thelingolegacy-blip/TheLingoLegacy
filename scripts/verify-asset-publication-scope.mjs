@@ -6,7 +6,7 @@ const configPath = path.join(root, 'wrangler.jsonc');
 const errors = [];
 const requiredExclusions = [
   '.github/', '.git/', '.wrangler/', 'config/', 'docs/', 'ops/', 'scripts/',
-  'tests/', 'node_modules/', '.env*', '*.env', '*.md', '*.mjs', '*.cjs',
+  'tests/', 'packages/', 'node_modules/', '.env*', '*.env', '*.md', '*.mjs', '*.cjs',
   '*.sh', '*.py', '*.yml', '*.yaml', '*.toml', '*.jsonc', '*.lock', '*.map',
   'worker.js', 'wrangler.jsonc', 'android/', 'ios/', 'lib/', 'infra/', 'cloudflare/',
   'diagnostics/', 'integration-os/', 'admin-command-center/', 'economy-command-center/',
