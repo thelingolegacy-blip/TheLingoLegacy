@@ -6,6 +6,7 @@ COPY server.mjs ./
 COPY identity ./identity
 COPY sonic-boom ./sonic-boom
 COPY ai ./ai
+COPY evidence ./evidence
 COPY dashboard ./dashboard
 COPY schemas ./schemas
 RUN mkdir -p /data && chown -R node:node /data
