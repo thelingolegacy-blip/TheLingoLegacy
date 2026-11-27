@@ -173,6 +173,12 @@
                   "minimum": 1,
                   "maximum": 65536,
                   "description": "Minimum raw output bytes required when require_nonempty_log is true; defaults to 8."
+                },
+                "soft_timeout_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1799999,
+                  "description": "Soft timeout warning threshold; defaults to 80% of timeout_ms."
                 }
               },
               "additionalProperties": false
