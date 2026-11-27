@@ -24,7 +24,7 @@ async function atomicJson(file, value) {
   await fs.rename(temp, file);
 }
 
-function validateTrack(track) {
+function validateTrack(track, config) {
   if (!Array.isArray(track.steps)) throw new Error("Every track must declare a steps array.");
   for (const step of track.steps) {
     if (!step || !EXECUTABLES.has(step.command) || !Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) {
@@ -33,7 +33,7 @@ function validateTrack(track) {
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
-    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
+    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");\n    if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");\n    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
     if (step.id !== undefined && !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id)) throw new Error("Step id is invalid.");
   }
 }
@@ -116,7 +116,7 @@ export async function executeRun(input, {
 } = {}) {
   const config = createRunConfig(input);
   if (config.target === "production") return { run_id: config.run_id, status: "PRODUCTION_TARGET_BLOCKED", tracks: {} };
-  for (const track of config.tracks) validateTrack(track);
+  for (const track of config.tracks) validateTrack(track, config);
 
   const required = [...new Set([...config.SECRETS_REQUIRED, ...config.tracks.flatMap(track => track.required_secrets)])];
   const secretCheck = preflightSecrets(required, environment);
