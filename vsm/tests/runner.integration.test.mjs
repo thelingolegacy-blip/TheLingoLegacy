@@ -78,6 +78,19 @@ test("runner enforces projected cost ceiling before invoking a step", async () =
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("runner rejects destructive steps unless explicitly authorized and idempotent", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-destructive-"));
+  try {
+    await assert.rejects(executeRun(base([
+      { id: "unsafe", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.exit(0)"], mutating: true }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } }), /ALLOW_DESTRUCTIVE/);
+    const summary = await executeRun(base([
+      { id: "safe-mutation", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.exit(0)"], mutating: true, idempotent: true }] }
+    ], { ALLOW_DESTRUCTIVE: true }), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "SUCCESS");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner controller supports human pause, resume and cancellation", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-control-"));
   try {
