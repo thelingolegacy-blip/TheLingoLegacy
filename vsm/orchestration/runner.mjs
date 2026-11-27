@@ -19,7 +19,7 @@ function safeError(error, secretValues) {
 }
 
 async function writeJsonAtomic(file, value) {
-  const temp = file + ".tmp";
+  const temp = file + "." + process.pid + "." + Math.random().toString(16).slice(2) + ".tmp";
   await fs.writeFile(temp, JSON.stringify(value, null, 2) + "
 ", { mode: 0o600 });
   await fs.rename(temp, file);
@@ -65,7 +65,8 @@ export async function executeRun(input, {
   let cancelReason = null;
   let pauseRequested = false;
   if (control) { const pauseOriginal = control.pause; const resumeOriginal = control.resume; control.pause = () => { pauseRequested = true; pauseOriginal(); }; control.resume = () => { pauseRequested = false; resumeOriginal(); }; }
-  const secretValues = required.flatMap(name => [environment[name]]).filter(value => typeof value === "string" && value.length > 0);
+  const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
+  const secretValues = required.flatMap(name => { const group = aliasGroups.find(items => items.includes(name)) || [name]; return group.map(key => environment[key]); }).filter(value => typeof value === "string" && value.length > 0);
 
   const emit = async event => {
     const safe = structuredRunEvent({ ...event, secretValues });
@@ -146,7 +147,7 @@ export async function executeRun(input, {
         }
       }
     } catch (error) {
-      trackStatus = controller.signal.aborted && track.criticality !== "critical" ? "CANCELLED" : "FAILED";
+      trackStatus = controller.signal.aborted ? "CANCELLED" : "FAILED";
       await emit({ runId: config.run_id, trackId: track.id, status: trackStatus, startedAt: startedTrack, detail: { error: safeError(error, [...secretValues, ...trackSecrets]) } });
     } finally {
       for (const name of track.required_secrets || []) delete trackEnv[name];
@@ -169,9 +170,9 @@ export async function executeRun(input, {
       await Promise.race([Promise.allSettled([...controllers.keys()].map(id => controllers.get(id)?.abort(cancelReason))), sleep(RUN_DEFAULTS.CANCEL_GRACE_MS)]);
     }
   }
-  const failedCritical = config.tracks.some((track, index) => track.criticality === "critical" && results[index] !== "SUCCESS");
+  const failedCritical = config.tracks.some((track, index) => track.criticality === "critical" && !["SUCCESS", "CANCELLED"].includes(results[index]));
   const anyFailed = results.some(status => status !== "SUCCESS");
-  const status = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : failedCritical ? "FAILED" : anyFailed ? "PARTIAL" : "SUCCESS";
+  const status = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : cancelled && cancelReason === "human-cancelled" ? "CANCELLED" : failedCritical ? "FAILED" : anyFailed ? "PARTIAL" : "SUCCESS";
   const summary = {
     run_id: config.run_id, status, started_at: new Date(ledger.started_at_ms).toISOString(), finished_at: nowIso(),
     secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, duration_ms: now() - ledger.started_at_ms, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd },
