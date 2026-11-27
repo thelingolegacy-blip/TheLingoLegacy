@@ -164,7 +164,8 @@ export async function executeRun(input, {
     return failed;
   }
   const controllers = new Map();
-  const childPids = new Set();\n  const pidFile = path.join(runDir, "child-processes.json");
+  const childPids = new Set();
+  const pidFile = path.join(runDir, "child-processes.json");
   const crashFile = path.join(runDir, "crash-report.json");
   await atomicJson(pidFile, []);
   const results = {};
