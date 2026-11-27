@@ -240,7 +240,7 @@ export async function executeRun(input, {
   };
 
   await updateStatus("RUNNING");
-  const watchdog = setTimeout(() => cancelAll("run-duration-exceeded"), config.RUN_MAX_DURATION_MINUTES * 60_000);
+  const watchdog = setTimeout(() => { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }, config.RUN_MAX_DURATION_MINUTES * 60_000);
   watchdog.unref?.();
   try {
     await Promise.all(config.tracks.map(runTrack));
