@@ -152,7 +152,15 @@ const server = http.createServer(async (req, res) => {
       if (activeRuns.has(runId)) return send(res, 409, { error: "A run with this ID is already active." });
       const priorRun = await fs.access(path.join(DATA_DIR, "runs", runId)).then(() => true).catch(() => false);
       if (priorRun) return send(res, 409, { error: "A run with this ID already exists; run IDs are immutable and cannot be reused." });
-      const controller = createRunController(validatedConfig, { rootDir: process.cwd(), artifactsDir: path.join(DATA_DIR, "runs") });
+      const runDirectory = path.join(DATA_DIR, "runs", runId);
+      const controller = createRunController(validatedConfig, {
+        rootDir: process.cwd(),
+        artifactsDir: path.join(DATA_DIR, "runs"),
+        notifyOwner: async event => {
+          const notification = { ...event, created_at: new Date().toISOString(), delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true };
+          await fs.writeFile(path.join(runDirectory, "owner-notification.json"), JSON.stringify(notification, null, 2) + "\\n", { mode: 0o600 });
+        }
+      });
       activeRuns.set(runId, controller);
       controller.promise.finally(() => activeRuns.delete(runId)).catch(() => activeRuns.delete(runId));
       await audit("run.started", { run_id: runId, requested_by: OWNER_IDENTITY.id, target: input.config.target || "local" });
@@ -189,8 +197,9 @@ const server = http.createServer(async (req, res) => {
       const runDir = path.join(DATA_DIR, "runs", runId);
       const status = await fs.readFile(path.join(runDir, "status.json"), "utf8").then(JSON.parse).catch(error => error.code === "ENOENT" ? null : Promise.reject(error));
       const summary = await fs.readFile(path.join(runDir, "summary.json"), "utf8").then(JSON.parse).catch(error => error.code === "ENOENT" ? null : Promise.reject(error));
+      const ownerNotification = await fs.readFile(path.join(runDir, "owner-notification.json"), "utf8").then(JSON.parse).catch(error => error.code === "ENOENT" ? null : Promise.reject(error));
       if (!status && !summary) return send(res, 404, { error: "Run status not found." });
-      return send(res, 200, { status, summary, active: activeRuns.has(runId) });
+      return send(res, 200, { status, summary, owner_notification: ownerNotification, active: activeRuns.has(runId) });
     }
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.2.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
