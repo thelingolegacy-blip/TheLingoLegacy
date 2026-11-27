@@ -186,6 +186,8 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   const runEvents = await fs.readFile(path.join(dataDir, "runs", "api-local-run-001", "events.jsonl"), "utf8");
   assert.ok(runEvents.includes("STARTED"));
   assert.ok(runEvents.includes("SUCCESS"));
+  const auditEvents = await fs.readFile(path.join(dataDir, "audit.jsonl"), "utf8");
+  assert.match(auditEvents, /run.owner-notification/);
 
   const unauthenticatedAudit = await fetch(base + "/api/audit/verify");
   assert.equal(unauthenticatedAudit.status, 403);
