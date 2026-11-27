@@ -15,6 +15,39 @@ def expect_integrity_error(db, statement, params, expected=None):
         raise AssertionError(f'expected integrity failure: {statement}')
 
 
+
+def verify_ruleset_digest_migration():
+    db = sqlite3.connect(':memory:')
+    db.execute('PRAGMA foreign_keys = ON')
+    game_schema = (ROOT / 'migrations/0001_lingo_game_wallet_staging.sql').read_text()
+    digest_migration = (ROOT / 'migrations/0004_lingo_game_ruleset_digest.sql').read_text()
+    db.executescript(game_schema)
+    db.execute("INSERT INTO lingo_game_accounts(firebase_uid) VALUES ('legacy-user')")
+    db.execute("""INSERT INTO lingo_game_sessions
+      (session_id, firebase_uid, game_id, idempotency_key, rule_version, reels_json, wager_units, payout_units, status)
+      VALUES ('legacy-session', 'legacy-user', 'thats-my-lingo', 'legacy-idempotency-0001',
+      'staging-demo-v1', '[]', 1, 0, 'settled')""")
+    db.executescript(digest_migration)
+    legacy_digest = db.execute(
+        "SELECT ruleset_digest FROM lingo_game_sessions WHERE session_id='legacy-session'"
+    ).fetchone()[0]
+    assert legacy_digest == ''
+    valid_digest = 'a' * 64
+    db.execute("""INSERT INTO lingo_game_sessions
+      (session_id, firebase_uid, game_id, idempotency_key, rule_version, ruleset_digest,
+       reels_json, wager_units, payout_units, status)
+      VALUES ('new-session', 'legacy-user', 'thats-my-lingo', 'new-idempotency-0001',
+      'tml-5x3-20line-option2-v1', ?, '[]', 20, 0, 'settled')""", (valid_digest,))
+    expect_integrity_error(db, """INSERT INTO lingo_game_sessions
+      (session_id, firebase_uid, game_id, idempotency_key, rule_version, ruleset_digest,
+       reels_json, wager_units, payout_units, status)
+      VALUES ('bad-session', 'legacy-user', 'thats-my-lingo', 'bad-idempotency-0001',
+      'tml-5x3-20line-option2-v1', ?, '[]', 20, 0, 'settled')""", ('z' * 64,), 'CHECK constraint')
+    assert db.execute("SELECT COUNT(*) FROM lingo_game_sessions").fetchone()[0] == 2
+    print('TML_RULESET_DIGEST_MIGRATION=PASS')
+    print('LEGACY_SESSION_PRESERVATION=PASS')
+    print('RULESET_DIGEST_FORMAT_CONSTRAINT=PASS')
+
 def main():
     db = sqlite3.connect(':memory:')
     db.execute('PRAGMA foreign_keys = ON')
@@ -94,6 +127,7 @@ def main():
     print('APPROVAL_CONSUMPTION_TERMINAL=PASS')
     print('APPROVAL_RECORD_RETENTION=PASS')
     print('RATE_LIMIT_BUCKET_CONSTRAINTS=PASS')
+    verify_ruleset_digest_migration()
 
 
 if __name__ == '__main__':
