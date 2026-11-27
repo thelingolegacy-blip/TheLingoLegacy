@@ -113,7 +113,8 @@ export async function executeRun(input, {
   control = null,
   notifyOwner = async () => {},
   now = () => Date.now(),
-  random = Math.random
+  random = Math.random,
+  fetchImpl = globalThis.fetch
 } = {}) {
   const config = createRunConfig(input);
   if (config.target === "production") return { run_id: config.run_id, status: "PRODUCTION_TARGET_BLOCKED", tracks: {} };
@@ -155,7 +156,7 @@ export async function executeRun(input, {
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
     const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {} };
     await atomicJson(path.join(runDir, "summary.json"), failed);
-    await updateStatus(failed.status);
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
     return failed;
   }
   const controllers = new Map();
