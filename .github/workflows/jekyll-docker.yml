@@ -2,10 +2,6 @@ name: Lingo Legacy Static CI
 run-name: Static CI · ${{ github.event_name }} · ${{ github.ref_name }} · ${{ github.sha }}
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
   workflow_dispatch:
 
 # Static validation and evidence upload require no repository or Actions write token.
