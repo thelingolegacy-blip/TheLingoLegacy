@@ -9,7 +9,7 @@ Local-first release control plane in the canonical repository. This is additive:
 - Release Package JSON Schema and fail-closed gate defaults.
 - Read-only mount of the existing repository at `/workspace`.
 - Public HTTP health probes against the configured base URL.
-- Owner-token protection for gate attestations, Sonic Boom configuration and release acceptance.
+- Owner-token protection for release creation, runtime probes, gate attestations, Sonic Boom configuration, bot invocation and release acceptance.
 - Local LINGO ID owner principal (`lingo://id/<handle>`) with an Ed25519 keypair.
 - SAAAE starter policy with default-deny role/capability mapping and explicit denials for production mutation.
 - Signed local release-acceptance envelopes; owner ID is stamped on packages and gate attestations.
@@ -58,8 +58,8 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - `GET /api/evidence/:id` — owner-token protected evidence retrieval with SHA-256 integrity verification.
 - `GET /api/centers`
 - `GET /api/releases`
-- `POST /api/releases` — create draft package.
-- `POST /api/releases/:id/probe` — run configured public probes and persist the result as a hashed evidence record.
+- `POST /api/releases` — Owner-token protected draft-package creation.
+- `POST /api/releases/:id/probe` — Owner-token protected public probes; results are persisted as hashed evidence records.
 - Gate attestations are also persisted as hashed, release-scoped evidence records.
 - `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`.
 - `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS and signs the acceptance payload with the local Owner Ed25519 key.
