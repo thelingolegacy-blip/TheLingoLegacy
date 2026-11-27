@@ -164,7 +164,7 @@ export async function executeRun(input, {
   const results = {};
   let cancelled = false;
   let cancelReason = null;
-  let pauseRequested = Boolean(control?.paused);\n  const pausedTracks = new Set();
+  let pauseRequested = Boolean(control?.paused);\n  const pausedTracks = new Set();\n  const cancelledTracks = new Set();
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
@@ -248,7 +248,7 @@ export async function executeRun(input, {
     await fs.mkdir(trackDir, { recursive: true, mode: 0o700 });
     const abort = new AbortController();
     controllers.set(track.id, abort);
-    if (cancelled) abort.abort(cancelReason);
+    if (cancelled) abort.abort(cancelReason);\n    if (cancelledTracks.has(track.id)) abort.abort("human-track-cancelled");
     const ledgerTrack = ledger.tracks[track.id];
     ledgerTrack.status = "RUNNING";
     const trackStarted = now();
