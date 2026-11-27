@@ -73,8 +73,9 @@ function validSecretValue(name, value) {
   if (name === "FIREBASE_SERVICE_ACCOUNT") {
     try {
       const parsed = JSON.parse(value);
-      return parsed.type === "service_account" && typeof parsed.project_id === "string" &&
-        typeof parsed.client_email === "string" && typeof parsed.private_key === "string";
+      return parsed.type === "service_account" && typeof parsed.project_id === "string" && parsed.project_id.length > 0 &&
+        typeof parsed.client_email === "string" && parsed.client_email.length > 0 &&
+        typeof parsed.private_key === "string" && /-----BEGIN PRIVATE KEY-----/.test(parsed.private_key) && /-----END PRIVATE KEY-----/.test(parsed.private_key);
     } catch { return false; }
   }
   return value.trim().length >= 16;
