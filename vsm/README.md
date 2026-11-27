@@ -40,7 +40,7 @@ Gitea registration is disabled and repository viewing requires sign-in. Complete
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
-The local API is loopback-bound by Compose; do not expose it publicly. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only.
+The local API is loopback-bound by Compose; do not expose it publicly. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only.
 
 ## API
 
