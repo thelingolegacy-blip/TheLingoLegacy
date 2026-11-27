@@ -132,7 +132,12 @@ export async function executeRun(input, {
   catch (error) { if (error.code === "EEXIST") return { run_id: config.run_id, status: "RUN_ID_CONFLICT", tracks: {} }; throw error; }
 
   const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
-  const secretValues = required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0);
+  const secretValues = [...new Set(required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0).flatMap(value => {
+    try {
+      const parsed = JSON.parse(value);
+      return [value, ...(typeof parsed.private_key === "string" ? [parsed.private_key] : [])];
+    } catch { return [value]; }
+  }))];
   const serializedConfig = JSON.stringify(config);
   const exposedSecretNames = required.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value)));
   if (exposedSecretNames.length) {
@@ -156,6 +161,7 @@ export async function executeRun(input, {
     const charged = chargeBudget(ledger, firstTrack, { toolCalls: preflightCalls, now: now() });
     if (!charged.ok) ledger.status = "BUDGET_EXCEEDED";
   }
+  if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
     const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {} };
     await atomicJson(path.join(runDir, "summary.json"), failed);
@@ -333,7 +339,7 @@ export async function executeRun(input, {
   await updateStatus("RUNNING");
   const crashWatchdog = spawn(process.execPath, [path.join(import.meta.dirname, "watchdog.mjs"), String(process.pid), pidFile, crashFile], { detached: true, stdio: "ignore", env: { PATH: environment.PATH || "" } });
   crashWatchdog.unref();
-  const watchdog = setTimeout(() => { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }, config.RUN_MAX_DURATION_MINUTES * 60_000);
+  const watchdog = setTimeout(() => { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }, Math.max(0, ledger.deadline_ms - now()));
   watchdog.unref?.();
   try {
     await Promise.all(config.tracks.map(runTrack));
