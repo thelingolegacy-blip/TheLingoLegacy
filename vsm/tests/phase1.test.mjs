@@ -56,3 +56,14 @@ test("evidence records are immutable-by-id and SHA-256 integrity checked", async
   assert.deepEqual(record.payload, { checks: 4, passed: true });
   await assert.rejects(() => evidence.readEvidence("../escape"));
 });
+
+test("SAAAE policy defaults to deny and never grants production mutation", async () => {
+  const policy = await import("../security/policy.mjs?test-suite");
+  const owner = { id: "lingo://id/test-owner", status: "active", roles: ["owner"] };
+  const operator = { id: "lingo://id/test-operator", status: "active", roles: ["operator"] };
+  assert.equal(policy.authorize(owner, "release.accept.local"), true);
+  assert.equal(policy.authorize(owner, "production.promote"), false);
+  assert.equal(policy.authorize(operator, "release.accept.local"), false);
+  assert.equal(policy.authorize({ ...owner, status: "suspended" }, "vsm.read"), false);
+  assert.equal(policy.authorize(owner, "unknown.capability"), false);
+});
