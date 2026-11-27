@@ -164,7 +164,7 @@ export async function executeRun(input, {
   const results = {};
   let cancelled = false;
   let cancelReason = null;
-  let pauseRequested = Boolean(control?.paused);
+  let pauseRequested = Boolean(control?.paused);\n  const pausedTracks = new Set();
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
@@ -269,7 +269,7 @@ export async function executeRun(input, {
         let transientRetries = 0;
         while (true) {
           if (cancelled || abort.signal.aborted) throw Object.assign(new Error("Run cancelled."), { name: "AbortError" });
-          while (pauseRequested && !cancelled) await sleep(100);
+          while ((pauseRequested || pausedTracks.has(track.id)) && !cancelled && !abort.signal.aborted) await sleep(100);
           await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "STARTED", attempt, startedAt: now() });
           const result = await runProcess(step, track, trackDir, trackEnv, abort.signal);
           if (result.ok && step.require_nonempty_log && result.output_bytes === 0) {
@@ -305,7 +305,7 @@ export async function executeRun(input, {
     ledgerTrack.status = outcome;
     results[track.id] = outcome;
     await emit({ runId: config.run_id, trackId: track.id, status: outcome, startedAt: trackStarted });
-    if (outcome === "FAILED" && track.criticality === "critical") cancelAll("critical-track-failed");
+    if (outcome === "FAILED" && track.criticality === "critical") cancelAll("critical-track-failed");\n    if (outcome === "CANCELLED" && track.criticality === "critical" && !cancelled) cancelAll("critical-track-cancelled");
     return outcome;
   };
 
