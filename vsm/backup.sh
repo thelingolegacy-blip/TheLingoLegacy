@@ -2,8 +2,8 @@
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-REPO_ROOT="$(CDPATH= cd -- "$ROOT/.." && pwd)"
-cd "$REPO_ROOT"
+cd "$ROOT"
+[ -f .env ] || { echo "Create vsm/.env before using backup/restore."; exit 2; }
 BACKUP_ROOT="\${VSM_BACKUP_DIR:-$HOME/.local/share/lingo-vsm/backups}"
 ACTION="\${1:-help}"
 BACKUP_ID="\${2:-}"
@@ -18,7 +18,7 @@ safe_id() {
   case "$BACKUP_ID" in ""|*[!A-Za-z0-9._-]*) echo "Invalid backup ID."; exit 2 ;; esac
 }
 service_was_running() {
-  docker compose -f "$ROOT/docker-compose.yml" ps --status running -q "$1" 2>/dev/null | grep -q .
+  docker compose -f docker-compose.yml ps --status running -q "$1" 2>/dev/null | grep -q .
 }
 STOPPED=0
 VSM_WAS_RUNNING=0
@@ -46,10 +46,11 @@ case "$ACTION" in
     trap restart_services EXIT INT TERM
     stop_services
     for volume in $VOLUMES; do
+      docker volume inspect "$volume" >/dev/null 2>&1 || { echo "Required volume is missing: $volume"; exit 2; }
       archive="$volume.tar.gz"
       docker run --rm -v "$volume:/data:ro" -v "$DEST:/backup" alpine:3.20 sh -c "tar -czf '/backup/$archive' -C /data ."
     done
-    (cd "$DEST" && sha256sum *.tar.gz > SHA256SUMS)
+    docker run --rm -v "$DEST:/backup" alpine:3.20 sh -c "cd /backup && sha256sum *.tar.gz > SHA256SUMS"
     printf 'backup_id=%s\ncreated_at=%s\nvolumes=%s\n' "$BACKUP_ID" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$VOLUMES" > "$DEST/MANIFEST"
     chmod 600 "$DEST"/*
     restart_services
@@ -65,7 +66,7 @@ case "$ACTION" in
     safe_id
     [ -d "$BACKUP_ROOT/$BACKUP_ID" ] || { echo "Backup ID not found."; exit 2; }
     [ -f "$BACKUP_ROOT/$BACKUP_ID/MANIFEST" ] && [ -f "$BACKUP_ROOT/$BACKUP_ID/SHA256SUMS" ] || { echo "Backup manifest/checksum file missing."; exit 2; }
-    (cd "$BACKUP_ROOT/$BACKUP_ID" && sha256sum -c SHA256SUMS)
+    docker run --rm -v "$BACKUP_ROOT/$BACKUP_ID:/backup:ro" alpine:3.20 sh -c "cd /backup && sha256sum -c SHA256SUMS"
     for volume in $VOLUMES; do
       [ -s "$BACKUP_ROOT/$BACKUP_ID/$volume.tar.gz" ] || { echo "Backup archive missing: $volume"; exit 2; }
       docker run --rm -v "$BACKUP_ROOT/$BACKUP_ID:/backup:ro" alpine:3.20 sh -c "tar -tzf '/backup/$volume.tar.gz' >/dev/null"
@@ -74,7 +75,7 @@ case "$ACTION" in
     stop_services
     for volume in $VOLUMES; do
       archive="$volume.tar.gz"
-      docker run --rm -v "$volume:/data" -v "$BACKUP_ROOT/$BACKUP_ID:/backup:ro" alpine:3.20 sh -c "find /data -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + && tar -xzf '/backup/$archive' -C /data"
+      docker run --rm -v "$volume:/data" -v "$BACKUP_ROOT/$BACKUP_ID:/backup:ro" alpine:3.20 sh -c "find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} \\; && tar -xzf '/backup/$archive' -C /data"
     done
     restart_services
     STOPPED=0
