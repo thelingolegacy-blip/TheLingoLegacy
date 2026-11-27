@@ -501,6 +501,7 @@ export async function executeRun(input, {
     try { crashWatchdog.kill("SIGTERM"); } catch {}
   }
   for (const track of config.tracks) if (!results[track.id]) results[track.id] = ledger.tracks[track.id].status === "RUNNING" ? "FAILED" : "CANCELLED";
+  if (now() >= ledger.deadline_ms && ledger.status === "RUNNING") { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }
 
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
