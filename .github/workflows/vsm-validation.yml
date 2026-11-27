@@ -37,7 +37,8 @@ jobs:
           chmod 700 "$RUNNER_TEMP/lingo-git-askpass"
           export GIT_ASKPASS="$RUNNER_TEMP/lingo-git-askpass"
           export GIT_TERMINAL_PROMPT=0
-          git clone --no-tags --depth 1 --branch "$GITHUB_HEAD_REF" "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_WORKSPACE"
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          git clone --no-tags --depth 1 --branch "$BRANCH" "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_WORKSPACE"
           git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth 1 origin "$GITHUB_SHA"
           git -C "$GITHUB_WORKSPACE" checkout --detach "$GITHUB_SHA"
           rm -f "$RUNNER_TEMP/lingo-git-askpass"
