@@ -4,12 +4,46 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 import { executeRun, createRunController } from "../orchestration/runner.mjs";
 
 const base = (tracks, extra = {}) => ({
   run_id: "runner-test-001", run_type: "local-validation", target: "local",
   RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 20, RUN_MAX_COST_USD: 2,
   tracks, ...extra
+});
+
+test("orphan watchdog writes crash summary, owner outbox and audit event", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-watchdog-"));
+  const runDir = path.join(rootDir, "runs", "watchdog-test-01");
+  await fs.mkdir(runDir, { recursive: true });
+  const pidFile = path.join(runDir, "child-processes.json");
+  const crashFile = path.join(runDir, "crash-report.json");
+  const statusFile = path.join(runDir, "status.json");
+  const auditFile = path.join(rootDir, "runs", "audit.jsonl");
+  const watchdogPath = fileURLToPath(new URL("../orchestration/watchdog.mjs", import.meta.url));
+  try {
+    await fs.writeFile(pidFile, "[]\n");
+    await fs.writeFile(statusFile, JSON.stringify({ run_id: "watchdog-test-01", status: "RUNNING", tracks: { build: { status: "RUNNING" } }, budget: { tool_calls: 1 } }));
+    await fs.writeFile(auditFile, "");
+    const parent = spawn(process.execPath, ["-e", "setTimeout(()=>process.exit(0),250)"], { stdio: "ignore" });
+    const watchdog = spawn(process.execPath, [watchdogPath, String(parent.pid), pidFile, crashFile], { stdio: "ignore" });
+    await new Promise((resolve, reject) => {
+      watchdog.once("error", reject);
+      watchdog.once("close", code => code === 0 ? resolve() : reject(new Error("watchdog exited " + code)));
+    });
+    const status = JSON.parse(await fs.readFile(statusFile, "utf8"));
+    const summary = JSON.parse(await fs.readFile(path.join(runDir, "summary.json"), "utf8"));
+    const notification = JSON.parse(await fs.readFile(path.join(runDir, "owner-notification.json"), "utf8"));
+    const crash = JSON.parse(await fs.readFile(crashFile, "utf8"));
+    const audit = await fs.readFile(auditFile, "utf8");
+    assert.equal(status.status, "ORCHESTRATOR_CRASH");
+    assert.equal(summary.status, "ORCHESTRATOR_CRASH");
+    assert.equal(notification.requires_human_poll, true);
+    assert.equal(crash.status, "ORCHESTRATOR_CRASH");
+    assert.match(audit, /run\.orchestrator-crash/);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
 test("runner executes tracks in parallel with isolated environments and run-scoped artifacts", async () => {
