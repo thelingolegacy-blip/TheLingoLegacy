@@ -34,6 +34,8 @@ test("secret preflight reports missing names only and track environments are lea
   const env = { FIREBASE_SERVICE_ACCOUNT: "firebase-secret", CLOUDFLARE_API_TOKEN: "cloudflare-secret", OTHER_TOKEN: "unrelated" };
   const scoped = scopedTrackEnvironment({ required_secrets: ["CLOUDFLARE_API_TOKEN"] }, env, { PATH: "/bin" });
   assert.deepEqual(scoped, { PATH: "/bin", CLOUDFLARE_API_TOKEN: "cloudflare-secret" });
+  const firebaseScoped = scopedTrackEnvironment({ required_secrets: ["FIREBASE_SERVICE_ACCOUNT"] }, { FIREBASE_TOKEN: "firebase-token-123456" });
+  assert.deepEqual(firebaseScoped, { FIREBASE_TOKEN: "firebase-token-123456" });
   assert.equal(JSON.stringify(check).includes("not-for-output"), false);
   const firebase = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "ci@lingo-stage.iam.gserviceaccount.com", private_key: "-----BEGIN PRIVATE KEY-----\
 redacted\
