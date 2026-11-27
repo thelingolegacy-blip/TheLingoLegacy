@@ -82,7 +82,13 @@ export function classifyFailure(error) {
   return "permanent";
 }
 
-export function transientRetryDelayMs(attempt, random = Math.random) {\n  if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");\n  const ceiling = Math.min(30_000, 1_000 * (2 ** (attempt - 1)));\n  return Math.floor(ceiling * (0.5 + Math.max(0, Math.min(1, random())) * 0.5));\n}\n\nexport function retryDecision({ error, attempt, startedAt, now = Date.now(), emptyLog = false, maxAttempts = RUN_DEFAULTS.RETRY_MAX_ATTEMPTS }) {
+export function transientRetryDelayMs(attempt, random = Math.random) {
+  if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");
+  const ceiling = Math.min(30_000, 1_000 * (2 ** (attempt - 1)));
+  return Math.floor(ceiling * (0.5 + Math.max(0, Math.min(1, random())) * 0.5));
+}
+
+export function retryDecision({ error, attempt, startedAt, now = Date.now(), emptyLog = false, maxAttempts = RUN_DEFAULTS.RETRY_MAX_ATTEMPTS }) {
   if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");
   if (emptyLog) return { retry: attempt < maxAttempts, reason: "empty-log", next_attempt: attempt + 1 };
   if (classifyFailure(error) !== "transient") return { retry: false, reason: "permanent-failure" };
@@ -122,8 +128,14 @@ export function chargeBudget(ledger, trackId, { toolCalls = 0, costUsd = 0, now 
   return { ok: !reason, reason, warning: !reason && ledger.tool_calls >= ledger.max_tool_calls * 0.8 };
 }
 
-export function structuredRunEvent({ runId, trackId = null, step = null, status, attempt = 1, startedAt, endedAt = Date.now(), detail = {} }) {
-  const safeDetail = { ...detail };
-  for (const key of Object.keys(safeDetail)) if (/secret|token|password|credential|authorization/i.test(key)) safeDetail[key] = "[REDACTED]";
+export function structuredRunEvent({ runId, trackId = null, step = null, status, attempt = 1, startedAt, endedAt = Date.now(), detail = {}, secretValues = [] }) {
+  const redact = (value, key = "") => {
+    if (/secret|token|password|credential|authorization/i.test(key)) return "[REDACTED]";
+    if (typeof value === "string") return secretValues.filter(item => typeof item === "string" && item.length > 0).reduce((text, secret) => text.split(secret).join("[REDACTED]"), value);
+    if (Array.isArray(value)) return value.map(item => redact(item));
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, redact(item, name)]));
+    return value;
+  };
+  const safeDetail = redact(detail);
   return { timestamp: new Date(endedAt).toISOString(), run_id: runId, track_id: trackId, step, status, attempt, duration_ms: startedAt === undefined ? null : Math.max(0, endedAt - startedAt), detail: safeDetail };
 }
