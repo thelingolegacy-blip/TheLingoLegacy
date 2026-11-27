@@ -1,0 +1,42 @@
+name: Canonical World Directory
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "worlds/index.html"
+      - "assets/flagship-home.css"
+      - "assets/flagship-home.js"
+      - "scripts/tests/world-directory-canon.test.mjs"
+      - ".github/workflows/world-directory-canon.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "index.html"
+      - "worlds/index.html"
+      - "assets/flagship-home.css"
+      - "assets/flagship-home.js"
+      - "scripts/tests/world-directory-canon.test.mjs"
+      - ".github/workflows/world-directory-canon.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canonical-world-directory-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+      - name: Verify canonical world directory
+        run: node --test scripts/tests/world-directory-canon.test.mjs
