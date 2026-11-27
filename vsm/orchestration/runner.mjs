@@ -31,9 +31,10 @@ function validateTrack(track, config) {
       throw new Error("Track steps must use node/npm with a string args array and no shell.");
     }
     if (step.require_nonempty_log !== undefined && typeof step.require_nonempty_log !== "boolean") throw new Error("Step require_nonempty_log must be boolean.");
+    if (step.mutating !== undefined && typeof step.mutating !== "boolean") throw new Error("Step mutating must be boolean.");
+    if (step.idempotent !== undefined && typeof step.idempotent !== "boolean") throw new Error("Step idempotent must be boolean.");
+    if (step.idempotency_key !== undefined && (typeof step.idempotency_key !== "string" || step.idempotency_key.length < 8 || step.idempotency_key.length > 128)) throw new Error("Step idempotency_key must be 8–128 characters.");
     if (step.min_log_bytes !== undefined && (!Number.isInteger(step.min_log_bytes) || step.min_log_bytes < 1 || step.min_log_bytes > 65_536)) throw new Error("Step min_log_bytes must be between 1 and 65536.");
-    const hardTimeout = step.timeout_ms ?? 5 * 60_000;
-    if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1 || step.soft_timeout_ms >= hardTimeout)) throw new Error("Step soft_timeout_ms must be positive and less than timeout_ms.");
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
