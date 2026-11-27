@@ -51,6 +51,18 @@
  </form>
 </section>
 <section class="panel">
+ <div class="section-head"><div><p class="eyebrow">LINGO STUDIO COMMAND</p><h2>Portfolio asset registry</h2></div><span id="assetCount" class="pill neutral">0 ASSETS</span></div>
+ <form id="assetForm">
+  <label>Asset name<input name="name" required minlength="2" maxlength="120" placeholder="Kotton's Code character concept"></label>
+  <div class="two"><label>Portfolio division<input name="division" required minlength="2" maxlength="80" placeholder="Kotton's Code"></label><label>Asset kind<select name="kind"><option value="design">Design</option><option value="image">Image</option><option value="audio">Audio</option><option value="video">Video</option><option value="document">Document</option><option value="code">Code</option><option value="game">Game</option><option value="other">Other</option></select></label></div>
+  <div class="two"><label>Rights status<select name="rights_status"><option value="pending_review">Pending review</option><option value="owner_created">Owner created</option><option value="licensed">Licensed</option><option value="public_domain">Public domain</option><option value="unknown">Unknown</option></select></label><label>Source URI (optional)<input name="source_uri" maxlength="500" placeholder="repo://TheLingoLegacy/assets/example"></label></div>
+  <label>Description<textarea name="description" maxlength="2000" rows="2" placeholder="Describe the asset, provenance and intended use"></textarea></label>
+  <button type="submit">Register asset proposal</button>
+  <p id="assetMessage" class="message">Metadata only. Binary upload, rights clearance and publication require separate workflows.</p>
+ </form>
+ <div id="assetList" class="asset-list"><p class="muted">Loading asset registry…</p></div>
+</section>
+<section class="panel">
  <div class="section-head"><div><p class="eyebrow">EVIDENCE & ACCEPTANCE</p><h2>Release registry</h2></div><button id="refresh" class="secondary">Refresh</button></div>
  <div id="releases" class="release-list"><p class="muted">Loading release registry…</p></div>
 </section>
