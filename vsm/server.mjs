@@ -136,6 +136,8 @@ const server = http.createServer(async (req, res) => {
       const runId = input.config.run_id;
       if (typeof runId !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(runId)) return send(res, 400, { error: "A valid run_id is required." });
       if (activeRuns.has(runId)) return send(res, 409, { error: "A run with this ID is already active." });
+      const priorRun = await fs.access(path.join(DATA_DIR, "runs", runId)).then(() => true).catch(() => false);
+      if (priorRun) return send(res, 409, { error: "A run with this ID already exists; run IDs are immutable and cannot be reused." });
       const controller = createRunController(input.config, { rootDir: process.cwd(), artifactsDir: path.join(DATA_DIR, "runs") });
       activeRuns.set(runId, controller);
       controller.promise.finally(() => activeRuns.delete(runId)).catch(() => activeRuns.delete(runId));
