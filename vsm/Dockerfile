@@ -7,5 +7,5 @@ COPY dashboard ./dashboard
 COPY schemas ./schemas
 RUN mkdir -p /data && chown -R node:node /data
 USER node
-EXPOSE 8787
+EXPOSE 8787 8788
 CMD ["node", "server.mjs"]
