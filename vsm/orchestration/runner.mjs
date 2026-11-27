@@ -30,6 +30,7 @@ function validateTrack(track, config) {
     if (!step || !EXECUTABLES.has(step.command) || !Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) {
       throw new Error("Track steps must use node/npm with a string args array and no shell.");
     }
+    if (step.min_log_bytes !== undefined && (!Number.isInteger(step.min_log_bytes) || step.min_log_bytes < 1 || step.min_log_bytes > 65_536)) throw new Error("Step min_log_bytes must be between 1 and 65536.");
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
@@ -296,7 +297,8 @@ export async function executeRun(input, {
           const remainingRetryWindow = Math.max(1000, RUN_DEFAULTS.TRANSIENT_RETRY_WINDOW_MS - (now() - stepStarted));
           const attemptStep = transientRetries > 0 ? { ...step, timeout_ms: Math.min(step.timeout_ms || 5 * 60_000, remainingRetryWindow) } : step;
           const result = await runProcess(attemptStep, track, trackDir, trackEnv, abort.signal);
-          if (result.ok && step.require_nonempty_log && result.output_bytes === 0) {
+          const minimumLogBytes = step.min_log_bytes ?? 8;
+          if (result.ok && step.require_nonempty_log && result.output_bytes < minimumLogBytes) {
             emptyAttempts++;
             const decision = retryDecision({ attempt: emptyAttempts, emptyLog: true, maxAttempts: config.RETRY_MAX_ATTEMPTS });
             if (decision.retry) { attempt++; continue; }
