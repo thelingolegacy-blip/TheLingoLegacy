@@ -90,7 +90,7 @@ export async function executeRun(input, {
   const results = {};
   let cancelled = false;
   let cancelReason = null;
-  let pauseRequested = false;
+  let pauseRequested = Boolean(control?.paused);
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
