@@ -35,10 +35,14 @@ test("Firebase service-account private-key material is redacted from child logs"
   const privateKey = "-----BEGIN PRIVATE KEY-----\nprivate-key-material-should-never-appear\n-----END PRIVATE KEY-----";
   const serviceAccount = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "runner@lingo-stage.iam.gserviceaccount.com", private_key: privateKey });
   try {
+    const notifications = [];
     const summary = await executeRun(base([
       { id: "firebase-check", criticality: "critical", required_secrets: ["FIREBASE_SERVICE_ACCOUNT"], steps: [{ id: "print-key", command: "node", args: ["-e", "process.stdout.write(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).private_key)"], require_nonempty_log: true }] }
-    ]), { rootDir, environment: { PATH: process.env.PATH, FIREBASE_SERVICE_ACCOUNT: serviceAccount } });
-    assert.equal(summary.status, "SUCCESS");
+    ]), { rootDir, environment: { PATH: process.env.PATH, FIREBASE_SERVICE_ACCOUNT: serviceAccount }, notifyOwner: async event => notifications.push(event) });
+    assert.equal(summary.status, "SECURITY_ABORT");
+    assert.equal(summary.owner_notification, "SENT");
+    assert.equal(notifications.length, 1);
+    assert.equal(notifications[0].status, "SECURITY_ABORT");
     const log = await fs.readFile(path.join(summary.artifact_directory, "tracks", "firebase-check", "print-key.log"), "utf8");
     assert.equal(log, "[REDACTED]");
     assert.equal(log.includes("private-key-material"), false);
