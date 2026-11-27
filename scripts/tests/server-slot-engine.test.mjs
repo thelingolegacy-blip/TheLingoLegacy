@@ -47,3 +47,46 @@ test('idempotency keys are bounded and constrained', () => {
   assert.equal(validateIdempotencyKey('short'), false);
   assert.equal(validateIdempotencyKey('contains spaces 123456'), false);
 });
+
+import { SLOT_5X3_PAYLINES, calculateLineStakeAllocation, evaluateSpin5x3 } from '../../src/server/slot-engine-5x3.mjs';
+
+test('5x3 engine exposes twenty unique valid paylines', () => {
+  assert.equal(SLOT_5X3_PAYLINES.length, 20);
+  assert.equal(new Set(SLOT_5X3_PAYLINES.map((line) => line.join(','))).size, 20);
+  for (const line of SLOT_5X3_PAYLINES) {
+    assert.equal(line.length, 5);
+    assert.ok(line.every((row) => Number.isInteger(row) && row >= 0 && row <= 2));
+  }
+});
+
+test('Option 2 divides total spin stake evenly across twenty paylines', () => {
+  assert.deepEqual(calculateLineStakeAllocation(400, 20), {
+    wagerUnits: 400, activePaylines: 20, lineBetUnits: 20, remainderUnits: 0,
+  });
+  assert.throws(() => calculateLineStakeAllocation(401, 20), /remainderUnits=1/);
+});
+
+test('server 5x3 evaluator settles twenty integer paylines from a secure weighted grid', () => {
+  const result = evaluateSpin5x3({
+    weightedSymbols: [{ symbol: 'SEVEN', weight: 1 }],
+    paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } },
+    wagerUnits: 20,
+    activePaylines: 20,
+  });
+  assert.equal(result.grid.length, 5);
+  assert.ok(result.grid.every((reel) => reel.length === 3 && reel.every((symbol) => symbol === 'SEVEN')));
+  assert.equal(result.totalWagerUnits, 20);
+  assert.equal(result.totalPayoutUnits, 300);
+  assert.equal(result.paylines.length, 20);
+});
+
+test('all-wild paylines remain unpaid until product payout rules are approved', () => {
+  const result = evaluateSpin5x3({
+    weightedSymbols: [{ symbol: 'WILD', weight: 1 }],
+    paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } },
+    wagerUnits: 20,
+    activePaylines: 20,
+  });
+  assert.equal(result.totalPayoutUnits, 0);
+  assert.equal(result.paylines.filter((line) => line.payoutUnits > 0).length, 0);
+});
