@@ -91,7 +91,7 @@ export function preflightSecrets(requiredNames, environment = process.env) {
 
 export function scopedTrackEnvironment(track, environment = process.env, base = {}) {
   const allowed = new Set(track.required_secrets || []);
-  const scoped = Object.fromEntries(Object.entries(base).filter(([name]) => !SECRET_NAMES.includes(name) && !/secret|token|password|credential|authorization/i.test(name)));
+  const scoped = Object.fromEntries(Object.entries(base).filter(([name]) => !SECRET_NAMES.includes(name) && !/secret|token|password|credential|authorization|api[_-]?key|private[_-]?key/i.test(name)));
   const aliases = [
     ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"],
     ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]
