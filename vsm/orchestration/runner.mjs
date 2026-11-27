@@ -54,12 +54,24 @@ async function pruneArtifacts(root, retentionDays = RUN_DEFAULTS.ARTIFACT_RETENT
 
 
 async function preflightResources(rootDir, config) {
-  const cpuCount = os.cpus()?.length || 0;
-  const freeMemoryMb = Math.floor(os.freemem() / 1_048_576);
+  const cpuCount = os.availableParallelism?.() || os.cpus()?.length || 0;
+  let freeMemoryBytes = os.freemem();
+  for (const [limitPath, currentPath] of [["/sys/fs/cgroup/memory.max", "/sys/fs/cgroup/memory.current"], ["/sys/fs/cgroup/memory/memory.limit_in_bytes", "/sys/fs/cgroup/memory/memory.usage_in_bytes"]]) {
+    try {
+      const [limitRaw, currentRaw] = await Promise.all([fs.readFile(limitPath, "utf8"), fs.readFile(currentPath, "utf8")]);
+      const limit = Number(limitRaw.trim());
+      const current = Number(currentRaw.trim());
+      if (Number.isFinite(limit) && limit > 0 && Number.isFinite(current) && current >= 0 && limit < Number.MAX_SAFE_INTEGER) {
+        freeMemoryBytes = Math.min(freeMemoryBytes, Math.max(0, limit - current));
+        break;
+      }
+    } catch {}
+  }
+  const freeMemoryMb = Math.floor(freeMemoryBytes / 1_048_576);
   const disk = await fs.statfs(rootDir);
   const freeDiskMb = Math.floor((disk.bavail * disk.bsize) / 1_048_576);
   const failures = [];
-  if (cpuCount < 1) failures.push("cpu");
+  if (cpuCount < config.PREFLIGHT_MIN_CPUS) failures.push("cpu");
   if (freeMemoryMb < config.PREFLIGHT_MIN_FREE_MEMORY_MB) failures.push("memory");
   if (freeDiskMb < config.PREFLIGHT_MIN_FREE_DISK_MB) failures.push("disk");
   return { ok: failures.length === 0, failures, cpu_count: cpuCount, free_memory_mb: freeMemoryMb, free_disk_mb: freeDiskMb };
