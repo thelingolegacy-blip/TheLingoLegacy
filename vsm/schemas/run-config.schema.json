@@ -115,6 +115,48 @@
           "cost_budget_usd": {
             "type": "number",
             "minimum": 0
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "command",
+                "args"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9._-]{1,60}$"
+                },
+                "command": {
+                  "type": "string",
+                  "enum": [
+                    "node",
+                    "npm"
+                  ]
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "timeout_ms": {
+                  "type": "integer",
+                  "minimum": 1000,
+                  "maximum": 1800000
+                },
+                "cost_usd": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "require_nonempty_log": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "additionalProperties": false
