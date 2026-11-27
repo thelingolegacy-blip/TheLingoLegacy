@@ -137,7 +137,7 @@ export async function executeRun(input, {
     try {
       const parsed = JSON.parse(value);
       const privateKey = typeof parsed.private_key === "string" ? parsed.private_key : "";
-      return [value, ...(privateKey ? [privateKey, ...privateKey.split(/\\r?\\n/).filter(Boolean)] : [])];
+      return [value, ...(privateKey ? [privateKey, ...privateKey.split(/\r?\n/).filter(Boolean)] : [])];
     } catch { return [value]; }
   }))];
   const serializedConfig = JSON.stringify(config);
@@ -233,8 +233,7 @@ export async function executeRun(input, {
     let outputBytes = 0;
     const append = chunk => {
       outputBytes += chunk.length;
-      let value = chunk.toString("utf8");
-      for (const secret of secretValues) value = value.split(secret).join("[REDACTED]");
+      const value = chunk.toString("utf8");
       output = (output + value).slice(-256_000);
     };
     child.stdout.on("data", append);
