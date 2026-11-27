@@ -164,7 +164,7 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
     headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
     body: JSON.stringify({ config: {
       run_id: "api-local-run-001", run_type: "local-validation", target: "local",
-      RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1, PREFLIGHT_MIN_CPUS: 1,
       tracks: [{ id: "smoke-check", criticality: "critical", required_secrets: [], steps: [{ id: "hello", command: "node", args: ["-e", "process.stdout.write('runner-ok')"], require_nonempty_log: true }] }]
     } })
   });
