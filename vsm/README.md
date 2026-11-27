@@ -79,7 +79,7 @@ From the repository root, run `cd vsm && npm run check && npm test`. To validate
 
 ## Verification status
 
-Phase 1 source files and configuration are committed on the feature branch. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
+Phase 1 source files and configuration are committed on the feature branch. Mission Control displays LINGO ID, lane state, SAAAE policy and audit-chain verification. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
 
 ## Next implementation waves
 
