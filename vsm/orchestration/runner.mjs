@@ -159,7 +159,7 @@ export async function executeRun(input, {
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
     return failed;
   }
-  const controllers = new Map();
+  const controllers = new Map();\n  const childPids = new Set();\n  const pidFile = path.join(runDir, "child-processes.json");\n  const crashFile = path.join(runDir, "crash-report.json");\n  await atomicJson(pidFile, []);
   const results = {};
   let cancelled = false;
   let cancelReason = null;
@@ -204,7 +204,7 @@ export async function executeRun(input, {
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
-    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });\n    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
     const append = chunk => {
