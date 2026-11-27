@@ -9,6 +9,11 @@ function alive(pid) {
   catch (error) { return error.code === "EPERM"; }
 }
 while (alive(parentPid)) await sleep(500);
+const runDir = (await import("node:path")).dirname(crashFile);
+try {
+  await fs.access((await import("node:path")).join(runDir, "completed.json"));
+  process.exit(0);
+} catch {}
 let pids = [];
 try { pids = JSON.parse(await fs.readFile(pidFile, "utf8")); } catch {}
 const killed = [];
@@ -16,4 +21,8 @@ for (const pid of pids) {
   if (!Number.isInteger(pid) || pid < 1) continue;
   try { process.kill(-pid, "SIGKILL"); killed.push(pid); } catch {}
 }
-await fs.writeFile(crashFile, JSON.stringify({ detected_at: new Date().toISOString(), parent_pid: parentPid, killed_process_groups: killed }) + "\n", { mode: 0o600 });
+const detectedAt = new Date().toISOString();
+const report = { detected_at: detectedAt, parent_pid: parentPid, killed_process_groups: killed, status: "ORCHESTRATOR_CRASH" };
+await fs.writeFile(crashFile, JSON.stringify(report) + "\n", { mode: 0o600 });
+await fs.writeFile((await import("node:path")).join(runDir, "owner-notification.json"), JSON.stringify({ run_id: (await import("node:path")).basename(runDir), status: "ORCHESTRATOR_CRASH", created_at: detectedAt, delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true, crash_report: crashFile }) + "\n", { mode: 0o600 });
+await fs.writeFile((await import("node:path")).join(runDir, "status.json"), JSON.stringify({ run_id: (await import("node:path")).basename(runDir), status: "ORCHESTRATOR_CRASH", updated_at: detectedAt }) + "\n", { mode: 0o600 });
