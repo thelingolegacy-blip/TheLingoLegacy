@@ -50,10 +50,14 @@ test('Firebase bearer parser rejects extra credential fields and empty tokens', 
 
 test('health endpoint confirms staging D1 reachability without authentication', async () => {
   const DB = fakeDb();
-  const response = await worker.fetch(new Request('https://staging.invalid/healthz'), { DB, ENVIRONMENT: 'staging' });
+  const response = await worker.fetch(new Request('https://staging.invalid/healthz'), {
+    DB, ENVIRONMENT: 'staging',
+    TML_RULESET_CONFIG: JSON.stringify({ weightedSymbols: [{ symbol: 'SEVEN', weight: 1 }], paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } } }),
+  });
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), {
-    status: 'ok', environment: 'staging', database: 'connected', tableCount: 6, rulesVersion: 'staging-demo-v1',
+    status: 'ok', environment: 'staging', database: 'connected', tableCount: 6,
+    rulesVersion: 'tml-5x3-20line-option2-v1', rulesetConfigured: true,
   });
 });
 
@@ -86,4 +90,15 @@ test('staging protected routes fail closed when Firebase is unset, production, o
 test('unknown routes return 404', async () => {
   const response = await worker.fetch(new Request('https://staging.invalid/no-such-route'), { DB: fakeDb(), ENVIRONMENT: 'staging' });
   assert.equal(response.status, 404);
+});
+
+
+test('health endpoint reports degraded when staging ruleset configuration is absent', async () => {
+  const DB = fakeDb();
+  const response = await worker.fetch(new Request('https://staging.invalid/healthz'), { DB, ENVIRONMENT: 'staging' });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    status: 'degraded', environment: 'staging', database: 'connected', tableCount: 6,
+    rulesVersion: 'tml-5x3-20line-option2-v1', rulesetConfigured: false,
+  });
 });
