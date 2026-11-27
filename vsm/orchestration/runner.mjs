@@ -404,23 +404,32 @@ export async function executeRun(input, {
   crashWatchdog.unref();
   const watchdog = setTimeout(() => { ledger.status = "BUDGET_EXCEEDED"; cancelAll("budget-exceeded:duration"); }, Math.max(0, ledger.deadline_ms - now()));
   watchdog.unref?.();
+  let orchestratorError = null;
+  const trackPromises = config.tracks.map(runTrack);
   try {
-    await Promise.all(config.tracks.map(runTrack));
+    await Promise.all(trackPromises);
+  } catch (error) {
+    orchestratorError = redactText(error?.message || "Unexpected orchestrator failure.", secretValues);
+    if (!["SECURITY_ABORT", "BUDGET_EXCEEDED"].includes(ledger.status)) ledger.status = "ORCHESTRATOR_FAILED";
+    cancelAll("orchestrator-error");
+    await Promise.allSettled(trackPromises);
   } finally {
     clearTimeout(watchdog);
     if (childPids.size) {
-      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGTERM"); } catch {} }
+      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGTERM"); else process.kill(pid, "SIGTERM"); } catch {} }
       await sleep(RUN_DEFAULTS.CANCEL_GRACE_MS);
-      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGKILL"); } catch {} }
+      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGKILL"); else process.kill(pid, "SIGKILL"); } catch {} }
       childPids.clear();
+      try { await persistChildPids(); } catch {}
     }
     try { crashWatchdog.kill("SIGTERM"); } catch {}
   }
+  for (const track of config.tracks) if (!results[track.id]) results[track.id] = ledger.tracks[track.id].status === "RUNNING" ? "FAILED" : "CANCELLED";
 
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
   const anyDegraded = config.tracks.some(track => track.criticality !== "critical" && ["FAILED", "CANCELLED"].includes(results[track.id]));
-  const finalStatus = ledger.status === "SECURITY_ABORT" ? "SECURITY_ABORT" : ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
+  const finalStatus = ledger.status === "SECURITY_ABORT" ? "SECURITY_ABORT" : ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : ledger.status === "ORCHESTRATOR_FAILED" ? "FAILED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
     (cancelReason === "run-duration-exceeded" || cancelReason === "critical-track-cancelled") ? "FAILED" :
     failedCritical ? "FAILED" : anyDegraded || (anyCancelled && !cancelled) ? "PARTIAL" :
@@ -431,12 +440,13 @@ export async function executeRun(input, {
     secrets_used: required.sort(),
     budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, duration_ms: now() - ledger.started_at_ms, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd },
     tracks: Object.fromEntries(config.tracks.map(track => [track.id, { criticality: track.criticality, status: results[track.id] || "CANCELLED" }])),
-    cancellation_reason: cancelReason, artifact_directory: runDir,
+    cancellation_reason: cancelReason, orchestrator_error: orchestratorError, artifact_directory: runDir,
     artifact_retention_days: RUN_DEFAULTS.ARTIFACT_RETENTION_DAYS,
     artifact_upload: "NOT_CONFIGURED", owner_notification: ownerNotificationStatus
   };
   await atomicJson(path.join(runDir, "summary.json"), summary);
-  await updateStatus(finalStatus);
+  try { await updateStatus(finalStatus); }
+  catch { await atomicJson(statusFile, { run_id: config.run_id, status: finalStatus, updated_at: iso(), recovery: "direct-write-after-status-queue-failure" }); }
   if (typeof notifyOwner === "function" && !ownerNotified) {
     try { await notifyOwner({ run_id: config.run_id, status: finalStatus, summary_path: path.join(runDir, "summary.json") }); summary.owner_notification = "SENT"; }
     catch (error) { summary.owner_notification = "FAILED"; summary.notification_error = redactText(error.message, secretValues); }
