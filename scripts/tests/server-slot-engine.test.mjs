@@ -59,6 +59,17 @@ test('5x3 engine exposes twenty unique valid paylines', () => {
   }
 });
 
+test('server Option 2 rejects reduced active-payline counts', () => {
+  assert.throws(() => calculateLineStakeAllocation(100, 5), /must equal 20/);
+  assert.throws(() => calculateLineStakeAllocation(200, 10), /must equal 20/);
+  assert.throws(() => evaluateSpin5x3({
+    weightedSymbols: [{ symbol: 'SEVEN', weight: 1 }],
+    paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } },
+    wagerUnits: 100,
+    activePaylines: 5,
+  }), /must equal 20/);
+});
+
 test('Option 2 divides total spin stake evenly across twenty paylines', () => {
   assert.deepEqual(calculateLineStakeAllocation(400, 20), {
     wagerUnits: 400, activePaylines: 20, lineBetUnits: 20, remainderUnits: 0,
