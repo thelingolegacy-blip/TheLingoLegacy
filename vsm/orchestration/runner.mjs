@@ -36,7 +36,7 @@ function validateTrack(track, config) {
     if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1000 || step.soft_timeout_ms >= (step.timeout_ms || 5 * 60_000))) throw new Error("Step soft_timeout_ms must be less than the hard timeout.");
     if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
     if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");
-    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
+    if (step.mutating === true && step.idempotent !== true && (typeof step.idempotency_key !== "string" || step.idempotency_key.length < 8 || step.idempotency_key.length > 128)) throw new Error("Mutating steps require idempotent=true or an 8–128 character idempotency_key.");
     if (step.id !== undefined && !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id)) throw new Error("Step id is invalid.");
   }
 }
