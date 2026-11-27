@@ -34,9 +34,24 @@ for (const define of requiredDefines) {
 }
 
 if (process.argv.includes('--require-runtime-config')) {
-  const missing = requiredDefines.filter((name) => !process.env[name]);
+  const platformArg = process.argv.find((argument) => argument.startsWith('--platform='));
+  const platform = platformArg?.split('=')[1];
+  const platformDefines = {
+    web: ['LINGO_FIREBASE_WEB_API_KEY', 'LINGO_FIREBASE_WEB_APP_ID'],
+    android: ['LINGO_FIREBASE_ANDROID_API_KEY', 'LINGO_FIREBASE_ANDROID_APP_ID'],
+    ios: ['LINGO_FIREBASE_IOS_API_KEY', 'LINGO_FIREBASE_IOS_APP_ID'],
+    macos: ['LINGO_FIREBASE_MACOS_API_KEY', 'LINGO_FIREBASE_MACOS_APP_ID'],
+  };
+  if (!platform || !Object.hasOwn(platformDefines, platform)) {
+    throw new Error('Strict runtime verification requires --platform=web|android|ios|macos.');
+  }
+  const runtimeDefines = [
+    'LINGO_FIREBASE_MESSAGING_SENDER_ID',
+    ...platformDefines[platform],
+  ];
+  const missing = runtimeDefines.filter((name) => !process.env[name]);
   if (missing.length) {
-    throw new Error(`Staging Firebase build configuration is incomplete: ${missing.join(', ')}`);
+    throw new Error(`Staging Firebase ${platform} build configuration is incomplete: ${missing.join(', ')}`);
   }
 }
 
