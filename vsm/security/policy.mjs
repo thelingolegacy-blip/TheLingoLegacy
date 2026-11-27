@@ -2,7 +2,7 @@ const ROLE_CAPABILITIES = Object.freeze({
   owner: [
     "vsm.read", "release.create", "release.probe", "release.attest", "release.accept.local",
     "sonic_boom.configure", "bot.invoke", "evidence.read", "audit.verify", "forge.admin",
-    "studio.propose", "math.validate", "identity.manage"
+    "studio.propose", "math.validate", "identity.manage", "run.execute", "run.read", "run.control"
   ],
   engineer: ["vsm.read", "release.create", "release.probe", "studio.propose", "math.validate"],
   studio_lead: ["vsm.read", "studio.propose"],
