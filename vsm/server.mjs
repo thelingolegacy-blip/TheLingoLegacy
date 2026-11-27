@@ -3,7 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const PORT = Number(process.env.PORT || 8787);\nconst PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
+const PORT = Number(process.env.PORT || 8787);
+const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
 const HOST = process.env.HOST || "127.0.0.1";
 const DATA_DIR = process.env.VSM_DATA_DIR || path.join(process.cwd(), "data");
 const WORKSPACE = process.env.VSM_WORKSPACE || path.resolve(process.cwd(), "..");
