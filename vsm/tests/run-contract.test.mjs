@@ -25,7 +25,7 @@ test("run configuration applies bounded defaults and production dry-run", () => 
   assert.equal(local.RUN_MAX_COST_USD, 15);
   assert.equal(local.RETRY_MAX_ATTEMPTS, 3);
   assert.equal(createRunConfig({ run_id: "prod-run-001", run_type: "production-change", target: "production", tracks: [{ id: "deploy", criticality: "critical", steps: [] }] }).DRY_RUN, true);
-  assert.throws(() => createRunConfig({ run_id: "bad-run-001", target: "production", DRY_RUN: false, tracks: [{ id: "deploy", criticality: "critical" }] }), /production-change/);
+  assert.throws(() => createRunConfig({ run_id: "bad-run-001", target: "production", DRY_RUN: false, tracks: [{ id: "deploy", criticality: "critical", steps: [] }] }), /production-change/);
   assert.throws(() => createRunConfig({ run_id: "bad-run-002", RUN_MAX_DURATION_MINUTES: 91, tracks: [{ id: "a", criticality: "critical", steps: [] }] }), /1–90/);
   assert.throws(() => createRunConfig({ run_id: "bad-run-003", tracks: [{ id: "aa", criticality: "unknown", steps: [] }] }), /criticality/);
 });
