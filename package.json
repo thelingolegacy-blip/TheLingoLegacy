@@ -4,9 +4,10 @@
   "version": "0.1.0",
   "scripts": {
     "test:slot": "node --test scripts/tests/server-slot-engine.test.mjs",
-    "test": "npm run test:slot && npm run test:tml-preview && npm run test:saaae",
+    "test": "npm run test:slot && npm run test:tml-preview && npm run test:saaae && npm run test:tml-virtual-credit-copy",
     "test:tml-preview": "node --test scripts/tests/tml-preview-engine.test.mjs",
-    "test:saaae": "node --test src/security/saaae/*.test.mjs"
+    "test:saaae": "node --test src/security/saaae/*.test.mjs",
+    "test:tml-virtual-credit-copy": "node --test scripts/tests/tml-virtual-credit-copy.test.mjs"
   },
   "engines": {
     "node": ">=20"
