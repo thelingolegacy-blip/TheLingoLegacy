@@ -39,8 +39,8 @@ Do not run the remote migration until all of the following are true:
 3. The Wrangler config used for the command is `wrangler.game-engine-staging.jsonc`, not the production or flagship config.
 4. A current Time Travel bookmark is recorded and the available restore-retention window is confirmed for this account/plan.
 5. The current schema DDL, indexes, triggers, and foreign-key state are exported or recorded for comparison.
-6. The operator has reviewed migrations `0001`, `0002`, and `0003` and confirmed the extra legacy table is preserved.
-7. The staging Worker/game-math acceptance blocker is resolved. The current Worker still uses a three-reel engine while the That’s My Lingo source contract is 5×3; do not deploy it as the final game engine.
+6. The operator has reviewed migrations `0001`, `0002`, `0003`, and `0004` and confirmed the extra legacy table is preserved.
+7. The Worker source now routes settlement through the 5×3 / 20-payline Option 2 engine and binds approvals/idempotency to a ruleset digest. This is source-level only: runtime CI, D1 integration, Cloudflare Worker validation, and independent acceptance have not passed. The exact staging symbol weights and paytable remain unapproved/unconfigured; do not deploy or mark the game operational.
 
 ## 3. Migration review
 
@@ -51,10 +51,11 @@ The intended sequence is:
 | `0001_lingo_game_wallet_staging.sql` | Initial game account, wallet, session, ledger, and progression schema | Core tables already exist; migration ledger is absent |
 | `0002_lingo_saaae_staging.sql` | Principals, tenant memberships, scoped grants, approvals, audit events, and rate-limit buckets | Not applied |
 | `0003_lingo_saaae_provisioning_evidence.sql` | Staging-only provisioning requests and append-only provisioning audit | Not applied |
+| `0004_lingo_game_ruleset_digest.sql` | Persist the exact SHA-256 ruleset digest on each game session for safe idempotent replay | Not applied |
 
 Migration `0003` now constrains `target_firebase_project` to exactly `lingo-legacy-staging`. Its regression test rejects `lingo-legacy-production`.
 
-All three migrations use idempotent `CREATE ... IF NOT EXISTS` patterns, but that does not replace a preflight DDL comparison. Confirm every existing table, index, and trigger against migration `0001` before establishing the migration ledger. Do not insert a hand-written `d1_migrations` record or mark a migration applied without proving that its complete SQL effects are already present.
+Migrations `0001`–`0003` use additive `CREATE ... IF NOT EXISTS` patterns, but that does not replace a preflight DDL comparison. Migration `0004` is a one-time `ALTER TABLE ... ADD COLUMN` and is not safe to execute twice; let the verified Wrangler migration ledger govern its single application. Confirm every existing table, index, and trigger against migration `0001` before establishing or reconciling the migration ledger. Do not insert a hand-written `d1_migrations` record or mark a migration applied without proving that its complete SQL effects are already present.
 
 ## 4. Approved staging execution sequence
 
@@ -67,8 +68,9 @@ After the preconditions and explicit migration approval are satisfied:
 5. Re-query `sqlite_master` for tables, indexes, and triggers.
 6. Run `PRAGMA foreign_key_check` and require an empty result.
 7. Confirm the six SAAAE tables from migration `0002` and the two provisioning tables plus their triggers from migration `0003` exist.
-8. Confirm `lingo_api_rate_limits` remains present and unchanged.
-9. Run the D1 integration tests against the staging binding, then verify the Worker health endpoint only after a staging-only deployment is separately approved.
+8. Confirm `lingo_game_sessions.ruleset_digest` exists from migration `0004`; verify existing sessions retain the empty legacy digest and new values satisfy the 64-character lowercase SHA-256 constraint.
+9. Confirm `lingo_api_rate_limits` remains present and unchanged.
+10. Run the D1 integration tests against the staging binding, then verify the Worker health endpoint only after a staging-only deployment is separately approved. Health must report both `rulesetConfigured: true` and `rulesetSchemaReady: true`.
 
 Do not run these commands against `lingo-production`, the flagship Worker database, or any database selected from an implicit default binding.
 
