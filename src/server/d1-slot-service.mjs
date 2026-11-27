@@ -153,7 +153,7 @@ export async function playAndSettleD1Spin(db, {
   `).bind(`${sessionId}:debit`, sessionId, firebaseUid, -wagerUnits);
 
   const statements = [approval, insertSession, debit];
-  if (outcome.payoutUnits > 0) {
+  if (outcome.totalPayoutUnits > 0) {
     statements.push(db.prepare(`
       INSERT INTO lingo_wallet_ledger (event_id, session_id, firebase_uid, event_type, delta_units)
       VALUES (?, ?, ?, 'slot_payout_credit', ?)
@@ -187,7 +187,7 @@ export async function playAndSettleD1Spin(db, {
   }
 
   const result = await db.prepare(`
-    SELECT session_id, game_id, rule_version, reels_json, wager_units, payout_units, status, balance_after_units
+    SELECT session_id, game_id, rule_version, ruleset_digest, reels_json, wager_units, payout_units, status, balance_after_units
       FROM lingo_game_sessions
      WHERE session_id = ? AND firebase_uid = ?
   `).bind(sessionId, firebaseUid).first();
