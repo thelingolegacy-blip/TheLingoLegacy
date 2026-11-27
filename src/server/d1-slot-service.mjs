@@ -157,7 +157,7 @@ export async function playAndSettleD1Spin(db, {
     statements.push(db.prepare(`
       INSERT INTO lingo_wallet_ledger (event_id, session_id, firebase_uid, event_type, delta_units)
       VALUES (?, ?, ?, 'slot_payout_credit', ?)
-    `).bind(`${sessionId}:payout`, sessionId, firebaseUid, outcome.payoutUnits));
+    `).bind(`${sessionId}:payout`, sessionId, firebaseUid, outcome.totalPayoutUnits));
   }
   statements.push(db.prepare(`
     UPDATE lingo_game_sessions
