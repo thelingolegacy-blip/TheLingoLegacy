@@ -33,7 +33,8 @@ function validateTrack(track, config) {
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
-    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");\n    if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");\n    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
+    if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost_usd must be a non-negative estimate.");
+    if (step.mutating === true && !config.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");\n    if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
     if (step.id !== undefined && !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id)) throw new Error("Step id is invalid.");
   }
 }
@@ -223,7 +224,9 @@ export async function executeRun(input, {
     clearTimeout(timeout);
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
-    let redactedOutput = output;\n    for (const secret of secretValues) if (secret) redactedOutput = redactedOutput.split(secret).join("[REDACTED]");\n    const safeOutput = redactedOutput.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
+    let redactedOutput = output;
+    for (const secret of secretValues) if (secret) redactedOutput = redactedOutput.split(secret).join("[REDACTED]");
+    const safeOutput = redactedOutput.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
     await fs.writeFile(path.join(trackDir, (step.id || "step") + ".log"), safeOutput, { mode: 0o600 });
     if (timedOut) return { ok: false, error: Object.assign(new Error("Step timeout exceeded."), { name: "TimeoutError" }), output_bytes: outputBytes };
     if (signal.aborted) return { ok: false, error: Object.assign(new Error("Step cancelled."), { name: "AbortError" }), output_bytes: outputBytes };
