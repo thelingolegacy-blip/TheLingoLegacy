@@ -5,11 +5,16 @@ on:
     branches: [main]
     paths:
       - "package.json"
+      - "lingoassister/**"
+      - "scripts/tests/**"
+      - "src/security/saaae/**"
+      - "studio-sites/games/doughboys-oasis-racing/**"
+      - "vsm/**"
+      - "cloudflare/static-backup-proxy.mjs"
+      - "worker.js"
       - "thats-my-lingo/index.html"
       - "thats-my-lingo/tml-preview-engine.mjs"
-      - "scripts/tests/tml-preview-engine.test.mjs"
       - "src/server/slot-engine.mjs"
-      - "scripts/tests/server-slot-engine.test.mjs"
       - ".github/workflows/slot-engine-contract-tests.yml"
 
 permissions:
@@ -22,7 +27,7 @@ concurrency:
 jobs:
   slot-engine-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout exact PR head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -33,5 +38,5 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22"
-      - name: Run isolated slot-engine contract suite
+      - name: Run complete repository Node regression suite
         run: npm test
