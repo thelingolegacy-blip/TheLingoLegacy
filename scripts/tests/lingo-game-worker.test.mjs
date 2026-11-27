@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import worker, { bearerTokenFromRequest } from '../../cloudflare/workers/lingo-game-engine-staging.mjs';
+import worker, { bearerTokenFromRequest, isEvenOption2Wager } from '../../cloudflare/workers/lingo-game-engine-staging.mjs';
 
 function fakeDb() {
   const calls = [];
@@ -122,4 +122,15 @@ test('health endpoint remains degraded until ruleset digest migration is applied
   });
   assert.equal(response.status, 503);
   assert.equal((await response.json()).rulesetSchemaReady, false);
+});
+
+
+test('Option 2 API wager validation accepts only whole-unit twenty-line allocations', () => {
+  assert.equal(isEvenOption2Wager(20), true);
+  assert.equal(isEvenOption2Wager(40), true);
+  assert.equal(isEvenOption2Wager(100), true);
+  assert.equal(isEvenOption2Wager(1), false);
+  assert.equal(isEvenOption2Wager(21), false);
+  assert.equal(isEvenOption2Wager(101), false);
+  assert.equal(isEvenOption2Wager(20.5), false);
 });
