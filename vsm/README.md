@@ -18,6 +18,7 @@ Local-first release control plane in the canonical repository. This is additive:
 - Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
 - First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
 - CPU-based mathematical validation engine for probability vectors and discrete virtual game-balance distributions; no cash wagering or cash-out model.
+- Local-first Studio asset metadata registry with division, type, source URI, SHA-256, rights-status and owner-proposal fields; binary upload and publication are not enabled.
 - Production promotion endpoint intentionally absent.
 
 **Implementation boundary:** LINGO ID currently bootstraps one local Owner principal and uses the existing owner bearer token for API authentication. It is not yet a full interactive session/federation system or multi-operator IAM. The Ed25519 private key is stored in the private local VSM data volume with restrictive file permissions; encrypted backup/key rotation is still required before remote or multi-host operation. Gitea is a separate private Git service; Forge SSO, GitHub/GitLab API compatibility, mirroring and protected-branch policy integration are not yet complete. The bot worker executes a small allowlist of deterministic local tasks; no model host, arbitrary tool execution, or autonomous privileged action is enabled. Sonic Boom's queue module is implemented and configurable, but is not yet wired into every center's job execution.
@@ -57,6 +58,8 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - `POST /api/bots/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
 - `GET /api/audit/verify` — verifies the append-only audit hash chain.
 - `GET /api/evidence/:id` — owner-token protected evidence retrieval with SHA-256 integrity verification.
+- `GET /api/studio/assets` — read-only Studio asset metadata registry.
+- `POST /api/studio/assets` — requires the `studio.propose` capability; records a metadata proposal and audit event. No binary upload or publication.
 - `GET /api/centers`
 - `GET /api/releases`
 - `POST /api/releases` — Owner-token protected draft-package creation.
