@@ -107,3 +107,28 @@ Phase 1 source files and configuration are committed on the feature branch. Miss
 - Phase 2: full SAAAE policy enforcement, multi-operator LINGO ID sessions, Forge mirroring/protected branches, Worker preview runtime verification, mathematical validation gates, and Studio asset binary-ingestion/rights-review workflow.
 - Phase 3: local model host, constrained bot workers, art/audio/math/motion pipelines, evidence-native studio dispatch, and staging-only promotion bridge.
 - Phase 4: encrypted backup/recovery, observability/cost guardrails, threat model, tested rollback and independently accepted production bridge. Production authority remains separately gated.
+
+
+### Local parallel run runner (experimental; not production-authorized)
+
+`orchestration/runner.mjs` adds a local process runner with up to five parallel tracks, unique run/track working directories, no-shell `node`/`npm` step execution, allowlisted per-track environment variables, secret-value log redaction, preflight credential validation, per-track/global call and cost budgets, a wall-clock watchdog, step timeouts, bounded retries, run-scoped JSONL events, a pollable status file, and a summary artifact. `createRunController` exposes pause/resume/cancel controls to an in-process caller. Cancellation sends SIGTERM and schedules SIGKILL after the 30-second grace period.
+
+A run config is JSON metadata only; credentials must arrive through the parent process environment from the CI/platform secret store. Never put secret values in the JSON file. Example:
+
+```json
+{
+  "run_id": "vsm-local-check-001",
+  "run_type": "local-validation",
+  "target": "local",
+  "tracks": [
+    { "id": "source-check", "criticality": "critical", "required_secrets": [], "steps": [
+      { "id": "syntax", "command": "npm", "args": ["run", "check"], "timeout_ms": 300000 }
+    ] },
+    { "id": "unit-tests", "criticality": "important", "required_secrets": [], "steps": [
+      { "id": "tests", "command": "npm", "args": ["test"], "timeout_ms": 300000 }
+    ] }
+  ]
+}
+```
+
+Run with `sh vsm/lingo-vsm run path/to/run-config.json`. This command does not source `.env`; required credentials must be injected by the invoking CI/platform environment. The current runner writes local artifacts under `vsm/artifacts/<run_id>`; it does not yet upload to a remote artifact store, implement a persistent external watchdog, or deliver owner notifications. Cost enforcement uses explicit per-step `cost_usd` estimates and cannot infer third-party spend automatically. Tool-call accounting counts each launched process as one call; integrations must charge additional external calls through the budget ledger. Treat this runner as a controlled local validation facility, not production release authority.
