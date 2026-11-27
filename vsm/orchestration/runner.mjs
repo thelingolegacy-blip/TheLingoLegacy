@@ -329,7 +329,8 @@ export async function executeRun(input, {
     let timedOut = false;
     const hardTimeoutMs = step.timeout_ms || 5 * 60_000;
     const softTimeoutMs = step.soft_timeout_ms ?? Math.max(1, Math.floor(hardTimeoutMs * 0.8));
-    const softTimeout = setTimeout(() => { if (typeof onSoftTimeout === "function") Promise.resolve(onSoftTimeout(softTimeoutMs, hardTimeoutMs)).catch(() => {}); }, softTimeoutMs);
+    let softWarningPromise = Promise.resolve();
+    const softTimeout = setTimeout(() => { if (typeof onSoftTimeout === "function") softWarningPromise = Promise.resolve().then(() => onSoftTimeout(softTimeoutMs, hardTimeoutMs)); }, softTimeoutMs);
     const timeout = setTimeout(() => { timedOut = true; abortHandler(); }, hardTimeoutMs);
     const softTimeout = step.soft_timeout_ms ? setTimeout(() => emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "STEP_SOFT_TIMEOUT", detail: { soft_timeout_ms: step.soft_timeout_ms } }), step.soft_timeout_ms) : null;
     const result = await new Promise(resolve => {
@@ -340,6 +341,7 @@ export async function executeRun(input, {
     if (child.pid) { childPids.delete(child.pid); await persistChildPids(); }
     clearTimeout(timeout);
     clearTimeout(softTimeout);
+    await softWarningPromise;
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
     let redactedOutput = output;
