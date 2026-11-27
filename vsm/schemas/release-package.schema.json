@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/vsm/schemas/release-package.schema.json",
+  "title": "LINGO LEGACY Release Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "source", "target", "status", "gates", "evidence", "created_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rp-[0-9]{8}-[a-z0-9-]{4,32}$" },
+    "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "branch", "commit"],
+      "properties": {
+        "repo": { "type": "string" },
+        "branch": { "type": "string" },
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{7,64}$" }
+      }
+    },
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "target": { "enum": ["local-preview", "staging", "production-candidate"] },
+    "status": { "enum": ["draft", "pending", "accepted", "rejected", "promoted", "rolled-back"] },
+    "gates": {
+      "type": "object",
+      "required": ["g02", "security", "static", "runtime"],
+      "properties": {
+        "g02": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
+        "security": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
+        "static": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
+        "runtime": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "probes": { "type": "array", "items": { "type": "object" } },
+        "tests": { "type": "array", "items": { "type": "object" } },
+        "logs": { "type": "array", "items": { "type": "string" } },
+        "screenshots": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "accepted_by": { "type": ["string", "null"] },
+    "accepted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
