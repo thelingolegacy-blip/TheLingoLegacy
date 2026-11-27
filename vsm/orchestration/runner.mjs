@@ -308,6 +308,7 @@ export async function executeRun(input, {
     control.cancelTrack = trackId => { const item = ledger.tracks[trackId]; if (!item || !["PENDING", "RUNNING"].includes(item.status)) return false; cancelledTracks.add(trackId); const trackController = controllers.get(trackId); if (trackController) trackController.abort("human-track-cancelled"); return true; };
   }
 
+  let budgetWarningEmitted = false;
   const runProcess = async (step, track, trackDir, trackEnv, signal, onSoftTimeout = null) => {
     const charge = chargeBudget(ledger, track.id, { toolCalls: 1, costUsd: step.cost_usd || 0, now: now() });
     if (!charge.ok) {
@@ -315,7 +316,7 @@ export async function executeRun(input, {
       cancelAll("budget-exceeded:" + charge.reason);
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
-    if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
+    if (charge.warning && !budgetWarningEmitted) { budgetWarningEmitted = true; await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } }); }
     const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
     if (child.pid) {
       childPids.add(child.pid);
@@ -474,7 +475,7 @@ export async function executeRun(input, {
     return outcome;
   };
 
-  if (networkCheck.warning) await emit({ runId: config.run_id, trackId: config.tracks[0].id, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%", source: "preflight" } });
+  if (networkCheck.warning) { budgetWarningEmitted = true; await emit({ runId: config.run_id, trackId: config.tracks[0].id, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%", source: "preflight" } }); }
   await updateStatus("RUNNING");
   const crashWatchdog = spawn(process.execPath, [path.join(import.meta.dirname, "watchdog.mjs"), String(process.pid), pidFile, crashFile], { detached: true, stdio: "ignore", env: { PATH: environment.PATH || "" } });
   crashWatchdog.unref();
