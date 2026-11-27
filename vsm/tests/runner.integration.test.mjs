@@ -15,7 +15,7 @@ test("runner executes tracks in parallel with isolated environments and run-scop
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-run-"));
   try {
     const summary = await executeRun(base([
-      { id: "alpha", criticality: "critical", required_secrets: [], steps: [{ id: "alpha-check", command: "node", args: ["-e", "process.stdout.write(process.env.TRACK_MARK || 'missing')"], require_nonempty_log: true }] },
+      { id: "alpha", criticality: "critical", required_secrets: [], steps: [{ id: "alpha-check", command: "node", args: ["-e", "process.stdout.write(process.env.TRACK_MARK || 'missing-value')"], require_nonempty_log: true }] },
       { id: "beta", criticality: "important", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [{ id: "beta-check", command: "node", args: ["-e", "process.stdout.write(process.env.CLOUDFLARE_API_TOKEN || 'missing')"], require_nonempty_log: true }] }
     ]), { rootDir, environment: { PATH: process.env.PATH, CLOUDFLARE_API_TOKEN: "cloudflare-test-token-12345", TRACK_MARK: "must-not-leak" } });
     assert.equal(summary.status, "SUCCESS");
@@ -24,7 +24,7 @@ test("runner executes tracks in parallel with isolated environments and run-scop
     assert.deepEqual(summary.secrets_used, ["CLOUDFLARE_API_TOKEN"]);
     const alphaLog = await fs.readFile(path.join(summary.artifact_directory, "tracks", "alpha", "alpha-check.log"), "utf8");
     const betaLog = await fs.readFile(path.join(summary.artifact_directory, "tracks", "beta", "beta-check.log"), "utf8");
-    assert.equal(alphaLog, "missing");
+    assert.equal(alphaLog, "missing-value");
     assert.equal(betaLog, "[REDACTED]");
     assert.equal((await fs.stat(path.join(summary.artifact_directory, "status.json"))).isFile(), true);
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
@@ -166,13 +166,26 @@ test("cancelling one non-critical track yields a partial run while other tracks 
   try {
     const controller = createRunController(base([
       { id: "optional", criticality: "best-effort", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0), 1000)"] }] },
-      { id: "required", criticality: "important", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.stdout.write('done')"], require_nonempty_log: true }] }
+      { id: "required", criticality: "important", required_secrets: [], steps: [{ command: "node", args: ["-e", "process.stdout.write('done-complete')"], require_nonempty_log: true }] }
     ]), { rootDir, environment: { PATH: process.env.PATH } });
     assert.equal(controller.cancelTrack("optional"), true);
     const summary = await controller.promise;
     assert.equal(summary.status, "PARTIAL");
     assert.equal(summary.tracks.optional.status, "CANCELLED");
     assert.equal(summary.tracks.required.status, "SUCCESS");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
+test("near-empty successful logs are rejected and retried within the attempt limit", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-near-empty-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "evidence", criticality: "critical", required_secrets: [], steps: [{ id: "short-output", command: "node", args: ["-e", "process.stdout.write('tiny')"], require_nonempty_log: true, min_log_bytes: 8 }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "FAILED");
+    const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
+    assert.equal((events.match(/"status":"STARTED"/g) || []).length >= 3, true);
+    assert.match(events, /"reason":"empty-log"/);
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
