@@ -9,6 +9,7 @@ const SYMBOLS = ['LEGACY_LION', 'ELECTRIC_GOLD', 'CRIMSON_CROWN', 'OBSIDIAN_BAR'
 const PAYTABLE = { LEGACY_LION: 40, ELECTRIC_GOLD: 30, CRIMSON_CROWN: 20, OBSIDIAN_BAR: 15, SEVEN: 15 };
 const RULE_VERSION = 'staging-demo-v1';
 const MAX_WAGER_UNITS = 100;
+const STAGING_FIREBASE_PROJECT_ID = 'lingo-legacy-staging';
 
 function json(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
@@ -24,8 +25,7 @@ export function bearerTokenFromRequest(request) {
 }
 
 async function identityFromRequest(request, env) {
-  if (env.ENVIRONMENT !== 'staging' || !env.FIREBASE_PROJECT_ID
-      || env.FIREBASE_PROJECT_ID === 'lingo-legacy-production') {
+  if (env.ENVIRONMENT !== 'staging' || env.FIREBASE_PROJECT_ID !== STAGING_FIREBASE_PROJECT_ID) {
     return { ok: false, status: 503, code: 'STAGING_IDENTITY_NOT_CONFIGURED' };
   }
   const token = bearerTokenFromRequest(request);
@@ -116,7 +116,7 @@ export default {
            )
         `).first();
         if (required?.present !== 6) return json({ status: 'degraded', environment: 'staging' }, 503);
-        return json({ status: 'ok', environment: 'staging', rulesVersion: RULE_VERSION });
+        return json({ status: 'ok', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION });
       } catch {
         return json({ status: 'degraded', environment: 'staging' }, 503);
       }
