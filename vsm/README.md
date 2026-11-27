@@ -11,8 +11,9 @@ Local-first release control plane in the canonical repository. This is additive:
 - Public HTTP health probes against the configured base URL.
 - Owner-token protection for gate attestations, Sonic Boom configuration and release acceptance.
 - Local LINGO ID owner principal (`lingo://id/<handle>`) with an Ed25519 keypair.
+- SAAAE starter policy with default-deny role/capability mapping and explicit denials for production mutation.
 - Signed local release-acceptance envelopes; owner ID is stamped on packages and gate attestations.
-- Self-hosted Gitea Forge service in Docker Compose, with loopback-only web and SSH ports.
+- Self-hosted Gitea Forge service in Docker Compose, with loopback-only web and SSH ports on a dedicated internal-only Docker network.
 - Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default.
 - Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
 - First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
@@ -40,12 +41,13 @@ Gitea registration is disabled and repository viewing requires sign-in. Complete
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
-The local API is loopback-bound by Compose; do not expose it publicly. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only.
+The local API is loopback-bound by Compose; do not expose it publicly. Mission Control displays LINGO ID, Sonic Boom lane state, bot registry, SAAAE policy and audit-chain verification. Owner controls use a bearer token held in browser session storage for the current tab session.
 
 ## API
 
 - `GET /api/health`
 - `GET /api/identity` — public owner principal and local-first identity status.
+- `GET /api/security/policy` — read-only SAAAE role/capability policy.
 - `GET /api/sonic-boom` — lane state.
 - `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
 - `GET /api/bots` — declared bot registry.
@@ -73,7 +75,7 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
 - Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
-## Local verification commands
+The Docker image build automatically runs JavaScript syntax checks and the Node test suite before producing the runtime image.\n\n## Local verification commands
 
 From the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.
 
