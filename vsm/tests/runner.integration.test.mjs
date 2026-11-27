@@ -33,13 +33,15 @@ test("runner executes tracks in parallel with isolated environments and run-scop
 test("Firebase service-account private-key material is redacted from child logs", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-firebase-secret-"));
   const privateKey = "-----BEGIN PRIVATE KEY-----\nprivate-key-material-should-never-appear\n-----END PRIVATE KEY-----";
+  const startedAt = Date.now();
   const serviceAccount = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "runner@lingo-stage.iam.gserviceaccount.com", private_key: privateKey });
   try {
     const notifications = [];
     const summary = await executeRun(base([
-      { id: "firebase-check", criticality: "critical", required_secrets: ["FIREBASE_SERVICE_ACCOUNT"], steps: [{ id: "print-key", command: "node", args: ["-e", "process.stdout.write(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).private_key)"], require_nonempty_log: true }] }
+      { id: "firebase-check", criticality: "critical", required_secrets: ["FIREBASE_SERVICE_ACCOUNT"], steps: [{ id: "print-key", command: "node", args: ["-e", "process.stdout.write(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).private_key); setInterval(()=>{},1000)"], require_nonempty_log: true }] }
     ]), { rootDir, environment: { PATH: process.env.PATH, FIREBASE_SERVICE_ACCOUNT: serviceAccount }, notifyOwner: async event => notifications.push(event) });
     assert.equal(summary.status, "SECURITY_ABORT");
+    assert.ok(Date.now() - startedAt < 5000, "credential exposure should terminate the child promptly");
     assert.equal(summary.owner_notification, "SENT");
     assert.equal(notifications.length, 1);
     assert.equal(notifications[0].status, "SECURITY_ABORT");
