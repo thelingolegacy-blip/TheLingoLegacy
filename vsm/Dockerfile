@@ -12,6 +12,7 @@ COPY math ./math
 COPY dashboard ./dashboard
 COPY schemas ./schemas
 COPY tests ./tests
+COPY lingo-vsm ./lingo-vsm
 RUN npm run check && npm test
 RUN mkdir -p /data && chown -R node:node /data
 USER node
