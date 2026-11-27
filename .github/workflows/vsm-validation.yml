@@ -1,0 +1,54 @@
+name: LINGO VSM Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "vsm/**"
+      - ".github/workflows/vsm-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-vsm-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-and-api-tests:
+    name: VSM source checks and API integration tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: vsm
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax and shell checks
+        run: npm run check
+      - name: Unit and HTTP integration tests
+        run: npm test
+
+  container-build:
+    name: Build isolated VSM image (no publish)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build VSM image; Dockerfile runs checks and tests
+        run: docker build --file vsm/Dockerfile --tag lingo-vsm:ci-${{ github.sha }} vsm
+      - name: Validate Compose model without starting services
+        env:
+          VSM_OWNER_TOKEN: ci-only-token-never-used-outside-validation-000000000000
+        run: docker compose --env-file /dev/null -f vsm/docker-compose.yml config --quiet
