@@ -107,7 +107,13 @@
             "type": "array",
             "uniqueItems": true,
             "items": {
-              "type": "string"
+              "enum": [
+                "FIREBASE_SERVICE_ACCOUNT",
+                "FIREBASE_TOKEN",
+                "CLOUDFLARE_API_TOKEN",
+                "CI_DEPLOY_KEY",
+                "GITHUB_TOKEN"
+              ]
             }
           },
           "tool_call_budget": {
