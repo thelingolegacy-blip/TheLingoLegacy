@@ -11,6 +11,11 @@ const ALLOCATION_METHOD = 'option2-total-spin-stake-even-split';
 const MAX_WAGER_UNITS = 100;
 const STAGING_FIREBASE_PROJECT_ID = 'lingo-legacy-staging';
 
+export function isEvenOption2Wager(wagerUnits) {
+  return Number.isSafeInteger(wagerUnits) && wagerUnits >= ACTIVE_PAYLINES
+    && wagerUnits <= MAX_WAGER_UNITS && wagerUnits % ACTIVE_PAYLINES === 0;
+}
+
 function loadRulesetConfig(env) {
   if (typeof env.TML_RULESET_CONFIG !== 'string' || env.TML_RULESET_CONFIG.length < 2) return null;
   let config;
@@ -215,6 +220,9 @@ export default {
         }
         if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1 || wagerUnits > MAX_WAGER_UNITS) {
           return json({ error: 'INVALID_WAGER', maxWagerUnits: MAX_WAGER_UNITS, correlationId }, 400);
+        }
+        if (wagerUnits % ACTIVE_PAYLINES !== 0) {
+          return json({ error: 'INVALID_WAGER_ALLOCATION', activePaylines: ACTIVE_PAYLINES, minimumWagerUnits: ACTIVE_PAYLINES, correlationId }, 400);
         }
         if (typeof idempotencyKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(idempotencyKey)) {
           return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
