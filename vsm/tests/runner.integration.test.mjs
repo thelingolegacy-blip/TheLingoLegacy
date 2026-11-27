@@ -30,6 +30,18 @@ test("runner executes tracks in parallel with isolated environments and run-scop
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("runner executes steps from the configured workspace, not the artifact directory", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "workspace", criticality: "critical", required_secrets: [], steps: [{ id: "cwd", command: "node", args: ["-e", "process.stdout.write(process.cwd())"], require_nonempty_log: true }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "SUCCESS");
+    const log = await fs.readFile(path.join(summary.artifact_directory, "tracks", "workspace", "cwd.log"), "utf8");
+    assert.equal(log, rootDir);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner aborts before tracks when a required credential is missing", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-preflight-"));
   try {
