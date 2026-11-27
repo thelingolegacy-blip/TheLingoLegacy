@@ -349,7 +349,6 @@ export async function executeRun(input, {
   }
 
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
-  const anyDegraded = Object.values(results).some(value => value !== "SUCCESS");
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
   const anyDegraded = config.tracks.some(track => track.criticality !== "critical" && ["FAILED", "CANCELLED"].includes(results[track.id]));
   const finalStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
