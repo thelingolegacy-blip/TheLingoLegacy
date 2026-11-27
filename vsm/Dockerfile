@@ -8,6 +8,7 @@ COPY sonic-boom ./sonic-boom
 COPY ai ./ai
 COPY evidence ./evidence
 COPY security ./security
+COPY studio ./studio
 COPY math ./math
 COPY dashboard ./dashboard
 COPY schemas ./schemas
