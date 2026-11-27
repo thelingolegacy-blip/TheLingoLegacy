@@ -15,8 +15,25 @@ function loadRulesetConfig(env) {
   if (typeof env.TML_RULESET_CONFIG !== 'string' || env.TML_RULESET_CONFIG.length < 2) return null;
   let config;
   try { config = JSON.parse(env.TML_RULESET_CONFIG); } catch { return null; }
-  if (!config || !Array.isArray(config.weightedSymbols) || !config.paytable
+  if (!config || !Array.isArray(config.weightedSymbols) || config.weightedSymbols.length < 1
+      || config.weightedSymbols.length > 256 || !config.paytable
       || typeof config.paytable !== 'object' || Array.isArray(config.paytable)) return null;
+  const seen = new Set();
+  let totalWeight = 0;
+  for (const entry of config.weightedSymbols) {
+    if (!entry || typeof entry.symbol !== 'string' || !/^[A-Z0-9_]{1,48}$/.test(entry.symbol)
+        || !Number.isSafeInteger(entry.weight) || entry.weight < 1 || seen.has(entry.symbol)) return null;
+    seen.add(entry.symbol);
+    totalWeight += entry.weight;
+    if (!Number.isSafeInteger(totalWeight) || totalWeight > 0xffff_ffff) return null;
+  }
+  for (const [symbol, tiers] of Object.entries(config.paytable)) {
+    if (!seen.has(symbol) || !tiers || typeof tiers !== 'object' || Array.isArray(tiers)) return null;
+    for (const count of [3, 4, 5]) {
+      if (tiers[count] !== undefined && (!Number.isSafeInteger(tiers[count]) || tiers[count] < 0)) return null;
+    }
+  }
+  if (Object.keys(config.paytable).length === 0) return null;
   return { weightedSymbols: config.weightedSymbols, paytable: config.paytable, activePaylines: ACTIVE_PAYLINES };
 }
 
