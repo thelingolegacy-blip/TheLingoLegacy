@@ -14,7 +14,8 @@ Local-first release control plane in the canonical repository. This is additive:
 - Signed local release-acceptance envelopes; owner ID is stamped on packages and gate attestations.
 - Self-hosted Gitea Forge service in Docker Compose, with loopback-only web and SSH ports.
 - Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default.
-- Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.\n- First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
+- Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
+- First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
 - Production promotion endpoint intentionally absent.
 
 **Implementation boundary:** LINGO ID currently bootstraps one local Owner principal and uses the existing owner bearer token for API authentication. It is not yet a full interactive session/federation system or multi-operator IAM. The Ed25519 private key is stored in the private local VSM data volume with restrictive file permissions; encrypted backup/key rotation is still required before remote or multi-host operation. Gitea is a separate private Git service; Forge SSO, GitHub/GitLab API compatibility, mirroring and protected-branch policy integration are not yet complete. The bot worker executes a small allowlist of deterministic local tasks; no model host, arbitrary tool execution, or autonomous privileged action is enabled. Sonic Boom's queue module is implemented and configurable, but is not yet wired into every center's job execution.
@@ -47,7 +48,8 @@ The local API is loopback-bound by Compose; do not expose it publicly.
 - `GET /api/identity` — public owner principal and local-first identity status.
 - `GET /api/sonic-boom` — lane state.
 - `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
-- `GET /api/bots` — declared bot registry.\n- `POST /api/bots/:bot-id/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
+- `GET /api/bots` — declared bot registry.
+- `POST /api/bots/:bot-id/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
 - `GET /api/centers`
 - `GET /api/releases`
 - `POST /api/releases` — create draft package.
