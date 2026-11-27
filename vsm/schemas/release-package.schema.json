@@ -4,45 +4,205 @@
   "title": "LINGO LEGACY Release Package",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "title", "source", "target", "status", "gates", "evidence", "created_at"],
+  "required": [
+    "id",
+    "title",
+    "source",
+    "target",
+    "status",
+    "gates",
+    "evidence",
+    "created_at"
+  ],
   "properties": {
-    "id": { "type": "string", "pattern": "^rp-[0-9]{8}-[a-z0-9-]{4,32}$" },
-    "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+    "id": {
+      "type": "string",
+      "pattern": "^rp-[0-9]{8}-[a-z0-9-]{4,32}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["repo", "branch", "commit"],
+      "required": [
+        "repo",
+        "branch",
+        "commit"
+      ],
       "properties": {
-        "repo": { "type": "string" },
-        "branch": { "type": "string" },
-        "commit": { "type": "string", "pattern": "^[a-f0-9]{7,64}$" }
+        "repo": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{7,64}$"
+        }
       }
     },
-    "artifacts": { "type": "array", "items": { "type": "string" } },
-    "target": { "enum": ["local-preview", "staging", "production-candidate"] },
-    "status": { "enum": ["draft", "pending", "accepted", "rejected", "promoted", "rolled-back"] },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "target": {
+      "enum": [
+        "local-preview",
+        "staging",
+        "production-candidate"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "pending",
+        "accepted",
+        "rejected",
+        "promoted",
+        "rolled-back"
+      ]
+    },
     "gates": {
       "type": "object",
-      "required": ["g02", "security", "static", "runtime"],
+      "required": [
+        "g02",
+        "security",
+        "static",
+        "runtime"
+      ],
       "properties": {
-        "g02": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
-        "security": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
-        "static": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] },
-        "runtime": { "enum": ["PASS", "FAIL", "HOLD", "UNKNOWN"] }
+        "g02": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "HOLD",
+            "UNKNOWN"
+          ]
+        },
+        "security": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "HOLD",
+            "UNKNOWN"
+          ]
+        },
+        "static": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "HOLD",
+            "UNKNOWN"
+          ]
+        },
+        "runtime": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "HOLD",
+            "UNKNOWN"
+          ]
+        }
       }
     },
     "evidence": {
       "type": "object",
       "properties": {
-        "probes": { "type": "array", "items": { "type": "object" } },
-        "tests": { "type": "array", "items": { "type": "object" } },
-        "logs": { "type": "array", "items": { "type": "string" } },
-        "screenshots": { "type": "array", "items": { "type": "string" } }
+        "probes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gate_attestations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "gate",
+              "decision",
+              "evidence_ref",
+              "rationale",
+              "attested_by",
+              "attested_at"
+            ],
+            "properties": {
+              "gate": {
+                "enum": [
+                  "g02",
+                  "security",
+                  "static"
+                ]
+              },
+              "decision": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "HOLD"
+                ]
+              },
+              "evidence_ref": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "attested_by": {
+                "type": "string"
+              },
+              "attested_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
       }
     },
-    "accepted_by": { "type": ["string", "null"] },
-    "accepted_at": { "type": ["string", "null"], "format": "date-time" },
-    "created_at": { "type": "string", "format": "date-time" },
-    "updated_at": { "type": "string", "format": "date-time" }
+    "accepted_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "accepted_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
   }
 }
