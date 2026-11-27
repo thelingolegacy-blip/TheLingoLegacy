@@ -67,7 +67,7 @@ export function preflightSecrets(requiredNames, environment = process.env) {
 
 export function scopedTrackEnvironment(track, environment = process.env, base = {}) {
   const allowed = new Set(track.required_secrets || []);
-  const scoped = { ...base };
+  const scoped = Object.fromEntries(Object.entries(base).filter(([name]) => !SECRET_NAMES.includes(name) && !/secret|token|password|credential|authorization/i.test(name)));
   for (const name of allowed) {
     if (typeof environment[name] === "string" && environment[name].length > 0) scoped[name] = environment[name];
   }
@@ -82,7 +82,7 @@ export function classifyFailure(error) {
   return "permanent";
 }
 
-export function retryDecision({ error, attempt, startedAt, now = Date.now(), emptyLog = false, maxAttempts = RUN_DEFAULTS.RETRY_MAX_ATTEMPTS }) {
+export function transientRetryDelayMs(attempt, random = Math.random) {\n  if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");\n  const ceiling = Math.min(30_000, 1_000 * (2 ** (attempt - 1)));\n  return Math.floor(ceiling * (0.5 + Math.max(0, Math.min(1, random())) * 0.5));\n}\n\nexport function retryDecision({ error, attempt, startedAt, now = Date.now(), emptyLog = false, maxAttempts = RUN_DEFAULTS.RETRY_MAX_ATTEMPTS }) {
   if (!Number.isInteger(attempt) || attempt < 1) throw new Error("attempt must be a positive integer.");
   if (emptyLog) return { retry: attempt < maxAttempts, reason: "empty-log", next_attempt: attempt + 1 };
   if (classifyFailure(error) !== "transient") return { retry: false, reason: "permanent-failure" };
