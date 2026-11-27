@@ -1,8 +1,6 @@
 name: G02 Control Watch — Read Only
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "17 * * * *"
 permissions:
   actions: read
   contents: read
