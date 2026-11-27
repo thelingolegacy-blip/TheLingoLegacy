@@ -265,6 +265,21 @@ test("near-empty successful logs are rejected and retried within the attempt lim
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("cancelling a critical track cancels the whole run without mislabeling it as a failure", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-critical-cancel-"));
+  try {
+    const controller = createRunController(base([
+      { id: "critical", criticality: "critical", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0),1000)"] }] },
+      { id: "support", criticality: "important", required_secrets: [], steps: [{ command: "node", args: ["-e", "setTimeout(()=>process.exit(0),5000)"] }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(controller.cancelTrack("critical"), true);
+    const summary = await controller.promise;
+    assert.equal(summary.status, "CANCELLED");
+    assert.equal(summary.tracks.critical.status, "CANCELLED");
+    assert.equal(summary.tracks.support.status, "CANCELLED");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("permanent step failures emit a terminal FAILED event", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-step-fail-"));
   try {
