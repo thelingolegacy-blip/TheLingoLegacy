@@ -11,6 +11,7 @@ function fakeDb() {
       return { bind() { return this; }, async first() {
         if (sql.startsWith('SELECT 1')) return { ok: 1 };
         if (sql.includes('sqlite_master')) return { present: 6 };
+        if (sql.includes('pragma_table_info')) return { present: 1 };
         return null;
       } };
     },
@@ -57,7 +58,7 @@ test('health endpoint confirms staging D1 reachability without authentication', 
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), {
     status: 'ok', environment: 'staging', database: 'connected', tableCount: 6,
-    rulesVersion: 'tml-5x3-20line-option2-v1', rulesetConfigured: true,
+    rulesVersion: 'tml-5x3-20line-option2-v1', rulesetConfigured: true, rulesetSchemaReady: true,
   });
 });
 
@@ -101,4 +102,24 @@ test('health endpoint reports degraded when staging ruleset configuration is abs
     status: 'degraded', environment: 'staging', database: 'connected', tableCount: 6,
     rulesVersion: 'tml-5x3-20line-option2-v1', rulesetConfigured: false,
   });
+});
+
+
+test('health endpoint remains degraded until ruleset digest migration is applied', async () => {
+  const DB = fakeDb();
+  DB.prepare = function(sql) {
+    this.calls.push(sql);
+    return { bind() { return this; }, async first() {
+      if (sql.startsWith('SELECT 1')) return { ok: 1 };
+      if (sql.includes('sqlite_master')) return { present: 6 };
+      if (sql.includes('pragma_table_info')) return { present: 0 };
+      return null;
+    } };
+  };
+  const response = await worker.fetch(new Request('https://staging.invalid/healthz'), {
+    DB, ENVIRONMENT: 'staging',
+    TML_RULESET_CONFIG: JSON.stringify({ weightedSymbols: [{ symbol: 'SEVEN', weight: 1 }], paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } } }),
+  });
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).rulesetSchemaReady, false);
 });
