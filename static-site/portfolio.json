@@ -2,21 +2,25 @@
   "schema_version": 1,
   "brand": "THE LINGO LEGACY",
   "tagline": "One Legacy. Many Worlds.",
-  "purpose": "Public portfolio navigation only; this manifest does not indicate that every product or service is live.",
+  "purpose": "Public navigation registry for the eight canonical public portfolios. Related concepts are preserved separately and are not counted as additional realms or public portfolios.",
   "worlds": [
     {
       "name": "LINGOlegacy",
       "category": "Flagship",
       "description": "Central home for identity, community and connected experiences.",
       "href": "/living-universe/",
-      "availability": "portfolio"
+      "availability": "portfolio",
+      "id": "lingo-legacy",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOlane",
       "category": "Apparel and lifestyle",
       "description": "Loyalty Lane Apparel, Designs & Promotions, and Laundry-Cycle.",
       "href": "/loyalty-lane-apparel/",
-      "availability": "showcase"
+      "availability": "showcase",
+      "id": "lingo-lane",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOslots",
@@ -30,7 +34,9 @@
         "Uhno Lingo U-No",
         "Lingo Lions Eruptions",
         "Cashman Lingo Mania"
-      ]
+      ],
+      "id": "lingo-slots",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOarcade",
@@ -44,7 +50,9 @@
         "Crazy Weasols",
         "Silly in Philly",
         "Jersey Shore: The Undead"
-      ]
+      ],
+      "id": "lingo-arcade",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOlibrary",
@@ -58,7 +66,9 @@
         "Say It Again",
         "Dice Shift Hotel",
         "Legacy Legends"
-      ]
+      ],
+      "id": "lingo-library",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOmedia",
@@ -68,7 +78,9 @@
       "availability": "showcase",
       "products": [
         "Rise of Zavione"
-      ]
+      ],
+      "id": "lingo-media",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LINGOworld",
@@ -88,56 +100,80 @@
         "LINGOshield",
         "LINGOlounge",
         "LINGOdonations"
-      ]
+      ],
+      "id": "lingo-world",
+      "node_type": "public_portfolio"
     },
     {
       "name": "LegacyXclub",
       "category": "Community",
       "description": "Community, loyalty, creator connections and participation.",
       "href": "/community-guidelines/",
-      "availability": "showcase"
-    },
-    {
-      "name": "LINGO ID",
-      "category": "Identity",
-      "description": "Identity and account foundations; activation depends on verified identity-provider and security controls.",
-      "href": null,
-      "availability": "planned"
-    },
-    {
-      "name": "Universal Legacy Wallet",
-      "category": "Wallet architecture",
-      "description": "Wallet and Lingo Coins architecture; no live balances, payments or transfers are represented here.",
-      "href": null,
-      "availability": "planned"
-    },
-    {
-      "name": "LINGO Nexus",
-      "category": "Platform",
-      "description": "Shared platform and integration foundations.",
-      "href": null,
-      "availability": "planned"
-    },
-    {
-      "name": "LINGO Studios",
-      "category": "Creative",
-      "description": "Creative production and studio experiences.",
-      "href": null,
-      "availability": "planned"
-    },
-    {
-      "name": "LINGO Towers",
-      "category": "Places and infrastructure",
-      "description": "Long-range property and infrastructure concept.",
-      "href": null,
-      "availability": "planned"
-    },
-    {
-      "name": "Bridged Gap",
-      "category": "Community initiative",
-      "description": "Community connection initiative.",
-      "href": null,
-      "availability": "planned"
+      "availability": "showcase",
+      "id": "legacy-x-club",
+      "node_type": "public_portfolio"
     }
-  ]
+  ],
+  "related_concepts": [
+    {
+      "id": "lingo-id-concept",
+      "name": "LINGO ID",
+      "description": "Identity and account foundations; activation depends on verified identity-provider and security controls.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "universal-legacy-wallet-concept",
+      "name": "Universal Legacy Wallet",
+      "description": "Wallet and Lingo Coins architecture; no live balances, payments or transfers are represented here.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-nexus-concept",
+      "name": "LINGO Nexus",
+      "description": "Shared platform and integration foundations.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-studios-concept",
+      "name": "LINGO Studios",
+      "description": "Creative production and studio experiences.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-towers-concept",
+      "name": "LINGO Towers",
+      "description": "Long-range property and infrastructure concept.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "bridged-gap-concept",
+      "name": "Bridged Gap",
+      "description": "Community connection initiative.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    }
+  ],
+  "taxonomy": {
+    "public_portfolio_count": 8,
+    "related_concept_count": 6,
+    "related_concepts_are_realms": false,
+    "note": "This public manifest is not the internal 14-node realm registry. The separate 14-node registry candidate requires its own current-main reconciliation, review and acceptance."
+  }
 }
