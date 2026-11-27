@@ -314,6 +314,18 @@ test("credential values embedded in run configuration abort before any track sta
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("step emits a soft-timeout warning before its hard timeout", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-soft-timeout-"));
+  try {
+    const summary = await executeRun(base([
+      { id: "slow-check", criticality: "critical", required_secrets: [], steps: [{ id: "slow", command: "node", args: ["-e", "setTimeout(()=>process.stdout.write('finished-ok'),1200)"], soft_timeout_ms: 1000, timeout_ms: 2500 }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH } });
+    assert.equal(summary.status, "SUCCESS");
+    const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
+    assert.match(events, /"status":"STEP_TIMEOUT_WARNING"/);
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("near-empty successful logs are rejected and retried within the attempt limit", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-near-empty-"));
   try {
