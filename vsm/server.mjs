@@ -33,35 +33,6 @@ const CENTERS = [
   ["lingoai", "LINGOai Core / askLINGO", "Local bot worker registry and policy-constrained orchestration."],
   ["economy", "Economy & Commerce Center", "Virtual wallet simulation and isolated commerce testing."],
   ["world-matrix", "World Matrix & Game Systems", "Game worlds, progression, game engines and release-linked assets."]
-];port http from "node:http";
-import fs from "node:fs/promises";
-import path from "node:path";
-import crypto from "node:crypto";
-import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./identity/identity.mjs";
-import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob } from "./sonic-boom/lane.mjs";
-import { executeBot } from "./ai/bot-worker.mjs";
-
-const PORT = Number(process.env.PORT || 8787);
-const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
-const HOST = process.env.HOST || "127.0.0.1";
-const DATA_DIR = process.env.VSM_DATA_DIR || path.join(process.cwd(), "data");
-const WORKSPACE = process.env.VSM_WORKSPACE || path.resolve(process.cwd(), "..");
-const OWNER_TOKEN = process.env.VSM_OWNER_TOKEN || "";
-const OWNER_NAME = process.env.VSM_OWNER_NAME || "Owner";
-const PROBE_BASE_URL = (process.env.VSM_PROBE_BASE_URL || "https://thelingolegacy.com").replace(/\/$/, "");
-const REQUIRED_GATES = ["g02", "security", "static", "runtime"];
-const CENTERS = [
-  ["release-dispatch", "Release Dispatch Center", "Release packages, evidence, acceptance and promotion records."],
-  ["execution", "Execution & Orchestration Center", "Local jobs, build orchestration and preview dispatch."],
-  ["g02-authority", "G02 Gate & Authority Center", "Fail-closed release authority and Last Known Good protection."],
-  ["troubleshooting", "Troubleshooting & Evidence Center", "Probe history, logs, artifacts and diagnostics."],
-  ["security-saaae", "Security & SAAAE Center", "Role catalog, privileged boundaries and audit enforcement."],
-  ["studio-worlds", "Studio & World Matrix Center", "Existing worlds, assets, creative systems and playable previews."],
-  ["economy", "Economy & Commerce Center", "Virtual wallet simulation and isolated commerce testing."],
-  ["identity", "Identity & Lingo ID Center", "Shared identity, profile and session contracts."],
-  ["asklingo", "askLINGO & AI Center", "Policy kernel, model routing and tool audit."],
-  ["infrastructure-truth", "Infrastructure Truth Center", "Cloudflare inventory, route map and configuration drift."],
-  ["observability", "Observability & Cost Center", "Health probes, telemetry, rate limits and cost guardrails."]
 ];
 
 await fs.mkdir(DATA_DIR, { recursive: true });
@@ -158,11 +129,11 @@ const server = http.createServer(async (req, res) => {
       const bots = JSON.parse(await fs.readFile(path.join(process.cwd(), "ai", "bots.json"), "utf8"));
       return send(res, 200, bots);
     }
-    const botRun = url.pathname.match(/^\/api\/bots\/(lingo:\/\/id\/bot-[a-z]+)\/run$/);
-    if (req.method === "POST" && botRun) {
+    if (req.method === "POST" && url.pathname === "/api/bots/run") {
       if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
       const input = await bodyJson(req);
-      const botId = botRun[1];
+      const botId = input.bot_id;
+      if (typeof botId !== "string" || !/^lingo:\/\/id\/bot-[a-z]+$/.test(botId)) return send(res, 400, { error: "A valid bot_id is required." });
       const result = await submitLaneJob({ owner: true, kind: "bot:" + botId, run: () => executeBot({
         botId, task: input.task, input: input.input || {},
         context: {
