@@ -23,7 +23,7 @@ Local-first release control plane in the canonical repository. This is additive:
 docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
 ```
 
-4. Open http://127.0.0.1:8787.
+4. Open http://127.0.0.1:8787 for Mission Control and http://127.0.0.1:8788 for the isolated static preview of the existing repository site.
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, and `accept RELEASE_ID`.
 
@@ -38,7 +38,7 @@ The dashboard currently creates draft release packages. Owner gate attestations 
 - `POST /api/releases/:id/probe` — run configured public probes.
 - `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`; requires decision, evidence reference and rationale.
 - `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS.
-- `GET /preview/` — serves the existing repository static files from the read-only mount.
+- Static preview: `http://127.0.0.1:8788/` serves the existing repository files from the read-only mount with root-relative assets. The Worker runtime is not emulated in Phase 0.
 
 ## Safety invariants
 
