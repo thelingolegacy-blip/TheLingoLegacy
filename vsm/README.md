@@ -154,7 +154,7 @@ Restore verifies the manifest, checksums and all archive structures before modif
 ALLOW_DESTRUCTIVE=true sh vsm/lingo-vsm restore BACKUP_ID
 ```
 
-The restore path stops VSM and Forge before replacing volume contents and restarts services that were running. The backup/restore utility is source-implemented but has not yet been executed against a real Docker daemon in this environment; treat it as unverified until a backup is created and a restore drill is completed. It is not an off-site backup or disaster-recovery service.
+The restore path stops VSM and Forge before replacing volume contents and restarts services that were running. The backup/restore utility is source-implemented but has not yet been executed against a real Docker daemon in this environment; treat it as unverified until a backup is created and a restore drill is completed. Archives are not encrypted and must be stored on a trusted local volume with owner-only access. This is not an off-site backup or disaster-recovery service.
 
 
 ## Backup and recovery
