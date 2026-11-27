@@ -243,6 +243,7 @@ export async function executeRun(input, {
       child.once("error", error => resolve({ code: -1, error }));
       child.once("close", (code, childSignal) => resolve({ code, signal: childSignal }));
     });
+    clearTimeout(softTimeout);
     if (child.pid) { childPids.delete(child.pid); await atomicJson(pidFile, [...childPids]); }
     clearTimeout(timeout);
     clearTimeout(forceTimer);
