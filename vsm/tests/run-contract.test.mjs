@@ -6,14 +6,16 @@ import {
 } from "../orchestration/run-contract.mjs";
 
 function config(overrides = {}) {
-  return createRunConfig({
+  const input = {
     run_id: "test-run-001", run_type: "local-validation", target: "local",
     tracks: [
-      { id: "source", criticality: "critical", required_secrets: [] },
-      { id: "preview", criticality: "important", required_secrets: ["CLOUDFLARE_API_TOKEN"] },
-      { id: "studio", criticality: "best-effort", required_secrets: [] }
+      { id: "source", criticality: "critical", required_secrets: [], steps: [] },
+      { id: "preview", criticality: "important", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [] },
+      { id: "studio", criticality: "best-effort", required_secrets: [], steps: [] }
     ], ...overrides
-  });
+  };
+  input.tracks = input.tracks.map(track => ({ steps: [], ...track }));
+  return createRunConfig(input);
 }
 
 test("run configuration applies bounded defaults and production dry-run", () => {
@@ -22,10 +24,10 @@ test("run configuration applies bounded defaults and production dry-run", () => 
   assert.equal(local.RUN_MAX_TOOL_CALLS, 1200);
   assert.equal(local.RUN_MAX_COST_USD, 15);
   assert.equal(local.RETRY_MAX_ATTEMPTS, 3);
-  assert.equal(createRunConfig({ run_id: "prod-run-001", run_type: "production-change", target: "production", tracks: [{ id: "deploy", criticality: "critical" }] }).DRY_RUN, true);
+  assert.equal(createRunConfig({ run_id: "prod-run-001", run_type: "production-change", target: "production", tracks: [{ id: "deploy", criticality: "critical", steps: [] }] }).DRY_RUN, true);
   assert.throws(() => createRunConfig({ run_id: "bad-run-001", target: "production", DRY_RUN: false, tracks: [{ id: "deploy", criticality: "critical" }] }), /production-change/);
-  assert.throws(() => createRunConfig({ run_id: "bad-run-002", RUN_MAX_DURATION_MINUTES: 91, tracks: [{ id: "a", criticality: "critical" }] }), /1–90/);
-  assert.throws(() => createRunConfig({ run_id: "bad-run-003", tracks: [{ id: "aa", criticality: "unknown" }] }), /criticality/);
+  assert.throws(() => createRunConfig({ run_id: "bad-run-002", RUN_MAX_DURATION_MINUTES: 91, tracks: [{ id: "a", criticality: "critical", steps: [] }] }), /1–90/);
+  assert.throws(() => createRunConfig({ run_id: "bad-run-003", tracks: [{ id: "aa", criticality: "unknown", steps: [] }] }), /criticality/);
 });
 
 test("secret preflight reports missing names only and track environments are least-privilege", () => {
