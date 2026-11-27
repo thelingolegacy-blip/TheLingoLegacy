@@ -104,7 +104,7 @@ test("Studio asset registry validates ownership metadata and source references",
     tags: ["character", "concept"],
     source_uri: "repo://TheLingoLegacy/assets/kotton",
     rights_status: "owner_created",
-    content_sha256: "a".repeat(64)
+    declared_content_sha256: "a".repeat(64)
   }, "lingo://id/test-owner");
   assert.match(asset.id, /^la-/);
   assert.equal(asset.status, "proposed");
