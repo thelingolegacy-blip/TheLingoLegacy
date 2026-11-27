@@ -14,7 +14,7 @@ Local-first release control plane in the canonical repository. This is additive:
 - SAAAE starter policy with default-deny role/capability mapping and explicit denials for production mutation.
 - Signed local release-acceptance envelopes; owner ID is stamped on packages and gate attestations.
 - Self-hosted Gitea Forge service in Docker Compose, with loopback-only web and SSH ports on a dedicated internal-only Docker network.
-- Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default.
+- Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default and fail-closed if persisted settings are invalid.
 - Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
 - First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
 - CPU-based mathematical validation engine for probability vectors and discrete virtual game-balance distributions; no cash wagering or cash-out model.
