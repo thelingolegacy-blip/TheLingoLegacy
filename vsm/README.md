@@ -44,6 +44,8 @@ docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
    - Existing repository static preview: http://127.0.0.1:8788
    - LINGO Forge (Gitea first-run setup): http://127.0.0.1:3000
    - Forge SSH: 127.0.0.1:2222
+
+VSM Control and Forge share the isolated internal Docker network for private service-to-service traffic. Forge web/SSH ports remain bound to host loopback only.
    - OpenNext + Wrangler Worker preview (optional profile): http://127.0.0.1:8790
 
 Gitea registration is disabled and repository viewing requires sign-in. Complete the first-run setup locally and create the initial Forge administrator. Do not reuse the VSM owner token as the Forge password. Keep all credentials in a password manager.
@@ -136,3 +138,20 @@ A run config is JSON metadata only; credentials must arrive through the parent p
 ```
 
 Run with `sh vsm/lingo-vsm run run-config.json` (the config path is relative to the `vsm/` directory). This command does not source `.env`; required credentials must be injected by the invoking CI/platform environment. The current runner writes local artifacts under `vsm/artifacts/<run_id>`; it does not yet upload to a remote artifact store, implement a persistent external watchdog, or deliver owner notifications. Cost enforcement uses explicit per-step `cost_usd` estimates and cannot infer third-party spend automatically. Tool-call accounting counts each launched process and configured service preflight request; integrations must charge additional external API calls through the budget ledger. Cost enforcement uses configured step estimates and cannot infer actual third-party spend. Treat this runner as a controlled local validation facility, not production release authority.
+
+
+## Local volume backup and guarded restore
+
+The local backup utility archives the VSM control data and Gitea data/config volumes while the services are stopped, writes SHA-256 checksums, and stores the archives outside the repository by default under `~/.local/share/lingo-vsm/backups`. The backup directory and archive files are owner-only. These archives contain sensitive identity keys and service data; protect them accordingly.
+
+```sh
+sh vsm/lingo-vsm backup
+```
+
+Restore verifies the manifest, checksums and all archive structures before modifying named volumes. It is destructive and requires an explicit environment opt-in:
+
+```sh
+ALLOW_DESTRUCTIVE=true sh vsm/lingo-vsm restore BACKUP_ID
+```
+
+The restore path stops VSM and Forge before replacing volume contents and restarts services that were running. The backup/restore utility is source-implemented but has not yet been executed against a real Docker daemon in this environment; treat it as unverified until a backup is created and a restore drill is completed. It is not an off-site backup or disaster-recovery service.
