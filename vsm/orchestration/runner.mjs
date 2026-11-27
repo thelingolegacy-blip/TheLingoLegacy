@@ -155,7 +155,8 @@ export async function executeRun(input, {
     return securityFailure;
   }
   if (!secretCheck.ok) {
-    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, artifact_directory: runDir, finished_at: iso() };
+    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, artifact_directory: runDir, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
+    if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: summary.status, missing_secrets: summary.missing_secrets, invalid_secrets: summary.invalid_secrets }); summary.owner_notification = "SENT"; } catch { summary.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), summary);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "PREFLIGHT_FAILED", updated_at: iso() });
     return summary;
@@ -171,7 +172,8 @@ export async function executeRun(input, {
   }
   if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
-    const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {} };
+    const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
+    if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: failed.status, resource_check: resourceCheck, network_check: networkCheck, budget: failed.budget }); failed.owner_notification = "SENT"; } catch { failed.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), failed);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
     return failed;
