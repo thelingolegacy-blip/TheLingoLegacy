@@ -47,3 +47,12 @@ test("first LINGO bots only execute declared proposal and validation tasks", asy
   assert.equal(math.percent, 25);
   await assert.rejects(() => worker.executeBot({ botId: "lingo://id/bot-release", task: "deploy_production", input: {} }));
 });
+
+test("evidence records are immutable-by-id and SHA-256 integrity checked", async () => {
+  const evidence = await import("../evidence/store.mjs?test-suite");
+  const ref = await evidence.writeEvidence({ releaseId: "rp-20261127-test", type: "test", payload: { checks: 4, passed: true }, createdBy: "lingo://id/test-owner" });
+  const record = await evidence.readEvidence(ref.id);
+  assert.equal(record.sha256, ref.sha256);
+  assert.deepEqual(record.payload, { checks: 4, passed: true });
+  await assert.rejects(() => evidence.readEvidence("../escape"));
+});
