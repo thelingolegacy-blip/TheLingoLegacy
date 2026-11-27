@@ -20,6 +20,8 @@ const TRANSIENT_CODES = new Set(["ECONNRESET", "ECONNREFUSED", "ETIMEDOUT", "EAI
 
 export function createRunConfig(input = {}) {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Run configuration must be an object.");
+  if (input.run_type !== undefined && typeof input.run_type !== "string") throw new Error("run_type must be a string.");
+  if (input.target !== undefined && typeof input.target !== "string") throw new Error("target must be a string.");
   if (input.TRACK_CRITICALITY !== undefined && (!input.TRACK_CRITICALITY || typeof input.TRACK_CRITICALITY !== "object" || Array.isArray(input.TRACK_CRITICALITY))) throw new Error("TRACK_CRITICALITY must be an object.");
   if (input.SECRETS_REQUIRED !== undefined && !Array.isArray(input.SECRETS_REQUIRED)) throw new Error("SECRETS_REQUIRED must be an array.");
   for (const name of ["ALLOW_DESTRUCTIVE", "DRY_RUN", "PREFLIGHT_NETWORK"]) if (input[name] !== undefined && typeof input[name] !== "boolean") throw new Error(name + " must be boolean.");
