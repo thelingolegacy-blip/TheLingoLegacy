@@ -125,7 +125,9 @@ export default {
            )
         `).first();
         if (required?.present !== 6) return json({ status: 'degraded', environment: 'staging' }, 503);
-        return json({ status: 'ok', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION });
+        const rulesetConfigured = Boolean(loadRulesetConfig(env));
+        if (!rulesetConfigured) return json({ status: 'degraded', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: false }, 503);
+        return json({ status: 'ok', environment: 'staging', database: 'connected', tableCount: required.present, rulesVersion: RULE_VERSION, rulesetConfigured: true });
       } catch {
         return json({ status: 'degraded', environment: 'staging' }, 503);
       }
