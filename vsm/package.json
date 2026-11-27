@@ -6,7 +6,7 @@
   "description": "Local-first sovereign release control plane for LINGO LEGACY",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check identity/identity.mjs && node --check sonic-boom/lane.mjs && node --check ai/bot-worker.mjs && node --check dashboard/app.js",
+    "check": "node --check server.mjs && node --check identity/identity.mjs && node --check sonic-boom/lane.mjs && node --check ai/bot-worker.mjs && node --check evidence/store.mjs && node --check dashboard/app.js",
     "test": "node --test"
   },
   "engines": {
