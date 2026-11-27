@@ -66,6 +66,14 @@ def main():
     db.execute("UPDATE lingo_saaae_provisioning_requests SET status='expired' WHERE request_id='req-2'")
 
     # Environment, reason, digest, and event request linkage are constrained.
+    # A staging-labelled request cannot target the production Firebase project.
+    try:
+        insert_request(db, request_id='prod-target', target_firebase_project='lingo-legacy-production')
+    except sqlite3.IntegrityError as error:
+        assert 'CHECK constraint' in str(error), str(error)
+    else:
+        raise AssertionError('production Firebase project was accepted by the staging provisioning schema')
+
     expect_integrity_error(db, "INSERT INTO lingo_saaae_provisioning_requests (request_id, environment, target_firebase_project, target_firebase_uid, tenant_id, product_id, resource_id, operation, effect, valid_from, expires_at, reason, ticket_reference, request_digest, requester_operator_id) VALUES ('bad-env','production','prod','uid','tenant','product','resource','read','allow','2026-11-23','2026-11-24','A valid reason here','ticket',?, 'requester')", ('c' * 64,), 'CHECK constraint')
     expect_integrity_error(db, "INSERT INTO lingo_saaae_provisioning_requests (request_id, environment, target_firebase_project, target_firebase_uid, tenant_id, product_id, resource_id, operation, effect, valid_from, expires_at, reason, ticket_reference, request_digest, requester_operator_id) VALUES ('bad-digest','staging','stage','uid','tenant','product','resource','read','allow','2026-11-23','2026-11-24','A valid reason here','ticket','short','requester')", (), 'CHECK constraint')
     expect_integrity_error(db, "INSERT INTO lingo_saaae_provisioning_audit (event_id, request_id, correlation_id, actor_operator_id, event_type, reason_code, request_digest) VALUES ('orphan','missing-request','corr','operator','request_submitted','SUBMITTED',?)", ('a' * 64,), 'FOREIGN KEY')
