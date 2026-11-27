@@ -10,7 +10,7 @@ import { executeRun, createRunController } from "../orchestration/runner.mjs";
 
 const base = (tracks, extra = {}) => ({
   run_id: "runner-test-001", run_type: "local-validation", target: "local",
-  RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 20, RUN_MAX_COST_USD: 2,
+  RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 20, RUN_MAX_COST_USD: 2, PREFLIGHT_MIN_CPUS: 1,
   tracks, ...extra
 });
 
@@ -225,7 +225,7 @@ test("staging run validates required service reachability and credentials before
   try {
     const summary = await executeRun({
       run_id: "runner-stage-check-01", run_type: "staging-validation", target: "staging",
-      PREFLIGHT_NETWORK: true, RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      PREFLIGHT_NETWORK: true, RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1, PREFLIGHT_MIN_CPUS: 1,
       tracks: [{ id: "cloudflare-probe", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [] }]
     }, {
       rootDir,
