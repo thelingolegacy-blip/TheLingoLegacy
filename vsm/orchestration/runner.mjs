@@ -185,6 +185,12 @@ export async function executeRun(input, {
   const pidFile = path.join(runDir, "child-processes.json");
   const crashFile = path.join(runDir, "crash-report.json");
   await atomicJson(pidFile, []);
+  let pidWriteQueue = Promise.resolve();
+  const persistChildPids = () => {
+    const snapshot = [...childPids];
+    pidWriteQueue = pidWriteQueue.then(() => atomicJson(pidFile, snapshot));
+    return pidWriteQueue;
+  };
   const results = {};
   let cancelled = false;
   let cancelReason = null;
@@ -194,15 +200,24 @@ export async function executeRun(input, {
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
-  const updateStatus = async status => atomicJson(statusFile, {
-    run_id: config.run_id, status, updated_at: iso(),
-    budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd, deadline_ms: ledger.deadline_ms },
-    tracks: Object.fromEntries(Object.entries(ledger.tracks).map(([id, item]) => [id, { status: item.status, tool_calls: item.tool_calls, cost_usd: item.cost_usd }]))
-  });
-  const emit = async event => {
+  let statusWriteQueue = Promise.resolve();
+  const updateStatus = status => {
+    const snapshot = {
+      run_id: config.run_id, status, updated_at: iso(),
+      budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd, deadline_ms: ledger.deadline_ms },
+      tracks: Object.fromEntries(Object.entries(ledger.tracks).map(([id, item]) => [id, { status: item.status, tool_calls: item.tool_calls, cost_usd: item.cost_usd }]))
+    };
+    statusWriteQueue = statusWriteQueue.then(() => atomicJson(statusFile, snapshot));
+    return statusWriteQueue;
+  };
+  let eventWriteQueue = Promise.resolve();
+  const emit = event => {
     const safe = structuredRunEvent({ ...event, secretValues });
-    await fs.appendFile(eventFile, JSON.stringify(safe) + "\n", { mode: 0o600 });
-    await updateStatus(ledger.status);
+    eventWriteQueue = eventWriteQueue.then(async () => {
+      await fs.appendFile(eventFile, JSON.stringify(safe) + "\n", { mode: 0o600 });
+      await updateStatus(ledger.status);
+    });
+    return eventWriteQueue;
   };
   const cancelAll = reason => {
     if (cancelled) return;
@@ -235,7 +250,7 @@ export async function executeRun(input, {
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
     const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
-    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
+    if (child.pid) { childPids.add(child.pid); await persistChildPids(); }
     let output = "";
     let outputBytes = 0;
     let secretScanTail = "";
@@ -272,7 +287,7 @@ export async function executeRun(input, {
       child.once("close", (code, childSignal) => resolve({ code, signal: childSignal }));
     });
     clearTimeout(softTimeout);
-    if (child.pid) { childPids.delete(child.pid); await atomicJson(pidFile, [...childPids]); }
+    if (child.pid) { childPids.delete(child.pid); await persistChildPids(); }
     clearTimeout(timeout);
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
