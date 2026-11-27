@@ -2,6 +2,8 @@ import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import { ensureOwnerIdentity, getOwnerPrincipal, signOwnerPayload } from "./identity/identity.mjs";
+import { loadLane, configureLane, snapshot as sonicBoomSnapshot } from "./sonic-boom/lane.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -27,6 +29,8 @@ const CENTERS = [
 ];
 
 await fs.mkdir(DATA_DIR, { recursive: true });
+const OWNER_IDENTITY = await ensureOwnerIdentity();
+await loadLane();
 const releasesFile = path.join(DATA_DIR, "releases.json");
 const auditFile = path.join(DATA_DIR, "audit.jsonl");
 
@@ -100,7 +104,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.1.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
-    if (req.method === "GET" && url.pathname === "/api/centers") {
+    if (req.method === "GET" && url.pathname === "/api/identity") {\n      const principal = await getOwnerPrincipal();\n      return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });\n    }\n    if (req.method === "GET" && url.pathname === "/api/sonic-boom") {\n      return send(res, 200, { lane: sonicBoomSnapshot(), policy: "priority and bounded concurrency only; gates remain mandatory" });\n    }\n    if (req.method === "POST" && url.pathname === "/api/sonic-boom") {\n      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });\n      const input = await bodyJson(req);\n      const lane = await configureLane(input);\n      await audit("sonic_boom.configured", { owner_id: OWNER_IDENTITY.id, lane });\n      return send(res, 200, { lane });\n    }\n    if (req.method === "GET" && url.pathname === "/api/bots") {\n      const bots = JSON.parse(await fs.readFile(path.join(process.cwd(), "ai", "bots.json"), "utf8"));\n      return send(res, 200, bots);\n    }\n    if (req.method === "GET" && url.pathname === "/api/centers") {
       return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "REGISTERED", phase: 0 })) });
     }
     if (req.method === "GET" && url.pathname === "/api/releases") {
@@ -114,7 +118,7 @@ const server = http.createServer(async (req, res) => {
       const target = ["local-preview", "staging", "production-candidate"].includes(input.target) ? input.target : "local-preview";
       const now = new Date().toISOString();
       const id = "rp-" + now.slice(0,10).replaceAll("-","") + "-" + crypto.randomBytes(4).toString("hex");
-      const release = { id, title: input.title.trim(), source: { repo: "thelingolegacy-blip/TheLingoLegacy", branch: input.source.branch.trim(), commit: input.source.commit.toLowerCase() }, artifacts: [], target, status: "draft", gates: { g02:"UNKNOWN", security:"UNKNOWN", static:"UNKNOWN", runtime:"UNKNOWN" }, evidence: { probes:[], tests:[], logs:[], screenshots:[] }, accepted_by:null, accepted_at:null, created_at:now, updated_at:now };
+      const release = { id, title: input.title.trim(), source: { repo: "thelingolegacy-blip/TheLingoLegacy", branch: input.source.branch.trim(), commit: input.source.commit.toLowerCase() }, artifacts: [], target, status: "draft", gates: { g02:"UNKNOWN", security:"UNKNOWN", static:"UNKNOWN", runtime:"UNKNOWN" }, evidence: { probes:[], tests:[], logs:[], screenshots:[] }, accepted_by:null, accepted_at:null, owner_id:OWNER_IDENTITY.id, created_at:now, updated_at:now };
       const releases = await readReleases(); releases.push(release); await writeReleases(releases); await audit("release.created", { id, target, commit: release.source.commit });
       return send(res, 201, { release });
     }
@@ -127,7 +131,7 @@ const server = http.createServer(async (req, res) => {
       const releases = await readReleases();
       const release = releases.find(x => x.id === id);
       if (!release) return send(res, 404, { error: "Release package not found." });
-      const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_NAME, attested_at: new Date().toISOString() };
+      const attestation = { gate, decision: input.decision, evidence_ref: input.evidence_ref.trim(), rationale: input.rationale.trim(), attested_by: OWNER_IDENTITY.id, attested_at: new Date().toISOString() };
       release.gates[gate] = input.decision;
       release.evidence.gate_attestations = [...(release.evidence.gate_attestations || []), attestation];
       release.updated_at = attestation.attested_at;
