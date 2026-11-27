@@ -10,6 +10,7 @@ const studioHub = await readFile(path.join(root, "studio-hub/index.html"), "utf8
 const drop = await readFile(path.join(root, "drop/index.html"), "utf8");
 const stripeScript = await readFile(path.join(root, "assets/stripe-checkout.js"), "utf8");
 const worker = await readFile(path.join(root, "worker.js"), "utf8");
+const arcade = await readFile(path.join(root, "lingoarcade/index.html"), "utf8");
 
 test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", () => {
   assert.equal(staticCopy, source, "static-site alias must stay byte-for-byte aligned");
@@ -28,6 +29,8 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.match(studioHub, /demo spins using virtual credits only/i);
   assert.match(studioHub, /cash wagering, cash-out and prize redemption are not enabled/i);
   assert.doesNotMatch(studioHub, /cash-value wagering/i);
+  assert.match(arcade, /Vegas Studio demo game and virtual-credit progression lane/);
+  assert.doesNotMatch(arcade, /Casino-style demo game/i);
 });
 
 test("founder drop checkout remains disabled in source and Worker", () => {
