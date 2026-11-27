@@ -49,7 +49,7 @@ function send(res, status, data, headers = {}) {
 }
 function auth(req) {
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  return OWNER_TOKEN.length >= 32 && supplied.length > 0 && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(OWNER_TOKEN));
+  return OWNER_TOKEN.length >= 32 && supplied.length === OWNER_TOKEN.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(OWNER_TOKEN));
 }
 async function bodyJson(req) {
   let raw = "";
@@ -68,7 +68,7 @@ async function serveFile(res, file) {
     const stat = await fs.stat(file);
     if (!stat.isFile()) throw new Error("Not a file");
     res.writeHead(200, { "Content-Type": contentType(file), "Content-Length": stat.size, "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" });
-    const stream = (await import("node:fs")).createReadStream(file);
+    const stream = (await import("node:fs")).createReadStream(resolved);
     stream.pipe(res);
   } catch {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
