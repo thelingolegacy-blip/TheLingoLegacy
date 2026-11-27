@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 
 const [parentPidRaw, pidFile, crashFile] = process.argv.slice(2);
 const parentPid = Number(parentPidRaw);
@@ -26,5 +27,26 @@ for (const pid of pids) {
 const detectedAt = new Date().toISOString();
 const report = { detected_at: detectedAt, parent_pid: parentPid, killed_process_groups: killed, status: "ORCHESTRATOR_CRASH" };
 await fs.writeFile(crashFile, JSON.stringify(report) + "\n", { mode: 0o600 });
-await fs.writeFile(path.join(runDir, "owner-notification.json"), JSON.stringify({ run_id: path.basename(runDir), status: "ORCHESTRATOR_CRASH", created_at: detectedAt, delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true, crash_report: crashFile }) + "\n", { mode: 0o600 });
-await fs.writeFile(path.join(runDir, "status.json"), JSON.stringify({ run_id: path.basename(runDir), status: "ORCHESTRATOR_CRASH", updated_at: detectedAt }) + "\n", { mode: 0o600 });
+const runId = path.basename(runDir);
+const statusFile = path.join(runDir, "status.json");
+const summaryFile = path.join(runDir, "summary.json");
+let previousStatus = {};
+try { previousStatus = JSON.parse(await fs.readFile(statusFile, "utf8")); } catch {}
+const status = { ...previousStatus, run_id: runId, status: "ORCHESTRATOR_CRASH", updated_at: detectedAt, crash_report: crashFile };
+const summary = { run_id: runId, status: "ORCHESTRATOR_CRASH", finished_at: detectedAt, budget: previousStatus.budget || null, tracks: previousStatus.tracks || {}, crash_report: crashFile, owner_notification: "LOCAL_OWNER_OUTBOX" };
+const notification = { run_id: runId, status: "ORCHESTRATOR_CRASH", created_at: detectedAt, delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true, crash_report: crashFile };
+await fs.writeFile(statusFile, JSON.stringify(status) + "\n", { mode: 0o600 });
+await fs.writeFile(summaryFile, JSON.stringify(summary, null, 2) + "\n", { mode: 0o600 });
+await fs.writeFile(path.join(runDir, "owner-notification.json"), JSON.stringify(notification) + "\n", { mode: 0o600 });
+try {
+  const auditFile = path.resolve(runDir, "..", "audit.jsonl");
+  let previousHash = "GENESIS";
+  try {
+    const raw = await fs.readFile(auditFile, "utf8");
+    const last = raw.trimEnd().split("\n").at(-1);
+    if (last) previousHash = JSON.parse(last).hash;
+  } catch (error) { if (error.code !== "ENOENT") throw error; }
+  const base = { at: detectedAt, event: "run.orchestrator-crash", detail: { run_id: runId, killed_process_groups: killed }, previous_hash: previousHash };
+  const hash = crypto.createHash("sha256").update(JSON.stringify(base)).digest("hex");
+  await fs.appendFile(auditFile, JSON.stringify({ ...base, hash }) + "\n", { mode: 0o600 });
+} catch {}
