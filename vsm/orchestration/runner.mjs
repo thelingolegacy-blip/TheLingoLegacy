@@ -137,10 +137,10 @@ export async function executeRun(input, {
   const secretEntries = secretKeys.flatMap(name => {
     const value = environment[name];
     if (typeof value !== "string" || value.length === 0) return [];
-    const fragments = [value, ...value.split(/\\r?\\n/).filter(Boolean)];
+    const fragments = [value, ...value.split(/\r?\n/).filter(Boolean)];
     try {
       const parsed = JSON.parse(value);
-      if (typeof parsed.private_key === "string") fragments.push(parsed.private_key, ...parsed.private_key.split(/\\r?\\n/).filter(Boolean));
+      if (typeof parsed.private_key === "string") fragments.push(parsed.private_key, ...parsed.private_key.split(/\r?\n/).filter(Boolean));
     } catch {}
     return [...new Set(fragments)].map(fragment => ({ name, value: fragment }));
   });
