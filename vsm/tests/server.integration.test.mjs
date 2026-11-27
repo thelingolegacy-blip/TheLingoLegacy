@@ -135,6 +135,44 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   });
   assert.equal(invalidStudio.status, 400);
 
+  const deniedRun = await fetch(base + "/api/runs", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ config: { run_id: "api-run-denied", tracks: [] } })
+  });
+  assert.equal(deniedRun.status, 403);
+
+  const productionRun = await fetch(base + "/api/runs", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify({ config: { run_id: "api-production-denied", run_type: "production-change", target: "production", tracks: [{ id: "deploy", criticality: "critical", steps: [] }] } })
+  });
+  assert.equal(productionRun.status, 423);
+
+  const startedRun = await fetch(base + "/api/runs", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify({ config: {
+      run_id: "api-local-run-001", run_type: "local-validation", target: "local",
+      RUN_MAX_DURATION_MINUTES: 1, RUN_MAX_TOOL_CALLS: 10, RUN_MAX_COST_USD: 1,
+      tracks: [{ id: "smoke-check", criticality: "critical", required_secrets: [], steps: [{ id: "hello", command: "node", args: ["-e", "process.stdout.write('runner-ok')"], require_nonempty_log: true }] }]
+    } })
+  });
+  assert.equal(startedRun.status, 202);
+  let runState;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const response = await fetch(base + "/api/runs/api-local-run-001", { headers: { authorization: `Bearer ${token}` } });
+    if (response.ok) {
+      runState = await response.json();
+      if (runState.summary) break;
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  assert.equal(runState?.summary?.status, "SUCCESS");
+  assert.equal(runState.summary.tracks["smoke-check"].status, "SUCCESS");
+  const runEvents = await fs.readFile(path.join(dataDir, "runs", "api-local-run-001", "events.jsonl"), "utf8");
+  assert.ok(runEvents.includes("STARTED"));
+  assert.ok(runEvents.includes("SUCCESS"));
+
   const unauthenticatedAudit = await fetch(base + "/api/audit/verify");
   assert.equal(unauthenticatedAudit.status, 403);
   const audit = await fetch(base + "/api/audit/verify", { headers: { authorization: `Bearer ${token}` } });
