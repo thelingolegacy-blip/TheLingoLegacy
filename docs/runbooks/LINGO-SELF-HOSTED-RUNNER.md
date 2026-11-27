@@ -1,0 +1,97 @@
+# LINGO G02 Self-Hosted GitHub Actions Runner
+
+**Repository:** `thelingolegacy-blip/TheLingoLegacy`  
+**Runner name default:** `lingo-legacy-g02`  
+**Required labels:** `self-hosted`, `linux`, `x64`, `lingo-g02`  
+**Host baseline:** dedicated Ubuntu 22.04 or 24.04 VM  
+**Status:** bootstrap files prepared; VM provisioning, registration, online check and job execution are NOT yet confirmed.
+
+## Architecture and security boundaries
+
+- Register this runner at repository scope, restricted to this repository.
+- Use a dedicated VM and non-login `actions` account.
+- Do not attach production credentials, Cloudflare API tokens, Firebase service-account keys, Supabase service-role keys, wallet/payment secrets, or customer data.
+- Do not run untrusted fork or pull-request code on this runner. The initial probe is manual-only and has no checkout, secrets, external actions or write permissions.
+- Prefer an ephemeral runner or a dedicated runner group for untrusted CI. This persistent runner is for trusted, reviewed, manual validation only.
+- Keep the host patched, restrict inbound networking, allow only required outbound HTTPS, enable provider console/MFA, and monitor disk, memory and runner service health.
+- Registration tokens are short-lived. Never commit them, place them in workflow YAML, save them in shell history, or paste them into chat.
+
+## Provisioning prerequisites
+
+1. Provision one dedicated Ubuntu 22.04/24.04 VM in an account controlled by LINGO.
+2. Set a cost ceiling and confirm provider, region, CPU/RAM/disk, billing owner and shutdown policy before creating billable infrastructure.
+3. Download the official GitHub Actions runner archive from the official `actions/runner` GitHub releases page. Verify its published SHA-256 checksum.
+4. In GitHub, open repository Settings → Actions → Runners → New self-hosted runner. Select Linux and x64. Copy the short-lived registration token locally; do not share it.
+5. Run the installer below from a secure terminal on the VM.
+
+## Install
+
+Set these environment variables in the VM terminal, not in chat or a committed file:
+
+- `RUNNER_TOKEN`: short-lived registration token from GitHub.
+- `RUNNER_TARBALL_URL`: official GitHub runner release tarball URL for Linux x64.
+- `RUNNER_TARBALL_SHA256`: published SHA-256 checksum for that exact archive.
+- Optional `RUNNER_NAME`: defaults to `lingo-legacy-g02`.
+
+Then run:
+
+```bash
+sudo --preserve-env=RUNNER_TOKEN,RUNNER_TARBALL_URL,RUNNER_TARBALL_SHA256,RUNNER_NAME bash scripts/runner/install-lingo-runner.sh
+```
+
+The script refuses to overwrite an existing runner directory/user, checks the official release URL and checksum, invokes the runner release's dependency installer for Ubuntu LTS compatibility, configures the canonical repository-scoped runner name `lingo-legacy-g02`, and installs its system service.
+
+## Verification
+
+1. GitHub Settings → Actions → Runners must show the named runner as **Idle/Online**.
+2. Dispatch `.github/workflows/lingo-self-hosted-runner-probe.yml` from the trusted default branch.
+3. Confirm a job is assigned to the expected runner, has a nonzero runner ID, completes all steps, and exposes logs.
+4. Record runner name, OS, architecture, runner version, job ID, run ID, commit SHA, timestamps and outcome.
+5. Do not mark G02 accepted until these facts are independently verified.
+
+## Operations
+
+- Check service: `sudo systemctl status 'actions.runner.*'`
+- View logs: `sudo journalctl -u 'actions.runner.*' --since today`
+- Stop service before maintenance: use the runner service's `svc.sh stop` from `/opt/actions-runner`.
+- Unregister before decommission: `./config.sh remove --token <fresh-removal-token>`; then remove the VM through its provider.
+- Rotate registration/removal tokens by generating fresh short-lived tokens in GitHub settings. Never reuse expired tokens.
+
+## Rollback
+
+If the runner behaves unexpectedly, stop and disable its service, remove it from GitHub repository Settings → Actions → Runners, preserve logs for investigation, and rebuild from a clean VM. No production system should depend on this runner until G02 acceptance and release controls pass.
+
+## Current blockers
+
+The ChatGPT-connected GitHub integration does not expose repository runner registration-token creation, repository secrets, or cloud VM provisioning. Therefore these files prepare the controlled bootstrap but do not provision a VM or register a runner. A cloud provider account and a cost-approved VM are still required. The short-lived token must be generated and used locally by an authorized repository administrator.
+
+
+## DigitalOcean provisioning decision — approved monthly cap
+
+**Selected provider:** DigitalOcean (planned; provider account access is not connected here).  
+**Authorized recurring compute ceiling:** USD $25/month maximum, all-in where taxes and mandatory fees are disclosed.  
+**Provisioning status:** BLOCKED — no Droplet creation or billing action has been performed.
+
+The $25/month ceiling supersedes the earlier $0 planning limit recorded in this runbook. Before provisioning, select the exact Ubuntu 24.04 x64 plan and verify its recurring total, billing cadence, taxes and mandatory fees against the cap. Do not create a Droplet if the total is unclear or exceeds $25/month. No automatic upgrades, autoscaling, additional volumes, snapshots, backups, floating IPs, or other billable add-ons are authorized without separate approval.
+
+### Prepared DigitalOcean host profile (not deployed)
+
+- Resource name: `lingo-g02-runner-01`
+- Region: NYC3 (proposed; choose nearest available region when approved)
+- Image: Ubuntu 24.04 LTS x64
+- Size: smallest Basic plan that satisfies the current Actions runner requirements and whose verified recurring total stays within the $25/month cap
+- Access: SSH key only; no password SSH; non-root sudo operator; provider firewall permits SSH only from an explicitly approved admin IP; runner makes outbound HTTPS connections
+- Runner scope: repository-only, labels `self-hosted,linux,x64,lingo-g02`
+- Billing guard: hard cap $25/month recurring; no resizing, snapshots, backups, reserved/floating IPs, extra volumes, autoscaling, or other billable add-ons without separate approval
+
+### Registration handoff (prepared; requires authorized local operator)
+
+1. Confirm the exact plan, region, billing cadence and all-in recurring cost are within the approved $25/month cap; then create the dedicated Ubuntu host with the security profile above.
+2. SSH to the host using its pre-registered public key and patch the OS.
+3. In the GitHub repository, open Settings → Actions → Runners → New self-hosted runner → Linux → x64. Generate a fresh repository-scoped registration token.
+4. Keep the token in the operator's local terminal environment only. Do not paste it into ChatGPT, issues, pull requests, logs, shell history, or source control.
+5. Download the runner release archive and published checksum shown by GitHub's runner setup instructions. Verify the checksum, then run the installer from the trusted checked-out branch with the three required environment variables.
+6. Confirm the runner appears Idle/Online in repository settings. Only then dispatch the manual G02 probe from the trusted default branch.
+7. Accept G02 only after the run records a nonzero runner ID, assigned job, completed steps, retrievable logs, run ID and commit SHA.
+
+**No token has been generated or exposed, no host has been created, and no runner is registered.** The repository integration does not provide the GitHub registration-token action or DigitalOcean account provisioning. Those two operations must be completed by an authorized operator in the provider/GitHub consoles or by an explicitly connected, properly scoped automation integration.
