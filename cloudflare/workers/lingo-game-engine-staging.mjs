@@ -221,7 +221,7 @@ export default {
         if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1 || wagerUnits > MAX_WAGER_UNITS) {
           return json({ error: 'INVALID_WAGER', maxWagerUnits: MAX_WAGER_UNITS, correlationId }, 400);
         }
-        if (wagerUnits % ACTIVE_PAYLINES !== 0) {
+        if (!isEvenOption2Wager(wagerUnits)) {
           return json({ error: 'INVALID_WAGER_ALLOCATION', activePaylines: ACTIVE_PAYLINES, minimumWagerUnits: ACTIVE_PAYLINES, correlationId }, 400);
         }
         if (typeof idempotencyKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(idempotencyKey)) {
