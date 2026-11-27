@@ -16,7 +16,7 @@ class SettlementD1 {
         }
         if (sql.includes('WHERE session_id = ? AND firebase_uid = ?')) {
           return {
-            session_id: 'session-1', game_id: 'thats-my-lingo', rule_version: 'staging-test-v1',
+            session_id: 'session-1', game_id: 'thats-my-lingo', rule_version: 'tml-5x3-20line-option2-v1',
             ruleset_digest: 'a'.repeat(64), reels_json: JSON.stringify(Array.from({ length: 5 }, () => ['SEVEN','SEVEN','SEVEN'])), wager_units: 20, payout_units: 300,
             status: 'settled', balance_after_units: 114,
           };
@@ -40,6 +40,9 @@ test('settlement atomically rechecks approver token freshness and explicit deny 
   assert.equal(result.status, 'settled');
   assert.equal(db.batchStatements.length >= 6, true);
   assert.match(db.batchStatements[1].sql, /ruleset_digest/);
+  const payoutCredit = db.batchStatements.find((statement) => statement.sql.includes('slot_payout_credit'));
+  assert.ok(payoutCredit, 'aggregate payout credit must be included in the atomic D1 batch');
+  assert.equal(payoutCredit.args[3], 300);
   const approvalSql = db.batchStatements[0].sql;
   assert.match(approvalSql, /approver_auth_time_epoch/);
   assert.match(approvalSql, /token_valid_after_epoch <= lingo_saaae_approvals\.approver_auth_time_epoch/);
