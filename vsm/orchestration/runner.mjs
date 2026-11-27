@@ -431,7 +431,6 @@ export async function executeRun(input, {
   const anyDegraded = config.tracks.some(track => track.criticality !== "critical" && ["FAILED", "CANCELLED"].includes(results[track.id]));
   const finalStatus = ledger.status === "SECURITY_ABORT" ? "SECURITY_ABORT" : ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : ledger.status === "ORCHESTRATOR_FAILED" ? "FAILED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
-    (cancelReason === "run-duration-exceeded" || cancelReason === "critical-track-cancelled") ? "FAILED" :
     failedCritical ? "FAILED" : anyDegraded || (anyCancelled && !cancelled) ? "PARTIAL" :
     cancelled ? "CANCELLED" : "SUCCESS";
   const summary = {
