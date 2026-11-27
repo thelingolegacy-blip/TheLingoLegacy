@@ -1,0 +1,14 @@
+{
+  "service": "lingo-legacy-static-standby",
+  "status": "ok",
+  "scope": "static-file-presence-only",
+  "checks": {
+    "homepage": "present",
+    "portfolio_manifest": "present"
+  },
+  "limitations": [
+    "Does not verify primary-site health.",
+    "Does not verify identity, APIs, payments, wallets, Firebase, databases or live transactions.",
+    "Does not authorize traffic failover."
+  ]
+}

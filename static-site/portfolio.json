@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "brand": "THE LINGO LEGACY",
+  "tagline": "One Legacy. Many Worlds.",
+  "purpose": "Public navigation registry for the eight canonical public portfolios. Related concepts are preserved separately and are not counted as additional realms or public portfolios.",
+  "worlds": [
+    {
+      "name": "LINGOlegacy",
+      "category": "Flagship",
+      "description": "Central home for identity, community and connected experiences.",
+      "href": "/living-universe/",
+      "availability": "portfolio",
+      "id": "lingo-legacy",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOlane",
+      "category": "Apparel and lifestyle",
+      "description": "Loyalty Lane Apparel, Designs & Promotions, and Laundry-Cycle.",
+      "href": "/loyalty-lane-apparel/",
+      "availability": "showcase",
+      "id": "lingo-lane",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOslots",
+      "category": "Games",
+      "description": "That’s My Lingo, Spades Is My Lingo, Uhno Lingo U-No, Lingo Lions Eruptions and Cashman Lingo Mania.",
+      "href": "/thats-my-lingo/",
+      "availability": "showcase",
+      "products": [
+        "That’s My Lingo",
+        "Spades Is My Lingo",
+        "Uhno Lingo U-No",
+        "Lingo Lions Eruptions",
+        "Cashman Lingo Mania"
+      ],
+      "id": "lingo-slots",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOarcade",
+      "category": "Arcade",
+      "description": "Tricias Escape, Doughboys Oasis, Crazy Weasols, Silly in Philly and Jersey Shore: The Undead.",
+      "href": null,
+      "availability": "portfolio",
+      "products": [
+        "Tricias Escape",
+        "Doughboys Oasis",
+        "Crazy Weasols",
+        "Silly in Philly",
+        "Jersey Shore: The Undead"
+      ],
+      "id": "lingo-arcade",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOlibrary",
+      "category": "Books and stories",
+      "description": "KottonsCode, The Block I Grew Up On, Say It Again, Dice Shift Hotel and Legacy Legends.",
+      "href": "/kottons-code/",
+      "availability": "showcase",
+      "products": [
+        "KottonsCode",
+        "The Block I Grew Up On",
+        "Say It Again",
+        "Dice Shift Hotel",
+        "Legacy Legends"
+      ],
+      "id": "lingo-library",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOmedia",
+      "category": "Media",
+      "description": "Rise of Zavione and the creative media universe.",
+      "href": "/visual-showcase/",
+      "availability": "showcase",
+      "products": [
+        "Rise of Zavione"
+      ],
+      "id": "lingo-media",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LINGOworld",
+      "category": "Digital services",
+      "description": "askLINGO, LINGOai, LINGOboom, LINGOtravel, LINGOcampus, LINGOsupport, LINGOwifi, LINGOvoice, LINGOshield, LINGOlounge and LINGOdonations.",
+      "href": "/lingo-ai/",
+      "availability": "showcase",
+      "products": [
+        "askLINGO",
+        "LINGOai",
+        "LINGOboom",
+        "LINGOtravel",
+        "LINGOcampus",
+        "LINGOsupport",
+        "LINGOwifi",
+        "LINGOvoice",
+        "LINGOshield",
+        "LINGOlounge",
+        "LINGOdonations"
+      ],
+      "id": "lingo-world",
+      "node_type": "public_portfolio"
+    },
+    {
+      "name": "LegacyXclub",
+      "category": "Community",
+      "description": "Community, loyalty, creator connections and participation.",
+      "href": "/community-guidelines/",
+      "availability": "showcase",
+      "id": "legacy-x-club",
+      "node_type": "public_portfolio"
+    }
+  ],
+  "related_concepts": [
+    {
+      "id": "lingo-id-concept",
+      "name": "LINGO ID",
+      "description": "Identity and account foundations; activation depends on verified identity-provider and security controls.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "universal-legacy-wallet-concept",
+      "name": "Universal Legacy Wallet",
+      "description": "Wallet and Lingo Coins architecture; no live balances, payments or transfers are represented here.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-nexus-concept",
+      "name": "LINGO Nexus",
+      "description": "Shared platform and integration foundations.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-studios-concept",
+      "name": "LINGO Studios",
+      "description": "Creative production and studio experiences.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "lingo-towers-concept",
+      "name": "LINGO Towers",
+      "description": "Long-range property and infrastructure concept.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    },
+    {
+      "id": "bridged-gap-concept",
+      "name": "Bridged Gap",
+      "description": "Community connection initiative.",
+      "route": null,
+      "availability": "planned",
+      "node_type": "related_concept",
+      "counted_as_realm": false
+    }
+  ],
+  "taxonomy": {
+    "public_portfolio_count": 8,
+    "related_concept_count": 6,
+    "related_concepts_are_realms": false,
+    "note": "This public manifest is not the internal 14-node realm registry. The separate 14-node registry candidate requires its own current-main reconciliation, review and acceptance."
+  }
+}
