@@ -154,7 +154,9 @@
                   "minimum": 0
                 },
                 "require_nonempty_log": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Defaults to true; set false only for intentionally silent steps."
                 },
                 "mutating": {
                   "type": "boolean",
