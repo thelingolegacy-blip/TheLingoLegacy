@@ -19,6 +19,10 @@ const CRITICALITIES = new Set(["critical", "important", "best-effort"]);
 const TRANSIENT_CODES = new Set(["ECONNRESET", "ECONNREFUSED", "ETIMEDOUT", "EAI_AGAIN", "ENETUNREACH", "UND_ERR_CONNECT_TIMEOUT"]);
 
 export function createRunConfig(input = {}) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Run configuration must be an object.");
+  if (input.TRACK_CRITICALITY !== undefined && (!input.TRACK_CRITICALITY || typeof input.TRACK_CRITICALITY !== "object" || Array.isArray(input.TRACK_CRITICALITY))) throw new Error("TRACK_CRITICALITY must be an object.");
+  if (input.SECRETS_REQUIRED !== undefined && !Array.isArray(input.SECRETS_REQUIRED)) throw new Error("SECRETS_REQUIRED must be an array.");
+  for (const name of ["ALLOW_DESTRUCTIVE", "DRY_RUN", "PREFLIGHT_NETWORK"]) if (input[name] !== undefined && typeof input[name] !== "boolean") throw new Error(name + " must be boolean.");
   const target = input.target || "local";
   const config = {
     run_id: input.run_id || `vsm-${new Date().toISOString().replace(/[^0-9]/g, "").slice(0,14)}-${randomUUID().slice(0,8)}`,
@@ -38,7 +42,7 @@ export function createRunConfig(input = {}) {
     PREFLIGHT_MIN_FREE_DISK_MB: input.PREFLIGHT_MIN_FREE_DISK_MB ?? 512,
     tracks: input.tracks || []
   };
-  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(config.run_id)) throw new Error("Invalid run_id.");
+  if (typeof config.run_id !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(config.run_id)) throw new Error("Invalid run_id.");
   if (!["local-validation", "staging-validation", "production-change"].includes(config.run_type)) throw new Error("Invalid run_type.");
   if (!["local", "staging", "production"].includes(target)) throw new Error("Invalid target.");
   if (!Number.isInteger(config.RUN_MAX_DURATION_MINUTES) || config.RUN_MAX_DURATION_MINUTES < 1 || config.RUN_MAX_DURATION_MINUTES > 90) throw new Error("RUN_MAX_DURATION_MINUTES must be 1–90.");
@@ -50,6 +54,7 @@ export function createRunConfig(input = {}) {
   if (!Number.isInteger(config.PREFLIGHT_MIN_FREE_DISK_MB) || config.PREFLIGHT_MIN_FREE_DISK_MB < 64) throw new Error("PREFLIGHT_MIN_FREE_DISK_MB must be at least 64.");
   if (config.target === "production" && !config.DRY_RUN && config.run_type !== "production-change") throw new Error("Non-dry-run production work requires run_type=production-change.");
   if (config.ALLOW_DESTRUCTIVE && config.target !== "local") throw new Error("Destructive operations are disabled for remote targets in this VSM phase.");
+  if (Object.values(config.TRACK_CRITICALITY).some(value => !CRITICALITIES.has(value))) throw new Error("TRACK_CRITICALITY contains an unrecognized criticality.");
   if (config.SECRETS_REQUIRED.some(name => !SECRET_NAMES.includes(name))) throw new Error("SECRETS_REQUIRED contains an unrecognized secret name.");
   if (!Array.isArray(config.tracks) || config.tracks.length < 1 || config.tracks.length > 5) throw new Error("A run must define between one and five tracks.");
   if (config.RUN_MAX_TOOL_CALLS < config.tracks.length) throw new Error("RUN_MAX_TOOL_CALLS must provide at least one call per track.");
@@ -60,6 +65,7 @@ export function createRunConfig(input = {}) {
     const criticality = track.criticality || config.TRACK_CRITICALITY[track.id];
     if (!CRITICALITIES.has(criticality)) throw new Error(`Track ${track.id} requires criticality: critical, important, or best-effort.`);
     track.criticality = criticality;
+    if (track.required_secrets !== undefined && !Array.isArray(track.required_secrets)) throw new Error(`Track ${track.id} required_secrets must be an array.`);
     track.required_secrets = [...new Set(track.required_secrets || [])];
     if (track.required_secrets.some(name => !SECRET_NAMES.includes(name))) throw new Error(`Track ${track.id} declares an unknown required secret name.`);
     if (track.tool_call_budget !== undefined && (!Number.isInteger(track.tool_call_budget) || track.tool_call_budget < 1)) throw new Error(`Track ${track.id} has an invalid tool_call_budget.`);
