@@ -148,17 +148,21 @@ export function chargeBudget(ledger, trackId, { toolCalls = 0, costUsd = 0, now 
   const track = ledger.tracks[trackId];
   if (!track) throw new Error("Unknown track.");
   if (!Number.isInteger(toolCalls) || toolCalls < 0 || !Number.isFinite(costUsd) || costUsd < 0) throw new Error("Budget charges must be non-negative finite values.");
-  track.tool_calls += toolCalls; ledger.tool_calls += toolCalls;
-  track.cost_usd += costUsd; ledger.cost_usd += costUsd;
   const reason = now >= ledger.deadline_ms ? "duration" :
-    ledger.tool_calls > ledger.max_tool_calls ? "tool_calls" :
-    ledger.cost_usd > ledger.max_cost_usd ? "cost" :
-    track.tool_calls > track.tool_call_budget ? "track_tool_calls" :
-    track.cost_usd > track.cost_budget_usd ? "track_cost" : null;
-  if (reason) ledger.status = "BUDGET_EXCEEDED";
-  return { ok: !reason, reason, warning: !reason && ledger.tool_calls >= ledger.max_tool_calls * 0.8 };
+    ledger.tool_calls + toolCalls > ledger.max_tool_calls ? "tool_calls" :
+    ledger.cost_usd + costUsd > ledger.max_cost_usd ? "cost" :
+    track.tool_calls + toolCalls > track.tool_call_budget ? "track_tool_calls" :
+    track.cost_usd + costUsd > track.cost_budget_usd ? "track_cost" : null;
+  if (reason) {
+    ledger.status = "BUDGET_EXCEEDED";
+    return { ok: false, reason, warning: false };
+  }
+  track.tool_calls += toolCalls;
+  ledger.tool_calls += toolCalls;
+  track.cost_usd += costUsd;
+  ledger.cost_usd += costUsd;
+  return { ok: true, reason: null, warning: ledger.tool_calls >= ledger.max_tool_calls * 0.8 };
 }
-
 export function structuredRunEvent({ runId, trackId = null, step = null, status, attempt = 1, startedAt, endedAt = Date.now(), detail = {}, secretValues = [] }) {
   const redact = (value, key = "") => {
     if (/secret|token|password|credential|authorization/i.test(key)) return "[REDACTED]";
