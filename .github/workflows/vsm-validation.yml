@@ -12,42 +12,54 @@ permissions:
   contents: read
 
 concurrency:
-  group: lingo-vsm-validation-${{ github.ref }}
+  group: lingo-vsm-validation
   cancel-in-progress: true
 
 jobs:
-  source-and-api-tests:
-    name: VSM source checks and API integration tests
+  vsm-validation:
+    name: VSM source, API, Docker and Compose validation
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: vsm
+    timeout-minutes: 30
     steps:
-      - name: Checkout without persisted credentials
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - name: Set up Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      - name: Checkout source without third-party actions
+        env:
+          GITHUB_TOKEN: \${{ github.token }}
+        run: |
+          set -eu
+          cat > "$RUNNER_TEMP/lingo-git-askpass" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' "x-access-token" ;;
+            *Password*) printf '%s\n' "$GITHUB_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$RUNNER_TEMP/lingo-git-askpass"
+          export GIT_ASKPASS="$RUNNER_TEMP/lingo-git-askpass"
+          export GIT_TERMINAL_PROMPT=0
+          git clone --no-tags --depth 1 --branch "$GITHUB_HEAD_REF" "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git -C "$GITHUB_WORKSPACE" checkout --detach "$GITHUB_SHA"
+          rm -f "$RUNNER_TEMP/lingo-git-askpass"
+      - name: Select Node.js 22
+        run: |
+          set -eu
+          if [ -s "$HOME/.nvm/nvm.sh" ]; then
+            . "$HOME/.nvm/nvm.sh"
+            nvm install 22
+            nvm use 22
+          fi
+          node -e 'if (Number(process.versions.node.split(".")[0]) < 22) process.exit(1)'
+          node --version
+          npm --version
       - name: Syntax and shell checks
+        working-directory: vsm
         run: npm run check
       - name: Unit and HTTP integration tests
+        working-directory: vsm
         run: npm test
-
-  container-build:
-    name: Build isolated VSM image (no publish)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout without persisted credentials
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - name: Build VSM image; Dockerfile runs checks and tests
-        run: docker build --file vsm/Dockerfile --tag lingo-vsm:ci-${{ github.sha }} vsm
+      - name: Build isolated VSM image (no publish)
+        run: docker build --file vsm/Dockerfile --tag "lingo-vsm:ci-$GITHUB_SHA" vsm
       - name: Validate Compose model without starting services
         env:
           VSM_OWNER_TOKEN: ci-only-token-never-used-outside-validation-000000000000
