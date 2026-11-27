@@ -5,14 +5,55 @@ cd "$ROOT"
 need_env() {
   [ -f .env ] || { echo "Create vsm/.env from .env.example and set VSM_OWNER_TOKEN."; exit 2; }
 }
+need_docker() {
+  command -v docker >/dev/null 2>&1 || { echo "Docker CLI is required."; exit 2; }
+  docker compose version >/dev/null 2>&1 || { echo "Docker Compose v2 is required."; exit 2; }
+}
 case "${1:-help}" in
-  up) need_env; docker compose up --build -d ;;
-  down) docker compose down ;;
-  status) docker compose ps; curl -fsS http://127.0.0.1:8787/api/health || true ;;
-  logs) docker compose logs -f --tail=150 ;;
+  doctor)
+    need_env
+    command -v node >/dev/null 2>&1 || { echo "Node.js 22+ is required for local checks."; exit 2; }
+    command -v npm >/dev/null 2>&1 || { echo "npm 10+ is required for local checks."; exit 2; }
+    node -e 'if(Number(process.versions.node.split(".")[0])<22)process.exit(1)' || { echo "Node.js 22+ required; found $(node --version)."; exit 2; }
+    npm -s --version >/dev/null
+    need_docker
+    TOKEN="$(sed -n 's/^VSM_OWNER_TOKEN=//p' .env | head -n 1)"
+    TOKEN_LENGTH="$(printf %s "$TOKEN" | wc -c | tr -d ' ')"
+    [ "$TOKEN_LENGTH" -ge 32 ] || { echo "VSM_OWNER_TOKEN must be at least 32 characters."; exit 2; }
+    case "$TOKEN" in REPLACE_WITH*) echo "Replace the sample VSM_OWNER_TOKEN before boot."; exit 2;; esac
+    docker compose config --quiet
+    echo "VSM_PREFLIGHT=PASS"
+    echo "Node: $(node --version) · npm: $(npm --version)"
+    echo "Docker Compose: available"
+    echo "Compose model: valid"
+    echo "Owner token: present (value not displayed)"
+    ;;
+  verify)
+    need_env
+    need_docker
+    npm run check
+    npm test
+    docker compose config --quiet
+    docker compose build vsm-control
+    echo "VSM_SOURCE_TESTS=PASS"
+    echo "VSM_CONTAINER_BUILD=PASS"
+    echo "VSM_COMPOSE_CONFIG=PASS"
+    ;;
+  up) need_env; need_docker; docker compose up --build -d ;;
+  down) need_docker; docker compose --profile worker-preview down ;;
+  status) need_docker; docker compose --profile worker-preview ps; curl -fsS http://127.0.0.1:8787/api/health || true ;;
+  logs) need_docker; docker compose --profile worker-preview logs -f --tail=150 ;;
+  worker-preview)
+    need_env
+    need_docker
+    . ./.env
+    WEB_PATH="${VSM_WEB_REPO_PATH:-../../TheLingoLegacy-Web}"
+    [ -d "$WEB_PATH" ] || { echo "Web repository not found at $WEB_PATH. Set VSM_WEB_REPO_PATH in vsm/.env."; exit 2; }
+    docker compose --profile worker-preview up -d worker-preview
+    ;;
   probe) need_env; [ -n "${2:-}" ] || { echo "Usage: sh vsm/lingo-vsm probe RELEASE_ID"; exit 2; }; . ./.env; curl -fsS -X POST -H "Authorization: Bearer $VSM_OWNER_TOKEN" "http://127.0.0.1:8787/api/releases/$2/probe" ;;
   dispatch) need_env; [ "$#" -ge 3 ] || { echo "Usage: sh vsm/lingo-vsm dispatch 'Title' COMMIT_SHA [BRANCH] [TARGET]"; exit 2; }; . ./.env; TITLE=$2; SHA=$3; BRANCH=${4:-main}; TARGET=${5:-local-preview}; node -e 'process.stdout.write(JSON.stringify({title:process.argv[1],source:{repo:"thelingolegacy-blip/TheLingoLegacy",branch:process.argv[3],commit:process.argv[2]},target:process.argv[4]}))' "$TITLE" "$SHA" "$BRANCH" "$TARGET" | curl -fsS -H "Authorization: Bearer $VSM_OWNER_TOKEN" -H 'Content-Type: application/json' -d @- http://127.0.0.1:8787/api/releases ;;
   attest) need_env; [ "$#" -ge 6 ] || { echo "Usage: sh vsm/lingo-vsm attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF 'RATIONALE'"; exit 2; }; . ./.env; ID=$2; GATE=$3; DECISION=$4; EVIDENCE=$5; RATIONALE=$6; node -e 'process.stdout.write(JSON.stringify({decision:process.argv[1],evidence_ref:process.argv[2],rationale:process.argv[3]}))' "$DECISION" "$EVIDENCE" "$RATIONALE" | curl -fsS -X POST -H "Authorization: Bearer $VSM_OWNER_TOKEN" -H 'Content-Type: application/json' -d @- "http://127.0.0.1:8787/api/releases/$ID/gates/$GATE" ;;
   accept) need_env; [ -n "${2:-}" ] || { echo "Usage: sh vsm/lingo-vsm accept RELEASE_ID"; exit 2; }; . ./.env; curl -fsS -X POST -H "Authorization: Bearer $VSM_OWNER_TOKEN" "http://127.0.0.1:8787/api/releases/$2/accept" ;;
-  help|*) echo "Usage: sh vsm/lingo-vsm {up|down|status|logs|dispatch|probe|attest|accept}" ;;
+  help|*) echo "Usage: sh vsm/lingo-vsm {doctor|verify|up|down|status|logs|worker-preview|dispatch|probe|attest|accept}" ;;
 esac
