@@ -30,11 +30,17 @@ test("run configuration applies bounded defaults and production dry-run", () => 
 
 test("secret preflight reports missing names only and track environments are least-privilege", () => {
   const check = preflightSecrets(["FIREBASE_SERVICE_ACCOUNT", "CLOUDFLARE_API_TOKEN"], { CLOUDFLARE_API_TOKEN: "not-for-output" });
-  assert.deepEqual(check, { ok: false, missing: ["FIREBASE_SERVICE_ACCOUNT"] });
+  assert.deepEqual(check, { ok: false, missing: ["FIREBASE_SERVICE_ACCOUNT"], invalid: [] });
   const env = { FIREBASE_SERVICE_ACCOUNT: "firebase-secret", CLOUDFLARE_API_TOKEN: "cloudflare-secret", OTHER_TOKEN: "unrelated" };
   const scoped = scopedTrackEnvironment({ required_secrets: ["CLOUDFLARE_API_TOKEN"] }, env, { PATH: "/bin" });
   assert.deepEqual(scoped, { PATH: "/bin", CLOUDFLARE_API_TOKEN: "cloudflare-secret" });
   assert.equal(JSON.stringify(check).includes("not-for-output"), false);
+  const firebase = JSON.stringify({ type: "service_account", project_id: "lingo-stage", client_email: "ci@lingo-stage.iam.gserviceaccount.com", private_key: "-----BEGIN PRIVATE KEY-----\
+redacted\
+-----END PRIVATE KEY-----" });
+  assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_TOKEN: "firebase-token-123456" }), { ok: true, missing: [], invalid: [] });
+  assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_SERVICE_ACCOUNT: firebase }), { ok: true, missing: [], invalid: [] });
+  assert.deepEqual(preflightSecrets(["FIREBASE_SERVICE_ACCOUNT"], { FIREBASE_SERVICE_ACCOUNT: "malformed" }), { ok: false, missing: [], invalid: ["FIREBASE_SERVICE_ACCOUNT"] });
 });
 
 test("retry policy is bounded and distinguishes transient from permanent failures", () => {
