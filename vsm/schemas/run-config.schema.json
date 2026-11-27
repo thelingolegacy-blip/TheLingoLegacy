@@ -34,7 +34,6 @@
     "RUN_MAX_TOOL_CALLS": {
       "type": "integer",
       "minimum": 1,
-      "maximum": 1200,
       "default": 1200
     },
     "RUN_MAX_COST_USD": {
@@ -128,4 +127,4 @@
     "target",
     "tracks"
   ]
-}\n
+}
