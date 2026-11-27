@@ -17,6 +17,7 @@ Local-first release control plane in the canonical repository. This is additive:
 - Sonic Boom lane configuration and in-process priority/concurrency scheduler module; disabled by default.
 - Read-only bot registry with Release, Probe, Studio and Math bot role/capability declarations.
 - First deterministic bot worker with task allowlists, routed through the Sonic Boom scheduler and owner-authenticated API.
+- CPU-based mathematical validation engine for probability vectors and discrete virtual game-balance distributions; no cash wagering or cash-out model.
 - Production promotion endpoint intentionally absent.
 
 **Implementation boundary:** LINGO ID currently bootstraps one local Owner principal and uses the existing owner bearer token for API authentication. It is not yet a full interactive session/federation system or multi-operator IAM. The Ed25519 private key is stored in the private local VSM data volume with restrictive file permissions; encrypted backup/key rotation is still required before remote or multi-host operation. Gitea is a separate private Git service; Forge SSO, GitHub/GitLab API compatibility, mirroring and protected-branch policy integration are not yet complete. The bot worker executes a small allowlist of deterministic local tasks; no model host, arbitrary tool execution, or autonomous privileged action is enabled. Sonic Boom's queue module is implemented and configurable, but is not yet wired into every center's job execution.
@@ -48,6 +49,7 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - `GET /api/health`
 - `GET /api/identity` — public owner principal and local-first identity status.
 - `GET /api/security/policy` — read-only SAAAE role/capability policy.
+- Math Bot allowlist includes probability validation and virtual outcome distribution analysis; output is simulation-only.
 - `GET /api/sonic-boom` — lane state.
 - `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
 - `GET /api/bots` — declared bot registry.
