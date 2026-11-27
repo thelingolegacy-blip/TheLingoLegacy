@@ -20,12 +20,12 @@ Local-first release control plane in the canonical repository. This is additive:
 3. From the repository root run:
 
 ```sh
-docker compose -f vsm/docker-compose.yml up --build -d
+docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
 ```
 
-4. Open http://127.0.0.1:8787.
+4. Open http://127.0.0.1:8787.\n\nOr use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, and `accept RELEASE_ID`.
 
-The dashboard currently creates draft release packages. It does not yet request an owner token because package creation is a non-authoritative local registry operation. Acceptance and all privileged operations require the bearer token at the API layer.
+The dashboard currently creates draft release packages. Owner gate attestations and acceptance use the bearer token at the API layer. The local API is loopback-bound by Compose; do not expose it publicly.
 
 ## API
 
@@ -34,7 +34,7 @@ The dashboard currently creates draft release packages. It does not yet request 
 - `GET /api/releases`
 - `POST /api/releases` — create draft package.
 - `POST /api/releases/:id/probe` — run configured public probes.
-- `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS.
+- `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`; requires decision, evidence reference and rationale.\n- `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS.
 - `GET /preview/` — serves the existing repository static files from the read-only mount.
 
 ## Safety invariants
