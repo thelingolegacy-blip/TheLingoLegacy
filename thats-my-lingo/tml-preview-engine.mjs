@@ -10,7 +10,7 @@ export const PAYLINES = Object.freeze([
 
 export function calculateLineStakeAllocation(wagerUnits, activePaylines = 20) {
   if (!Number.isSafeInteger(wagerUnits) || wagerUnits <= 0) throw new RangeError('wagerUnits must be a positive safe integer');
-  if (!Number.isSafeInteger(activePaylines) || activePaylines < 1 || activePaylines > PAYLINES.length) throw new RangeError('activePaylines must be an integer from 1 to 20');
+  if (!Number.isSafeInteger(activePaylines) || activePaylines !== PAYLINES.length) throw new RangeError('activePaylines must equal 20 for the approved Option 2 contract');
   const lineStakeUnits = Math.floor(wagerUnits / activePaylines);
   const remainderUnits = wagerUnits % activePaylines;
   if (remainderUnits !== 0) throw new RangeError('wagerUnits must divide evenly across active paylines; remainderUnits=' + remainderUnits);
