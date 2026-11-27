@@ -15,7 +15,7 @@ need_docker() {
   docker info >/dev/null 2>&1 || { echo "Docker daemon is unavailable."; exit 2; }
 }
 safe_id() {
-  case "$BACKUP_ID" in ""|*[!A-Za-z0-9._-]*) echo "Invalid backup ID."; exit 2 ;; esac
+  case "$BACKUP_ID" in ""|"."|".."|*[!A-Za-z0-9._-]*) echo "Invalid backup ID."; exit 2 ;; esac
 }
 service_was_running() {
   docker compose -f docker-compose.yml ps --status running -q "$1" 2>/dev/null | grep -q .
@@ -32,14 +32,15 @@ restart_services() {
 stop_services() {
   service_was_running vsm-control && VSM_WAS_RUNNING=1 || true
   service_was_running lingo-forge && FORGE_WAS_RUNNING=1 || true
-  docker compose -f "$ROOT/docker-compose.yml" stop vsm-control lingo-forge >/dev/null
   STOPPED=1
+  docker compose -f "$ROOT/docker-compose.yml" stop vsm-control lingo-forge >/dev/null
 }
 case "$ACTION" in
   backup)
     need_docker
     mkdir -p "$BACKUP_ROOT"
     chmod 700 "$BACKUP_ROOT"
+    BACKUP_ROOT="$(CDPATH= cd -- "$BACKUP_ROOT" && pwd)"
     BACKUP_ID="$(date -u +%Y%m%dT%H%M%SZ)"
     DEST="$BACKUP_ROOT/$BACKUP_ID"
     mkdir -m 700 "$DEST"
@@ -64,6 +65,7 @@ case "$ACTION" in
     need_docker
     [ "${ALLOW_DESTRUCTIVE:-false}" = "true" ] || { echo "Restore is destructive. Set ALLOW_DESTRUCTIVE=true and retry."; exit 2; }
     safe_id
+    BACKUP_ROOT="$(CDPATH= cd -- "$BACKUP_ROOT" && pwd)"
     [ -d "$BACKUP_ROOT/$BACKUP_ID" ] || { echo "Backup ID not found."; exit 2; }
     [ -f "$BACKUP_ROOT/$BACKUP_ID/MANIFEST" ] && [ -f "$BACKUP_ROOT/$BACKUP_ID/SHA256SUMS" ] || { echo "Backup manifest/checksum file missing."; exit 2; }
     docker run --rm -v "$BACKUP_ROOT/$BACKUP_ID:/backup:ro" alpine:3.20 sh -c "cd /backup && sha256sum -c SHA256SUMS"
