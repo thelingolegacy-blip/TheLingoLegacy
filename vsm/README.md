@@ -25,7 +25,7 @@ docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
 
 4. Open http://127.0.0.1:8787 for Mission Control and http://127.0.0.1:8788 for the isolated static preview of the existing repository site.
 
-Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, and `accept RELEASE_ID`.
+Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
 The dashboard currently creates draft release packages. Owner gate attestations and acceptance use the bearer token at the API layer. The local API is loopback-bound by Compose; do not expose it publicly.
 
