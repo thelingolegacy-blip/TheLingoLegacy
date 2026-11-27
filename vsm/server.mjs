@@ -177,6 +177,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { releases: releases.sort((a,b) => b.created_at.localeCompare(a.created_at)) });
     }
     if (req.method === "POST" && url.pathname === "/api/releases") {
+      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
       const input = await bodyJson(req);
       if (typeof input.title !== "string" || input.title.trim().length < 3 || input.title.length > 160) return send(res, 400, { error: "Title must be 3–160 characters." });
       if (!input.source || !validCommit(input.source.commit) || typeof input.source.branch !== "string" || !input.source.branch.trim()) return send(res, 400, { error: "A valid source commit SHA and branch are required." });
@@ -184,7 +185,7 @@ const server = http.createServer(async (req, res) => {
       const now = new Date().toISOString();
       const id = "rp-" + now.slice(0,10).replaceAll("-","") + "-" + crypto.randomBytes(4).toString("hex");
       const release = { id, title: input.title.trim(), source: { repo: "thelingolegacy-blip/TheLingoLegacy", branch: input.source.branch.trim(), commit: input.source.commit.toLowerCase() }, artifacts: [], target, status: "draft", gates: { g02:"UNKNOWN", security:"UNKNOWN", static:"UNKNOWN", runtime:"UNKNOWN" }, evidence: { probes:[], tests:[], logs:[], screenshots:[] }, accepted_by:null, accepted_at:null, owner_id:OWNER_IDENTITY.id, created_at:now, updated_at:now };
-      const releases = await readReleases(); releases.push(release); await writeReleases(releases); await audit("release.created", { id, target, commit: release.source.commit });
+      const releases = await readReleases(); releases.push(release); await writeReleases(releases); await audit("release.created", { id, target, commit: release.source.commit, created_by: OWNER_IDENTITY.id });
       return send(res, 201, { release });
     }
     const gateMatch = url.pathname.match(/^\/api\/releases\/([a-z0-9-]+)\/gates\/(g02|security|static)$/);
@@ -212,6 +213,7 @@ const server = http.createServer(async (req, res) => {
       const release = releases.find(x => x.id === id);
       if (!release) return send(res, 404, { error: "Release package not found." });
       if (action === "probe") {
+        if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
         if (release.status !== "draft" && release.status !== "pending") return send(res, 409, { error: "Probes are only allowed for draft or pending packages." });
         const probes = await runProbes();
         const probeEvidence = await writeEvidence({ releaseId: id, type: "probe", payload: probes, createdBy: OWNER_IDENTITY.id });
