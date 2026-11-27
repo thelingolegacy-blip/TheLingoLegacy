@@ -51,8 +51,8 @@ case "$ACTION" in
       archive="$volume.tar.gz"
       docker run --rm -v "$volume:/data:ro" -v "$DEST:/backup" alpine:3.20 sh -c "tar -czf '/backup/$archive' -C /data ."
     done
-    docker run --rm -v "$DEST:/backup" alpine:3.20 sh -c "cd /backup && sha256sum *.tar.gz > SHA256SUMS"
-    printf 'backup_id=%s\ncreated_at=%s\nvolumes=%s\n' "$BACKUP_ID" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$VOLUMES" > "$DEST/MANIFEST"
+    docker run --rm -v "$DEST:/backup" alpine:3.20 sh -c "cd /backup && sha256sum *.tar.gz > SHA256SUMS && sha256sum -c SHA256SUMS && for archive in *.tar.gz; do tar -tzf \"$archive\" >/dev/null; done"
+    printf 'backup_format=1\nbackup_id=%s\ncreated_at=%s\nvolumes=%s\nchecksum=SHA256\nencrypted=false\n' "$BACKUP_ID" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$VOLUMES" > "$DEST/MANIFEST"
     chmod 600 "$DEST"/*
     restart_services
     STOPPED=0
