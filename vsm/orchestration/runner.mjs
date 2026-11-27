@@ -31,6 +31,18 @@ function validateStep(step) {
   if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
 }
 
+async function pruneExpiredArtifacts(artifactsDir, retentionDays = RUN_DEFAULTS.ARTIFACT_RETENTION_DAYS, now = Date.now()) {
+  await fs.mkdir(artifactsDir, { recursive: true, mode: 0o700 });
+  const cutoff = now - retentionDays * 24 * 60 * 60 * 1000;
+  const entries = await fs.readdir(artifactsDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(entry.name)) continue;
+    const target = path.join(artifactsDir, entry.name);
+    const stat = await fs.stat(target);
+    if (stat.mtimeMs < cutoff) await fs.rm(target, { recursive: true, force: true });
+  }
+}
+
 export function createRunController(input, options = {}) {
   const control = { cancelled: false, paused: false, cancel: null, pause: () => { control.paused = true; }, resume: () => { control.paused = false; } };
   const abort = new AbortController();
@@ -181,7 +193,8 @@ export async function executeRun(input, {
   };
   await writeJsonAtomic(path.join(runDir, "summary.json"), summary);
   await emit({ runId: config.run_id, status, detail: { summary: { ...summary, artifact_directory: "[LOCAL_RUN_ARTIFACTS]" } } });
-  await notifyOwner({ run_id: config.run_id, status, summary_path: path.join(runDir, "summary.json") });
+  try { await notifyOwner({ run_id: config.run_id, status, summary_path: path.join(runDir, "summary.json") }); }
+  catch (error) { summary.notification_status = "FAILED"; summary.notification_error = safeError(error, secretValues); await writeJsonAtomic(path.join(runDir, "summary.json"), summary); }
   return summary;
 }
 
