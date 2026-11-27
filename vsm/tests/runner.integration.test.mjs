@@ -233,6 +233,7 @@ test("near-empty successful logs are rejected and retried within the attempt lim
     const events = await fs.readFile(path.join(summary.artifact_directory, "events.jsonl"), "utf8");
     assert.equal((events.match(/"status":"STARTED"/g) || []).length >= 3, true);
     assert.match(events, /"reason":"empty-log"/);
+    assert.match(events, /"status":"RETRYING"/);
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
