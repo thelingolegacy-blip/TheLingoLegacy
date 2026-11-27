@@ -122,7 +122,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || "/", "http://127.0.0.1");
     if (req.method === "GET" && url.pathname === "/api/health") {
-      return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.1.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
+      return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.2.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
     if (req.method === "GET" && url.pathname === "/api/audit/verify") {
       const raw = await fs.readFile(auditFile, "utf8").catch(error => error.code === "ENOENT" ? "" : Promise.reject(error));
@@ -166,7 +166,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { bot_id: botId, invoked_by: OWNER_IDENTITY.id, result, note: "Deterministic local worker; no model inference or privileged mutation performed." });
     }
     if (req.method === "GET" && url.pathname === "/api/centers") {
-      return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "REGISTERED", phase: 0 })) });
+      return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "SOURCE_REGISTERED_NOT_RUNTIME_VERIFIED", phase: 1 })) });
     }
     if (req.method === "GET" && url.pathname === "/api/releases") {
       const releases = await readReleases();
@@ -220,7 +220,7 @@ const server = http.createServer(async (req, res) => {
       if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
       const missing = REQUIRED_GATES.filter(g => release.gates[g] !== "PASS");
       if (missing.length) return send(res, 409, { error: "Acceptance denied: required gates are not PASS.", blocked_gates: missing });
-      if (release.target === "production-candidate") return send(res, 423, { error: "Production acceptance is disabled in Phase 0. Use the staging/preview evidence and a separately authorized promotion bridge." });
+      if (release.target === "production-candidate") return send(res, 423, { error: "Production acceptance is disabled in this VSM phase. Use the staging/preview evidence and a separately authorized promotion bridge." });
       release.status = "accepted"; release.accepted_by = OWNER_IDENTITY.id; release.accepted_at = new Date().toISOString(); release.updated_at = release.accepted_at;
       release.acceptance_signature = await signOwnerPayload({ release_id: id, source: release.source, target: release.target, gates: release.gates, accepted_at: release.accepted_at });
       await writeReleases(releases); await audit("release.accepted", { id, accepted_by: OWNER_IDENTITY.id, signature_algorithm: "Ed25519" });
