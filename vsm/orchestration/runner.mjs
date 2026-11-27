@@ -238,18 +238,23 @@ export async function executeRun(input, {
       outputBytes += chunk.length;
       const value = chunk.toString("utf8");
       const scan = secretScanTail + value;
-      if (secretValues.some(secret => secret && scan.includes(secret))) secretExposureDetected = true;
+      if (!secretExposureDetected && secretValues.some(secret => secret && scan.includes(secret))) {
+        secretExposureDetected = true;
+        terminate();
+        forceTimer = setTimeout(forceKill, RUN_DEFAULTS.CANCEL_GRACE_MS);
+        forceTimer.unref?.();
+      }
       secretScanTail = maxSecretLength > 1 ? scan.slice(-(maxSecretLength - 1)) : "";
       output = (output + value).slice(-256_000);
     };
     child.stdout.on("data", append);
     child.stderr.on("data", append);
     const terminate = () => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGTERM"); else child.kill("SIGTERM"); } catch { try { child.kill("SIGTERM"); } catch {} } };
+    const forceKill = () => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGKILL"); else child.kill("SIGKILL"); } catch { try { child.kill("SIGKILL"); } catch {} } };
     let forceTimer;
     const abortHandler = () => {
       terminate();
-      forceTimer = setTimeout(() => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGKILL"); else child.kill("SIGKILL"); } catch { try { child.kill("SIGKILL"); } catch {} } }, RUN_DEFAULTS.CANCEL_GRACE_MS);
-      forceTimer.unref?.();
+      if (!forceTimer) { forceTimer = setTimeout(forceKill, RUN_DEFAULTS.CANCEL_GRACE_MS); forceTimer.unref?.(); }
     };
     signal.addEventListener("abort", abortHandler, { once: true });
     let timedOut = false;
