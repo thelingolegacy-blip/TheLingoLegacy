@@ -102,11 +102,13 @@ export function evaluateFivePaylines({ grid, lineBetUnits, paytable, paylines = 
 
   const results = paylines.map((line, lineIndex) => {
     let best = { lineIndex, symbol: null, matchCount: 0, multiplier: 0, payoutUnits: 0 };
+    const lineValues = line.map((row, reel) => grid[reel][row]);
+    if (lineValues.every((value) => value === WILD)) return Object.freeze(best);
     for (const [symbol, tiers] of Object.entries(paytable)) {
       if (symbol === WILD) continue;
       let matchCount = 0;
       for (let reel = 0; reel < 5; reel += 1) {
-        const actual = grid[reel][line[reel]];
+        const actual = lineValues[reel];
         if (actual === symbol || actual === WILD) matchCount += 1;
         else break;
       }
