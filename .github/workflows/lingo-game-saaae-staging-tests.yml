@@ -1,0 +1,48 @@
+name: LINGO Game Engine SAAAE Staging Contracts
+
+on:
+  pull_request:
+    branches:
+      - staging/firebase-project-isolation-20261123
+    paths:
+      - "cloudflare/workers/lingo-game-engine-staging.mjs"
+      - "migrations/**"
+      - "src/server/**"
+      - "scripts/tests/**"
+      - ".github/workflows/lingo-game-saaae-staging-tests.yml"
+  push:
+    branches:
+      - security/game-engine-saaae-staging-20261123
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-game-saaae-staging-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging-contract-tests:
+    name: Node and SQLite staging contract tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Record runtime versions
+        run: |
+          node --version
+          python3 --version
+
+      - name: Run server engine, D1 settlement, and Worker contract tests
+        run: |
+          node --test \
+            scripts/tests/server-slot-engine.test.mjs \
+            scripts/tests/d1-slot-service.test.mjs \
+            scripts/tests/lingo-game-worker.test.mjs
+
+      - name: Run SAAAE and ruleset migration constraints
+        run: |
+          python3 scripts/tests/test-lingo-saaae-migration.py
+          python3 scripts/tests/test-lingo-saaae-provisioning-migration.py
