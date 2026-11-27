@@ -87,3 +87,10 @@ test("math engine validates probability vectors and calculates virtual distribut
   assert.throws(() => math.evaluateVirtualDistribution([{ value: 1, probability: 0.4 }]), /sum to 1/);
   assert.throws(() => math.evaluateVirtualDistribution([{ value: Number.MAX_VALUE, probability: 0.5 }, { value: -Number.MAX_VALUE, probability: 0.5 }]), /numeric range/);
 });
+
+test("Sonic Boom refuses unsafe persisted scheduler configuration", async () => {
+  await fs.writeFile(path.join(temp, "sonic-boom-lane.json"), JSON.stringify({ enabled: true, owner_priority: true, max_parallel_jobs: 99 }));
+  await assert.rejects(() => lane.loadLane(), /failed validation/);
+  await fs.writeFile(path.join(temp, "sonic-boom-lane.json"), JSON.stringify({ enabled: false, owner_priority: true, max_parallel_jobs: 4 }));
+  assert.equal((await lane.loadLane()).enabled, false);
+});
