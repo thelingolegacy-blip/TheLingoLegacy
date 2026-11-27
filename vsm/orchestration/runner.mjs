@@ -221,14 +221,14 @@ export async function executeRun(input, {
     const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, started_at: new Date(runStartedAt).toISOString(), finished_at: iso(), budget: { tool_calls: 0, cost_usd: 0, duration_ms: now() - runStartedAt, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: config.RUN_MAX_TOOL_CALLS, max_cost_usd: config.RUN_MAX_COST_USD }, artifact_directory: runDir, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames }); securityFailure.owner_notification = "SENT"; } catch { securityFailure.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), securityFailure);
-    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso() });
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso(), budget: securityFailure.budget, exposed_secret_names: exposedSecretNames });
     return securityFailure;
   }
   if (!secretCheck.ok) {
     const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, artifact_directory: runDir, started_at: new Date(runStartedAt).toISOString(), finished_at: iso(), budget: { tool_calls: 0, cost_usd: 0, duration_ms: now() - runStartedAt, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: config.RUN_MAX_TOOL_CALLS, max_cost_usd: config.RUN_MAX_COST_USD }, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: summary.status, missing_secrets: summary.missing_secrets, invalid_secrets: summary.invalid_secrets }); summary.owner_notification = "SENT"; } catch { summary.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), summary);
-    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "PREFLIGHT_FAILED", updated_at: iso() });
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "PREFLIGHT_FAILED", updated_at: iso(), budget: summary.budget, missing_secrets: summary.missing_secrets, invalid_secrets: summary.invalid_secrets });
     return summary;
   }
   const ledger = createBudgetLedger(config, runStartedAt);
