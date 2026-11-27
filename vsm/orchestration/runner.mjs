@@ -57,7 +57,21 @@ async function pruneArtifacts(root, retentionDays = RUN_DEFAULTS.ARTIFACT_RETENT
 
 
 async function preflightResources(rootDir, config) {
-  const cpuCount = os.availableParallelism?.() || os.cpus()?.length || 0;
+  let cpuCount = os.availableParallelism?.() || os.cpus()?.length || 0;
+  for (const cpuLimitPath of ["/sys/fs/cgroup/cpu.max"]) {
+    try {
+      const [quotaRaw, periodRaw] = (await fs.readFile(cpuLimitPath, "utf8")).trim().split(/\\s+/);
+      const quota = Number(quotaRaw);
+      const period = Number(periodRaw);
+      if (quotaRaw !== "max" && Number.isFinite(quota) && quota > 0 && Number.isFinite(period) && period > 0) cpuCount = Math.min(cpuCount, Math.floor(quota / period));
+    } catch {}
+  }
+  try {
+    const [quotaRaw, periodRaw] = await Promise.all([fs.readFile("/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "utf8"), fs.readFile("/sys/fs/cgroup/cpu/cpu.cfs_period_us", "utf8")]);
+    const quota = Number(quotaRaw.trim());
+    const period = Number(periodRaw.trim());
+    if (quota > 0 && period > 0) cpuCount = Math.min(cpuCount, Math.floor(quota / period));
+  } catch {}
   let freeMemoryBytes = os.freemem();
   for (const [limitPath, currentPath] of [["/sys/fs/cgroup/memory.max", "/sys/fs/cgroup/memory.current"], ["/sys/fs/cgroup/memory/memory.limit_in_bytes", "/sys/fs/cgroup/memory/memory.usage_in_bytes"]]) {
     try {
@@ -207,7 +221,7 @@ export async function executeRun(input, {
     return summary;
   }
   const ledger = createBudgetLedger(config, now());
-  const resourceCheck = await preflightResources(rootDir, config);
+  const resourceCheck = await preflightResources(runDir, config);
   const networkCheck = config.PREFLIGHT_NETWORK && resourceCheck.ok
     ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id })
     : { ok: resourceCheck.ok, results: [], calls: 0, warning: false, budget_exceeded: false, skipped: true };
