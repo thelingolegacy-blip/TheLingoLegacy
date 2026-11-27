@@ -1,0 +1,42 @@
+name: Hosted zero-dependency canary
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hosted-zero-dependency-canary.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-zero-dependency-canary-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosted-canary:
+    name: hosted-canary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report runner identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "HOSTED_BOOTSTRAP_PASS"
+          echo "runner_os=${RUNNER_OS}"
+          echo "runner_arch=${RUNNER_ARCH}"
+          echo "github_repository=${GITHUB_REPOSITORY}"
+          echo "github_sha=${GITHUB_SHA}"
+      - name: Write evidence summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "## Hosted zero-dependency canary"
+            echo "- Marker: HOSTED_BOOTSTRAP_PASS"
+            echo "- Runner: ${RUNNER_OS}/${RUNNER_ARCH}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Third-party actions: none"
+          } >> "${GITHUB_STEP_SUMMARY}"
