@@ -33,7 +33,8 @@ export function createRunConfig(input = {}) {
     ALLOW_DESTRUCTIVE: input.ALLOW_DESTRUCTIVE === true,
     DRY_RUN: input.DRY_RUN === undefined ? target === "production" : input.DRY_RUN === true,
     PREFLIGHT_NETWORK: input.PREFLIGHT_NETWORK === undefined ? target === "staging" : input.PREFLIGHT_NETWORK === true,
-    PREFLIGHT_MIN_FREE_MEMORY_MB: input.PREFLIGHT_MIN_FREE_MEMORY_MB ?? 256,\n    PREFLIGHT_MIN_FREE_DISK_MB: input.PREFLIGHT_MIN_FREE_DISK_MB ?? 512,
+    PREFLIGHT_MIN_FREE_MEMORY_MB: input.PREFLIGHT_MIN_FREE_MEMORY_MB ?? 256,
+    PREFLIGHT_MIN_FREE_DISK_MB: input.PREFLIGHT_MIN_FREE_DISK_MB ?? 512,
     tracks: input.tracks || []
   };
   if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(config.run_id)) throw new Error("Invalid run_id.");
