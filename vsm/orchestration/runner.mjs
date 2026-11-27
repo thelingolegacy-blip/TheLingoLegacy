@@ -231,9 +231,15 @@ export async function executeRun(input, {
     if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
+    let secretScanTail = "";
+    let secretExposureDetected = false;
+    const maxSecretLength = Math.min(256_000, Math.max(0, ...secretValues.map(value => value.length)));
     const append = chunk => {
       outputBytes += chunk.length;
       const value = chunk.toString("utf8");
+      const scan = secretScanTail + value;
+      if (secretValues.some(secret => secret && scan.includes(secret))) secretExposureDetected = true;
+      secretScanTail = maxSecretLength > 1 ? scan.slice(-(maxSecretLength - 1)) : "";
       output = (output + value).slice(-256_000);
     };
     child.stdout.on("data", append);
@@ -262,7 +268,7 @@ export async function executeRun(input, {
     for (const secret of secretValues) if (secret) redactedOutput = redactedOutput.split(secret).join("[REDACTED]");
     const safeOutput = redactedOutput.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
     await fs.writeFile(path.join(trackDir, (step.id || "step") + ".log"), safeOutput, { mode: 0o600 });
-    const secretExposure = secretValues.some(secret => secret && output.includes(secret));
+    const secretExposure = secretExposureDetected || secretValues.some(secret => secret && output.includes(secret));
     if (secretExposure) return { ok: false, securityAbort: true, error: new Error("Security anomaly: credential material appeared in process output."), output_bytes: outputBytes };
     if (timedOut) return { ok: false, error: Object.assign(new Error("Step timeout exceeded."), { name: "TimeoutError" }), output_bytes: outputBytes };
     if (signal.aborted) return { ok: false, error: Object.assign(new Error("Step cancelled."), { name: "AbortError" }), output_bytes: outputBytes };
