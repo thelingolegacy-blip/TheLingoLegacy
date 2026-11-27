@@ -79,6 +79,7 @@ function auth(req) {
   const expectedBytes = Buffer.from(OWNER_TOKEN, "utf8");
   return expectedBytes.length >= 32 && suppliedBytes.length === expectedBytes.length && crypto.timingSafeEqual(suppliedBytes, expectedBytes) && authorize(OWNER_IDENTITY, "vsm.read");
 }
+function can(req, capability) { return auth(req) && authorize(OWNER_IDENTITY, capability); }
 async function bodyJson(req) {
   let raw = "";
   for await (const chunk of req) {
@@ -128,13 +129,15 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.2.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
     if (req.method === "GET" && url.pathname === "/api/audit/verify") {
+      if (!can(req, "audit.verify")) return send(res, 403, { error: "Audit verification capability required." });
+      await auditQueue;
       const raw = await fs.readFile(auditFile, "utf8").catch(error => error.code === "ENOENT" ? "" : Promise.reject(error));
       let previous = "GENESIS"; let verified = 0;
       for (const line of raw.split("\n").filter(Boolean)) { const row = JSON.parse(line); const { hash, ...base } = row; const actual = crypto.createHash("sha256").update(JSON.stringify(base)).digest("hex"); if (row.previous_hash !== previous || hash !== actual) return send(res, 200, { ok: false, verified, broken_at: verified + 1 }); previous = hash; verified++; }
       return send(res, 200, { ok: true, verified, head: previous });
     }
     const evidenceMatch = url.pathname.match(/^\/api\/evidence\/(ev-[a-z0-9-]+)$/);
-    if (req.method === "GET" && evidenceMatch) { if (!auth(req)) return send(res, 401, { error: "Owner authorization required." }); const record = await readEvidence(evidenceMatch[1]); return send(res, 200, record); }
+    if (req.method === "GET" && evidenceMatch) { if (!can(req, "evidence.read")) return send(res, 401, { error: "Owner authorization required." }); const record = await readEvidence(evidenceMatch[1]); return send(res, 200, record); }
     if (req.method === "GET" && url.pathname === "/api/security/policy") {
       return send(res, 200, policySnapshot());
     }
@@ -150,7 +153,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { lane: sonicBoomSnapshot(), policy: "priority and bounded concurrency only; gates remain mandatory" });
     }
     if (req.method === "POST" && url.pathname === "/api/sonic-boom") {
-      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      if (!can(req, "sonic_boom.configure")) return send(res, 403, { error: "Sonic Boom configuration capability required." });
       const input = await bodyJson(req);
       const lane = await configureLane(input);
       await audit("sonic_boom.configured", { owner_id: OWNER_IDENTITY.id, lane });
@@ -161,7 +164,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, bots);
     }
     if (req.method === "POST" && url.pathname === "/api/bots/run") {
-      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      if (!can(req, "bot.invoke")) return send(res, 403, { error: "Bot invocation capability required." });
       const input = await bodyJson(req);
       const botId = input.bot_id;
       if (typeof botId !== "string" || !/^lingo:\/\/id\/bot-[a-z]+$/.test(botId)) return send(res, 400, { error: "A valid bot_id is required." });
@@ -183,7 +186,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { releases: releases.sort((a,b) => b.created_at.localeCompare(a.created_at)) });
     }
     if (req.method === "POST" && url.pathname === "/api/releases") {
-      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      if (!can(req, "release.create")) return send(res, 403, { error: "Release creation capability required." });
       const input = await bodyJson(req);
       if (typeof input.title !== "string" || input.title.trim().length < 3 || input.title.length > 160) return send(res, 400, { error: "Title must be 3–160 characters." });
       if (!input.source || !validCommit(input.source.commit) || typeof input.source.branch !== "string" || !input.source.branch.trim()) return send(res, 400, { error: "A valid source commit SHA and branch are required." });
@@ -196,7 +199,7 @@ const server = http.createServer(async (req, res) => {
     }
     const gateMatch = url.pathname.match(/^\/api\/releases\/([a-z0-9-]+)\/gates\/(g02|security|static)$/);
     if (req.method === "POST" && gateMatch) {
-      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      if (!can(req, "release.attest")) return send(res, 403, { error: "Release attestation capability required." });
       const [, id, gate] = gateMatch;
       const input = await bodyJson(req);
       if (!["PASS", "FAIL", "HOLD"].includes(input.decision) || typeof input.evidence_ref !== "string" || input.evidence_ref.trim().length < 3 || typeof input.rationale !== "string" || input.rationale.trim().length < 8) return send(res, 400, { error: "Provide PASS/FAIL/HOLD, an evidence reference, and a rationale of at least 8 characters." });
@@ -219,7 +222,7 @@ const server = http.createServer(async (req, res) => {
       const release = releases.find(x => x.id === id);
       if (!release) return send(res, 404, { error: "Release package not found." });
       if (action === "probe") {
-        if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+        if (!can(req, "release.probe")) return send(res, 403, { error: "Release probe capability required." });
         if (release.status !== "draft" && release.status !== "pending") return send(res, 409, { error: "Probes are only allowed for draft or pending packages." });
         const probes = await runProbes();
         const probeEvidence = await writeEvidence({ releaseId: id, type: "probe", payload: probes, createdBy: OWNER_IDENTITY.id });
@@ -229,7 +232,7 @@ const server = http.createServer(async (req, res) => {
         await writeReleases(releases); await audit("release.probed", { id, runtime: release.gates.runtime, probe_count: probes.length });
         return send(res, 200, { release, probes, note: "Public HTTP probes are evidence of reachability only, not full product acceptance." });
       }
-      if (!auth(req)) return send(res, 401, { error: "Owner authorization required." });
+      if (!can(req, "release.accept.local")) return send(res, 403, { error: "Local release acceptance capability required." });
       const missing = REQUIRED_GATES.filter(g => release.gates[g] !== "PASS");
       if (missing.length) return send(res, 409, { error: "Acceptance denied: required gates are not PASS.", blocked_gates: missing });
       if (release.target === "production-candidate") return send(res, 423, { error: "Production acceptance is disabled in this VSM phase. Use the staging/preview evidence and a separately authorized promotion bridge." });
