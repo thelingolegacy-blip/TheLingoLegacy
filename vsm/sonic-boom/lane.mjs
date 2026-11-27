@@ -10,7 +10,11 @@ let active = 0;
 const waiters = [];
 export async function loadLane() {
   await fs.mkdir(DATA_DIR, { recursive: true });
-  try { state = { ...DEFAULT_STATE, ...JSON.parse(await fs.readFile(STATE_FILE, "utf8")) }; }
+  try {
+    const loaded = JSON.parse(await fs.readFile(STATE_FILE, "utf8"));
+    if (typeof loaded.enabled !== "boolean" || typeof loaded.owner_priority !== "boolean" || !Number.isInteger(loaded.max_parallel_jobs) || loaded.max_parallel_jobs < 1 || loaded.max_parallel_jobs > 16) throw new Error("Persisted Sonic Boom lane state failed validation; refusing unsafe scheduler settings.");
+    state = { ...DEFAULT_STATE, enabled: loaded.enabled, owner_priority: loaded.owner_priority, max_parallel_jobs: loaded.max_parallel_jobs, updated_at: loaded.updated_at || null, queue: [] };
+  }
   catch (e) { if (e.code !== "ENOENT") throw e; await persist(); }
   return snapshot();
 }
