@@ -1,0 +1,65 @@
+name: Firebase and Flutter staging validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "firebase.json"
+      - ".firebaserc"
+      - "scripts/**"
+      - "android/**"
+      - "ios/**"
+      - "macos/**"
+      - "firestore.rules"
+      - "firestore.indexes.json"
+      - ".github/workflows/firebase-flutter-validation.yml"
+  push:
+    branches:
+      - "recovery/firebase-clean-replacement-20261123"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-flutter-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-validation:
+    name: Flutter dependency, format, analyze, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Install Flutter stable
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Record toolchain
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Check Dart formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze Flutter application
+        run: flutter analyze --fatal-infos
+
+      - name: Run Flutter tests
+        run: flutter test --reporter expanded
+
+      - name: Verify staging-only Firebase compile-time contract
+        run: node scripts/verify-flutter-firebase.mjs

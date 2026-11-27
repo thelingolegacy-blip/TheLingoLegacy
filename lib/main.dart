@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'firebase/firebase_configuration.dart';
+import 'auth/firebase_entry.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +41,7 @@ class LingoLegacyApp extends StatelessWidget {
       useMaterial3: true,
       cardTheme: CardThemeData(color: const Color(0xFF111522), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: Color(0xFF30384B)))),
     ),
-    home: const UniverseHome(),
+    home: const FirebaseEntry(child: UniverseHome()),
   );
 }
 

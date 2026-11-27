@@ -7,11 +7,13 @@ version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
-# Offline preview only; Firebase service SDKs are intentionally deferred until staging is provisioned.
 dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^2.24.0
+  firebase_auth: ^4.17.8
+  cloud_firestore: ^4.15.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -19,4 +21,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
