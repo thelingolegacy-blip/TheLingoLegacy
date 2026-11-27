@@ -78,7 +78,7 @@ async function parseJson(request) {
   }
   const contentLength = request.headers.get('content-length');
   if (contentLength !== null) {
-    if (!/^\\d+$/.test(contentLength)) {
+    if (!/^\d+$/.test(contentLength)) {
       return { ok: false, status: 400, error: 'Invalid Content-Length.' };
     }
     if (Number(contentLength) > MAX_BEACON_BODY_BYTES) {
