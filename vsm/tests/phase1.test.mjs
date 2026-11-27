@@ -109,6 +109,7 @@ test("Studio asset registry validates ownership metadata and source references",
   assert.match(asset.id, /^la-/);
   assert.equal(asset.status, "proposed");
   assert.equal(asset.rights_status, "owner_created");
+  assert.equal(asset.declared_content_sha256, "a".repeat(64));
   assert.equal((await studio.listStudioAssets()).some(item => item.id === asset.id), true);
   await assert.rejects(() => studio.createStudioAsset({ name: "X", division: "IP", kind: "design" }, "lingo://id/test-owner"), /Asset name/);
   await assert.rejects(() => studio.createStudioAsset({ name: "Invalid source", division: "IP", kind: "image", source_uri: "file:///etc/passwd" }, "lingo://id/test-owner"), /HTTPS/);
