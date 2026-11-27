@@ -190,6 +190,7 @@ export async function executeRun(input, {
   fetchImpl = globalThis.fetch
 } = {}) {
   const config = createRunConfig(input);
+  const runStartedAt = now();
   if (config.target === "production") return { run_id: config.run_id, status: "PRODUCTION_TARGET_BLOCKED", tracks: {} };
   for (const track of config.tracks) validateTrack(track, config);
 
@@ -217,20 +218,20 @@ export async function executeRun(input, {
   const serializedConfig = JSON.stringify(config);
   const exposedSecretNames = [...new Set(secretEntries.filter(entry => serializedConfig.includes(entry.value)).map(entry => entry.name))];
   if (exposedSecretNames.length) {
-    const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
+    const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, started_at: new Date(runStartedAt).toISOString(), finished_at: iso(), budget: { tool_calls: 0, cost_usd: 0, duration_ms: now() - runStartedAt, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: config.RUN_MAX_TOOL_CALLS, max_cost_usd: config.RUN_MAX_COST_USD }, artifact_directory: runDir, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames }); securityFailure.owner_notification = "SENT"; } catch { securityFailure.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), securityFailure);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso() });
     return securityFailure;
   }
   if (!secretCheck.ok) {
-    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, artifact_directory: runDir, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
+    const summary = { run_id: config.run_id, status: "PREFLIGHT_FAILED", missing_secrets: secretCheck.missing, invalid_secrets: secretCheck.invalid, secrets_used: [], tracks: {}, artifact_directory: runDir, started_at: new Date(runStartedAt).toISOString(), finished_at: iso(), budget: { tool_calls: 0, cost_usd: 0, duration_ms: now() - runStartedAt, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: config.RUN_MAX_TOOL_CALLS, max_cost_usd: config.RUN_MAX_COST_USD }, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: summary.status, missing_secrets: summary.missing_secrets, invalid_secrets: summary.invalid_secrets }); summary.owner_notification = "SENT"; } catch { summary.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), summary);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "PREFLIGHT_FAILED", updated_at: iso() });
     return summary;
   }
-  const ledger = createBudgetLedger(config, now());
+  const ledger = createBudgetLedger(config, runStartedAt);
   const resourceCheck = await preflightResources(runDir, config);
   const networkCheck = config.PREFLIGHT_NETWORK && resourceCheck.ok && !externalSignal?.aborted
     ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id, signal: externalSignal })
@@ -238,10 +239,10 @@ export async function executeRun(input, {
   if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED" || networkCheck.cancelled) {
     const preflightStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : networkCheck.cancelled ? "CANCELLED" : "PREFLIGHT_FAILED";
-    const failed = { run_id: config.run_id, status: preflightStatus, missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
+    const failed = { run_id: config.run_id, status: preflightStatus, missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), started_at: new Date(ledger.started_at_ms).toISOString(), finished_at: iso(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd, duration_ms: now() - ledger.started_at_ms, max_duration_minutes: config.RUN_MAX_DURATION_MINUTES, max_tool_calls: ledger.max_tool_calls, max_cost_usd: ledger.max_cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: failed.status, resource_check: resourceCheck, network_check: networkCheck, budget: failed.budget }); failed.owner_notification = "SENT"; } catch { failed.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), failed);
-    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso(), budget: failed.budget, resource_check: resourceCheck, network_check: networkCheck });
     return failed;
   }
   const controllers = new Map();
