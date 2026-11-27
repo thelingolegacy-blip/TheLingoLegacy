@@ -1,11 +1,13 @@
 import { secureRandomInt } from './slot-engine.mjs';
 
 export const SLOT_5X3_PAYLINES = Object.freeze([
-  Object.freeze([1, 1, 1, 1, 1]), // middle
-  Object.freeze([0, 0, 0, 0, 0]), // top
-  Object.freeze([2, 2, 2, 2, 2]), // bottom
-  Object.freeze([0, 1, 2, 1, 0]), // V
-  Object.freeze([2, 1, 0, 1, 2]), // inverted V
+  Object.freeze([1,1,1,1,1]), Object.freeze([0,0,0,0,0]), Object.freeze([2,2,2,2,2]),
+  Object.freeze([0,1,2,1,0]), Object.freeze([2,1,0,1,2]), Object.freeze([0,0,1,2,2]),
+  Object.freeze([2,2,1,0,0]), Object.freeze([1,0,0,0,1]), Object.freeze([1,2,2,2,1]),
+  Object.freeze([0,1,1,1,0]), Object.freeze([2,1,1,1,2]), Object.freeze([1,0,1,2,1]),
+  Object.freeze([1,2,1,0,1]), Object.freeze([0,0,1,1,2]), Object.freeze([2,2,1,1,0]),
+  Object.freeze([0,1,0,1,0]), Object.freeze([2,1,2,1,2]), Object.freeze([1,0,1,0,1]),
+  Object.freeze([1,2,1,2,1]), Object.freeze([0,1,2,2,1]),
 ]);
 
 const WILD = 'WILD';
@@ -30,10 +32,7 @@ function validateWeightedSymbols(weightedSymbols) {
   return totalWeight;
 }
 
-/**
- * Returns five reel columns, each containing three visible symbols.
- * Weighted entries and the random source are server-owned inputs.
- */
+/** Server-owned weighted RNG: five reels, three visible rows per reel. */
 export function generateGrid5x3({ weightedSymbols, readUint32 }) {
   const totalWeight = validateWeightedSymbols(weightedSymbols);
   const draw = () => {
@@ -71,25 +70,44 @@ function validatePaytable(paytable) {
   }
 }
 
+export function calculateLineStakeAllocation(wagerUnits, activePaylines = 20) {
+  if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1) {
+    throw new RangeError('wagerUnits must be a positive safe integer');
+  }
+  if (!Number.isSafeInteger(activePaylines) || activePaylines < 1 || activePaylines > SLOT_5X3_PAYLINES.length) {
+    throw new RangeError('activePaylines must be an integer from 1 to 20');
+  }
+  const lineBetUnits = Math.floor(wagerUnits / activePaylines);
+  const remainderUnits = wagerUnits % activePaylines;
+  if (remainderUnits !== 0) {
+    throw new RangeError(`wagerUnits must divide evenly across active paylines; remainderUnits=${remainderUnits}`);
+  }
+  if (!Number.isSafeInteger(lineBetUnits) || lineBetUnits < 1) {
+    throw new RangeError('lineBetUnits must be a positive safe integer');
+  }
+  return Object.freeze({ wagerUnits, activePaylines, lineBetUnits, remainderUnits });
+}
+
 export function evaluateFivePaylines({ grid, lineBetUnits, paytable, paylines = SLOT_5X3_PAYLINES }) {
   validateGrid(grid);
   validatePaytable(paytable);
   if (!Number.isSafeInteger(lineBetUnits) || lineBetUnits < 1) {
     throw new RangeError('lineBetUnits must be a positive safe integer');
   }
-  if (!Array.isArray(paylines) || paylines.length !== 5
+  if (!Array.isArray(paylines) || paylines.length < 1 || paylines.length > SLOT_5X3_PAYLINES.length
     || paylines.some((line) => !Array.isArray(line) || line.length !== 5
       || line.some((row) => !Number.isInteger(row) || row < 0 || row > 2))) {
-    throw new TypeError('exactly five valid five-reel paylines are required');
+    throw new TypeError('one to twenty valid five-reel paylines are required');
   }
 
   const results = paylines.map((line, lineIndex) => {
     let best = { lineIndex, symbol: null, matchCount: 0, multiplier: 0, payoutUnits: 0 };
     for (const [symbol, tiers] of Object.entries(paytable)) {
+      if (symbol === WILD) continue;
       let matchCount = 0;
       for (let reel = 0; reel < 5; reel += 1) {
         const actual = grid[reel][line[reel]];
-        if (actual === symbol || (symbol !== WILD && actual === WILD)) matchCount += 1;
+        if (actual === symbol || actual === WILD) matchCount += 1;
         else break;
       }
       const multiplier = matchCount >= 3 ? (tiers[matchCount] ?? 0) : 0;
@@ -114,4 +132,18 @@ export function evaluateFivePaylines({ grid, lineBetUnits, paytable, paylines = 
     totalPayoutUnits,
     netDeltaUnits: totalPayoutUnits - totalWagerUnits,
   });
+}
+
+/** Complete server-side Option 2 spin: wagerUnits is the total stake across active paylines. */
+export function evaluateSpin5x3({ weightedSymbols, paytable, wagerUnits, activePaylines = 20, readUint32 }) {
+  const allocation = calculateLineStakeAllocation(wagerUnits, activePaylines);
+  const grid = generateGrid5x3({ weightedSymbols, readUint32 });
+  const evaluation = evaluateFivePaylines({
+    grid,
+    lineBetUnits: allocation.lineBetUnits,
+    paytable,
+    paylines: SLOT_5X3_PAYLINES.slice(0, activePaylines),
+  });
+  if (evaluation.totalWagerUnits !== wagerUnits) throw new Error('SPIN_STAKE_ALLOCATION_MISMATCH');
+  return Object.freeze({ grid, ...allocation, ...evaluation });
 }
