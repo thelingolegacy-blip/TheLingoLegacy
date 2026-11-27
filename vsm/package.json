@@ -1,0 +1,13 @@
+{
+  "name": "lingo-legacy-vsm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first sovereign release control plane for LINGO LEGACY",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check dashboard/app.js",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=20" }
+}
