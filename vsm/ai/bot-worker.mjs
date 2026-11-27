@@ -1,12 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { validateProbabilityVector, evaluateVirtualDistribution } from "../math/engine.mjs";
 
 const REGISTRY = path.join(process.cwd(), "ai", "bots.json");
 const ALLOWED_TASKS = {
   "lingo://id/bot-release": ["prepare_release_draft", "review_release"],
   "lingo://id/bot-probe": ["system_snapshot"],
   "lingo://id/bot-studio": ["asset_intake_proposal"],
-  "lingo://id/bot-math": ["validate_probability_input"]
+  "lingo://id/bot-math": ["validate_probability_input", "validate_probability_vector", "evaluate_virtual_distribution"]
 };
 
 export async function executeBot({ botId, task, input = {}, context = {} }) {
@@ -34,7 +35,7 @@ export async function executeBot({ botId, task, input = {}, context = {} }) {
     if (typeof input.asset_name !== "string" || !input.asset_name.trim()) throw new Error("asset_name is required.");
     return { type: "asset_intake_proposal", asset_name: input.asset_name.trim(), proposed_status: "needs_owner_review", mutation_performed: false };
   }
-  if (task === "validate_probability_input") {
+  if (task === "validate_probability_vector") {\n    return { type: "probability_vector_validation", ...validateProbabilityVector(input.probabilities) };\n  }\n  if (task === "evaluate_virtual_distribution") {\n    return { type: "virtual_distribution_analysis", ...evaluateVirtualDistribution(input.outcomes) };\n  }\n  if (task === "validate_probability_input") {
     const probability = Number(input.probability);
     if (!Number.isFinite(probability) || probability < 0 || probability > 1) throw new Error("probability must be between 0 and 1 inclusive.");
     return { type: "probability_validation", probability, percent: probability * 100, valid: true, mutation_performed: false };
