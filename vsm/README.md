@@ -38,10 +38,13 @@ docker compose --env-file vsm/.env -f vsm/docker-compose.yml up --build -d
    - Existing repository static preview: http://127.0.0.1:8788
    - LINGO Forge (Gitea first-run setup): http://127.0.0.1:3000
    - Forge SSH: 127.0.0.1:2222
+   - OpenNext + Wrangler Worker preview (optional profile): http://127.0.0.1:8790
 
 Gitea registration is disabled and repository viewing requires sign-in. Complete the first-run setup locally and create the initial Forge administrator. Do not reuse the VSM owner token as the Forge password. Keep all credentials in a password manager.
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
+
+To start the real OpenNext/Cloudflare Worker-compatible local preview as well, ensure `VSM_WEB_REPO_PATH` points to the sibling `TheLingoLegacy-Web` checkout, then run `docker compose --profile worker-preview --env-file vsm/.env -f vsm/docker-compose.yml up -d`. The profile copies the Web source into a separate writable runtime volume, excludes `.env*` and `.dev.vars*`, installs the locked dependencies, builds with OpenNext and starts Wrangler Dev in staging mode. It is loopback-only on port 8790; rebuild/recreate the service after source changes. This is a local Worker runtime preview, not a production deployment or proof of production bindings.
 
 The local API is loopback-bound by Compose; do not expose it publicly. Mission Control displays LINGO ID, Sonic Boom lane state, bot registry, SAAAE policy and audit-chain verification. Owner controls use a bearer token held in browser session storage for the current tab session.
 
@@ -67,7 +70,8 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - Gate attestations are also persisted as hashed, release-scoped evidence records.
 - `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`.
 - `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS and signs the acceptance payload with the local Owner Ed25519 key.
-- Static preview: `http://127.0.0.1:8788/` serves existing repository files from the read-only mount. The Worker runtime is not emulated.
+- Static preview: `http://127.0.0.1:8788/` serves existing canonical repository files from the read-only mount.
+- Worker preview: `http://127.0.0.1:8790/` runs the separate Web repository through OpenNext and Wrangler when the optional `worker-preview` profile is enabled.
 
 ## Safety invariants
 
@@ -77,7 +81,7 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - Acceptance is impossible unless all required gates explicitly PASS.
 - Local acceptance is not production authorization or a deployment.
 - The VSM data volume is separate from the source repository.
-- API, Forge web and Forge SSH ports are bound to host loopback only by Compose.
+- API, static preview, optional Worker preview, Forge web and Forge SSH ports are bound to host loopback only by Compose.
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
 - Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
@@ -89,11 +93,11 @@ From the repository root, run `cd vsm && npm run check && npm test`. To validate
 
 ## Verification status
 
-Phase 1 source files and configuration are committed on the feature branch. Mission Control displays LINGO ID, lane state, SAAAE policy and audit-chain verification. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
+Phase 1 source files and configuration are committed on the feature branch. Mission Control displays LINGO ID, lane state, SAAAE policy, audit-chain verification and Studio asset metadata. An optional OpenNext/Wrangler preview profile is configured but not yet executed. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
 
 ## Next implementation waves
 
 - Phase 1 completion: execute Node tests and Docker/Compose checks; connect the scheduler to an audited job API; wire dashboard identity/lane status; validate Forge setup and backup.
-- Phase 2: full SAAAE policy enforcement, multi-operator LINGO ID sessions, Forge mirroring/protected branches, local Worker-compatible runtime, mathematical validation gates, and studio asset registry.
+- Phase 2: full SAAAE policy enforcement, multi-operator LINGO ID sessions, Forge mirroring/protected branches, Worker preview runtime verification, mathematical validation gates, and Studio asset binary-ingestion/rights-review workflow.
 - Phase 3: local model host, constrained bot workers, art/audio/math/motion pipelines, evidence-native studio dispatch, and staging-only promotion bridge.
 - Phase 4: encrypted backup/recovery, observability/cost guardrails, threat model, tested rollback and independently accepted production bridge. Production authority remains separately gated.
