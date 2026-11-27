@@ -37,3 +37,13 @@ test("Sonic Boom scheduler resolves queued work and serializes while disabled", 
   ]);
   assert.deepEqual(values, ["one", "two"]);
 });
+
+test("first LINGO bots only execute declared proposal and validation tasks", async () => {
+  const worker = await import("../ai/bot-worker.mjs?test-suite");
+  const proposal = await worker.executeBot({ botId: "lingo://id/bot-release", task: "prepare_release_draft", input: { title: "Phase 1 package", commit: "abcdef1234567", branch: "main", target: "local-preview" } });
+  assert.equal(proposal.type, "release_draft_proposal");
+  assert.equal(proposal.mutation_performed, false);
+  const math = await worker.executeBot({ botId: "lingo://id/bot-math", task: "validate_probability_input", input: { probability: 0.25 } });
+  assert.equal(math.percent, 25);
+  await assert.rejects(() => worker.executeBot({ botId: "lingo://id/bot-release", task: "deploy_production", input: {} }));
+});
