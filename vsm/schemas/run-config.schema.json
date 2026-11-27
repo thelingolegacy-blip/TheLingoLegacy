@@ -15,7 +15,8 @@
         "local-validation",
         "staging-validation",
         "production-change"
-      ]
+      ],
+      "default": "local-validation"
     },
     "target": {
       "type": "string",
@@ -23,7 +24,8 @@
         "local",
         "staging",
         "production"
-      ]
+      ],
+      "default": "local"
     },
     "RUN_MAX_DURATION_MINUTES": {
       "type": "integer",
@@ -77,7 +79,7 @@
     },
     "DRY_RUN": {
       "type": "boolean",
-      "default": true
+      "description": "Defaults to true for production targets and false for local or staging targets."
     },
     "tracks": {
       "type": "array",
@@ -87,7 +89,6 @@
         "type": "object",
         "required": [
           "id",
-          "criticality",
           "steps"
         ],
         "properties": {
@@ -177,7 +178,8 @@
     },
     "PREFLIGHT_NETWORK": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Defaults to true for staging targets and false otherwise."
     },
     "PREFLIGHT_MIN_FREE_MEMORY_MB": {
       "type": "integer",
