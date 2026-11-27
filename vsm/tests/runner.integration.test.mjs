@@ -64,6 +64,21 @@ test("rejects credentials embedded in run configuration arguments before any tra
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("missing required secrets abort before tracks and notify the owner outbox", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-missing-secret-"));
+  const notifications = [];
+  try {
+    const summary = await executeRun(base([
+      { id: "needs-cloudflare", criticality: "critical", required_secrets: ["CLOUDFLARE_API_TOKEN"], steps: [{ command: "node", args: ["-e", "process.exit(0)"] }] }
+    ]), { rootDir, environment: { PATH: process.env.PATH }, notifyOwner: async event => notifications.push(event) });
+    assert.equal(summary.status, "PREFLIGHT_FAILED");
+    assert.deepEqual(summary.missing_secrets, ["CLOUDFLARE_API_TOKEN"]);
+    assert.equal(summary.owner_notification, "SENT");
+    assert.equal(notifications.length, 1);
+    assert.equal(notifications[0].missing_secrets[0], "CLOUDFLARE_API_TOKEN");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
 test("runner executes steps from the configured execution root", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
   try {
