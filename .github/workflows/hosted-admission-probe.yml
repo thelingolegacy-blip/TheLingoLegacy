@@ -1,0 +1,41 @@
+name: Hosted Actions Admission Probe
+
+on:
+  push:
+    branches: ["infra/g02-render-worker-plan-2026-11-25"]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: hosted-admission-probe
+  cancel-in-progress: false
+
+jobs:
+  admission:
+    name: Hosted image ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-22.04, ubuntu-slim]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 3
+    steps:
+      - name: Prove hosted job allocation and shell execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          {
+            echo "## Hosted Actions admission probe"
+            echo "- Status: HOSTED_JOB_EXECUTED"
+            echo "- Runner: $RUNNER_NAME"
+            echo "- OS/architecture: $RUNNER_OS/$RUNNER_ARCH"
+            echo "- Run ID: $GITHUB_RUN_ID"
+            echo "- Attempt: $GITHUB_RUN_ATTEMPT"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- UTC: $(date -u +%FT%TZ)"
+            echo "- Scope: no checkout, secrets, external actions, artifacts, or production access"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "HOSTED_JOB_EXECUTED=true"
