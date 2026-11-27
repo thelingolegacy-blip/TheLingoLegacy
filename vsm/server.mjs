@@ -7,6 +7,7 @@ import { loadLane, configureLane, snapshot as sonicBoomSnapshot, submitLaneJob }
 import { executeBot } from "./ai/bot-worker.mjs";
 import { writeEvidence, readEvidence } from "./evidence/store.mjs";
 import { authorize, policySnapshot } from "./security/policy.mjs";
+import { listStudioAssets, createStudioAsset } from "./studio/asset-registry.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -180,6 +181,16 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "GET" && url.pathname === "/api/centers") {
       return send(res, 200, { centers: CENTERS.map(([id, name, purpose]) => ({ id, name, purpose, status: "SOURCE_REGISTERED_NOT_RUNTIME_VERIFIED", phase: 1 })) });
+    }
+    if (req.method === "GET" && url.pathname === "/api/studio/assets") {
+      return send(res, 200, { assets: await listStudioAssets(), registry: "local-first-metadata", binary_uploads: "not_enabled" });
+    }
+    if (req.method === "POST" && url.pathname === "/api/studio/assets") {
+      if (!can(req, "studio.propose")) return send(res, 403, { error: "Studio asset proposal capability required." });
+      const input = await bodyJson(req);
+      const asset = await createStudioAsset(input, OWNER_IDENTITY.id);
+      await audit("studio.asset.proposed", { asset_id: asset.id, division: asset.division, kind: asset.kind, rights_status: asset.rights_status, created_by: OWNER_IDENTITY.id });
+      return send(res, 201, { asset, note: "Metadata proposal recorded. Binary upload, rights clearance and publication remain separate approvals." });
     }
     if (req.method === "GET" && url.pathname === "/api/releases") {
       const releases = await readReleases();
