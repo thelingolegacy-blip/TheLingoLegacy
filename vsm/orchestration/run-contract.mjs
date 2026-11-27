@@ -60,9 +60,32 @@ export function createRunConfig(input = {}) {
   return Object.freeze(config);
 }
 
+function validSecretValue(name, value) {
+  if (typeof value !== "string" || value.trim().length === 0 || /[\\r\\n]/.test(value)) return false;
+  if (name === "FIREBASE_SERVICE_ACCOUNT") {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed.type === "service_account" && typeof parsed.project_id === "string" &&
+        typeof parsed.client_email === "string" && typeof parsed.private_key === "string";
+    } catch { return false; }
+  }
+  return value.trim().length >= 16;
+}
+
 export function preflightSecrets(requiredNames, environment = process.env) {
-  const missing = [...new Set(requiredNames)].filter(name => !SECRET_NAMES.includes(name) || typeof environment[name] !== "string" || environment[name].trim().length === 0);
-  return { ok: missing.length === 0, missing: missing.sort() };
+  const missing = [];
+  const invalid = [];
+  for (const name of [...new Set(requiredNames)]) {
+    if (!SECRET_NAMES.includes(name)) { invalid.push(name); continue; }
+    const alternatives = name === "FIREBASE_SERVICE_ACCOUNT" || name === "FIREBASE_TOKEN"
+      ? ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"]
+      : name === "CI_DEPLOY_KEY" || name === "GITHUB_TOKEN"
+        ? ["CI_DEPLOY_KEY", "GITHUB_TOKEN"] : [name];
+    const supplied = alternatives.filter(candidate => typeof environment[candidate] === "string" && environment[candidate].trim().length > 0);
+    if (!supplied.length) { missing.push(name); continue; }
+    if (!supplied.some(candidate => validSecretValue(candidate, environment[candidate]))) invalid.push(name);
+  }
+  return { ok: missing.length === 0 && invalid.length === 0, missing: missing.sort(), invalid: invalid.sort() };
 }
 
 export function scopedTrackEnvironment(track, environment = process.env, base = {}) {
