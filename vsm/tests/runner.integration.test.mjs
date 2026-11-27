@@ -30,7 +30,7 @@ test("runner executes tracks in parallel with isolated environments and run-scop
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
-test("runner executes steps from the configured workspace, not the artifact directory", async () => {
+test("runner executes steps from the configured execution root", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
   try {
     const summary = await executeRun(base([
