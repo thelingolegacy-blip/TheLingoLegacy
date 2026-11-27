@@ -10,13 +10,34 @@
 <header class="top"><div class="brand"><span class="mark">L</span><div><strong>LINGO VSM</strong><small>SOVEREIGN MISSION CONTROL</small></div></div><span id="systemState" class="pill">CONNECTING</span></header>
 <main>
 <section class="hero"><p class="eyebrow">THE LINGO LEGACY · RELEASE OPERATIONS</p><h1>One machine.<br><em>Every world.</em></h1><p class="sub">A local-first control plane for releases, evidence, gates and owner-authorized transitions. Production remains separate.</p><p><a href="http://127.0.0.1:8788/" target="_blank" rel="noreferrer" style="color:#e5c36a">Open existing site in isolated static preview ↗</a></p></section>
-<section class="panel identity-panel">\n <div class="section-head"><div><p class="eyebrow">SOVEREIGN IDENTITY</p><h2 id="identityState">LINGO ID loading…</h2></div><span id="identityRole" class="pill neutral">OWNER</span></div>\n <p id="identityKey" class="muted">Local Ed25519 identity</p>\n <form id="ownerTokenForm" class="inline-form"><label>Owner access token<input id="ownerTokenInput" type="password" autocomplete="current-password" placeholder="Paste your VSM owner token" required></label><button type="submit" class="secondary">Unlock owner controls</button></form><p id="identityMessage" class="message">Owner token stays in this browser session only.</p>\n</section>\n<section class="stats">
+<section class="panel identity-panel">
+ <div class="section-head"><div><p class="eyebrow">SOVEREIGN IDENTITY</p><h2 id="identityState">LINGO ID loading…</h2></div><span id="identityRole" class="pill neutral">OWNER</span></div>
+ <p id="identityKey" class="muted">Local Ed25519 identity</p>
+ <form id="ownerTokenForm" class="inline-form"><label>Owner access token<input id="ownerTokenInput" type="password" autocomplete="current-password" placeholder="Paste your VSM owner token" required></label><button type="submit" class="secondary">Unlock owner controls</button></form>
+ <p id="identityMessage" class="message">Owner token stays in this browser session only.</p>
+</section>
+<section class="stats">
  <article><small>CONTROL PLANE</small><b id="apiState">—</b><span>Local runtime</span></article>
  <article><small>RELEASE PACKAGES</small><b id="releaseCount">0</b><span>Registered</span></article>
  <article><small>AUTHORITY</small><b id="authorityState">FAIL-CLOSED</b><span>Production bridge disabled</span></article>
 </section>
 <section class="section-head"><div><p class="eyebrow">CONTROL CENTERS</p><h2>Mission systems</h2></div></section>
 <div id="centers" class="centers"></div>
+<section class="panel">
+ <div class="section-head"><div><p class="eyebrow">SONIC BOOM VELOCITY LANE</p><h2 id="laneState">SONIC BOOM OFF</h2></div><button id="laneToggle" class="secondary" type="button">Enable Sonic Boom</button></div>
+ <p id="laneMeta" class="muted">Bounded local scheduling · mandatory gates retained</p><p id="laneMessage" class="message">Priority lane is disabled until the Owner enables it.</p>
+</section>
+<section class="panel">
+ <div class="section-head"><div><p class="eyebrow">LINGOai CORE · BOT WORKERS</p><h2>First worker fleet</h2></div></div>
+ <div id="botList" class="bot-list"></div>
+ <form id="botRunForm" class="bot-form">
+  <label>Bot<select name="bot_id" id="botSelect"><option value="lingo://id/bot-math">Math Bot</option><option value="lingo://id/bot-probe">Probe Bot</option></select></label>
+  <label>Task<select name="task" id="botTask"><option value="validate_probability_input">Validate probability</option></select></label>
+  <label id="probabilityLabel">Probability<input name="probability" type="number" min="0" max="1" step="0.01" value="0.25"></label>
+  <button type="submit">Run allowlisted bot task</button>
+ </form>
+ <pre id="botResult" class="bot-result">Bot output appears here. Owner token required.</pre>
+</section>
 <section class="panel">
  <div class="section-head"><div><p class="eyebrow">RELEASE DISPATCH CENTER</p><h2>Create a release package</h2></div><span class="pill neutral">LOCAL REGISTRY</span></div>
  <form id="releaseForm">
