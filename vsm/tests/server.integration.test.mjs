@@ -91,6 +91,24 @@ test("VSM HTTP API enforces owner capabilities and records verifiable evidence",
   const evidenceRecord = await evidence.json();
   assert.equal(evidenceRecord.payload.decision, "PASS");
 
+  const deniedStudio = await fetch(base + "/api/studio/assets", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name: "Unauthorized asset", division: "LINGO", kind: "image" })
+  });
+  assert.equal(deniedStudio.status, 403);
+
+  const studioResponse = await fetch(base + "/api/studio/assets", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name: "Integration concept", division: "LINGOarcade", kind: "design", rights_status: "pending_review", tags: ["integration"] })
+  });
+  assert.equal(studioResponse.status, 201);
+  const studioBody = await studioResponse.json();
+  assert.equal(studioBody.asset.status, "proposed");
+  const studioList = await fetch(base + "/api/studio/assets");
+  assert.equal(studioList.status, 200);
+  assert.ok((await studioList.json()).assets.some(asset => asset.id === studioBody.asset.id));
+
   const unauthenticatedAudit = await fetch(base + "/api/audit/verify");
   assert.equal(unauthenticatedAudit.status, 403);
   const audit = await fetch(base + "/api/audit/verify", { headers: { authorization: `Bearer ${token}` } });
