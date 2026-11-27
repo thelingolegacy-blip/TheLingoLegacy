@@ -170,6 +170,18 @@ const server = http.createServer(async (req, res) => {
       await audit("run." + action, { run_id: runId, requested_by: OWNER_IDENTITY.id });
       return send(res, 200, { run_id: runId, action, accepted: true });
     }
+    const trackControlMatch = url.pathname.match(/^\/api\/runs\/([A-Za-z0-9][A-Za-z0-9._-]{2,79})\/tracks\/([a-z][a-z0-9-]{1,39})\/(pause|resume|cancel)$/);
+    if (req.method === "POST" && trackControlMatch) {
+      if (!can(req, "run.control")) return send(res, 403, { error: "Run control capability required." });
+      const [, runId, trackId, action] = trackControlMatch;
+      const controller = activeRuns.get(runId);
+      if (!controller) return send(res, 404, { error: "No active run with that ID." });
+      const accepted = action === "pause" ? controller.pauseTrack(trackId) :
+        action === "resume" ? controller.resumeTrack(trackId) : controller.cancelTrack(trackId);
+      if (!accepted) return send(res, 404, { error: "Track is not active or does not exist." });
+      await audit("run.track." + action, { run_id: runId, track_id: trackId, requested_by: OWNER_IDENTITY.id });
+      return send(res, 200, { run_id: runId, track_id: trackId, action, accepted: true });
+    }
     const runStatusMatch = url.pathname.match(/^\/api\/runs\/([A-Za-z0-9][A-Za-z0-9._-]{2,79})$/);
     if (req.method === "GET" && runStatusMatch) {
       if (!can(req, "run.read")) return send(res, 403, { error: "Run read capability required." });
