@@ -15,7 +15,7 @@ Local-first release control plane in the canonical repository. This is additive:
 
 ## Boot
 
-1. Copy `.env.example` to `.env`.
+1. Run `cp vsm/.env.example vsm/.env` from the repository root.
 2. Replace `VSM_OWNER_TOKEN` with a unique random secret of at least 32 characters.
 3. From the repository root run:
 
