@@ -6,6 +6,7 @@ import path from "node:path";
 const root = process.cwd();
 const source = await readFile(path.join(root, "casino/index.html"), "utf8");
 const staticCopy = await readFile(path.join(root, "static-site/casino/index.html"), "utf8");
+const studioHub = await readFile(path.join(root, "studio-hub/index.html"), "utf8");
 
 test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", () => {
   assert.equal(staticCopy, source, "static-site alias must stay byte-for-byte aligned");
@@ -21,4 +22,7 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.doesNotMatch(source, /sweepstakes/i);
   assert.doesNotMatch(source, /dollar symbols/i);
   assert.doesNotMatch(source, /Jackpot meter/i);
+  assert.match(studioHub, /demo spins using virtual credits only/i);
+  assert.match(studioHub, /cash wagering, cash-out and prize redemption are not enabled/i);
+  assert.doesNotMatch(studioHub, /cash-value wagering/i);
 });
