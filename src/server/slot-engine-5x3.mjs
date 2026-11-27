@@ -74,8 +74,8 @@ export function calculateLineStakeAllocation(wagerUnits, activePaylines = 20) {
   if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1) {
     throw new RangeError('wagerUnits must be a positive safe integer');
   }
-  if (!Number.isSafeInteger(activePaylines) || activePaylines < 1 || activePaylines > SLOT_5X3_PAYLINES.length) {
-    throw new RangeError('activePaylines must be an integer from 1 to 20');
+  if (!Number.isSafeInteger(activePaylines) || activePaylines !== SLOT_5X3_PAYLINES.length) {
+    throw new RangeError('activePaylines must equal 20 for the approved Option 2 contract');
   }
   const lineBetUnits = Math.floor(wagerUnits / activePaylines);
   const remainderUnits = wagerUnits % activePaylines;
