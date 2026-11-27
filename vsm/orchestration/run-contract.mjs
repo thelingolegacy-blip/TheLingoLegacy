@@ -33,6 +33,7 @@ export function createRunConfig(input = {}) {
     ALLOW_DESTRUCTIVE: input.ALLOW_DESTRUCTIVE === true,
     DRY_RUN: input.DRY_RUN === undefined ? target === "production" : input.DRY_RUN === true,
     PREFLIGHT_NETWORK: input.PREFLIGHT_NETWORK === undefined ? target === "staging" : input.PREFLIGHT_NETWORK === true,
+    PREFLIGHT_MIN_CPUS: input.PREFLIGHT_MIN_CPUS ?? 2,
     PREFLIGHT_MIN_FREE_MEMORY_MB: input.PREFLIGHT_MIN_FREE_MEMORY_MB ?? 256,
     PREFLIGHT_MIN_FREE_DISK_MB: input.PREFLIGHT_MIN_FREE_DISK_MB ?? 512,
     tracks: input.tracks || []
@@ -44,6 +45,7 @@ export function createRunConfig(input = {}) {
   if (!Number.isInteger(config.RUN_MAX_TOOL_CALLS) || config.RUN_MAX_TOOL_CALLS < 1) throw new Error("RUN_MAX_TOOL_CALLS must be a positive integer.");
   if (!Number.isFinite(config.RUN_MAX_COST_USD) || config.RUN_MAX_COST_USD <= 0) throw new Error("RUN_MAX_COST_USD must be greater than zero.");
   if (!Number.isInteger(config.RETRY_MAX_ATTEMPTS) || config.RETRY_MAX_ATTEMPTS < 1 || config.RETRY_MAX_ATTEMPTS > 3) throw new Error("RETRY_MAX_ATTEMPTS must be 1–3 total attempts.");
+  if (!Number.isInteger(config.PREFLIGHT_MIN_CPUS) || config.PREFLIGHT_MIN_CPUS < 1 || config.PREFLIGHT_MIN_CPUS > 64) throw new Error("PREFLIGHT_MIN_CPUS must be 1–64.");
   if (!Number.isInteger(config.PREFLIGHT_MIN_FREE_MEMORY_MB) || config.PREFLIGHT_MIN_FREE_MEMORY_MB < 64) throw new Error("PREFLIGHT_MIN_FREE_MEMORY_MB must be at least 64.");
   if (!Number.isInteger(config.PREFLIGHT_MIN_FREE_DISK_MB) || config.PREFLIGHT_MIN_FREE_DISK_MB < 64) throw new Error("PREFLIGHT_MIN_FREE_DISK_MB must be at least 64.");
   if (config.target === "production" && !config.DRY_RUN && config.run_type !== "production-change") throw new Error("Non-dry-run production work requires run_type=production-change.");
