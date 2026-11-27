@@ -77,33 +77,57 @@ async function preflightResources(rootDir, config) {
   return { ok: failures.length === 0, failures, cpu_count: cpuCount, free_memory_mb: freeMemoryMb, free_disk_mb: freeDiskMb };
 }
 
-async function preflightNetwork(required, environment, fetchImpl) {
+async function preflightNetwork(required, environment, fetchImpl, { now = () => Date.now(), random = Math.random } = {}) {
   const services = [];
   if (required.some(name => ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"].includes(name))) services.push({ name: "firebase", url: "https://firebase.googleapis.com/" });
   if (required.includes("CLOUDFLARE_API_TOKEN")) services.push({ name: "cloudflare", url: "https://api.cloudflare.com/client/v4/user/tokens/verify", token: environment.CLOUDFLARE_API_TOKEN });
   if (required.some(name => ["CI_DEPLOY_KEY", "GITHUB_TOKEN"].includes(name))) services.push({ name: "github", url: "https://api.github.com/rate_limit", token: environment.GITHUB_TOKEN });
   const results = [];
+  let calls = 0;
   for (const service of services) {
-    try {
-      const response = await fetchImpl(service.url, {
-        method: "GET",
-        redirect: "error",
-        signal: AbortSignal.timeout(8000),
-        headers: { "User-Agent": "LINGO-VSM-Preflight/1.0", ...(service.token ? { Authorization: "Bearer " + service.token } : {}) }
-      });
-      let valid = response.status < 500;
-      if (service.name === "cloudflare") {
-        const body = await response.json().catch(() => ({}));
-        valid = response.ok && body.success === true;
-      } else if (service.name === "github" && service.token) {
-        valid = response.ok;
+    const startedAt = now();
+    let attempt = 0;
+    let lastStatus = null;
+    let ok = false;
+    let failureClass = null;
+    while (true) {
+      attempt++;
+      calls++;
+      try {
+        const response = await fetchImpl(service.url, {
+          method: "GET",
+          redirect: "error",
+          signal: AbortSignal.timeout(8000),
+          headers: { "User-Agent": "LINGO-VSM-Preflight/1.0", ...(service.token ? { Authorization: "Bearer " + service.token } : {}) }
+        });
+        lastStatus = response.status;
+        const transient = [408, 425, 429].includes(response.status) || response.status >= 500;
+        if (transient) failureClass = "transient";
+        else if (service.name === "cloudflare") {
+          const body = await response.json().catch(() => ({}));
+          ok = response.ok && body.success === true;
+          failureClass = ok ? null : "permanent";
+        } else if (service.name === "github" && service.token) {
+          ok = response.ok;
+          failureClass = ok ? null : "permanent";
+        } else {
+          // Firebase probe checks service reachability only; OAuth exchange is a separate integration.
+          ok = response.status < 500;
+          failureClass = ok ? null : "transient";
+        }
+        if (ok || failureClass !== "transient") break;
+      } catch {
+        failureClass = "transient";
+        lastStatus = null;
       }
-      results.push({ service: service.name, ok: valid, status: response.status });
-    } catch {
-      results.push({ service: service.name, ok: false, status: null });
+      const retriesUsed = attempt - 1;
+      const delay = transientRetryDelayMs(retriesUsed + 1, random);
+      if (retriesUsed >= RUN_DEFAULTS.TRANSIENT_MAX_RETRIES || now() - startedAt + delay > RUN_DEFAULTS.TRANSIENT_RETRY_WINDOW_MS) break;
+      await sleep(delay);
     }
+    results.push({ service: service.name, ok, status: lastStatus, attempts: attempt, failure_class: failureClass });
   }
-  return { ok: results.every(item => item.ok), results };
+  return { ok: results.every(item => item.ok), results, calls };
 }
 
 export function createRunController(input, options = {}) {
@@ -175,8 +199,8 @@ export async function executeRun(input, {
   }
   const ledger = createBudgetLedger(config, now());
   const resourceCheck = await preflightResources(rootDir, config);
-  const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl) : { ok: true, results: [], skipped: true };
-  const preflightCalls = networkCheck.results.length;
+  const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl, { now, random }) : { ok: true, results: [], calls: 0, skipped: true };
+  const preflightCalls = networkCheck.calls;
   if (preflightCalls > 0) {
     const firstTrack = config.tracks[0].id;
     const charged = chargeBudget(ledger, firstTrack, { toolCalls: preflightCalls, now: now() });
