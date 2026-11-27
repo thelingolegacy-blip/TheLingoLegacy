@@ -203,9 +203,9 @@ export async function executeRun(input, {
     control.resume = () => { pauseRequested = false; originalResume(); };
     const originalCancel = control.cancel;
     control.cancel = reason => { originalCancel(reason); cancelAll(reason || "human-cancelled"); };
-    control.pauseTrack = trackId => { if (!ledger.tracks[trackId]) return false; pausedTracks.add(trackId); return true; };
-    control.resumeTrack = trackId => { if (!ledger.tracks[trackId]) return false; pausedTracks.delete(trackId); return true; };
-    control.cancelTrack = trackId => { if (!ledger.tracks[trackId]) return false; cancelledTracks.add(trackId); const trackController = controllers.get(trackId); if (trackController) trackController.abort("human-track-cancelled"); return true; };
+    control.pauseTrack = trackId => { const item = ledger.tracks[trackId]; if (!item || !["PENDING", "RUNNING"].includes(item.status)) return false; pausedTracks.add(trackId); return true; };
+    control.resumeTrack = trackId => { const item = ledger.tracks[trackId]; if (!item || !["PENDING", "RUNNING"].includes(item.status)) return false; pausedTracks.delete(trackId); return true; };
+    control.cancelTrack = trackId => { const item = ledger.tracks[trackId]; if (!item || !["PENDING", "RUNNING"].includes(item.status)) return false; cancelledTracks.add(trackId); const trackController = controllers.get(trackId); if (trackController) trackController.abort("human-track-cancelled"); return true; };
   }
 
   const runProcess = async (step, track, trackDir, trackEnv, signal) => {
@@ -351,6 +351,7 @@ export async function executeRun(input, {
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
   const anyDegraded = Object.values(results).some(value => value !== "SUCCESS");
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
+  const anyDegraded = config.tracks.some(track => track.criticality !== "critical" && ["FAILED", "CANCELLED"].includes(results[track.id]));
   const finalStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
     (cancelReason === "run-duration-exceeded" || cancelReason === "critical-track-cancelled") ? "FAILED" :
