@@ -95,7 +95,7 @@ async function preflightResources(rootDir, config) {
   return { ok: failures.length === 0, failures, cpu_count: cpuCount, free_memory_mb: freeMemoryMb, free_disk_mb: freeDiskMb };
 }
 
-async function preflightNetwork(required, environment, fetchImpl, { now = () => Date.now(), random = Math.random, budgetLedger = null, budgetTrackId = null } = {}) {
+async function preflightNetwork(required, environment, fetchImpl, { now = () => Date.now(), random = Math.random, budgetLedger = null, budgetTrackId = null, signal = null } = {}) {
   const services = [];
   if (required.some(name => ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"].includes(name))) services.push({ name: "firebase", url: "https://firebase.googleapis.com/" });
   if (required.includes("CLOUDFLARE_API_TOKEN")) services.push({ name: "cloudflare", url: "https://api.cloudflare.com/client/v4/user/tokens/verify", token: environment.CLOUDFLARE_API_TOKEN });
@@ -110,6 +110,7 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
     let ok = false;
     let failureClass = null;
     while (true) {
+      if (signal?.aborted) return { ok: false, results, calls, warning, budget_exceeded: false, cancelled: true };
       attempt++;
       if (budgetLedger && budgetTrackId) {
         const charge = chargeBudget(budgetLedger, budgetTrackId, { toolCalls: 1, now: now() });
@@ -121,7 +122,7 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
         const response = await fetchImpl(service.url, {
           method: "GET",
           redirect: "error",
-          signal: AbortSignal.timeout(8000),
+          signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(8000)]) : AbortSignal.timeout(8000),
           headers: { "User-Agent": "LINGO-VSM-Preflight/1.0", ...(service.token ? { Authorization: "Bearer " + service.token } : {}) }
         });
         lastStatus = response.status;
@@ -141,6 +142,7 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
         }
         if (ok || failureClass !== "transient") break;
       } catch {
+        if (signal?.aborted) return { ok: false, results, calls, warning, budget_exceeded: false, cancelled: true };
         failureClass = "transient";
         lastStatus = null;
       }
@@ -151,7 +153,7 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
     }
     results.push({ service: service.name, ok, status: lastStatus, attempts: attempt, failure_class: failureClass });
   }
-  return { ok: results.every(item => item.ok), results, calls, warning, budget_exceeded: false };
+  return { ok: results.every(item => item.ok), results, calls, warning, budget_exceeded: false, cancelled: false };
 }
 
 export function createRunController(input, options = {}) {
@@ -234,8 +236,9 @@ export async function executeRun(input, {
     ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id })
     : { ok: resourceCheck.ok, results: [], calls: 0, warning: false, budget_exceeded: false, skipped: true };
   if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
-  if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
-    const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
+  if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED" || networkCheck.cancelled) {
+    const preflightStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : networkCheck.cancelled ? "CANCELLED" : "PREFLIGHT_FAILED";
+    const failed = { run_id: config.run_id, status: preflightStatus, missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
     if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: failed.status, resource_check: resourceCheck, network_check: networkCheck, budget: failed.budget }); failed.owner_notification = "SENT"; } catch { failed.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), failed);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
