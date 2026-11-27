@@ -102,6 +102,9 @@ export function createRunController(input, options = {}) {
     pauseTrack: () => false,
     resumeTrack: () => false,
     cancelTrack: () => false,
+    pauseTrack: () => false,
+    resumeTrack: () => false,
+    cancelTrack: () => false,
     get paused() { return paused; },
     get cancelled() { return abort.signal.aborted; }
   };
@@ -204,6 +207,9 @@ export async function executeRun(input, {
     control.resume = () => { pauseRequested = false; originalResume(); };
     const originalCancel = control.cancel;
     control.cancel = reason => { originalCancel(reason); cancelAll(reason || "human-cancelled"); };
+    control.pauseTrack = trackId => { if (!ledger.tracks[trackId]) return false; pausedTracks.add(trackId); return true; };
+    control.resumeTrack = trackId => { if (!ledger.tracks[trackId]) return false; pausedTracks.delete(trackId); return true; };
+    control.cancelTrack = trackId => { if (!ledger.tracks[trackId]) return false; cancelledTracks.add(trackId); const trackController = controllers.get(trackId); if (trackController) trackController.abort("human-track-cancelled"); return true; };
   }
 
   const runProcess = async (step, track, trackDir, trackEnv, signal) => {
@@ -214,7 +220,7 @@ export async function executeRun(input, {
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
-    const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
     if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
