@@ -193,9 +193,6 @@
     }
   },
   "required": [
-    "run_id",
-    "run_type",
-    "target",
     "tracks"
   ]
 }
