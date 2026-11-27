@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: lingo-vsm-control
     restart: unless-stopped
+    networks:
+      - default
+      - forge-internal
     environment:
       PORT: "8787"
       PREVIEW_PORT: "8788"
