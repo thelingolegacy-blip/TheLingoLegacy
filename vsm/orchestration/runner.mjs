@@ -336,8 +336,14 @@ export async function executeRun(input, {
   try {
     await Promise.all(config.tracks.map(runTrack));
   } finally {
-    try { crashWatchdog.kill("SIGTERM"); } catch {}
     clearTimeout(watchdog);
+    if (childPids.size) {
+      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGTERM"); } catch {} }
+      await sleep(RUN_DEFAULTS.CANCEL_GRACE_MS);
+      for (const pid of childPids) { try { if (process.platform !== "win32") process.kill(-pid, "SIGKILL"); } catch {} }
+      childPids.clear();
+    }
+    try { crashWatchdog.kill("SIGTERM"); } catch {}
   }
 
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
