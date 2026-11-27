@@ -30,6 +30,8 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.doesNotMatch(source, /sweepstakes/i);
   assert.doesNotMatch(source, /dollar symbols/i);
   assert.doesNotMatch(source, /Jackpot meter/i);
+  assert.match(source, /View Founder Drop · Purchases Paused/);
+  assert.doesNotMatch(source, /Open Founder Checkout|href=["\']\/drop\/#stripe-checkout/i);
   assert.match(studioHub, /demo spins using virtual credits only/i);
   assert.match(studioHub, /cash wagering, cash-out and prize redemption are not enabled/i);
   assert.doesNotMatch(studioHub, /cash-value wagering/i);
