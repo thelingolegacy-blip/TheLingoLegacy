@@ -125,7 +125,7 @@ export function classifyFailure(error) {
   const status = Number(error?.status || error?.statusCode || 0);
   const code = String(error?.code || "");
   if ([401, 403].includes(status) || /auth|permission|unauthorized|forbidden/i.test(String(error?.message || ""))) return "permanent";
-  if ([408, 425, 429].includes(status) || status >= 500 || TRANSIENT_CODES.has(code) || error?.name === "TimeoutError" || error?.name === "AbortError") return "transient";
+  if ([408, 425, 429].includes(status) || status >= 500 || TRANSIENT_CODES.has(code) || error?.name === "TimeoutError") return "transient";
   return "permanent";
 }
 
