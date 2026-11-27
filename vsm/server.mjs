@@ -158,7 +158,7 @@ const server = http.createServer(async (req, res) => {
         artifactsDir: path.join(DATA_DIR, "runs"),
         notifyOwner: async event => {
           const notification = { ...event, created_at: new Date().toISOString(), delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true };
-          await fs.writeFile(path.join(runDirectory, "owner-notification.json"), JSON.stringify(notification, null, 2) + "\\n", { mode: 0o600 });
+          await fs.writeFile(path.join(runDirectory, "owner-notification.json"), JSON.stringify(notification, null, 2) + "\n", { mode: 0o600 });
         }
       });
       activeRuns.set(runId, controller);
