@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import { executeRun, createRunController } from "../orchestration/runner.mjs";
 
 const base = (tracks, extra = {}) => ({
@@ -76,6 +77,42 @@ test("missing required secrets abort before tracks and notify the owner outbox",
     assert.equal(summary.owner_notification, "SENT");
     assert.equal(notifications.length, 1);
     assert.equal(notifications[0].missing_secrets[0], "CLOUDFLARE_API_TOKEN");
+  } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
+});
+
+test("watchdog records crashes but ignores a clean orchestrator exit", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-watchdog-"));
+  const watchdogPath = path.resolve("orchestration/watchdog.mjs");
+  const runWatchdog = (pid, pidFile, crashFile) => spawn(process.execPath, [watchdogPath, String(pid), pidFile, crashFile], { stdio: "ignore" });
+  const waitForExit = child => new Promise((resolve, reject) => {
+    child.once("error", reject);
+    child.once("close", (code, signal) => resolve({ code, signal }));
+  });
+  try {
+    const crashDir = path.join(rootDir, "crashed-run");
+    await fs.mkdir(crashDir);
+    const crashPidFile = path.join(crashDir, "child-processes.json");
+    const crashReport = path.join(crashDir, "crash-report.json");
+    await fs.writeFile(crashPidFile, "[]");
+    const crashedParent = spawn(process.execPath, ["-e", "setTimeout(()=>process.exit(0),100)"], { stdio: "ignore" });
+    const crashWatchdog = runWatchdog(crashedParent.pid, crashPidFile, crashReport);
+    await Promise.all([waitForExit(crashedParent), waitForExit(crashWatchdog)]);
+    const report = JSON.parse(await fs.readFile(crashReport, "utf8"));
+    assert.equal(report.status, "ORCHESTRATOR_CRASH");
+    assert.equal(JSON.parse(await fs.readFile(path.join(crashDir, "status.json"), "utf8")).status, "ORCHESTRATOR_CRASH");
+    assert.equal(JSON.parse(await fs.readFile(path.join(crashDir, "owner-notification.json"), "utf8")).delivery, "LOCAL_OWNER_OUTBOX");
+
+    const cleanDir = path.join(rootDir, "clean-run");
+    await fs.mkdir(cleanDir);
+    const cleanPidFile = path.join(cleanDir, "child-processes.json");
+    const cleanCrashReport = path.join(cleanDir, "crash-report.json");
+    const completedFile = path.join(cleanDir, "completed.json");
+    await fs.writeFile(cleanPidFile, "[]");
+    const cleanParent = spawn(process.execPath, ["-e", "const fs=require('fs');setTimeout(()=>{fs.writeFileSync(process.argv[1],'{}');process.exit(0)},100)", completedFile], { stdio: "ignore" });
+    const cleanWatchdog = runWatchdog(cleanParent.pid, cleanPidFile, cleanCrashReport);
+    await Promise.all([waitForExit(cleanParent), waitForExit(cleanWatchdog)]);
+    await assert.rejects(fs.access(cleanCrashReport));
+    await assert.rejects(fs.access(path.join(cleanDir, "owner-notification.json")));
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
