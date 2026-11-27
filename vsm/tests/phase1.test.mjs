@@ -45,6 +45,9 @@ test("first LINGO bots only execute declared proposal and validation tasks", asy
   assert.equal(proposal.mutation_performed, false);
   const math = await worker.executeBot({ botId: "lingo://id/bot-math", task: "validate_probability_input", input: { probability: 0.25 } });
   assert.equal(math.percent, 25);
+  const distribution = await worker.executeBot({ botId: "lingo://id/bot-math", task: "evaluate_virtual_distribution", input: { outcomes: [{ value: 0, probability: 0.5 }, { value: 10, probability: 0.5 }] } });
+  assert.equal(distribution.expected_virtual_value, 5);
+  assert.equal(distribution.monetary_wagering, false);
   await assert.rejects(() => worker.executeBot({ botId: "lingo://id/bot-release", task: "deploy_production", input: {} }));
 });
 
