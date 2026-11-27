@@ -9,6 +9,7 @@ COPY ai ./ai
 COPY evidence ./evidence
 COPY security ./security
 COPY studio ./studio
+COPY orchestration ./orchestration
 COPY math ./math
 COPY dashboard ./dashboard
 COPY schemas ./schemas
