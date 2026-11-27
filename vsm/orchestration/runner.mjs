@@ -353,8 +353,8 @@ export async function executeRun(input, {
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
   const finalStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
-    cancelReason === "run-duration-exceeded" ? "FAILED" :
-    failedCritical ? "FAILED" : anyFailed || (anyCancelled && !cancelled) ? "PARTIAL" :
+    (cancelReason === "run-duration-exceeded" || cancelReason === "critical-track-cancelled") ? "FAILED" :
+    failedCritical ? "FAILED" : anyDegraded || (anyCancelled && !cancelled) ? "PARTIAL" :
     cancelled ? "CANCELLED" : "SUCCESS";
   const summary = {
     run_id: config.run_id, status: finalStatus,
