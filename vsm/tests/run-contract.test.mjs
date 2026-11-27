@@ -45,7 +45,9 @@ test("retry policy is bounded and distinguishes transient from permanent failure
   assert.equal(retryDecision({ error: { status: 503 }, attempt: 1, startedAt: 1000, now: 2000 }).retry, true);
   assert.equal(retryDecision({ error: { status: 503 }, attempt: 4, startedAt: 1000, now: 2000 }).retry, false);
   assert.equal(retryDecision({ error: { status: 401 }, attempt: 1, startedAt: 1000 }).retry, false);
-  assert.equal(retryDecision({ error: { status: 503 }, attempt: 2, startedAt: 1000, now: 242000 }).retry, false);\n  assert.equal(transientRetryDelayMs(1, () => 0), 500);\n  assert.equal(transientRetryDelayMs(2, () => 1), 2000);
+  assert.equal(retryDecision({ error: { status: 503 }, attempt: 2, startedAt: 1000, now: 242000 }).retry, false);
+  assert.equal(transientRetryDelayMs(1, () => 0), 500);
+  assert.equal(transientRetryDelayMs(2, () => 1), 2000);
 });
 
 test("run and per-track budgets enforce hard ceilings and warning threshold", () => {
@@ -67,11 +69,13 @@ test("structured events redact secret-like fields and include duration and attem
   const event = structuredRunEvent({
     runId: "test-run-001", trackId: "source", step: "compile", status: "FAILED",
     attempt: 2, startedAt: 1000, endedAt: 2500,
-    detail: { message: "failed with never-print-this", api_token: "never-print-this", secret_name: "CLOUDFLARE_API_TOKEN" },\n    secretValues: ["never-print-this"]
+    detail: { message: "failed with never-print-this", api_token: "never-print-this", secret_name: "CLOUDFLARE_API_TOKEN" },
+    secretValues: ["never-print-this"]
   });
   assert.equal(event.duration_ms, 1500);
   assert.equal(event.attempt, 2);
   assert.equal(event.detail.api_token, "[REDACTED]");
   assert.equal(event.detail.secret_name, "[REDACTED]");
-  assert.equal(JSON.stringify(event).includes("never-print-this"), false);\n  assert.equal(event.detail.message, "failed with [REDACTED]");
+  assert.equal(JSON.stringify(event).includes("never-print-this"), false);
+  assert.equal(event.detail.message, "failed with [REDACTED]");
 });
