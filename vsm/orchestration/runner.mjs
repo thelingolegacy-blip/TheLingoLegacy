@@ -129,6 +129,14 @@ export async function executeRun(input, {
 
   const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
   const secretValues = required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0);
+  const serializedConfig = JSON.stringify(config);
+  const exposedSecretNames = required.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value)));
+  if (exposedSecretNames.length) {
+    const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, finished_at: iso() };
+    await atomicJson(path.join(runDir, "summary.json"), securityFailure);
+    await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso() });
+    return securityFailure;
+  }
   const ledger = createBudgetLedger(config, now());
   const resourceCheck = await preflightResources(rootDir, config);
   const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl) : { ok: true, results: [], skipped: true };
