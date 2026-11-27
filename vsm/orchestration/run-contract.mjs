@@ -50,6 +50,7 @@ export function createRunConfig(input = {}) {
   if (config.ALLOW_DESTRUCTIVE && config.target !== "local") throw new Error("Destructive operations are disabled for remote targets in this VSM phase.");
   if (config.SECRETS_REQUIRED.some(name => !SECRET_NAMES.includes(name))) throw new Error("SECRETS_REQUIRED contains an unrecognized secret name.");
   if (!Array.isArray(config.tracks) || config.tracks.length < 1 || config.tracks.length > 5) throw new Error("A run must define between one and five tracks.");
+  if (config.RUN_MAX_TOOL_CALLS < config.tracks.length) throw new Error("RUN_MAX_TOOL_CALLS must provide at least one call per track.");
   const ids = new Set();
   for (const track of config.tracks) {
     if (!track || !/^[a-z][a-z0-9-]{1,39}$/.test(track.id || "") || ids.has(track.id)) throw new Error("Track IDs must be unique lowercase identifiers.");
