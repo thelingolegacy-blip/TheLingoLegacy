@@ -143,6 +143,10 @@ const server = http.createServer(async (req, res) => {
             if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 1800000)) throw new Error("Step timeout must be 1 second to 30 minutes.");
             if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1000 || step.soft_timeout_ms >= (step.timeout_ms || 300000))) throw new Error("Step soft timeout must be less than the hard timeout.");
             if (step.min_log_bytes !== undefined && (!Number.isInteger(step.min_log_bytes) || step.min_log_bytes < 1 || step.min_log_bytes > 65536)) throw new Error("Step minimum log bytes must be 1–65536.");
+            if (step.require_nonempty_log !== undefined && typeof step.require_nonempty_log !== "boolean") throw new Error("Step require_nonempty_log must be boolean.");
+            if (step.mutating !== undefined && typeof step.mutating !== "boolean") throw new Error("Step mutating must be boolean.");
+            if (step.idempotent !== undefined && typeof step.idempotent !== "boolean") throw new Error("Step idempotent must be boolean.");
+            if (step.idempotency_key !== undefined && (typeof step.idempotency_key !== "string" || step.idempotency_key.length < 8 || step.idempotency_key.length > 128)) throw new Error("Step idempotency_key must be 8–128 characters.");
             if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost estimate must be non-negative.");
             if (step.id !== undefined && (typeof step.id !== "string" || !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id))) throw new Error("Step ID is invalid.");
             if (step.mutating === true && !validatedConfig.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");
