@@ -163,11 +163,16 @@ export async function executeRun(input, {
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: failed.status, updated_at: iso() });
     return failed;
   }
-  const controllers = new Map();\n  const childPids = new Set();\n  const pidFile = path.join(runDir, "child-processes.json");\n  const crashFile = path.join(runDir, "crash-report.json");\n  await atomicJson(pidFile, []);
+  const controllers = new Map();
+  const childPids = new Set();\n  const pidFile = path.join(runDir, "child-processes.json");
+  const crashFile = path.join(runDir, "crash-report.json");
+  await atomicJson(pidFile, []);
   const results = {};
   let cancelled = false;
   let cancelReason = null;
-  let pauseRequested = Boolean(control?.paused);\n  const pausedTracks = new Set();\n  const cancelledTracks = new Set();
+  let pauseRequested = Boolean(control?.paused);
+  const pausedTracks = new Set();
+  const cancelledTracks = new Set();
   const eventFile = path.join(runDir, "events.jsonl");
   const statusFile = path.join(runDir, "status.json");
 
@@ -208,7 +213,8 @@ export async function executeRun(input, {
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
-    const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });\n    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
+    const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
     const append = chunk => {
@@ -251,7 +257,8 @@ export async function executeRun(input, {
     await fs.mkdir(trackDir, { recursive: true, mode: 0o700 });
     const abort = new AbortController();
     controllers.set(track.id, abort);
-    if (cancelled) abort.abort(cancelReason);\n    if (cancelledTracks.has(track.id)) abort.abort("human-track-cancelled");
+    if (cancelled) abort.abort(cancelReason);
+    if (cancelledTracks.has(track.id)) abort.abort("human-track-cancelled");
     const ledgerTrack = ledger.tracks[track.id];
     ledgerTrack.status = "RUNNING";
     const trackStarted = now();
@@ -308,7 +315,8 @@ export async function executeRun(input, {
     ledgerTrack.status = outcome;
     results[track.id] = outcome;
     await emit({ runId: config.run_id, trackId: track.id, status: outcome, startedAt: trackStarted });
-    if (outcome === "FAILED" && track.criticality === "critical") cancelAll("critical-track-failed");\n    if (outcome === "CANCELLED" && track.criticality === "critical" && !cancelled) cancelAll("critical-track-cancelled");
+    if (outcome === "FAILED" && track.criticality === "critical") cancelAll("critical-track-failed");
+    if (outcome === "CANCELLED" && track.criticality === "critical" && !cancelled) cancelAll("critical-track-cancelled");
     return outcome;
   };
 
