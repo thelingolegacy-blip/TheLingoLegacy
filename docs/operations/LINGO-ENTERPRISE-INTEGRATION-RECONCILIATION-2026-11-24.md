@@ -1,0 +1,537 @@
+# LINGO Enterprise Integration Reconciliation
+**Snapshot date:** 2026-11-24  
+**Repository:** `thelingolegacy-blip/TheLingoLegacy`  
+**Source of truth:** `main`  
+**Disposition:** PROTECTED HOLD / NOT READY — reconciliation work only
+
+## 1. Purpose
+
+Create one evidence-led integration sequence for the LINGO ecosystem. This document is a coordination baseline, not a declaration that the ecosystem is integrated, tested, accepted, or production-ready.
+
+The governing acceptance chain is:
+
+`SOURCE → EXECUTION → EVIDENCE → INDEPENDENT VERIFICATION → ACCEPTANCE → AUTHORIZATION → PROMOTION`
+
+A merged change, successful static check, queued workflow, green badge, mockup, or written plan does not independently prove operational readiness.
+
+## 2. Read-only repository snapshot
+
+The following facts were retrieved from GitHub on 2026-11-24:
+
+- Default branch: `main`.
+- Main HEAD observed: `3fe099eb11329cc333ffa5a1ea36affcd0375343`.
+- Open pull requests: **257**, retrieved across three complete GitHub API pages (100 + 100 + 57).
+- First page of branch inventory: 100 branch refs; every returned branch reported `protected: false`. This is a first-page sample, not a complete branch count.
+- Main branch reports `protected: false` through the branch endpoint (legacy branch-protection flag).
+- A separate repository ruleset read confirms ruleset **27403956 — “Lingo - protect main”** is `active`. Its returned rules are only `deletion`, `non_fast_forward`, and `copilot_code_review` (review on push enabled; draft PR review disabled). The returned ruleset does **not** include required pull-request approvals or required status checks. Its empty include/exclude ref filters were preserved as returned; do not infer narrower coverage from the ruleset name alone.
+- Therefore a ruleset exists and is active, but the current evidence does not establish the complete merge-governance controls required for protected integration (independent approvals and required CI checks). The legacy branch endpoint and ruleset endpoint are distinct controls; do not summarize this as “no ruleset exists.”
+- The repository's `AGENTS.md` requires small reviewable changes, no routine direct commits to main, and the acceptance chain above. It also states that agents cannot authorize their own acceptance or release.
+- Repeated GitHub Actions `startup_failure` outcomes with zero jobs and zero artifacts are infrastructure/job-instantiation failures. They are not successful CI and do not prove that application tests ran.
+
+Evidence entry points:
+- Main branch: https://github.com/thelingolegacy-blip/TheLingoLegacy/tree/main
+- Open pull requests: https://github.com/thelingolegacy-blip/TheLingoLegacy/pulls
+- Repository agent instructions: https://github.com/thelingolegacy-blip/TheLingoLegacy/blob/main/AGENTS.md
+
+## 3. Cloudflare live account snapshot (read-only, 2026-11-24)
+
+A fresh Cloudflare API read returned the following account inventory:
+
+- Account plan: Free Website; the account-level `enforce_twofactor` setting is `false`.
+- Worker inventory: **11** scripts; the previous ten-script snapshot is superseded.
+- D1 inventory: **5** databases, including `lingo-game-engine-staging-20261107` and `asklingo-v2-staging-20261122`.
+- Access inventory: **15** applications.
+- Zone Worker routes: **27**.
+- Accepted account members: **1**; the returned member's `two_factor_authentication_enabled` value is `false`.
+- The **LINGO SAAAE Staging Privileged Executor** Access application exists for `saaae-staging.thelingolegacy.com`, but its attached policy list is empty.
+- The current route inventory contains no route for `saaae-staging.thelingolegacy.com`; the existing public apex, wildcard, and www routing remain unchanged.
+- The D1 database's existence does not prove the SAAAE schema or runtime is installed. PR #659's read-only schema inspection reported no SAAAE runtime/provisioning evidence tables; no migration was applied.
+
+**Operational consequence:** privileged staging execution remains blocked. A separate operator/reviewer identity is not currently available from the accepted account-member roster; account MFA is not enforced and the sole returned member has 2FA disabled. Do not attach an Access allow policy, create a route, deploy a Worker, or apply a migration to work around these prerequisites. The account owner must establish MFA and a distinct authorized reviewer/operator identity through the provider's normal account process before this boundary can be completed.
+
+No Cloudflare account settings, members, Access policies, DNS records, Worker routes, Worker scripts, D1 schemas, or deployments were changed by this read.
+
+## 5. GitHub Actions execution diagnosis (2026-11-24)
+
+A further read-only inspection of the latest runs on the reconciliation PR confirms:
+
+- Latest static CI run: `45413702131`, workflow path `.github/workflows/jekyll-docker.yml`, conclusion `startup_failure`.
+- Latest G02 image build run: `45413699027`, conclusion `startup_failure`.
+- Latest Crimson Smoke UI validation run: `45413696013`, conclusion `startup_failure`.
+- The preceding three runs on commit `212317788635160cf0486c1846213195f3f1b40c` failed identically.
+- All six inspected run records have no instantiated jobs and no artifacts. Therefore there are no step logs, runner identities, or test results to evaluate.
+- The static CI workflow source is syntactically structured for a single `ubuntu-24.04` hosted job with read-only contents permission; its first step captures runner identity, followed by checkout, Node 22 setup, static tests, and evidence upload. The independent hosted-runner probe is also a manual-only `ubuntu-latest` job with `contents: none`, no checkout, no actions, no secrets, and no network calls.
+- The G02 self-hosted smoke and dispatch diagnostic workflows remain guarded by `if: false`; they were not activated.
+- The GitHub integration available in this session exposes read-only run/job/artifact inspection and PR/file operations, but no workflow-dispatch operation or Actions administration endpoints. Thus it cannot initiate the isolated manual probe or inspect/repair repository runner settings from this session.
+
+**Diagnosis boundary:** evidence establishes a GitHub Actions startup failure before job creation across multiple workflows, not an application test failure. It does not establish the provider's internal cause. Do not claim the workflow YAML, runner image, hosted capacity, account policy, or repository Actions setting is the cause without a successful job or authorized provider-side diagnostics.
+
+**Next safe action:** an authorized repository administrator must dispatch `.github/workflows/isolated-hosted-runner-probe.yml` manually (or use GitHub's UI) and inspect the run's jobs. If it also ends in `startup_failure` with zero jobs, escalate the exact run IDs to GitHub Support / account administration for hosted-runner startup diagnostics. Keep all self-hosted G02 jobs disabled.
+
+## 6. High-priority integration relationships
+
+### A. Canonical portfolio, enterprise register, and public directory
+
+These proposals overlap but have distinct intended roles:
+
+- **PR #511 — master registry and dependency graph:** proposes the broad product, route, plugin, campaign, identity, wallet, and dependency registries; includes ADR-002 for the identity/backend decision.
+- **PR #602 — 14-node ecosystem inventory and dispatch contracts:** adds a 14-node inventory, schemas/validators, recovery dispatch contracts, and `/worlds/` changes. It is stacked on PR #548, not directly on main.
+- **PR #638 — enterprise stack register and Studio module catalog:** proposes the shared enterprise architecture, 22 Studio modules, and readiness/evidence taxonomy. It explicitly says backend authority remains unselected until #511 ADR-002 and #515 are reconciled.
+- **PR #640 — canonical public portfolio directory:** maps the public portfolio into eight canonical groups and separates shared platform capabilities from public brands; also changes `index.html` and `worlds/index.html`.
+- **PR #548 — flagship website/live-readiness base:** is the declared base of #602 and also changes homepage, brand framework, navigation, and `worlds/index.html`.
+
+**Required reconciliation:** establish one canonical registry model with explicit entity types (portfolio, brand, subproduct, shared platform capability, operations domain), stable IDs, ownership, dependencies, environment, and readiness evidence. Preserve the 14-node inventory as traceable source inventory while presenting the eight canonical public portfolio groups. Do not maintain competing registries or merge the overlapping homepage/directory changes as independent competing implementations.
+
+### B. Backend, identity, and data authority
+
+- **PR #515** proposes Supabase-primary backend architecture.
+- **PR #511 ADR-002** is the named decision record for identity/backend authority.
+- **PR #654** proposes Firebase Auth + Firestore and Flutter sign-in as a staged Firebase direction.
+- The current architecture materials do not establish one fully accepted, operational backend authority.
+
+**Required reconciliation:** produce an owner-reviewed architecture decision that names the canonical system of record for identity, authorization, transactional data, ledger, files, analytics, and product-specific databases. Explicitly document what remains separate and why. Until that decision and compatibility checks are accepted, do not activate competing production backends or migrate data.
+
+### C. Staging security and privileged execution dependency chain
+
+- **PR #655** changes the staging game-engine Firebase project binding and is based on `staging/server-authoritative-game-foundation-2026-11-07`.
+- **PR #658** is explicitly based on #655's branch and proposes staging game-engine SAAAE runtime controls.
+- **PR #659** is explicitly based on #658's branch and proposes the staging Cloudflare Access privileged-executor boundary.
+- The PR descriptions report missing live staging resource verification, incomplete operator separation, and absent successful GitHub Actions execution evidence.
+
+**Required order:** verify the staging project/resource identities and base configuration; validate #655; validate the #658 migrations/runtime and approval/audit semantics; then validate #659's operator identity and Access policy lifecycle. Keep all three staging-only. No migration, grant, DNS, Access allow policy, Worker deployment, or production mutation is implied by source code alone.
+
+### D. CI startup recovery
+
+- **PR #656** proposes a manual-only hosted-runner bootstrap on `ubuntu-latest`.
+- It is intentionally isolated from G02 and does not certify product code, Firebase, Cloudflare, or the self-hosted runner.
+- The connected GitHub integration does not expose the required `workflow_dispatch` action.
+
+**Required order:** owner dispatches the documented workflow from its exact branch; independently inspect the resulting run, instantiated job, positive runner ID, runner name, completed steps, run/commit correlation, and `HOSTED_BOOTSTRAP_PASS`. Do not treat a startup failure with zero jobs as a test result. G02 remains independently blocked until its own acceptance contract is satisfied.
+
+### E. Website and studio CI maintenance
+
+- **PR #602** is stacked on #548 and both touch the public directory.
+- **PR #640** independently touches the homepage and directory on main, so its changes must be compared against #548/#602 before selecting a single canonical implementation.
+- **PR #638** changes `studio/index.html` and `worker.js` as well as adding its enterprise registry.
+- **PR #660** only aligns two Studio workflows to Node 22; it does not resolve Actions job startup failure.
+
+**Required order:** reconcile the desired homepage and directory output; compare all competing diffs; preserve Worker ownership and exact-root versus wildcard route boundaries; validate Studio registry integration; then run static, route, browser, accessibility, and security checks once Actions can instantiate jobs.
+
+## 4. Integration sequence
+
+| Order | Workstream | Entry criteria | Exit evidence |
+|---|---|---|---|
+| 0 | Preserve production and last-known-good | Current source and live topology captured | No unapproved production mutation; rollback/LKG identity retained |
+| 1 | Repository governance and CI recovery | Branch inventory, main protection state, Actions settings/permissions understood | Enforced review/check policy; real jobs with steps/logs on exact commits |
+| 2 | Canonical portfolio and dependency registry | #511, #602, #638, #640 and #548 diffs reconciled | One validated registry and one canonical public directory contract |
+| 3 | Backend and identity decision | #511 ADR-002, #515, #654 and existing service inventory compared | Owner-approved system-of-record decision and environment map |
+| 4 | SAAAE staging control plane | Staging resources and distinct operators verified | Default-deny authorization, scoped grants, persistent approvals, atomic/tamper-evident audit, revocation and staging integration tests |
+| 5 | Shared platform interfaces | Identity, API/event, ledger, storage, telemetry, secrets and environment contracts accepted | Versioned interfaces and compatibility tests |
+| 6 | Product/domain integrations | Shared interfaces available; each product's source and dependencies inventoried | Per-product functional, security, privacy, accessibility and data-isolation evidence |
+| 7 | Web/mobile/game surfaces | Canonical portfolio and service contracts accepted | Web/browser QA, Flutter builds/device QA, game title-specific test artifacts |
+| 8 | Operations and resilience | Observability, backup, restore, incident, cost and support controls implemented | Verified alerting, restore drills, runbooks, SLOs and ownership |
+| 9 | Release acceptance | All relevant prior gates passed | Independent review, named owner acceptance, explicit authorization, then separate promotion decision |
+
+## 5. Mandatory security and release invariants
+
+- SAAAE is enforced server-side; client-side UI checks are not authorization.
+- Default-deny RBAC/ABAC with unique human/service/agent identities, least privilege, tenant/product/resource/operation scoping, session/token validation, immediate revocation, and fail-closed behavior.
+- Approval records are persistent and bound to requester, approver, action, resource, scope, policy version, expiry, and one-time/idempotent consumption semantics.
+- Audit records are durable, tamper-evident, correlated, and fail closed for privileged operations.
+- Secrets are never committed, copied into logs, or placed in evidence records. Inventories store metadata only.
+- Staging and production identities, databases, Workers, routes, credentials, and data remain isolated.
+- No real-money wagering, cash-out, wallet-value mutation, sweepstakes activation, payment activation, or customer-data mutation without their separate legal, security, financial, and release gates.
+- G02 remains FAIL / UNVERIFIED; G03–G11 and production promotion remain held until their own evidence is accepted.
+- Historical names and artifacts remain preserved in their correct archive; canonical current brand/product identities are not silently replaced.
+
+## 6. Immediate next actions
+
+1. Complete the full open-PR and branch inventory, including pagination and branch ancestry.
+2. Build a PR-to-file overlap matrix and dependency graph; identify superseded, duplicate, stacked, independent, and blocked proposals without deleting their history.
+3. Compare the current main tree against the exact head commits for the integration candidates.
+4. Prepare one reviewable consolidation sequence with explicit keep/rebase/cherry-pick/close-as-superseded recommendations and conflict notes.
+5. Reconcile the backend/identity ADR before connecting product data paths.
+6. Resolve GitHub Actions job startup through the isolated bootstrap evidence path; do not weaken checks or substitute the G02 runner.
+7. Execute staged validations and record exact commit/run/evidence references.
+8. Request independent review and owner acceptance before merge; keep production promotion separate.
+
+## 7. Current disposition
+
+**NOT MERGED. NOT DEPLOYED. NOT CERTIFIED.**
+
+This reconciliation document is a planning and evidence index. It does not change runtime configuration, production routes, Firebase resources, Cloudflare resources, secrets, payment settings, runner registration, or customer data. Open PRs and branches remain preserved pending the full reconciliation.
+
+
+## 7. Parallel application and live staging reconciliation (2026-11-24)
+
+The following checks were performed in parallel against the current draft branches and Cloudflare account. All Cloudflare database queries in this section were read-only `SELECT` statements; no resource or schema was changed.
+
+### Ecosystem registry — PR #602
+
+- Parsed the branch's registry JSON and schema JSON successfully.
+- Registry contains **14 realms**, **14 unique IDs**, and **8 unique non-null routes**.
+- Production policy remains `protected-hold`.
+- Realm readiness values remain non-production states (`live-uncertified`, `scaffolded-unverified`, `planned`, `preview-needs-independent-qa`, `planned-disabled`).
+- This was a structural parse/invariant spot-check, not execution of the committed Node validator or full JSON Schema validator in CI.
+
+### Firebase / Flutter — PRs #654 and #655
+
+- PR #654 Firestore rules are explicit deny-all (`allow read, write: if false`) pending reviewed tenant-scoped rules and emulator tests.
+- Flutter Firebase configuration requires complete options and exact project-ID match; default target is `lingo-legacy-staging`, while production requires explicit build-time opt-in.
+- Actual Firebase staging project existence/access, registered platform app IDs, Firebase credentials, Flutter dependency resolution, emulator rules tests, and GitHub Actions execution remain unverified. No Firebase project or configuration was changed.
+
+### askLINGO — PR #657 and live Cloudflare staging
+
+- Live Worker inventory includes `asklingo-v2-staging`.
+- Its Worker settings show a D1 binding `ASKLINGO_DB` to database `e041e690-2a45-4c82-8b46-6e012d739972` (`asklingo-v2-staging-20261122`).
+- A read-only `sqlite_master` inspection found the expected authorization foundation tables: `principals`, `grants`, `approvals`, `audit_events`, `idempotency_keys`, and `rate_limit_buckets`, plus Cloudflare's `_cf_KV`; append-only audit triggers and lookup indexes are present.
+- PR #657 source verifies Firebase RS256 signatures and token claims, checks disabled/revoked account state, applies scoped staging grants, rate limits, and fail-closed audit handling. It deliberately returns `503 service_not_enabled` while provider/privacy approval remains pending; inference and operational actions are not enabled.
+- No matching askLINGO-named Cloudflare Access application was returned by the account Access-app query. This does not invalidate its Firebase bearer-token model, but any additional Access front-door requirement must be specified separately.
+- No live query, conversation persistence, inference, or operational action was enabled by this inspection.
+
+### Game engine SAAAE — PRs #655, #658, #659
+
+- The dedicated game-engine D1 database `793ab138-7818-47c9-ad01-b319ad34a8c5` exists.
+- Read-only schema inspection found the existing game foundation tables and ledger/rate-limit structures, but **none** of the six `lingo_saaae_*` tables required by PR #658's migration.
+- A direct Worker-settings read for `lingo-game-engine-staging` returned Cloudflare 404 (`This Worker does not exist on your account`). The current account Worker inventory does not list that script. The existence of the D1 database is not evidence of a deployed game-engine Worker.
+- PR #655's Wrangler config specifies the staging Firebase project ID, but this source configuration is not live deployment evidence. Historical evidence in the branch records an earlier Worker binding to the production Firebase project; that historical state must not be treated as a current staging runtime.
+- PR #658 source includes scoped principal/membership/grant authorization, rate limiting, approval-bound spins, and settlement logic. Its six-table migration is not applied to the live D1 database. PR #659's Access application remains a zero-policy shell; independent operator identity and MFA requirements remain blockers.
+- Do not deploy the Worker, apply either SAAAE migration, add Access policies, or create routes until staging Firebase identity, separate reviewer identity, exact-source CI, migration tests, rollback, and explicit staging authorization are all satisfied.
+
+### Overall parallel disposition
+
+Source-level work and read-only infrastructure reconciliation advanced, but no application branch was merged, no new Worker deployed, no migration applied, no Firebase project mutated, and no production setting changed. CI remains blocked before job creation. All related PRs remain draft/unmerged and production remains under protected hold.
+
+
+## 8. Backend authority and Supabase connector reconciliation (2026-11-24)
+
+- PR #515 proposes Supabase as the primary transactional backend while retaining Firebase for identity compatibility and specialist services.
+- PR #638 explicitly states backend authority is unselected pending owner reconciliation of ADR-002 and PR #515. PR #654/#655 meanwhile implement a Firebase Auth + Firestore staging foundation, and PR #658/#659 depend on that Firebase staging identity.
+- This is an unresolved architecture decision, not a safe basis for merging or migrating data. The canonical owner must select one authoritative transactional system and define which records/services remain in Firebase before any backend schema or application data is moved.
+- Supabase project discovery returned one project, `zoksxavxmgnkrthselek`, in `us-west-2`, provider status `ACTIVE_HEALTHY`, PostgreSQL 17.6. The Edge Functions inventory returned zero functions.
+- Supabase table and migration reads failed with database authentication errors (`password authentication failed` for the connector's read-only and postgres roles). Advisor reads reported the project as hibernated. These connector errors conflict with the provider-level `ACTIVE_HEALTHY` status; they do **not** establish that the database has zero tables or migrations.
+- No Supabase schema, migration, branch, function, or project was changed. Do not create or migrate a backend until owner architecture approval, database access recovery, RLS/security review, migration plan, and exact-source CI are available.
+
+
+## 9. AppDeploy portfolio and preview QA reconciliation (2026-11-24)
+
+- The primary AppDeploy account lists **20 deployed app records**, all currently reported with deployment status `ready`. This means a deployment record is available; it is not independent product acceptance or proof of production readiness.
+- The connected AppDeploy account reports the free plan and 547.83186303 monthly credits available, with zero top-up credits. Deployment access is explicitly `deploy_app_allowed: false` because the authorization expired on 2026-07-07. No deploy, build, restore, source mutation, resource upload, or paid action was attempted.
+- Twenty app status checks were reviewed across the portfolio. Most returned empty current frontend/backend error lists and empty network-error lists, but their QA snapshots are not uniformly current and do not replace manual browser/device/accessibility review.
+- Two actionable QA findings remain:
+  - `LINGO Studio Hub` reports two frontend resource failures for `/resources/visuals/lingoapparel-world.jpeg`; its QA snapshot also contains an eight-test advisory. The image path/resource must be reconciled against the saved source and resource inventory.
+  - `Hello The Lingo Legacy` reports an aborted frontend request and one backend error in its status record. Its runtime/realtime path requires a fresh controlled diagnostic before acceptance.
+- `That's My Lingo`, `Kotton's Code Family Explorer`, and `Loyalty Lane Apparel` have recent deployment snapshots and zero reported frontend/network errors in their returned QA records. Their product-level legal, privacy, inventory, game-math, payment, accessibility, and independent acceptance gates remain separate.
+- No AppDeploy deployment permission renewal or secret-entry action was initiated. Account owner authorization is required before further app writes; use GitHub as source of truth and export any approved AppDeploy source changes back to the canonical repository.
+
+
+## 10. Public portfolio taxonomy and stacked-PR ordering
+
+- PR #602 preserves a useful **14-node inventory**, but it is stacked on PR #548's website-readiness branch and is not a clean independent merge to `main`.
+- PR #638 recommends retaining those 14 nodes while classifying them as public portfolios, subproducts, or shared platform capabilities.
+- PR #640 provides the current eight-public-portfolio presentation: `LINGOlegacy`, `LINGOlane`, `LINGOslots`, `LINGOarcade`, `LINGOlibrary`, `LINGOmedia`, `LINGOworld`, and `LegacyXclub`. It classifies Studio, Core, Identity, and Wallet as shared platform capabilities, with Campus and Shield inside LINGOworld. This is consistent with the canonical public-brand hierarchy and should be the portfolio presentation layer; it does not delete the detailed 14-node inventory.
+- Current PR metadata: #548 remains draft and reports `mergeable: false`; #602 remains draft and targets #548's branch; #638 and #640 are draft and target `main`. No branch was rebased or merged.
+- Recommended integration order: first resolve the #548 exact-root/wildcard source and preview acceptance; then reconcile #638's enterprise taxonomy with #602's detailed registry and #640's public directory; then select one canonical registry/validator owner and remove duplicate/conflicting ownership before any merge.
+- Do not merge #602 into `main` while its base dependency is unresolved, and do not merge multiple competing registry/portfolio implementations solely to make branches appear consolidated.
+
+
+## 11. Current merge graph and file-overlap review (2026-11-24)
+
+A fresh PR metadata and complete changed-file inventory review was performed for #548, #511, #515, #523, #638, #640, and #656.
+
+### Direct merge and overlap findings
+
+- **#548** is open/draft, reports `mergeable: false`, targets `main`, and changes 19 files including `index.html`, `assets/flagship-home.css`, `assets/flagship-home.js`, and `worlds/index.html`. Its exact-root Worker and preview build changes remain the foundational flagship site work.
+- **#640** is open/draft, reports `mergeable: true`, targets `main`, and overlaps #548 on all four of those flagship presentation paths. A direct merge of both without a single chosen source-of-truth implementation would risk overwriting homepage, navigation, and /worlds/ work. Keep #640 as the canonical directory/presentation proposal; reconcile its overlapping files against #548 before either merge.
+- **#602** remains stacked on #548's branch, so its 14-realm registry and expanded /worlds/ implementation must not be merged to `main` until #548's base is resolved. It also overlaps the public directory implementation in #640. The detailed 14-node registry and eight-portfolio public presentation should be reconciled as data model vs presentation, not treated as competing replacement implementations.
+- **#511** is open/draft and targets `main`; its 28-file master registry/dependency-graph baseline includes ADR-002 and identity/wallet contracts. It is the appropriate owner for the canonical dependency graph, but its backend decision record must be reconciled with #515 and the later Firebase staging branches before it is accepted.
+- **#515** is open/draft, targets `main`, and changes only `docs/SUPABASE-PRIMARY-BACKEND-ARCHITECTURE.md`. It is an architecture proposal, not a live backend migration or deployed service. Do not treat the proposal as authority while Firebase staging is being built.
+- **#638** is open/draft, targets `main`, and changes nine files including `worker.js`, Studio registry/validator files, and `studio/index.html`. Its enterprise module registry can be reconciled with #511's dependency graph, but the Worker and Studio page must be checked against existing owners before merging.
+- **#523** is open/draft, reports `mergeable: false`, targets `main`, and adds a control-room page plus release/runbook documentation and Studio Hub. It is not a substitute for actual runtime observability, live integration, or release evidence.
+- **#656** is open/draft, targets `main`, and contains the isolated manual hosted-runner probe plus its recovery runbook. It is the canonical safe CI startup diagnostic; it must be manually dispatched by a repository owner because this connector has no dispatch action.
+
+### Recommended consolidation sequence
+
+1. Resolve the #548 exact-root/preview source and its reported mergeability conflict first.
+2. Reconcile #640's overlapping homepage and directory files with #548, preserving the canonical eight-portfolio presentation and 14-realm registry data.
+3. Reconcile #511, #638, #602 and #515 into one canonical registry/dependency/backend architecture decision, with explicit file ownership and no duplicate validators.
+4. Keep #654–#659 as dependent identity and SAAAE staging slices; do not merge dependent branches out of order.
+5. Keep #523 as a later presentation/runbook integration after real runtime telemetry is available.
+6. Use #656 for the manual hosted-runner diagnostic; do not activate G02 as a workaround.
+
+This is a file-overlap and metadata review, not a merge simulation. GitHub's `mergeable` field is only a provider-reported snapshot and does not replace fetching the current merge base, reviewing the complete diff, and executing exact-head CI.
+
+
+## 12. Post-update Actions startup recheck (2026-11-24)
+
+After the merge-graph update, six newer LINGO Ecosystem Registry Validation runs were inspected: `45416184637`, `45416166572`, `45416161205`, `45416151092`, `45416143495`, and `45416138117`. All six concluded `startup_failure`; the Jobs API returned **zero jobs** and the Artifacts API returned **zero artifacts** for every run. This confirms the same pre-job startup failure signature across the registry validation workflow as well as the earlier Static CI, G02 image-build, and Crimson Smoke workflows. It still does not identify the provider-side root cause or indicate a test failure. No retry, dispatch, or runner action was taken.
+
+
+
+## 13. Parallel branch-source verification (2026-11-24)
+
+A further source-level review inspected exact PR branch content and changed-file inventories for #548, #640, #511, #638, and #523. No merge, deployment, provider mutation, or workflow dispatch was performed.
+
+### Flagship homepage and directory — #548 / #640
+
+- Complete changed-file inventories confirm #548 and #640 both change `index.html`, `assets/flagship-home.css`, `assets/flagship-home.js`, and `worlds/index.html`. #640's branch is based on `main`; #548 remains the conflicting foundational branch. These are competing edits to the same four canonical presentation paths and must be consolidated into one reviewed file owner before merge.
+- Exact #640 branch reads returned homepage blob `07e38fd25838e321a320a46c7fdf620088f8c11b`, directory blob `2952a5f4a076383c0808c05afc96d7aa0bb9e0ac`, and shared stylesheet blob `47c89c8d40eecbb4ac3eb6dec906423b328ac574`.
+- A source-level assertion pass confirmed exactly eight canonical portfolio cards on both pages: `LINGOlegacy`, `LINGOlane`, `LINGOslots`, `LINGOarcade`, `LINGOlibrary`, `LINGOmedia`, `LINGOworld`, and `LegacyXclub`. Both pages use the canonical apex URL and Contact route; the checked forbidden/stale product routes are not linked. Responsive CSS breakpoints are present.
+- #640 authors a Node test suite and a least-privilege, path-filtered workflow. The source assertions were inspected, but the Node suite and workflow have not executed because GitHub Actions startup failures still occur before job creation.
+- #640 also adds a separate public identity record for “THE PRESTIGIOUS HOUSE OF DUSSE” containing the founder display name “Zavione” and a debut date. This is outside the eight LINGO public portfolio cards and is not established by the existing LINGO portfolio canon in this reconciliation. Keep that disclosure out of a public merge until the brand owner explicitly confirms the exact public wording and date.
+
+### Master registry and backend decision — #511
+
+- #511's ADR-002 explicitly makes no provider selection and prohibits schema migration, production configuration, account creation, data writes, and provider cutover until a named owner decision is recorded.
+- This is consistent with the unresolved Firebase/Supabase architecture boundary. Preserve the ADR as the decision record; do not infer that the presence of either provider connector authorizes a backend choice.
+
+### Enterprise registry and Studio dashboard — #638
+
+- Exact branch reads confirm a 22-module, read-only Studio registry proposal, a validator that rejects write scopes and requires evidence for `LIVE_VERIFIED`, and tests for module uniqueness, sensitive-domain scopes, dashboard data sources, CSP, and credential exclusion.
+- The PR description's statement that Supabase had zero public application tables and zero project migrations is not supported by the current recovery evidence. In this session, project discovery returned provider status `ACTIVE_HEALTHY`, but database table and migration reads failed with authentication errors; the connector evidence does not establish zero tables or migrations. Correct the PR description and any copied status statements to “not verifiable with current connector access” before acceptance.
+- #638 changes the shared `worker.js` CSP to permit `https://api.github.com` in `connect-src`. This is a source-only proposal, not a deployed policy change; review the exact browser request requirement and confirm no other page or Worker behavior is unintentionally affected before merge.
+- Its own PR description records that main advanced after the branch was created; rebase/base synchronization and rerun of the exact-head tests remain required.
+
+### Operations control room — #523
+
+- The control-room source performs same-origin HTTP probes and public GitHub metadata reads. It labels provider bindings as observations rather than proof of data integrity, and its release summary is explicitly hard-coded to remain locked/not certified even if probes respond.
+- The UI does not provide independent runtime certification, CI execution, artifact provenance, or deployment attestation. It remains a read-only presentation proposal; its own description confirms that HTML parsing, JavaScript syntax, browser, accessibility, security, integration, and load tests have not run.
+- Keep #523 behind the source/runtime evidence work and do not treat the dashboard's visual status as a release gate.
+
+### Disposition
+
+The public directory has a promising canonical eight-card source candidate, but overlapping homepage ownership, unexecuted tests, and the unconfirmed independent-brand disclosure prevent merge acceptance. The enterprise register is structurally guarded but its Supabase inventory claim needs correction and its base needs synchronization. The backend ADR remains appropriately undecided. All five PRs remain review proposals; production remains PROTECTED HOLD.
+
+
+### Additional structural spot-check — PR #638 registry
+
+- Re-read the exact #638 branch registry, validator, test file, and Worker source. The registry parses as JSON and contains **22 unique modules** and **7 provider records**.
+- An independent structural spot-check found no duplicate module IDs, unknown readiness values, write-enabled module records, declared `:write` scopes, missing baseline evidence requirements, missing required domain read scopes, or violations of the declared global read-only controls.
+- The committed test file contains **12** Node test cases. These are authored tests only; neither the committed validator nor the Node test runner has executed in CI. This spot-check is not a substitute for the JSON Schema validator, exact-head Node execution, browser QA, or independent review.
+- The Worker CSP proposal adds the narrowly scoped GitHub API origin to `connect-src`; no live Worker policy was changed.
+
+
+## 14. AppDeploy resource and runtime error recheck (2026-11-24)
+
+Read-only AppDeploy account and application checks were repeated for the Studio Hub and Hello The Lingo Legacy.
+
+### LINGO Studio Hub
+
+- App record remains deployed/ready at `https://lingo-legacy-studio-hub-nhda3b.v2.appdeploy.ai/`; this is preview status, not production certification.
+- Resource-only inventory includes `public/resources/visuals/lingoapparel-world.jpeg`, the same asset path implicated by two frontend load errors in the app's error record.
+- Therefore the finding is **not simply “asset absent from resource inventory.”** The inventory does not prove the file is correctly bound, served at the expected public URL, or decodable by the browser. A fresh controlled browser/network fetch of the exact URL and resource metadata/content-type check is still required.
+- The latest returned QA snapshot has zero frontend/network errors, but it is timestamped earlier than the two later asset errors. Treat it as stale relative to those errors.
+
+### Hello The Lingo Legacy
+
+- App record remains deployed/ready at `https://hello-the-lingo-legacy-ois1rj.v2.appdeploy.ai/`; deployment readiness does not resolve the runtime issue.
+- The error record includes a frontend aborted-request rejection and a backend `AppDatabaseGatewayUnavailable` HTTP 503 from the `media-health-monitor` cron handler.
+- The cron inventory currently reports the monitor enabled, last status `success`, and failure count `0`. This later scheduler status is useful but does not erase the earlier backend 503 or independently verify the user-facing realtime/media path.
+- The latest returned QA snapshot reports no frontend/network errors but predates the newer frontend abort. A fresh browser/realtime and backend gateway diagnostic is still required.
+
+### AppDeploy write boundary
+
+- Deployment access remains expired (`deploy_app_allowed: false`). No app source, resource binding, deployment, build, or billing action was changed.
+- Continue using GitHub as the source of truth. Do not upload or bind a replacement asset merely because an older error log names the path; first verify the exact resource bytes, serving path, and current browser request.
+
+
+## 15. Updated reconciliation PR CI check (2026-11-24)
+
+- The latest reconciliation branch head is `8c0e1ead834e1b169ffa7387d143c1abb352ed96`.
+- PR #661 remains open and draft. The branch is **14 commits ahead and 0 behind** `main`; the compare endpoint reports one changed file with 335 additions and no deletions.
+- The exact-head Crimson Smoke UI static-validation run `45418815694` completed with conclusion `startup_failure`. Its Jobs API returned **0 jobs** and its Artifacts API returned **0 artifacts**.
+- The new documentation commit therefore has no CI execution evidence. This is the same pre-job startup failure signature; it is not a documentation test failure or a successful validation.
+- No merge, deployment, runner registration, workflow dispatch, or production mutation was performed.
+
+
+## 16. Homepage branch ancestry and conflict resolution refinement (2026-11-24)
+
+A direct content and ancestry comparison refines the earlier “four-file overlap” finding:
+
+- PR #548 head is `ops/website-live-readiness-2026-11-11`; PR #640 head is `feat/canonical-world-directory-and-operations-2026-11-21`.
+- The two branches have **identical blob SHAs** for `assets/flagship-home.css` (`47c89c8d40eecbb4ac3eb6dec906423b328ac574`) and `assets/flagship-home.js` (`5ae4d5109c425c42ebc056d2d551598ed9f6ca54`). Those two files are not substantive content conflicts.
+- The two branches have different `index.html` and `worlds/index.html` blobs. These are the actual content-level reconciliation points.
+- PR #640 compares to `main` as 36 commits ahead and 0 behind, with six changed files. PR #548's branch compared to PR #640 is 64 commits ahead and 33 behind and contains a much broader set of unrelated workflow, Firebase, mobile, engine, and infrastructure changes. This branch divergence is not a safe basis for merging #548 wholesale.
+- PR #640's branch source contains a separate “THE PRESTIGIOUS HOUSE OF DUSSE” identity section, explicitly described as neither a ninth LINGO portfolio card nor a verified destination route. It includes founder display name “Zavione” and debut date “November 7, 2021.” This is a distinct public brand disclosure, not part of the eight-card LINGO taxonomy; obtain explicit brand-owner approval of the wording and date before public release.
+- Recommendation: keep #548 draft as the exact-root Worker provenance/preview evidence and do not merge its broadly diverged branch wholesale. Treat #640 as the narrower current-main-based public-directory candidate, subject to the separate Dusse disclosure approval, manual execution of its Node/workflow tests, independent browser/accessibility/security QA, and final review. Its branch being 36/0 does not waive any of those gates.
+
+This refines the earlier overlap note: CSS/JS are byte-identical; homepage and directory HTML require the focused reconciliation. No files were changed in either PR branch and no merge was performed.
+
+
+## 17. Focused CI path-filter repair on PR #640 (2026-11-24)
+
+- Static inspection of `.github/workflows/world-directory-canon.yml` found an asymmetry: the `pull_request` path filter included `index.html`, but the `push` to `main` path filter omitted it. A homepage-only update after merge could therefore fail to trigger the canonical directory regression workflow.
+- Corrected the PR #640 branch workflow by adding `index.html` to the `push.branches: [main].paths` list. The pull-request filter, `ubuntu-latest` runner, `contents: read` permission, and `node --test scripts/tests/world-directory-canon.test.mjs` command were left unchanged.
+- Verified the updated branch workflow content contains `index.html` in both path filters. The seven authored Node test cases remain unexecuted because repository Actions startup failure prevents job creation.
+- PR #640 head is now `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`. This is a focused CI-trigger repair only; it does not authorize merging the PR or public release.
+
+
+### Exact-head CI result after the PR #640 workflow repair
+
+- Four workflows were associated with repaired PR #640 head `fdb4dd13ab9d3382c1053e77e6875f70486d90bc`: Lingo Legacy Static CI (`45421048353`), Crimson Smoke UI (`45421045314`), Canonical World Directory (`45421042242`), and G02 Runner Image Build (no publish) (`45421038886`).
+- All four completed with `startup_failure`; each returned **zero jobs and zero artifacts**.
+- The path-filter repair is source-verified, but the canonical directory test did not execute. This confirms the repository-wide pre-job Actions blocker still affects the PR's own dedicated workflow and is not isolated to unrelated CI.
+
+
+
+## 18. Studio enterprise registry source audit and exact-head CI status (2026-11-24)
+
+- Refreshed PR #638: `docs/destiny-engine-enterprise-stack-register-main-sync-2026-11-21`, head `a4f75223927541bdc536fe6ef3adc2ab97b271ec`; PR remains OPEN / DRAFT / UNMERGED.
+- Read the registry JSON, JSON Schema, Node validator, 12-case test file, and dedicated workflow. Static review confirms the registry's 22-module inventory and declared read-only posture; the validator enforces no write authority, no `:write` permission scopes, bounded domain scopes, required evidence fields, and deny-by-default global controls.
+- Additional validation limitation identified: the JavaScript validator checks LIVE_VERIFIED evidence values only for non-empty strings; it does not enforce the schema's `observedAt` date-time format or `confidence` enum. The schema file is present, but the dedicated workflow does not invoke a JSON Schema validator. These are validation-coverage gaps, not proof that current records are malformed. Add executable schema validation and negative tests before accepting the registry contract.
+- The test file includes 12 tests, including checks for duplicate module IDs, write authority, unknown readiness values, bounded domain scopes, dashboard source, CSP restriction, secret-pattern absence, and correlated evidence. These tests remain authored but unexecuted.
+- Six workflows are associated with the exact PR #638 head: Studio Sandbox Guard (`45092265432`), Worker Route Security (`45092266502`), G02 Runner Image Build (`45092264486`), Lingo Legacy Static CI (`45092263471`), Studio Enterprise Module Registry (`45092262526`), and Crimson Smoke UI (`45092261574`). All six concluded `startup_failure`. The dedicated registry workflow, static CI, and Crimson Smoke UI each returned zero jobs and zero artifacts.
+- This is consistent with the already observed repository-wide pre-job Actions failure. It is not a failing test report and does not establish the provider/root cause. No runner, workflow, repository setting, provider, or production configuration was changed.
+- PR #638 remains unaccepted pending executable Node and JSON Schema validation, correction of any validation findings, independent review, and evidence that the Actions jobs actually instantiate and complete.
+
+
+
+## 19. Explicit owner authorization for production release progression (2026-11-24)
+
+- The owner explicitly authorized lifting the protected hold for full production merges and deployments, after being asked to distinguish that scope from staging-only authorization.
+- This authorization is recorded as permission to proceed with the production release process and to perform otherwise-approved release actions when their required controls pass. It is not a waiver of required CI, security, independent review, identity, data migration, rollback, legal/compliance, or production acceptance gates.
+- Current exact-head evidence still includes Actions `startup_failure` with zero jobs/artifacts on PR #638 and #661. G02 remains FAIL / UNVERIFIED; backend authority and staging identity remain unresolved; outstanding runtime and rollback evidence remains incomplete.
+- Therefore, the authorization is active, but the production release gate is NOT YET SATISFIED. No PR was merged, no branch protection or environment rule was changed, no production deployment was initiated, and no runner/provider/production configuration was mutated in response to this authorization.
+- Next execution order: (1) restore and prove GitHub Actions job execution on exact candidate commits; (2) close source/security review findings and obtain independent review; (3) resolve identity/backend ownership and migration/restore evidence; (4) verify staging parity, smoke tests, rollback and monitoring; (5) evaluate each production PR/deployment independently against its checks and owner approvals. Do not batch-merge unrelated branches or treat the authorization as blanket approval for unreviewed code.
+
+
+## 20. Exact-head reconciliation refresh (2026-11-24)
+
+- Prior inspected PR #661 head: `9b07196cfb107a0ffb3c52c763646d6ef65e32d7`; the evidence below is the exact-head result for that commit. This refresh was then committed to the same documentation-only PR as `7cc44bbb308c10f3c96e0ad6a1c0d7fcbd0f9bed`. PR #661 remains OPEN / DRAFT / UNMERGED and changes only this reconciliation document. The PR had no submitted independent reviews and no inline review threads at the time of the inspection.
+- Three workflow runs associated with this exact commit were inspected: Lingo Legacy Static CI `45425574710`, Crimson Smoke UI static validation `45425570235`, and G02 Runner Image Build (no publish) `45425572411`.
+- All three runs completed with conclusion `startup_failure`. For each run, the Jobs API returned **0 jobs** and the Artifacts API returned **0 artifacts**. No steps, runner identity, test results, or build artifacts exist for these attempts.
+- The active repository ruleset `27403956` (“Lingo - protect main”) was re-read. Its configured rules are deletion protection, non-fast-forward protection, and Copilot code review on push. It does not configure required pull-request approvals or required status checks. Its ref include/exclude arrays are empty; do not infer narrower scope from the ruleset name.
+- The isolated hosted-runner probe workflow was re-fetched from `main`. It remains manual-only (`workflow_dispatch`), uses `ubuntu-latest`, has `contents: none`, and performs a minimal environment capture without checkout, third-party actions, secrets, network calls, artifacts, or production access. The connected GitHub integration in this session has no workflow-dispatch action, so the probe cannot be initiated here.
+- G02 remains disabled/unverified. No runner registration, workflow dispatch, merge, branch-protection mutation, staging mutation, or production deployment was performed.
+- **Disposition:** authorization to progress production release remains recorded, but PR #661 itself is a documentation-only coordination change and does not satisfy CI execution, independent review, staging acceptance, rollback, monitoring, or product-specific production gates. Continue with focused source reconciliation; do not merge unrelated draft PRs as a batch.
+
+
+## 21. Owner authorization follow-up and live provider access refresh (2026-11-24)
+
+- The repository connection reports authenticated GitHub user `thelingolegacy-blip` and repository permission `admin: true`. The connected GitHub fetch integration nevertheless rejects direct reads of the repository Actions runners, Actions permissions, collaborators, and legacy branch-protection endpoints; it exposes no workflow-dispatch or Actions administration operation. The latest run on this PR's exact current head `ff355ef032d8058e1a2c56de8b7dcff29af8eec5` is Static CI run `45426061109`, conclusion `startup_failure`; Jobs API returned **0 jobs** and Artifacts API returned **0 artifacts**. This is a fresh failure after the preceding evidence refresh, not a test result.
+- The branch `main` remains at `3fe099eb11329cc333ffa5a1ea36affcd0375343` in this refresh. The legacy branch endpoint reports `protected: false`, protection disabled, and no required status checks. Active ruleset `27403956` still has only deletion, non-fast-forward, and Copilot code-review-on-push rules; it does not require independent PR approvals or passing status checks. Do not merge the coordination PR or any product PR solely because repository permission is admin or owner authorization exists.
+- Cloudflare account inventory was refreshed. The account has exactly one accepted member; that member's 2FA is disabled and account-level `enforce_twofactor` is false. The current SAAAE Access application `LINGO SAAAE Staging Privileged Executor` has **zero attached policies**. Its Access identity provider is restricted to account members. The zone route inventory has no `saaae-staging.thelingolegacy.com` route. The SAAAE application remains fail-closed; no allow policy, route, or Worker deployment was created. Enabling account-wide 2FA enforcement before the sole member enrolls 2FA could lock out the account owner, so no enforcement mutation was made.
+- Cloudflare D1 inventory shows five databases, but each returned `num_tables: 0`, including `lingo-game-engine-staging-20261107` and `asklingo-v2-staging-20261122`. Database existence is not SAAAE schema/runtime evidence. No D1 migration was applied.
+- Supabase organization and project discovery returned one project `zoksxavxmgnkrthselek` in `us-west-2`, status `ACTIVE_HEALTHY`, PostgreSQL 17.6.1.121. However, the table-inspection request failed with password authentication failure for the connector's read-only database user, and the security-advisor request returned a hibernation response for a different internal project identifier. Therefore the Supabase project is discoverable but schema/security state is **not verified** in this session. No SQL, migration, auth configuration, or project mutation was performed.
+- PR #515's source explicitly labels Supabase as a candidate option, not an accepted primary backend; it states the governing ADR remains provider-neutral and Firebase Auth is retained for compatibility until identity mapping and token/RLS tests pass. PR #654's Firebase branch still documents placeholder platform options, no connected staging Firebase app, and outstanding emulator/Flutter verification. Backend authority is consequently still unselected; do not infer a decision from the existence of a Supabase project.
+- **Required external actions to unblock:** (1) use an authorized GitHub administrator session with Actions administration access to dispatch `.github/workflows/isolated-hosted-runner-probe.yml` and inspect the provider-side runner startup; (2) establish/enroll Cloudflare account MFA before enforcing it and invite/attest a distinct human reviewer through the approved identity process; (3) choose and document the backend authority through the canonical ADR, then repair and verify the applicable database connector; (4) register and verify the actual staging Firebase app/project only if Firebase remains the selected identity compatibility provider. Do not fabricate identities, use the requester as reviewer, or populate the operator registry with synthetic attestations.
+- **Disposition:** owner authorization is reaffirmed for release progression, but the release gates remain unsatisfied. No production promotion, unrelated PR merge, privileged Access grant, D1 schema mutation, Supabase schema mutation, runner registration, or production resource change was performed.
+
+
+## 22. Cross-branch recovery reconciliation (2026-11-24)
+
+- The main-branch G02 staging sentinel currently contains a hard-disabled job condition false && inputs.confirm_staging_only == 'STAGING'. The same workflow on PR #655 branch staging/firebase-project-isolation-20261123, and its dependent PR #658/#659 branches, has the safe staging-only condition inputs.confirm_staging_only == 'STAGING' and targets only labels self-hosted, linux, x64, lingo-legacy-g02-staging. This removes the source-level hard-disable in those review branches; it does not provision a staging host, register a runner, or prove that the workflow has executed. Keep the main-branch sentinel unchanged until the staging dependency chain is reviewed and integrated.
+- PR #655 is OPEN/DRAFT and targets the staging server-authoritative foundation branch, not main; PR #658 and #659 are stacked on that staging branch and each other. The chain cannot be merged as an independent parallel batch. PR #655 records that the Cloudflare account inventory did not contain lingo-game-engine-staging; its historical Worker evidence is stale and the source-only Firebase staging binding does not prove a live Worker or Firebase project exists.
+- PR #654's Firebase replacement baseline proposes Firebase Auth + Firestore as a narrow first integration with default-deny Firestore rules and no protected writes. Its own checklist says the staging Firebase project, app registrations, provider enablement, emulator tests, Flutter builds, and CI execution remain unverified. The repository's infrastructure/registry/firebase-projects.json identifies lingo-legacy-staging as the intended non-production project ID but explicitly marks deployment verification NOT_VERIFIED and client configuration as placeholders.
+- The accepted greenfield architecture in PR #594 ADR-0001 is provider-neutral Go modular services + PostgreSQL transactional authority per migrated domain, with OIDC identity adapter and Cloudflare edge. It explicitly defers managed-provider selection and does not select Supabase as primary authority. PR #515 is only a Supabase candidate assessment and retains Firebase Auth as compatibility identity until token/account mapping and RLS tests pass. Therefore do not designate either the discovered Supabase project or Firebase as the universal transactional authority. Keep the ADR's one-authority-per-domain rule; use the existing narrow Firebase compatibility/staging work only for the explicitly scoped auth/mobile integration while the PostgreSQL hosting/provider decision remains open.
+- Actionable source remediation status: PR #655 and downstream SAAAE branches already contain the staging-only sentinel condition. No new source edit is required to remove the hard-disable from those branches. The required next execution dependency is a real isolated staging runner with the exact staging labels and a verified host/service; no such runner/host is evidenced by the connected GitHub or Cloudflare inventory.
+- Disposition: source-level staging gate correction exists in a draft dependency chain, but no staging runtime is available to execute it. Keep the production runner, production Worker routes, and production identity/data untouched. Continue to block merge/promotion until a distinct staging runner, independent reviewer, real staging provider configuration, and passing evidence are available.
+
+
+## 23. Latest-head CI and SAAAE source review (2026-11-24)
+
+### Exact-head CI refresh
+The new PR #661 head d87ba117e0556c923a82cdd15fa17b2fe021b40c triggered three PR checks:
+- Crimson Smoke UI — static validation: run 45427312340, conclusion startup_failure.
+- Lingo Legacy Static CI: run 45427308948, conclusion startup_failure.
+- G02 Runner Image Build (no publish): run 45427306079, conclusion startup_failure.
+All three runs have zero Actions jobs. No runner identity, executed step, log, or artifact exists for this head. The reconciliation commit itself therefore has no executed CI validation.
+
+### SAAAE source-review findings in PR #659
+- The Cloudflare Access JWT verifier checks RS256, issuer, audience, subject, expiry, not-before and signature against the Access signing keys. Its in-memory JWKS cache returns a miss immediately when a previously cached key set does not contain a new kid; it does not refresh on an unknown kid until the cache expires. This is a key-rotation availability defect to correct and test before certification.
+- The operator registry checks that person_ref and independence_attestation_id are present, unique, and accompanied by a configured attestation_issuer string. It does not cryptographically verify an attestation, query an independently trusted workforce source, or validate issuer-signed proof. Therefore those string fields are not evidence that two distinct natural persons have been independently verified. The code must not be treated as satisfying the independent-human approval gate until a verifiable attestation mechanism is implemented and independently reviewed.
+- Cloudflare Access application inventory previously showed zero attached Access policies and no dedicated SAAAE staging route. The Worker source and unit tests do not establish live Access policy enforcement, route isolation, or deployment.
+- These are source-review findings, not runtime exploit demonstrations. Keep SAAAE fail-closed and do not configure an allow policy or deploy until the code review, live policy, independent identity evidence, and staging tests pass.
+
+### Current dependency disposition
+PR #654 (Firebase), #655 (staging project isolation), #658 (staging game-engine SAAAE), #659 (Cloudflare Access executor boundary), and #661 (reconciliation) remain open and draft. Their dependency bases are different; do not merge them as a single unordered batch. The source changes and test definitions remain review material until hosted CI executes and independent review is recorded.
+
+
+## 24. Follow-up source remediation and exact-head CI refresh (2026-11-24)
+
+### PR #659 JWKS key-rotation correction
+- Updated `src/auth/cloudflare-access-jwt.mjs` so a still-fresh JWKS cache is reused only when it contains the requested `kid`. An unknown `kid` now causes a JWKS refresh; if refresh fails or the key remains absent, verification still fails closed.
+- Added a focused unit test in `scripts/tests/cloudflare-access-jwt.test.mjs` that primes the cache with the original key, then verifies a token signed by a newly rotated key and asserts a second JWKS fetch.
+- Source and test edits are on the existing PR #659 staging branch. Latest source-file commit: `02d8d2095f1d62651244d1fd2eb1d92db5fe3121`. The code and test were committed, but hosted CI execution and local test execution have not been evidenced. Do not mark the correction tested or certified yet.
+- The independent-human attestation gap remains open: the current registry's person and attestation fields are caller/configuration strings, not issuer-signed evidence. No trusted workforce attestation integration was invented or enabled.
+
+### PR #661 exact-head CI
+- Latest reconciliation head inspected: `69b997ce746ea0b6628a53f54e74596e427175e3`.
+- Exact-head PR checks: Crimson Smoke UI — static validation run `45427929351`, Lingo Legacy Static CI run `45427931463`, and G02 Runner Image Build (no publish) run `45427927878`; all concluded `startup_failure`.
+- No Actions jobs were instantiated for these runs. There are no provider-assigned runner IDs, executed steps, job logs, or artifacts to certify. Combined commit status returned no status entries.
+- The separate PR #659 source branch update is not a passing CI result. The available commit-run reader only reports pull-request-triggered runs; an empty result from that reader is not evidence that push-triggered validation succeeded.
+
+### Remaining release disposition
+- PRs #654, #659, and #661 remain open and draft; no merge or production deployment was performed.
+- Firebase project/app configuration, emulator execution, Flutter build/test evidence, isolated SAAAE runner provisioning, Cloudflare Access allow-policy/route enforcement, and independently verified human attestations remain unproven.
+- Production stays protected. Do not merge the stacked staging dependency chain, activate the production sentinel, attach privileged Access policies, or promote Workers until the exact staging dependencies and independent release evidence pass.
+
+
+## 25. Post-update exact-head CI result (2026-11-24)
+
+After Section 24 was committed, PR #661 advanced to head `15713d34ea80416320d3a0db87985781c7bc0ad9`. The exact-head Actions refresh returned:
+- G02 Runner Image Build (no publish): run `45440406117` — `startup_failure`.
+- Crimson Smoke UI — static validation: run `45440403385` — `startup_failure`.
+- Lingo Legacy Static CI: run `45440400925` — `startup_failure`.
+All three runs completed before job instantiation; no jobs or runner evidence were returned. Combined commit status contains no status entries. This newest reconciliation head is therefore also unvalidated by executed CI.
+
+
+## 26. SAAAE push-trigger validation and runner-access refresh (2026-11-24)
+
+### Push-trigger validation on the SAAAE source branch
+The repository-wide Actions API was queried directly for push-triggered runs on `security/saaae-cloudflare-access-executor-staging-20261123`. It returned 22 runs in the first page; the newest three correspond to the JWT source and test commits:
+- `45440260224` — `02d8d2095f1d62651244d1fd2eb1d92db5fe3121`, SAAAE Provisioning Staging Validation, `startup_failure`.
+- `45440183126` — `b3a3e2bd1d4797706a8c31f15df94913140cbb19`, same workflow, `startup_failure`.
+- `45440178698` — `eb680e82ac8dbb933015a6bc573f1db6684e9aab`, same workflow, `startup_failure`.
+The latest run was inspected through the run and jobs endpoints; its jobs array is empty. Therefore the JWT test suite did not execute. The workflow is configured to run Node 22 syntax checks and focused Node tests, but configuration is not execution evidence.
+
+### Latest PR #661 exact-head checks
+The exact-head Actions API query for `2203c98f38491bf0f2c1b577b5d726ad02813872` returned:
+- `45440487041` — G02 Runner Image Build (no publish), `startup_failure`.
+- `45440483025` — Crimson Smoke UI — static validation, `startup_failure`.
+- `45440479145` — Lingo Legacy Static CI, `startup_failure`.
+All three were inspected; each has an empty jobs array. No runner identity, executed steps, logs, or artifacts exist for this head.
+
+### Independent review and available action surface
+- PR #659 has no submitted review records. PR #654 has one COMMENTED review from the repository owner; that is not an independent approval.
+- The connected GitHub action catalog exposes read-only workflow/run inspection and job rerun operations, but no workflow-dispatch, Actions administration, or runner registration operation. The generic GitHub fetch surface is GET-only. No dispatch or rerun was attempted because these startup-failure runs contain no jobs to retry.
+- The SAAAE operator registry still validates configured strings for person references and attestation issuer/ID; it does not verify issuer-signed attestations or consult an independently trusted workforce identity authority. This remains a hard security gate, not a documentation-only checkbox.
+
+### Disposition
+The JWKS rotation source correction is committed, but its test has not run. CI startup is failing on both PR and push events, and no independent security approval or staging runner evidence exists. Keep the SAAAE executor disabled and all production resources protected.
+
+
+## Live execution update — 2026-11-24
+
+### CI admission
+- Latest Core recovery runs previously inspected: `45494361261`, `45494363413`, `45494358311`; all `startup_failure`, zero jobs and zero artifacts.
+- Web command-center PR #44 new-head runs `45495968646` and `45496202532`; both `startup_failure` before job creation.
+- No connected GitHub action in this session exposes workflow dispatch or runner administration. The exact admission root cause is not returned by run/job APIs. Owner/admin billing and effective Actions policy inspection plus GitHub Support escalation remain the correct next steps.
+- Do not conflate a successful Cloudflare preview with hosted GitHub Actions acceptance.
+
+### Cloudflare and SAAAE
+- Account-level two-factor enforcement is false; exactly one accepted account member is returned and that member's account-level 2FA is false.
+- SAAAE staging privileged-executor Access application has zero attached policies.
+- askLINGO staging D1 contains all six SAAAE schema tables, but schema presence does not prove runtime enforcement.
+- Game-engine staging D1 lacks the six SAAAE tables, and no `lingo-game-engine-staging` Worker is present in the live Worker inventory.
+- Production `thelingolegacyv-5` latest uploaded version is v378, while the active 100% deployment remains v137. This is drift, not deployment authorization.
+- All Cloudflare reads were non-mutating. No policy, member, MFA, D1 migration, Worker, route, DNS, secret, production setting, or billing change was made.
+
+### Design integration
+- Existing Web PR #44 was advanced rather than creating another project: Figma Enterprise Foundation tokens integrated into global CSS; command-center palette and responsive grid aligned; eight canonical portfolio entries added; migration document updated.
+- Latest branch head: `67664892cd2c86f42ea278d6938591119d0f0a66`. Source read-back passed. Actions run `45496202532` failed at startup. Screenshot comparison, browser/device QA and runtime acceptance remain open.
+
+### Current gate disposition
+- G02: FAIL / UNVERIFIED; no authorized live runner-host evidence.
+- G03: BLOCKED by Actions execution recovery.
+- G04: BLOCKED by SAAAE runtime integration, operator separation/MFA, staging migration and privacy/security acceptance.
+- G05–G11: BLOCKED; each retains independent acceptance requirements.
+- Production: protected; no promotion performed.
+
+
+### GitHub Core repository governance read
+- The connected integration can read active repository ruleset `Lingo - protect main` (ID `27403956`), enforcement `active`.
+- The returned ruleset contains deletion protection, non-fast-forward protection, and Copilot code review on push.
+- This ruleset payload contains no required-status-check rule. The separate branch-protection endpoint returned 403 / Resource not accessible by integration, so this inspection does not establish the complete effective protection configuration.
+- The private Web repository ruleset endpoint returned 403 because the current GitHub plan/connection does not expose that capability. Web branch governance remains UNVERIFIED.
+- No ruleset or branch-protection setting was changed.
