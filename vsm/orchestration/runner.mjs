@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
 import { spawn } from "node:child_process";
 import {
   createRunConfig, preflightSecrets, scopedTrackEnvironment, retryDecision,
@@ -47,6 +48,48 @@ async function pruneArtifacts(root, retentionDays = RUN_DEFAULTS.ARTIFACT_RETENT
   }
 }
 
+
+async function preflightResources(rootDir, config) {
+  const cpuCount = os.cpus()?.length || 0;
+  const freeMemoryMb = Math.floor(os.freemem() / 1_048_576);
+  const disk = await fs.statfs(rootDir);
+  const freeDiskMb = Math.floor((disk.bavail * disk.bsize) / 1_048_576);
+  const failures = [];
+  if (cpuCount < 1) failures.push("cpu");
+  if (freeMemoryMb < config.PREFLIGHT_MIN_FREE_MEMORY_MB) failures.push("memory");
+  if (freeDiskMb < config.PREFLIGHT_MIN_FREE_DISK_MB) failures.push("disk");
+  return { ok: failures.length === 0, failures, cpu_count: cpuCount, free_memory_mb: freeMemoryMb, free_disk_mb: freeDiskMb };
+}
+
+async function preflightNetwork(required, environment, fetchImpl) {
+  const services = [];
+  if (required.some(name => ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"].includes(name))) services.push({ name: "firebase", url: "https://firebase.googleapis.com/" });
+  if (required.includes("CLOUDFLARE_API_TOKEN")) services.push({ name: "cloudflare", url: "https://api.cloudflare.com/client/v4/user/tokens/verify", token: environment.CLOUDFLARE_API_TOKEN });
+  if (required.some(name => ["CI_DEPLOY_KEY", "GITHUB_TOKEN"].includes(name))) services.push({ name: "github", url: "https://api.github.com/rate_limit", token: environment.GITHUB_TOKEN });
+  const results = [];
+  for (const service of services) {
+    try {
+      const response = await fetchImpl(service.url, {
+        method: "GET",
+        redirect: "error",
+        signal: AbortSignal.timeout(8000),
+        headers: { "User-Agent": "LINGO-VSM-Preflight/1.0", ...(service.token ? { Authorization: "Bearer " + service.token } : {}) }
+      });
+      let valid = response.status < 500;
+      if (service.name === "cloudflare") {
+        const body = await response.json().catch(() => ({}));
+        valid = response.ok && body.success === true;
+      } else if (service.name === "github" && service.token) {
+        valid = response.ok;
+      }
+      results.push({ service: service.name, ok: valid, status: response.status });
+    } catch {
+      results.push({ service: service.name, ok: false, status: null });
+    }
+  }
+  return { ok: results.every(item => item.ok), results };
+}
+
 export function createRunController(input, options = {}) {
   const abort = new AbortController();
   let paused = false;
@@ -86,6 +129,20 @@ export async function executeRun(input, {
   const aliasGroups = [["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"], ["CI_DEPLOY_KEY", "GITHUB_TOKEN"]];
   const secretValues = required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0);
   const ledger = createBudgetLedger(config, now());
+  const resourceCheck = await preflightResources(rootDir, config);
+  const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl) : { ok: true, results: [], skipped: true };
+  const preflightCalls = networkCheck.results.length;
+  if (preflightCalls > 0) {
+    const firstTrack = config.tracks[0].id;
+    const charged = chargeBudget(ledger, firstTrack, { toolCalls: preflightCalls, now: now() });
+    if (!charged.ok) ledger.status = "BUDGET_EXCEEDED";
+  }
+  if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
+    const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {} };
+    await atomicJson(path.join(runDir, "summary.json"), failed);
+    await updateStatus(failed.status);
+    return failed;
+  }
   const controllers = new Map();
   const results = {};
   let cancelled = false;
