@@ -25,8 +25,61 @@ for (const token of ["Content-Security-Policy:", "X-Content-Type-Options:", "X-F
   headers.includes(token) ? pass("header " + token) : fail("missing header " + token);
 }
 const manifest = JSON.parse(read("static-site/portfolio.json"));
-if (!Array.isArray(manifest.worlds) || manifest.worlds.length < 12) fail("portfolio manifest must contain at least twelve portfolio entries");
-else pass("portfolio manifest has " + manifest.worlds.length + " entries");
+const EXPECTED_PUBLIC_PORTFOLIOS = [
+  ["lingo-legacy", "LINGOlegacy"],
+  ["lingo-lane", "LINGOlane"],
+  ["lingo-slots", "LINGOslots"],
+  ["lingo-arcade", "LINGOarcade"],
+  ["lingo-library", "LINGOlibrary"],
+  ["lingo-media", "LINGOmedia"],
+  ["lingo-world", "LINGOworld"],
+  ["legacy-x-club", "LegacyXclub"]
+];
+const EXPECTED_RELATED_CONCEPTS = [
+  "LINGO ID",
+  "Universal Legacy Wallet",
+  "LINGO Nexus",
+  "LINGO Studios",
+  "LINGO Towers",
+  "Bridged Gap"
+];
+const worlds = Array.isArray(manifest.worlds) ? manifest.worlds : [];
+if (worlds.length !== EXPECTED_PUBLIC_PORTFOLIOS.length) {
+  fail("public portfolio manifest must contain exactly eight canonical public portfolios");
+} else {
+  for (const [index, [id, name]] of EXPECTED_PUBLIC_PORTFOLIOS.entries()) {
+    const world = worlds[index];
+    if (!world || world.id !== id || world.name !== name || world.node_type !== "public_portfolio") {
+      fail("non-canonical public portfolio at position " + (index + 1) + ": " + String(world?.name));
+    }
+  }
+  pass("exactly eight canonical public portfolios");
+}
+const related = Array.isArray(manifest.related_concepts) ? manifest.related_concepts : [];
+if (related.length !== EXPECTED_RELATED_CONCEPTS.length) {
+  fail("related concepts must contain exactly six preserved non-realm concepts");
+} else {
+  for (const name of EXPECTED_RELATED_CONCEPTS) {
+    const item = related.find((entry) => entry.name === name);
+    if (!item || item.node_type !== "related_concept" || item.counted_as_realm !== false || item.route !== null) {
+      fail("related concept must remain separately classified and unrouted: " + name);
+    }
+  }
+  pass("six related concepts preserved outside the realm count");
+}
+if (manifest.taxonomy?.public_portfolio_count !== 8 ||
+    manifest.taxonomy?.related_concept_count !== 6 ||
+    manifest.taxonomy?.related_concepts_are_realms !== false) {
+  fail("manifest taxonomy metadata does not match the eight-plus-six separation");
+} else {
+  pass("public portfolio and related-concept counts are explicit");
+}
+const manifestIds = [...worlds, ...related].map((entry) => entry.id);
+if (manifestIds.some((id) => typeof id !== "string" || !id) || new Set(manifestIds).size !== manifestIds.length) {
+  fail("manifest identifiers must be non-empty and unique");
+} else {
+  pass("manifest identifiers are unique");
+}
 for (const world of manifest.worlds ?? []) {
   if (!world.href) continue;
   const target = resolve(site, world.href.replace(/^\/+/, ""), "index.html");
