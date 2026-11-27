@@ -263,6 +263,9 @@ export default {
         if (!Number.isSafeInteger(wagerUnits) || wagerUnits < 1 || wagerUnits > MAX_WAGER_UNITS) {
           return json({ error: 'INVALID_WAGER', maxWagerUnits: MAX_WAGER_UNITS, correlationId }, 400);
         }
+        if (!isEvenOption2Wager(wagerUnits)) {
+          return json({ error: 'INVALID_WAGER_ALLOCATION', activePaylines: ACTIVE_PAYLINES, minimumWagerUnits: ACTIVE_PAYLINES, correlationId }, 400);
+        }
         if (typeof idempotencyKey !== 'string' || idempotencyKey.length < 16 || idempotencyKey.length > 128) {
           return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
         }
