@@ -85,4 +85,5 @@ test("math engine validates probability vectors and calculates virtual distribut
   assert.equal(report.variance, 25);
   assert.equal(report.monetary_wagering, false);
   assert.throws(() => math.evaluateVirtualDistribution([{ value: 1, probability: 0.4 }]), /sum to 1/);
+  assert.throws(() => math.evaluateVirtualDistribution([{ value: Number.MAX_VALUE, probability: 0.5 }, { value: -Number.MAX_VALUE, probability: 0.5 }]), /numeric range/);
 });
