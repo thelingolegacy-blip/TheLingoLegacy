@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
-  "generated_at": "2026-11-11",
+  "generated_at": "2026-11-20",
   "canonical_repository": "thelingolegacy-blip/TheLingoLegacy",
   "canonical_branch": "main",
-  "inventory_count": 38,
+  "inventory_count": 39,
   "classification_legend": [
     "CANONICAL",
     "ACTIVE_CANDIDATE",
@@ -276,6 +276,16 @@
       "status": "ACTIVE_CANDIDATE",
       "notes": "game collection candidate; runtime unverified",
       "evidence": "GitHub tree/readme inspection; see Wave 00.2 audit notes",
+      "assignment_status": "PROVISIONAL"
+    },
+    {
+      "full_name": "thelingolegacy-blip/Lingo-enterprise",
+      "status": "ACTIVE_CANDIDATE",
+      "visibility": "PRIVATE",
+      "default_branch": "main",
+      "repository_id": 1459419679,
+      "notes": "Private LINGO Enterprise foundation workspace. Main remains README-only; PR #1 holds the 19-file foundation baseline, PR #3 adds a stacked CircleCI hosted-verification candidate, and PR #5 adds a documentation-only monorepo integration foundation. No application source import, source-of-truth transfer, runner activation, production provisioning, or deployment has occurred. Keep TheLingoLegacy canonical until migration acceptance is proven.",
+      "evidence": "GitHub repository metadata verified 2026-11-20: private, default branch main, repo ID 1459419679. Five branches observed; main tree contains README.md only. Draft PR #1 (enterprise/foundation-baseline), #3 (ci/circleci-hosted-verification stacked on #1), and #5 (integration/monorepo-foundation) remain open/unmerged. Branch API reports protected=false for all five branches; rulesets endpoint returned 403 due GitHub plan restriction.",
       "assignment_status": "PROVISIONAL"
     }
   ],

@@ -11,6 +11,7 @@ const files = [
   'infrastructure/registry/reconciliation-status.json',
   'infrastructure/registry/worker-bindings.json',
   'infrastructure/registry/firebase-projects.json',
+  'infrastructure/registry/pages-projects.json',
 ];
 
 const parsed = {};
@@ -25,15 +26,26 @@ const workers = parsed[files[2]];
 const reconciliation = parsed['infrastructure/registry/reconciliation-status.json'];
 const workerBindings = parsed['infrastructure/registry/worker-bindings.json'];
 const firebaseProjects = parsed['infrastructure/registry/firebase-projects.json'];
-if (repositories.inventory_count !== 38 || repositories.repositories.length !== 38) {
+if (repositories.inventory_count !== 39 || repositories.repositories.length !== 39) {
   throw new Error('Repository inventory count mismatch');
 }
 if (engines.packages.length !== 12) throw new Error('Expected exactly 12 shared engines');
-if (workers.workers.length !== 7) throw new Error('Expected exactly 7 observed Workers');
-if (workers.route_inventory?.observed_routes !== 21 || workers.route_inventory?.route_ids_and_assignments?.length !== 21) {
-  throw new Error('Expected 21 observed Worker routes with complete route ID mapping');
+if (workers.workers.length !== 10) throw new Error('Expected exactly 10 observed Worker scripts');
+const workerNames = workers.workers.map((worker) => worker.name);
+if (new Set(workerNames).size !== workerNames.length) throw new Error('Worker registry contains duplicate script names');
+if (workers.route_inventory?.observed_routes !== 27 || workers.route_inventory?.route_ids_and_assignments?.length !== 27) {
+  throw new Error('Expected 27 observed Worker routes with complete route ID mapping');
 }
-if (workerBindings.workers?.length !== 7) throw new Error('Expected binding observations for all 7 Workers');
+if (workerBindings.workers_checked !== 10 || workerBindings.workers?.length !== 10) {
+  throw new Error('Expected current binding observations for all 10 Worker scripts');
+}
+const bindingWorkerNames = workerBindings.workers.map((worker) => worker.name);
+if (new Set(bindingWorkerNames).size !== bindingWorkerNames.length) {
+  throw new Error('Worker binding inventory contains duplicate script names');
+}
+if (workerNames.some((name) => !bindingWorkerNames.includes(name)) || bindingWorkerNames.some((name) => !workerNames.includes(name))) {
+  throw new Error('Worker binding inventory must exactly cover the Worker script registry');
+}
 if (firebaseProjects.projects?.length !== 3 || firebaseProjects.deployment_verification !== 'NOT_VERIFIED') {
   throw new Error('Firebase project inventory must remain explicit and unverified until live target verification');
 }
@@ -62,4 +74,45 @@ for (const assignment of parsed[files[6]].repository_assignments) {
     throw new Error(`Repository disposition mismatch for ${assignment.repository}: expected ${expectedStatus}, got ${assignment.repository_status}`);
   }
 }
+
+const pagesProjects = parsed['infrastructure/registry/pages-projects.json'];
+if (pagesProjects.projects?.length !== 5 || pagesProjects.observed_at !== '2026-11-20') {
+  throw new Error('Expected five current Cloudflare Pages projects in the live inventory');
+}
+const pagesNames = pagesProjects.projects.map((project) => project.name);
+if (new Set(pagesNames).size !== pagesNames.length) throw new Error('Pages project inventory contains duplicate names');
+if (!pagesProjects.projects.some((project) => project.name === 'my-flutter-app' && project.custom_domains?.some((domain) => domain.name === 'app.thelingolegacy.com' && domain.status === 'active'))) {
+  throw new Error('Active app.thelingolegacy.com Pages custom domain must remain visible in the inventory');
+}
+if (!pagesProjects.projects.some((project) => project.name === 'thelingolegacy-static-backup' && project.disposition === 'HISTORICAL_PRODUCTION_DEPLOYMENT_NOT_RESTORE_TESTED')) {
+  throw new Error('Historical static backup must not be represented as restore-accepted');
+}
+
+
+const backupProject = pagesProjects.projects.find((project) => project.name === 'thelingolegacy-static-backup');
+if (!backupProject?.dns_aliases?.some((alias) => alias.name === 'launch.thelingolegacy.com' && alias.target === 'thelingolegacy-static-backup.pages.dev' && alias.proxied === true)) {
+  throw new Error('Static backup launch DNS alias and proxy state must remain documented');
+}
+if (backupProject.worker_route?.script !== 'lingo-static-backup-proxy' || backupProject.access_application_exact_domain_match !== 'NOT_FOUND_IN_READ_ONLY_QUERY') {
+  throw new Error('Backup route and Access application association must remain explicitly unverified');
+}
+
+
+const flutterPreview = pagesProjects.projects.find((project) => project.name === 'lingo-flutter-firebase-preview');
+const executionPreview = pagesProjects.projects.find((project) => project.name === 'lingo-execution-center-preview');
+const staticBackup = pagesProjects.projects.find((project) => project.name === 'thelingolegacy-static-backup');
+const appProject = pagesProjects.projects.find((project) => project.name === 'my-flutter-app');
+if (flutterPreview?.latest_deployment?.all_stages_idle !== true || flutterPreview.latest_deployment.branch_is_allowlisted !== false) {
+  throw new Error('Flutter preview must remain recorded as queued/not-started for the non-allowlisted audit branch');
+}
+if (executionPreview?.latest_deployment?.all_stages_idle !== true || executionPreview.latest_deployment.path_is_included !== false) {
+  throw new Error('Execution Center preview must remain queued/not-started for the non-matching path');
+}
+if (staticBackup?.source?.deployments_enabled !== false || staticBackup.source.production_deployments_enabled !== false) {
+  throw new Error('Static backup Pages project must remain deployment-disabled');
+}
+if (appProject?.source?.status !== 'NOT_RETURNED_IN_PROJECT_READBACK' || appProject.latest_deployment?.commit_sha !== null) {
+  throw new Error('Legacy app production provenance gap must remain visible');
+}
+
 console.log('PASS EZCA registry invariants');

@@ -24,6 +24,12 @@ A missing field, API error, queued job, zero runner ID, empty steps, missing log
 
 Use `quarantine-manifest.json` to record candidate stale resources and their evidence. The manifest is an inventory, not an instruction to delete. Capture owner, exact resource ID/path, dependency scan, last-seen timestamp, backup/export hash, and rollback method before approving retirement. Prefer disable/quarantine, observe, then separately authorize deletion. Never delete a runner registration, workflow, DNS record, Worker route, artifact, or deployment merely because it looks duplicated.
 
+## Orchestrator execution boundary
+
+`run_one_time_restoration.py` executes repository-controlled scripts, tests, build tools, and analyzers in child processes. A temporary copy is not a security sandbox. Execute it only inside a disposable, unprivileged VM/container with no provider credentials, no SSH agent, no host filesystem mounts, and no privileged sockets. The required `--isolated-host-confirmed` flag is an operator attestation only; it does not technically prove isolation.
+
+Workspace copying now rejects non-ignored symlinks and uses a deterministic SHA-256 file manifest before and after copying; the source manifest must remain stable and match the copied workspace. The root checkout and each candidate checkout must also remain clean at their exact caller-supplied SHA across the copy boundary. Supply `--source-expected-sha <full-40-character-sha>` for the root checkout, plus `--core-v2-expected-sha` and/or `--firebase-expected-sha` whenever those candidate directories are supplied. Output paths must remain inside the repository and cannot traverse symlinked directories. Child processes receive a narrow environment plus a per-run owner-only HOME directory rather than inherited cloud/SSH/provider credentials; `LINGO_FIREBASE_STAGING_PROJECT_ID` is passed only to the Firebase identity validator when explicitly present. Flutter and Go dependency resolution are offline-only; Terraform provider installation is blocked. `--network-enabled` adds only fixed-host public HTTPS GET probes in the orchestrator process. Redirects are not followed; a redirect is accepted only when its destination remains HTTPS on the original hostname, with no embedded credentials or nonstandard port. **This does not restrict child-process network egress.** The host must enforce outbound deny-by-default networking (or remain fully offline); when probes are enabled, allow only the three fixed probe hosts. The CLI acknowledgement is an operator attestation, not an enforcement mechanism. Do not execute without a disposable unprivileged VM/container, no credentials/host mounts/privileged sockets, and host-enforced egress controls.
+
 ## Operator commands
 
 ```bash
@@ -62,3 +68,31 @@ python ops/recovery/unified_gate.py \
 ```
 
 Without the full trusted verifier configuration, authorization remains BLOCKED. The nonce registry directory must already exist, must not be a symlink, must not be group/world writable, and must be durable/shared across all verifiers accepting the same approvals. Atomic file creation prevents duplicate consumption only among processes sharing that registry filesystem; it is not a distributed ledger. This path has not yet been executed or certified in CI. It does not bypass the canonical runner contract, evidence verification, or the production lock.
+
+## Safe local execution (W0–W3)
+
+Run only in a disposable, unprivileged VM/container with no provider credentials, no SSH agent, no host filesystem mounts, and host-enforced deny-by-default egress. The `--isolated-host-confirmed` switch is an operator attestation; it does not create isolation. `--network-enabled` enables only the script's explicit public probes and does not sandbox child-process network access.
+
+Set the three local checkout paths to clean worktrees, then capture their exact HEADs after verifying each branch against the current GitHub PR head:
+
+```bash
+export REPO_ROOT=/workspace/TheLingoLegacy
+export FIREBASE_DIR=/workspace/pr614
+export CORE_V2_DIR=/workspace/pr596
+
+SOURCE_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
+FIREBASE_SHA="$(git -C "$FIREBASE_DIR" rev-parse HEAD)"
+CORE_V2_SHA="$(git -C "$CORE_V2_DIR" rev-parse HEAD)"
+
+python3 "$REPO_ROOT/ops/recovery/run_one_time_restoration.py" \
+  --repo-root "$REPO_ROOT" \
+  --source-expected-sha "$SOURCE_SHA" \
+  --firebase-candidate-dir "$FIREBASE_DIR" \
+  --firebase-expected-sha "$FIREBASE_SHA" \
+  --core-v2-dir "$CORE_V2_DIR" \
+  --core-v2-expected-sha "$CORE_V2_SHA" \
+  --isolated-host-confirmed \
+  --network-enabled
+```
+
+The expected-SHA arguments are mandatory. Refresh the candidate SHAs from the current PR heads immediately before execution; do not reuse an earlier SHA after either PR advances. Do not add `--allow-local-postgres-integration` unless a loopback-only database named `lingo_test` is available and that integration test has been separately approved. A successful W0–W3 local run does not override G02, G03–G11, independent review, or production authorization.

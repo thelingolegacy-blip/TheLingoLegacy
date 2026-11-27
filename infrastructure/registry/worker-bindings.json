@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "observed_at": "2026-11-11",
+  "observed_at": "2026-11-20",
   "account_id": "16cb6f247cd1b28fca864760c7269606",
-  "workers_checked": 7,
+  "workers_checked": 10,
   "raw_secret_values_requested": false,
   "workers": [
     {
@@ -31,12 +31,12 @@
       "secret_binding_names": []
     },
     {
-      "name": "lingo-ecosystem-atlas",
+      "name": "lingo-flagship-site-preview",
       "regular_bindings": [],
       "secret_binding_names": []
     },
     {
-      "name": "lingo-flagship-site-preview",
+      "name": "lingo-integration-config-404",
       "regular_bindings": [],
       "secret_binding_names": []
     },
@@ -54,11 +54,29 @@
       "name": "lingo-studio-control-center-staging",
       "regular_bindings": [],
       "secret_binding_names": []
+    },
+    {
+      "name": "lingo-unified-control-tower-preview",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "lingo-ecosystem-atlas",
+      "regular_bindings": [],
+      "secret_binding_names": []
+    },
+    {
+      "name": "thelingolegacy-web",
+      "regular_bindings": [],
+      "secret_binding_names": []
     }
   ],
   "limitations": [
-    "Secret values were never requested.",
-    "Zero names returned from the per-script secret listing does not establish absence of account-level secrets, service bindings, environment variables outside the settings response, or external provider credentials.",
-    "No Worker route or deployment was modified."
+    "All ten currently observed Worker scripts were queried through the Worker settings and per-script secret-binding-name endpoints on 2026-11-20.",
+    "Secret values were never requested or returned.",
+    "No secret binding names were returned for any of the ten scripts.",
+    "Thelingolegacyv-5 exposes ASSETS, CANONICAL_DOMAIN, and PUBLIC_SITE_URL as regular bindings; the other nine scripts returned no regular bindings in the settings readback.",
+    "This does not establish the absence of account-level secrets, service bindings outside the returned settings, environment variables in other systems, or external provider credentials.",
+    "No Worker route, deployment, version, binding, or secret was modified."
   ]
 }
