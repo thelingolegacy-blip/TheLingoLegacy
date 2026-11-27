@@ -72,3 +72,14 @@ test("SAAAE policy defaults to deny and never grants production mutation", async
   assert.equal(policy.authorize({ ...owner, status: "suspended" }, "vsm.read"), false);
   assert.equal(policy.authorize(owner, "unknown.capability"), false);
 });
+
+test("math engine validates probability vectors and calculates virtual distribution statistics", async () => {
+  const math = await import("../math/engine.mjs?test-suite");
+  assert.equal(math.validateProbabilityVector([0.2, 0.3, 0.5]).valid, true);
+  assert.equal(math.validateProbabilityVector([0.2, 0.2]).valid, false);
+  const report = math.evaluateVirtualDistribution([{ value: 0, probability: 0.5 }, { value: 10, probability: 0.5 }]);
+  assert.equal(report.expected_virtual_value, 5);
+  assert.equal(report.variance, 25);
+  assert.equal(report.monetary_wagering, false);
+  assert.throws(() => math.evaluateVirtualDistribution([{ value: 1, probability: 0.4 }]), /sum to 1/);
+});
