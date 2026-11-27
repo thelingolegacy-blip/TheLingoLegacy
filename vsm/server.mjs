@@ -141,8 +141,12 @@ const server = http.createServer(async (req, res) => {
           for (const step of track.steps) {
             if (!step || !["node", "npm"].includes(step.command) || !Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) throw new Error("Run steps must use node/npm with string arguments.");
             if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 1800000)) throw new Error("Step timeout must be 1 second to 30 minutes.");
+            if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1000 || step.soft_timeout_ms >= (step.timeout_ms || 300000))) throw new Error("Step soft timeout must be less than the hard timeout.");
+            if (step.min_log_bytes !== undefined && (!Number.isInteger(step.min_log_bytes) || step.min_log_bytes < 1 || step.min_log_bytes > 65536)) throw new Error("Step minimum log bytes must be 1–65536.");
+            if (step.cost_usd !== undefined && (!Number.isFinite(step.cost_usd) || step.cost_usd < 0)) throw new Error("Step cost estimate must be non-negative.");
+            if (step.id !== undefined && (typeof step.id !== "string" || !/^[a-zA-Z0-9._-]{1,60}$/.test(step.id))) throw new Error("Step ID is invalid.");
             if (step.mutating === true && !validatedConfig.ALLOW_DESTRUCTIVE) throw new Error("Mutating steps require ALLOW_DESTRUCTIVE=true.");
-            if (step.mutating === true && step.idempotent !== true && typeof step.idempotency_key !== "string") throw new Error("Mutating steps require idempotent=true or an idempotency_key.");
+            if (step.mutating === true && step.idempotent !== true && (typeof step.idempotency_key !== "string" || step.idempotency_key.length < 8 || step.idempotency_key.length > 128)) throw new Error("Mutating steps require idempotent=true or an 8–128 character idempotency_key.");
           }
         }
       } catch (error) { return send(res, 400, { error: error.message || "Invalid run configuration." }); }
