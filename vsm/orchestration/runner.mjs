@@ -99,6 +99,9 @@ export function createRunController(input, options = {}) {
     cancel: reason => abort.abort(reason || "human-cancelled"),
     pause: () => { paused = true; },
     resume: () => { paused = false; },
+    pauseTrack: () => false,
+    resumeTrack: () => false,
+    cancelTrack: () => false,
     get paused() { return paused; },
     get cancelled() { return abort.signal.aborted; }
   };
