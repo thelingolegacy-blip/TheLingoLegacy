@@ -17,7 +17,7 @@ class SettlementD1 {
         if (sql.includes('WHERE session_id = ? AND firebase_uid = ?')) {
           return {
             session_id: 'session-1', game_id: 'thats-my-lingo', rule_version: 'staging-test-v1',
-            reels_json: '["SEVEN","SEVEN","SEVEN"]', wager_units: 1, payout_units: 15,
+            ruleset_digest: 'a'.repeat(64), reels_json: JSON.stringify(Array.from({ length: 5 }, () => ['SEVEN','SEVEN','SEVEN'])), wager_units: 20, payout_units: 300,
             status: 'settled', balance_after_units: 114,
           };
         }
@@ -32,12 +32,14 @@ test('settlement atomically rechecks approver token freshness and explicit deny 
   const db = new SettlementD1();
   const result = await playAndSettleD1Spin(db, {
     firebaseUid: 'requester-1', gameId: 'thats-my-lingo', idempotencyKey: 'settlement-test-0001',
-    ruleVersion: 'staging-test-v1', symbols: ['SEVEN'], paytable: { SEVEN: 15 },
-    wagerUnits: 1, tenantId: 'tenant-1', approvalId: 'approval-1',
+    ruleVersion: 'tml-5x3-20line-option2-v1', rulesetDigest: 'a'.repeat(64),
+    weightedSymbols: [{ symbol: 'SEVEN', weight: 1 }], paytable: { SEVEN: { 3: 1, 4: 5, 5: 15 } },
+    wagerUnits: 20, activePaylines: 20, tenantId: 'tenant-1', approvalId: 'approval-1',
     actionDigest: 'a'.repeat(64), correlationId: 'corr-1', authTime: 120,
   });
   assert.equal(result.status, 'settled');
-  assert.equal(db.batchStatements.length >= 5, true);
+  assert.equal(db.batchStatements.length >= 6, true);
+  assert.match(db.batchStatements[1].sql, /ruleset_digest/);
   const approvalSql = db.batchStatements[0].sql;
   assert.match(approvalSql, /approver_auth_time_epoch/);
   assert.match(approvalSql, /token_valid_after_epoch <= lingo_saaae_approvals\.approver_auth_time_epoch/);
