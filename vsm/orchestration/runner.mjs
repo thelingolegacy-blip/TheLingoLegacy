@@ -250,7 +250,14 @@ export async function executeRun(input, {
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
     const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
-    if (child.pid) { childPids.add(child.pid); await persistChildPids(); }
+    if (child.pid) {
+      childPids.add(child.pid);
+      try { await persistChildPids(); }
+      catch (error) {
+        try { if (process.platform !== "win32") process.kill(-child.pid, "SIGKILL"); else child.kill("SIGKILL"); } catch { try { child.kill("SIGKILL"); } catch {} }
+        throw error;
+      }
+    }
     let output = "";
     let outputBytes = 0;
     let secretScanTail = "";
