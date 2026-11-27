@@ -115,7 +115,7 @@ export async function executeRun(input, {
   artifactsDir = path.join(rootDir, "artifacts"),
   signal: externalSignal,
   control = null,
-  notifyOwner = async () => {},
+  notifyOwner = null,
   now = () => Date.now(),
   random = Math.random,
   fetchImpl = globalThis.fetch
@@ -136,13 +136,15 @@ export async function executeRun(input, {
   const secretValues = [...new Set(required.flatMap(name => (aliasGroups.find(group => group.includes(name)) || [name]).map(key => environment[key])).filter(value => typeof value === "string" && value.length > 0).flatMap(value => {
     try {
       const parsed = JSON.parse(value);
-      return [value, ...(typeof parsed.private_key === "string" ? [parsed.private_key] : [])];
+      const privateKey = typeof parsed.private_key === "string" ? parsed.private_key : "";
+      return [value, ...(privateKey ? [privateKey, ...privateKey.split(/\\r?\\n/).filter(Boolean)] : [])];
     } catch { return [value]; }
   }))];
   const serializedConfig = JSON.stringify(config);
   const exposedSecretNames = required.filter(name => secretValues.some(value => value.length > 0 && serializedConfig.includes(value)));
   if (exposedSecretNames.length) {
-    const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, finished_at: iso() };
+    const securityFailure = { run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames, secrets_used: [], tracks: {}, owner_notification: "NOT_CONFIGURED", finished_at: iso() };
+    if (typeof notifyOwner === "function") { try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", exposed_secret_names: exposedSecretNames }); securityFailure.owner_notification = "SENT"; } catch { securityFailure.owner_notification = "FAILED"; } }
     await atomicJson(path.join(runDir, "summary.json"), securityFailure);
     await atomicJson(path.join(runDir, "status.json"), { run_id: config.run_id, status: "SECURITY_ABORT", updated_at: iso() });
     return securityFailure;
@@ -170,6 +172,8 @@ export async function executeRun(input, {
     return failed;
   }
   const controllers = new Map();
+  let ownerNotified = false;
+  let ownerNotificationStatus = "NOT_CONFIGURED";
   const childPids = new Set();
   const pidFile = path.join(runDir, "child-processes.json");
   const crashFile = path.join(runDir, "crash-report.json");
@@ -259,6 +263,8 @@ export async function executeRun(input, {
     for (const secret of secretValues) if (secret) redactedOutput = redactedOutput.split(secret).join("[REDACTED]");
     const safeOutput = redactedOutput.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
     await fs.writeFile(path.join(trackDir, (step.id || "step") + ".log"), safeOutput, { mode: 0o600 });
+    const secretExposure = secretValues.some(secret => secret && output.includes(secret));
+    if (secretExposure) return { ok: false, securityAbort: true, error: new Error("Security anomaly: credential material appeared in process output."), output_bytes: outputBytes };
     if (timedOut) return { ok: false, error: Object.assign(new Error("Step timeout exceeded."), { name: "TimeoutError" }), output_bytes: outputBytes };
     if (signal.aborted) return { ok: false, error: Object.assign(new Error("Step cancelled."), { name: "AbortError" }), output_bytes: outputBytes };
     if (result.error) return { ok: false, error: result.error, output_bytes: outputBytes };
@@ -297,6 +303,17 @@ export async function executeRun(input, {
           const remainingRetryWindow = Math.max(1000, RUN_DEFAULTS.TRANSIENT_RETRY_WINDOW_MS - (now() - stepStarted));
           const attemptStep = transientRetries > 0 ? { ...step, timeout_ms: Math.min(step.timeout_ms || 5 * 60_000, remainingRetryWindow) } : step;
           const result = await runProcess(attemptStep, track, trackDir, trackEnv, abort.signal);
+          if (result.securityAbort) {
+            ledger.status = "SECURITY_ABORT";
+            cancelAll("security-secret-exposure");
+            await emit({ runId: config.run_id, trackId: track.id, step: stepName, status: "SECURITY_ABORT", attempt, startedAt: stepStarted, detail: { secret_names: track.required_secrets } });
+            if (typeof notifyOwner === "function" && !ownerNotified) {
+              try { await notifyOwner({ run_id: config.run_id, status: "SECURITY_ABORT", track_id: track.id, secret_names: track.required_secrets }); ownerNotificationStatus = "SENT"; }
+              catch { ownerNotificationStatus = "FAILED"; }
+              ownerNotified = true;
+            }
+            throw result.error;
+          }
           const minimumLogBytes = step.min_log_bytes ?? 8;
           if (result.ok && step.require_nonempty_log && result.output_bytes < minimumLogBytes) {
             emptyAttempts++;
@@ -323,7 +340,7 @@ export async function executeRun(input, {
         }
       }
     } catch (error) {
-      outcome = abort.signal.aborted ? "CANCELLED" : "FAILED";
+      outcome = ledger.status === "SECURITY_ABORT" ? "FAILED" : abort.signal.aborted ? "CANCELLED" : "FAILED";
       await emit({ runId: config.run_id, trackId: track.id, status: outcome, startedAt: trackStarted, detail: { error: redactText(error.message, secretValues) } });
     } finally {
       for (const name of track.required_secrets) delete trackEnv[name];
@@ -359,7 +376,7 @@ export async function executeRun(input, {
   const failedCritical = config.tracks.some(track => track.criticality === "critical" && results[track.id] === "FAILED");
   const anyCancelled = Object.values(results).some(value => value === "CANCELLED");
   const anyDegraded = config.tracks.some(track => track.criticality !== "critical" && ["FAILED", "CANCELLED"].includes(results[track.id]));
-  const finalStatus = ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
+  const finalStatus = ledger.status === "SECURITY_ABORT" ? "SECURITY_ABORT" : ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" :
     cancelReason === "human-cancelled" ? "CANCELLED" :
     (cancelReason === "run-duration-exceeded" || cancelReason === "critical-track-cancelled") ? "FAILED" :
     failedCritical ? "FAILED" : anyDegraded || (anyCancelled && !cancelled) ? "PARTIAL" :
@@ -372,14 +389,13 @@ export async function executeRun(input, {
     tracks: Object.fromEntries(config.tracks.map(track => [track.id, { criticality: track.criticality, status: results[track.id] || "CANCELLED" }])),
     cancellation_reason: cancelReason, artifact_directory: runDir,
     artifact_retention_days: RUN_DEFAULTS.ARTIFACT_RETENTION_DAYS,
-    artifact_upload: "NOT_CONFIGURED", owner_notification: "NOT_CONFIGURED"
+    artifact_upload: "NOT_CONFIGURED", owner_notification: ownerNotificationStatus
   };
   await atomicJson(path.join(runDir, "summary.json"), summary);
   await updateStatus(finalStatus);
-  try { await notifyOwner({ run_id: config.run_id, status: finalStatus, summary_path: path.join(runDir, "summary.json") }); }
-  catch (error) {
-    summary.owner_notification = "FAILED";
-    summary.notification_error = redactText(error.message, secretValues);
+  if (typeof notifyOwner === "function" && !ownerNotified) {
+    try { await notifyOwner({ run_id: config.run_id, status: finalStatus, summary_path: path.join(runDir, "summary.json") }); summary.owner_notification = "SENT"; }
+    catch (error) { summary.owner_notification = "FAILED"; summary.notification_error = redactText(error.message, secretValues); }
     await atomicJson(path.join(runDir, "summary.json"), summary);
   }
   return summary;
