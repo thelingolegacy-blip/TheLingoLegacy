@@ -8,6 +8,7 @@ import { executeBot } from "./ai/bot-worker.mjs";
 import { writeEvidence, readEvidence } from "./evidence/store.mjs";
 import { authorize, policySnapshot } from "./security/policy.mjs";
 import { listStudioAssets, createStudioAsset } from "./studio/asset-registry.mjs";
+import { createRunController } from "./orchestration/runner.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -44,6 +45,7 @@ await loadLane();
 const releasesFile = path.join(DATA_DIR, "releases.json");
 const auditFile = path.join(DATA_DIR, "audit.jsonl");
 let auditQueue = Promise.resolve();
+const activeRuns = new Map();
 
 async function readReleases() {
   try { return JSON.parse(await fs.readFile(releasesFile, "utf8")); }
@@ -126,6 +128,42 @@ async function runProbes() {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || "/", "http://127.0.0.1");
+    if (req.method === "POST" && url.pathname === "/api/runs") {
+      if (!can(req, "run.execute")) return send(res, 403, { error: "Run execution capability required." });
+      const input = await bodyJson(req);
+      if (!input.config || typeof input.config !== "object" || Array.isArray(input.config)) return send(res, 400, { error: "A run configuration object is required." });
+      if (input.config.target === "production") return send(res, 423, { error: "Production-target runs are disabled in this VSM phase." });
+      const runId = input.config.run_id;
+      if (typeof runId !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(runId)) return send(res, 400, { error: "A valid run_id is required." });
+      if (activeRuns.has(runId)) return send(res, 409, { error: "A run with this ID is already active." });
+      const controller = createRunController(input.config, { rootDir: process.cwd(), artifactsDir: path.join(DATA_DIR, "runs") });
+      activeRuns.set(runId, controller);
+      controller.promise.finally(() => activeRuns.delete(runId)).catch(() => activeRuns.delete(runId));
+      await audit("run.started", { run_id: runId, requested_by: OWNER_IDENTITY.id, target: input.config.target || "local" });
+      return send(res, 202, { run_id: runId, status: "STARTING", status_url: "/api/runs/" + runId, controls: ["pause", "resume", "cancel"] });
+    }
+    const runControlMatch = url.pathname.match(/^\/api\/runs\/([A-Za-z0-9][A-Za-z0-9._-]{2,79})\/(pause|resume|cancel)$/);
+    if (req.method === "POST" && runControlMatch) {
+      if (!can(req, "run.control")) return send(res, 403, { error: "Run control capability required." });
+      const [, runId, action] = runControlMatch;
+      const controller = activeRuns.get(runId);
+      if (!controller) return send(res, 404, { error: "No active run with that ID." });
+      if (action === "pause") controller.pause();
+      if (action === "resume") controller.resume();
+      if (action === "cancel") controller.cancel("human-cancelled");
+      await audit("run." + action, { run_id: runId, requested_by: OWNER_IDENTITY.id });
+      return send(res, 200, { run_id: runId, action, accepted: true });
+    }
+    const runStatusMatch = url.pathname.match(/^\/api\/runs\/([A-Za-z0-9][A-Za-z0-9._-]{2,79})$/);
+    if (req.method === "GET" && runStatusMatch) {
+      if (!can(req, "run.read")) return send(res, 403, { error: "Run read capability required." });
+      const runId = runStatusMatch[1];
+      const runDir = path.join(DATA_DIR, "runs", runId);
+      const status = await fs.readFile(path.join(runDir, "status.json"), "utf8").then(JSON.parse).catch(error => error.code === "ENOENT" ? null : Promise.reject(error));
+      const summary = await fs.readFile(path.join(runDir, "summary.json"), "utf8").then(JSON.parse).catch(error => error.code === "ENOENT" ? null : Promise.reject(error));
+      if (!status && !summary) return send(res, 404, { error: "Run status not found." });
+      return send(res, 200, { status, summary, active: activeRuns.has(runId) });
+    }
     if (req.method === "GET" && url.pathname === "/api/health") {
       return send(res, 200, { ok: true, service: "lingo-vsm", version: "0.2.0", authority: "FAIL-CLOSED", production_bridge: "DISABLED", centers: CENTERS.length, timestamp: new Date().toISOString() });
     }
