@@ -6,7 +6,7 @@
   "description": "Local-first sovereign release control plane for LINGO LEGACY",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check orchestration/run-contract.mjs && node --check orchestration/runner.mjs && node --check server.mjs && node --check identity/identity.mjs && node --check sonic-boom/lane.mjs && node --check ai/bot-worker.mjs && node --check evidence/store.mjs && node --check security/policy.mjs && node --check math/engine.mjs && node --check studio/asset-registry.mjs && node --check dashboard/app.js && sh -n lingo-vsm",
+    "check": "node --check orchestration/run-contract.mjs && node --check orchestration/runner.mjs && node --check orchestration/watchdog.mjs && node --check server.mjs && node --check identity/identity.mjs && node --check sonic-boom/lane.mjs && node --check ai/bot-worker.mjs && node --check evidence/store.mjs && node --check security/policy.mjs && node --check math/engine.mjs && node --check studio/asset-registry.mjs && node --check dashboard/app.js && sh -n lingo-vsm",
     "test": "node --test"
   },
   "engines": {
