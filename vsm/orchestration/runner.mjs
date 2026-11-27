@@ -199,8 +199,13 @@ export async function executeRun(input, {
 }
 
 async function runProcess(step, cwd, env, signal, config, ledger, trackId, now, emit, secretValues, trackSecrets, onBudgetExceeded) {
-  const started = now();
   const timeout = step.timeout_ms || 5 * 60_000;
+  const estimatedCost = step.cost_usd || 0;
+  const charge = chargeBudget(ledger, trackId, { toolCalls: 1, costUsd: estimatedCost, now: now() });
+  if (!charge.ok) {
+    onBudgetExceeded("budget-exceeded:" + charge.reason);
+    return { ok: false, error: Object.assign(new Error("Run budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
+  }
   const child = spawn(step.command, step.args, { cwd, env, shell: false, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
   const outputFile = path.join(cwd, (step.id || "step") + ".log");
   let output = "";
@@ -208,30 +213,31 @@ async function runProcess(step, cwd, env, signal, config, ledger, trackId, now, 
   const append = chunk => {
     outputBytes += chunk.length;
     const text = chunk.toString("utf8");
-    for (const secret of secretValues) if (secret) output = (output + text).split(secret).join("[REDACTED]");
-    if (output.length > 256_000) output = output.slice(-256_000);
+    let safe = text;
+    for (const secret of secretValues) if (secret) safe = safe.split(secret).join("[REDACTED]");
+    output = (output + safe).slice(-256_000);
   };
-  child.stdout.on("data", append); child.stderr.on("data", append);
+  child.stdout.on("data", append);
+  child.stderr.on("data", append);
   const kill = () => { try { child.kill("SIGTERM"); } catch {} };
   let forceTimer;
-  const forceKill = () => { forceTimer = setTimeout(() => { try { child.kill("SIGKILL"); } catch {} }, RUN_DEFAULTS.CANCEL_GRACE_MS); forceTimer.unref?.(); };
-  signal.addEventListener("abort", () => { kill(); forceKill(); }, { once: true });
+  const abortHandler = () => {
+    kill();
+    forceTimer = setTimeout(() => { try { child.kill("SIGKILL"); } catch {} }, RUN_DEFAULTS.CANCEL_GRACE_MS);
+    forceTimer.unref?.();
+  };
+  signal.addEventListener("abort", abortHandler, { once: true });
   let timedOut = false;
-  const timer = setTimeout(() => { timedOut = true; kill(); }, timeout);
+  const timer = setTimeout(() => { timedOut = true; abortHandler(); }, timeout);
   const result = await new Promise(resolve => {
     child.once("error", error => resolve({ code: -1, error }));
     child.once("close", (code, sig) => resolve({ code, signal: sig }));
   });
-  clearTimeout(timer); clearTimeout(forceTimer); signal.removeEventListener("abort", kill);
-  const safeOutput = output.split(/\r?
-/).map(line => line.slice(0, 4000)).join("
-");
+  clearTimeout(timer);
+  clearTimeout(forceTimer);
+  signal.removeEventListener("abort", abortHandler);
+  const safeOutput = output.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
   await fs.writeFile(outputFile, safeOutput, { mode: 0o600 });
-  const charge = chargeBudget(ledger, trackId, { toolCalls: 1, now: now() });
-  if (!charge.ok) {
-    signal.throwIfAborted?.();
-    throw Object.assign(new Error("Run budget exceeded: " + charge.reason), { budgetExceeded: true });
-  }
   if (timedOut) return { ok: false, error: Object.assign(new Error("Step timeout exceeded."), { name: "TimeoutError" }), output_bytes: outputBytes };
   if (signal.aborted) return { ok: false, error: Object.assign(new Error("Step cancelled."), { name: "AbortError" }), output_bytes: outputBytes };
   if (result.error) return { ok: false, error: result.error, output_bytes: outputBytes };
