@@ -7,6 +7,9 @@ const root = process.cwd();
 const source = await readFile(path.join(root, "casino/index.html"), "utf8");
 const staticCopy = await readFile(path.join(root, "static-site/casino/index.html"), "utf8");
 const studioHub = await readFile(path.join(root, "studio-hub/index.html"), "utf8");
+const drop = await readFile(path.join(root, "drop/index.html"), "utf8");
+const stripeScript = await readFile(path.join(root, "assets/stripe-checkout.js"), "utf8");
+const worker = await readFile(path.join(root, "worker.js"), "utf8");
 
 test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", () => {
   assert.equal(staticCopy, source, "static-site alias must stay byte-for-byte aligned");
@@ -25,4 +28,17 @@ test("That’s My Lingo casino alias is a virtual-credit Vegas Studio surface", 
   assert.match(studioHub, /demo spins using virtual credits only/i);
   assert.match(studioHub, /cash wagering, cash-out and prize redemption are not enabled/i);
   assert.doesNotMatch(studioHub, /cash-value wagering/i);
+});
+
+test("founder drop checkout remains disabled in source and Worker", () => {
+  assert.match(drop, /no checkout or payment is available/i);
+  assert.match(drop, /THE PRESTIGIOUS HOUSE OF DUSSE/);
+  assert.doesNotMatch(drop, /Avalon House Badge Set/i);
+  assert.match(drop, /data-stripe-tier="xp" disabled aria-disabled="true">Payments paused/);
+  assert.match(stripeScript, /button\.disabled = true/);
+  assert.match(stripeScript, /Payments paused/);
+  assert.match(worker, /code: 'BILLING_DISABLED'/);
+  assert.match(worker, /}, 410, request, env\)/);
+  assert.match(worker, /billing: \{ mode: 'DISABLED', checkout: false/);
+  assert.doesNotMatch(worker, /STRIPE_SECRET_KEY/);
 });
