@@ -27,4 +27,4 @@ const detectedAt = new Date().toISOString();
 const report = { detected_at: detectedAt, parent_pid: parentPid, killed_process_groups: killed, status: "ORCHESTRATOR_CRASH" };
 await fs.writeFile(crashFile, JSON.stringify(report) + "\n", { mode: 0o600 });
 await fs.writeFile(path.join(runDir, "owner-notification.json"), JSON.stringify({ run_id: path.basename(runDir), status: "ORCHESTRATOR_CRASH", created_at: detectedAt, delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true, crash_report: crashFile }) + "\n", { mode: 0o600 });
-await fs.writeFile(path.join(runDir, "status.json"), JSON.stringify({ run_id: (await import("node:path")).basename(runDir), status: "ORCHESTRATOR_CRASH", updated_at: detectedAt }) + "\n", { mode: 0o600 });
+await fs.writeFile(path.join(runDir, "status.json"), JSON.stringify({ run_id: path.basename(runDir), status: "ORCHESTRATOR_CRASH", updated_at: detectedAt }) + "\n", { mode: 0o600 });
