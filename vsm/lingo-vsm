@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+COMPOSE="docker compose --project-directory "$ROOT" -f "$ROOT/docker-compose.yml""
+case "${1:-help}" in
+  up) cd "$ROOT"; [ -f .env ] || { echo "Create vsm/.env from .env.example and set VSM_OWNER_TOKEN."; exit 2; }; docker compose -f docker-compose.yml up --build -d ;;
+  down) cd "$ROOT"; docker compose -f docker-compose.yml down ;;
+  status) cd "$ROOT"; docker compose -f docker-compose.yml ps; curl -fsS http://127.0.0.1:8787/api/health || true ;;
+  logs) cd "$ROOT"; docker compose -f docker-compose.yml logs -f --tail=150 ;;
+  help|*) echo "Usage: sh vsm/lingo-vsm {up|down|status|logs}" ;;
+esac
