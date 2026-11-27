@@ -26,6 +26,8 @@ No `lingo_saaae_*` tables and no `d1_migrations` table were present. The current
 
 The D1 database-list response reported `num_tables: 0`, inconsistent with the live `sqlite_master` query. Use the live SQL metadata query for schema verification, not the `num_tables` field. The extra `lingo_api_rate_limits` table is legacy state: preserve it and do not drop or rewrite it as part of this work.
 
+A current D1 Time Travel bookmark was retrieved read-only on 2026-11-27: `00000027-00000000-00005130-a38f57e72bde3a34d88ae14d5017ebef`. Refresh the bookmark immediately before any approved migration; this captured value is the current pre-migration reference, not a permanent substitute for a fresh backup check.
+
 No application rows were read. No SQL writes were performed.
 
 ## 2. Preconditions before any remote migration
