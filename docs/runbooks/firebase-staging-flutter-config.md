@@ -43,10 +43,10 @@ flutter build web \
   --dart-define=LINGO_FIREBASE_WEB_APP_ID="$LINGO_FIREBASE_WEB_APP_ID"
 ```
 
-Android/iOS/macOS builds must receive the corresponding platform-specific API key and App ID defines plus the shared messaging sender ID. A release build must run:
+Android/iOS/macOS builds must receive the corresponding platform-specific API key and App ID defines plus the shared messaging sender ID. Run the strict verifier with the matching `--platform=android`, `--platform=ios`, or `--platform=macos` argument for those targets. A release build must run:
 
 ```sh
-node scripts/verify-flutter-firebase.mjs --require-runtime-config
+node scripts/verify-flutter-firebase.mjs --require-runtime-config --platform=web
 ```
 
 The static CI contract check intentionally does not require app-registration values; it verifies staging isolation and the compile-time injection interface. It is not proof that a Firebase app is configured or that authentication/Firestore works.
