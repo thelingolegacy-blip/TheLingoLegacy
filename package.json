@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "scripts": {
     "test:slot": "node --test scripts/tests/server-slot-engine.test.mjs",
-    "test": "npm run test:slot && npm run test:tml-preview",
-    "test:tml-preview": "node --test scripts/tests/tml-preview-engine.test.mjs"
+    "test": "npm run test:slot && npm run test:tml-preview && npm run test:saaae",
+    "test:tml-preview": "node --test scripts/tests/tml-preview-engine.test.mjs",
+    "test:saaae": "node --test src/security/saaae/*.test.mjs"
   },
   "engines": {
     "node": ">=20"
