@@ -59,7 +59,8 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 - `GET /api/health`
 - `POST /api/runs` — owner-only, starts a local/staging-target dry-run validation plan with up to five isolated process tracks; production target is rejected.
 - `GET /api/runs/:run_id` — owner-only live status and completed summary.
-- `POST /api/runs/:run_id/pause|resume|cancel` — owner-only whole-run controls.\n- `POST /api/runs/:run_id/tracks/:track_id/pause|resume|cancel` — owner-only per-track controls, including cancellation of queued tracks.
+- `POST /api/runs/:run_id/pause|resume|cancel` — owner-only whole-run controls.
+- `POST /api/runs/:run_id/tracks/:track_id/pause|resume|cancel` — owner-only per-track controls, including cancellation of queued tracks.
 - `GET /api/identity` — public owner principal and local-first identity status.
 - `GET /api/session` — validates the Owner token and returns the local session capability set.
 - `GET /api/security/policy` — read-only SAAAE role/capability policy.
