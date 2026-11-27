@@ -34,7 +34,6 @@ jobs:
         run: |
           node --version
           python3 --version
-          sqlite3 --version
 
       - name: Run server engine, D1 settlement, and Worker contract tests
         run: |
