@@ -47,3 +47,28 @@ test("first LINGO bots only execute declared proposal and validation tasks", asy
   assert.equal(math.percent, 25);
   await assert.rejects(() => worker.executeBot({ botId: "lingo://id/bot-release", task: "deploy_production", input: {} }));
 });
+
+test("evidence records are immutable-by-id and SHA-256 integrity checked", async () => {
+  const evidence = await import("../evidence/store.mjs?test-suite");
+  const ref = await evidence.writeEvidence({ releaseId: "rp-20261127-test", type: "test", payload: { checks: 4, passed: true }, createdBy: "lingo://id/test-owner" });
+  const record = await evidence.readEvidence(ref.id);
+  assert.equal(record.sha256, ref.sha256);
+  assert.deepEqual(record.payload, { checks: 4, passed: true });
+  const evidencePath = path.join(temp, "evidence", ref.id + ".json");
+  const tampered = JSON.parse(await fs.readFile(evidencePath, "utf8"));
+  tampered.payload.passed = false;
+  await fs.writeFile(evidencePath, JSON.stringify(tampered));
+  await assert.rejects(() => evidence.readEvidence(ref.id), /integrity check failed/);
+  await assert.rejects(() => evidence.readEvidence("../escape"));
+});
+
+test("SAAAE policy defaults to deny and never grants production mutation", async () => {
+  const policy = await import("../security/policy.mjs?test-suite");
+  const owner = { id: "lingo://id/test-owner", status: "active", roles: ["owner"] };
+  const operator = { id: "lingo://id/test-operator", status: "active", roles: ["operator"] };
+  assert.equal(policy.authorize(owner, "release.accept.local"), true);
+  assert.equal(policy.authorize(owner, "production.promote"), false);
+  assert.equal(policy.authorize(operator, "release.accept.local"), false);
+  assert.equal(policy.authorize({ ...owner, status: "suspended" }, "vsm.read"), false);
+  assert.equal(policy.authorize(owner, "unknown.capability"), false);
+});
