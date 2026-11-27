@@ -161,6 +161,20 @@
         },
         "additionalProperties": false
       }
+    },
+    "PREFLIGHT_NETWORK": {
+      "type": "boolean",
+      "default": false
+    },
+    "PREFLIGHT_MIN_FREE_MEMORY_MB": {
+      "type": "integer",
+      "minimum": 64,
+      "default": 256
+    },
+    "PREFLIGHT_MIN_FREE_DISK_MB": {
+      "type": "integer",
+      "minimum": 64,
+      "default": 512
     }
   },
   "required": [
