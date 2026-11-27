@@ -77,13 +77,14 @@ async function preflightResources(rootDir, config) {
   return { ok: failures.length === 0, failures, cpu_count: cpuCount, free_memory_mb: freeMemoryMb, free_disk_mb: freeDiskMb };
 }
 
-async function preflightNetwork(required, environment, fetchImpl, { now = () => Date.now(), random = Math.random } = {}) {
+async function preflightNetwork(required, environment, fetchImpl, { now = () => Date.now(), random = Math.random, budgetLedger = null, budgetTrackId = null } = {}) {
   const services = [];
   if (required.some(name => ["FIREBASE_SERVICE_ACCOUNT", "FIREBASE_TOKEN"].includes(name))) services.push({ name: "firebase", url: "https://firebase.googleapis.com/" });
   if (required.includes("CLOUDFLARE_API_TOKEN")) services.push({ name: "cloudflare", url: "https://api.cloudflare.com/client/v4/user/tokens/verify", token: environment.CLOUDFLARE_API_TOKEN });
   if (required.some(name => ["CI_DEPLOY_KEY", "GITHUB_TOKEN"].includes(name))) services.push({ name: "github", url: "https://api.github.com/rate_limit", token: environment.GITHUB_TOKEN });
   const results = [];
   let calls = 0;
+  let warning = false;
   for (const service of services) {
     const startedAt = now();
     let attempt = 0;
@@ -92,6 +93,11 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
     let failureClass = null;
     while (true) {
       attempt++;
+      if (budgetLedger && budgetTrackId) {
+        const charge = chargeBudget(budgetLedger, budgetTrackId, { toolCalls: 1, now: now() });
+        if (!charge.ok) return { ok: false, results, calls, warning, budget_exceeded: true, budget_reason: charge.reason };
+        warning = warning || charge.warning;
+      }
       calls++;
       try {
         const response = await fetchImpl(service.url, {
@@ -127,7 +133,7 @@ async function preflightNetwork(required, environment, fetchImpl, { now = () => 
     }
     results.push({ service: service.name, ok, status: lastStatus, attempts: attempt, failure_class: failureClass });
   }
-  return { ok: results.every(item => item.ok), results, calls };
+  return { ok: results.every(item => item.ok), results, calls, warning, budget_exceeded: false };
 }
 
 export function createRunController(input, options = {}) {
@@ -199,13 +205,9 @@ export async function executeRun(input, {
   }
   const ledger = createBudgetLedger(config, now());
   const resourceCheck = await preflightResources(rootDir, config);
-  const networkCheck = config.PREFLIGHT_NETWORK ? await preflightNetwork(required, environment, fetchImpl, { now, random }) : { ok: true, results: [], calls: 0, skipped: true };
-  const preflightCalls = networkCheck.calls;
-  if (preflightCalls > 0) {
-    const firstTrack = config.tracks[0].id;
-    const charged = chargeBudget(ledger, firstTrack, { toolCalls: preflightCalls, now: now() });
-    if (!charged.ok) ledger.status = "BUDGET_EXCEEDED";
-  }
+  const networkCheck = config.PREFLIGHT_NETWORK && resourceCheck.ok
+    ? await preflightNetwork(required, environment, fetchImpl, { now, random, budgetLedger: ledger, budgetTrackId: config.tracks[0].id })
+    : { ok: resourceCheck.ok, results: [], calls: 0, warning: false, budget_exceeded: false, skipped: true };
   if (now() >= ledger.deadline_ms) ledger.status = "BUDGET_EXCEEDED";
   if (!resourceCheck.ok || !networkCheck.ok || ledger.status === "BUDGET_EXCEEDED") {
     const failed = { run_id: config.run_id, status: ledger.status === "BUDGET_EXCEEDED" ? "BUDGET_EXCEEDED" : "PREFLIGHT_FAILED", missing_secrets: [], invalid_secrets: [], resource_check: resourceCheck, network_check: networkCheck, artifact_directory: runDir, secrets_used: required.sort(), budget: { tool_calls: ledger.tool_calls, cost_usd: ledger.cost_usd }, tracks: {}, owner_notification: "NOT_CONFIGURED" };
@@ -435,6 +437,7 @@ export async function executeRun(input, {
     return outcome;
   };
 
+  if (networkCheck.warning) await emit({ runId: config.run_id, trackId: config.tracks[0].id, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%", source: "preflight" } });
   await updateStatus("RUNNING");
   const crashWatchdog = spawn(process.execPath, [path.join(import.meta.dirname, "watchdog.mjs"), String(process.pid), pidFile, crashFile], { detached: true, stdio: "ignore", env: { PATH: environment.PATH || "" } });
   crashWatchdog.unref();
