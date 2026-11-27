@@ -216,7 +216,7 @@ export async function executeRun(input, {
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
     if (charge.warning) await emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "BUDGET_WARNING", detail: { tool_calls: ledger.tool_calls, ceiling: ledger.max_tool_calls, threshold: "80%" } });
-    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    const child = spawn(step.command, step.args, { cwd: rootDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
     if (child.pid) { childPids.add(child.pid); await atomicJson(pidFile, [...childPids]); }
     let output = "";
     let outputBytes = 0;
