@@ -15,8 +15,9 @@ case "${1:-help}" in
     command -v node >/dev/null 2>&1 || { echo "Node.js 22+ is required for local checks."; exit 2; }
     command -v npm >/dev/null 2>&1 || { echo "npm 10+ is required for local checks."; exit 2; }
     node -e 'if(Number(process.versions.node.split(".")[0])<22)process.exit(1)' || { echo "Node.js 22+ required; found $(node --version)."; exit 2; }
-    npm -s --version >/dev/null
+    npm -s --version | awk -F. '{ if ($1 < 10) exit 1 }' || { echo "npm 10+ required; found $(npm --version)."; exit 2; }
     need_docker
+    docker info >/dev/null 2>&1 || { echo "Docker daemon is not running or is inaccessible."; exit 2; }
     TOKEN="$(sed -n 's/^VSM_OWNER_TOKEN=//p' .env | head -n 1)"
     TOKEN_LENGTH="$(printf %s "$TOKEN" | wc -c | tr -d ' ')"
     [ "$TOKEN_LENGTH" -ge 32 ] || { echo "VSM_OWNER_TOKEN must be at least 32 characters."; exit 2; }
