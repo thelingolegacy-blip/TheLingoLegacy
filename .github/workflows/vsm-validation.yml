@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout exact PR branch without third-party actions
         env:
-          GITHUB_TOKEN: \${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -eu
           cat > "$RUNNER_TEMP/lingo-git-askpass" <<'ASKPASS'
@@ -35,15 +35,15 @@ jobs:
           esac
           ASKPASS
           chmod 700 "$RUNNER_TEMP/lingo-git-askpass"
+          trap 'rm -f "$RUNNER_TEMP/lingo-git-askpass"' EXIT
           export GIT_ASKPASS="$RUNNER_TEMP/lingo-git-askpass"
           export GIT_TERMINAL_PROMPT=0
           git init "$GITHUB_WORKSPACE"
           git -C "$GITHUB_WORKSPACE" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
-          BRANCH="\${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
           git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth 1 origin "refs/heads/$BRANCH"
           git -C "$GITHUB_WORKSPACE" checkout --detach FETCH_HEAD
           git -C "$GITHUB_WORKSPACE" rev-parse HEAD
-          rm -f "$RUNNER_TEMP/lingo-git-askpass"
       - name: Confirm Docker build environment
         run: |
           set -eu
