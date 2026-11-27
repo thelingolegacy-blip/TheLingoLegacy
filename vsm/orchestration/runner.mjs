@@ -490,5 +490,6 @@ export async function executeRun(input, {
     catch (error) { summary.owner_notification = "FAILED"; summary.notification_error = redactText(error.message, secretValues); }
     await atomicJson(path.join(runDir, "summary.json"), summary);
   }
+  await atomicJson(path.join(runDir, "completed.json"), { run_id: config.run_id, status: finalStatus, completed_at: iso() });
   return summary;
 }
