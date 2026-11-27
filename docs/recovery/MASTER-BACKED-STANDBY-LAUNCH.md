@@ -9,7 +9,7 @@
 
 Create a one-page LINGO Legacy public front door and a separately hosted static standby while preserving the existing curated route set. The static content is copied from the current canonical \`main\` tree for the 68 existing public files that were already part of the curated standby. Only those curated paths are mirrored; internal admin, governance, operations, source and private data paths are not copied into the public Pages root.
 
-The former backup homepage is preserved at \`static-site/legacy-home/index.html\`. The portfolio manifest is a public navigation registry and explicitly distinguishes portfolio/planned/showcase entries from live products. It does not claim that all services are deployed.
+The former backup homepage is preserved at `static-site/legacy-home/index.html`. The public navigation manifest contains exactly the eight public portfolios. Six related concepts (LINGO ID, Universal Legacy Wallet, LINGO Nexus, LINGO Studios, LINGO Towers and Bridged Gap) remain preserved in a separate non-realm list with no public routes. This manifest is not the internal 14-node realm registry; that separate candidate must be reconciled against current main, reviewed and accepted before it is treated as authoritative.
 
 ## Existing Cloudflare state observed 2026-11-24
 
