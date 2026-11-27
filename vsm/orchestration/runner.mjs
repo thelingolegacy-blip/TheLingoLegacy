@@ -137,7 +137,7 @@ export async function executeRun(input, {
       cancelAll("budget-exceeded:" + charge.reason);
       return { ok: false, error: Object.assign(new Error("Budget exceeded: " + charge.reason), { code: "BUDGET_EXCEEDED" }), output_bytes: 0 };
     }
-    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    const child = spawn(step.command, step.args, { cwd: trackDir, env: trackEnv, shell: false, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
     let output = "";
     let outputBytes = 0;
     const append = chunk => {
@@ -148,11 +148,11 @@ export async function executeRun(input, {
     };
     child.stdout.on("data", append);
     child.stderr.on("data", append);
-    const terminate = () => { try { child.kill("SIGTERM"); } catch {} };
+    const terminate = () => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGTERM"); else child.kill("SIGTERM"); } catch { try { child.kill("SIGTERM"); } catch {} } };
     let forceTimer;
     const abortHandler = () => {
       terminate();
-      forceTimer = setTimeout(() => { try { child.kill("SIGKILL"); } catch {} }, RUN_DEFAULTS.CANCEL_GRACE_MS);
+      forceTimer = setTimeout(() => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGKILL"); else child.kill("SIGKILL"); } catch { try { child.kill("SIGKILL"); } catch {} } }, RUN_DEFAULTS.CANCEL_GRACE_MS);
       forceTimer.unref?.();
     };
     signal.addEventListener("abort", abortHandler, { once: true });
@@ -165,7 +165,7 @@ export async function executeRun(input, {
     clearTimeout(timeout);
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
-    const safeOutput = output.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
+    let redactedOutput = output;\n    for (const secret of secretValues) if (secret) redactedOutput = redactedOutput.split(secret).join("[REDACTED]");\n    const safeOutput = redactedOutput.split(/\r?\n/).map(line => line.slice(0, 4000)).join("\n");
     await fs.writeFile(path.join(trackDir, (step.id || "step") + ".log"), safeOutput, { mode: 0o600 });
     if (timedOut) return { ok: false, error: Object.assign(new Error("Step timeout exceeded."), { name: "TimeoutError" }), output_bytes: outputBytes };
     if (signal.aborted) return { ok: false, error: Object.assign(new Error("Step cancelled."), { name: "AbortError" }), output_bytes: outputBytes };
