@@ -37,10 +37,11 @@ jobs:
           chmod 700 "$RUNNER_TEMP/lingo-git-askpass"
           export GIT_ASKPASS="$RUNNER_TEMP/lingo-git-askpass"
           export GIT_TERMINAL_PROMPT=0
-          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          git clone --no-tags --depth 1 --branch "$BRANCH" "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_WORKSPACE"
+          git init "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
           git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth 1 origin "$GITHUB_SHA"
-          git -C "$GITHUB_WORKSPACE" checkout --detach "$GITHUB_SHA"
+          git -C "$GITHUB_WORKSPACE" checkout --detach FETCH_HEAD
+          git -C "$GITHUB_WORKSPACE" rev-parse HEAD
           rm -f "$RUNNER_TEMP/lingo-git-askpass"
       - name: Select Node.js 22
         run: |
