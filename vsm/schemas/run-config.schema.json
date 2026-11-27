@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thelingolegacy.com/schemas/vsm-run-config.schema.json",
+  "title": "LINGO VSM Run Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$"
+    },
+    "run_type": {
+      "type": "string",
+      "enum": [
+        "local-validation",
+        "staging-validation",
+        "production-change"
+      ]
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "local",
+        "staging",
+        "production"
+      ]
+    },
+    "RUN_MAX_DURATION_MINUTES": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 90,
+      "default": 45
+    },
+    "RUN_MAX_TOOL_CALLS": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1200,
+      "default": 1200
+    },
+    "RUN_MAX_COST_USD": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 15,
+      "default": 15
+    },
+    "RETRY_MAX_ATTEMPTS": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "default": 3,
+      "description": "Total attempts for empty-log rejection; default 3 means 2 retries."
+    },
+    "TRACK_CRITICALITY": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "critical",
+          "important",
+          "best-effort"
+        ]
+      }
+    },
+    "SECRETS_REQUIRED": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "FIREBASE_SERVICE_ACCOUNT",
+          "FIREBASE_TOKEN",
+          "CLOUDFLARE_API_TOKEN",
+          "CI_DEPLOY_KEY",
+          "GITHUB_TOKEN"
+        ]
+      }
+    },
+    "ALLOW_DESTRUCTIVE": {
+      "type": "boolean",
+      "default": false
+    },
+    "DRY_RUN": {
+      "type": "boolean",
+      "default": true
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "criticality"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{1,39}$"
+          },
+          "criticality": {
+            "enum": [
+              "critical",
+              "important",
+              "best-effort"
+            ]
+          },
+          "required_secrets": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "tool_call_budget": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cost_budget_usd": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "run_id",
+    "run_type",
+    "target",
+    "tracks"
+  ]
+}
