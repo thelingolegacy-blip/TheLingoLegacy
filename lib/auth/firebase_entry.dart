@@ -128,7 +128,7 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_busy || !_formKey.currentState!.validate()) return;
     setState(() { _busy = true; _error = null; });
     try {
       final auth = FirebaseAuth.instance;
@@ -156,6 +156,7 @@ class _FirebaseSignInScreenState extends State<FirebaseSignInScreen> {
   }
 
   Future<void> _resetPassword() async {
+    if (_busy) return;
     final email = _email.text.trim();
     if (email.isEmpty || !email.contains('@')) {
       setState(() => _error = 'Enter your email address first to request a reset link.');
@@ -294,18 +295,68 @@ class FirebaseVerificationScreen extends StatefulWidget {
 }
 
 class _FirebaseVerificationScreenState extends State<FirebaseVerificationScreen> {
+  static const _resendCooldown = Duration(seconds: 60);
+
   bool _busy = false;
   String? _message;
+  DateTime? _lastResendAttempt;
 
   Future<void> _refresh() async {
+    if (_busy) return;
     setState(() { _busy = true; _message = null; });
     try {
       await widget.user.reload();
-      if (mounted) setState(() => _message = FirebaseAuth.instance.currentUser?.emailVerified == true
-        ? 'Email verified. Your session is refreshing.'
-        : 'Email verification is still pending.');
+      if (mounted) {
+        setState(() => _message = FirebaseAuth.instance.currentUser?.emailVerified == true
+          ? 'Email verified. Your session is refreshing.'
+          : 'Email verification is still pending.');
+      }
     } catch (_) {
       if (mounted) setState(() => _message = 'Could not refresh verification status. Try again.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _resend() async {
+    if (_busy) return;
+    final now = DateTime.now();
+    final lastAttempt = _lastResendAttempt;
+    if (lastAttempt != null) {
+      final elapsed = now.difference(lastAttempt);
+      if (elapsed < _resendCooldown) {
+        final remaining = (_resendCooldown - elapsed).inSeconds;
+        setState(() => _message = 'Please wait $remaining seconds before requesting another verification email.');
+        return;
+      }
+    }
+
+    setState(() { _busy = true; _message = null; });
+    // Client-side cooldown is a UX guard; Firebase's server-side abuse controls remain authoritative.
+    _lastResendAttempt = now;
+    try {
+      await widget.user.sendEmailVerification();
+      if (mounted) setState(() => _message = 'A new verification email has been sent.');
+    } on FirebaseAuthException catch (error) {
+      if (mounted) {
+        setState(() => _message = error.code == 'too-many-requests'
+          ? 'Too many requests. Wait before trying again.'
+          : 'Could not resend the verification email. Try again later.');
+      }
+    } catch (_) {
+      if (mounted) setState(() => _message = 'Could not resend the verification email. Check your connection and try again.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _signOut() async {
+    if (_busy) return;
+    setState(() { _busy = true; _message = null; });
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {
+      if (mounted) setState(() => _message = 'Sign out could not be completed. Try again.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -329,8 +380,13 @@ class _FirebaseVerificationScreenState extends State<FirebaseVerificationScreen>
               textAlign: TextAlign.center, style: const TextStyle(color: _muted)),
             if (_message != null) ...[const SizedBox(height: 12), Text(_message!, textAlign: TextAlign.center)],
             const SizedBox(height: 20),
-            FilledButton(onPressed: _busy ? null : _refresh, child: Text(_busy ? 'Checking…' : 'I verified my email')),
-            TextButton(onPressed: () => FirebaseAuth.instance.signOut(), child: const Text('Sign out')),
+            OutlinedButton(
+              onPressed: _busy ? null : _resend,
+              child: const Text('Resend verification email'),
+            ),
+            const SizedBox(height: 8),
+            FilledButton(onPressed: _busy ? null : _refresh, child: Text(_busy ? 'Working…' : 'I verified my email')),
+            TextButton(onPressed: _busy ? null : _signOut, child: const Text('Sign out')),
           ]),
         )),
       ),
