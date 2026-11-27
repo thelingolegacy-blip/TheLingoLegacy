@@ -16,6 +16,7 @@ COPY schemas ./schemas
 COPY tests ./tests
 COPY lingo-vsm ./lingo-vsm
 COPY backup.sh ./backup.sh
+COPY backup.sh ./backup.sh
 RUN npm run check && npm test
 RUN mkdir -p /data && chown -R node:node /data
 USER node
