@@ -116,6 +116,27 @@ test("watchdog records crashes but ignores a clean orchestrator exit", async () 
   } finally { await fs.rm(rootDir, { recursive: true, force: true }); }
 });
 
+test("watchdog exits promptly when a run completes while the VSM host remains alive", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-watchdog-clean-"));
+  const runDir = path.join(rootDir, "active-run");
+  await fs.mkdir(runDir);
+  const pidFile = path.join(runDir, "child-processes.json");
+  const crashFile = path.join(runDir, "crash-report.json");
+  const completedFile = path.join(runDir, "completed.json");
+  await fs.writeFile(pidFile, "[]");
+  const parent = spawn(process.execPath, ["-e", "const fs=require('fs');setTimeout(()=>fs.writeFileSync(process.argv[1],'{}'),100);setTimeout(()=>{},5000)", completedFile], { stdio: "ignore" });
+  const watchdog = spawn(process.execPath, [path.resolve("orchestration/watchdog.mjs"), String(parent.pid), pidFile, crashFile], { stdio: "ignore" });
+  const watchdogExit = new Promise((resolve, reject) => { watchdog.once("error", reject); watchdog.once("close", resolve); });
+  try {
+    await watchdogExit;
+    assert.equal(parent.exitCode, null, "the VSM host process should still be alive when this run watchdog exits");
+    await assert.rejects(fs.access(crashFile));
+  } finally {
+    parent.kill("SIGKILL");
+    await fs.rm(rootDir, { recursive: true, force: true });
+  }
+});
+
 test("runner executes steps from the configured execution root", async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "lingo-vsm-workspace-"));
   try {
