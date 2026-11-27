@@ -50,6 +50,7 @@ redacted\
 test("retry policy is bounded and distinguishes transient from permanent failures", () => {
   assert.equal(classifyFailure({ status: 503 }), "transient");
   assert.equal(classifyFailure({ status: 401 }), "permanent");
+  assert.equal(classifyFailure(Object.assign(new Error("cancelled"), { name: "AbortError" })), "permanent");
   assert.deepEqual(retryDecision({ emptyLog: true, attempt: 1 }), { retry: true, reason: "empty-log", next_attempt: 2 });
   assert.equal(retryDecision({ emptyLog: true, attempt: 3 }).retry, false);
   assert.equal(retryDecision({ error: { status: 503 }, attempt: 1, startedAt: 1000, now: 2000 }).retry, true);
