@@ -32,7 +32,7 @@ case "${1:-help}" in
   run)
     [ -n "${2:-}" ] || { echo "Usage: sh vsm/lingo-vsm run RUN_CONFIG.json"; exit 2; }
     [ -f "$2" ] || { echo "Run configuration file not found."; exit 2; }
-    node --input-type=module -e 'import fs from "node:fs/promises"; import { executeRun } from "./orchestration/runner.mjs"; const config=JSON.parse(await fs.readFile(process.argv[1],"utf8")); const result=await executeRun(config); process.stdout.write(JSON.stringify(result,null,2)+"\\n"); if(!["SUCCESS","PARTIAL"].includes(result.status)) process.exitCode=1;' "$2"
+    node --input-type=module -e 'import fs from "node:fs/promises"; import { executeRun } from "./orchestration/runner.mjs"; const config=JSON.parse(await fs.readFile(process.argv[1],"utf8")); const result=await executeRun(config); process.stdout.write(JSON.stringify(result,null,2)+"\n"); if(!["SUCCESS","PARTIAL"].includes(result.status)) process.exitCode=1;' "$2"
     ;;
   verify)
     need_env
