@@ -9,6 +9,7 @@ import { writeEvidence, readEvidence } from "./evidence/store.mjs";
 import { authorize, policySnapshot } from "./security/policy.mjs";
 import { listStudioAssets, createStudioAsset } from "./studio/asset-registry.mjs";
 import { createRunController } from "./orchestration/runner.mjs";
+import { createRunConfig } from "./orchestration/run-contract.mjs";
 
 const PORT = Number(process.env.PORT || 8787);
 const PREVIEW_PORT = Number(process.env.PREVIEW_PORT || 8788);
@@ -132,13 +133,24 @@ const server = http.createServer(async (req, res) => {
       if (!can(req, "run.execute")) return send(res, 403, { error: "Run execution capability required." });
       const input = await bodyJson(req);
       if (!input.config || typeof input.config !== "object" || Array.isArray(input.config)) return send(res, 400, { error: "A run configuration object is required." });
-      if (input.config.target === "production") return send(res, 423, { error: "Production-target runs are disabled in this VSM phase." });
-      const runId = input.config.run_id;
+      let validatedConfig;
+      try {
+        validatedConfig = createRunConfig(input.config);
+        for (const track of validatedConfig.tracks) {
+          if (!Array.isArray(track.steps)) throw new Error("Every track requires a steps array.");
+          for (const step of track.steps) {
+            if (!step || !["node", "npm"].includes(step.command) || !Array.isArray(step.args) || step.args.some(arg => typeof arg !== "string")) throw new Error("Run steps must use node/npm with string arguments.");
+            if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 1800000)) throw new Error("Step timeout must be 1 second to 30 minutes.");
+          }
+        }
+      } catch (error) { return send(res, 400, { error: error.message || "Invalid run configuration." }); }
+      if (validatedConfig.target === "production") return send(res, 423, { error: "Production-target runs are disabled in this VSM phase." });
+      const runId = validatedConfig.run_id;
       if (typeof runId !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$/.test(runId)) return send(res, 400, { error: "A valid run_id is required." });
       if (activeRuns.has(runId)) return send(res, 409, { error: "A run with this ID is already active." });
       const priorRun = await fs.access(path.join(DATA_DIR, "runs", runId)).then(() => true).catch(() => false);
       if (priorRun) return send(res, 409, { error: "A run with this ID already exists; run IDs are immutable and cannot be reused." });
-      const controller = createRunController(input.config, { rootDir: process.cwd(), artifactsDir: path.join(DATA_DIR, "runs") });
+      const controller = createRunController(validatedConfig, { rootDir: process.cwd(), artifactsDir: path.join(DATA_DIR, "runs") });
       activeRuns.set(runId, controller);
       controller.promise.finally(() => activeRuns.delete(runId)).catch(() => activeRuns.delete(runId));
       await audit("run.started", { run_id: runId, requested_by: OWNER_IDENTITY.id, target: input.config.target || "local" });
