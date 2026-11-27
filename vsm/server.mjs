@@ -133,7 +133,10 @@ const server = http.createServer(async (req, res) => {
     }
     const evidenceMatch = url.pathname.match(/^\/api\/evidence\/(ev-[a-z0-9-]+)$/);
     if (req.method === "GET" && evidenceMatch) { if (!auth(req)) return send(res, 401, { error: "Owner authorization required." }); const record = await readEvidence(evidenceMatch[1]); return send(res, 200, record); }
-    if (req.method === "GET" && url.pathname === "/api/security/policy") {\n      return send(res, 200, policySnapshot());\n    }\n    if (req.method === "GET" && url.pathname === "/api/identity") {
+    if (req.method === "GET" && url.pathname === "/api/security/policy") {
+      return send(res, 200, policySnapshot());
+    }
+    if (req.method === "GET" && url.pathname === "/api/identity") {
       const principal = await getOwnerPrincipal();
       return send(res, 200, { principal, local_first: true, session_auth: "owner bearer token", federation: "not configured" });
     }
