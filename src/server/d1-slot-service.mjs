@@ -1,4 +1,5 @@
-import { evaluateThreeReelSpin, validateIdempotencyKey } from './slot-engine.mjs';
+import { evaluateSpin5x3 } from './slot-engine-5x3.mjs';
+import { validateIdempotencyKey } from './slot-engine.mjs';
 
 const safeId = (value, field) => {
   if (typeof value !== 'string' || value.length < 1 || value.length > 128) {
@@ -38,8 +39,8 @@ export async function findSettledD1SpinReplay(db, { firebaseUid, gameId, idempot
  * one D1 batch so a failed debit or missing approval rolls the entire action back.
  */
 export async function playAndSettleD1Spin(db, {
-  firebaseUid, gameId, idempotencyKey, ruleVersion, symbols, paytable, wagerUnits,
-  tenantId, approvalId, actionDigest, correlationId, authTime,
+  firebaseUid, gameId, idempotencyKey, ruleVersion, weightedSymbols, paytable, wagerUnits,
+  activePaylines = 20, tenantId, approvalId, actionDigest, correlationId, authTime,
 }) {
   safeId(firebaseUid, 'firebaseUid');
   safeId(gameId, 'gameId');
@@ -126,7 +127,7 @@ export async function playAndSettleD1Spin(db, {
   `).bind(firebaseUid, approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, authTime);
 
   const sessionId = crypto.randomUUID();
-  const outcome = evaluateThreeReelSpin({ symbols, paytable, wagerUnits });
+  const outcome = evaluateSpin5x3({ weightedSymbols, paytable, wagerUnits, activePaylines });
   const insertSession = db.prepare(`
     INSERT INTO lingo_game_sessions
       (session_id, firebase_uid, game_id, idempotency_key, rule_version, reels_json, wager_units, payout_units, status)
@@ -139,7 +140,7 @@ export async function playAndSettleD1Spin(db, {
      )
   `).bind(
     sessionId, firebaseUid, gameId, idempotencyKey, ruleVersion,
-    JSON.stringify(outcome.reels), wagerUnits, outcome.payoutUnits,
+    JSON.stringify(outcome.grid), wagerUnits, outcome.totalPayoutUnits,
     approvalId, firebaseUid, tenantId, gameId, `game:${gameId}`, actionDigest, firebaseUid,
   );
 
