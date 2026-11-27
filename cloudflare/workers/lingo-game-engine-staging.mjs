@@ -4,12 +4,21 @@ import { findSettledD1SpinReplay, playAndSettleD1Spin } from '../../src/server/d
 
 const GAME_ID = 'thats-my-lingo';
 const PRODUCT_ID = 'thats-my-lingo';
-const SYMBOLS = ['LEGACY_LION', 'ELECTRIC_GOLD', 'CRIMSON_CROWN', 'OBSIDIAN_BAR', 'SEVEN'];
-// Explicitly provisional staging-only virtual-credit rules; not an RTP certification.
-const PAYTABLE = { LEGACY_LION: 40, ELECTRIC_GOLD: 30, CRIMSON_CROWN: 20, OBSIDIAN_BAR: 15, SEVEN: 15 };
-const RULE_VERSION = 'staging-demo-v1';
+// Version identifies the approved math contract, not an RTP certification.
+const RULE_VERSION = 'tml-5x3-20line-option2-v1';
+const ACTIVE_PAYLINES = 20;
+const ALLOCATION_METHOD = 'option2-total-spin-stake-even-split';
 const MAX_WAGER_UNITS = 100;
 const STAGING_FIREBASE_PROJECT_ID = 'lingo-legacy-staging';
+
+function loadRulesetConfig(env) {
+  if (typeof env.TML_RULESET_CONFIG !== 'string' || env.TML_RULESET_CONFIG.length < 2) return null;
+  let config;
+  try { config = JSON.parse(env.TML_RULESET_CONFIG); } catch { return null; }
+  if (!config || !Array.isArray(config.weightedSymbols) || !config.paytable
+      || typeof config.paytable !== 'object' || Array.isArray(config.paytable)) return null;
+  return { weightedSymbols: config.weightedSymbols, paytable: config.paytable, activePaylines: ACTIVE_PAYLINES };
+}
 
 function json(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
@@ -189,6 +198,9 @@ export default {
         if (typeof idempotencyKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(idempotencyKey)) {
           return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
         }
+        const ruleset = loadRulesetConfig(env);
+        if (!ruleset) return json({ error: 'STAGING_RULESET_NOT_CONFIGURED', rulesVersion: RULE_VERSION, correlationId }, 503);
+        const rulesetDigest = await sha256Hex(JSON.stringify({ rulesVersion: RULE_VERSION, ...ruleset }));
         const resourceId = `game:${GAME_ID}`;
         const authorization = await authorizeD1Request(env.DB, {
           uid: identity.uid, authTime: identity.authTime, tenantId,
@@ -199,7 +211,8 @@ export default {
 
         const actionDigest = await sha256Hex(JSON.stringify({
           tenantId, productId: PRODUCT_ID, resourceId, operation: 'spin',
-          wagerUnits, idempotencyKey,
+          wagerUnits, idempotencyKey, rulesVersion: RULE_VERSION, rulesetDigest,
+          grid: '5x3', activePaylines: ACTIVE_PAYLINES, allocation: ALLOCATION_METHOD,
         }));
         const approvalId = crypto.randomUUID();
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
@@ -224,10 +237,14 @@ export default {
         if (typeof idempotencyKey !== 'string' || idempotencyKey.length < 16 || idempotencyKey.length > 128) {
           return json({ error: 'IDEMPOTENCY_KEY_REQUIRED', correlationId }, 400);
         }
+        const ruleset = loadRulesetConfig(env);
+        if (!ruleset) return json({ error: 'STAGING_RULESET_NOT_CONFIGURED', rulesVersion: RULE_VERSION, correlationId }, 503);
+        const rulesetDigest = await sha256Hex(JSON.stringify({ rulesVersion: RULE_VERSION, ...ruleset }));
         const resourceId = `game:${GAME_ID}`;
         const actionDigest = await sha256Hex(JSON.stringify({
           tenantId, productId: PRODUCT_ID, resourceId, operation: 'spin',
-          wagerUnits, idempotencyKey,
+          wagerUnits, idempotencyKey, rulesVersion: RULE_VERSION, rulesetDigest,
+          grid: '5x3', activePaylines: ACTIVE_PAYLINES, allocation: ALLOCATION_METHOD,
         }));
         const authorization = await authorizeD1Request(env.DB, {
           uid: identity.uid, authTime: identity.authTime, tenantId,
@@ -242,7 +259,7 @@ export default {
         });
         if (replay) {
           return json({
-            sessionId: replay.session_id, reels: JSON.parse(replay.reels_json),
+            sessionId: replay.session_id, grid: JSON.parse(replay.reels_json),
             wagerUnits: replay.wager_units, payoutUnits: replay.payout_units,
             newBalanceUnits: replay.balance_after_units, replayed: true,
             currency: 'NON_REDEEMABLE_PLAY_CREDITS', rulesVersion: replay.rule_version,
@@ -264,11 +281,11 @@ export default {
 
         const result = await playAndSettleD1Spin(env.DB, {
           firebaseUid: identity.uid, gameId: GAME_ID, idempotencyKey,
-          ruleVersion: RULE_VERSION, symbols: SYMBOLS, paytable: PAYTABLE,
-          wagerUnits, tenantId, approvalId, actionDigest, correlationId, authTime: identity.authTime,
+          ruleVersion: RULE_VERSION, weightedSymbols: ruleset.weightedSymbols, paytable: ruleset.paytable,
+          activePaylines: ruleset.activePaylines, wagerUnits, tenantId, approvalId, actionDigest, correlationId, authTime: identity.authTime,
         });
         return json({
-          sessionId: result.session_id, reels: JSON.parse(result.reels_json),
+          sessionId: result.session_id, grid: JSON.parse(result.reels_json),
           wagerUnits: result.wager_units, payoutUnits: result.payout_units,
           newBalanceUnits: result.balance_after_units, replayed: result.replayed,
           currency: 'NON_REDEEMABLE_PLAY_CREDITS', rulesVersion: result.rule_version,
