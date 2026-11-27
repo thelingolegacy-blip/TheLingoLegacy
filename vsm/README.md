@@ -48,6 +48,7 @@ The local API is loopback-bound by Compose; do not expose it publicly. Mission C
 
 - `GET /api/health`
 - `GET /api/identity` — public owner principal and local-first identity status.
+- `GET /api/session` — validates the Owner token and returns the local session capability set.
 - `GET /api/security/policy` — read-only SAAAE role/capability policy.
 - Math Bot allowlist includes probability validation and virtual outcome distribution analysis; output is simulation-only.
 - `GET /api/sonic-boom` — lane state.
