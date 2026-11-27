@@ -31,6 +31,8 @@ function validateTrack(track, config) {
       throw new Error("Track steps must use node/npm with a string args array and no shell.");
     }
     if (step.min_log_bytes !== undefined && (!Number.isInteger(step.min_log_bytes) || step.min_log_bytes < 1 || step.min_log_bytes > 65_536)) throw new Error("Step min_log_bytes must be between 1 and 65536.");
+    const hardTimeout = step.timeout_ms ?? 5 * 60_000;
+    if (step.soft_timeout_ms !== undefined && (!Number.isInteger(step.soft_timeout_ms) || step.soft_timeout_ms < 1 || step.soft_timeout_ms >= hardTimeout)) throw new Error("Step soft_timeout_ms must be positive and less than timeout_ms.");
     if (step.timeout_ms !== undefined && (!Number.isInteger(step.timeout_ms) || step.timeout_ms < 1000 || step.timeout_ms > 30 * 60_000)) {
       throw new Error("Step timeout_ms must be between 1 second and 30 minutes.");
     }
@@ -279,7 +281,7 @@ export async function executeRun(input, {
     control.cancelTrack = trackId => { const item = ledger.tracks[trackId]; if (!item || !["PENDING", "RUNNING"].includes(item.status)) return false; cancelledTracks.add(trackId); const trackController = controllers.get(trackId); if (trackController) trackController.abort("human-track-cancelled"); return true; };
   }
 
-  const runProcess = async (step, track, trackDir, trackEnv, signal) => {
+  const runProcess = async (step, track, trackDir, trackEnv, signal, onSoftTimeout = null) => {
     const charge = chargeBudget(ledger, track.id, { toolCalls: 1, costUsd: step.cost_usd || 0, now: now() });
     if (!charge.ok) {
       ledger.status = "BUDGET_EXCEEDED";
@@ -325,7 +327,10 @@ export async function executeRun(input, {
     };
     signal.addEventListener("abort", abortHandler, { once: true });
     let timedOut = false;
-    const timeout = setTimeout(() => { timedOut = true; abortHandler(); }, step.timeout_ms || 5 * 60_000);
+    const hardTimeoutMs = step.timeout_ms || 5 * 60_000;
+    const softTimeoutMs = step.soft_timeout_ms ?? Math.max(1, Math.floor(hardTimeoutMs * 0.8));
+    const softTimeout = setTimeout(() => { if (typeof onSoftTimeout === "function") Promise.resolve(onSoftTimeout(softTimeoutMs, hardTimeoutMs)).catch(() => {}); }, softTimeoutMs);
+    const timeout = setTimeout(() => { timedOut = true; abortHandler(); }, hardTimeoutMs);
     const softTimeout = step.soft_timeout_ms ? setTimeout(() => emit({ runId: config.run_id, trackId: track.id, step: step.id || null, status: "STEP_SOFT_TIMEOUT", detail: { soft_timeout_ms: step.soft_timeout_ms } }), step.soft_timeout_ms) : null;
     const result = await new Promise(resolve => {
       child.once("error", error => resolve({ code: -1, error }));
@@ -334,6 +339,7 @@ export async function executeRun(input, {
     clearTimeout(softTimeout);
     if (child.pid) { childPids.delete(child.pid); await persistChildPids(); }
     clearTimeout(timeout);
+    clearTimeout(softTimeout);
     clearTimeout(forceTimer);
     signal.removeEventListener("abort", abortHandler);
     let redactedOutput = output;
