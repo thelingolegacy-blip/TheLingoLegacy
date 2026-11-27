@@ -5,7 +5,7 @@ Local-first release control plane in the canonical repository. This is additive:
 ## Implemented in source
 
 - Dockerized Node.js control API and dashboard.
-- Persistent local release registry and append-only audit events.
+- Persistent local release registry, SHA-256 content-integrity evidence store and hash-chained audit events with verification endpoint.
 - Release Package JSON Schema and fail-closed gate defaults.
 - Read-only mount of the existing repository at `/workspace`.
 - Public HTTP health probes against the configured base URL.
@@ -40,7 +40,7 @@ Gitea registration is disabled and repository viewing requires sign-in. Complete
 
 Or use the launcher: `sh vsm/lingo-vsm up`. Other commands: `status`, `logs`, `dispatch "Title" COMMIT_SHA [BRANCH] [TARGET]`, `probe RELEASE_ID`, `attest RELEASE_ID GATE PASS|FAIL|HOLD EVIDENCE_REF RATIONALE`, and `accept RELEASE_ID`.
 
-The local API is loopback-bound by Compose; do not expose it publicly.
+The local API is loopback-bound by Compose; do not expose it publicly. Mission Control now displays the local LINGO ID, Sonic Boom lane state and bot registry, and offers Owner-token-protected lane and bot controls. The owner token is kept in browser session storage only.
 
 ## API
 
@@ -49,11 +49,11 @@ The local API is loopback-bound by Compose; do not expose it publicly.
 - `GET /api/sonic-boom` — lane state.
 - `POST /api/sonic-boom` — owner-token protected; accepts `enabled`, optional `owner_priority`, and `max_parallel_jobs` (1–16).
 - `GET /api/bots` — declared bot registry.
-- `POST /api/bots/:bot-id/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.
+- `POST /api/bots/run` — owner-token protected, allowlisted deterministic tasks; proposal/validation only, no model inference or privileged mutation.\n- `GET /api/audit/verify` — verifies the append-only audit hash chain.\n- `GET /api/evidence/:id` — owner-token protected evidence retrieval with SHA-256 integrity verification.
 - `GET /api/centers`
 - `GET /api/releases`
 - `POST /api/releases` — create draft package.
-- `POST /api/releases/:id/probe` — run configured public probes.
+- `POST /api/releases/:id/probe` — run configured public probes and persist the result as a hashed evidence record.\n- Gate attestations are also persisted as hashed, release-scoped evidence records.
 - `POST /api/releases/:id/gates/:gate` — owner-token protected attestation for `g02`, `security`, or `static`.
 - `POST /api/releases/:id/accept` — owner-token protected; refuses unless every required gate is PASS and signs the acceptance payload with the local Owner Ed25519 key.
 - Static preview: `http://127.0.0.1:8788/` serves existing repository files from the read-only mount. The Worker runtime is not emulated.
@@ -70,7 +70,7 @@ The local API is loopback-bound by Compose; do not expose it publicly.
 - The probe runner checks public HTTP endpoints; a green probe is not proof of full product or backend functionality.
 - Sonic Boom changes scheduling priority/concurrency only; it never bypasses security, G02, evidence or acceptance gates.
 
-## Verification status
+## Local verification commands\n\nFrom the repository root, run `cd vsm && npm run check && npm test`. To validate the Compose model without starting services, run `docker compose --env-file vsm/.env -f vsm/docker-compose.yml config --quiet`. These commands have not yet been executed in the hosted repository workspace.\n\n## Verification status
 
 Phase 1 source files and configuration are committed on the feature branch. Docker image build, Compose validation, live Gitea bootstrap, Node test execution, browser QA and end-to-end release acceptance have **not** yet been executed in a Docker runtime. Do not mark the VSM operational until those checks pass and evidence is attached.
 
