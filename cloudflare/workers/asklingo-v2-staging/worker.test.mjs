@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker from './worker.js';
+import worker, { runWorkersAi } from './worker.js';
 const env = {};
 test('health is fail-closed when identity and D1 are not configured', async () => {
   const r=await worker.fetch(new Request('https://staging.invalid/_health'),env);
@@ -67,4 +67,34 @@ test('query enforces payload limit on streamed bodies without Content-Length', a
   assert.equal(request.headers.get('content-length'),null);
   const r=await worker.fetch(request,{});
   assert.equal(r.status,413);
+});
+
+test('Workers AI inference remains disabled without explicit zero-spend confirmation', async () => {
+  let called=false;
+  const env={AI:{run:async()=>{called=true;return {response:'should not run'};}},ASKLINGO_PROVIDER:'cloudflare-workers-ai',ASKLINGO_MODEL_ID:'@cf/google/gemma-4-26b-a4b-it',ASKLINGO_INFERENCE_ENABLED:'true'};
+  await assert.rejects(()=>runWorkersAi(env,'hello'),/provider_not_approved_or_configured/);
+  assert.equal(called,false);
+});
+
+test('Workers AI adapter uses only the approved staging model and bounded output', async () => {
+  let call;
+  const env={
+    AI:{run:async(model,options)=>{call={model,options};return {response:'Hello from askLINGO'};}},
+    ASKLINGO_PROVIDER:'cloudflare-workers-ai',
+    ASKLINGO_MODEL_ID:'@cf/google/gemma-4-26b-a4b-it',
+    ASKLINGO_INFERENCE_ENABLED:'true',
+    ASKLINGO_ZERO_SPEND_CONFIRMED:'true'
+  };
+  const result=await runWorkersAi(env,'hello');
+  assert.equal(result.text,'Hello from askLINGO');
+  assert.equal(call.model,'@cf/google/gemma-4-26b-a4b-it');
+  assert.equal(call.options.max_tokens,512);
+  assert.equal(call.options.temperature,0.4);
+  assert.equal(call.options.messages[1].content,'hello');
+});
+
+test('Workers AI adapter rejects empty and oversized prompts', async () => {
+  const env={AI:{run:async()=>({response:'unused'})},ASKLINGO_PROVIDER:'cloudflare-workers-ai',ASKLINGO_MODEL_ID:'@cf/google/gemma-4-26b-a4b-it',ASKLINGO_INFERENCE_ENABLED:'true',ASKLINGO_ZERO_SPEND_CONFIRMED:'true'};
+  await assert.rejects(()=>runWorkersAi(env,''),/invalid_message/);
+  await assert.rejects(()=>runWorkersAi(env,'x'.repeat(2001)),/invalid_message/);
 });
