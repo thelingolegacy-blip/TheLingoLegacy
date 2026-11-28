@@ -66,6 +66,33 @@ async function audit(db, event) {
     .bind(crypto.randomUUID(),event.tenantId || 'unresolved',event.principalId || null,'user',event.type,'assistant','query',null,event.decision,event.requestId,Math.floor(Date.now()/1000),JSON.stringify({reason:event.reason || 'none',surface:event.surface || 'unknown'})).run();
 }
 function configuredOrigins(env) { return new Set(String(env.ASKLINGO_ALLOWED_ORIGINS || '').split(',').map(x=>x.trim()).filter(Boolean)); }
+export async function runWorkersAi(env, message) {
+  if (!env?.AI || env.ASKLINGO_PROVIDER !== 'cloudflare-workers-ai'
+    || env.ASKLINGO_MODEL_ID !== '@cf/google/gemma-4-26b-a4b-it'
+    || env.ASKLINGO_INFERENCE_ENABLED !== 'true'
+    || env.ASKLINGO_ZERO_SPEND_CONFIRMED !== 'true') {
+    throw new Error('provider_not_approved_or_configured');
+  }
+  if (typeof message !== 'string' || message.trim().length === 0 || message.length > MAX_MESSAGE_CHARS) {
+    throw new Error('invalid_message');
+  }
+  const result = await env.AI.run('@cf/google/gemma-4-26b-a4b-it', {
+    messages: [
+      { role: 'system', content: 'You are askLINGO, the helpful assistant for THE LINGO LEGACY. Be accurate, warm, concise, and clear. Do not claim to perform actions, access private accounts, or change settings. Do not request passwords, access tokens, or payment credentials. If a request requires an external action or unavailable information, explain the limitation.' },
+      { role: 'user', content: message.trim() }
+    ],
+    max_tokens: 512,
+    temperature: 0.4
+  });
+  const text = typeof result?.response === 'string'
+    ? result.response
+    : typeof result?.choices?.[0]?.message?.content === 'string'
+      ? result.choices[0].message.content
+      : '';
+  if (!text.trim()) throw new Error('provider_empty_response');
+  return { text: text.trim().slice(0, 12000) };
+}
+
 export default {
   async fetch(request, env) {
     const requestId = crypto.randomUUID(); const url = new URL(request.url);
@@ -118,9 +145,28 @@ export default {
     const windowStart=Math.floor(now/60)*60;
     const bucket=await db.prepare('INSERT INTO rate_limit_buckets (principal_id,route_key,window_start,request_count,updated_at) VALUES (?, ?, ?, 1, ?) ON CONFLICT(principal_id,route_key,window_start) DO UPDATE SET request_count=request_count+1,updated_at=excluded.updated_at RETURNING request_count').bind(principal.principal_id,'asklingo.query',windowStart,now).first();
     if (!bucket || bucket.request_count>RATE_LIMIT_PER_MINUTE) { try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.rate_limited',decision:'deny',reason:'rate_limit',surface:body.surface}); } catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); } return response({error:'rate_limited',request_id:requestId},429,requestId,origin); }
-    try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.blocked',decision:'deny',reason:'provider_and_privacy_gate_pending',surface:body.surface}); }
+    const providerReady = env.AI
+      && env.ASKLINGO_PROVIDER === 'cloudflare-workers-ai'
+      && env.ASKLINGO_MODEL_ID === '@cf/google/gemma-4-26b-a4b-it'
+      && env.ASKLINGO_INFERENCE_ENABLED === 'true'
+      && env.ASKLINGO_ZERO_SPEND_CONFIRMED === 'true';
+    if (!providerReady) {
+      try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.blocked',decision:'deny',reason:'provider_or_zero_spend_gate_pending',surface:body.surface}); }
+      catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); }
+      return response({error:'service_not_enabled',code:'PROVIDER_OR_ZERO_SPEND_GATE_PENDING',request_id:requestId},503,requestId,origin);
+    }
+    try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.inference_started',decision:'allow',reason:'cloudflare_workers_ai_gemma4',surface:body.surface}); }
     catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); }
-    return response({error:'service_not_enabled',code:'PROVIDER_AND_PRIVACY_GATE_PENDING',request_id:requestId},503,requestId,origin);
+    let generated;
+    try {
+      generated = await runWorkersAi(env, body.message);
+    } catch {
+      try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.inference_failed',decision:'deny',reason:'provider_error',surface:body.surface}); } catch {}
+      return response({error:'inference_unavailable',request_id:requestId},503,requestId,origin);
+    }
+    try { await audit(db,{requestId,principalId:principal.principal_id,tenantId:principal.tenant_id,type:'query.inference_succeeded',decision:'allow',reason:'cloudflare_workers_ai_gemma4',surface:body.surface}); }
+    catch { return response({error:'audit_unavailable',request_id:requestId},503,requestId,origin); }
+    return response({ok:true,reply:generated.text,request_id:requestId,provider:'cloudflare-workers-ai',model:'@cf/google/gemma-4-26b-a4b-it'},200,requestId,origin);
     } catch { return response({error:'authorization_service_unavailable',request_id:requestId},503,requestId,origin); }
   }
 }
