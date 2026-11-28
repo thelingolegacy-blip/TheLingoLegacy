@@ -34,11 +34,39 @@ export async function configureLane(input) {
   await persist();
   return snapshot();
 }
-export function submitLaneJob({ owner = false, kind = "task", run }) {
+export function submitLaneJob({ owner = false, kind = "task", run, signal = null }) {
   if (typeof run !== "function") throw new Error("A job runner function is required.");
   const job = { id: "sb-" + crypto.randomBytes(6).toString("hex"), owner, kind, run, enqueued_at: Date.now() };
   return new Promise((resolve, reject) => {
-    waiters.push({ ...job, resolve, reject });
+    let settled = false;
+    const cleanup = () => signal?.removeEventListener("abort", onAbort);
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      fn(value);
+    };
+    const entry = {
+      ...job,
+      resolve: value => finish(resolve, value),
+      reject: error => finish(reject, error),
+      signal,
+      onAbort: null
+    };
+    const onAbort = () => {
+      const index = waiters.indexOf(entry);
+      if (index !== -1) {
+        waiters.splice(index, 1);
+        entry.reject(Object.assign(new Error("Sonic Boom job cancelled while queued."), { name: "AbortError", code: "ABORT_ERR" }));
+      }
+    };
+    entry.onAbort = onAbort;
+    if (signal?.aborted) {
+      entry.reject(Object.assign(new Error("Sonic Boom job cancelled before enqueue."), { name: "AbortError", code: "ABORT_ERR" }));
+      return;
+    }
+    signal?.addEventListener("abort", onAbort, { once: true });
+    waiters.push(entry);
     waiters.sort((a, b) => (state.enabled && state.owner_priority ? Number(b.owner) - Number(a.owner) : 0) || a.enqueued_at - b.enqueued_at);
     drain();
   });
