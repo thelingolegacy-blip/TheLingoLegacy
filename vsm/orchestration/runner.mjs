@@ -174,7 +174,11 @@ export function createRunController(input, options = {}) {
     get paused() { return paused; },
     get cancelled() { return abort.signal.aborted; }
   };
-  control.promise = executeRun(input, { ...options, signal: abort.signal, control });
+  const { schedule, ...runOptions } = options;
+  const start = () => executeRun(input, { ...runOptions, signal: abort.signal, control });
+  control.promise = typeof schedule === "function"
+    ? schedule(start, { signal: abort.signal })
+    : start();
   return control;
 }
 
