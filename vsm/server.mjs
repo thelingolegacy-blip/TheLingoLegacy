@@ -165,6 +165,12 @@ const server = http.createServer(async (req, res) => {
       const controller = createRunController(validatedConfig, {
         rootDir: process.cwd(),
         artifactsDir: path.join(DATA_DIR, "runs"),
+        schedule: (run, { signal }) => submitLaneJob({
+          owner: true,
+          kind: "run:" + runId,
+          run,
+          signal
+        }),
         notifyOwner: async event => {
           const notification = { ...event, created_at: new Date().toISOString(), delivery: "LOCAL_OWNER_OUTBOX", requires_human_poll: true };
           const notificationFile = path.join(runDirectory, "owner-notification.json");
