@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: lingo-vsm-control
     restart: unless-stopped
+    networks:
+      - default
+      - forge-internal
     environment:
       PORT: "8787"
       PREVIEW_PORT: "8788"
@@ -37,6 +40,8 @@ services:
       start_period: 10s
 
   lingo-forge:
+    networks:
+      - forge-internal
     image: gitea/gitea:1.24.7-rootless
     container_name: lingo-forge
     restart: unless-stopped
@@ -60,6 +65,45 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  worker-preview:
+    profiles: ["worker-preview"]
+    image: node:22-bookworm-slim
+    container_name: lingo-worker-preview
+    working_dir: /runtime
+    restart: "no"
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      HOME: /tmp
+      npm_config_cache: /tmp/npm-cache
+    command:
+      - sh
+      - -lc
+      - >-
+        mkdir -p /runtime &&
+        tar -C /source-web --exclude=.git --exclude=node_modules --exclude=.next --exclude=.open-next --exclude='.env*' --exclude='.dev.vars*' -cf - . |
+        tar -C /runtime -xf - &&
+        npm ci --no-audit --no-fund &&
+        npm run cf:preview -- --ip 0.0.0.0 --port 8790 --var ENVIRONMENT:staging
+    ports:
+      - "127.0.0.1:8790:8790"
+    volumes:
+      - ${VSM_WEB_REPO_PATH:-../../TheLingoLegacy-Web}:/source-web:ro
+      - worker-preview-runtime:/runtime
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8790').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 5
+      start_period: 180s
+
 volumes:
   vsm-data:
     name: lingo-vsm-data
@@ -67,3 +111,9 @@ volumes:
     name: lingo-forge-data
   lingo-forge-config:
     name: lingo-forge-config
+  worker-preview-runtime:
+    name: lingo-worker-preview-runtime
+
+networks:
+  forge-internal:
+    internal: true

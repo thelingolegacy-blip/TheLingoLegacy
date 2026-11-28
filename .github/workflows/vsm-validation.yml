@@ -1,0 +1,58 @@
+name: LINGO VSM Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "vsm/**"
+      - ".github/workflows/vsm-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lingo-vsm-validation
+  cancel-in-progress: true
+
+jobs:
+  vsm-validation:
+    name: VSM source, API, Docker and Compose validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact PR branch without third-party actions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          cat > "$RUNNER_TEMP/lingo-git-askpass" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' "x-access-token" ;;
+            *Password*) printf '%s\n' "$GITHUB_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$RUNNER_TEMP/lingo-git-askpass"
+          trap 'rm -f "$RUNNER_TEMP/lingo-git-askpass"' EXIT
+          export GIT_ASKPASS="$RUNNER_TEMP/lingo-git-askpass"
+          export GIT_TERMINAL_PROMPT=0
+          git init "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          git -C "$GITHUB_WORKSPACE" fetch --no-tags --depth 1 origin "refs/heads/$BRANCH"
+          git -C "$GITHUB_WORKSPACE" checkout --detach FETCH_HEAD
+          git -C "$GITHUB_WORKSPACE" rev-parse HEAD
+      - name: Confirm Docker build environment
+        run: |
+          set -eu
+          docker --version
+          docker compose version
+      - name: Build isolated VSM image; Dockerfile runs Node 22 checks and tests
+        run: docker build --progress=plain --file vsm/Dockerfile --tag "lingo-vsm:ci-$GITHUB_SHA" vsm
+      - name: Validate Compose model without starting services
+        env:
+          VSM_OWNER_TOKEN: ci-only-token-never-used-outside-validation-000000000000
+          VSM_WEB_REPO_PATH: /tmp/lingo-web-preview-not-mounted
+        run: docker compose --env-file /dev/null -f vsm/docker-compose.yml config --quiet

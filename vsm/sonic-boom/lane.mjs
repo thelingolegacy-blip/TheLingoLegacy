@@ -10,7 +10,11 @@ let active = 0;
 const waiters = [];
 export async function loadLane() {
   await fs.mkdir(DATA_DIR, { recursive: true });
-  try { state = { ...DEFAULT_STATE, ...JSON.parse(await fs.readFile(STATE_FILE, "utf8")) }; }
+  try {
+    const loaded = JSON.parse(await fs.readFile(STATE_FILE, "utf8"));
+    if (typeof loaded.enabled !== "boolean" || typeof loaded.owner_priority !== "boolean" || !Number.isInteger(loaded.max_parallel_jobs) || loaded.max_parallel_jobs < 1 || loaded.max_parallel_jobs > 16) throw new Error("Persisted Sonic Boom lane state failed validation; refusing unsafe scheduler settings.");
+    state = { ...DEFAULT_STATE, enabled: loaded.enabled, owner_priority: loaded.owner_priority, max_parallel_jobs: loaded.max_parallel_jobs, updated_at: loaded.updated_at || null, queue: [] };
+  }
   catch (e) { if (e.code !== "ENOENT") throw e; await persist(); }
   return snapshot();
 }
@@ -30,11 +34,39 @@ export async function configureLane(input) {
   await persist();
   return snapshot();
 }
-export function submitLaneJob({ owner = false, kind = "task", run }) {
+export function submitLaneJob({ owner = false, kind = "task", run, signal = null }) {
   if (typeof run !== "function") throw new Error("A job runner function is required.");
   const job = { id: "sb-" + crypto.randomBytes(6).toString("hex"), owner, kind, run, enqueued_at: Date.now() };
   return new Promise((resolve, reject) => {
-    waiters.push({ ...job, resolve, reject });
+    let settled = false;
+    const cleanup = () => signal?.removeEventListener("abort", onAbort);
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      fn(value);
+    };
+    const entry = {
+      ...job,
+      resolve: value => finish(resolve, value),
+      reject: error => finish(reject, error),
+      signal,
+      onAbort: null
+    };
+    const onAbort = () => {
+      const index = waiters.indexOf(entry);
+      if (index !== -1) {
+        waiters.splice(index, 1);
+        entry.reject(Object.assign(new Error("Sonic Boom job cancelled while queued."), { name: "AbortError", code: "ABORT_ERR" }));
+      }
+    };
+    entry.onAbort = onAbort;
+    if (signal?.aborted) {
+      entry.reject(Object.assign(new Error("Sonic Boom job cancelled before enqueue."), { name: "AbortError", code: "ABORT_ERR" }));
+      return;
+    }
+    signal?.addEventListener("abort", onAbort, { once: true });
+    waiters.push(entry);
     waiters.sort((a, b) => (state.enabled && state.owner_priority ? Number(b.owner) - Number(a.owner) : 0) || a.enqueued_at - b.enqueued_at);
     drain();
   });
