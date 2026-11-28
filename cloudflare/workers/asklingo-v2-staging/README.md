@@ -17,7 +17,19 @@
 - `FIREBASE_WEB_API_KEY`: the staging project's public Firebase web API key, supplied as a Worker variable and never committed. The account-status/revocation lookup fails closed when absent.
 - `ASKLINGO_ALLOWED_ORIGINS`: comma-separated exact HTTPS origins; no wildcard.
 
-Do not add credentials or secret values to source. Provider configuration is deliberately absent. This candidate returns `503 PROVIDER_AND_PRIVACY_GATE_PENDING` after identity and grant checks.
+Do not add credentials or secret values to source. The staging candidate now contains a gated Cloudflare Workers AI adapter; it remains disabled unless every explicit provider and zero-spend gate is present. The approved model is `@cf/google/gemma-4-26b-a4b-it` (Google Gemma 4 26B A4B), selected as the initial staging candidate for its function-calling/reasoning capability and Cloudflare-hosted deployment. The model page identifies zero-data-retention support and lists unit pricing; Cloudflare's Workers AI pricing page separately documents a 10,000-Neuron/day free allocation. Verify the actual account plan and current quota before enabling anything. Sources: Cloudflare model page https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/ and pricing https://developers.cloudflare.com/workers-ai/platform/pricing/.
+
+### Inference gates and limits
+- `AI`: Cloudflare Workers AI binding; no external provider API key is required inside the Worker.
+- `ASKLINGO_PROVIDER`: must equal `cloudflare-workers-ai`.
+- `ASKLINGO_MODEL_ID`: must equal `@cf/google/gemma-4-26b-a4b-it`; arbitrary model selection is rejected.
+- `ASKLINGO_INFERENCE_ENABLED`: must equal `true`.
+- `ASKLINGO_ZERO_SPEND_CONFIRMED`: must equal `true` only after an operator independently verifies the Cloudflare account is on Workers Free and the free daily allocation is sufficient. This is an operator attestation, not a programmatic billing-plan check or hard spend cap. Never set it if the account can incur paid overages or if a billing method/paid plan is required.
+- The adapter sends only the current user message and a fixed system instruction; it does not persist conversation history or expose tools/actions. Output is capped at 512 generated tokens and 12,000 response characters.
+- Provider start/success/failure audit events contain request correlation and non-sensitive metadata only; prompts, bearer tokens, and generated answers are not written to D1.
+- Provider execution remains unavailable when any gate is absent, and audit persistence must succeed before inference starts. No inference is enabled by this source change alone.
+
+This is a staging-only adapter. It does not authorize a deployment, route attachment, live user traffic, a paid plan, prepaid credits, or production use.
 
 ## D1 authorization model
 - `principals`: maps verified `(issuer, subject, tenant_id)` to an active principal.
