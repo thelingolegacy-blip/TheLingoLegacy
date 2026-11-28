@@ -38,6 +38,29 @@ test("Sonic Boom scheduler resolves queued work and serializes while disabled", 
   assert.deepEqual(values, ["one", "two"]);
 });
 
+test("Sonic Boom removes an aborted run from the queue without starting it", async () => {
+  await lane.configureLane({ enabled: false, max_parallel_jobs: 1, owner_priority: true });
+  let releaseFirst;
+  const firstGate = new Promise(resolve => { releaseFirst = resolve; });
+  const first = lane.submitLaneJob({ owner: true, kind: "test:blocker", run: () => firstGate });
+  assert.equal(lane.snapshot().active_jobs, 1);
+  const aborter = new AbortController();
+  let secondStarted = false;
+  const second = lane.submitLaneJob({
+    owner: true,
+    kind: "test:queued-run",
+    signal: aborter.signal,
+    run: async () => { secondStarted = true; return "unexpected"; }
+  });
+  assert.equal(lane.snapshot().queued_jobs, 1);
+  aborter.abort();
+  await assert.rejects(second, error => error.name === "AbortError" && error.code === "ABORT_ERR");
+  assert.equal(lane.snapshot().queued_jobs, 0);
+  assert.equal(secondStarted, false);
+  releaseFirst("first-complete");
+  assert.equal(await first, "first-complete");
+});
+
 test("first LINGO bots only execute declared proposal and validation tasks", async () => {
   const worker = await import("../ai/bot-worker.mjs?test-suite");
   const proposal = await worker.executeBot({ botId: "lingo://id/bot-release", task: "prepare_release_draft", input: { title: "Phase 1 package", commit: "abcdef1234567", branch: "main", target: "local-preview" } });
